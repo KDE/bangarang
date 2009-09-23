@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Bangarang
+GenericName=Media Player
+Icon=bangarang
+X-DocPath=bangarang/index.html
+TryExec=bangarang
+Exec=bangarang %u
+MimeType=video/ogg;video/x-theora+ogg;video/x-ogm+ogg;video/x-ms-wmv;video/x-msvideo;video/x-ms-asf;video/x-matroska;video/mpeg;video/avi;video/quicktime;video/vnd.rn-realvideo;video/x-flic;video/mp4;audio/mpeg;audio/mp4;audio/ogg;audio/vorbis;audio/aac;audio/aiff;audio/basic;audio/flac;audio/mp2;audio/mp3;audio/vnd.rn-realaudio;audio/wav;application/ogg;audio/x-flac;audio/x-musepack
+Categories=Qt;KDE;AudioVideo;Player;

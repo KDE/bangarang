@@ -1,0 +1,151 @@
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include "platform/mediaitemmodel.h"
+#include "platform/playlist.h"
+#include "mediaitemdelegate.h"
+#include "nowplayingdelegate.h"
+
+#include <KIcon>
+
+#include <Phonon>
+#include <QMainWindow>
+#include <QResizeEvent>
+#include <QEvent>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
+#include <QGraphicsItem>
+#include <QFrame>
+#include <QListWidgetItem>
+#include <QAction>
+#include <QDateTime>
+
+namespace Ui
+{
+    class MainWindowClass;
+}
+
+namespace ListChooser
+{
+    enum MediaListRole{NameRole = Qt::UserRole + 1,
+                       LriRole = Qt::UserRole + 2,
+                       TypeRole = Qt::UserRole + 3};
+}
+
+class InfoManager;
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+    
+public:
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+    MediaItemModel * m_mediaItemModel;
+    MediaItemModel * m_currentPlaylist;
+    MediaItemModel * m_nowPlaying;
+    Playlist * m_playlist;
+    void addListToHistory();
+    Ui::MainWindowClass *ui;
+
+private:
+    Phonon::VideoPlayer *m_player;
+    MediaItemDelegate * m_itemDelegate;
+    MediaItemDelegate * m_playlistItemDelegate;
+    NowPlayingDelegate * m_nowPlayingDelegate;
+    Phonon::VideoWidget *m_videoWidget;
+    Phonon::AudioOutput *m_audioOutput;
+    Phonon::MediaObject *m_media;
+    QGraphicsScene *m_Scene;
+    QString m_addItemsMessage;
+    QTime m_messageTime;
+    bool playWhenPlaylistChanges;
+    bool showRemainingTime;
+    void setupModel();
+    void setPropertiesForLists();
+    void setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties);
+    MediaListProperties listItemProperties(QListWidgetItem * item);
+    QList<MediaItem> m_mediaList;
+    QList< QList<MediaItem> > m_mediaListHistory;
+    QList<MediaListProperties> m_mediaListPropertiesHistory;
+    QList<int> m_mediaListScrollHistory;
+    KIcon addItemsIcon();
+    void setupIcons();
+    void setupActions();
+    void showApplicationBanner();
+    KIcon turnIconOff(KIcon icon, QSize size);
+    bool m_showQueue;
+    bool m_repeat;
+    bool m_shuffle;
+    QDateTime m_lastMouseMoveTime;
+    InfoManager * m_infoManager;
+    
+    QAction * playAllAction;
+    QAction * playSelectedAction;
+    
+public slots:
+    void playAll();
+    void playSelected();
+    void addSelectedToPlaylist();
+    void removeSelectedFromPlaylist();
+    
+
+private slots:
+    void on_nowPlaying_clicked();
+    void on_collectionButton_clicked();
+    void on_mediaPlayPause_clicked();
+    void on_mediaNext_clicked();
+    void on_mediaPrevious_clicked();
+    void updateSeekTime(qint64 time);
+    void on_volumeIcon_toggled(bool muted);
+    void on_previous_clicked();
+    void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
+    void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+    void on_playAll_clicked();
+    void on_playSelected_clicked();
+    void on_mediaLists_currentChanged(int i);
+    void on_audioLists_itemSelectionChanged();
+    void on_videoLists_itemSelectionChanged();
+    void on_showPlaylist_clicked(bool checked);
+    void mediaListChanged();
+    void playlistChanged();
+    void nowPlayingChanged();
+    void hidePlayButtons();
+    void updateListTitle();
+    void on_clearPlaylist_clicked();
+    void on_playlistView_activated(const QModelIndex & index);
+    void on_fullScreen_toggled(bool fullScreen);
+    void on_seekTime_clicked();
+    void on_shuffle_clicked();
+    void on_repeat_clicked();
+    void on_showQueue_clicked();
+    void on_Filter_returnPressed();
+    void on_showInfo_clicked();
+    void on_saveInfo_clicked();
+    
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+};
+
+class MouseMoveDetector : public QObject
+{
+    Q_OBJECT
+    MouseMoveDetector(QObject * parent = 0) : QObject(parent){}
+    ~MouseMoveDetector(){}
+    
+    Q_SIGNALS:
+    void mouseMoved();
+    
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event)
+        {
+            if (event->type() == QEvent::MouseMove) {
+                emit mouseMoved();
+            }
+            // standard event processing
+            return QObject::eventFilter(obj, event);
+        }
+        
+};
+#endif // MAINWINDOW_H
