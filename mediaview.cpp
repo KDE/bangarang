@@ -22,9 +22,9 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
     connect(playAllAction, SIGNAL(triggered()), m_mainWindow, SLOT(playAll()));
     playSelectedAction = new QAction(KIcon("media-playback-start"), tr("Play selected"), this);
     connect(playSelectedAction, SIGNAL(triggered()), m_mainWindow, SLOT(playSelected()));    
-    addSelectedToPlayListAction = new QAction(KIcon("mail-mark-notjunk"), tr("Mark for playlist"), this);
+    addSelectedToPlayListAction = new QAction(KIcon("mail-mark-notjunk"), tr("Add to playlist"), this);
     connect(addSelectedToPlayListAction, SIGNAL(triggered()), m_mainWindow, SLOT(addSelectedToPlaylist()));    
-    removeSelectedToPlayListAction = new QAction(KIcon(), tr("Unmark"), this);
+    removeSelectedToPlayListAction = new QAction(KIcon(), tr("Remove from playlist"), this);
     connect(removeSelectedToPlayListAction, SIGNAL(triggered()), m_mainWindow, SLOT(removeSelectedFromPlaylist()));    
 }
 

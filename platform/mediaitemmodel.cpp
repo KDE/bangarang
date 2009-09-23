@@ -362,7 +362,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
    QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
    markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
    markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
-   markPlaylistItem->setData("Mark for playlist/Unmark", Qt::ToolTipRole);
+   markPlaylistItem->setData("Add to playlist/Remove from playlist", Qt::ToolTipRole);
    rowData << markPlaylistItem;
    //}
    
