@@ -171,6 +171,13 @@ void MainWindow::on_Filter_returnPressed()
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(searchProperties);
             m_mediaItemModel->load();
+        } else if (ui->mediaLists->currentIndex() == 1) {
+            MediaListProperties searchProperties;
+            searchProperties.name = "Video Search";
+            searchProperties.lri = QString("video://search?%1").arg(ui->Filter->text());
+            m_mediaItemModel->clearMediaListData();
+            m_mediaItemModel->setMediaListProperties(searchProperties);
+            m_mediaItemModel->load();
         }
     }
 }
@@ -693,6 +700,15 @@ void MainWindow::setPropertiesForLists()
     listItemProperties.name = "Files and Folders";
     listItemProperties.lri = "files://video";
     setListItemProperties(ui->videoLists->item(0), listItemProperties);    
+    listItemProperties.name = "TV Shows";
+    listItemProperties.lri = "video://tvshows";
+    setListItemProperties(ui->videoLists->item(1), listItemProperties);    
+    listItemProperties.name = "Movies";
+    listItemProperties.lri = "video://movies";
+    setListItemProperties(ui->videoLists->item(2), listItemProperties);    
+    listItemProperties.name = "Video Clips";
+    listItemProperties.lri = "video://clips";
+    setListItemProperties(ui->videoLists->item(3), listItemProperties);    
 }
 
 MediaListProperties MainWindow::listItemProperties(QListWidgetItem * item)

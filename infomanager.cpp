@@ -191,9 +191,9 @@ void InfoManager::saveInfoView()
     QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(0), 1));
     if (typeComboBox->currentText() == "Music") {
         saveMusicInfoToFiles();
-        saveMusicInfoToMediaModel();
-        m_mediaIndexer->indexMediaItems(m_infoMediaItemsModel->mediaList());
     }
+    saveInfoToMediaModel();
+    m_mediaIndexer->indexMediaItems(m_infoMediaItemsModel->mediaList());
     ui->mediaViewHolder->setCurrentIndex(0);
 }
         
@@ -232,61 +232,70 @@ QStringList InfoManager::valueList(QString field)
 
 void InfoManager::saveMusicInfoToFiles()
 {
-    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
-    for (int i = 0; i < mediaList.count(); i++) {
-        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toUtf8());
-        
-        KLineEdit * titleWidget = static_cast<KLineEdit*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(2), 1));
-        QString title = titleWidget->text();
-        if (!title.isEmpty()) {
-            TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-            file.tag()->setTitle(tTitle);
+    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(0), 1));
+    if (typeComboBox->currentText() == "Music") {
+        QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+        for (int i = 0; i < mediaList.count(); i++) {
+            if (Utilities::isMusic(mediaList.at(i).url)) {
+                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toUtf8());
+                
+                KLineEdit * titleWidget = static_cast<KLineEdit*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(2), 1));
+                QString title = titleWidget->text();
+                if (!title.isEmpty()) {
+                    TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                    file.tag()->setTitle(tTitle);
+                }
+                
+                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(3), 1));
+                QString artist = artistWidget->currentText();
+                if (!artist.isEmpty()) {
+                    TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                    file.tag()->setArtist(tArtist);
+                }
+                
+                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(4), 1));
+                QString album = albumWidget->currentText();
+                if (!album.isEmpty()) {
+                    TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                    file.tag()->setAlbum(tAlbum);
+                }
+                
+                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(5), 1));
+                int year = yearWidget->value();
+                if (year != 0) {
+                    file.tag()->setYear(year);
+                }
+                
+                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(6), 1));
+                int trackNumber = trackNumberWidget->value();
+                if (trackNumber != 0) {
+                    file.tag()->setTrack(trackNumber);
+                }
+                
+                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(7), 1));
+                QString genre = genreWidget->currentText();
+                if (!genre.isEmpty()) {
+                    TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                    file.tag()->setGenre(tGenre);
+                }
+                
+                file.save();
+            }
         }
-        
-        QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(3), 1));
-        QString artist = artistWidget->currentText();
-        if (!artist.isEmpty()) {
-            TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-            file.tag()->setArtist(tArtist);
-        }
-        
-        QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(4), 1));
-        QString album = albumWidget->currentText();
-        if (!album.isEmpty()) {
-            TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-            file.tag()->setAlbum(tAlbum);
-        }
-        
-        QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(5), 1));
-        int year = yearWidget->value();
-        if (year != 0) {
-            file.tag()->setYear(year);
-        }
-        
-        QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(6), 1));
-        int trackNumber = trackNumberWidget->value();
-        if (trackNumber != 0) {
-            file.tag()->setTrack(trackNumber);
-        }
-        
-        QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(7), 1));
-        QString genre = genreWidget->currentText();
-        if (!genre.isEmpty()) {
-            TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-            file.tag()->setGenre(tGenre);
-        }
-        
-        file.save();
     }
     
 }
 
-void InfoManager::saveMusicInfoToMediaModel()
+void InfoManager::saveInfoToMediaModel()
 {
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
     QList<MediaItem> updatedList;
+    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(0), 1));
+    
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
+        
+        //All media types have a title
         KLineEdit * titleWidget = static_cast<KLineEdit*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(2), 1));
         QString title = titleWidget->text();
         if (!title.isEmpty()) {
@@ -294,37 +303,52 @@ void InfoManager::saveMusicInfoToMediaModel()
             mediaItem.fields["title"] = title;
         }
         
-        QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(3), 1));
-        QString artist = artistWidget->currentText();
-        if (!artist.isEmpty()) {
-            mediaItem.fields["artist"] = artist;
+        if (typeComboBox->currentText() == "Music") {
+            mediaItem.fields["audioType"] = "Music";
+            
+            QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(3), 1));
+            QString artist = artistWidget->currentText();
+            if (!artist.isEmpty()) {
+                mediaItem.fields["artist"] = artist;
+            }
+            
+            QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(4), 1));
+            QString album = albumWidget->currentText();
+            if (!album.isEmpty()) {
+                mediaItem.fields["album"] = album;
+            }
+            
+            mediaItem.subTitle = mediaItem.fields["artist"].toString() + QString(" - ") + mediaItem.fields["album"].toString();
+            
+            QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(5), 1));
+            int year = yearWidget->value();
+            if (year != 0) {
+                mediaItem.fields["year"] = year;
+            }
+            
+            QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(6), 1));
+            int trackNumber = trackNumberWidget->value();
+            if (trackNumber != 0) {
+                mediaItem.fields["trackNumber"] = trackNumber;
+            }
+            
+            QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(7), 1));
+            QString genre = genreWidget->currentText();
+            if (!genre.isEmpty()) {
+                mediaItem.fields["genre"] = genre;
+            }
+        } else if (typeComboBox->currentText() == "Audio Clip") {
+            mediaItem.fields["audioType"] = "AudioClip";
+        } else if (typeComboBox->currentText() == "Audio Stream") {
+            mediaItem.fields["audioType"] = "AudioStream";
+        } else if (typeComboBox->currentText() == "Video Clip") {
+            mediaItem.fields["videoType"] = "VideoClip";
+        } else if (typeComboBox->currentText() == "Movie") {
+            mediaItem.fields["videoType"] = "Movie";
+        } else if (typeComboBox->currentText() == "Video Clip") {
+            mediaItem.fields["videoType"] = "TVShow";
         }
-        
-        QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(4), 1));
-        QString album = albumWidget->currentText();
-        if (!album.isEmpty()) {
-            mediaItem.fields["album"] = album;
-        }
-        
-        mediaItem.subTitle = mediaItem.fields["artist"].toString() + QString(" - ") + mediaItem.fields["album"].toString();
-        
-        QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(5), 1));
-        int year = yearWidget->value();
-        if (year != 0) {
-            mediaItem.fields["year"] = year;
-        }
-        
-        QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(6), 1));
-        int trackNumber = trackNumberWidget->value();
-        if (trackNumber != 0) {
-            mediaItem.fields["trackNumber"] = trackNumber;
-        }
-        
-        QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoMediaItems->itemWidget(ui->infoMediaItems->topLevelItem(7), 1));
-        QString genre = genreWidget->currentText();
-        if (!genre.isEmpty()) {
-            mediaItem.fields["genre"] = genre;
-        }
+            
         updatedList << mediaItem;
         m_parent->m_mediaItemModel->replaceMediaItemAt(m_rows.at(i), mediaItem);        
     }

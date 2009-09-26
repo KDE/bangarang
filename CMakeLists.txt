@@ -10,7 +10,7 @@ INCLUDE(KDE4Defaults)
 INCLUDE_DIRECTORIES( ${KDE4_INCLUDES} ${NEPOMUK_INDLUDE_DIR} ${TAGLIB_INCLUDES} ${TAGLIB_INCLUDES}/.. /usr/include/taglib)
 ADD_DEFINITIONS( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
-SET(BangarangSources mainwindow.cpp main.cpp sensiblewidgets.cpp mediaitemdelegate.cpp nowplayingdelegate.cpp mediaview.cpp infomanager.cpp platform/mediaitemmodel.cpp platform/musiclistengine.cpp platform/filelistengine.cpp platform/playlist.cpp platform/utilities.cpp platform/listengine.cpp platform/listenginefactory.cpp platform/mediaindexer.cpp platform/blur.cpp)
+SET(BangarangSources mainwindow.cpp main.cpp sensiblewidgets.cpp mediaitemdelegate.cpp nowplayingdelegate.cpp mediaview.cpp infomanager.cpp platform/mediaitemmodel.cpp platform/musiclistengine.cpp platform/videolistengine.cpp platform/filelistengine.cpp platform/playlist.cpp platform/utilities.cpp platform/listengine.cpp platform/listenginefactory.cpp platform/mediaindexer.cpp platform/blur.cpp)
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
 

@@ -131,6 +131,8 @@ void FileListEngine::activateAction()
                 mediaItem.url = fileList.at(i).url();
                 mediaItem.title = fileList.at(i).fileName();
                 mediaItem.type = "Audio";
+                mediaItem.fields["url"] = mediaItem.url;
+                mediaItem.fields["title"] = fileList.at(i).fileName();
                 if (Utilities::isMusic(mediaItem.url)) {
                     TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
                     QString title = TStringToQString(file.tag()->title()).trimmed();
@@ -150,11 +152,22 @@ void FileListEngine::activateAction()
                     mediaItem.fields["genre"] = genre;
                     mediaItem.fields["trackNumber"] = track;
                     mediaItem.fields["audioType"] = "Music";
+                } else {
+                    mediaItem.fields["audioType"] = "AudioClip";
+                    Nepomuk::Resource res(mediaItem.url);
+                    if (res.exists()) {
+                        QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                        if (!title.isEmpty()) {
+                            mediaItem.title = title;
+                            mediaItem.fields["title"] = title;
+                        }
+                    }
                 }
                 urlsToIndex << mediaItem.url;
                 mediaList << mediaItem; 
             }
-            m_mediaIndexer->indexUrls(urlsToIndex);
+            //m_mediaIndexer->indexUrls(urlsToIndex);
+            m_mediaIndexer->indexMediaItems(mediaList);
             m_mediaListProperties.name = "Audio Files";
         }
         if (m_mediaListProperties.engineArg() == "video") {
@@ -165,9 +178,22 @@ void FileListEngine::activateAction()
                 mediaItem.url = fileList.at(i).url();
                 mediaItem.title = fileList.at(i).fileName();
                 mediaItem.type = "Video";
+                mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
+                Nepomuk::Resource res(mediaItem.url);
+                if (res.exists()) {
+                    QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                    if (!title.isEmpty()) {
+                        mediaItem.title = title;
+                        mediaItem.fields["title"] = title;
+                    }
+                    if (res.hasType(Soprano::Vocabulary::Xesam::Video())) {
+                        mediaItem.title = mediaItem.title + QString(" - ") + Soprano::Vocabulary::Xesam::Video().toString();
+                    }
+                }
                 mediaList << mediaItem;
             }
+            m_mediaIndexer->indexMediaItems(mediaList);
             m_mediaListProperties.name = "Video Files";
         }
     } else if (m_mediaListProperties.engineFilter() == "getFolder") {
@@ -184,6 +210,8 @@ void FileListEngine::activateAction()
                     mediaItem.url = fileList.at(i).url();
                     mediaItem.title = fileList.at(i).fileName();
                     mediaItem.type = "Audio";
+                    mediaItem.fields["url"] = mediaItem.url;
+                    mediaItem.fields["title"] = fileList.at(i).fileName();
                     if (Utilities::isMusic(mediaItem.url)) {
                         TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
                         QString title = TStringToQString(file.tag()->title()).trimmed();
@@ -203,11 +231,22 @@ void FileListEngine::activateAction()
                         mediaItem.fields["genre"] = genre;
                         mediaItem.fields["trackNumber"] = track;
                         mediaItem.fields["audioType"] = "Music";
+                    } else {
+                        mediaItem.fields["audioType"] = "AudioClip";
+                        Nepomuk::Resource res(mediaItem.url);
+                        if (res.exists()) {
+                            QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                            if (!title.isEmpty()) {
+                                mediaItem.title = title;
+                                mediaItem.fields["title"] = title;
+                            }
+                        }
                     }
                     urlsToIndex << mediaItem.url;
                     mediaList << mediaItem; 
                 }
-                m_mediaIndexer->indexUrls(urlsToIndex);
+                //m_mediaIndexer->indexUrls(urlsToIndex);
+                m_mediaIndexer->indexMediaItems(mediaList);
             }
             m_mediaListProperties.name = "Audio Files";           
         }
@@ -222,9 +261,19 @@ void FileListEngine::activateAction()
                 mediaItem.url = fileList.at(i).url();
                 mediaItem.title = fileList.at(i).fileName();
                 mediaItem.type = "Video";
+                mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
+                Nepomuk::Resource res(mediaItem.url);
+                if (res.exists()) {
+                    QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                    if (!title.isEmpty()) {
+                        mediaItem.title = title;
+                        mediaItem.fields["title"] = title;
+                    }
+                }
                 mediaList << mediaItem;
             }
+            m_mediaIndexer->indexMediaItems(mediaList);
             m_mediaListProperties.name = "Video Files";
     }
     

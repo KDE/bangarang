@@ -35,7 +35,7 @@ class InfoManager : public QObject
         QVariant commonValue(QString field);
         QStringList valueList(QString field);
         void saveMusicInfoToFiles();
-        void saveMusicInfoToMediaModel();
+        void saveInfoToMediaModel();
         QList<int> m_rows;
         
 };
