@@ -1,11 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "platform/mediaitemmodel.h"
-#include "platform/playlist.h"
-#include "mediaitemdelegate.h"
-#include "nowplayingdelegate.h"
-
 #include <KIcon>
 
 #include <Phonon>
@@ -21,6 +16,14 @@
 #include <QAction>
 #include <QDateTime>
 
+class MediaItem;
+class MediaListProperties;
+class MediaItemModel;
+class Playlist;
+class MediaItemDelegate;
+class NowPlayingDelegate;
+class InfoManager;
+
 namespace Ui
 {
     class MainWindowClass;
@@ -32,8 +35,6 @@ namespace ListChooser
                        LriRole = Qt::UserRole + 2,
                        TypeRole = Qt::UserRole + 3};
 }
-
-class InfoManager;
 
 class MainWindow : public QMainWindow
 {

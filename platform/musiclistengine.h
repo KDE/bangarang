@@ -1,13 +1,15 @@
 #ifndef MUSICLISTENGINE_H
 #define MUSICLISTENGINE_H
 
-#include "mediaitemmodel.h"
 #include "listengine.h"
-#include "listenginefactory.h"
 #include <QtCore>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
+
+class MediaItem;
+class MediaListProperties;
+class ListEngineFactory;
 
 class MusicListEngine : public ListEngine
 {

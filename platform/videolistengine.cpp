@@ -1,5 +1,5 @@
-#include "videolistengine.h"
 #include "mediaitemmodel.h"
+#include "videolistengine.h"
 #include "listenginefactory.h"
 
 #include <Soprano/QueryResultIterator>

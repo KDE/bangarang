@@ -1,4 +1,8 @@
 #include "mediaitemdelegate.h"
+#include "platform/playlist.h"
+#include "platform/mediaitemmodel.h"
+#include "mainwindow.h"
+
 #include <QPalette>
 #include <QStyle>
 #include <QIcon>
@@ -9,7 +13,6 @@
 #include <KColorScheme>
 #include <KIcon>
 #include <KIconEffect>
-#include "mainwindow.h"
 
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {

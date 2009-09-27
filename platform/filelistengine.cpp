@@ -1,6 +1,10 @@
+#include "mediaitemmodel.h"
 #include "filelistengine.h"
+#include "listenginefactory.h"
+#include "mediaindexer.h"
+#include "utilities.h"
+
 #include <Soprano/QueryResultIterator>
-//#include <Soprano/Query>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
@@ -11,7 +15,6 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
-#include "utilities.h"
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 

@@ -1,18 +1,20 @@
 #include "mediaindexer.h"
+#include "mediaitemmodel.h"
+#include "utilities.h"
+
+#include <KUrl>
+#include <kuiserverjobtracker.h>
 #include <Soprano/QueryResultIterator>
-//#include <Soprano/Query>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <QApplication>
-#include <KUrl>
-#include <kuiserverjobtracker.h>
+#include <nepomuk/resource.h>
+#include <nepomuk/variant.h>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
-#include "utilities.h"
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
+
+#include <QApplication>
 
 MediaIndexerJob::MediaIndexerJob(QObject * parent) : KJob(parent)
 {

@@ -6,7 +6,6 @@
 #include <QStyle>
 #include <QStyleOptionViewItem>
 #include <QTreeView>
-#include "platform/mediaitemmodel.h"
 
 class MainWindow;
 class MediaItemDelegate : public QItemDelegate

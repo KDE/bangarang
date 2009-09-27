@@ -1,9 +1,10 @@
-#include <QFontMetrics>
-#include <QDateTime>
-#include <KIcon>
 #include "mediaitemmodel.h"
 #include "listengine.h"
 #include "listenginefactory.h"
+
+#include <QFontMetrics>
+#include <QDateTime>
+#include <KIcon>
 
 MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent) 
 {

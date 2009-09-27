@@ -1,9 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "platform/utilities.h"
+#include "platform/mediaitemmodel.h"
+#include "platform/playlist.h"
 #include "infomanager.h"
+#include "mediaitemdelegate.h"
+#include "nowplayingdelegate.h"
 
-#include <Phonon>
+
 #include <KCmdLineArgs>
 #include <KUrl>
 #include <KIcon>
@@ -11,6 +15,7 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
+#include <Phonon>
 
 #include <QVBoxLayout>
 #include <QStackedLayout>

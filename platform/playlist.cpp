@@ -1,4 +1,5 @@
 #include "playlist.h"
+#include "mediaitemmodel.h"
 #include "utilities.h"
 #include <time.h>
 #include <KUrl>

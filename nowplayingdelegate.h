@@ -5,7 +5,6 @@
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionViewItem>
-#include "platform/mediaitemmodel.h"
 
 class MainWindow;
 class NowPlayingDelegate : public QItemDelegate

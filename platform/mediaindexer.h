@@ -1,9 +1,10 @@
 #ifndef MEDIAINDEXER_H
 #define MEDIAINDEXER_H
 
-#include "mediaitemmodel.h"
 #include <QtCore>
 #include <KJob>
+
+class MediaItem;
 
 class MediaIndexerJob: public KJob
 {

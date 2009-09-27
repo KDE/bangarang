@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <Phonon>
-#include "mediaitemmodel.h"
+
+class MediaItemModel;
+class MediaItem;
 
 class Playlist : public QObject
 {

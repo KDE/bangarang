@@ -1,15 +1,16 @@
 #include "musiclistengine.h"
+#include "mediaitemmodel.h"
+#include "listenginefactory.h"
+#include <KIcon>
+#include <KUrl>
 #include <Soprano/QueryResultIterator>
-//#include <Soprano/Query>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <QApplication>
-#include <KIcon>
-#include <KUrl>
-#include <taglib/fileref.h>
-#include <QTime>
 #include <nepomuk/variant.h>
+#include <QApplication>
+#include <QTime>
+#include <taglib/fileref.h>
 
 MusicListEngine::MusicListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {

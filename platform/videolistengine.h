@@ -35,6 +35,7 @@ class VideoListEngine : public ListEngine
         
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
+        #include "mediaitemmodel.h"
         
 };
 #endif // VIDEOLISTENGINE_H

@@ -1,17 +1,18 @@
 #ifndef FILELISTENGINE_H
 #define FILELISTENGINE_H
 
-#include "mediaitemmodel.h"
 #include "listengine.h"
-#include "listenginefactory.h"
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
-#include "mediaindexer.h"
 
+class MediaItem;
+class MediaListProperties;
+class ListEngineFactory;
+class MediaIndexer;
 
 class FileListEngine : public ListEngine
 {

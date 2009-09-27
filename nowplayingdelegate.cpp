@@ -1,5 +1,7 @@
-#include "mediaitemdelegate.h"
+#include "nowplayingdelegate.h"
 #include "platform/utilities.h"
+#include "platform/mediaitemmodel.h"
+
 #include <QPalette>
 #include <QStyle>
 #include <QIcon>
