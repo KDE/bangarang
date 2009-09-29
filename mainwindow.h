@@ -49,7 +49,9 @@ public:
     Playlist * m_playlist;
     void addListToHistory();
     Ui::MainWindowClass *ui;
-
+    QList< QList<MediaItem> > m_mediaListHistory;
+    QList<MediaListProperties> m_mediaListPropertiesHistory;
+    
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -68,8 +70,6 @@ private:
     void setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties);
     MediaListProperties listItemProperties(QListWidgetItem * item);
     QList<MediaItem> m_mediaList;
-    QList< QList<MediaItem> > m_mediaListHistory;
-    QList<MediaListProperties> m_mediaListPropertiesHistory;
     QList<int> m_mediaListScrollHistory;
     KIcon addItemsIcon();
     void setupIcons();

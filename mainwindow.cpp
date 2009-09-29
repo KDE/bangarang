@@ -358,6 +358,9 @@ void MainWindow::on_mediaLists_currentChanged(int i)
         m_mediaListHistory.clear();
         m_mediaListPropertiesHistory.clear();
         ui->previous->setVisible(false);
+        ui->mediaViewHolder->setCurrentIndex(0);
+        ui->saveInfo->setVisible(false);
+        ui->showInfo->setVisible(false);
     }
 }
 
@@ -373,6 +376,9 @@ void MainWindow::on_audioLists_itemSelectionChanged()
             m_mediaListHistory.clear();
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
+            ui->mediaViewHolder->setCurrentIndex(0);
+            ui->saveInfo->setVisible(false);
+            ui->showInfo->setVisible(false);
         }
     }
 }    
@@ -389,6 +395,9 @@ void MainWindow::on_videoLists_itemSelectionChanged()
             m_mediaListHistory.clear();
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
+            ui->mediaViewHolder->setCurrentIndex(0);
+            ui->saveInfo->setVisible(false);
+            ui->showInfo->setVisible(false);
         }
     }
 }    
@@ -705,11 +714,11 @@ void MainWindow::setPropertiesForLists()
     listItemProperties.name = "Files and Folders";
     listItemProperties.lri = "files://video";
     setListItemProperties(ui->videoLists->item(0), listItemProperties);    
-    listItemProperties.name = "TV Shows";
-    listItemProperties.lri = "video://tvshows";
-    setListItemProperties(ui->videoLists->item(1), listItemProperties);    
     listItemProperties.name = "Movies";
     listItemProperties.lri = "video://movies";
+    setListItemProperties(ui->videoLists->item(1), listItemProperties);    
+    listItemProperties.name = "Series";
+    listItemProperties.lri = "video://series";
     setListItemProperties(ui->videoLists->item(2), listItemProperties);    
     listItemProperties.name = "Video Clips";
     listItemProperties.lri = "video://clips";
@@ -769,8 +778,8 @@ void MainWindow::setupIcons()
     
     //Video List Icons
     ui->videoLists->item(0)->setIcon(KIcon("document-open-folder"));
-    ui->videoLists->item(1)->setIcon(KIcon("video-television"));
-    ui->videoLists->item(2)->setIcon(KIcon("tool-animator"));
+    ui->videoLists->item(1)->setIcon(KIcon("tool-animator"));
+    ui->videoLists->item(2)->setIcon(KIcon("video-television"));
     ui->videoLists->item(3)->setIcon(KIcon("video-x-generic"));
     ui->addVideoList->setIcon(KIcon("list-add"));
     ui->removeVideoList->setIcon(KIcon("list-remove"));

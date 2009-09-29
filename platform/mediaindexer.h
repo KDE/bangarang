@@ -5,6 +5,10 @@
 #include <KJob>
 
 class MediaItem;
+namespace Nepomuk 
+{
+    class Resource;
+}
 
 class MediaIndexerJob: public KJob
 {
@@ -23,6 +27,7 @@ class MediaIndexerJob: public KJob
         QList<MediaItem> m_mediaListToIndex;
         bool running;
         int m_indexType;
+        void removeType(Nepomuk::Resource res, QUrl mediaType);
 };
 
 class MediaIndexer : public QThread

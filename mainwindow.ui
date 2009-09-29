@@ -319,9 +319,6 @@
                     <property name="spacing">
                      <number>0</number>
                     </property>
-                    <property name="currentRow">
-                     <number>1</number>
-                    </property>
                     <item>
                      <property name="text">
                       <string>Files and Folders</string>
@@ -578,20 +575,20 @@
                     </item>
                     <item>
                      <property name="text">
-                      <string>TV Shows</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
                       <string>Movies</string>
                      </property>
                      <property name="icon">
                       <iconset>
                        <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</iconset>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Series</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</iconset>
                      </property>
                     </item>
                     <item>
@@ -847,7 +844,7 @@
               <item>
                <widget class="QStackedWidget" name="mediaViewHolder">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="page">
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1057,9 +1054,6 @@
                     <property name="columnCount">
                      <number>2</number>
                     </property>
-                    <attribute name="headerVisible">
-                     <bool>false</bool>
-                    </attribute>
                     <attribute name="headerVisible">
                      <bool>false</bool>
                     </attribute>
@@ -4693,13 +4687,17 @@ color: rgb(255, 255, 255);</string>
  </customwidgets>
  <tabstops>
   <tabstop>audioLists</tabstop>
+  <tabstop>videoLists</tabstop>
   <tabstop>Filter</tabstop>
-  <tabstop>previous</tabstop>
-  <tabstop>playSelected</tabstop>
+  <tabstop>mediaView</tabstop>
+  <tabstop>infoMediaItems</tabstop>
   <tabstop>nowPlaying</tabstop>
+  <tabstop>previous</tabstop>
+  <tabstop>playAll</tabstop>
+  <tabstop>playSelected</tabstop>
+  <tabstop>saveInfo</tabstop>
   <tabstop>addVideoList</tabstop>
   <tabstop>addAudioList</tabstop>
-  <tabstop>videoLists</tabstop>
   <tabstop>removeAudioList</tabstop>
   <tabstop>configureAudioList</tabstop>
   <tabstop>configureVideoList</tabstop>
@@ -4712,6 +4710,20 @@ color: rgb(255, 255, 255);</string>
   <tabstop>fullScreen</tabstop>
   <tabstop>volumeSlider</tabstop>
   <tabstop>seekSlider</tabstop>
+  <tabstop>klineedit</tabstop>
+  <tabstop>kcombobox</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>sortList</tabstop>
+  <tabstop>showInfo</tabstop>
+  <tabstop>showPlaylist</tabstop>
+  <tabstop>nowPlayingView</tabstop>
+  <tabstop>showQueue</tabstop>
+  <tabstop>playlistNameEdit</tabstop>
+  <tabstop>clearPlaylist</tabstop>
+  <tabstop>repeat</tabstop>
+  <tabstop>shuffle</tabstop>
+  <tabstop>playlistView</tabstop>
+  <tabstop>seekTime</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -3,6 +3,7 @@
 #include "listenginefactory.h"
 #include "mediaindexer.h"
 #include "utilities.h"
+#include "mediavocabulary.h"
 
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
@@ -124,6 +125,8 @@ void FileListEngine::activateAction()
     QString audioMimeFilter = "audio/mpeg audio/mp4 audio/ogg audio/vorbis audio/aac audio/aiff audio/basic audio/flac audio/mp2 audio/mp3 audio/vnd.rn-realaudio audio/wav application/ogg audio/x-flac audio/x-musepack";
     QString videoMimeFilter = "video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg";
     
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    
     if (m_mediaListProperties.engineFilter() == "getFiles") {
         if (m_mediaListProperties.engineArg() == "audio") {
             KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(audioMimeFilter), static_cast<QWidget *>(model()->m_parent), "Open audio file(s)");
@@ -156,10 +159,10 @@ void FileListEngine::activateAction()
                     mediaItem.fields["trackNumber"] = track;
                     mediaItem.fields["audioType"] = "Music";
                 } else {
-                    mediaItem.fields["audioType"] = "AudioClip";
+                    mediaItem.fields["audioType"] = "Audio Clip";
                     Nepomuk::Resource res(mediaItem.url);
                     if (res.exists()) {
-                        QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                        QString title = res.property(mediaVocabulary.title()).toString();
                         if (!title.isEmpty()) {
                             mediaItem.title = title;
                             mediaItem.fields["title"] = title;
@@ -183,15 +186,29 @@ void FileListEngine::activateAction()
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
+                mediaItem.fields["videoType"] = "Video Clip";
                 Nepomuk::Resource res(mediaItem.url);
                 if (res.exists()) {
-                    QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                    QString title = res.property(mediaVocabulary.title()).toString();
                     if (!title.isEmpty()) {
                         mediaItem.title = title;
                         mediaItem.fields["title"] = title;
                     }
-                    if (res.hasType(Soprano::Vocabulary::Xesam::Video())) {
-                        mediaItem.title = mediaItem.title + QString(" - ") + Soprano::Vocabulary::Xesam::Video().toString();
+                    QString description = res.property(mediaVocabulary.description()).toString();
+                    if (!description.isEmpty()) {
+                        mediaItem.fields["description"] = description;
+                    }
+                    if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                        int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
+                        if (season !=0 ) {
+                            mediaItem.fields["season"] = season;
+                            mediaItem.subTitle = QString("Season %1 ").arg(season);
+                        }
+                        int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
+                        if (episode !=0 ) {
+                            mediaItem.fields["episode"] = episode;
+                            mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                        }
                     }
                 }
                 mediaList << mediaItem;
@@ -235,10 +252,10 @@ void FileListEngine::activateAction()
                         mediaItem.fields["trackNumber"] = track;
                         mediaItem.fields["audioType"] = "Music";
                     } else {
-                        mediaItem.fields["audioType"] = "AudioClip";
+                        mediaItem.fields["audioType"] = "Audio Clip";
                         Nepomuk::Resource res(mediaItem.url);
                         if (res.exists()) {
-                            QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                            QString title = res.property(mediaVocabulary.title()).toString();
                             if (!title.isEmpty()) {
                                 mediaItem.title = title;
                                 mediaItem.fields["title"] = title;
@@ -266,19 +283,36 @@ void FileListEngine::activateAction()
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
+                mediaItem.fields["videoType"] = "Video Clip";
                 Nepomuk::Resource res(mediaItem.url);
                 if (res.exists()) {
-                    QString title = res.property(Soprano::Vocabulary::Xesam::title()).toString();
+                    QString title = res.property(mediaVocabulary.title()).toString();
                     if (!title.isEmpty()) {
                         mediaItem.title = title;
                         mediaItem.fields["title"] = title;
+                    }
+                    QString description = res.property(mediaVocabulary.description()).toString();
+                    if (!description.isEmpty()) {
+                        mediaItem.fields["description"] = description;
+                    }
+                    if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                        int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
+                        if (season !=0 ) {
+                            mediaItem.fields["season"] = season;
+                            mediaItem.subTitle = QString("Season %1 ").arg(season);
+                        }
+                        int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
+                        if (episode !=0 ) {
+                            mediaItem.fields["episode"] = episode;
+                            mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                        }
                     }
                 }
                 mediaList << mediaItem;
             }
             m_mediaIndexer->indexMediaItems(mediaList);
             m_mediaListProperties.name = "Video Files";
-    }
+        }
     
     }
     

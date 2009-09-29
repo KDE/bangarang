@@ -37,6 +37,16 @@ class InfoManager : public QObject
         void saveMusicInfoToFiles();
         void saveInfoToMediaModel();
         QList<int> m_rows;
+        void showAudioType(int index);
+        void showAudioFields();
+        void showAudioMusicFields();
+        void showAudioStreamFields();
+        void showVideoType(int index);
+        void showVideoFields();
+        void showVideoMovieFields();
+        void showVideoSeriesFields();
         
+    private slots:
+        void mediaTypeChanged(int index);
 };
 #endif //INFOMANAGER_H

@@ -1,6 +1,7 @@
 #include "mediaindexer.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
+#include "mediavocabulary.h"
 
 #include <KUrl>
 #include <kuiserverjobtracker.h>
@@ -82,13 +83,14 @@ void MediaIndexerJob::setMediaListToIndex(QList<MediaItem> mediaList)
 void MediaIndexerJob::indexUrl(QString url)
 {
     //Update RDF store
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
     Nepomuk::Resource res(url);
     if (Utilities::isMusic(url)) {
         if (!res.exists()) {
-            res = Nepomuk::Resource(url, Soprano::Vocabulary::Xesam::Music());
+            res = Nepomuk::Resource(url, mediaVocabulary.typeAudioMusic());
         }
-        if (!res.hasType(Soprano::Vocabulary::Xesam::Music())) {
-            res.addType(Soprano::Vocabulary::Xesam::Music());
+        if (!res.hasType(mediaVocabulary.typeAudioMusic())) {
+            res.addType(mediaVocabulary.typeAudioMusic());
         }
         TagLib::FileRef file(KUrl(url).path().toUtf8());
         QString title = TStringToQString(file.tag()->title()).trimmed();
@@ -97,59 +99,113 @@ void MediaIndexerJob::indexUrl(QString url)
         int track   = file.tag()->track();
         QString genre   = TStringToQString(file.tag()->genre()).trimmed();
         int duration = file.audioProperties()->length();
-        res.setProperty(Soprano::Vocabulary::Xesam::title(), Nepomuk::Variant(title));
-        res.setProperty(Soprano::Vocabulary::Xesam::artist(), Nepomuk::Variant(artist));
-        res.setProperty(Soprano::Vocabulary::Xesam::album(), Nepomuk::Variant(album));
-        res.setProperty(Soprano::Vocabulary::Xesam::trackNumber(), Nepomuk::Variant(track));
-        res.setProperty(Soprano::Vocabulary::Xesam::genre(), Nepomuk::Variant(genre));
-        res.setProperty(Soprano::Vocabulary::Xesam::mediaDuration(), Nepomuk::Variant(duration));
+        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
+        res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
+        res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
+        res.setProperty(mediaVocabulary.musicGenre(), Nepomuk::Variant(genre));
+        res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
     }
 }    
 
 void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
 {
     //Update RDF store
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
     Nepomuk::Resource res(mediaItem.url);
     if (mediaItem.type == "Audio") {
+        // Update the media type
+        QUrl audioType;
         if (mediaItem.fields["audioType"] == "Music") {
-            if (!res.exists()) {
-                res = Nepomuk::Resource(mediaItem.url, Soprano::Vocabulary::Xesam::Music());
-            }
-            if (!res.hasType(Soprano::Vocabulary::Xesam::Music())) {
-                res.addType(Soprano::Vocabulary::Xesam::Music());
-            }
-            QString title = mediaItem.fields["title"].toString();
+            audioType = mediaVocabulary.typeAudioMusic();
+        } else if (mediaItem.fields["audioType"] == "Audio Stream") {
+            audioType = mediaVocabulary.typeAudioStream();
+        } else if (mediaItem.fields["audioType"] == "Audio Clip") {
+            audioType = mediaVocabulary.typeAudio();
+        }
+        if (!res.exists()) {
+            res = Nepomuk::Resource(mediaItem.url, audioType);
+        }
+        if (!res.hasType(audioType)) {
+            res.addType(audioType);
+        }
+        
+        // Update the properties
+        QString title = mediaItem.fields["title"].toString();
+        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        if (mediaItem.fields["audioType"] == "Music") {
             QString artist  = mediaItem.fields["artist"].toString();
             QString album   = mediaItem.fields["album"].toString();
             int track   = mediaItem.fields["trackNumber"].toInt();
             QString genre   = mediaItem.fields["genre"].toString();
             int duration = mediaItem.fields["duration"].toInt();
-            res.setProperty(Soprano::Vocabulary::Xesam::title(), Nepomuk::Variant(title));
-            res.setProperty(Soprano::Vocabulary::Xesam::artist(), Nepomuk::Variant(artist));
-            res.setProperty(Soprano::Vocabulary::Xesam::album(), Nepomuk::Variant(album));
-            res.setProperty(Soprano::Vocabulary::Xesam::trackNumber(), Nepomuk::Variant(track));
-            res.setProperty(Soprano::Vocabulary::Xesam::genre(), Nepomuk::Variant(genre));
-            res.setProperty(Soprano::Vocabulary::Xesam::mediaDuration(), Nepomuk::Variant(duration));
-        } else {
-            if (!res.exists()) {
-                res = Nepomuk::Resource(mediaItem.url, Soprano::Vocabulary::Xesam::Audio());
+            res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
+            res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
+            if (track != 0) {
+                res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
             }
-            if (!res.hasType(Soprano::Vocabulary::Xesam::Audio())) {
-                res.addType(Soprano::Vocabulary::Xesam::Audio());
+            res.setProperty(mediaVocabulary.musicGenre(), Nepomuk::Variant(genre));
+            if (duration != 0) {
+                res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
             }
+        } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
+            (mediaItem.fields["audioType"] == "Audio Clip")) {
             QString title = mediaItem.fields["title"].toString();
-            res.setProperty(Soprano::Vocabulary::Xesam::title(), Nepomuk::Variant(title));
+            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+            QString description = mediaItem.fields["description"].toString();
+            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
         }
     } else if (mediaItem.type == "Video") {
+        //Update the media type
+        QUrl videoType;
+        if (mediaItem.fields["videoType"] == "Movie") {
+            videoType = mediaVocabulary.typeVideoMovie();
+        } else if (mediaItem.fields["videoType"] == "Series") {
+            videoType = mediaVocabulary.typeVideoSeries();
+        } else if (mediaItem.fields["videoType"] == "Video Clip") {
+            videoType = mediaVocabulary.typeVideo();
+        }
         if (!res.exists()) {
-            res = Nepomuk::Resource(mediaItem.url, Soprano::Vocabulary::Xesam::Video());
+            res = Nepomuk::Resource(mediaItem.url, videoType);
         }
-        if (!res.hasType(Soprano::Vocabulary::Xesam::Video())) {
-            res.addType(Soprano::Vocabulary::Xesam::Video());
+        if (!res.hasType(videoType)) {
+            res.addType(videoType);
         }
+        
+        if (mediaItem.fields["videoType"] == "Movie") {
+            removeType(res, mediaVocabulary.typeVideoSeries());
+        } else if (mediaItem.fields["videoType"] == "Series") {
+            removeType(res, mediaVocabulary.typeVideoMovie());
+        }
+        
+        //Update the properties
         QString title = mediaItem.fields["title"].toString();
-        res.setProperty(Soprano::Vocabulary::Xesam::title(), Nepomuk::Variant(title));
+        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        QString description = mediaItem.fields["description"].toString();
+        res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        if (mediaItem.fields["videoType"] == "Series") {
+            int season = mediaItem.fields["season"].toInt();
+            if (season != 0) {
+                res.setProperty(mediaVocabulary.videoSeriesSeason(), Nepomuk::Variant(season));
+            }
+            int episode = mediaItem.fields["episode"].toInt();
+            if (episode != 0) {
+                res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
+            }
+        }
     }
+}
+
+void MediaIndexerJob::removeType(Nepomuk::Resource res, QUrl mediaType)
+{
+    QList<QUrl> types = res.types();
+    for (int i = 0; i < types.count(); i++) {
+        if (types.at(i).toString() == mediaType.toString()) {
+            types.removeAt(i);
+            break;
+        }
+    }
+    res.setTypes(types);
 }
 
 MediaIndexer::MediaIndexer(QObject * parent) : QThread(parent)

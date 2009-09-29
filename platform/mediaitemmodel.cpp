@@ -335,7 +335,9 @@ void MediaItemModel::hideLoadingMessage()
         }
     }
     if (row != -1) {
-        removeMediaItemAt(row, false);
+        if (m_mediaList.count() > 0) {
+            removeMediaItemAt(row, false);
+        }
     }
 }
 
@@ -357,6 +359,12 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.duration, MediaItem::DurationRole);
     titleItem->setData(mediaItem.playlistIndex, MediaItem::PlaylistIndexRole);
     titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
+    if (!mediaItem.fields["description"].toString().isEmpty()) {
+        QString tooltip = QString("<b>%1</b><br>%2")
+                        .arg(mediaItem.title)
+                        .arg(mediaItem.fields["description"].toString());
+        titleItem->setData(tooltip, Qt::ToolTipRole);
+    }
     rowData << titleItem;
     
     //if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
