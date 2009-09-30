@@ -54,60 +54,66 @@ void InfoManager::loadInfoView()
     m_infoMediaItemsModel->loadSources(mediaList);
     
     if (mediaList.at(0).type == "Audio") {
-        if (mediaList.at(0).fields["audioType"] == "Music") {
-            mediaTypeChanged(0);
-        } else if (mediaList.at(0).fields["audioType"] == "Audio Stream") {
-            mediaTypeChanged(1);
-        } else if (mediaList.at(0).fields["audioType"] == "Audio Clip") {
-            mediaTypeChanged(2);
+        if (multipleAudioTypes()) {
+            //Only show fields applicable to all types (fields for Audio Clip)
+            mediaTypeChanged(-1);
+        } else {
+            if (mediaList.at(0).fields["audioType"] == "Music") {
+                mediaTypeChanged(0);
+            } else if (mediaList.at(0).fields["audioType"] == "Audio Stream") {
+                mediaTypeChanged(1);
+            } else if (mediaList.at(0).fields["audioType"] == "Audio Clip") {
+                mediaTypeChanged(2);
+            }
         }
     } else if (mediaList.at(0).type == "Video") {
-        if (mediaList.at(0).fields["videoType"] == "Movie") {
-            mediaTypeChanged(0);
-        } else if (mediaList.at(0).fields["videoType"] == "Series") {
-            mediaTypeChanged(1);
-        } else if (mediaList.at(0).fields["videoType"] == "Video Clip") {
-            mediaTypeChanged(2);
+        if (multipleVideoTypes()) {
+            //Only show fields applicable to all types (fields for Video Clip)
+            mediaTypeChanged(-1);
+        } else {
+            if (mediaList.at(0).fields["videoType"] == "Movie") {
+                mediaTypeChanged(0);
+            } else if (mediaList.at(0).fields["videoType"] == "Series") {
+                mediaTypeChanged(1);
+            } else if (mediaList.at(0).fields["videoType"] == "Video Clip") {
+                mediaTypeChanged(2);
+            }
         }
     }
 }
 
 void InfoManager::mediaTypeChanged(int index)
 {
-    //ui->Filter->setText(newType);
+    //index = -1 means that there are multiple audio/video types
+    //so only fields for applicable to all types will be shown
     
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
-    //QString mediaType;
     if (mediaList.count() > 0) {
         ui->infoMediaItems->clear();
-        /*if (ui->infoMediaItems->topLevelItemCount() > 1) {
-            for (int i = 1; i < ui->infoMediaItems->topLevelItemCount(); i++) {
-                QTreeWidgetItem * item = ui->infoMediaItems->takeTopLevelItem(i);
-                delete item;
-            }
-        } else {
-            if (mediaList.at(0).type == "Audio") {
-                showAudioType(mediaType);
-            } else if (mediaList.at(0).type == "Video") {
-                showVideoType(mediaType);
-            }
-        }*/
         if (mediaList.at(0).type == "Audio") {
-            showAudioType(index);
+            if (index != -1) {
+                showAudioType(index);
+            }
             showAudioFields();
-            if (index == 0) {
-                showAudioMusicFields();
-            } else if (index == 1) {
-                showAudioStreamFields();
-            } else if (index == 2) {
+            if (index != -1) {
+                if (index == 0) {
+                    showAudioMusicFields();
+                } else if (index == 1) {
+                    showAudioStreamFields();
+                } else if (index == 2) {
+                }
             }
         } else if (mediaList.at(0).type == "Video") {
-            showVideoType(index);
+            if (index != -1) {
+                showVideoType(index);
+            }
             showVideoFields();
-            if (index == 0) {
-            } else if (index == 1) {
-                showVideoSeriesFields();
-            } else if (index == 2) {
+            if (index != -1) {
+                if (index == 0) {
+                } else if (index == 1) {
+                    showVideoSeriesFields();
+                } else if (index == 2) {
+                }
             }
         }
         
@@ -351,6 +357,7 @@ void InfoManager::saveInfoToMediaModel()
 
 void InfoManager::showAudioType(int index)
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * type = new QTreeWidgetItem(ui->infoMediaItems);
     type->setText(0, tr2i18n("Type"));
     ui->infoMediaItems->addTopLevelItem(type);
@@ -359,37 +366,39 @@ void InfoManager::showAudioType(int index)
     typeList << "Music" << "Audio Stream" << "Audio Clip";
     typeComboBox->addItems(typeList);
     typeComboBox->setCurrentIndex(index);
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(0), 1, typeComboBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, typeComboBox);
     connect(typeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mediaTypeChanged(int)));
 }
 
 void InfoManager::showAudioFields()
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * location = new QTreeWidgetItem(ui->infoMediaItems);
     location->setText(0, tr2i18n("Location"));
     ui->infoMediaItems->addTopLevelItem(location);
     KUrlRequester * locationEdit = new KUrlRequester();
     locationEdit->setText(commonValue("url").toString());
     locationEdit->setEnabled(false);
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(1), 1, locationEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, locationEdit);
     
     QTreeWidgetItem * title = new QTreeWidgetItem(ui->infoMediaItems);
     title->setText(0, tr2i18n("Title"));
     ui->infoMediaItems->addTopLevelItem(title);
     KLineEdit * titleLineEdit = new KLineEdit();
     titleLineEdit->setText(commonValue("title").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(2), 1, titleLineEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 1), 1, titleLineEdit);
     
     QTreeWidgetItem * description = new QTreeWidgetItem(ui->infoMediaItems);
     description->setText(0, tr2i18n("Description"));
     ui->infoMediaItems->addTopLevelItem(description);
     KLineEdit * descriptionEdit = new KLineEdit();
     descriptionEdit->setText(commonValue("description").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(3), 1, descriptionEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 2), 1, descriptionEdit);
 }
 
 void InfoManager::showAudioMusicFields()
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * artist = new QTreeWidgetItem(ui->infoMediaItems);
     artist->setText(0, tr2i18n("Artist"));
     ui->infoMediaItems->addTopLevelItem(artist);
@@ -397,7 +406,7 @@ void InfoManager::showAudioMusicFields()
     artistComboBox->setEditable(true);
     artistComboBox->addItems(valueList("artist"));
     artistComboBox->setEditText(commonValue("artist").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(4), 1, artistComboBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, artistComboBox);
     
     QTreeWidgetItem * album = new QTreeWidgetItem(ui->infoMediaItems);
     album->setText(0, tr2i18n("Album"));
@@ -406,7 +415,7 @@ void InfoManager::showAudioMusicFields()
     albumComboBox->setEditable(true);
     albumComboBox->addItems(valueList("album"));
     albumComboBox->setEditText(commonValue("album").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(5), 1, albumComboBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 1), 1, albumComboBox);
     
     QTreeWidgetItem * year = new QTreeWidgetItem(ui->infoMediaItems);
     year->setText(0, tr2i18n("Year"));
@@ -415,7 +424,7 @@ void InfoManager::showAudioMusicFields()
     yearSpinBox->setRange(0,9999);
     yearSpinBox->setSpecialValueText("-");
     yearSpinBox->setValue(commonValue("year").toInt());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(6), 1, yearSpinBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 2), 1, yearSpinBox);
     
     QTreeWidgetItem * trackNumber = new QTreeWidgetItem(ui->infoMediaItems);
     trackNumber->setText(0, tr2i18n("Track Number"));
@@ -424,7 +433,7 @@ void InfoManager::showAudioMusicFields()
     trackNumberSpinBox->setRange(0,999);
     trackNumberSpinBox->setSpecialValueText("-");
     trackNumberSpinBox->setValue(commonValue("trackNumber").toInt());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(7), 1, trackNumberSpinBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 3), 1, trackNumberSpinBox);
     
     QTreeWidgetItem * genre = new QTreeWidgetItem(ui->infoMediaItems);
     genre->setText(0, tr2i18n("Genre"));
@@ -433,7 +442,7 @@ void InfoManager::showAudioMusicFields()
     genreComboBox->setEditable(true);
     genreComboBox->addItems(valueList("genre"));
     genreComboBox->setEditText(commonValue("genre").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(8), 1, genreComboBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 4), 1, genreComboBox);
 }
 
 void InfoManager::showAudioStreamFields()
@@ -442,6 +451,7 @@ void InfoManager::showAudioStreamFields()
 
 void InfoManager::showVideoType(int index)
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * type = new QTreeWidgetItem(ui->infoMediaItems);
     type->setText(0, tr2i18n("Type"));
     ui->infoMediaItems->addTopLevelItem(type);
@@ -450,37 +460,39 @@ void InfoManager::showVideoType(int index)
     typeList << "Movie" << "Series" << "Video Clip";
     typeComboBox->addItems(typeList);
     typeComboBox->setCurrentIndex(index);
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(0), 1, typeComboBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, typeComboBox);
     connect(typeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(mediaTypeChanged(int)));
 }
 
 void InfoManager::showVideoFields()
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * location = new QTreeWidgetItem(ui->infoMediaItems);
     location->setText(0, tr2i18n("Location"));
     ui->infoMediaItems->addTopLevelItem(location);
     KUrlRequester * locationEdit = new KUrlRequester();
     locationEdit->setText(commonValue("url").toString());
     locationEdit->setEnabled(false);
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(1), 1, locationEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, locationEdit);
     
     QTreeWidgetItem * title = new QTreeWidgetItem(ui->infoMediaItems);
     title->setText(0, tr2i18n("Title"));
     ui->infoMediaItems->addTopLevelItem(title);
     KLineEdit * titleLineEdit = new KLineEdit();
     titleLineEdit->setText(commonValue("title").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(2), 1, titleLineEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 1), 1, titleLineEdit);
     
     QTreeWidgetItem * description = new QTreeWidgetItem(ui->infoMediaItems);
     description->setText(0, tr2i18n("Description"));
     ui->infoMediaItems->addTopLevelItem(description);
     KLineEdit * descriptionLineEdit = new KLineEdit();
     descriptionLineEdit->setText(commonValue("description").toString());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(3), 1, descriptionLineEdit);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 2), 1, descriptionLineEdit);
 }
 
 void InfoManager::showVideoSeriesFields()
 {
+    int startRow = ui->infoMediaItems->topLevelItemCount();
     QTreeWidgetItem * season = new QTreeWidgetItem(ui->infoMediaItems);
     season->setText(0, tr2i18n("Season"));
     ui->infoMediaItems->addTopLevelItem(season);
@@ -488,7 +500,7 @@ void InfoManager::showVideoSeriesFields()
     seasonSpinBox->setRange(0,999);
     seasonSpinBox->setSpecialValueText("-");
     seasonSpinBox->setValue(commonValue("season").toInt());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(4), 1, seasonSpinBox);
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow), 1, seasonSpinBox);
     
     QTreeWidgetItem * episode = new QTreeWidgetItem(ui->infoMediaItems);
     episode->setText(0, tr2i18n("Episode"));
@@ -497,5 +509,45 @@ void InfoManager::showVideoSeriesFields()
     episodeSpinBox->setRange(0,999);
     episodeSpinBox->setSpecialValueText("-");
     episodeSpinBox->setValue(commonValue("episode").toInt());
-    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(5), 1, episodeSpinBox);               
+    ui->infoMediaItems->setItemWidget(ui->infoMediaItems->topLevelItem(startRow + 1), 1, episodeSpinBox);               
+}
+
+bool InfoManager::multipleVideoTypes()
+{
+    int videoTypeCount = 0;
+    QString lastType;
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    for (int i = 0; i < mediaList.count(); i++) {
+        QString currentType = mediaList.at(i).fields["videoType"].toString();
+        if (!currentType.isEmpty()) {
+            if (currentType != lastType) {
+                videoTypeCount++;
+                if (videoTypeCount > 1) {
+                    return true;
+                }
+                lastType = currentType;
+            }
+        }
+    }
+    return false;
+}
+
+bool InfoManager::multipleAudioTypes()
+{
+    int audioTypeCount = 0;
+    QString lastType;
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    for (int i = 0; i < mediaList.count(); i++) {
+        QString currentType = mediaList.at(i).fields["videoType"].toString();
+        if (!currentType.isEmpty()) {
+            if (currentType != lastType) {
+                audioTypeCount++;
+                if (audioTypeCount > 1) {
+                    return true;
+                }
+                lastType = currentType;
+            }
+        }
+    }
+    return false;
 }

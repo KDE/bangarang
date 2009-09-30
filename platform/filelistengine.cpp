@@ -180,13 +180,11 @@ void FileListEngine::activateAction()
             KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(videoMimeFilter), static_cast<QWidget *>(model()->m_parent), "Open video file(s)");
             for (int i = 0; i < fileList.count(); ++i) {
                 MediaItem mediaItem;
-                mediaItem.artwork = KIcon("video-x-generic");
                 mediaItem.url = fileList.at(i).url();
                 mediaItem.title = fileList.at(i).fileName();
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
-                mediaItem.fields["videoType"] = "Video Clip";
                 Nepomuk::Resource res(mediaItem.url);
                 if (res.exists()) {
                     QString title = res.property(mediaVocabulary.title()).toString();
@@ -198,7 +196,12 @@ void FileListEngine::activateAction()
                     if (!description.isEmpty()) {
                         mediaItem.fields["description"] = description;
                     }
-                    if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                    if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                        mediaItem.fields["videoType"] = "Movie";
+                        mediaItem.artwork = KIcon("tool-animator");
+                    } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                        mediaItem.fields["videoType"] = "Series";
+                        mediaItem.artwork = KIcon("video-television");
                         int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
                         if (season !=0 ) {
                             mediaItem.fields["season"] = season;
@@ -209,6 +212,9 @@ void FileListEngine::activateAction()
                             mediaItem.fields["episode"] = episode;
                             mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
                         }
+                    } else {
+                        mediaItem.fields["videoType"] = "Video Clip";
+                        mediaItem.artwork = KIcon("video-x-generic");
                     }
                 }
                 mediaList << mediaItem;
@@ -283,7 +289,6 @@ void FileListEngine::activateAction()
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = fileList.at(i).fileName();
-                mediaItem.fields["videoType"] = "Video Clip";
                 Nepomuk::Resource res(mediaItem.url);
                 if (res.exists()) {
                     QString title = res.property(mediaVocabulary.title()).toString();
@@ -295,7 +300,12 @@ void FileListEngine::activateAction()
                     if (!description.isEmpty()) {
                         mediaItem.fields["description"] = description;
                     }
-                    if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                    if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                        mediaItem.fields["videoType"] = "Movie";
+                        mediaItem.artwork = KIcon("tool-animator");
+                    } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                        mediaItem.fields["videoType"] = "Series";
+                        mediaItem.artwork = KIcon("video-television");
                         int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
                         if (season !=0 ) {
                             mediaItem.fields["season"] = season;
@@ -306,6 +316,9 @@ void FileListEngine::activateAction()
                             mediaItem.fields["episode"] = episode;
                             mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
                         }
+                    } else {
+                        mediaItem.fields["videoType"] = "Video Clip";
+                        mediaItem.artwork = KIcon("video-x-generic");
                     }
                 }
                 mediaList << mediaItem;

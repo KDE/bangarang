@@ -45,6 +45,8 @@ class InfoManager : public QObject
         void showVideoFields();
         void showVideoMovieFields();
         void showVideoSeriesFields();
+        bool multipleVideoTypes();
+        bool multipleAudioTypes();
         
     private slots:
         void mediaTypeChanged(int index);

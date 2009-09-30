@@ -267,11 +267,13 @@ void VideoListEngine::run()
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?description ?duration ");
         QString whereConditions = QString("WHERE { "
-        "?r rdf:type xesam:Video . ");
+        "?r rdf:type <%1> . ")
+        .arg(mediaVocabulary.typeVideo().toString());
         QString whereOptionalConditions = QString("OPTIONAL {?r xesam:title ?title } "
         "OPTIONAL { ?r <%1> ?description } "
-        "OPTIONAL { ?r xesam:mediaDuration ?duration } ")
-        .arg(mediaVocabulary.description().toString());
+        "OPTIONAL { ?r <%2> ?duration } ")
+        .arg(mediaVocabulary.description().toString())
+        .arg(mediaVocabulary.duration().toString());
         QString searchCondition = QString("FILTER (regex(str(?title),\"%1\",\"i\") || "
         "regex(str(?description),\"%1\",\"i\")) ")
         .arg(engineFilter);
@@ -301,10 +303,32 @@ void VideoListEngine::run()
             }
             mediaItem.type = "Video";
             mediaItem.nowPlaying = false;
-            mediaItem.artwork = KIcon("video-x-generic");
             mediaItem.fields["title"] = it.binding("title").literal().toString();
-            mediaItem.fields["videoType"] = "VideoClip";
             mediaItem.fields["description"] = it.binding("description").literal().toString();
+            mediaItem.fields["duration"] = it.binding("duration").literal().toString();
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                    mediaItem.artwork = KIcon("tool-animator");
+                    mediaItem.fields["videoType"] = "Movie";
+                } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                    mediaItem.artwork = KIcon("video-television");
+                    mediaItem.fields["videoType"] = "Series";
+                    int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
+                    if (season !=0 ) {
+                        mediaItem.fields["season"] = season;
+                        mediaItem.subTitle = QString("Season %1 ").arg(season);
+                    }
+                    int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
+                    if (episode !=0 ) {
+                        mediaItem.fields["episode"] = episode;
+                        mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                    }
+                } else {
+                    mediaItem.artwork = KIcon("video-x-generic");
+                    mediaItem.fields["videoType"] = "Video Clip";
+                }
+            }
             mediaList.append(mediaItem);
             ++i;
         }
