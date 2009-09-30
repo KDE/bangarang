@@ -36,6 +36,8 @@ class MediaVocabulary {
         QUrl title();
         QUrl description();
         QUrl duration();
+        QUrl lastPlayed();
+        QUrl playCount();
         
         QUrl musicArtist();
         QUrl musicArtistName();

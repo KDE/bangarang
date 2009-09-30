@@ -230,6 +230,26 @@ QUrl MediaVocabulary::duration()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::lastPlayed()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::lastUsed();
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::playCount()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::useCount();
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::musicArtist()
 {
     QUrl returnUrl = QUrl();

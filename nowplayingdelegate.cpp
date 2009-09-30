@@ -1,6 +1,7 @@
 #include "nowplayingdelegate.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/mediavocabulary.h"
 
 #include <QPalette>
 #include <QStyle>
@@ -12,6 +13,8 @@
 #include <KColorScheme>
 #include <KIcon>
 #include <QTextOption>
+#include <nepomuk/resource.h>
+#include <nepomuk/variant.h>
 #include "mainwindow.h"
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
@@ -72,6 +75,16 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     p.drawText(QRectF(titleRect), text, textOption);
     
     QString subTitle = index.data(MediaItem::SubTitleRole).toString();
+    
+    //TODO:Find a place in the UI to show last played and play count
+    /*Nepomuk::Resource res(QUrl(index.data(MediaItem::UrlRole).toString()));
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    int playCount = res.property(mediaVocabulary.playCount()).toInt();
+    QString lastPlayed = res.property(mediaVocabulary.lastPlayed()).toDateTime().toString();
+    subTitle = subTitle + QString(" Last Played %1 Play %2 times")
+    .arg(res.property(mediaVocabulary.lastPlayed()).toDateTime().toString())
+    .arg(res.property(mediaVocabulary.playCount()).toInt());*/
+    
     QFont subTitleFont = option.font;
     QRect subTitleRect(left + textInner,
                      top + topOffset + iconWidth/2, width - textInner - padding, 40+iconWidth/2);

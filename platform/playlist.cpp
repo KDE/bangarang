@@ -1,9 +1,15 @@
 #include "playlist.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
+#include "mediavocabulary.h"
 #include <time.h>
 #include <KUrl>
 #include <KIcon>
+#include <nepomuk/resource.h>
+#include <nepomuk/variant.h>
+#include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/XMLSchema>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
@@ -124,6 +130,7 @@ void Playlist::playItemAt(int row, int model)
     m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
     m_mediaObject->play();
     m_playlistFinished = false;
+    
 }
 
 void Playlist::playNext()
@@ -271,6 +278,16 @@ void Playlist::updateNowPlaying(const Phonon::MediaSource & newSource)
     if (m_nowPlaying->rowCount() > 0) {
         if (newSource.url().toString() == m_nowPlaying->mediaItemAt(0).url) {
         }
+    }
+    
+    //Update last played date and play count
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    Nepomuk::Resource res(newSource.url());
+    if (res.exists()) {
+        res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
+        int playCount = res.property(mediaVocabulary.playCount()).toInt();
+        playCount = playCount + 1;
+        res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
     }
 }
 
