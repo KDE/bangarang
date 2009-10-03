@@ -158,6 +158,10 @@ void FileListEngine::activateAction()
                     mediaItem.fields["genre"] = genre;
                     mediaItem.fields["trackNumber"] = track;
                     mediaItem.fields["audioType"] = "Music";
+                    Nepomuk::Resource res(mediaItem.url);
+                    if (res.exists()) {
+                        mediaItem.fields["rating"] = res.rating();
+                    }
                 } else {
                     mediaItem.fields["audioType"] = "Audio Clip";
                     Nepomuk::Resource res(mediaItem.url);
@@ -167,6 +171,7 @@ void FileListEngine::activateAction()
                             mediaItem.title = title;
                             mediaItem.fields["title"] = title;
                         }
+                        mediaItem.fields["rating"] = res.rating();
                     }
                 }
                 urlsToIndex << mediaItem.url;
@@ -216,6 +221,7 @@ void FileListEngine::activateAction()
                         mediaItem.fields["videoType"] = "Video Clip";
                         mediaItem.artwork = KIcon("video-x-generic");
                     }
+                    mediaItem.fields["rating"] = res.rating();
                 }
                 mediaList << mediaItem;
             }
@@ -257,6 +263,10 @@ void FileListEngine::activateAction()
                         mediaItem.fields["genre"] = genre;
                         mediaItem.fields["trackNumber"] = track;
                         mediaItem.fields["audioType"] = "Music";
+                        Nepomuk::Resource res(mediaItem.url);
+                        if (res.exists()) {
+                            mediaItem.fields["rating"] = res.rating();
+                        }
                     } else {
                         mediaItem.fields["audioType"] = "Audio Clip";
                         Nepomuk::Resource res(mediaItem.url);
@@ -266,6 +276,7 @@ void FileListEngine::activateAction()
                                 mediaItem.title = title;
                                 mediaItem.fields["title"] = title;
                             }
+                            mediaItem.fields["rating"] = res.rating();
                         }
                     }
                     urlsToIndex << mediaItem.url;
@@ -319,6 +330,10 @@ void FileListEngine::activateAction()
                     } else {
                         mediaItem.fields["videoType"] = "Video Clip";
                         mediaItem.artwork = KIcon("video-x-generic");
+                    }
+                    Nepomuk::Resource res(mediaItem.url);
+                    if (res.exists()) {
+                        mediaItem.fields["rating"] = res.rating();
                     }
                 }
                 mediaList << mediaItem;

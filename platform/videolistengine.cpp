@@ -110,6 +110,10 @@ void VideoListEngine::run()
             mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
             mediaItem.fields["description"] = it.binding("description").literal().toString();
             mediaItem.fields["videoType"] = "Video Clip";
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                mediaItem.fields["rating"] = res.rating();
+            }
             mediaList.append(mediaItem);
             ++i;
         }
@@ -186,6 +190,10 @@ void VideoListEngine::run()
             mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
             mediaItem.fields["description"] = it.binding("description").literal().toString();
             mediaItem.fields["videoType"] = "Series";
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                mediaItem.fields["rating"] = res.rating();
+            }
             mediaList.append(mediaItem);
             ++i;
         }
@@ -248,6 +256,10 @@ void VideoListEngine::run()
             mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
             mediaItem.fields["description"] = it.binding("description").literal().toString();
             mediaItem.fields["videoType"] = "Movie";
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                mediaItem.fields["rating"] = res.rating();
+            }
             mediaList.append(mediaItem);
             ++i;
         }
@@ -328,6 +340,7 @@ void VideoListEngine::run()
                     mediaItem.artwork = KIcon("video-x-generic");
                     mediaItem.fields["videoType"] = "Video Clip";
                 }
+                mediaItem.fields["rating"] = res.rating();
             }
             mediaList.append(mediaItem);
             ++i;
