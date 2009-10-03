@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->addAudioListBox->setVisible(false);
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
+    ui->sortList->setVisible(false);
     
     
     //Set up media object

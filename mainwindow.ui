@@ -545,8 +545,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>94</width>
+                   <height>90</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -844,7 +844,7 @@
               <item>
                <widget class="QStackedWidget" name="mediaViewHolder">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page">
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -874,6 +874,12 @@
                      </property>
                      <item>
                       <widget class="QFrame" name="frame_19">
+                       <property name="minimumSize">
+                        <size>
+                         <width>0</width>
+                         <height>24</height>
+                        </size>
+                       </property>
                        <property name="frameShape">
                         <enum>QFrame::NoFrame</enum>
                        </property>

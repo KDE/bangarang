@@ -234,6 +234,12 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      if (playlistRow != -1) {
                          m_parent->m_currentPlaylist->replaceMediaItemAt(playlistRow, updatedMediaItem);
                      }
+                     int queueRow = m_parent->m_playlist->queueModel()->rowOfUrl(updatedMediaItem.url);
+                     if (queueRow != -1) {
+                         MediaItem queueItem = m_parent->m_playlist->queueModel()->mediaItemAt(queueRow);
+                         queueItem.fields["rating"] = newRating;
+                         m_parent->m_playlist->queueModel()replaceMediaItemAt(queueRow, queueItem);
+                     }
                      int nowPlayingRow = m_parent->m_playlist->nowPlayingModel()->rowOfUrl(updatedMediaItem.url);
                      if (nowPlayingRow != -1) {
                          MediaItem nowPlayingItem = m_parent->m_playlist->nowPlayingModel()->mediaItemAt(nowPlayingRow);
