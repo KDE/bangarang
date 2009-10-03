@@ -216,6 +216,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
     if (event->type() == QEvent::MouseButtonPress) {
         if (index.column() == 0) {
             if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+                //Check if rating was clicked and update rating
                 QMouseEvent * mouseEvent = (QMouseEvent *)event;
                 int ratingLeft = option.rect.right() - 50;
                 int ratingRight = option.rect.left();
@@ -228,6 +229,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      model->replaceMediaItemAt(index.row(), updatedMediaItem);
                      Nepomuk::Resource res(QUrl(updatedMediaItem.url));
                      res.setRating(newRating);
+                     //Keep other views of same mediaItem in sync
                      int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(updatedMediaItem.url);
                      if (playlistRow != -1) {
                          m_parent->m_currentPlaylist->replaceMediaItemAt(playlistRow, updatedMediaItem);

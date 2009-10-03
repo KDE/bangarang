@@ -102,6 +102,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     p.setPen(subTitleColor);
     p.drawText(QRectF(subTitleRect), subTitle, textOption);
 
+    //Draw rating
     if (isMediaItem) {
         int rating = 0;
         if (index.data(MediaItem::RatingRole).isValid()) {
@@ -155,6 +156,7 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
     if (event->type() == QEvent::MouseButtonPress) {
         if (index.column() == 0) {
             if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+                //Check if rating was clicked and update rating
                 QMouseEvent * mouseEvent = (QMouseEvent *)event;
                 int padding = 6;
                 int iconWidth = 128;
@@ -171,9 +173,11 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
                     model->replaceMediaItemAt(index.row(), updatedMediaItem);
                     Nepomuk::Resource res(QUrl(updatedMediaItem.url));
                     res.setRating(newRating);
+                    //Keep other views of same mediaItem in sync
                     int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
                     if (playlistRow != -1) {
-                        m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, updatedMediaItem);
+                        MediaItem playlistItem = m_parent->m_playlist->playlistModel()->mediaItemAt(playlistRow);
+                        m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, playlistItem);
                     }
                     int mediaListRow = m_parent->m_mediaItemModel->rowOfUrl(updatedMediaItem.url);
                     if (mediaListRow != -1) {
