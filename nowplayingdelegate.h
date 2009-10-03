@@ -20,7 +20,9 @@ class NowPlayingDelegate : public QItemDelegate
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
                     
     private:
-        MainWindow * m_parent;        
+        MainWindow * m_parent;  
+        QPixmap m_ratingCount;
+        QPixmap m_ratingNotCount;
         
 };
 

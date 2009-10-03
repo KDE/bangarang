@@ -1,6 +1,7 @@
 #ifndef MEDIAITEMDELEGATE_H
 #define MEDIAITEMDELEGATE_H
 
+#include <KIcon>
 #include <QItemDelegate>
 #include <QPainter>
 #include <QStyle>
@@ -25,6 +26,11 @@ class MediaItemDelegate : public QItemDelegate
         MainWindow * m_parent;
         QTreeView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
+        QPixmap m_ratingCount;
+        QPixmap m_ratingNotCount;
+        KIcon m_showPlaying;
+        KIcon m_showInPlaylist;
+        KIcon m_showNotInPlaylist;
         int calcItemHeight(const QStyleOptionViewItem &option) const;
         
         

@@ -21,6 +21,19 @@
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_parent = (MainWindow *)parent;
+    m_ratingNotCount = KIcon("rating").pixmap(8, 8, QIcon::Disabled);
+    m_ratingCount = KIcon("rating").pixmap(8, 8);
+    m_showPlaying = KIcon("media-playback-start");
+    m_showInPlaylist = KIcon("mail-mark-notjunk");
+    QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
+    KIconEffect::toGray(image, 1.0);
+    QPixmap pixmap(16, 16);
+    pixmap.fill(Qt::transparent);
+    QPainter pp(&pixmap);
+    pp.drawImage(QPoint(0,0), image);
+    pp.end();
+    m_showNotInPlaylist = KIcon(pixmap);
+    
 }
 
 MediaItemDelegate::~MediaItemDelegate()
@@ -69,7 +82,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (m_parent->m_nowPlaying->rowCount() > 0) {
             MediaItem nowPlayingItem = m_parent->m_nowPlaying->mediaItemAt(0);
             if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
-                icon = KIcon("media-playback-start");
+                icon = m_showPlaying;
             }
         }
         int iconWidth = 22;
@@ -124,13 +137,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             if (index.data(MediaItem::RatingRole).isValid()) {
                 rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
             }
-            QPixmap ratingNotCount = KIcon("rating").pixmap(8, 8, QIcon::Disabled);
-            QPixmap ratingCount = KIcon("rating").pixmap(8, 8);
             for (int i = 1; i <= 5; i++) {
                 if (i <= rating) {
-                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, ratingCount);
+                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, m_ratingCount);
                 } else {
-                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, ratingNotCount);
+                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, m_ratingNotCount);
                 }
             }
         }
@@ -141,17 +152,18 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
             QIcon icon;        
             if (playlistRow != -1) {
-                icon = KIcon("mail-mark-notjunk");
+                icon = m_showInPlaylist;
             } else {
                 if (option.state.testFlag(QStyle::State_MouseOver)) {
-                    QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
+                    /*QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
                     KIconEffect::toGray(image, 1.0);
                     QPixmap pixmap(16, 16);
                     pixmap.fill(Qt::transparent);
                     QPainter pp(&pixmap);
                     pp.drawImage(QPoint(0,0), image);
                     pp.end();
-                    icon = KIcon(pixmap);
+                    icon = KIcon(pixmap);*/
+                    icon = m_showNotInPlaylist;
                 } else {
                     icon = KIcon();
                 }

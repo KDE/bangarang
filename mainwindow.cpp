@@ -253,7 +253,7 @@ void MainWindow::on_mediaPrevious_clicked()
     m_playlist->playPrevious();
 }
 
-void MainWindow::on_playlistView_activated(const QModelIndex & index)
+void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
     m_playlist->playItemAt(index.row());
 }

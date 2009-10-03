@@ -115,7 +115,7 @@ private slots:
     void hidePlayButtons();
     void updateListTitle();
     void on_clearPlaylist_clicked();
-    void on_playlistView_activated(const QModelIndex & index);
+    void on_playlistView_doubleClicked(const QModelIndex & index);
     void on_fullScreen_toggled(bool fullScreen);
     void on_seekTime_clicked();
     void on_shuffle_clicked();

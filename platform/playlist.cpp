@@ -72,6 +72,12 @@ void Playlist::playItemAt(int row, int model)
             m_queue->loadMediaList(queueMediaList, true);
         }
         
+        //Play media Item
+        m_mediaObject->clearQueue();
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+        m_mediaObject->play();
+        m_playlistFinished = false;
+        
         //Get row of previously playing item
         int oldItemRow = -1;
         if (m_nowPlaying->rowCount() > 0) {
@@ -102,6 +108,12 @@ void Playlist::playItemAt(int row, int model)
         m_queue->clearMediaListData();
         m_queue->loadMediaList(queueMediaList, true);
         
+        //Play media Item
+        m_mediaObject->clearQueue();
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+        m_mediaObject->play();
+        m_playlistFinished = false;
+        
         //Get row of previously playing item
         int oldItemRow = -1;
         if (m_nowPlaying->rowCount() > 0) {
@@ -124,12 +136,7 @@ void Playlist::playItemAt(int row, int model)
             m_currentPlaylist->item(oldItemRow, 0)->setData(false, MediaItem::NowPlayingRole);
         }
     }
-        
-    //Play media Item
-    m_mediaObject->clearQueue();
-    m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
-    m_mediaObject->play();
-    m_playlistFinished = false;
+    
     
 }
 

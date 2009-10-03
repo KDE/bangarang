@@ -21,6 +21,9 @@
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_parent = (MainWindow *)parent;
+    m_ratingNotCount = KIcon("rating").pixmap(16, 16, QIcon::Disabled);
+    m_ratingCount = KIcon("rating").pixmap(16, 16);
+    
 }
 
 NowPlayingDelegate::~NowPlayingDelegate()
@@ -108,13 +111,11 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         if (index.data(MediaItem::RatingRole).isValid()) {
             rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
         }
-        QPixmap ratingNotCount = KIcon("rating").pixmap(16, 16, QIcon::Disabled);
-        QPixmap ratingCount = KIcon("rating").pixmap(16, 16);
         for (int i = 1; i <= 5; i++) {
             if (i <= rating) {
-                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, ratingCount);
+                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingCount);
             } else {
-                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, ratingNotCount);
+                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingNotCount);
             }
         }
     }
@@ -196,5 +197,6 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
             }
         }
     }
+    return false;
     //return QItemDelegate::editorEvent(event, model, option, index);
 }
