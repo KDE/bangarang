@@ -255,7 +255,11 @@ void MainWindow::on_mediaPrevious_clicked()
 
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
-    m_playlist->playItemAt(index.row());
+    if (!m_showQueue) {
+        m_playlist->playItemAt(index.row(), Playlist::PlaylistModel);
+    } else {
+        m_playlist->playItemAt(index.row(), Playlist::QueueModel);
+    }
 }
 
 void MainWindow::on_volumeIcon_toggled(bool muted)

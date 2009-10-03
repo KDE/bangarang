@@ -35,6 +35,7 @@ class Playlist : public QObject
         void orderByPlaylist();
         void addToQueue();
         void setRepeat(bool repeat);
+        void buildQueueFrom(int playlistRow);
         
     private:
         QObject * m_parent;

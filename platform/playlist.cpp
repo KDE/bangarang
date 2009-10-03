@@ -61,16 +61,6 @@ void Playlist::playItemAt(int row, int model)
         nextMediaItem = m_currentPlaylist->mediaItemAt(row);
         nextMediaItem.playlistIndex = row;
         nextMediaItem.nowPlaying = true;
-        //Prepend to the front of queue if it's not already there.
-        if (nextMediaItem.url != m_queue->mediaItemAt(0).url) {
-            QList<MediaItem> queueMediaList = m_queue->mediaList();
-            queueMediaList.prepend(nextMediaItem);
-            if (queueMediaList.count() > m_queueDepth) {
-                queueMediaList.removeLast();
-            }
-            m_queue->clearMediaListData();
-            m_queue->loadMediaList(queueMediaList, true);
-        }
         
         //Play media Item
         m_mediaObject->clearQueue();
@@ -78,6 +68,36 @@ void Playlist::playItemAt(int row, int model)
         m_mediaObject->play();
         m_playlistFinished = false;
         
+        
+        if (m_mode == Playlist::Normal) {
+            //Just build a new queue from the specified row
+            buildQueueFrom(row);
+        } else if (m_mode == Playlist::Shuffle) {
+            if ((m_playlistIndicesHistory.indexOf(row) == -1) && (m_nowPlaying->mediaItemAt(0).url != nextMediaItem.url)) {
+                //If item has not yet played move it to the front
+                if (m_queue->rowOfUrl(nextMediaItem.url) != -1) {
+                    QList<MediaItem> queueMediaList = m_queue->mediaList();
+                    queueMediaList.move(m_queue->rowOfUrl(nextMediaItem.url), 0);
+                    m_queue->clearMediaListData();
+                    m_queue->loadMediaList(queueMediaList, true);
+                } else {
+                    QList<MediaItem> queueMediaList = m_queue->mediaList();
+                    queueMediaList.insert(0, nextMediaItem);
+                    queueMediaList.removeLast();
+                    m_queue->clearMediaListData();
+                    m_queue->loadMediaList(queueMediaList, true);
+                }
+            } else if (m_playlistIndicesHistory.indexOf(row) != -1) {
+                //If item has already played remove from history and place at front of queue
+                m_playlistIndicesHistory.removeAt(m_playlistIndicesHistory.indexOf(row));
+                QList<MediaItem> queueMediaList = m_queue->mediaList();
+                queueMediaList.insert(0, nextMediaItem);
+                queueMediaList.removeLast();
+                m_queue->clearMediaListData();
+                m_queue->loadMediaList(queueMediaList, true);
+            }    
+        }
+            
         //Get row of previously playing item
         int oldItemRow = -1;
         if (m_nowPlaying->rowCount() > 0) {
@@ -102,11 +122,19 @@ void Playlist::playItemAt(int row, int model)
         //Get media item from playlist
         nextMediaItem = m_queue->mediaItemAt(row);
         nextMediaItem.nowPlaying = true;
-        //Move item to front of queue
-        QList<MediaItem> queueMediaList = m_queue->mediaList();
-        queueMediaList.move(row, 0);
-        m_queue->clearMediaListData();
-        m_queue->loadMediaList(queueMediaList, true);
+        
+        if (m_mode == Playlist::Normal) {
+            //Just build a new queue from the row of the item in the playlist
+            buildQueueFrom(nextMediaItem.playlistIndex);
+        } else if (m_mode == Playlist::Shuffle) {
+            if (row > 0) {
+                //Move item to front of queue
+                QList<MediaItem> queueMediaList = m_queue->mediaList();
+                queueMediaList.move(row, 0);
+                m_queue->clearMediaListData();
+                m_queue->loadMediaList(queueMediaList, true);
+            }
+        }
         
         //Play media Item
         m_mediaObject->clearQueue();
@@ -155,14 +183,7 @@ void Playlist::playPrevious()
 {
     if (m_playlistIndicesHistory.count() > 0) {
         int previousRow = m_playlistIndicesHistory.last();
-        m_playlistIndicesHistory.removeLast();
-        m_playlistIndices.prepend(m_queue->mediaItemAt(0).playlistIndex);
-        
-        if (previousRow >=0) {
-            playItemAt(previousRow, Playlist::PlaylistModel);
-        } else {
-            m_mediaObject->seek(0);
-        }
+        playItemAt(previousRow, Playlist::PlaylistModel);
     }
 }
 
@@ -241,12 +262,13 @@ void Playlist::clearPlaylist()
 void Playlist::queueNextPlaylistItem()
 {
     addToQueue();
-    if (m_queue->rowCount() > 0) {
+    if (m_queue->rowCount() == 1) {
         //remove old queue item
         m_playlistFinished = true;
         m_queue->removeMediaItemAt(0);
     }
-    if (m_queue->rowCount() > 0) {
+    if (m_queue->rowCount() > 1) {
+        m_queue->removeMediaItemAt(0);
         //Load next queued item
         MediaItem nextMediaItem = m_queue->mediaItemAt(0);
         QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
@@ -259,7 +281,7 @@ void Playlist::queueNextPlaylistItem()
         m_nowPlaying->loadMediaItem(nextMediaItem);
     }
     
-    //Get row of previously playing item
+    //Get row of previously playing item and add to history
     int oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
     m_playlistIndicesHistory.append(oldItemRow);
     
@@ -389,4 +411,26 @@ void Playlist::addToQueue()
             m_queue->loadMediaItem(nextMediaItem);
         }
     }
+}
+
+void Playlist::buildQueueFrom(int playlistRow)
+{
+    if (playlistRow < m_currentPlaylist->rowCount()) {
+        m_playlistIndices.clear();
+        m_playlistIndicesHistory.clear();
+        m_queue->clearMediaListData();
+        for (int i = 0; i < playlistRow; ++i) {
+            m_playlistIndicesHistory.append(i);
+        }
+        int lastRowOfQueue;
+        for (int j = playlistRow; j < qMin(playlistRow + m_queueDepth, m_currentPlaylist->rowCount()); ++j) {
+            MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(j);
+            nextMediaItem.playlistIndex = j;
+            m_queue->loadMediaItem(nextMediaItem);
+            lastRowOfQueue = j;
+        }
+        for (int k = lastRowOfQueue + 1; k < m_currentPlaylist->rowCount(); ++k) {
+            m_playlistIndices.append(k);
+        }
+    }   
 }
