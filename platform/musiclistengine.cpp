@@ -5,6 +5,7 @@
 #include <KUrl>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <nepomuk/variant.h>
@@ -136,9 +137,11 @@ void MusicListEngine::run()
         //Build songs query 
         QString prefix = QString("PREFIX xesam: <%1> "
         "PREFIX rdf: <%2> "
-        "PREFIX xls: <%3> ")
+        "PREFIX nao: <%3> "
+        "PREFIX xls: <%4> ")
         .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
         .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
+        .arg(Soprano::Vocabulary::NAO::naoNamespace().toString())
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?artist ?album ?duration ?trackNumber ");
         QString whereConditions = QString("WHERE { "
@@ -148,6 +151,7 @@ void MusicListEngine::run()
         QString whereOptionalConditions = QString("OPTIONAL { ?r xesam:album ?album } "
         "OPTIONAL { ?r xesam:mediaDuration ?duration } "
         "OPTIONAL { ?r xesam:genre ?genre } "
+        "OPTIONAL { ?r nao:numericRating ?rating } "
         "OPTIONAL { ?r xesam:trackNumber ?trackNumber } ");
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?artist ?album ?trackNumber ");
@@ -195,6 +199,11 @@ void MusicListEngine::run()
             mediaItem.fields["genre"] = it.binding("genre").literal().toString();
             mediaItem.fields["trackNumber"] = it.binding("trackNumber").literal().toInt();
             mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
+            //mediaItem.fields["rating"] = (it.binding("rating").literal().toDouble() + 0.5)/2.0;
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                mediaItem.fields["rating"] = res.rating();
+            }
             mediaItem.fields["audioType"] = "Music";
             //FIXME: Do not update the RDF store synchronously.  Provide UI for asynchronous update
             /*Nepomuk::Resource song(it["r"].uri());
@@ -239,9 +248,11 @@ void MusicListEngine::run()
         //Build songs query 
         QString prefix = QString("PREFIX xesam: <%1> "
         "PREFIX rdf: <%2> "
-        "PREFIX xls: <%3> ")
+        "PREFIX nao: <%3> "
+        "PREFIX xls: <%4> ")
         .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
         .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
+        .arg(Soprano::Vocabulary::NAO::naoNamespace().toString())
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?artist ?album ?duration ?trackNumber ");
         QString whereConditions = QString("WHERE { "
@@ -251,6 +262,7 @@ void MusicListEngine::run()
         "OPTIONAL { ?r xesam:artist ?artist } "
         "OPTIONAL { ?r xesam:genre ?genre } "
         "OPTIONAL { ?r xesam:mediaDuration ?duration } "
+        "OPTIONAL { ?r nao:numericRating ?rating } "
         "OPTIONAL { ?r xesam:trackNumber ?trackNumber } ");
         QString searchCondition = QString("FILTER (regex(str(?artist),\"%1\",\"i\") || " 
         "regex(str(?album),\"%1\",\"i\") || "
@@ -285,11 +297,18 @@ void MusicListEngine::run()
             mediaItem.type = "Audio";
             mediaItem.nowPlaying = false;
             mediaItem.artwork = KIcon("audio-mpeg");
+            mediaItem.fields["url"] = mediaItem.url;
             mediaItem.fields["title"] = it.binding("title").literal().toString();
             mediaItem.fields["artist"] = it.binding("artist").literal().toString();
             mediaItem.fields["album"] = it.binding("album").literal().toString();
             mediaItem.fields["genre"] = it.binding("genre").literal().toString();
             mediaItem.fields["trackNumber"] = it.binding("trackNumber").literal().toInt();
+            mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
+            //mediaItem.fields["rating"] = (it.binding("rating").literal().toDouble() + 0.5)/2.0;
+            Nepomuk::Resource res(mediaItem.url);
+            if (res.exists()) {
+                mediaItem.fields["rating"] = res.rating();
+            }
             mediaItem.fields["audioType"] = "Music";
             mediaList.append(mediaItem);
             ++i;

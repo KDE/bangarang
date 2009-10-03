@@ -365,6 +365,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
                         .arg(mediaItem.fields["description"].toString());
         titleItem->setData(tooltip, Qt::ToolTipRole);
     }
+    titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
     rowData << titleItem;
     
     //if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {

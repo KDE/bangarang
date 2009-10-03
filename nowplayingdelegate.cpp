@@ -2,6 +2,7 @@
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/mediavocabulary.h"
+#include "platform/playlist.h"
 
 #include <QPalette>
 #include <QStyle>
@@ -42,8 +43,14 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     const int height = option.rect.height();   
     int padding = 6;
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
-    option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
-    
+    option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);    
+
+    bool isMediaItem = false;
+    if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||
+        (index.data(MediaItem::TypeRole).toString() == "Video") ||
+        (index.data(MediaItem::TypeRole).toString() == "Image")) {
+        isMediaItem = true;
+    }
     
     //Create base pixmap
     QPixmap pixmap(width, height);
@@ -65,11 +72,11 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     int textInner = iconWidth == 0 ? padding : iconWidth + 2 * padding;
     QString text = index.data(Qt::DisplayRole).toString();
     QFont textFont = option.font;
-    QTextOption textOption(Qt::AlignLeft | Qt::AlignVCenter);
+    QTextOption textOption(Qt::AlignLeft | Qt::AlignBottom);
     textOption.setWrapMode(QTextOption::WordWrap);
     QRect titleRect(left + textInner,
-                     top + topOffset, width - textInner - padding, iconWidth/2);
-    textFont.setPixelSize((int)(titleRect.height()/3.5));
+                    top + padding, width - textInner - padding, 0.4*iconWidth + topOffset);
+    textFont.setPixelSize((int)(titleRect.height()/7));
     p.setFont(textFont);
     p.setPen(foregroundColor);
     p.drawText(QRectF(titleRect), text, textOption);
@@ -87,14 +94,30 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     
     QFont subTitleFont = option.font;
     QRect subTitleRect(left + textInner,
-                     top + topOffset + iconWidth/2, width - textInner - padding, 40+iconWidth/2);
-    subTitleFont.setPixelSize((int)(subTitleRect.height()/7));
-    textOption.setAlignment(Qt::AlignLeft | Qt::AlignTop);
+                     top + topOffset + 0.4*iconWidth, width - textInner - padding, 0.6*iconWidth - 18);
+    subTitleFont.setPixelSize((int)(subTitleRect.height()/4));
+    textOption.setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     QColor subTitleColor = KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color();
     p.setFont(subTitleFont);
     p.setPen(subTitleColor);
     p.drawText(QRectF(subTitleRect), subTitle, textOption);
 
+    if (isMediaItem) {
+        int rating = 0;
+        if (index.data(MediaItem::RatingRole).isValid()) {
+            rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
+        }
+        QPixmap ratingNotCount = KIcon("rating").pixmap(16, 16, QIcon::Disabled);
+        QPixmap ratingCount = KIcon("rating").pixmap(16, 16);
+        for (int i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, ratingCount);
+            } else {
+                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, ratingNotCount);
+            }
+        }
+    }
+    
     p.end();
 
     //Draw finished pixmap
@@ -129,5 +152,38 @@ int NowPlayingDelegate::columnWidth (int column, int viewWidth) const {
 
 bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {   
-    return QItemDelegate::editorEvent(event, model, option, index);
+    if (event->type() == QEvent::MouseButtonPress) {
+        if (index.column() == 0) {
+            if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+                QMouseEvent * mouseEvent = (QMouseEvent *)event;
+                int padding = 6;
+                int iconWidth = 128;
+                int topOffset = (option.rect.height() - iconWidth) / 2;
+                int ratingLeft = option.rect.left() + iconWidth + 2 * padding;
+                int ratingRight = ratingLeft + 5 * 18;
+                int ratingTop = option.rect.top() + topOffset + iconWidth - 18;
+                int ratingBottom = option.rect.top() + topOffset + iconWidth;
+                if ((mouseEvent->x() > ratingLeft) && (mouseEvent->x() < ratingRight) && (mouseEvent->y() > ratingTop)  && (mouseEvent->y() < ratingBottom)) {
+                    int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/(5*18)) + 0.5);
+                    MediaItemModel * model = (MediaItemModel *)index.model();
+                    MediaItem updatedMediaItem = model->mediaItemAt(index.row());
+                    updatedMediaItem.fields["rating"] = newRating;
+                    model->replaceMediaItemAt(index.row(), updatedMediaItem);
+                    Nepomuk::Resource res(QUrl(updatedMediaItem.url));
+                    res.setRating(newRating);
+                    int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
+                    if (playlistRow != -1) {
+                        m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, updatedMediaItem);
+                    }
+                    int mediaListRow = m_parent->m_mediaItemModel->rowOfUrl(updatedMediaItem.url);
+                    if (mediaListRow != -1) {
+                        MediaItem mediaListItem = m_parent->m_mediaItemModel->mediaItemAt(mediaListRow);
+                        mediaListItem.fields["rating"] = newRating;
+                        m_parent->m_mediaItemModel->replaceMediaItemAt(mediaListRow, mediaListItem);
+                    }
+                }
+            }
+        }
+    }
+    //return QItemDelegate::editorEvent(event, model, option, index);
 }

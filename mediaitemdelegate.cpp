@@ -3,16 +3,20 @@
 #include "platform/mediaitemmodel.h"
 #include "mainwindow.h"
 
+#include <KGlobalSettings>
+#include <KColorScheme>
+#include <KIcon>
+#include <KIconEffect>
+#include <Soprano/Vocabulary/NAO>
+#include <nepomuk/variant.h>
+#include <nepomuk/resource.h>
+#include <QUrl>
 #include <QPalette>
 #include <QStyle>
 #include <QIcon>
 #include <QFont>
 #include <QStandardItem>
 #include <QApplication>
-#include <KGlobalSettings>
-#include <KColorScheme>
-#include <KIcon>
-#include <KIconEffect>
 
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -112,9 +116,26 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         p.setPen(subColor);
         p.drawText(left + width - 50,
                     top+1, 49, height,
-                    Qt::AlignVCenter | Qt::AlignRight, duration);
-                    
-} else if (index.column() == 1) {
+                    Qt::AlignBottom | Qt::AlignRight, duration);
+        
+        //Paint Rating
+        if (isMediaItem) {
+            int rating = 0;
+            if (index.data(MediaItem::RatingRole).isValid()) {
+                rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
+            }
+            QPixmap ratingNotCount = KIcon("rating").pixmap(8, 8, QIcon::Disabled);
+            QPixmap ratingCount = KIcon("rating").pixmap(8, 8);
+            for (int i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, ratingCount);
+                } else {
+                    p.drawPixmap(left + width - 50 + (10 * (i-1)), top + 3, ratingNotCount);
+                }
+            }
+        }
+        
+    } else if (index.column() == 1) {
         //Paint add to playlist Icon
         if (isMediaItem) {
             int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
@@ -193,6 +214,33 @@ int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
 bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::MouseButtonPress) {
+        if (index.column() == 0) {
+            if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+                QMouseEvent * mouseEvent = (QMouseEvent *)event;
+                int ratingLeft = option.rect.right() - 50;
+                int ratingRight = option.rect.left();
+                int ratingBottom = option.rect.top() + option.rect.height()/2;
+                if ((mouseEvent->x() > ratingLeft) && (mouseEvent->y() < ratingBottom)) {
+                     int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/50.0) + 0.5);
+                     MediaItemModel * model = (MediaItemModel *)index.model();
+                     MediaItem updatedMediaItem = model->mediaItemAt(index.row());
+                     updatedMediaItem.fields["rating"] = newRating;
+                     model->replaceMediaItemAt(index.row(), updatedMediaItem);
+                     Nepomuk::Resource res(QUrl(updatedMediaItem.url));
+                     res.setRating(newRating);
+                     int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(updatedMediaItem.url);
+                     if (playlistRow != -1) {
+                         m_parent->m_currentPlaylist->replaceMediaItemAt(playlistRow, updatedMediaItem);
+                     }
+                     int nowPlayingRow = m_parent->m_playlist->nowPlayingModel()->rowOfUrl(updatedMediaItem.url);
+                     if (nowPlayingRow != -1) {
+                         MediaItem nowPlayingItem = m_parent->m_playlist->nowPlayingModel()->mediaItemAt(nowPlayingRow);
+                         nowPlayingItem.fields["rating"] = newRating;
+                         m_parent->m_playlist->nowPlayingModel()->replaceMediaItemAt(nowPlayingRow, nowPlayingItem);
+                     }
+                }
+            }
+        }
         if (index.column() == 1) {
             if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
                 int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
