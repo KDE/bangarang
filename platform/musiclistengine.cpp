@@ -137,11 +137,9 @@ void MusicListEngine::run()
         //Build songs query 
         QString prefix = QString("PREFIX xesam: <%1> "
         "PREFIX rdf: <%2> "
-        "PREFIX nao: <%3> "
-        "PREFIX xls: <%4> ")
+        "PREFIX xls: <%3> ")
         .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
         .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-        .arg(Soprano::Vocabulary::NAO::naoNamespace().toString())
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?artist ?album ?duration ?trackNumber ");
         QString whereConditions = QString("WHERE { "
@@ -151,7 +149,6 @@ void MusicListEngine::run()
         QString whereOptionalConditions = QString("OPTIONAL { ?r xesam:album ?album } "
         "OPTIONAL { ?r xesam:mediaDuration ?duration } "
         "OPTIONAL { ?r xesam:genre ?genre } "
-        "OPTIONAL { ?r nao:numericRating ?rating } "
         "OPTIONAL { ?r xesam:trackNumber ?trackNumber } ");
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?artist ?album ?trackNumber ");
@@ -248,11 +245,9 @@ void MusicListEngine::run()
         //Build songs query 
         QString prefix = QString("PREFIX xesam: <%1> "
         "PREFIX rdf: <%2> "
-        "PREFIX nao: <%3> "
-        "PREFIX xls: <%4> ")
+        "PREFIX xls: <%3> ")
         .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
         .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-        .arg(Soprano::Vocabulary::NAO::naoNamespace().toString())
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?artist ?album ?duration ?trackNumber ");
         QString whereConditions = QString("WHERE { "
@@ -262,7 +257,6 @@ void MusicListEngine::run()
         "OPTIONAL { ?r xesam:artist ?artist } "
         "OPTIONAL { ?r xesam:genre ?genre } "
         "OPTIONAL { ?r xesam:mediaDuration ?duration } "
-        "OPTIONAL { ?r nao:numericRating ?rating } "
         "OPTIONAL { ?r xesam:trackNumber ?trackNumber } ");
         QString searchCondition = QString("FILTER (regex(str(?artist),\"%1\",\"i\") || " 
         "regex(str(?album),\"%1\",\"i\") || "

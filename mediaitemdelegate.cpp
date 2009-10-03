@@ -230,15 +230,16 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      Nepomuk::Resource res(QUrl(updatedMediaItem.url));
                      res.setRating(newRating);
                      //Keep other views of same mediaItem in sync
-                     int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(updatedMediaItem.url);
+                     int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
                      if (playlistRow != -1) {
-                         m_parent->m_currentPlaylist->replaceMediaItemAt(playlistRow, updatedMediaItem);
+                         MediaItem playlistItem = m_parent->m_playlist->playlistModel()->mediaItemAt(playlistRow);
+                         m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, playlistItem);
                      }
                      int queueRow = m_parent->m_playlist->queueModel()->rowOfUrl(updatedMediaItem.url);
                      if (queueRow != -1) {
                          MediaItem queueItem = m_parent->m_playlist->queueModel()->mediaItemAt(queueRow);
                          queueItem.fields["rating"] = newRating;
-                         m_parent->m_playlist->queueModel()replaceMediaItemAt(queueRow, queueItem);
+                         m_parent->m_playlist->queueModel()->replaceMediaItemAt(queueRow, queueItem);
                      }
                      int nowPlayingRow = m_parent->m_playlist->nowPlayingModel()->rowOfUrl(updatedMediaItem.url);
                      if (nowPlayingRow != -1) {
