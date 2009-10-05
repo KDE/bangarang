@@ -48,17 +48,19 @@ class Playlist : public QObject
         int m_oldPlaylistLength;
         QList<int> m_playlistIndices;
         QList<int> m_playlistIndicesHistory;
+        QList<QString> m_playlistUrlHistory;
         Phonon::MediaObject * m_mediaObject;
         Phonon::MediaController * m_mediaController;
         bool playWhenPlaylistChanges;
         bool m_playlistFinished;
+        void createUrlHistoryFromIndices();
+        void updateNowPlaying();
         
     private slots:
-        void updateNowPlaying(const Phonon::MediaSource & newSource);
+        void currentSourceChanged(const Phonon::MediaSource & newSource);
+        void titleChanged(int newTitle);
         void playlistChanged();
         void queueNextPlaylistItem();
-        void playNextDiscTitle();
-        void updateNowPlayingOnTitleChanged(int newTitle);
         
 };
 #endif // PLAYLIST_H
