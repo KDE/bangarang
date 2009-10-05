@@ -60,6 +60,7 @@ private:
     Phonon::VideoWidget *m_videoWidget;
     Phonon::AudioOutput *m_audioOutput;
     Phonon::MediaObject *m_media;
+    Phonon::MediaController *m_mediaController;
     QGraphicsScene *m_Scene;
     QString m_addItemsMessage;
     QTime m_messageTime;

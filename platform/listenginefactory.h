@@ -9,6 +9,7 @@ class ListEngine;
 class MusicListEngine;
 class FileListEngine;
 class VideoListEngine;
+class CDListEngine;
 
 class ListEngineFactory : public QObject
 {
@@ -28,6 +29,7 @@ class ListEngineFactory : public QObject
         QList<MusicListEngine *> m_musicListEngines;
         QList<FileListEngine *> m_fileListEngines;
         QList<VideoListEngine *> m_videoListEngines;
+        QList<CDListEngine *> m_cdListEngines;
 };
 #endif // LISTENGINEFACTORY_H
         

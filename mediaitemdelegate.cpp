@@ -65,6 +65,14 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         (index.data(MediaItem::TypeRole).toString() == "Image")) {
         isMediaItem = true;
     }
+    QString subType;
+    if (index.data(MediaItem::TypeRole).toString() == "Audio") {
+        MediaItemModel * model = (MediaItemModel *)index.model();
+        subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
+    } else if (index.data(MediaItem::TypeRole).toString() == "Video") {
+        MediaItemModel * model = (MediaItemModel *)index.model();
+        subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
+    }
     bool isCategory = index.data(MediaItem::TypeRole).toString() == "Category" ? true : false;
     bool isAction = index.data(MediaItem::TypeRole).toString() == "Action" ? true : false;
     bool isMessage = index.data(MediaItem::TypeRole).toString() == "Message" ? true : false;
@@ -132,7 +140,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     Qt::AlignBottom | Qt::AlignRight, duration);
         
         //Paint Rating
-        if (isMediaItem) {
+        if ((isMediaItem) && (subType != "CD Track")) {
             int rating = 0;
             if (index.data(MediaItem::RatingRole).isValid()) {
                 rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);

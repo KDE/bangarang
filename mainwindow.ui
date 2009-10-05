@@ -373,6 +373,11 @@
                        <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</iconset>
                      </property>
                     </item>
+                    <item>
+                     <property name="text">
+                      <string>Audio CD</string>
+                     </property>
+                    </item>
                    </widget>
                   </item>
                   <item>

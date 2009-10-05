@@ -3,11 +3,12 @@
 #include "musiclistengine.h"
 #include "filelistengine.h"
 #include "videolistengine.h"
+#include "cdlistengine.h"
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -75,6 +76,23 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         videoListEngine->setModel(m_parent);
         return videoListEngine;        
+    } else if (engine.toLower() == "cdaudio://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        CDListEngine * cdListEngine;
+        for (int i = 0; i < m_cdListEngines.count(); ++i) {
+            if (!m_cdListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                cdListEngine = m_cdListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            cdListEngine = new CDListEngine(this);
+            m_cdListEngines << cdListEngine;
+        }
+        cdListEngine->setModel(m_parent);
+        return cdListEngine;        
     }
 }
 

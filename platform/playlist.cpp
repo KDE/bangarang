@@ -16,6 +16,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
 {
     m_parent = parent;
     m_mediaObject = mediaObject;
+    m_mediaController = new Phonon::MediaController(m_mediaObject);
     m_currentPlaylist = new MediaItemModel(this);
     m_nowPlaying = new MediaItemModel(this);
     m_queue = new MediaItemModel(this);   
@@ -26,6 +27,8 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_playlistFinished = false;
     
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
+    connect(m_mediaObject, SIGNAL(finished()), this, SLOT(playNextDiscTitle()));
+    connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(updateNowPlayingOnTitleChanged(int)));
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(updateNowPlaying(const Phonon::MediaSource & )));
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
     
@@ -36,6 +39,7 @@ Playlist::~Playlist()
     delete m_currentPlaylist;
     delete m_nowPlaying;
     delete m_queue;
+    //delete m_mediaController;
 }
 
 MediaItemModel * Playlist::playlistModel()
@@ -64,11 +68,17 @@ void Playlist::playItemAt(int row, int model)
         
         //Play media Item
         m_mediaObject->clearQueue();
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else {
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+        }
         m_mediaObject->play();
         m_playlistFinished = false;
         
-        
+        //Update Queue Model
         if (m_mode == Playlist::Normal) {
             //Just build a new queue from the specified row
             buildQueueFrom(row);
@@ -118,11 +128,25 @@ void Playlist::playItemAt(int row, int model)
         if ((oldItemRow != -1) && (oldItemRow != row) && (oldItemRow < m_currentPlaylist->rowCount())) {
             m_currentPlaylist->item(oldItemRow, 0)->setData(false, MediaItem::NowPlayingRole);
         }
+        
     } else if (model == Playlist::QueueModel) {
-        //Get media item from playlist
+        //Get media item from queue list
         nextMediaItem = m_queue->mediaItemAt(row);
         nextMediaItem.nowPlaying = true;
         
+        //Play media Item
+        m_mediaObject->clearQueue();
+        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else {
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+        }
+        m_mediaObject->play();
+        m_playlistFinished = false;
+        
+        //Update Queue Model
         if (m_mode == Playlist::Normal) {
             //Just build a new queue from the row of the item in the playlist
             buildQueueFrom(nextMediaItem.playlistIndex);
@@ -135,12 +159,6 @@ void Playlist::playItemAt(int row, int model)
                 m_queue->loadMediaList(queueMediaList, true);
             }
         }
-        
-        //Play media Item
-        m_mediaObject->clearQueue();
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
-        m_mediaObject->play();
-        m_playlistFinished = false;
         
         //Get row of previously playing item
         int oldItemRow = -1;
@@ -271,13 +289,27 @@ void Playlist::queueNextPlaylistItem()
         m_queue->removeMediaItemAt(0);
         //Load next queued item
         MediaItem nextMediaItem = m_queue->mediaItemAt(0);
-        QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
-        if (!artwork.isNull()) {
-            nextMediaItem.artwork = KIcon(artwork);
+        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            if (m_mediaObject->currentSource() == Phonon::MediaSource(Phonon::Cd)) {
+                if (nextMediaItem.fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1) {
+                    m_mediaController->setAutoplayTitles(true);
+                } else {
+                    m_mediaController->setAutoplayTitles(false);
+                }
+            } else {
+                QList<Phonon::MediaSource> queue;
+                queue << Phonon::MediaSource(Phonon::Cd);
+                m_mediaObject->setQueue(queue);
+            }
+        } else {
+            QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
+            if (!artwork.isNull()) {
+                nextMediaItem.artwork = KIcon(artwork);
+            }
+            QList<QUrl> queue;
+            queue << QUrl(nextMediaItem.url);
+            m_mediaObject->setQueue(queue);
         }
-        QList<QUrl> queue;
-        queue << QUrl(nextMediaItem.url);
-        m_mediaObject->setQueue(queue);
         m_nowPlaying->loadMediaItem(nextMediaItem);
     }
     
@@ -294,7 +326,7 @@ void Playlist::queueNextPlaylistItem()
     if ((row >= 0) && (row < m_currentPlaylist->rowCount())) {
         m_currentPlaylist->item(row,0)->setData(true, MediaItem::NowPlayingRole);
     }
-    if (oldItemRow != row && oldItemRow >= 0) {
+    if (oldItemRow != row && oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
         //Cycle through true and false to ensure data change forces update
         m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
         m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
@@ -309,15 +341,34 @@ void Playlist::updateNowPlaying(const Phonon::MediaSource & newSource)
         }
     }
     
-    //Update last played date and play count
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    Nepomuk::Resource res(newSource.url());
-    if (res.exists()) {
-        res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
-        int playCount = res.property(mediaVocabulary.playCount()).toInt();
-        playCount = playCount + 1;
-        res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
+    if (newSource == Phonon::MediaSource(Phonon::Cd)) {
+        m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
+    } else {
+        //Update last played date and play count
+        MediaVocabulary mediaVocabulary = MediaVocabulary();
+        Nepomuk::Resource res(newSource.url());
+        if (res.exists()) {
+            res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
+            int playCount = res.property(mediaVocabulary.playCount()).toInt();
+            playCount = playCount + 1;
+            res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
+        }
     }
+}
+
+void Playlist::playNextDiscTitle()
+{
+    if ((!m_playlistFinished) && (m_mediaObject->currentSource() == Phonon::MediaSource(Phonon::Cd))) {
+        if (m_nowPlaying->mediaItemAt(0).fields["audioType"] == "CD Track") {
+            m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
+            m_mediaObject->play();
+        }
+    }
+}
+
+void Playlist::updateNowPlayingOnTitleChanged(int newTitle)
+{
+    queueNextPlaylistItem();
 }
 
 void Playlist::playlistChanged()
@@ -422,7 +473,7 @@ void Playlist::buildQueueFrom(int playlistRow)
         for (int i = 0; i < playlistRow; ++i) {
             m_playlistIndicesHistory.append(i);
         }
-        int lastRowOfQueue;
+        int lastRowOfQueue = 0;
         for (int j = playlistRow; j < qMin(playlistRow + m_queueDepth, m_currentPlaylist->rowCount()); ++j) {
             MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(j);
             nextMediaItem.playlistIndex = j;

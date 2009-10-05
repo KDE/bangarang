@@ -142,9 +142,9 @@ void MediaItemModel::loadMediaItem(MediaItem mediaItem, bool emitMediaListChange
         categoryItem->setData(tooltip, Qt::ToolTipRole);
         rowData << categoryItem;
     }*/
-    appendRow(rowDataFromMediaItem(mediaItem));
     m_mediaList << mediaItem;
     urlList << mediaItem.url;
+    appendRow(rowDataFromMediaItem(mediaItem));
     if (emitMediaListChanged) {
         emit mediaListChanged();
     }

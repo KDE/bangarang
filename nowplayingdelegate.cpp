@@ -54,6 +54,14 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         (index.data(MediaItem::TypeRole).toString() == "Image")) {
         isMediaItem = true;
     }
+    QString subType;
+    if (index.data(MediaItem::TypeRole).toString() == "Audio") {
+        MediaItemModel * model = (MediaItemModel *)index.model();
+        subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
+    } else if (index.data(MediaItem::TypeRole).toString() == "Video") {
+        MediaItemModel * model = (MediaItemModel *)index.model();
+        subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
+    }
     
     //Create base pixmap
     QPixmap pixmap(width, height);
@@ -106,7 +114,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     p.drawText(QRectF(subTitleRect), subTitle, textOption);
 
     //Draw rating
-    if (isMediaItem) {
+    if (isMediaItem && (subType != "CD Track")) {
         int rating = 0;
         if (index.data(MediaItem::RatingRole).isValid()) {
             rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);

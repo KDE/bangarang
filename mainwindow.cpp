@@ -320,6 +320,10 @@ void MainWindow::on_playAll_clicked()
     m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
     
     m_playlist->playMediaList(mediaList);
+    /*m_media->setCurrentSource(Phonon::Cd);
+    m_mediaController = new Phonon::MediaController(m_media);
+    m_mediaController->setAutoplayTitles(true);
+    m_media->play();*/
 
     // Show Now Playing page
     ui->stackedWidget->setCurrentIndex(1);   
@@ -715,6 +719,9 @@ void MainWindow::setPropertiesForLists()
     listItemProperties.name = "Clips";
     listItemProperties.lri = "audioclips://";
     setListItemProperties(ui->audioLists->item(5), listItemProperties);
+    listItemProperties.name = "Audio CD";
+    listItemProperties.lri = "cdaudio://";
+    setListItemProperties(ui->audioLists->item(6), listItemProperties);
     //Video
     listItemProperties.name = "Files and Folders";
     listItemProperties.lri = "files://video";
@@ -777,6 +784,7 @@ void MainWindow::setupIcons()
     ui->audioLists->item(3)->setIcon(KIcon("audio-mpeg"));
     ui->audioLists->item(4)->setIcon(KIcon("flag-blue"));
     ui->audioLists->item(5)->setIcon(KIcon("audio-x-wav"));
+    ui->audioLists->item(6)->setIcon(KIcon("media-optical-audio"));
     ui->addAudioList->setIcon(KIcon("list-add"));
     ui->removeAudioList->setIcon(KIcon("list-remove"));
     ui->configureAudioList->setIcon(KIcon("configure"));
