@@ -1,9 +1,16 @@
 #include "utilities.h"
 #include "mediaitemmodel.h"
+#include "mediavocabulary.h"
 
 #include <KUrl>
 #include <KMimeType>
 #include <KIcon>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/XMLSchema>
+#include <nepomuk/resource.h>
+#include <nepomuk/variant.h>
 
 #include <QByteArray>
 #include <QFile>
@@ -266,9 +273,12 @@ void Utilities::shadowBlur(QImage &image, int radius, const QColor &color)
 
 MediaItem Utilities::mediaItemFromUrl(KUrl url)
 {
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    
     MediaItem mediaItem;
     url.cleanPath();
     url = QUrl::fromPercentEncoding(url.url().toUtf8());
+    mediaItem.url = url.url();
     mediaItem.title = url.fileName();
     
     mediaItem.artwork = KIcon("audio-x-generic"); //Assume audio unless we can tell otherwise
@@ -277,22 +287,69 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     if (isMusic(mediaItem.url)) {
         mediaItem.artwork = KIcon("audio-mp4");
         mediaItem.type = "Audio";
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
         QString title = TStringToQString(file.tag()->title()).trimmed();
         QString artist  = TStringToQString(file.tag()->artist()).trimmed();
-        QString album   = TStringToQString(file.tag()->album()).trimmed();
+        QString album = TStringToQString(file.tag()->album()).trimmed();
+        QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+        int track   = file.tag()->track();
         int duration = file.audioProperties()->length();
         if (!title.isEmpty()) {
             mediaItem.title = title;
         }
         mediaItem.subTitle = artist + QString(" - ") + album;
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+        mediaItem.fields["title"] = title;
+        mediaItem.fields["artist"] = artist;
+        mediaItem.fields["album"] = album;
+        mediaItem.fields["genre"] = genre;
+        mediaItem.fields["trackNumber"] = track;
+        mediaItem.fields["audioType"] = "Music";
+        Nepomuk::Resource res(mediaItem.url);
+        if (res.exists()) {
+            mediaItem.fields["rating"] = res.rating();
+        }
     }
     if (isVideo(mediaItem.url)){
         mediaItem.artwork = KIcon("video-x-generic");
         mediaItem.type = "Video";
+        mediaItem.fields["url"] = mediaItem.url;
+        mediaItem.fields["title"] = mediaItem.title;
+        Nepomuk::Resource res(mediaItem.url);
+        if (res.exists()) {
+            QString title = res.property(mediaVocabulary.title()).toString();
+            if (!title.isEmpty()) {
+                mediaItem.title = title;
+                mediaItem.fields["title"] = title;
+            }
+            QString description = res.property(mediaVocabulary.description()).toString();
+            if (!description.isEmpty()) {
+                mediaItem.fields["description"] = description;
+            }
+            if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                mediaItem.fields["videoType"] = "Movie";
+                mediaItem.artwork = KIcon("tool-animator");
+            } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
+                mediaItem.fields["videoType"] = "Series";
+                mediaItem.artwork = KIcon("video-television");
+                int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
+                if (season !=0 ) {
+                    mediaItem.fields["season"] = season;
+                    mediaItem.subTitle = QString("Season %1 ").arg(season);
+                }
+                int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
+                if (episode !=0 ) {
+                    mediaItem.fields["episode"] = episode;
+                    mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                }
+            } else {
+                mediaItem.fields["videoType"] = "Video Clip";
+                mediaItem.artwork = KIcon("video-x-generic");
+            }
+            Nepomuk::Resource res(mediaItem.url);
+            mediaItem.fields["rating"] = res.rating();
+        }
     }
-    
     return mediaItem;
 }
 
