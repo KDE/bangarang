@@ -61,6 +61,10 @@ class Playlist : public QObject
         void titleChanged(int newTitle);
         void playlistChanged();
         void queueNextPlaylistItem();
+        void confirmPlaylistFinished();
+        
+    Q_SIGNALS:
+        void playlistFinished();
         
 };
 #endif // PLAYLIST_H

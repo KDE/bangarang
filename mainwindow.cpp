@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up playlist
     m_playlist = new Playlist(this, m_media);
+    connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
     
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
@@ -419,6 +420,7 @@ void MainWindow::on_clearPlaylist_clicked()
     if (KMessageBox::warningContinueCancel(this, "Are you sure you want to clear the current playlist?", QString(), clearPlaylist) == KMessageBox::Continue) {
         m_playlist->clearPlaylist();
         showApplicationBanner();
+        setWindowTitle(QString("Bangarang"));
         ui->nowPlaying->setIcon(KIcon("tool-animator"));
         ui->nowPlaying->setText("Now Playing");
     }
@@ -594,22 +596,29 @@ void MainWindow::nowPlayingChanged()
             ui->nowPlaying->setIcon(m_nowPlaying->mediaItemAt(0).artwork);  
             setWindowTitle(QString(m_nowPlaying->mediaItemAt(0).title + " - Bangarang"));
         }
-    } else {
-        showApplicationBanner();
-    }
     
-    ui->nowPlayingView->header()->setStretchLastSection(false);
-    ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
-    ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    ui->nowPlayingView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
-    ui->nowPlayingView->header()->hideSection(1);
-    ui->nowPlayingView->header()->hideSection(2);
-    
-    if (m_nowPlaying->mediaItemAt(0).type == "Video") {
-        ui->viewerStack->setCurrentIndex(1);
-    } else if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
-        ui->viewerStack->setCurrentIndex(0);
+        ui->nowPlayingView->header()->setStretchLastSection(false);
+        ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
+        ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+        ui->nowPlayingView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+        ui->nowPlayingView->header()->hideSection(1);
+        ui->nowPlayingView->header()->hideSection(2);
+        
+        if (m_nowPlaying->mediaItemAt(0).type == "Video") {
+            ui->viewerStack->setCurrentIndex(1);
+        } else if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
+            ui->viewerStack->setCurrentIndex(0);
+        }
     }
+}
+
+void MainWindow::playlistFinished()
+{
+    showApplicationBanner();
+    setWindowTitle(QString("Bangarang"));
+    ui->nowPlaying->setIcon(KIcon("tool-animator"));
+    ui->nowPlaying->setText("Now Playing");
+    ui->seekTime->setText("0:00");
 }
 
 void MainWindow::hidePlayButtons()

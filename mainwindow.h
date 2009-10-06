@@ -113,6 +113,7 @@ private slots:
     void mediaListChanged();
     void playlistChanged();
     void nowPlayingChanged();
+    void playlistFinished();
     void hidePlayButtons();
     void updateListTitle();
     void on_clearPlaylist_clicked();

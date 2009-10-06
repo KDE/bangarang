@@ -27,6 +27,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_playlistFinished = false;
     
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
+    connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
     connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
@@ -372,9 +373,8 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
     
     addToQueue();
     if (m_queue->rowCount() == 1) {
-        //remove old queue item
-        m_playlistFinished = true;
-        m_queue->removeMediaItemAt(0);
+        //Playlist is finished
+        m_playlistFinished = true;        
     }
     if (m_queue->rowCount() > 1) {
         m_queue->removeMediaItemAt(0);
@@ -401,7 +401,7 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
 {
     //Check next mediaItem to decide how to setAutoplayTitles
-    if (newSource == Phonon::MediaSource(Phonon::Cd)) {
+    if (newSource.discType() == Phonon::Cd) {
         if (m_queue->rowCount() > 1) {
             if (m_queue->mediaItemAt(1).url.startsWith("CDTRACK")) {
                 if (m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1) {
@@ -411,9 +411,10 @@ void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //con
                 }
             }
         }
+    } 
+    if (newSource.discType() == Phonon::NoDisc) {
+        updateNowPlaying();
     }
-    
-    updateNowPlaying();
 }
 
 void Playlist::titleChanged(int newTitle) //connected to MediaController::titleChanged
@@ -427,6 +428,26 @@ void Playlist::titleChanged(int newTitle) //connected to MediaController::titleC
         }
     }
     updateNowPlaying();
+}
+
+void Playlist::confirmPlaylistFinished() //connected to MediaObject::finished()
+{
+    if (m_playlistFinished) {
+        //Refresh playlist model to ensure views get updated
+        int row = -1;
+        if (m_nowPlaying->rowCount() > 0) {
+            row = m_nowPlaying->mediaItemAt(0).playlistIndex;
+        }
+        if ((row >= 0) && (row < m_currentPlaylist->rowCount())) {
+            m_currentPlaylist->item(row,0)->setData(true, MediaItem::NowPlayingRole);
+            m_currentPlaylist->item(row,0)->setData(false, MediaItem::NowPlayingRole);
+        }
+        
+        //Clear nowPlaying and queue and emit playlistFinished
+        m_nowPlaying->removeMediaItemAt(0);
+        m_queue->removeMediaItemAt(0);
+        emit playlistFinished();
+    }
 }
 
 //--------------------------------
@@ -511,7 +532,7 @@ void Playlist::playlistChanged()
         // stop playing and play item at front of queue
         if ((m_mediaObject->state() == Phonon::PlayingState) || (m_mediaObject->state() == Phonon::PausedState)) {
             QString currentUrl;
-            if (m_mediaObject->currentSource() == Phonon::MediaSource(Phonon::Cd)) {
+            if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
                 currentUrl = QString("CDTRACK%1").arg(m_mediaController->currentTitle());
             } else {
                 currentUrl = m_mediaObject->currentSource().url().toString();
@@ -547,7 +568,7 @@ void Playlist::updateNowPlaying()
                 itemIsStale = false;
             }
         } else {
-            if (mediaItem.url == m_mediaObject->currentSource().url().toString()) {
+            if (QUrl(mediaItem.url) == m_mediaObject->currentSource().url()) {
                 itemIsStale = false;
             }
         }
@@ -579,7 +600,7 @@ void Playlist::updateNowPlaying()
         m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
     }
     
-    if (m_mediaObject->currentSource() == Phonon::MediaSource(Phonon::Cd)) {
+    if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
         //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
     } else {
         //Update last played date and play count
