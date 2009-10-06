@@ -325,8 +325,11 @@ void Playlist::setMode(int mode)
         m_playlistIndicesHistory.clear();
         m_playlistUrlHistory.clear();
         if (m_currentPlaylist->rowCount() > 0) {
-            int oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-            m_nowPlaying->removeMediaItemAt(0);
+            int oldItemRow = -1;
+            if (m_nowPlaying->rowCount() > 0) {
+                oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
+                m_nowPlaying->removeMediaItemAt(0);
+            }
             if (oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
                 //Cycle through true and false to ensure data change forces update
                 m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
