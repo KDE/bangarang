@@ -235,9 +235,9 @@ void MainWindow::on_seekTime_clicked()
 
 void MainWindow::on_mediaPlayPause_clicked()
 {
-    if (m_media->state() == Phonon::PausedState) {
+    if ((m_media->state() == Phonon::PausedState) || (m_media->state() == Phonon::StoppedState)) {
 		m_media->play();
-    } else if (m_media->state() == Phonon::PlayingState){
+    } else if ((m_media->state() == Phonon::PlayingState) || (m_media->state() == Phonon::BufferingState)) {
         m_media->pause();
     } else {
         if (m_currentPlaylist->rowCount() > 0) {
