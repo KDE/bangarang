@@ -4,11 +4,12 @@
 #include "filelistengine.h"
 #include "videolistengine.h"
 #include "cdlistengine.h"
+#include "dvdlistengine.h"
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -93,6 +94,23 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         cdListEngine->setModel(m_parent);
         return cdListEngine;        
+    } else if (engine.toLower() == "dvdvideo://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        DVDListEngine * dvdListEngine;
+        for (int i = 0; i < m_dvdListEngines.count(); ++i) {
+            if (!m_dvdListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                dvdListEngine = m_dvdListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            dvdListEngine = new DVDListEngine(this);
+            m_dvdListEngines << dvdListEngine;
+        }
+        dvdListEngine->setModel(m_parent);
+        return dvdListEngine;        
     }
 }
 

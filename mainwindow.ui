@@ -284,7 +284,7 @@
                  <number>0</number>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <property name="tabSpacing">
                  <number>0</number>
@@ -550,8 +550,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>94</width>
-                   <height>90</height>
+                   <width>154</width>
+                   <height>322</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -566,8 +566,11 @@
                   </property>
                   <item>
                    <widget class="QListWidget" name="videoLists">
+                    <property name="selectionBehavior">
+                     <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
                     <property name="currentRow">
-                     <number>0</number>
+                     <number>-1</number>
                     </property>
                     <item>
                      <property name="text">
@@ -603,6 +606,11 @@
                      <property name="icon">
                       <iconset>
                        <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</iconset>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>DVD Video</string>
                      </property>
                     </item>
                    </widget>

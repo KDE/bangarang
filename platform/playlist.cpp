@@ -76,6 +76,11 @@ void Playlist::playItemAt(int row, int model)
             m_mediaObject->setCurrentSource(Phonon::Cd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            m_nowPlaying->loadMediaItem(nextMediaItem, true);
+            m_mediaObject->setCurrentSource(Phonon::Dvd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
         } else {
             // - Get album artwork
             MediaItem itemWithArtwork = nextMediaItem;
@@ -153,6 +158,11 @@ void Playlist::playItemAt(int row, int model)
         if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
             m_nowPlaying->loadMediaItem(nextMediaItem, true);
             m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            m_nowPlaying->loadMediaItem(nextMediaItem, true);
+            m_mediaObject->setCurrentSource(Phonon::Dvd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
         } else {
@@ -387,6 +397,10 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
             QList<Phonon::MediaSource> queue;
             queue << Phonon::MediaSource(Phonon::Cd);
             m_mediaObject->setQueue(queue);
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            QList<Phonon::MediaSource> queue;
+            queue << Phonon::MediaSource(Phonon::Dvd);
+            m_mediaObject->setQueue(queue);
         } else {
             QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
             if (!artwork.isNull()) {
@@ -404,9 +418,9 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
 {
     //Check next mediaItem to decide how to setAutoplayTitles
-    if (newSource.discType() == Phonon::Cd) {
+    if ((newSource.discType() == Phonon::Cd) || (newSource.discType() == Phonon::Dvd)){
         if (m_queue->rowCount() > 1) {
-            if (m_queue->mediaItemAt(1).url.startsWith("CDTRACK")) {
+            if ((m_queue->mediaItemAt(1).url.startsWith("CDTRACK")) || (m_queue->mediaItemAt(1).url.startsWith("DVDTRACK"))) {
                 if (m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1) {
                    m_mediaController->setAutoplayTitles(true);
                 } else {
@@ -537,6 +551,8 @@ void Playlist::playlistChanged()
             QString currentUrl;
             if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
                 currentUrl = QString("CDTRACK%1").arg(m_mediaController->currentTitle());
+            } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
+                currentUrl = QString("DVDTRACK%1").arg(m_mediaController->currentTitle());
             } else {
                 currentUrl = m_mediaObject->currentSource().url().toString();
             }
@@ -566,7 +582,7 @@ void Playlist::updateNowPlaying()
     
     bool itemIsStale = true;
     if (itemIsMedia) {
-        if (mediaItem.fields["audioType"].toString() == "CD Track") {
+        if ((mediaItem.fields["audioType"].toString() == "CD Track") || (mediaItem.fields["videoType"].toString() == "DVD Title")) {
             if (mediaItem.fields["trackNumber"].toInt() == m_mediaController->currentTitle()) {
                 itemIsStale = false;
             }
@@ -604,6 +620,8 @@ void Playlist::updateNowPlaying()
     }
     
     if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
+        //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
+    } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
         //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
     } else {
         //Update last played date and play count

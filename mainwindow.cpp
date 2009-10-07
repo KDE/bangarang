@@ -127,6 +127,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->audioLists->setCurrentRow(0);
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
+    ui->audioLists->setCurrentRow(0);
+    ui->videoLists->setCurrentRow(0);
     updateSeekTime(0);
     showApplicationBanner();
     m_showQueue = false;
@@ -749,6 +751,9 @@ void MainWindow::setPropertiesForLists()
     listItemProperties.name = "Video Clips";
     listItemProperties.lri = "video://clips";
     setListItemProperties(ui->videoLists->item(3), listItemProperties);    
+    listItemProperties.name = "DVD Video";
+    listItemProperties.lri = "dvdvideo://";
+    setListItemProperties(ui->videoLists->item(4), listItemProperties);    
 }
 
 MediaListProperties MainWindow::listItemProperties(QListWidgetItem * item)
@@ -808,6 +813,7 @@ void MainWindow::setupIcons()
     ui->videoLists->item(1)->setIcon(KIcon("tool-animator"));
     ui->videoLists->item(2)->setIcon(KIcon("video-television"));
     ui->videoLists->item(3)->setIcon(KIcon("video-x-generic"));
+    ui->videoLists->item(4)->setIcon(KIcon("media-optical-dvd"));
     ui->addVideoList->setIcon(KIcon("list-add"));
     ui->removeVideoList->setIcon(KIcon("list-remove"));
     ui->configureVideoList->setIcon(KIcon("configure"));
