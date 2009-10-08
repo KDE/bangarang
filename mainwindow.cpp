@@ -15,7 +15,6 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
-#include <Phonon>
 
 #include <QVBoxLayout>
 #include <QStackedLayout>

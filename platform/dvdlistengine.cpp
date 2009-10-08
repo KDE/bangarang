@@ -18,7 +18,7 @@
 #include <id3v2tag.h>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
-#include <Phonon>
+#include <Phonon/MediaController>
 
 DVDListEngine::DVDListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -63,7 +63,7 @@ void DVDListEngine::run()
         QString album = "DVD Video";
         QString title;
         QString artist;
-        int duration;
+        //int duration;
         for (int i = 1; i <= trackCount; i++) {
             title = QString("Title %1").arg(i);
             mediaItem.url = QString("DVDTRACK%1").arg(i);
@@ -104,9 +104,7 @@ MediaListProperties DVDListEngine::mediaListProperties()
 
 void DVDListEngine::setFilterForSources(QString engineFilter)
 {
-    //Always return files
-    //FIXME:Figure out how sources work
-    //m_mediaListProperties.lri = QString("files://getFiles?%1").arg(engineFilter);
+    Q_UNUSED(engineFilter);
 }
 
 void DVDListEngine::setRequestSignature(QString requestSignature)

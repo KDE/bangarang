@@ -18,7 +18,7 @@
 #include <id3v2tag.h>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
-#include <Phonon>
+#include <Phonon/MediaController>
 
 CDListEngine::CDListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -63,7 +63,7 @@ void CDListEngine::run()
         QString album = "Audio CD";
         QString title;
         QString artist;
-        int duration;
+        //int duration;
         for (int i = 1; i <= trackCount; i++) {
             title = QString("Track %1").arg(i);
             mediaItem.url = QString("CDTRACK%1").arg(i);
@@ -104,9 +104,7 @@ MediaListProperties CDListEngine::mediaListProperties()
 
 void CDListEngine::setFilterForSources(QString engineFilter)
 {
-    //Always return files
-    //FIXME:Figure out how sources work
-    //m_mediaListProperties.lri = QString("files://getFiles?%1").arg(engineFilter);
+    Q_UNUSED(engineFilter);
 }
 
 void CDListEngine::setRequestSignature(QString requestSignature)

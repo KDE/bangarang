@@ -239,7 +239,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                 //Check if rating was clicked and update rating
                 QMouseEvent * mouseEvent = (QMouseEvent *)event;
                 int ratingLeft = option.rect.right() - 50;
-                int ratingRight = option.rect.left();
+                //int ratingRight = option.rect.left();
                 int ratingBottom = option.rect.top() + option.rect.height()/2;
                 if ((mouseEvent->x() > ratingLeft) && (mouseEvent->y() < ratingBottom)) {
                      int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/50.0) + 0.5);

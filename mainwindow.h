@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <KIcon>
-
-#include <Phonon>
+#include <Phonon/AudioOutput>
+#include <Phonon/MediaController>
+#include <Phonon/MediaObject>
+#include <Phonon/VideoPlayer>
+#include <Phonon/VideoWidget>
 #include <QMainWindow>
 #include <QResizeEvent>
 #include <QEvent>

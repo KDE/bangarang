@@ -9,7 +9,7 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
-#include <Phonon>
+#include <Phonon/MediaObject>
 
 class MediaItem;
 class MediaListProperties;
