@@ -905,8 +905,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
 {
-  if(event->button() == Qt::LeftButton)
-  {
+  if(event->button() == Qt::LeftButton){
     if(isFullScreen())
       on_fullScreen_toggled(false);
     else
@@ -914,6 +913,22 @@ void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
   }
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+  switch(event->key())
+  {
+    case Qt::Key_Escape: {
+	on_fullScreen_toggled(false);
+	break;
+    }
+    case Qt::Key_F11: {
+	if(!isFullScreen())
+	   on_fullScreen_toggled(true);
+	break;
+    }
+    default:{}	
+  }
+}
 /*void MainWindow::saveInfo()
 {
     if (m_infoItemsModel->rowCount() > 0) {

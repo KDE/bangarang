@@ -150,7 +150,8 @@ private slots:
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
-    void mouseDoubleClickEvent (QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 };
 
 class MouseMoveDetector : public QObject
