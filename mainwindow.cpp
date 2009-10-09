@@ -903,6 +903,17 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
+void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
+{
+  if(event->button() == Qt::LeftButton)
+  {
+    if(isFullScreen())
+      on_fullScreen_toggled(false);
+    else
+      on_fullScreen_toggled(true);
+  }
+}
+
 /*void MainWindow::saveInfo()
 {
     if (m_infoItemsModel->rowCount() > 0) {
