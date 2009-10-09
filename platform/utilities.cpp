@@ -288,22 +288,24 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         mediaItem.artwork = KIcon("audio-mp4");
         mediaItem.type = "Audio";
         TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
-        QString title = TStringToQString(file.tag()->title()).trimmed();
-        QString artist  = TStringToQString(file.tag()->artist()).trimmed();
-        QString album = TStringToQString(file.tag()->album()).trimmed();
-        QString genre   = TStringToQString(file.tag()->genre()).trimmed();
-        int track   = file.tag()->track();
-        int duration = file.audioProperties()->length();
-        if (!title.isEmpty()) {
-            mediaItem.title = title;
+        if (!file.isNull()) {
+            QString title = TStringToQString(file.tag()->title()).trimmed();
+            QString artist  = TStringToQString(file.tag()->artist()).trimmed();
+            QString album = TStringToQString(file.tag()->album()).trimmed();
+            QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+            int track   = file.tag()->track();
+            int duration = file.audioProperties()->length();
+            if (!title.isEmpty()) {
+                mediaItem.title = title;
+            }
+            mediaItem.subTitle = artist + QString(" - ") + album;
+            mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+            mediaItem.fields["title"] = title;
+            mediaItem.fields["artist"] = artist;
+            mediaItem.fields["album"] = album;
+            mediaItem.fields["genre"] = genre;
+            mediaItem.fields["trackNumber"] = track;
         }
-        mediaItem.subTitle = artist + QString(" - ") + album;
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-        mediaItem.fields["title"] = title;
-        mediaItem.fields["artist"] = artist;
-        mediaItem.fields["album"] = album;
-        mediaItem.fields["genre"] = genre;
-        mediaItem.fields["trackNumber"] = track;
         mediaItem.fields["audioType"] = "Music";
         Nepomuk::Resource res(mediaItem.url);
         if (res.exists()) {

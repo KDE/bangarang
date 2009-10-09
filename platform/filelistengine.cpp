@@ -141,6 +141,9 @@ void FileListEngine::activateAction()
                 mediaItem.fields["title"] = fileList.at(i).fileName();
                 if (Utilities::isMusic(mediaItem.url)) {
                     TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
+                    if (file.isNull()) {
+                        continue;
+                    }
                     QString title = TStringToQString(file.tag()->title()).trimmed();
                     QString artist  = TStringToQString(file.tag()->artist()).trimmed();
                     QString album = TStringToQString(file.tag()->album()).trimmed();
