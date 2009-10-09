@@ -141,7 +141,7 @@ void FileListEngine::activateAction()
 {
     QList<MediaItem> mediaList;
     QString audioMimeFilter = "audio/mpeg audio/mp4 audio/ogg audio/vorbis audio/aac audio/aiff audio/basic audio/flac audio/mp2 audio/mp3 audio/vnd.rn-realaudio audio/wav application/ogg audio/x-flac audio/x-musepack";
-    QString videoMimeFilter = "video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg";
+    QString videoMimeFilter = "video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg video/divx video/x-msvideo video/x-wmv video/x-flv video/flv";
     
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
