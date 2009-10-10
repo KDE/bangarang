@@ -107,7 +107,7 @@ void Playlist::playItemAt(int row, int model)
                 itemWithArtwork.artwork = KIcon(artwork);
             }
             m_nowPlaying->loadMediaItem(itemWithArtwork, true);
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
         m_mediaObject->play();
         m_playlistFinished = false;
@@ -190,7 +190,7 @@ void Playlist::playItemAt(int row, int model)
                 nextMediaItem.artwork = KIcon(artwork);
             }
             m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl(nextMediaItem.url)));
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
         m_mediaObject->play();
         m_playlistFinished = false;
@@ -425,7 +425,7 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
                 nextMediaItem.artwork = KIcon(artwork);
             }
             QList<QUrl> queue;
-            queue << QUrl(nextMediaItem.url);
+            queue << QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
             m_mediaObject->setQueue(queue);
         }
         m_nowPlaying->loadMediaItem(nextMediaItem);
@@ -605,7 +605,7 @@ void Playlist::updateNowPlaying()
                 itemIsStale = false;
             }
         } else {
-            if (QUrl(mediaItem.url) == m_mediaObject->currentSource().url()) {
+            if (mediaItem.url == KUrl(m_mediaObject->currentSource().url()).url()) {
                 itemIsStale = false;
             }
         }
