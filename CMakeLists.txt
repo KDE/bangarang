@@ -19,7 +19,7 @@ INCLUDE_DIRECTORIES(
     /usr/include/taglib 
 )
 
-SET(BangarangSources mainwindow.cpp main.cpp sensiblewidgets.cpp mediaitemdelegate.cpp nowplayingdelegate.cpp mediaview.cpp infomanager.cpp platform/mediaitemmodel.cpp platform/musiclistengine.cpp platform/videolistengine.cpp platform/filelistengine.cpp platform/cdlistengine.cpp platform/dvdlistengine.cpp platform/playlist.cpp platform/utilities.cpp platform/listengine.cpp platform/listenginefactory.cpp platform/mediaindexer.cpp platform/mediavocabulary.cpp platform/blur.cpp)
+SET(BangarangSources mainwindow.cpp main.cpp sensiblewidgets.cpp mediaitemdelegate.cpp nowplayingdelegate.cpp mediaview.cpp infomanager.cpp savedlistsmanager.cpp platform/mediaitemmodel.cpp platform/musiclistengine.cpp platform/videolistengine.cpp platform/filelistengine.cpp platform/cdlistengine.cpp platform/dvdlistengine.cpp platform/playlist.cpp platform/utilities.cpp platform/listengine.cpp platform/savedlistsengine.cpp platform/listenginefactory.cpp platform/mediaindexer.cpp platform/mediavocabulary.cpp platform/blur.cpp)
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
 

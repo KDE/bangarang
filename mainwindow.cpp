@@ -22,6 +22,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
 #include "infomanager.h"
+#include "savedlistsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 
@@ -60,7 +61,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->playlistHolder->setVisible(false);
     ui->playlistNameEdit->setVisible(false);
     ui->playSelected->setVisible(false);
-    ui->addAudioListBox->setVisible(false);
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
@@ -139,6 +139,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Setup Info View
     m_infoManager = new InfoManager(this);
+
+    //Setup Saved Lists Manager
+    m_savedListsManager = new SavedListsManager(this);
+    m_savedListsManager->showSavedLists();
     
     //Set up defaults
     ui->audioLists->setCurrentRow(0);
@@ -146,6 +150,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaViewHolder->setCurrentIndex(0);
     ui->audioLists->setCurrentRow(0);
     ui->videoLists->setCurrentRow(0);
+    ui->audioListsStack->setCurrentIndex(0);
+    ui->videoListsStack->setCurrentIndex(0);
     updateSeekTime(0);
     showApplicationBanner();
     m_showQueue = false;
@@ -497,7 +503,29 @@ void MainWindow::on_showInfo_clicked()
 void MainWindow::on_saveInfo_clicked()
 {
     m_infoManager->saveInfoView();    
-}    
+} 
+
+void MainWindow::on_addAudioList_clicked()
+{
+    ui->audioListsStack->setCurrentIndex(1);
+}
+
+void MainWindow::on_addVideoList_clicked()
+{
+    ui->videoListsStack->setCurrentIndex(1);
+}
+
+void MainWindow::on_aCancelSaveList_clicked()
+{
+    ui->aNewListName->clear();
+    ui->audioListsStack->setCurrentIndex(0);
+}
+
+void MainWindow::on_vCancelSaveList_clicked()
+{
+    ui->vNewListName->clear();
+    ui->videoListsStack->setCurrentIndex(0);
+}
 
 
 /*----------------------------------------
