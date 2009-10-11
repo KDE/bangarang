@@ -62,7 +62,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>170</width>
             <height>0</height>
            </size>
           </property>
@@ -308,239 +308,328 @@
                   <property name="sizeConstraint">
                    <enum>QLayout::SetDefaultConstraint</enum>
                   </property>
-                  <property name="margin">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>4</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QListWidget" name="audioLists">
-                    <property name="selectionBehavior">
-                     <enum>QAbstractItemView::SelectRows</enum>
-                    </property>
-                    <property name="spacing">
+                   <widget class="QStackedWidget" name="audioListsStack">
+                    <property name="currentIndex">
                      <number>0</number>
                     </property>
-                    <item>
-                     <property name="text">
-                      <string>Files and Folders</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Artists</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Albums</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Songs</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Genre</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Clips</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Audio CD</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="addAudioListBox">
-                    <layout class="QVBoxLayout" name="verticalLayout_21">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="margin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="KLineEdit" name="klineedit">
-                       <property name="clickMessage">
-                        <string>New Audio List Name</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QFrame" name="frame_21">
-                       <property name="frameShape">
-                        <enum>QFrame::NoFrame</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_16">
+                    <widget class="QWidget" name="page_2">
+                     <layout class="QVBoxLayout" name="verticalLayout_22">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="margin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QListWidget" name="audioLists">
+                        <property name="selectionBehavior">
+                         <enum>QAbstractItemView::SelectRows</enum>
+                        </property>
                         <property name="spacing">
                          <number>0</number>
                         </property>
-                        <property name="margin">
-                         <number>0</number>
+                        <item>
+                         <property name="text">
+                          <string>Files and Folders</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Artists</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Albums</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Songs</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Genre</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Clips</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Audio CD</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="frame_9">
+                        <property name="frameShape">
+                         <enum>QFrame::NoFrame</enum>
                         </property>
-                        <item>
-                         <widget class="KComboBox" name="kcombobox">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <item>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_11">
+                         <property name="spacing">
+                          <number>0</number>
+                         </property>
+                         <property name="margin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QToolButton" name="addAudioList">
                            <property name="text">
-                            <string>Empty</string>
+                            <string/>
                            </property>
-                          </item>
-                          <item>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="removeAudioList">
                            <property name="text">
-                            <string>Use Selected</string>
+                            <string/>
                            </property>
-                          </item>
-                          <item>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_5">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="configureAudioList">
                            <property name="text">
-                            <string>Use All</string>
+                            <string/>
                            </property>
-                          </item>
-                          <item>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="page_3">
+                     <layout class="QVBoxLayout" name="verticalLayout_25">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="margin">
+                       <number>4</number>
+                      </property>
+                      <item>
+                       <spacer name="verticalSpacer_2">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QGroupBox" name="groupBox">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>150</height>
+                         </size>
+                        </property>
+                        <property name="title">
+                         <string>Source</string>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_26">
+                         <property name="margin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QRadioButton" name="aListSourceSelection">
                            <property name="text">
-                            <string>Use Playlist</string>
+                            <string>Current Selection</string>
                            </property>
-                          </item>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="pushButton">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>28</width>
-                            <height>16777215</height>
-                           </size>
-                          </property>
-                          <property name="text">
-                           <string/>
-                          </property>
-                          <property name="icon">
-                           <iconset>
-                            <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame_9">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_11">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="margin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QToolButton" name="addAudioList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="removeAudioList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_5">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="configureAudioList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                           <attribute name="buttonGroup">
+                            <string>buttonGroup</string>
+                           </attribute>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="aListSourceView">
+                           <property name="text">
+                            <string>Current View</string>
+                           </property>
+                           <attribute name="buttonGroup">
+                            <string>buttonGroup</string>
+                           </attribute>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="aListSourcePlaylist">
+                           <property name="text">
+                            <string>Current Playlist</string>
+                           </property>
+                           <attribute name="buttonGroup">
+                            <string>buttonGroup</string>
+                           </attribute>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="KLineEdit" name="aNewListName">
+                        <property name="clickMessage">
+                         <string>New List Name</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QWidget" name="widget" native="true">
+                        <layout class="QHBoxLayout" name="horizontalLayout_20">
+                         <property name="spacing">
+                          <number>4</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QPushButton" name="saveAudioList">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>32</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Save</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="aCancelSaveList">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>32</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Cancel</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
                   </item>
                  </layout>
@@ -565,127 +654,285 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QListWidget" name="videoLists">
-                    <property name="selectionBehavior">
-                     <enum>QAbstractItemView::SelectRows</enum>
+                   <widget class="QStackedWidget" name="videoListsStack">
+                    <property name="currentIndex">
+                     <number>0</number>
                     </property>
-                    <property name="currentRow">
-                     <number>-1</number>
-                    </property>
-                    <item>
-                     <property name="text">
-                      <string>Files and Folders</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Movies</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Series</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Clips</string>
-                     </property>
-                     <property name="icon">
-                      <iconset>
-                       <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</iconset>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>DVD Video</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame_10">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_12">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="margin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QToolButton" name="addVideoList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="removeVideoList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_6">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="configureVideoList">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset>
-                         <normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
-                       </property>
-                       <property name="autoRaise">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <widget class="QWidget" name="page_4">
+                     <layout class="QVBoxLayout" name="verticalLayout_23">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="margin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QListWidget" name="videoLists">
+                        <property name="selectionBehavior">
+                         <enum>QAbstractItemView::SelectRows</enum>
+                        </property>
+                        <property name="currentRow">
+                         <number>-1</number>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>Files and Folders</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Movies</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Series</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Clips</string>
+                         </property>
+                         <property name="icon">
+                          <iconset>
+                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</iconset>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>DVD Video</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QFrame" name="frame_10">
+                        <property name="frameShape">
+                         <enum>QFrame::NoFrame</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Raised</enum>
+                        </property>
+                        <layout class="QHBoxLayout" name="horizontalLayout_12">
+                         <property name="spacing">
+                          <number>0</number>
+                         </property>
+                         <property name="margin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QToolButton" name="addVideoList">
+                           <property name="text">
+                            <string/>
+                           </property>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="removeVideoList">
+                           <property name="text">
+                            <string/>
+                           </property>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <spacer name="horizontalSpacer_6">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>40</width>
+                             <height>20</height>
+                            </size>
+                           </property>
+                          </spacer>
+                         </item>
+                         <item>
+                          <widget class="QToolButton" name="configureVideoList">
+                           <property name="text">
+                            <string/>
+                           </property>
+                           <property name="icon">
+                            <iconset>
+                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
+                           </property>
+                           <property name="autoRaise">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="page_5">
+                     <layout class="QVBoxLayout" name="verticalLayout_29">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <spacer name="verticalSpacer_3">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>48</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QGroupBox" name="groupBox_3">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>150</height>
+                         </size>
+                        </property>
+                        <property name="title">
+                         <string>Source</string>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_28">
+                         <property name="margin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QRadioButton" name="vListSourceSelection">
+                           <property name="text">
+                            <string>Current Selection</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="vListSourceView">
+                           <property name="text">
+                            <string>Current View</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="vListSourcePlaylist">
+                           <property name="text">
+                            <string>Current Playlist</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer_4">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>48</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="KLineEdit" name="vNewListName">
+                        <property name="clickMessage">
+                         <string>New List Name</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QWidget" name="widget_2" native="true">
+                        <layout class="QHBoxLayout" name="horizontalLayout_22">
+                         <property name="spacing">
+                          <number>4</number>
+                         </property>
+                         <property name="leftMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="rightMargin">
+                          <number>0</number>
+                         </property>
+                         <property name="bottomMargin">
+                          <number>0</number>
+                         </property>
+                         <item>
+                          <widget class="QPushButton" name="saveVideoList">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>32</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Save</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QPushButton" name="vCancelSaveList">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="minimumSize">
+                            <size>
+                             <width>0</width>
+                             <height>32</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Cancel</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
                   </item>
                  </layout>
@@ -778,7 +1025,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -929,7 +1176,7 @@
                           </property>
                           <property name="icon">
                            <iconset>
-                            <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</iconset>
+                            <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</iconset>
                           </property>
                           <property name="toolButtonStyle">
                            <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -946,7 +1193,7 @@
                           </property>
                           <property name="icon">
                            <iconset>
-                            <normaloff>../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</normaloff>../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</iconset>
+                            <normaloff>../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</normaloff>../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</iconset>
                           </property>
                           <property name="toolButtonStyle">
                            <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -1201,7 +1448,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</normaloff>../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</iconset>
+                  <normaloff>../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</normaloff>../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1230,7 +1477,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1256,7 +1503,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1747,7 +1994,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -4043,7 +4290,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</iconset>
+                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4085,7 +4332,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</iconset>
+                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4115,7 +4362,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</iconset>
+                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4144,7 +4391,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</normaloff>../../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</iconset>
+                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4262,7 +4509,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4306,7 +4553,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4521,7 +4768,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4582,7 +4829,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4611,7 +4858,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4631,7 +4878,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</iconset>
+                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4663,11 +4910,6 @@ color: rgb(255, 255, 255);</string>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>SToolButton</class>
@@ -4705,8 +4947,6 @@ color: rgb(255, 255, 255);</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>audioLists</tabstop>
-  <tabstop>videoLists</tabstop>
   <tabstop>Filter</tabstop>
   <tabstop>mediaView</tabstop>
   <tabstop>infoMediaItems</tabstop>
@@ -4729,9 +4969,6 @@ color: rgb(255, 255, 255);</string>
   <tabstop>fullScreen</tabstop>
   <tabstop>volumeSlider</tabstop>
   <tabstop>seekSlider</tabstop>
-  <tabstop>klineedit</tabstop>
-  <tabstop>kcombobox</tabstop>
-  <tabstop>pushButton</tabstop>
   <tabstop>sortList</tabstop>
   <tabstop>showInfo</tabstop>
   <tabstop>showPlaylist</tabstop>
@@ -4746,4 +4983,7 @@ color: rgb(255, 255, 255);</string>
  </tabstops>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

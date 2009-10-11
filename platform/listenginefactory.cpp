@@ -23,11 +23,12 @@
 #include "videolistengine.h"
 #include "cdlistengine.h"
 #include "dvdlistengine.h"
+#include "savedlistsengine.h"
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -40,6 +41,15 @@ ListEngineFactory::~ListEngineFactory()
     }
     for (int j = 0; j < m_videoListEngines.count(); ++j) {
         delete m_videoListEngines.at(j);
+    }
+    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+        delete m_cdListEngines.at(j);
+    }
+    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+        delete m_dvdListEngines.at(j);
+    }
+    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+        delete m_savedListsEngines.at(j);
     }
     
 }
@@ -54,6 +64,7 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
             if (!m_musicListEngines.at(i)->isRunning()) {
                 foundListEngine = true;
                 musicListEngine = m_musicListEngines.at(i);
+                break;
             }
         }
         if (!foundListEngine) {
@@ -70,6 +81,7 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
             if (!m_fileListEngines.at(i)->isRunning()) {
                 foundListEngine = true;
                 fileListEngine = m_fileListEngines.at(i);
+                break;
             }
         }
         if (!foundListEngine) {
@@ -129,7 +141,25 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         dvdListEngine->setModel(m_parent);
         return dvdListEngine;        
+    } else if (engine.toLower() == "savedlists://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        SavedListsEngine * savedListsEngine;
+        for (int i = 0; i < m_savedListsEngines.count(); ++i) {
+            if (!m_savedListsEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                savedListsEngine = m_savedListsEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            savedListsEngine = new SavedListsEngine(this);
+            m_savedListsEngines << savedListsEngine;
+        }
+        savedListsEngine->setModel(m_parent);
+        return savedListsEngine;        
     }
+    return new ListEngine(this);
 }
 
 QString ListEngineFactory::generateRequestSignature()

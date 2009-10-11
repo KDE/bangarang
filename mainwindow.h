@@ -44,6 +44,7 @@ class Playlist;
 class MediaItemDelegate;
 class NowPlayingDelegate;
 class InfoManager;
+class SavedListsManager;
 
 namespace Ui
 {
@@ -72,6 +73,7 @@ public:
     Ui::MainWindowClass *ui;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
+    void setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties);
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -89,7 +91,6 @@ private:
     bool showRemainingTime;
     void setupModel();
     void setPropertiesForLists();
-    void setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties);
     MediaListProperties listItemProperties(QListWidgetItem * item);
     QList<MediaItem> m_mediaList;
     QList<int> m_mediaListScrollHistory;
@@ -103,6 +104,7 @@ private:
     bool m_shuffle;
     QDateTime m_lastMouseMoveTime;
     InfoManager * m_infoManager;
+    SavedListsManager * m_savedListsManager;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -147,6 +149,10 @@ private slots:
     void on_Filter_returnPressed();
     void on_showInfo_clicked();
     void on_saveInfo_clicked();
+    void on_addAudioList_clicked();
+    void on_addVideoList_clicked();
+    void on_aCancelSaveList_clicked();
+    void on_vCancelSaveList_clicked();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
