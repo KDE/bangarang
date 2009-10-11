@@ -605,7 +605,8 @@ void Playlist::updateNowPlaying()
                 itemIsStale = false;
             }
         } else {
-            if (mediaItem.url == KUrl(m_mediaObject->currentSource().url()).url()) {
+            QUrl mediaItemUrl = QUrl::fromPercentEncoding(mediaItem.url.toUtf8());
+            if (mediaItemUrl == m_mediaObject->currentSource().url()) {
                 itemIsStale = false;
             }
         }
@@ -643,13 +644,15 @@ void Playlist::updateNowPlaying()
         //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
     } else {
         //Update last played date and play count
-        MediaVocabulary mediaVocabulary = MediaVocabulary();
-        Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
-        if (res.exists()) {
-            res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
-            int playCount = res.property(mediaVocabulary.playCount()).toInt();
-            playCount = playCount + 1;
-            res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
+        if (m_nowPlaying->rowCount() > 0) {
+            MediaVocabulary mediaVocabulary = MediaVocabulary();
+            Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
+            if (res.exists()) {
+                res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
+                int playCount = res.property(mediaVocabulary.playCount()).toInt();
+                playCount = playCount + 1;
+                res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
+            }
         }
     }
 }
