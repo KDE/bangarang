@@ -1,0 +1,9 @@
+The icons in this directory are used by ../mainwindow.ui
+
+The sole purpose is to allow shared use of Qt4 Designer to more correctly visualize mainwindow.ui during design.
+
+Just add an icon here and point to it in Qt4 Designer.
+
+NOTE: This is for design purposes only.  Icons should be replaced with a proper KIcon in code.
+
+Use of Qt4 Designer for editing ui files is strongly recommended.  We can work on making ui files more efficient after we get the interaction models nailed down.

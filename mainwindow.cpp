@@ -873,6 +873,9 @@ void MainWindow::setupIcons()
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
     ui->fullScreen->setIcon(KIcon("view-fullscreen"));
     ui->volumeIcon->setIcon(KIcon("preferences-desktop-text-to-speech"));
+    ui->mediaPrevious->setIcon(KIcon("media-skip-backward"));
+    ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
+    ui->mediaNext->setIcon(KIcon("media-skip-forward"));
     
     //Now Playing View top bar
     ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
