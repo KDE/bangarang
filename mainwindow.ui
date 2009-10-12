@@ -42,7 +42,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -347,7 +347,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
+                           <normaloff>convenience/document-open-folder.png</normaloff>convenience/document-open-folder.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -356,7 +356,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/system-users.png</iconset>
+                           <normaloff>convenience/system-users.png</normaloff>convenience/system-users.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -365,7 +365,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/media-optical.png</iconset>
+                           <normaloff>convenience/media-optical.png</normaloff>convenience/media-optical.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -381,18 +381,10 @@
                          <property name="text">
                           <string>Genre</string>
                          </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/flag-blue.png</iconset>
-                         </property>
                         </item>
                         <item>
                          <property name="text">
                           <string>Clips</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-x-wav.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -680,7 +672,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-open-folder.png</iconset>
+                           <normaloff>convenience/document-open-folder.png</normaloff>convenience/document-open-folder.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -689,7 +681,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/tool-animator.png</iconset>
+                           <normaloff>convenience/tool-animator16.png</normaloff>convenience/tool-animator16.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -698,7 +690,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/devices/video-television.png</iconset>
+                           <normaloff>convenience/video-television.png</normaloff>convenience/video-television.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -707,7 +699,7 @@
                          </property>
                          <property name="icon">
                           <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/video-x-generic.png</iconset>
+                           <normaloff>convenience/video-x-generic.png</normaloff>convenience/video-x-generic.png</iconset>
                          </property>
                         </item>
                         <item>
@@ -1025,7 +1017,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/48x48/actions/tool-animator.png</iconset>
+                  <normaloff>convenience/tool-animator.png</normaloff>convenience/tool-animator.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -1176,7 +1168,7 @@
                           </property>
                           <property name="icon">
                            <iconset>
-                            <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-sort-ascending.png</iconset>
+                            <normaloff>convenience/view-sort-ascending.png</normaloff>convenience/view-sort-ascending.png</iconset>
                           </property>
                           <property name="toolButtonStyle">
                            <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -1193,7 +1185,7 @@
                           </property>
                           <property name="icon">
                            <iconset>
-                            <normaloff>../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</normaloff>../../../../../../../../../usr/share/icons/oxygen/22x22/actions/documentinfo.png</iconset>
+                            <normaloff>convenience/documentinfo.png</normaloff>convenience/documentinfo.png</iconset>
                           </property>
                           <property name="toolButtonStyle">
                            <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -1448,7 +1440,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</normaloff>../../../../../../../../../usr/share/icons/oxygen/16x16/actions/document-save.png</iconset>
+                  <normaloff>convenience/document-save.png</normaloff>convenience/document-save.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1477,7 +1469,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
+                  <normaloff>convenience/media-playback-start16.png</normaloff>convenience/media-playback-start16.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1503,7 +1495,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/media-playback-start.png</iconset>
+                  <normaloff>convenience/media-playback-start16.png</normaloff>convenience/media-playback-start16.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1994,13 +1986,23 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/mail-mark-notjunk.png</iconset>
+                  <normaloff>convenience/mail-mark-notjunk.png</normaloff>convenience/mail-mark-notjunk.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
                 </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="toolButton">
+                <property name="text">
+                 <string/>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -4509,7 +4511,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/view-media-playlist.png</iconset>
+                  <normaloff>convenience/view-media-playlist.png</normaloff>convenience/view-media-playlist.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4553,7 +4555,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/view-fullscreen.png</iconset>
+                  <normaloff>convenience/view-fullscreen.png</normaloff>convenience/view-fullscreen.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4768,7 +4770,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/apps/preferences-desktop-text-to-speech.png</iconset>
+                  <normaloff>convenience/preferences-desktop-text-to-speech.png</normaloff>convenience/preferences-desktop-text-to-speech.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4829,7 +4831,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-backward.png</iconset>
+                  <normaloff>convenience/media-skip-backward.png</normaloff>convenience/media-skip-backward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4858,7 +4860,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/32x32/actions/media-playback-start.png</iconset>
+                  <normaloff>convenience/media-playback-start.png</normaloff>convenience/media-playback-start.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4878,7 +4880,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</normaloff>../../../../../../../../../../../../../usr/share/icons/oxygen/22x22/actions/media-skip-forward.png</iconset>
+                  <normaloff>convenience/media-skip-forward.png</normaloff>convenience/media-skip-forward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
