@@ -372,10 +372,6 @@
                          <property name="text">
                           <string>Songs</string>
                          </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/mimetypes/audio-mpeg.png</iconset>
-                         </property>
                         </item>
                         <item>
                          <property name="text">
@@ -416,7 +412,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
+                             <normaloff>convenience/list-add.png</normaloff>convenience/list-add.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -430,7 +426,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
+                             <normaloff>convenience/list-remove.png</normaloff>convenience/list-remove.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -457,7 +453,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
+                             <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -731,7 +727,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-add.png</iconset>
+                             <normaloff>convenience/list-add.png</normaloff>convenience/list-add.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -745,7 +741,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/list-remove.png</iconset>
+                             <normaloff>convenience/list-remove.png</normaloff>convenience/list-remove.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -772,7 +768,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</normaloff>../../../../../../../../../../../../../../usr/share/icons/oxygen/16x16/actions/configure.png</iconset>
+                             <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -2000,9 +1996,13 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="toolButton">
+               <widget class="QToolButton" name="videoSettings">
                 <property name="text">
                  <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -4292,7 +4292,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-preview.png</iconset>
+                               <normaloff>hi22-actions-bangarang-preview.png</normaloff>hi22-actions-bangarang-preview.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4334,7 +4334,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-clearplaylist.png</iconset>
+                               <normaloff>hi22-actions-bangarang-clearplaylist.png</normaloff>hi22-actions-bangarang-clearplaylist.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4364,7 +4364,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-repeat.png</iconset>
+                               <normaloff>hi22-actions-bangarang-repeat.png</normaloff>hi22-actions-bangarang-repeat.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
@@ -4393,7 +4393,7 @@ color: rgb(255, 255, 255);</string>
                              </property>
                              <property name="icon">
                               <iconset>
-                               <normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</normaloff>../../../../../../../.designer/backup/hi22-actions-bangarang-shuffle.png</iconset>
+                               <normaloff>hi22-actions-bangarang-shuffle.png</normaloff>hi22-actions-bangarang-shuffle.png</iconset>
                              </property>
                              <property name="iconSize">
                               <size>
