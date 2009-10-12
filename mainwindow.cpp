@@ -148,6 +148,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->audioLists->setCurrentRow(0);
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
+    ui->mediaLists->setCurrentIndex(0);
     ui->audioLists->setCurrentRow(0);
     ui->videoLists->setCurrentRow(0);
     ui->audioListsStack->setCurrentIndex(0);
