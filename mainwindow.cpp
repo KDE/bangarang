@@ -58,12 +58,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Hide certain widgets
     ui->previous->setVisible(false);
-    ui->playlistHolder->setVisible(false);
+    ui->contextStack->setVisible(false);
     ui->playlistNameEdit->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
+    ui->showVideoSettings->setVisible(false);
     
     
     //Set up media object
@@ -227,7 +228,7 @@ void MainWindow::on_collectionButton_clicked()
 
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
-    ui->playlistHolder->setVisible(checked);
+    ui->contextStack->setVisible(checked);
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -919,7 +920,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if ((event->type() == QEvent::Enter)) {
         //Hide the widgets in the Now Playing view
-        if ((ui->stackedWidget->currentIndex() == 1) && (isFullScreen()) && (!ui->playlistHolder->isVisible())) {
+        if ((ui->stackedWidget->currentIndex() == 1) && (isFullScreen()) && (!ui->contextStack->isVisible())) {
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
         }
