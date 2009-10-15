@@ -30,6 +30,10 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {
     m_parent = parent;
     ui = m_parent->ui;
+    
+    ui->aListSourceSelection->setEnabled(false);
+    ui->vListSourceSelection->setEnabled(false);
+    
     connect(ui->addAudioList, SIGNAL(clicked()), this, SLOT(showAudioListSave()));
     connect(ui->addVideoList, SIGNAL(clicked()), this, SLOT(showVideoListSave()));
     connect(ui->aCancelSaveList, SIGNAL(clicked()), this, SLOT(hideAudioListSave()));
@@ -38,6 +42,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->addVideoList, SIGNAL(clicked()), this, SLOT(saveVideoList()));
     connect(ui->aNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(ui->vNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    
+    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(selectionChanged(const QItemSelection, const QItemSelection)));
     
 }
 
@@ -124,6 +130,25 @@ void SavedListsManager::enableValidSave(QString newText)
     } 
     Q_UNUSED(newText); //not used since method may be called directly
 }
+
+void SavedListsManager::selectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
+{
+    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
+        QString listItemType = m_parent->m_mediaItemModel->mediaItemAt(0).type;
+        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
+            ui->aListSourceSelection->setEnabled(true);
+            ui->vListSourceSelection->setEnabled(true);
+        }
+    } else {
+        ui->aListSourceSelection->setChecked(false);
+        ui->vListSourceSelection->setChecked(false);
+        ui->aListSourceSelection->setEnabled(false);
+        ui->vListSourceSelection->setEnabled(false);
+    }
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+}
+
 
 void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, QString type)
 {

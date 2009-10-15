@@ -20,6 +20,7 @@
 #define SAVEDLISTSMANAGER_H
 
 #include <QObject>
+#include <QItemSelection>
 
 namespace Ui
 {
@@ -54,6 +55,7 @@ class SavedListsManager : public QObject
         
     private slots:
         void enableValidSave(QString newText = QString());
+        void selectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
         
 
 };
