@@ -27,6 +27,7 @@
 #include <QList>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QTimer>
 
 class SToolButton : public QToolButton
 {
@@ -36,20 +37,31 @@ public:
     ~SToolButton();
     void setHoverDelay(int i);
     int hoverDelay();
+    void setHoldDelay(int i);
+    int holdDelay();
+    
 private:
     bool m_hovered;
+    bool m_pressed;
     int m_hoverDelay;
+    int m_holdDelay;
+    QTimer *m_timer;
 
 Q_SIGNALS:
     void entered();
     void exited();
+    void held();
 
 protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
-
+    
+    
 protected Q_SLOTS:
     void hoverTimeout();
+    void holdTimeout();
+    void pressedEvent();
+    void releasedEvent();
 };
 
 class SFrame : public QFrame

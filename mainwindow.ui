@@ -294,8 +294,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>139</width>
+                   <height>224</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -627,8 +627,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>139</width>
+                   <height>220</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -3794,7 +3794,7 @@ color: rgb(255, 255, 255);</string>
                  <property name="currentIndex">
                   <number>0</number>
                  </property>
-                 <widget class="QWidget" name="playlistHolderPage1" native="true">
+                 <widget class="QWidget" name="playlistHolderPage1">
                   <layout class="QVBoxLayout" name="verticalLayout_13">
                    <property name="spacing">
                     <number>4</number>
@@ -5297,7 +5297,7 @@ color: rgb(255, 255, 255);</string>
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="mediaPlayPause">
+               <widget class="SToolButton" name="mediaPlayPause">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                   <horstretch>0</horstretch>
