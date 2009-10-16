@@ -154,11 +154,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoLists->setCurrentRow(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
+    ui->mediaPlayPause->setHoldDelay(1500);
     updateSeekTime(0);
     showApplicationBanner();
     m_showQueue = false;
     m_repeat = false;
     m_shuffle = false;
+    m_pausePressed = false;
+    m_stopPressed = false;
     
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -258,16 +261,42 @@ void MainWindow::on_seekTime_clicked()
     }
 }
 
-void MainWindow::on_mediaPlayPause_clicked()
+void MainWindow::on_mediaPlayPause_pressed()
 {
-    if ((m_media->state() == Phonon::PausedState) || (m_media->state() == Phonon::StoppedState)) {
-		m_media->play();
-    } else if ((m_media->state() == Phonon::PlayingState) || (m_media->state() == Phonon::BufferingState)) {
+    if ((m_media->state() == Phonon::PlayingState) || (m_media->state() == Phonon::BufferingState)) {
         m_media->pause();
+        m_pausePressed = true;
+        ui->mediaPlayPause->setToolTip("<b>Paused</b><br>Hold to stop");
+    }
+}
+
+void MainWindow::on_mediaPlayPause_held()
+{
+    if (m_pausePressed) {
+        m_pausePressed = false;
+        m_stopPressed = true;
+        ui->mediaPlayPause->setIcon(KIcon("media-playback-stop"));
+    }
+}
+
+void MainWindow::on_mediaPlayPause_released()
+{
+    if (m_stopPressed) {
+        m_stopPressed = false;
+        m_playlist->stop();
     } else {
-        if (m_currentPlaylist->rowCount() > 0) {
-            m_playlist->start();
+        if ((!m_pausePressed) && (m_media->state() == Phonon::PausedState)) {
+            m_media->play();
+        } else if (m_media->state() == Phonon::StoppedState) {
+            if (m_currentPlaylist->rowCount() > 0) {
+                m_playlist->start();
+            }
         }
+    }
+    m_pausePressed = false;
+    if ((m_media->state() == Phonon::PausedState) || (m_media->state() == Phonon::StoppedState)) {
+        ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
+        ui->mediaPlayPause->setToolTip("");
     }
 }
 
@@ -571,8 +600,11 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         } else {
             ui->viewerStack->setCurrentIndex(0);
         }
+        ui->mediaPlayPause->setToolTip("<b>Playing</b><br>Click to pause<br>Click and hold to stop");
     } else {
-        ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
+        if ((!m_pausePressed) && (!m_stopPressed)) {
+            ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
+        }
     }
     
     Q_UNUSED(oldstate);

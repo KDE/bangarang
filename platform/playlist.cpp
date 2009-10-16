@@ -277,6 +277,18 @@ void Playlist::start()
 
 void Playlist::stop()
 {
+    m_mediaObject->stop();
+    m_queue->clearMediaListData();
+    if (m_nowPlaying->rowCount() > 0) {
+        int oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
+        m_nowPlaying->removeMediaItemAt(0, true);
+        if ((oldItemRow >= 0) && (oldItemRow < m_currentPlaylist->rowCount())) {
+            //Cycle through true and false to ensure data change forces update
+            m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
+            m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
+        }
+    }
+    emit playlistFinished();
 }
 
 void Playlist::playMediaList(QList<MediaItem> mediaList)

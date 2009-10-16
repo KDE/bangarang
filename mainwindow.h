@@ -105,6 +105,8 @@ private:
     QDateTime m_lastMouseMoveTime;
     InfoManager * m_infoManager;
     SavedListsManager * m_savedListsManager;
+    bool m_pausePressed;
+    bool m_stopPressed;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -119,7 +121,9 @@ public slots:
 private slots:
     void on_nowPlaying_clicked();
     void on_collectionButton_clicked();
-    void on_mediaPlayPause_clicked();
+    void on_mediaPlayPause_pressed();
+    void on_mediaPlayPause_held();
+    void on_mediaPlayPause_released();
     void on_mediaNext_clicked();
     void on_mediaPrevious_clicked();
     void updateSeekTime(qint64 time);

@@ -17,14 +17,17 @@
 */
 
 #include "sensiblewidgets.h"
-#include <QTimer>
 
 SToolButton::SToolButton(QWidget * parent):QToolButton (parent) 
 {
     m_hoverDelay = 0;
+    m_timer = new QTimer(this);
+    connect(this, SIGNAL(pressed()), this, SLOT(pressedEvent()));
+    connect(this, SIGNAL(released()), this, SLOT(releasedEvent()));
 }
 SToolButton::~SToolButton() 
 {
+    delete m_timer;
 }
 void SToolButton::setHoverDelay(int i)
 {
@@ -55,6 +58,32 @@ void SToolButton::hoverTimeout()
     if (m_hovered) {
         emit this->entered();
     }
+}
+void SToolButton::setHoldDelay(int i)
+{
+    m_holdDelay = i;
+}
+int SToolButton::holdDelay()
+{
+    return m_holdDelay;
+}
+void SToolButton::pressedEvent()
+{
+    m_pressed = true;
+    if (m_holdDelay > 0) {
+        m_timer->singleShot(m_holdDelay, this, SLOT(holdTimeout()));
+    }
+}
+void SToolButton::holdTimeout()
+{
+    if (m_pressed) {
+        emit this->held();
+    }
+}
+void SToolButton::releasedEvent()
+{
+    m_pressed = false;
+    m_timer->stop();
 }
 
 SFrame::SFrame(QWidget * parent):QFrame (parent) 
