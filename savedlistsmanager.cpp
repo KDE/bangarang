@@ -54,12 +54,14 @@ SavedListsManager::~SavedListsManager()
 void SavedListsManager::showAudioListSave()
 {
     ui->audioListsStack->setCurrentIndex(1);
+    ui->aNewListName->setText("Untitled");
     enableValidSave();
 }
 
 void SavedListsManager::showVideoListSave()
 {
     ui->videoListsStack->setCurrentIndex(1);
+    ui->vNewListName->setText("Untitled");
     enableValidSave();
 }
 
