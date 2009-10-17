@@ -878,6 +878,8 @@ void MainWindow::setupIcons()
     ui->addAudioList->setIcon(KIcon("list-add"));
     ui->removeAudioList->setIcon(KIcon("list-remove"));
     ui->configureAudioList->setIcon(KIcon("configure"));
+    ui->saveAudioList->setIcon(KIcon("document-save"));
+    
     
     //Video List Icons
     ui->videoLists->item(0)->setIcon(KIcon("document-open-folder"));
@@ -888,6 +890,7 @@ void MainWindow::setupIcons()
     ui->addVideoList->setIcon(KIcon("list-add"));
     ui->removeVideoList->setIcon(KIcon("list-remove"));
     ui->configureVideoList->setIcon(KIcon("configure"));
+    ui->saveVideoList->setIcon(KIcon("document-save"));
     
     //Media View Icons
     ui->sortList->setIcon(KIcon("view-sort-ascending"));
