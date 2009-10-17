@@ -136,7 +136,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_nowPlaying, SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     ui->nowPlayingView->header()->setVisible(false);
     ui->nowPlayingView->header()->hideSection(1);
-    ui->nowPlayingView->header()->hideSection(2);
     
     //Setup Info View
     m_infoManager = new InfoManager(this);
@@ -621,21 +620,17 @@ void MainWindow::mediaListChanged()
     ui->mediaView->header()->setStretchLastSection(false);
     ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);
     ui->mediaView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    ui->mediaView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
     
     if (m_mediaItemModel->rowCount() != 0) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             ui->mediaView->header()->showSection(1);
-            ui->mediaView->header()->hideSection(2);
             ui->playAll->setVisible(true);
         } else if (listItemType == "Category") {
-            ui->mediaView->header()->hideSection(1);
-            ui->mediaView->header()->showSection(2);
+            ui->mediaView->header()->showSection(1);
             ui->playAll->setVisible(true);
         } else if ((listItemType == "Action") || (listItemType == "Message")) {
             ui->mediaView->header()->hideSection(1);
-            ui->mediaView->header()->hideSection(2);
             ui->playAll->setVisible(false);
         }
         ui->saveInfo->setVisible(false);
@@ -667,7 +662,6 @@ void MainWindow::playlistChanged()
     ui->playlistView->header()->setStretchLastSection(false);
     ui->playlistView->header()->setResizeMode(0, QHeaderView::Stretch);
     ui->playlistView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    ui->playlistView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
 }
 
 void MainWindow::nowPlayingChanged()
@@ -681,9 +675,7 @@ void MainWindow::nowPlayingChanged()
         ui->nowPlayingView->header()->setStretchLastSection(false);
         ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
         ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-        ui->nowPlayingView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
         ui->nowPlayingView->header()->hideSection(1);
-        ui->nowPlayingView->header()->hideSection(2);
         
         if (m_nowPlaying->mediaItemAt(0).type == "Video") {
             ui->viewerStack->setCurrentIndex(1);

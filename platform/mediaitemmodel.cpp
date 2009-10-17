@@ -386,15 +386,13 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
     rowData << titleItem;
     
-    //if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
-   QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
-   markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
-   markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
-   markPlaylistItem->setData("Add to playlist/Remove from playlist", Qt::ToolTipRole);
-   rowData << markPlaylistItem;
-   //}
-   
-   if (mediaItem.type == "Category") {
+    if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
+       QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
+       markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
+       markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
+       markPlaylistItem->setData("Add to playlist/Remove from playlist", Qt::ToolTipRole);
+       rowData << markPlaylistItem;
+    } else if (mediaItem.type == "Category") {
        KIcon categoryActionIcon;
        QString tooltip;
        categoryActionIcon = KIcon("system-run");
@@ -410,6 +408,6 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
        categoryItem->setData(mediaItem.type, MediaItem::TypeRole);   
        categoryItem->setData(tooltip, Qt::ToolTipRole);
        rowData << categoryItem;
-   }
-   return rowData;
+    }
+    return rowData;
 }

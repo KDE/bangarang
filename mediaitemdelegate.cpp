@@ -173,8 +173,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         }
         
     } else if (index.column() == 1) {
-        //Paint add to playlist Icon
         if (isMediaItem) {
+            //Paint add to playlist Icon
             int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
             QIcon icon;        
             if (playlistRow != -1) {
@@ -197,10 +197,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             int iconWidth = 16;
             int topOffset = (height - iconWidth) / 2;
             icon.paint(&p, left + padding , top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
-        }
-    } else if (index.column() ==2 ) {
-        //Paint Category/Action Icon
-        if (isCategory) {
+        } else if (isCategory) {
+            //Paint Category Icon
             QIcon catIcon = index.data(Qt::DecorationRole).value<QIcon>();
             int iconWidth = 16;
             int topOffset = (height - iconWidth) / 2;
@@ -220,8 +218,6 @@ QSize MediaItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 {
     int width;
     if (index.column() == 1)  {
-        width = 20;
-    } else if (index.column() == 2)  {
         width = 22;
     } else {
         width = 0;
@@ -242,8 +238,8 @@ int MediaItemDelegate::calcItemHeight(const QStyleOptionViewItem &option) const
 }
 
 int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
-    if (column == 2) {
-        return 16;
+    if (column == 1) {
+        return 22;
     } else {
         return viewWidth - columnWidth(1, viewWidth);
     }
@@ -298,8 +294,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                     m_parent->m_playlist->addMediaItem(model->mediaItemAt(index.row()));
                 }
             }
-        }
-        if (index.column() == 2) {
             if (index.data(MediaItem::TypeRole).toString() == "Category") {
                 m_parent->addListToHistory();
                 emit categoryActivated(index);
@@ -318,7 +312,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
     
     if (index.column() != 1 && (index.data(MediaItem::TypeRole).toString() != "Message")) {
         return QItemDelegate::editorEvent(event, model, option, index);
-    } 
+    }
 }
 
 void MediaItemDelegate::setView(QTreeView * view) 
