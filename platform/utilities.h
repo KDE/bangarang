@@ -20,6 +20,7 @@
 #define UTILITIES_H
 
 #include <KUrl>
+#include <KIcon>
 #include <QPixmap>
 
 class MediaItem;
@@ -46,5 +47,6 @@ namespace Utilities {
     void shadowBlur(QImage &image, int radius, const QColor &color);
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(QList<MediaItem> mediaList);
+    KIcon turnIconOff(KIcon icon, QSize size);
 }
 #endif //UTILITIES_H    
