@@ -52,10 +52,14 @@ class SavedListsManager : public QObject
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         int m_startRow;
+        QList<int> m_savedAudioListRows;
+        QList<int> m_savedVideoListRows;
         
     private slots:
         void enableValidSave(QString newText = QString());
         void selectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+        void audioListsChanged(int row);
+        void videoListsChanged(int row);
         
 
 };

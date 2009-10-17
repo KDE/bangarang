@@ -44,6 +44,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->vNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(selectionChanged(const QItemSelection, const QItemSelection)));
+    connect(ui->audioLists, SIGNAL(currentRowChanged(int)), this, SLOT(audioListsChanged(int)));
+    connect(ui->videoLists, SIGNAL(currentRowChanged(int)), this, SLOT(videoListsChanged(int)));
     
 }
 
@@ -133,6 +135,24 @@ void SavedListsManager::enableValidSave(QString newText)
     Q_UNUSED(newText); //not used since method may be called directly
 }
 
+void SavedListsManager::audioListsChanged(int row)
+{
+    if (m_savedAudioListRows.indexOf(row) != -1) {
+        ui->removeAudioList->setEnabled(true);
+    } else {
+        ui->removeAudioList->setEnabled(false);
+    }
+}
+
+void SavedListsManager::videoListsChanged(int row)
+{
+    if (m_savedVideoListRows.indexOf(row) != -1) {
+        ui->removeVideoList->setEnabled(true);
+    } else {
+        ui->removeVideoList->setEnabled(false);
+    }
+}
+
 void SavedListsManager::selectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
     if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
@@ -187,12 +207,16 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
         listItemProperties.lri = QString("savedlists://%1").arg(QString("%1.m3u").arg(filename));
         if (type == "Audio") {
             int row = ui->audioLists->count();
-            ui->audioLists->addItem(name);
+            QListWidgetItem * newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
+            ui->audioLists->addItem(newListItem);
             m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
+            m_savedAudioListRows << row;
         } else if (type == "Video") {
             int row = ui->videoLists->count();
-            ui->videoLists->addItem(name);
+            QListWidgetItem * newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
+            ui->videoLists->addItem(newListItem);
             m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
+            m_savedVideoListRows << row;
         }
     }
 }
@@ -215,12 +239,16 @@ void SavedListsManager::saveView(QString name, QString type)
         listItemProperties.lri = m_parent->m_mediaItemModel->mediaListProperties().lri;
         if (type == "Audio") {
             int row = ui->audioLists->count();
-            ui->audioLists->addItem(name);
+            QListWidgetItem * newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
+            ui->audioLists->addItem(newListItem);
             m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
+            m_savedAudioListRows << row;
         } else if (type == "Video") {
             int row = ui->videoLists->count();
-            ui->videoLists->addItem(name);
+            QListWidgetItem * newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
+            ui->videoLists->addItem(newListItem);
             m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
+            m_savedVideoListRows << row;
         }
     }
 }
@@ -243,14 +271,22 @@ void SavedListsManager::showSavedLists()
             MediaListProperties listItemProperties;
             listItemProperties.name = name;
             listItemProperties.lri = lri;
+            QListWidgetItem * newListItem;
+            if (lri.startsWith("savedlists://")) {
+                newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
+            } else {
+                newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
+            }   
             if (type == "Audio") {
                 int row = ui->audioLists->count();
-                ui->audioLists->addItem(name);
+                ui->audioLists->addItem(newListItem);
                 m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
+                m_savedAudioListRows << row;
             } else if (type == "Video") {
                 int row = ui->videoLists->count();
-                ui->videoLists->addItem(name);
+                ui->videoLists->addItem(newListItem);
                 m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
+                m_savedVideoListRows << row;
             }
         }
     }

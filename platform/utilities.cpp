@@ -23,6 +23,7 @@
 #include <KUrl>
 #include <KMimeType>
 #include <KIcon>
+#include <KIconEffect>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -380,4 +381,11 @@ QStringList Utilities::mediaListUrls(QList<MediaItem> mediaList)
         urls << mediaList.at(i).url;
     }
     return urls;
+}
+
+KIcon Utilities::turnIconOff(KIcon icon, QSize size)
+{
+    QImage image = KIcon(icon).pixmap(size).toImage();
+    KIconEffect::toGray(image, 0.8);
+    return KIcon(QPixmap::fromImage(image));
 }
