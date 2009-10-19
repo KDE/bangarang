@@ -334,60 +334,19 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QListWidget" name="audioLists">
+                       <widget class="QListView" name="audioLists">
                         <property name="selectionBehavior">
                          <enum>QAbstractItemView::SelectRows</enum>
                         </property>
                         <property name="spacing">
                          <number>0</number>
                         </property>
-                        <item>
-                         <property name="text">
-                          <string>Files and Folders</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/document-open-folder.png</normaloff>convenience/document-open-folder.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Artists</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/system-users.png</normaloff>convenience/system-users.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Albums</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/media-optical.png</normaloff>convenience/media-optical.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Songs</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Genre</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Clips</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Audio CD</string>
-                         </property>
-                        </item>
+                        <property name="gridSize">
+                         <size>
+                          <width>0</width>
+                          <height>18</height>
+                         </size>
+                        </property>
                        </widget>
                       </item>
                       <item>
@@ -686,54 +645,16 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QListWidget" name="videoLists">
+                       <widget class="QListView" name="videoLists">
                         <property name="selectionBehavior">
                          <enum>QAbstractItemView::SelectRows</enum>
                         </property>
-                        <property name="currentRow">
-                         <number>-1</number>
+                        <property name="gridSize">
+                         <size>
+                          <width>0</width>
+                          <height>18</height>
+                         </size>
                         </property>
-                        <item>
-                         <property name="text">
-                          <string>Files and Folders</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/document-open-folder.png</normaloff>convenience/document-open-folder.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Movies</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/tool-animator16.png</normaloff>convenience/tool-animator16.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Series</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/video-television.png</normaloff>convenience/video-television.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>Clips</string>
-                         </property>
-                         <property name="icon">
-                          <iconset>
-                           <normaloff>convenience/video-x-generic.png</normaloff>convenience/video-x-generic.png</iconset>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text">
-                          <string>DVD Video</string>
-                         </property>
-                        </item>
                        </widget>
                       </item>
                       <item>

@@ -24,11 +24,12 @@
 #include "cdlistengine.h"
 #include "dvdlistengine.h"
 #include "savedlistsengine.h"
+#include "medialistsengine.h"
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -51,7 +52,9 @@ ListEngineFactory::~ListEngineFactory()
     for (int j = 0; j < m_videoListEngines.count(); ++j) {
         delete m_savedListsEngines.at(j);
     }
-    
+    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+        delete m_mediaListsEngines.at(j);
+    }
 }
 
 ListEngine * ListEngineFactory::availableListEngine(QString engine)
@@ -158,6 +161,23 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         savedListsEngine->setModel(m_parent);
         return savedListsEngine;        
+    } else if (engine.toLower() == "medialists://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        MediaListsEngine * mediaListsEngine;
+        for (int i = 0; i < m_mediaListsEngines.count(); ++i) {
+            if (!m_mediaListsEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                mediaListsEngine = m_mediaListsEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            mediaListsEngine = new MediaListsEngine(this);
+            m_mediaListsEngines << mediaListsEngine;
+        }
+        mediaListsEngine->setModel(m_parent);
+        return mediaListsEngine;        
     }
     return new ListEngine(this);
 }

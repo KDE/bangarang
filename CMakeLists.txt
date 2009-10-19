@@ -34,6 +34,7 @@ SET(BangarangSources
     platform/filelistengine.cpp 
     platform/cdlistengine.cpp 
     platform/dvdlistengine.cpp 
+    platform/medialistsengine.cpp
     platform/playlist.cpp 
     platform/utilities.cpp 
     platform/listengine.cpp 

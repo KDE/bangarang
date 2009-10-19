@@ -44,6 +44,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_infoMediaItemsModel = new MediaItemModel(this);
     m_mediaIndexer = new MediaIndexer(this);
     connect(ui->saveInfo, SIGNAL(clicked()), this, SLOT(saveInfoView()));
+    connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(loadInfoView()));
     
 }
 

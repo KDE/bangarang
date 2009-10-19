@@ -377,6 +377,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.duration, MediaItem::DurationRole);
     titleItem->setData(mediaItem.playlistIndex, MediaItem::PlaylistIndexRole);
     titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
+    titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     if (!mediaItem.fields["description"].toString().isEmpty()) {
         QString tooltip = QString("<b>%1</b><br>%2")
                         .arg(mediaItem.title)

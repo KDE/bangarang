@@ -46,7 +46,6 @@ class SavedListsManager : public QObject
         void hideVideoListSave();
         void saveAudioList();
         void saveVideoList();
-        void showSavedLists();
         
     private:
         MainWindow *m_parent; 
@@ -54,12 +53,19 @@ class SavedListsManager : public QObject
         int m_startRow;
         QList<int> m_savedAudioListRows;
         QList<int> m_savedVideoListRows;
+        QList<QString> m_savedAudioLists;
+        QList<QString> m_savedVideoLists;
+        void updateSavedListsIndex();
         
     private slots:
         void enableValidSave(QString newText = QString());
         void selectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
-        void audioListsChanged(int row);
-        void videoListsChanged(int row);
+        void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+        void videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+        void mediaListChanged();
+        void removeAudioList();
+        void removeVideoList();
+        void loadSavedListsIndex();
         
 
 };
