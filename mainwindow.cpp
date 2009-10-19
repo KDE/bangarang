@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     
-    setPropertiesForLists();
+    //setPropertiesForLists();
     
     //Setup interface icons
     setupIcons();
@@ -93,6 +93,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
     connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+    
+    //Set up Audio lists view 
+    MediaListProperties audioListsProperties;
+    audioListsProperties.lri = "medialists://audio";
+    m_audioListsModel = new MediaItemModel(this);
+    m_audioListsModel->setMediaListProperties(audioListsProperties);
+    ui->audioLists->setModel(m_audioListsModel);
+    connect(ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_audioListsModel, SIGNAL(mediaListChanged()), this, SLOT(audioListsChanged()));
+    m_audioListsModel->load();
+    
+    //Set up Video lists view 
+    MediaListProperties videoListsProperties;
+    videoListsProperties.lri = "medialists://video";
+    m_videoListsModel = new MediaItemModel(this);
+    m_videoListsModel->setMediaListProperties(videoListsProperties);
+    ui->videoLists->setModel(m_videoListsModel);
+    connect(ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_videoListsModel, SIGNAL(mediaListChanged()), this, SLOT(videoListsChanged()));
+    m_videoListsModel->load();
     
     //Set up media list view
     MediaListProperties mediaListProperties;
@@ -142,15 +162,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //Setup Saved Lists Manager
     m_savedListsManager = new SavedListsManager(this);
-    m_savedListsManager->showSavedLists();
     
     //Set up defaults
-    ui->audioLists->setCurrentRow(0);
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
     ui->mediaLists->setCurrentIndex(0);
-    ui->audioLists->setCurrentRow(0);
-    ui->videoLists->setCurrentRow(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1500);
@@ -376,10 +392,6 @@ void MainWindow::on_playAll_clicked()
     m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
     
     m_playlist->playMediaList(mediaList);
-    /*m_media->setCurrentSource(Phonon::Cd);
-    m_mediaController = new Phonon::MediaController(m_media);
-    m_mediaController->setAutoplayTitles(true);
-    m_media->play();*/
 
     // Show Now Playing page
     ui->stackedWidget->setCurrentIndex(1);   
@@ -404,68 +416,39 @@ void MainWindow::on_playSelected_clicked()
 
 void MainWindow::on_mediaLists_currentChanged(int i)
 {
-    QListWidgetItem * current;
+    int selectedRow = -1;
+    MediaListProperties currentProperties;
     if (i == 0) {
-        current = ui->audioLists->currentItem();
+        if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
+            selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+            currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
+            currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
+        }
         ui->audioLists->setFocus();
         ui->Filter->setClickMessage("Search for audio");
-    //} else if (i == 1) {
     } else {
-        current = ui->videoLists->currentItem();
+        if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
+            selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+            currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
+            currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
+        }
         ui->videoLists->setFocus();
         ui->Filter->setClickMessage("Search for video");
     }
-    MediaListProperties currentProperties = listItemProperties(current);
-    if ((m_mediaItemModel->mediaListProperties().engine() != currentProperties.engine()) || (m_mediaItemModel->mediaListProperties().engineArg() != currentProperties.engineArg())) {
-        m_mediaItemModel->clearMediaListData();
-        m_mediaItemModel->setMediaListProperties(currentProperties);
-        m_mediaItemModel->load();
-        m_mediaListHistory.clear();
-        m_mediaListPropertiesHistory.clear();
-        ui->previous->setVisible(false);
-        ui->mediaViewHolder->setCurrentIndex(0);
-        ui->saveInfo->setVisible(false);
-        ui->showInfo->setVisible(false);
+    if (selectedRow != -1) {
+        if ((m_mediaItemModel->mediaListProperties().engine() != currentProperties.engine()) || (m_mediaItemModel->mediaListProperties().engineArg() != currentProperties.engineArg())) {
+            m_mediaItemModel->clearMediaListData();
+            m_mediaItemModel->setMediaListProperties(currentProperties);
+            m_mediaItemModel->load();
+            m_mediaListHistory.clear();
+            m_mediaListPropertiesHistory.clear();
+            ui->previous->setVisible(false);
+            ui->mediaViewHolder->setCurrentIndex(0);
+            ui->saveInfo->setVisible(false);
+            ui->showInfo->setVisible(false);
+        }
     }
 }
-
-void MainWindow::on_audioLists_itemSelectionChanged()
-{
-    if (ui->audioLists->selectedItems().count() != 0) {
-        QListWidgetItem * current = ui->audioLists->selectedItems().at(0);
-        MediaListProperties currentProperties = listItemProperties(current);
-        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(currentProperties);
-            m_mediaItemModel->load();
-            m_mediaListHistory.clear();
-            m_mediaListPropertiesHistory.clear();
-            ui->previous->setVisible(false);
-            ui->mediaViewHolder->setCurrentIndex(0);
-            ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);
-        }
-    }
-}    
-
-void MainWindow::on_videoLists_itemSelectionChanged()
-{
-    if (ui->videoLists->selectedItems().count() != 0) {
-        QListWidgetItem * current = ui->videoLists->selectedItems().at(0);
-        MediaListProperties currentProperties = listItemProperties(current);
-        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(currentProperties);
-            m_mediaItemModel->load();
-            m_mediaListHistory.clear();
-            m_mediaListPropertiesHistory.clear();
-            ui->previous->setVisible(false);
-            ui->mediaViewHolder->setCurrentIndex(0);
-            ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);
-        }
-    }
-}    
 
 void MainWindow::on_clearPlaylist_clicked()
 {
@@ -524,39 +507,6 @@ void MainWindow::on_showQueue_clicked()
         ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     }
 }
-
-void MainWindow::on_showInfo_clicked()
-{
-    m_infoManager->loadInfoView();    
-}    
-
-void MainWindow::on_saveInfo_clicked()
-{
-    m_infoManager->saveInfoView();    
-} 
-
-void MainWindow::on_addAudioList_clicked()
-{
-    ui->audioListsStack->setCurrentIndex(1);
-}
-
-void MainWindow::on_addVideoList_clicked()
-{
-    ui->videoListsStack->setCurrentIndex(1);
-}
-
-void MainWindow::on_aCancelSaveList_clicked()
-{
-    ui->aNewListName->clear();
-    ui->audioListsStack->setCurrentIndex(0);
-}
-
-void MainWindow::on_vCancelSaveList_clicked()
-{
-    ui->vNewListName->clear();
-    ui->videoListsStack->setCurrentIndex(0);
-}
-
 
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
@@ -654,6 +604,66 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
     ui->saveInfo->setVisible(false);
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
+}
+
+void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
+{
+    if ((ui->mediaLists->currentIndex() == 0) && (selected.indexes().count() > 0)) {
+        MediaListProperties currentProperties;
+        int selectedRow = selected.indexes().at(0).row();
+        currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
+        currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
+        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
+            m_mediaItemModel->clearMediaListData();
+            m_mediaItemModel->setMediaListProperties(currentProperties);
+            m_mediaItemModel->load();
+            m_mediaListHistory.clear();
+            m_mediaListPropertiesHistory.clear();
+            ui->previous->setVisible(false);
+            ui->mediaViewHolder->setCurrentIndex(0);
+            ui->saveInfo->setVisible(false);
+            ui->showInfo->setVisible(false);
+        }
+    }
+    Q_UNUSED(deselected);
+}    
+
+void MainWindow::audioListsChanged()
+{
+    QModelIndex index = m_audioListsModel->index(0, 0);
+    if (index.isValid()) {
+        ui->audioLists->selectionModel()->select( index, QItemSelectionModel::Select );
+    }
+}
+
+void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
+{
+    if ((ui->mediaLists->currentIndex() == 1) && (selected.indexes().count() > 0)) {
+        MediaListProperties currentProperties;
+        int selectedRow = selected.indexes().at(0).row();
+        currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
+        currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
+        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
+            m_mediaItemModel->clearMediaListData();
+            m_mediaItemModel->setMediaListProperties(currentProperties);
+            m_mediaItemModel->load();
+            m_mediaListHistory.clear();
+            m_mediaListPropertiesHistory.clear();
+            ui->previous->setVisible(false);
+            ui->mediaViewHolder->setCurrentIndex(0);
+            ui->saveInfo->setVisible(false);
+            ui->showInfo->setVisible(false);
+        }
+    }
+    Q_UNUSED(deselected);
+}    
+
+void MainWindow::videoListsChanged()
+{
+    QModelIndex index = m_videoListsModel->index(0, 0);
+    if (index.isValid()) {
+        ui->videoLists->selectionModel()->select( index, QItemSelectionModel::Select );
+    }
 }
 
 void MainWindow::playlistChanged()
@@ -784,66 +794,6 @@ void MainWindow::addListToHistory()
     ui->previous->setVisible(true);
 }
 
-void MainWindow::setPropertiesForLists()
-{
-    MediaListProperties listItemProperties;
-    //Audio
-    listItemProperties.name = "Files and Folders";
-    listItemProperties.lri = "files://audio";
-    setListItemProperties(ui->audioLists->item(0), listItemProperties);
-    listItemProperties.name = "Artists";
-    listItemProperties.lri = "music://artists";
-    setListItemProperties(ui->audioLists->item(1), listItemProperties);
-    listItemProperties.name = "Albums";
-    listItemProperties.lri = "music://albums";
-    setListItemProperties(ui->audioLists->item(2), listItemProperties);
-    listItemProperties.name = "Songs";
-    listItemProperties.lri = "music://songs";
-    setListItemProperties(ui->audioLists->item(3), listItemProperties);
-    listItemProperties.name = "Genres";
-    listItemProperties.lri = "music://genres";
-    setListItemProperties(ui->audioLists->item(4), listItemProperties);
-    listItemProperties.name = "Clips";
-    listItemProperties.lri = "audioclips://";
-    setListItemProperties(ui->audioLists->item(5), listItemProperties);
-    listItemProperties.name = "Audio CD";
-    listItemProperties.lri = "cdaudio://";
-    setListItemProperties(ui->audioLists->item(6), listItemProperties);
-    //Video
-    listItemProperties.name = "Files and Folders";
-    listItemProperties.lri = "files://video";
-    setListItemProperties(ui->videoLists->item(0), listItemProperties);    
-    listItemProperties.name = "Movies";
-    listItemProperties.lri = "video://movies";
-    setListItemProperties(ui->videoLists->item(1), listItemProperties);    
-    listItemProperties.name = "Series";
-    listItemProperties.lri = "video://series";
-    setListItemProperties(ui->videoLists->item(2), listItemProperties);    
-    listItemProperties.name = "Video Clips";
-    listItemProperties.lri = "video://clips";
-    setListItemProperties(ui->videoLists->item(3), listItemProperties);    
-    listItemProperties.name = "DVD Video";
-    listItemProperties.lri = "dvdvideo://";
-    setListItemProperties(ui->videoLists->item(4), listItemProperties);    
-}
-
-MediaListProperties MainWindow::listItemProperties(QListWidgetItem * item)
-{
-    MediaListProperties listItemProperties;
-    listItemProperties.name = item->data(ListChooser::NameRole).toString();
-    listItemProperties.lri = item->data(ListChooser::LriRole).toString();
-    listItemProperties.type = item->data(ListChooser::TypeRole).toString();
-    
-    return listItemProperties;
-}
-
-void MainWindow::setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties)
-{
-    item->setData(ListChooser::NameRole, listItemProperties.name);
-    item->setData(ListChooser::LriRole, listItemProperties.lri);
-    item->setData(ListChooser::TypeRole, listItemProperties.type);
-}
-
 KIcon MainWindow::addItemsIcon()
 {
     QPixmap pixmap(16,16);
@@ -868,13 +818,6 @@ void MainWindow::setupIcons()
     setWindowIcon(KIcon("bangarang"));
     
     //Audio List Icons
-    ui->audioLists->item(0)->setIcon(KIcon("document-open-folder"));
-    ui->audioLists->item(1)->setIcon(KIcon("system-users"));
-    ui->audioLists->item(2)->setIcon(KIcon("media-optical"));
-    ui->audioLists->item(3)->setIcon(KIcon("audio-mpeg"));
-    ui->audioLists->item(4)->setIcon(KIcon("flag-blue"));
-    ui->audioLists->item(5)->setIcon(KIcon("audio-x-wav"));
-    ui->audioLists->item(6)->setIcon(KIcon("media-optical-audio"));
     ui->addAudioList->setIcon(KIcon("list-add"));
     ui->removeAudioList->setIcon(KIcon("list-remove"));
     ui->configureAudioList->setIcon(KIcon("configure"));
@@ -882,11 +825,6 @@ void MainWindow::setupIcons()
     
     
     //Video List Icons
-    ui->videoLists->item(0)->setIcon(KIcon("document-open-folder"));
-    ui->videoLists->item(1)->setIcon(KIcon("tool-animator"));
-    ui->videoLists->item(2)->setIcon(KIcon("video-television"));
-    ui->videoLists->item(3)->setIcon(KIcon("video-x-generic"));
-    ui->videoLists->item(4)->setIcon(KIcon("media-optical-dvd"));
     ui->addVideoList->setIcon(KIcon("list-add"));
     ui->removeVideoList->setIcon(KIcon("list-remove"));
     ui->configureVideoList->setIcon(KIcon("configure"));
@@ -989,18 +927,3 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     default:{}	
   }
 }
-/*void MainWindow::saveInfo()
-{
-    if (m_infoItemsModel->rowCount() > 0) {
-        for (int i = 0; i < m_infoItemsModel->rowCount) {
-            MediaItem mediaItem = m_infoItemsModel->mediaItemAt(i);
-            
-            //Save rating
-            Utilities::saveRating(mediaItem, rating);
-            
-            //Save new tags
-            Utilities::saveTags(mediaItem, tags);
-
-            if (m_infoItemsModel->mediaItemAt(0).type = "Audio") {
-            
-}*/

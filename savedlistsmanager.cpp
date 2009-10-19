@@ -24,6 +24,7 @@
 #include "platform/playlist.h"
 
 #include <KStandardDirs>
+#include <KMessageBox>
 #include <QFile>
 
 SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
@@ -33,6 +34,7 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     
     ui->aListSourceSelection->setEnabled(false);
     ui->vListSourceSelection->setEnabled(false);
+    loadSavedListsIndex();
     
     connect(ui->addAudioList, SIGNAL(clicked()), this, SLOT(showAudioListSave()));
     connect(ui->addVideoList, SIGNAL(clicked()), this, SLOT(showVideoListSave()));
@@ -42,11 +44,16 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->addVideoList, SIGNAL(clicked()), this, SLOT(saveVideoList()));
     connect(ui->aNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(ui->vNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(ui->aNewListName, SIGNAL(returnPressed()), this, SLOT(saveAudioList()));
+    connect(ui->vNewListName, SIGNAL(returnPressed()), this, SLOT(saveVideoList()));
+    connect(ui->removeAudioList, SIGNAL(clicked()), this, SLOT(removeAudioList()));
+    connect(ui->removeVideoList, SIGNAL(clicked()), this, SLOT(removeVideoList()));
+    
     
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(selectionChanged(const QItemSelection, const QItemSelection)));
-    connect(ui->audioLists, SIGNAL(currentRowChanged(int)), this, SLOT(audioListsChanged(int)));
-    connect(ui->videoLists, SIGNAL(currentRowChanged(int)), this, SLOT(videoListsChanged(int)));
-    
+    connect(ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
 }
 
 SavedListsManager::~SavedListsManager()
@@ -57,6 +64,14 @@ void SavedListsManager::showAudioListSave()
 {
     ui->audioListsStack->setCurrentIndex(1);
     ui->aNewListName->setText("Untitled");
+    if (ui->aListSourceSelection->isEnabled()) {
+        ui->aListSourceSelection->setChecked(true);
+    } else if (ui->aListSourceView->isEnabled()) {
+        ui->aListSourceView->setChecked(true);
+    } else {
+        ui->aListSourcePlaylist->setChecked(true);
+    }
+    ui->aNewListName->setFocus();
     enableValidSave();
 }
 
@@ -64,6 +79,14 @@ void SavedListsManager::showVideoListSave()
 {
     ui->videoListsStack->setCurrentIndex(1);
     ui->vNewListName->setText("Untitled");
+    if (ui->vListSourceSelection->isEnabled()) {
+        ui->vListSourceSelection->setChecked(true);
+    } else if (ui->vListSourceView->isEnabled()) {
+        ui->vListSourceView->setChecked(true);
+    } else {
+        ui->vListSourcePlaylist->setChecked(true);
+    }
+    ui->aNewListName->setFocus();
     enableValidSave();
 }
 
@@ -96,6 +119,10 @@ void SavedListsManager::saveAudioList()
         QList<MediaItem> mediaList = m_parent->m_playlist->playlistModel()->mediaList();
         saveMediaList(mediaList, ui->aNewListName->text(), QString("Audio"));
     }
+    MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
+    m_parent->m_audioListsModel->clearMediaListData();
+    m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
+    m_parent->m_audioListsModel->load();
     hideAudioListSave();
 }
 
@@ -116,7 +143,75 @@ void SavedListsManager::saveVideoList()
         QList<MediaItem> mediaList = m_parent->m_playlist->playlistModel()->mediaList();
         saveMediaList(mediaList, ui->vNewListName->text(), QString("Video"));
     }
+    MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
+    m_parent->m_audioListsModel->clearMediaListData();
+    m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
+    m_parent->m_videoListsModel->load();
     hideVideoListSave();
+}
+
+void SavedListsManager::removeAudioList()
+{
+    if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
+        int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+        QString name = m_parent->m_audioListsModel->mediaItemAt(selectedRow).title;
+        
+        KGuiItem removeSavedList;
+        removeSavedList.setText(QString("Remove"));
+        removeSavedList.setIcon(KIcon("list-remove"));
+        QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
+        
+        if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
+            QString savedListEntry = QString("Audio:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedAudioLists.count(); i++) {
+                if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedAudioLists.removeAt(rowsToRemove.at(i));
+            }
+            updateSavedListsIndex();
+            MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
+            m_parent->m_audioListsModel->clearMediaListData();
+            m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
+            m_parent->m_audioListsModel->load();
+        }
+    }
+}
+
+void SavedListsManager::removeVideoList()
+{
+    if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
+        int selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+        QString name = m_parent->m_audioListsModel->mediaItemAt(selectedRow).title;
+        
+        KGuiItem removeSavedList;
+        removeSavedList.setText(QString("Remove"));
+        removeSavedList.setIcon(KIcon("list-remove"));
+        QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
+        
+        if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
+            QString savedListEntry = QString("Video:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedVideoLists.count(); i++) {
+                if (m_savedVideoLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedVideoLists.removeAt(rowsToRemove.at(i));
+            }
+            updateSavedListsIndex();
+            MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
+            m_parent->m_audioListsModel->clearMediaListData();
+            m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
+            m_parent->m_audioListsModel->load();
+        }
+    }
 }
 
 void SavedListsManager::enableValidSave(QString newText)
@@ -135,22 +230,32 @@ void SavedListsManager::enableValidSave(QString newText)
     Q_UNUSED(newText); //not used since method may be called directly
 }
 
-void SavedListsManager::audioListsChanged(int row)
+void SavedListsManager::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-    if (m_savedAudioListRows.indexOf(row) != -1) {
-        ui->removeAudioList->setEnabled(true);
-    } else {
-        ui->removeAudioList->setEnabled(false);
+    if (selected.indexes().count() > 0) {
+        bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
+        if (isSavedList) {
+            ui->removeAudioList->setEnabled(true);
+        } else {
+            ui->removeAudioList->setEnabled(false);
+        }
     }
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
 }
 
-void SavedListsManager::videoListsChanged(int row)
+void SavedListsManager::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-    if (m_savedVideoListRows.indexOf(row) != -1) {
-        ui->removeVideoList->setEnabled(true);
-    } else {
-        ui->removeVideoList->setEnabled(false);
+    if (selected.indexes().count() > 0) {
+        bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
+        if (isSavedList) {
+            ui->removeVideoList->setEnabled(true);
+        } else {
+            ui->removeVideoList->setEnabled(false);
+        }
     }
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
 }
 
 void SavedListsManager::selectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
@@ -171,6 +276,22 @@ void SavedListsManager::selectionChanged (const QItemSelection & selected, const
     Q_UNUSED(deselected);
 }
 
+void SavedListsManager::mediaListChanged()
+{
+    if (m_parent->m_mediaItemModel->rowCount() > 0) {
+        QString listItemType = m_parent->m_mediaItemModel->mediaItemAt(0).type;
+        if (listItemType == "Audio") {
+            ui->aListSourceView->setEnabled(true);
+        } else if (listItemType == "Video") {
+            ui->vListSourceView->setEnabled(true);
+        } else {
+            ui->aListSourceView->setChecked(false);
+            ui->vListSourceView->setChecked(false);
+            ui->aListSourceView->setEnabled(false);
+            ui->vListSourceView->setEnabled(false);
+        }
+    }
+}
 
 void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, QString type)
 {
@@ -192,32 +313,43 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
         }
         file.close();
         
-        //Add to saved list index
-        QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", true));
-        if (!indexFile.open(QIODevice::Append | QIODevice::Text)) {
-            return;
-        }
-        QTextStream outIndex(&indexFile);
-        outIndex << type << ":::" << name << ":::" << QString("savedlists://%1.m3u").arg(filename) << "\r\n";
-        indexFile.close();
-        
-        //Add saved item to Audio/Video lists
-        MediaListProperties listItemProperties;
-        listItemProperties.name = name;
-        listItemProperties.lri = QString("savedlists://%1").arg(QString("%1.m3u").arg(filename));
+        //Save list to index file
         if (type == "Audio") {
-            int row = ui->audioLists->count();
-            QListWidgetItem * newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
-            ui->audioLists->addItem(newListItem);
-            m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
-            m_savedAudioListRows << row;
+            QString indexEntry = QString("%1:::%2:::%3")
+            .arg(type)
+            .arg(name)
+            .arg(QString("savedlists://%1.m3u").arg(filename));
+            QString savedListEntry = QString("Audio:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedAudioLists.count(); i++) {
+                if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedAudioLists.removeAt(rowsToRemove.at(i));
+            }
+            m_savedAudioLists << indexEntry;
         } else if (type == "Video") {
-            int row = ui->videoLists->count();
-            QListWidgetItem * newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
-            ui->videoLists->addItem(newListItem);
-            m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
-            m_savedVideoListRows << row;
+            QString indexEntry = QString("%1:::%2:::%3")
+            .arg(type)
+            .arg(name)
+            .arg(QString("savedlists://%1.m3u").arg(filename));
+            QString savedListEntry = QString("Video:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedVideoLists.count(); i++) {
+                if (m_savedVideoLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedVideoLists.removeAt(rowsToRemove.at(i));
+            }
+            m_savedVideoLists << indexEntry;
         }
+        updateSavedListsIndex();
     }
 }
 
@@ -225,37 +357,51 @@ void SavedListsManager::saveView(QString name, QString type)
 {
     if (!name.isEmpty()) {
         //Add to saved list index
-        QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", true));
-        if (!indexFile.open(QIODevice::Append | QIODevice::Text)) {
-            return;
-        }
-        QTextStream outIndex(&indexFile);
-        outIndex << type << ":::" << name << ":::" << m_parent->m_mediaItemModel->mediaListProperties().lri << "\r\n";
-        indexFile.close();
-        
-        //Add saved item to Audio/Video lists
-        MediaListProperties listItemProperties;
-        listItemProperties.name = name;
-        listItemProperties.lri = m_parent->m_mediaItemModel->mediaListProperties().lri;
         if (type == "Audio") {
-            int row = ui->audioLists->count();
-            QListWidgetItem * newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
-            ui->audioLists->addItem(newListItem);
-            m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
-            m_savedAudioListRows << row;
+            QString indexEntry = QString("%1:::%2:::%3")
+            .arg(type)
+            .arg(name)
+            .arg(m_parent->m_mediaItemModel->mediaListProperties().lri);
+            QString savedListEntry = QString("Audio:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedAudioLists.count(); i++) {
+                if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedAudioLists.removeAt(rowsToRemove.at(i));
+            }
+            m_savedAudioLists << indexEntry;
         } else if (type == "Video") {
-            int row = ui->videoLists->count();
-            QListWidgetItem * newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
-            ui->videoLists->addItem(newListItem);
-            m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
-            m_savedVideoListRows << row;
+            QString indexEntry = QString("%1:::%2:::%3")
+            .arg(type)
+            .arg(name)
+            .arg(m_parent->m_mediaItemModel->mediaListProperties().lri);
+            QString savedListEntry = QString("Video:::%1")
+            .arg(name);
+            QList<int> rowsToRemove;
+            for (int i = 0; i < m_savedVideoLists.count(); i++) {
+                if (m_savedVideoLists.at(i).startsWith(savedListEntry)) {
+                    rowsToRemove << i;
+                }
+            }
+            for (int i = 0; i < rowsToRemove.count(); i++) {
+                m_savedVideoLists.removeAt(rowsToRemove.at(i));
+            }
+            m_savedVideoLists << indexEntry;
         }
+        updateSavedListsIndex();
     }
 }
 
-void SavedListsManager::showSavedLists()
+
+void SavedListsManager::loadSavedListsIndex()
 {
     //Load lists from index
+    m_savedAudioLists.clear();
+    m_savedVideoLists.clear();
     QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
     if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return;
@@ -266,30 +412,31 @@ void SavedListsManager::showSavedLists()
         QStringList nameUrl = line.split(":::");
         if (nameUrl.count() >= 3) {
             QString type = nameUrl.at(0).trimmed();
-            QString name = nameUrl.at(1).trimmed();
-            QString lri = nameUrl.at(2).trimmed();
-            MediaListProperties listItemProperties;
-            listItemProperties.name = name;
-            listItemProperties.lri = lri;
-            QListWidgetItem * newListItem;
-            if (lri.startsWith("savedlists://")) {
-                newListItem = new QListWidgetItem(Utilities::turnIconOff(KIcon("view-media-playlist"), QSize(16,16)), name);
-            } else {
-                newListItem = new QListWidgetItem(KIcon("view-media-playlist"), name);
-            }   
             if (type == "Audio") {
-                int row = ui->audioLists->count();
-                ui->audioLists->addItem(newListItem);
-                m_parent->setListItemProperties(ui->audioLists->item(row), listItemProperties);
-                m_savedAudioListRows << row;
+                m_savedAudioLists << line;
             } else if (type == "Video") {
-                int row = ui->videoLists->count();
-                ui->videoLists->addItem(newListItem);
-                m_parent->setListItemProperties(ui->videoLists->item(row), listItemProperties);
-                m_savedVideoListRows << row;
+                m_savedVideoLists << line;
             }
         }
     }
     indexFile.close();
 }
+void SavedListsManager::updateSavedListsIndex()
+{
+    QFile::remove(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", true));
+    if (!indexFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+    QTextStream outIndex(&indexFile);
+    for (int i = 0; i < m_savedAudioLists.count(); i++) {
+        outIndex << m_savedAudioLists.at(i) << "\r\n";
+    }
+    for (int i = 0; i < m_savedVideoLists.count(); i++) {
+        outIndex << m_savedVideoLists.at(i) << "\r\n";
+    }
+    indexFile.close();    
+}
+
+
 

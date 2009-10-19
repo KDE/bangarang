@@ -65,6 +65,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    MediaItemModel * m_audioListsModel;
+    MediaItemModel * m_videoListsModel;
     MediaItemModel * m_mediaItemModel;
     MediaItemModel * m_currentPlaylist;
     MediaItemModel * m_nowPlaying;
@@ -73,7 +75,6 @@ public:
     Ui::MainWindowClass *ui;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
-    void setListItemProperties(QListWidgetItem * item, MediaListProperties listItemProperties);
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -90,8 +91,6 @@ private:
     bool playWhenPlaylistChanges;
     bool showRemainingTime;
     void setupModel();
-    void setPropertiesForLists();
-    MediaListProperties listItemProperties(QListWidgetItem * item);
     QList<MediaItem> m_mediaList;
     QList<int> m_mediaListScrollHistory;
     KIcon addItemsIcon();
@@ -134,10 +133,12 @@ private slots:
     void on_playAll_clicked();
     void on_playSelected_clicked();
     void on_mediaLists_currentChanged(int i);
-    void on_audioLists_itemSelectionChanged();
-    void on_videoLists_itemSelectionChanged();
     void on_showPlaylist_clicked(bool checked);
     void mediaListChanged();
+    void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+    void audioListsChanged();
+    void videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+    void videoListsChanged();
     void playlistChanged();
     void nowPlayingChanged();
     void playlistFinished();
@@ -151,12 +152,6 @@ private slots:
     void on_repeat_clicked();
     void on_showQueue_clicked();
     void on_Filter_returnPressed();
-    void on_showInfo_clicked();
-    void on_saveInfo_clicked();
-    void on_addAudioList_clicked();
-    void on_addVideoList_clicked();
-    void on_aCancelSaveList_clicked();
-    void on_vCancelSaveList_clicked();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

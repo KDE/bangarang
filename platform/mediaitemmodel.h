@@ -36,7 +36,8 @@ struct MediaItem {
     TypeRole = Qt::UserRole + 5,
     FilterRole = Qt::UserRole + 6,
     PlaylistIndexRole = Qt::UserRole + 7, 
-    NowPlayingRole = Qt::UserRole + 8 };
+    NowPlayingRole = Qt::UserRole + 8,
+    IsSavedListRole = Qt::UserRole + 9 };
     QIcon artwork;
     QString title;
     QString subTitle;
@@ -46,6 +47,7 @@ struct MediaItem {
     QString filter;
     int playlistIndex;
     bool nowPlaying;
+    bool isSavedList;
     QHash <QString, QVariant> fields;
 };
 
