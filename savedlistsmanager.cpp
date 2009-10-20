@@ -41,7 +41,7 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->aCancelSaveList, SIGNAL(clicked()), this, SLOT(hideAudioListSave()));
     connect(ui->vCancelSaveList, SIGNAL(clicked()), this, SLOT(hideVideoListSave()));
     connect(ui->saveAudioList, SIGNAL(clicked()), this, SLOT(saveAudioList()));
-    connect(ui->addVideoList, SIGNAL(clicked()), this, SLOT(saveVideoList()));
+    connect(ui->saveVideoList, SIGNAL(clicked()), this, SLOT(saveVideoList()));
     connect(ui->aNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(ui->vNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(ui->aNewListName, SIGNAL(returnPressed()), this, SLOT(saveAudioList()));
@@ -86,7 +86,7 @@ void SavedListsManager::showVideoListSave()
     } else {
         ui->vListSourcePlaylist->setChecked(true);
     }
-    ui->aNewListName->setFocus();
+    ui->vNewListName->setFocus();
     enableValidSave();
 }
 
