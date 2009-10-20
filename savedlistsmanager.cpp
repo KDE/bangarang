@@ -162,8 +162,13 @@ void SavedListsManager::removeAudioList()
         QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
         
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
+            //Remove M3U file
+            QString filename = name;
+            filename = filename.replace(" ", "");
+            QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Audio-%1.m3u").arg(filename), false));
+            
             QString savedListEntry = QString("Audio:::%1")
-            .arg(name);
+                                        .arg(name);
             QList<int> rowsToRemove;
             for (int i = 0; i < m_savedAudioLists.count(); i++) {
                 if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
@@ -194,8 +199,13 @@ void SavedListsManager::removeVideoList()
         QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
         
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
+            //Remove M3U file
+            QString filename = name;
+            filename = filename.replace(" ", "");
+            QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Video-%1.m3u").arg(filename), false));
+            
             QString savedListEntry = QString("Video:::%1")
-            .arg(name);
+                                        .arg(name);
             QList<int> rowsToRemove;
             for (int i = 0; i < m_savedVideoLists.count(); i++) {
                 if (m_savedVideoLists.at(i).startsWith(savedListEntry)) {
@@ -300,8 +310,8 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
         //Create and populate M3U file
         QString filename = name;
         filename = filename.replace(" ", "");
-        QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1.m3u").arg(filename), false));
-        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1.m3u").arg(filename), true));
+        QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), false));
+        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
             return;
         }
