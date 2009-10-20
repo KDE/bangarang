@@ -143,9 +143,9 @@ void SavedListsManager::saveVideoList()
         QList<MediaItem> mediaList = m_parent->m_playlist->playlistModel()->mediaList();
         saveMediaList(mediaList, ui->vNewListName->text(), QString("Video"));
     }
-    MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
-    m_parent->m_audioListsModel->clearMediaListData();
-    m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
+    MediaListProperties videoListsProperties = m_parent->m_videoListsModel->mediaListProperties();
+    m_parent->m_videoListsModel->clearMediaListData();
+    m_parent->m_videoListsModel->setMediaListProperties(videoListsProperties);
     m_parent->m_videoListsModel->load();
     hideVideoListSave();
 }
@@ -186,7 +186,7 @@ void SavedListsManager::removeVideoList()
 {
     if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
         int selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-        QString name = m_parent->m_audioListsModel->mediaItemAt(selectedRow).title;
+        QString name = m_parent->m_videoListsModel->mediaItemAt(selectedRow).title;
         
         KGuiItem removeSavedList;
         removeSavedList.setText(QString("Remove"));
@@ -206,10 +206,10 @@ void SavedListsManager::removeVideoList()
                 m_savedVideoLists.removeAt(rowsToRemove.at(i));
             }
             updateSavedListsIndex();
-            MediaListProperties audioListsProperties = m_parent->m_audioListsModel->mediaListProperties();
-            m_parent->m_audioListsModel->clearMediaListData();
-            m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
-            m_parent->m_audioListsModel->load();
+            MediaListProperties videoListsProperties = m_parent->m_videoListsModel->mediaListProperties();
+            m_parent->m_videoListsModel->clearMediaListData();
+            m_parent->m_videoListsModel->setMediaListProperties(videoListsProperties);
+            m_parent->m_videoListsModel->load();
         }
     }
 }
