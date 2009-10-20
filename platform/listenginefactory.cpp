@@ -43,16 +43,16 @@ ListEngineFactory::~ListEngineFactory()
     for (int j = 0; j < m_videoListEngines.count(); ++j) {
         delete m_videoListEngines.at(j);
     }
-    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+    for (int j = 0; j < m_cdListEngines.count(); ++j) {
         delete m_cdListEngines.at(j);
     }
-    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+    for (int j = 0; j < m_dvdListEngines.count(); ++j) {
         delete m_dvdListEngines.at(j);
     }
-    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+    for (int j = 0; j < m_savedListsEngines.count(); ++j) {
         delete m_savedListsEngines.at(j);
     }
-    for (int j = 0; j < m_videoListEngines.count(); ++j) {
+    for (int j = 0; j < m_mediaListsEngines.count(); ++j) {
         delete m_mediaListsEngines.at(j);
     }
 }
