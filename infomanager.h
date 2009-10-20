@@ -37,13 +37,13 @@ class InfoManager : public QObject
     public:
         InfoManager(MainWindow * parent);
         ~InfoManager();
-        void loadInfoView();
         
         MediaItemModel *m_infoMediaItemsModel;
         MediaItemDelegate *m_infoItemDelegate;
         
     public slots:
         void saveInfoView();
+        void loadInfoView();
         
         
     private:

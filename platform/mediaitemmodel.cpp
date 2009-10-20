@@ -409,6 +409,10 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
        categoryItem->setData(mediaItem.type, MediaItem::TypeRole);   
        categoryItem->setData(tooltip, Qt::ToolTipRole);
        rowData << categoryItem;
-    }
+    } else {
+        //Always return a second column. let the view figure out what to do with it
+        QStandardItem * categoryItem = new QStandardItem(QIcon(), QString());
+        rowData << categoryItem;
+    }   
     return rowData;
 }
