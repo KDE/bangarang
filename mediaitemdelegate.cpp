@@ -283,9 +283,9 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      }
                 }
             }
-        }
-        if (index.column() == 1) {
+        } else if (index.column() == 1) {
             if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+                //Add or remove from playlist
                 int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
                 if (playlistRow != -1) {
                     m_parent->m_playlist->removeMediaItemAt(playlistRow);
@@ -304,15 +304,13 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
             m_parent->addListToHistory();
             emit actionActivated(index);
             return true;
-        }
-        if (index.data(MediaItem::TypeRole).toString() == "Message") {
+        } else if (index.data(MediaItem::TypeRole).toString() == "Message") {
             // Do nothing
+            return true;
         }
     }
     
-    if (index.column() != 1 && (index.data(MediaItem::TypeRole).toString() != "Message")) {
-        return QItemDelegate::editorEvent(event, model, option, index);
-    }
+    return QItemDelegate::editorEvent(event, model, option, index);
 }
 
 void MediaItemDelegate::setView(QTreeView * view) 
