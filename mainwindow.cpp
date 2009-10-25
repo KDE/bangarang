@@ -34,6 +34,10 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
+#include <Solid/Device>
+#include <Solid/DeviceInterface>
+#include <Solid/OpticalDisc>
+#include <Solid/DeviceNotifier>
 
 #include <QVBoxLayout>
 #include <QStackedLayout>
@@ -50,8 +54,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     
-    //setPropertiesForLists();
-    
     //Setup interface icons
     setupIcons();
     setupActions();
@@ -66,6 +68,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->sortList->setVisible(false);
     ui->showVideoSettings->setVisible(false);
     
+    //Set up device notifier
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )), this, SLOT(deviceAdded(const QString & )));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString & )), this, SLOT(deviceRemoved(const QString & )));
     
     //Set up media object
     m_media = new Phonon::MediaObject(this);
@@ -172,6 +177,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaPlayPause->setHoldDelay(1500);
     updateSeekTime(0);
     showApplicationBanner();
+    updateCachedDevicesList();
     m_showQueue = false;
     m_repeat = false;
     m_shuffle = false;
@@ -594,7 +600,9 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
         ui->playAll->setVisible(false);
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            ui->showInfo->setVisible(true);
+            if (!m_mediaItemModel->mediaItemAt(0).url.startsWith("DVDTRACK") && !m_mediaItemModel->mediaItemAt(0).url.startsWith("CDTRACK")) {
+                ui->showInfo->setVisible(true);
+            }
         }
     } else {
         ui->playSelected->setVisible(false);
@@ -881,6 +889,20 @@ KIcon MainWindow::turnIconOff(KIcon icon, QSize size)
     return KIcon(QPixmap::fromImage(image));
 }
 
+void MainWindow::updateCachedDevicesList()
+{
+    m_devicesAdded.clear();
+    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString())) {
+        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
+            m_devicesAdded << QString("CD:%1").arg(device.udi());
+        }
+        if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
+            m_devicesAdded << QString("DVD:%1").arg(device.udi());
+        }
+    }
+}
+
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if ((event->type() == QEvent::Enter)) {
@@ -926,4 +948,42 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     default:{}	
   }
+}
+
+/*-------------------------
+-- Device Notifier Slots --
+---------------------------*/
+void MainWindow::deviceAdded(const QString &udi)
+{
+    //Check type of device that was added
+    //and reload media lists if necessary
+    Solid::Device deviceAdded(udi);
+    if (deviceAdded.isDeviceInterface(Solid::DeviceInterface::OpticalDisc)) {
+        const Solid::OpticalDisc *disc = deviceAdded.as<const Solid::OpticalDisc> ();
+        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
+            m_audioListsModel->clearMediaListData();
+            m_audioListsModel->load();
+            updateCachedDevicesList();
+        } else if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
+            m_videoListsModel->clearMediaListData();
+            m_videoListsModel->load();
+            updateCachedDevicesList();
+        }
+    }
+}
+
+void MainWindow::deviceRemoved(const QString &udi)
+{
+    //Check type of device that was removed
+    //and reload media lists if necessary
+    if (m_devicesAdded.indexOf(QString("CD:%1").arg(udi)) != -1) {
+        m_audioListsModel->clearMediaListData();
+        m_audioListsModel->load();
+        updateCachedDevicesList();
+    }
+    if (m_devicesAdded.indexOf(QString("DVD:%1").arg(udi)) != -1) {
+        m_videoListsModel->clearMediaListData();
+        m_videoListsModel->load();
+        updateCachedDevicesList();
+    }
 }

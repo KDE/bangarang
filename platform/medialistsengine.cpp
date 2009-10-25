@@ -28,6 +28,9 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <QFile>
+#include <Solid/Device>
+#include <Solid/DeviceInterface>
+#include <Solid/OpticalDisc>
 
 MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -74,27 +77,40 @@ void MediaListsEngine::run()
         mediaItem.url = "audioclips://";
         mediaItem.artwork = KIcon("audio-x-wav");
         mediaList << mediaItem;
-        mediaItem.title = "Audio CD";
-        mediaItem.url = "cdaudio://";
-        mediaItem.artwork = KIcon("media-optical-audio");
-        mediaList << mediaItem;
+        
+        //Show Audio CD if present
+        bool audioCDFound = false;
+        foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
+        {
+            const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+            if (disc->availableContent() & Solid::OpticalDisc::Audio) {
+                audioCDFound = true;
+            }
+        }
+        if (audioCDFound) {
+            mediaItem.title = "Audio CD";
+            mediaItem.url = "cdaudio://";
+            mediaItem.artwork = KIcon("media-optical-audio");
+            mediaList << mediaItem;
+        }
         
         //Load saved lists from index
         QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
-        if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            return;
-        }
-        QTextStream in(&indexFile);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList nameUrl = line.split(":::");
-            if (nameUrl.count() >= 3) {
-                if (nameUrl.at(0) == "Audio") {
-                    mediaItem.title = nameUrl.at(1).trimmed();
-                    mediaItem.url = nameUrl.at(2).trimmed();
-                    mediaItem.artwork = KIcon("view-media-playlist");
-                    mediaItem.isSavedList = true;
-                    mediaList << mediaItem;
+        if (indexFile.exists()) {
+            if (indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(&indexFile);
+                while (!in.atEnd()) {
+                    QString line = in.readLine();
+                    QStringList nameUrl = line.split(":::");
+                    if (nameUrl.count() >= 3) {
+                        if (nameUrl.at(0) == "Audio") {
+                            mediaItem.title = nameUrl.at(1).trimmed();
+                            mediaItem.url = nameUrl.at(2).trimmed();
+                            mediaItem.artwork = KIcon("view-media-playlist");
+                            mediaItem.isSavedList = true;
+                            mediaList << mediaItem;
+                        }
+                    }
                 }
             }
         }
@@ -119,27 +135,40 @@ void MediaListsEngine::run()
         mediaItem.url = "video://clips";
         mediaItem.artwork = KIcon("video-x-generic");
         mediaList << mediaItem;
-        mediaItem.title = "DVD Video";
-        mediaItem.url = "dvdvideo://";
-        mediaItem.artwork = KIcon("media-optical-dvd");
-        mediaList << mediaItem;
+        
+        //Show DVD if present
+        bool DVDFound = false;
+        foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
+        {
+            const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+            if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
+                DVDFound = true;
+            }
+        }
+        if (DVDFound) {
+            mediaItem.title = "DVD Video";
+            mediaItem.url = "dvdvideo://";
+            mediaItem.artwork = KIcon("media-optical-dvd");
+            mediaList << mediaItem;        
+        }
         
         //Load saved lists from index
         QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
-        if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            return;
-        }
-        QTextStream in(&indexFile);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList nameUrl = line.split(":::");
-            if (nameUrl.count() >= 3) {
-                if (nameUrl.at(0) == "Video") {
-                    mediaItem.title = nameUrl.at(1).trimmed();
-                    mediaItem.url = nameUrl.at(2).trimmed();
-                    mediaItem.artwork = KIcon("view-media-playlist");
-                    mediaItem.isSavedList = true;
-                    mediaList << mediaItem;
+        if (indexFile.exists()) {
+            if (indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(&indexFile);
+                while (!in.atEnd()) {
+                    QString line = in.readLine();
+                    QStringList nameUrl = line.split(":::");
+                    if (nameUrl.count() >= 3) {
+                        if (nameUrl.at(0) == "Video") {
+                            mediaItem.title = nameUrl.at(1).trimmed();
+                            mediaItem.url = nameUrl.at(2).trimmed();
+                            mediaItem.artwork = KIcon("view-media-playlist");
+                            mediaItem.isSavedList = true;
+                            mediaList << mediaItem;
+                        }
+                    }
                 }
             }
         }
