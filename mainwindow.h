@@ -106,6 +106,8 @@ private:
     SavedListsManager * m_savedListsManager;
     bool m_pausePressed;
     bool m_stopPressed;
+    QList<QString> m_devicesAdded;
+    void updateCachedDevicesList();
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -116,7 +118,6 @@ public slots:
     void addSelectedToPlaylist();
     void removeSelectedFromPlaylist();
     
-
 private slots:
     void on_nowPlaying_clicked();
     void on_collectionButton_clicked();
@@ -152,6 +153,8 @@ private slots:
     void on_repeat_clicked();
     void on_showQueue_clicked();
     void on_Filter_returnPressed();
+    void deviceAdded(const QString &udi);
+    void deviceRemoved(const QString &udi);
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

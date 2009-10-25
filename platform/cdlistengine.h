@@ -24,8 +24,6 @@
 #include <QDir>
 #include <KUrl>
 #include <libkcompactdisc/kcompactdisc.h>
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
 #include <Phonon/MediaObject>
 
@@ -51,7 +49,6 @@ class CDListEngine : public ListEngine
         
     private:
         ListEngineFactory * m_parent;
-        Soprano::Model * m_mainModel;
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
