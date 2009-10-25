@@ -247,10 +247,10 @@ int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
 
 bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    if (event->type() == QEvent::MouseButtonPress) {
-        if (index.column() == 0) {
-            if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
-                //Check if rating was clicked and update rating
+    if (index.column() == 0) {
+        if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+            //Check if rating was clicked and update rating
+            if (event->type() == QEvent::MouseButtonPress) {
                 QMouseEvent * mouseEvent = (QMouseEvent *)event;
                 int ratingLeft = option.rect.right() - 50;
                 //int ratingRight = option.rect.left();
@@ -283,9 +283,11 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      }
                 }
             }
-        } else if (index.column() == 1) {
-            if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
-                //Add or remove from playlist
+        }
+    } else if (index.column() == 1) {
+        if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+            if (event->type() == QEvent::MouseButtonPress) {
+               //Add or remove from playlist
                 int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
                 if (playlistRow != -1) {
                     m_parent->m_playlist->removeMediaItemAt(playlistRow);
@@ -294,22 +296,25 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                     m_parent->m_playlist->addMediaItem(model->mediaItemAt(index.row()));
                 }
             }
-            if (index.data(MediaItem::TypeRole).toString() == "Category") {
+        }
+        if (index.data(MediaItem::TypeRole).toString() == "Category") {
+            if (event->type() == QEvent::MouseButtonPress) {
                 m_parent->addListToHistory();
                 emit categoryActivated(index);
-                return true;
             }
-        }
-        if (index.data(MediaItem::TypeRole).toString() == "Action") {
-            m_parent->addListToHistory();
-            emit actionActivated(index);
-            return true;
-        } else if (index.data(MediaItem::TypeRole).toString() == "Message") {
-            // Do nothing
             return true;
         }
     }
-    
+    if (index.data(MediaItem::TypeRole).toString() == "Action") {
+        if (event->type() == QEvent::MouseButtonPress) {
+            m_parent->addListToHistory();
+            emit actionActivated(index);
+        }
+        return true;
+    } else if (index.data(MediaItem::TypeRole).toString() == "Message") {
+        // Do nothing
+        return true;
+    }
     return QItemDelegate::editorEvent(event, model, option, index);
 }
 
