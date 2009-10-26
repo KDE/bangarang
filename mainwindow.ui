@@ -1054,7 +1054,7 @@
               <item>
                <widget class="QStackedWidget" name="mediaViewHolder">
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="page">
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1220,10 +1220,23 @@
                       </property>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QToolButton" name="editInfo">
+                      <property name="text">
+                       <string>Edit</string>
+                      </property>
+                      <property name="toolButtonStyle">
+                       <enum>Qt::ToolButtonTextBesideIcon</enum>
+                      </property>
+                      <property name="autoRaise">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                   <item>
-                   <widget class="QTreeWidget" name="infoMediaItems">
+                   <widget class="QTreeWidget" name="infoView">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                       <horstretch>0</horstretch>
@@ -1259,6 +1272,9 @@
                     </property>
                     <property name="itemsExpandable">
                      <bool>false</bool>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
                     </property>
                     <property name="expandsOnDoubleClick">
                      <bool>false</bool>
@@ -5324,6 +5340,16 @@ color: rgb(255, 255, 255);</string>
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>Phonon::SeekSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/seekslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::VolumeSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/volumeslider.h</header>
+  </customwidget>
+  <customwidget>
    <class>SToolButton</class>
    <extends>QToolButton</extends>
    <header location="global">sensiblewidgets.h</header>
@@ -5343,16 +5369,6 @@ color: rgb(255, 255, 255);</string>
    </slots>
   </customwidget>
   <customwidget>
-   <class>Phonon::VolumeSlider</class>
-   <extends>QSlider</extends>
-   <header>phonon/volumeslider.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Phonon::SeekSlider</class>
-   <extends>QSlider</extends>
-   <header>phonon/seekslider.h</header>
-  </customwidget>
-  <customwidget>
    <class>MediaView</class>
    <extends>QTreeView</extends>
    <header location="global">mediaview.h</header>
@@ -5361,7 +5377,7 @@ color: rgb(255, 255, 255);</string>
  <tabstops>
   <tabstop>Filter</tabstop>
   <tabstop>mediaView</tabstop>
-  <tabstop>infoMediaItems</tabstop>
+  <tabstop>infoView</tabstop>
   <tabstop>nowPlaying</tabstop>
   <tabstop>previous</tabstop>
   <tabstop>playAll</tabstop>

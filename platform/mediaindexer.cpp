@@ -151,6 +151,8 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         // Update the properties
         QString title = mediaItem.fields["title"].toString();
         res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        QString description = mediaItem.fields["description"].toString();
+        res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
         if (mediaItem.fields["audioType"] == "Music") {
             QString artist  = mediaItem.fields["artist"].toString();
             QString album   = mediaItem.fields["album"].toString();
@@ -168,10 +170,6 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             }
         } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
             (mediaItem.fields["audioType"] == "Audio Clip")) {
-            QString title = mediaItem.fields["title"].toString();
-            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-            QString description = mediaItem.fields["description"].toString();
-            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
         }
     } else if (mediaItem.type == "Video") {
         //Update the media type
