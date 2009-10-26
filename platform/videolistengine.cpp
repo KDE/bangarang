@@ -151,7 +151,7 @@ void VideoListEngine::run()
         .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
         .arg("http://www.semanticdesktop.org/ontologies/nmm#")
         .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
-        QString select = QString("SELECT DISTINCT ?r ?title ?duration ?season ?episode ?description ");
+        QString select = QString("SELECT DISTINCT ?r ?title ?duration ?season ?episode ?description ?seriesName ");
         QString whereConditions = QString("WHERE { "
         "?r rdf:type <%1> . "
         "?r <%2> ?title . ")
@@ -160,10 +160,12 @@ void VideoListEngine::run()
         QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
         "OPTIONAL { ?r <%2> ?season } "
         "OPTIONAL { ?r <%3> ?episode } "
-        "OPTIONAL { ?r <%4> ?description } ")
+        "OPTIONAL { ?r <%4> ?seriesName } "
+        "OPTIONAL { ?r <%5> ?description } ")
         .arg(mediaVocabulary.duration().toString())
         .arg(mediaVocabulary.videoSeriesSeason().toString())
         .arg(mediaVocabulary.videoSeriesEpisode().toString())
+        .arg(mediaVocabulary.videoSeriesName().toString())
         .arg(mediaVocabulary.description().toString());
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?title ");
@@ -200,6 +202,12 @@ void VideoListEngine::run()
                 mediaItem.fields["episode"] = episode;
                 mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
             }
+            QString seriesName = it.binding("seriesName").literal().toString();
+            if (!seriesName.isEmpty()) {
+                mediaItem.fields["seriesName"] = seriesName;
+                mediaItem.subTitle = seriesName + " - " + mediaItem.subTitle;
+            }
+
             mediaItem.type = "Video";
             mediaItem.nowPlaying = false;
             mediaItem.artwork = KIcon("video-television");
