@@ -333,6 +333,7 @@ void VideoListEngine::run()
             }
             mediaItem.type = "Video";
             mediaItem.nowPlaying = false;
+            mediaItem.fields["url"] = mediaItem.url;
             mediaItem.fields["title"] = it.binding("title").literal().toString();
             mediaItem.fields["description"] = it.binding("description").literal().toString();
             mediaItem.fields["duration"] = it.binding("duration").literal().toString();

@@ -19,6 +19,7 @@
 #include "musiclistengine.h"
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
+#include "mediavocabulary.h"
 #include <KIcon>
 #include <KUrl>
 #include <Soprano/QueryResultIterator>
@@ -61,7 +62,7 @@ void MusicListEngine::run()
     
     //Create media list based on engine argument and filter
     QList<MediaItem> mediaList;
-    
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
@@ -218,6 +219,7 @@ void MusicListEngine::run()
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
+                mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
             }
             mediaItem.fields["audioType"] = "Music";
             //FIXME: Do not update the RDF store synchronously.  Provide UI for asynchronous update
@@ -320,6 +322,7 @@ void MusicListEngine::run()
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
+                mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
             }
             mediaItem.fields["audioType"] = "Music";
             mediaList.append(mediaItem);

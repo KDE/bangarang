@@ -237,6 +237,12 @@ void MainWindow::on_Filter_returnPressed()
             m_mediaItemModel->setMediaListProperties(searchProperties);
             m_mediaItemModel->load();
         }
+        m_mediaListHistory.clear();
+        m_mediaListPropertiesHistory.clear();
+        ui->previous->setVisible(false);
+        ui->mediaViewHolder->setCurrentIndex(0);
+        ui->saveInfo->setVisible(false);
+        ui->showInfo->setVisible(false);
     }
 }
 
@@ -843,6 +849,9 @@ void MainWindow::setupIcons()
     ui->playSelected->setIcon(KIcon("media-playback-start"));
     ui->playAll->setIcon(KIcon("media-playback-start"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
+    ui->saveInfo->setIcon(KIcon("document-save"));
+    ui->showInfo->setIcon(KIcon("help-about"));
+    ui->editInfo->setIcon(KIcon("document-edit"));
     
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
