@@ -208,6 +208,8 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             if (episode != 0) {
                 res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
             }
+            QString seriesName = mediaItem.fields["seriesName"].toString();
+            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
         }
     }
 }

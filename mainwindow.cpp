@@ -206,6 +206,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Install event filter for hiding widgets in Now Playing view
     ui->nowPlayingView->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
+
+
+    //Add standard quit shortcut
+    QAction* quit = new QAction(this);
+    quit->setShortcut(Qt::CTRL + Qt::Key_Q);
+    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+    addAction(quit);
 }
 
 MainWindow::~MainWindow()

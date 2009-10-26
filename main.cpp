@@ -17,6 +17,7 @@
 */
 
 #include <QtGui/QApplication>
+#include <QtGui/QAction>
 #include "mainwindow.h"
 #include <KApplication>
 #include <KCmdLineArgs>
@@ -45,6 +46,8 @@ int main(int argc, char *argv[])
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication application;
+
+
 
     MainWindow w;
     w.show();
