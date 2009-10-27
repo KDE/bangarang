@@ -30,6 +30,8 @@ namespace Nepomuk
 
 class MediaIndexerJob: public KJob
 {
+    Q_OBJECT
+    
     public:
         MediaIndexerJob(QObject *parent);
         ~MediaIndexerJob();
@@ -46,6 +48,9 @@ class MediaIndexerJob: public KJob
         bool running;
         int m_indexType;
         void removeType(Nepomuk::Resource res, QUrl mediaType);
+        
+    Q_SIGNALS:
+        void jobComplete();
 };
 
 class MediaIndexer : public QThread
@@ -65,6 +70,12 @@ class MediaIndexer : public QThread
         QList<QString> m_urls;
         QList<MediaItem> m_mediaList;
         int m_indexType;
+    
+    private slots:
+        void jobComplete();
+        
+    Q_SIGNALS:
+        void indexingComplete();
         
 };
 #endif // MEDIAINDEXER_H

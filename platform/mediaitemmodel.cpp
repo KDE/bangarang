@@ -113,6 +113,12 @@ void MediaItemModel::load()
     }
 }
 
+void MediaItemModel::reload()
+{
+    clearMediaListData();
+    load();
+}
+
 void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged)
 {
     for (int i = 0 ; i < mediaList.count() ; ++i) {

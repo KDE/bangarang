@@ -137,7 +137,7 @@ class MediaItemModel : public QStandardItemModel
     
     public Q_SLOTS:
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
-        
+        void reload();
 };
 
 #endif // MEDIAITEMMODEL_H

@@ -43,6 +43,10 @@ MediaIndexerJob::MediaIndexerJob(QObject * parent) : KJob(parent)
 
 MediaIndexerJob::~MediaIndexerJob()
 {
+    if (running) {
+        setPercent(100);
+        emitResult();
+    }
 }
 
 void MediaIndexerJob::start()
@@ -80,6 +84,7 @@ void MediaIndexerJob::index()
         emitResult();
         running = false;
     }
+    emit jobComplete();
 }
 
 void MediaIndexerJob::setUrlsToIndex(QList<QString> urls)
@@ -247,6 +252,7 @@ void MediaIndexer::run()
     } else if (m_indexType == MediaIndexer::IndexMediaItem) {
         if (m_mediaList.count() > 0) {
             MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
+            connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
             indexerJob->setMediaListToIndex(m_mediaList);
             KUiServerJobTracker * jt = new KUiServerJobTracker(this);
             jt->registerJob(indexerJob);
@@ -267,4 +273,9 @@ void MediaIndexer::indexMediaItems(QList<MediaItem> mediaList)
     m_indexType = MediaIndexer::IndexMediaItem;
     m_mediaList = mediaList;
     start();
+}
+
+void MediaIndexer::jobComplete()
+{
+    emit indexingComplete();
 }

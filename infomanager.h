@@ -59,12 +59,13 @@ class InfoManager : public QObject
         Ui::MainWindowClass *ui;
         MediaIndexer *m_mediaIndexer;
         bool m_editToggle;
-        void loadInfoView(bool edit = false);
+        void loadInfoView();
         QVariant commonValue(QString field);
         QStringList valueList(QString field);
         void saveMusicInfoToFiles();
         void saveInfoToMediaModel();
         QList<int> m_rows;
+        void showFields(bool edit = false);
         void showCommonFields(bool edit = false);
         void showAudioType(int index, bool edit = false);
         void showAudioFields();

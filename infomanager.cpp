@@ -72,7 +72,7 @@ void InfoManager::showInfoView()
 void InfoManager::editInfoView()
 {
     m_editToggle = !m_editToggle;
-    loadInfoView(m_editToggle);
+    showFields(m_editToggle);
     if (m_editToggle) {
         ui->editInfo->setText("Cancel Edit");
         ui->editInfo->setIcon(KIcon("dialog-cancel"));
@@ -82,15 +82,13 @@ void InfoManager::editInfoView()
     }
 }
 
-void InfoManager::loadInfoView(bool edit)
+void InfoManager::loadInfoView()
 {
     ui->mediaViewHolder->setCurrentIndex(1);
     ui->previous->setVisible(true);
     ui->previous->setText(ui->listTitle->text());
     ui->playSelected->setVisible(false);
     ui->playAll->setVisible(false);
-    ui->saveInfo->setVisible(edit);
-    ui->infoView->clear();
     
     m_rows.clear();
     QList<MediaItem> mediaList;
@@ -99,39 +97,12 @@ void InfoManager::loadInfoView(bool edit)
         m_rows << selectedRows.at(i).row();
         mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
     }
-    m_infoMediaItemsModel->clearMediaListData();
-    m_infoMediaItemsModel->loadSources(mediaList);
-    
-    showCommonFields(edit);
-    if (mediaList.at(0).type == "Audio") {
-        if (!multipleAudioTypes()) {
-            if (mediaList.at(0).fields["audioType"] == "Music") {
-                showAudioType(0, edit);
-                showAudioMusicFields(edit);
-            } else if (mediaList.at(0).fields["audioType"] == "Audio Stream") {
-                showAudioType(1, edit);
-                showAudioStreamFields(edit);
-            } else if (mediaList.at(0).fields["audioType"] == "Audio Clip") {
-                showAudioType(2, edit);
-                //No special audio clip fields
-            }
-        }
-    } else if (mediaList.at(0).type == "Video") {
-        if (!multipleVideoTypes()) {
-            if (mediaList.at(0).fields["videoType"] == "Movie") {
-                showVideoType(0, edit);
-            } else if (mediaList.at(0).fields["videoType"] == "Series") {
-                showVideoType(1, edit);
-                showVideoSeriesFields(edit);
-            } else if (mediaList.at(0).fields["videoType"] == "Video Clip") {
-                showVideoType(2, edit);
-                //No special video clip fields
-            }
-        }
+    if (mediaList.count() == 0) {
+        return;
     }
-    QTreeWidgetItem * footer = new QTreeWidgetItem(ui->infoView);
-    ui->infoView->addTopLevelItem(footer);
-    ui->infoView->setFocus();
+    m_infoMediaItemsModel->clearMediaListData();
+    m_infoMediaItemsModel->loadMediaList(mediaList);
+    showFields();
 }
 
 void InfoManager::audioTypeChanged(int type)
@@ -177,35 +148,66 @@ void InfoManager::videoTypeChanged(int type)
 
 void InfoManager::saveInfoView()
 {
+    ui->saveInfo->setText("Saving...");
+    ui->saveInfo->setEnabled(false);
+    
+    //Save info data to nepomuk store
+    saveInfoToMediaModel();
+    m_mediaIndexer->indexMediaItems(m_infoMediaItemsModel->mediaList());
+    connect(m_mediaIndexer, SIGNAL(indexingComplete()), m_parent->m_mediaItemModel, SLOT(reload()));
 
+    //Save metadata to files
     QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
     if (typeComboBox->currentText() == "Music") {
         saveMusicInfoToFiles();
     }
-    saveInfoToMediaModel();
-    m_mediaIndexer->indexMediaItems(m_infoMediaItemsModel->mediaList());
-    
-    //Go back to media view
+     
+    //show non-editable fields
     m_editToggle = false;
     ui->editInfo->setText("Edit");
-    ui->mediaViewHolder->setCurrentIndex(0);
+    ui->editInfo->setIcon(KIcon("document-edit"));
+    ui->saveInfo->setText("Save");
+    ui->saveInfo->setEnabled(true);
     ui->saveInfo->setVisible(false);
-    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-        ui->playSelected->setVisible(true);
-        ui->playAll->setVisible(false);
-        ui->showInfo->setVisible(true);
-    } else {
-        ui->playSelected->setVisible(false);
-        ui->playAll->setVisible(true);
-        ui->showInfo->setVisible(false);
+    showFields(false);
+    m_parent->m_mediaItemModel->reload();
+}
+
+void InfoManager::showFields(bool edit)
+{
+    ui->infoView->clear();
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    showCommonFields(edit);
+    if (mediaList.at(0).type == "Audio") {
+        if (!multipleAudioTypes()) {
+            if (mediaList.at(0).fields["audioType"] == "Music") {
+                showAudioType(0, edit);
+                showAudioMusicFields(edit);
+            } else if (mediaList.at(0).fields["audioType"] == "Audio Stream") {
+                showAudioType(1, edit);
+                showAudioStreamFields(edit);
+            } else if (mediaList.at(0).fields["audioType"] == "Audio Clip") {
+                showAudioType(2, edit);
+                //No special audio clip fields
+            }
+        }
+    } else if (mediaList.at(0).type == "Video") {
+        if (!multipleVideoTypes()) {
+            if (mediaList.at(0).fields["videoType"] == "Movie") {
+                showVideoType(0, edit);
+            } else if (mediaList.at(0).fields["videoType"] == "Series") {
+                showVideoType(1, edit);
+                showVideoSeriesFields(edit);
+            } else if (mediaList.at(0).fields["videoType"] == "Video Clip") {
+                showVideoType(2, edit);
+                //No special video clip fields
+            }
+        }
     }
-    if (m_parent->m_mediaListPropertiesHistory.count() > 0) {
-        ui->previous->setVisible(true);
-        ui->previous->setText(m_parent->m_mediaListPropertiesHistory.last().name);
-    } else {
-        ui->previous->setVisible(false);
-    }
-    
+    QTreeWidgetItem * footer = new QTreeWidgetItem(ui->infoView);
+    ui->infoView->addTopLevelItem(footer);
+    ui->infoView->setFocus();
+    ui->saveInfo->setVisible(edit);
 }
         
 void InfoManager::showCommonFields(bool edit)
@@ -401,12 +403,12 @@ void InfoManager::saveMusicInfoToFiles()
                     file.tag()->setTrack(trackNumber);
                 }
                 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
+                /*QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
                     file.tag()->setGenre(tGenre);
-                }
+                }*/
                 
                 file.save();
             }
@@ -469,11 +471,11 @@ void InfoManager::saveInfoToMediaModel()
                     mediaItem.fields["trackNumber"] = trackNumber;
                 }
                 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
+                /*QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
-                }
+                }*/
             } else if (typeComboBox->currentText() == "Audio Clip") {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Clip";
