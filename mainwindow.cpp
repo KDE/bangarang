@@ -38,6 +38,7 @@
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
 #include <Solid/DeviceNotifier>
+#include <Nepomuk/ResourceManager>
 
 #include <QVBoxLayout>
 #include <QStackedLayout>
@@ -67,6 +68,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
     ui->showVideoSettings->setVisible(false);
+    
+    //Initialize Nepomuk
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        //resource manager inited successfully
+    } else {
+        //no resource manager
+    };
     
     //Set up device notifier
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )), this, SLOT(deviceAdded(const QString & )));

@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 {
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
     aboutData.addCredit( ki18n("Andrew Lake"), ki18n("Creator") );
+    aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
 
