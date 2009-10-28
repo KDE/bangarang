@@ -45,6 +45,7 @@ class MediaItemDelegate;
 class NowPlayingDelegate;
 class InfoManager;
 class SavedListsManager;
+class ActionsManager;
 
 namespace Ui
 {
@@ -75,6 +76,7 @@ public:
     Ui::MainWindowClass *ui;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
+    ActionsManager * actionsManager();
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -104,6 +106,7 @@ private:
     QDateTime m_lastMouseMoveTime;
     InfoManager * m_infoManager;
     SavedListsManager * m_savedListsManager;
+    ActionsManager * m_actionsManager;
     bool m_pausePressed;
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
@@ -117,6 +120,8 @@ public slots:
     void playSelected();
     void addSelectedToPlaylist();
     void removeSelectedFromPlaylist();
+    void on_fullScreen_toggled(bool fullScreen);
+    
     
 private slots:
     void on_nowPlaying_clicked();
@@ -147,7 +152,6 @@ private slots:
     void updateListTitle();
     void on_clearPlaylist_clicked();
     void on_playlistView_doubleClicked(const QModelIndex & index);
-    void on_fullScreen_toggled(bool fullScreen);
     void on_seekTime_clicked();
     void on_shuffle_clicked();
     void on_repeat_clicked();
@@ -159,7 +163,7 @@ private slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+    //void keyPressEvent(QKeyEvent *event);
 };
 
 class MouseMoveDetector : public QObject

@@ -23,6 +23,7 @@
 #include "platform/playlist.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
+#include "actionsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 
@@ -177,6 +178,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Setup Saved Lists Manager
     m_savedListsManager = new SavedListsManager(this);
     
+    //Setup Actions Manager
+    m_actionsManager = new ActionsManager(this);
+    
     //Set up defaults
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
@@ -215,13 +219,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Install event filter for hiding widgets in Now Playing view
     ui->nowPlayingView->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
-
-
-    //Add standard quit shortcut
-    QAction* quit = new QAction(this);
-    quit->setShortcut(Qt::CTRL + Qt::Key_Q);
-    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
-    addAction(quit);
 }
 
 MainWindow::~MainWindow()
@@ -958,22 +955,6 @@ void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
   }
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-  switch(event->key())
-  {
-    case Qt::Key_Escape: {
-	on_fullScreen_toggled(false);
-	break;
-    }
-    case Qt::Key_F11: {
-	if(!isFullScreen())
-	   on_fullScreen_toggled(true);
-	break;
-    }
-    default:{}	
-  }
-}
 
 /*-------------------------
 -- Device Notifier Slots --
@@ -1011,4 +992,9 @@ void MainWindow::deviceRemoved(const QString &udi)
         m_videoListsModel->load();
         updateCachedDevicesList();
     }
+}
+
+ActionsManager * MainWindow::actionsManager()
+{
+    return m_actionsManager;
 }
