@@ -28,6 +28,7 @@ SET(BangarangSources
     mediaview.cpp 
     infomanager.cpp 
     savedlistsmanager.cpp 
+    actionsmanager.cpp
     platform/mediaitemmodel.cpp 
     platform/musiclistengine.cpp 
     platform/videolistengine.cpp 
