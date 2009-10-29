@@ -164,40 +164,8 @@ QUrl MediaVocabulary::typeVideo()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        //Bangarang proposal to remove nmm:Video from nmm ontology draft
+        //Bangarang uses nfo:Video not nmm:Video - can't see semantic benefit
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
-    }
-    
-    return returnUrl;
-}
-
-QUrl MediaVocabulary::typeVideoMovie()
-{
-    QUrl returnUrl = QUrl();
-    if (m_videoVocabulary == MediaVocabulary::xesam) {
-        //no xesam ontology for movies
-    } else if (m_videoVocabulary == MediaVocabulary::nie) {
-        //no nie ontology for movies
-    } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang proposal for addition to nmm ontology draft
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Movie");
-    }
-    
-    return returnUrl;
-}
-
-QUrl MediaVocabulary::typeVideoSeries()
-{
-    QUrl returnUrl = QUrl();
-    if (m_videoVocabulary == MediaVocabulary::xesam) {
-        //no xesam ontology for video series
-    } else if (m_videoVocabulary == MediaVocabulary::nie) {
-        //no nie ontology for video series
-    } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang proposal for addition to nmm ontology draft
-        // - propose removing nmm:isSeries from draft
-        // - propose changing range of nmm:season and nmm:episodeNumber to nmm:VideoSeries
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#VideoSeries");
     }
     
     return returnUrl;
@@ -366,6 +334,28 @@ QUrl MediaVocabulary::musicGenre()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::videoIsMovie()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        //Bangarang extension to nmm ontology draft
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#isMovie");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoIsTVShow()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        //Bangarang extension to nmm ontology draft
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#isTVShow");
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::videoGenre()
 {
     QUrl returnUrl = QUrl();
@@ -382,7 +372,7 @@ QUrl MediaVocabulary::videoSeriesName()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang proposal for addition to nmm ontology draft
+        //Bangarang extension of nmm ontology draft
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#seriesName");
     }
     

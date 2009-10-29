@@ -347,21 +347,47 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
             if (!description.isEmpty()) {
                 mediaItem.fields["description"] = description;
             }
-            if (res.hasType(mediaVocabulary.typeVideoMovie())) {
-                mediaItem.fields["videoType"] = "Movie";
-                mediaItem.artwork = KIcon("tool-animator");
-            } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
-                mediaItem.fields["videoType"] = "Series";
-                mediaItem.artwork = KIcon("video-television");
+            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                if (res.property(mediaVocabulary.videoIsMovie()).toBool()) {
+                    mediaItem.artwork = KIcon("tool-animator");
+                    mediaItem.fields["videoType"] = "Movie";
+                    QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
+                    if (!seriesName.isEmpty()) {
+                        mediaItem.fields["seriesName"] = seriesName;
+                        mediaItem.subTitle = seriesName;
+                    }
+                }
+            } else if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                if (res.property(mediaVocabulary.videoIsTVShow()).toBool()) {
+                    mediaItem.artwork = KIcon("video-television");
+                    mediaItem.fields["videoType"] = "TV Show";
+                }
+                QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
+                if (!seriesName.isEmpty()) {
+                    mediaItem.fields["seriesName"] = seriesName;
+                    mediaItem.subTitle = seriesName;
+                }
                 int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
                 if (season !=0 ) {
                     mediaItem.fields["season"] = season;
-                    mediaItem.subTitle = QString("Season %1 ").arg(season);
+                    if (!mediaItem.subTitle.isEmpty()) {
+                        mediaItem.subTitle = QString("%1 - Season %2")
+                        .arg(mediaItem.subTitle)
+                        .arg(season);
+                    } else {
+                        mediaItem.subTitle = QString("Season %1").arg(season);
+                    }
                 }
                 int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
                 if (episode !=0 ) {
                     mediaItem.fields["episode"] = episode;
-                    mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                    if (!mediaItem.subTitle.isEmpty()) {
+                        mediaItem.subTitle = QString("%1 - Episode %2")
+                        .arg(mediaItem.subTitle)
+                        .arg(episode);
+                    } else {
+                        mediaItem.subTitle = QString("Episode %2").arg(episode);
+                    }
                 }
             } else {
                 mediaItem.fields["videoType"] = "Video Clip";

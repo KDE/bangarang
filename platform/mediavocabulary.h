@@ -47,8 +47,6 @@ class MediaVocabulary {
         QUrl typeAudioMusic();
         QUrl typeAudioStream();
         QUrl typeVideo();
-        QUrl typeVideoMovie();
-        QUrl typeVideoSeries();
         
         //These properties are applicable to all media types
         QUrl title();
@@ -65,6 +63,8 @@ class MediaVocabulary {
         QUrl musicTrackNumber();
         QUrl musicGenre();
         
+        QUrl videoIsMovie();
+        QUrl videoIsTVShow();
         QUrl videoGenre();
         QUrl videoSeriesName();
         QUrl videoSeriesSeason();

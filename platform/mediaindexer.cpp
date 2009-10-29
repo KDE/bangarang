@@ -178,25 +178,11 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         }
     } else if (mediaItem.type == "Video") {
         //Update the media type
-        QUrl videoType;
-        if (mediaItem.fields["videoType"] == "Movie") {
-            videoType = mediaVocabulary.typeVideoMovie();
-        } else if (mediaItem.fields["videoType"] == "Series") {
-            videoType = mediaVocabulary.typeVideoSeries();
-        } else if (mediaItem.fields["videoType"] == "Video Clip") {
-            videoType = mediaVocabulary.typeVideo();
-        }
         if (!res.exists()) {
-            res = Nepomuk::Resource(mediaItem.url, videoType);
+            res = Nepomuk::Resource(mediaItem.url, mediaVocabulary.typeVideo());
         }
-        if (!res.hasType(videoType)) {
-            res.addType(videoType);
-        }
-        
-        if (mediaItem.fields["videoType"] == "Movie") {
-            removeType(res, mediaVocabulary.typeVideoSeries());
-        } else if (mediaItem.fields["videoType"] == "Series") {
-            removeType(res, mediaVocabulary.typeVideoMovie());
+        if (!res.hasType(mediaVocabulary.typeVideo())) {
+            res.addType(mediaVocabulary.typeVideo());
         }
         
         //Update the properties
@@ -204,17 +190,32 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
         QString description = mediaItem.fields["description"].toString();
         res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-        if (mediaItem.fields["videoType"] == "Series") {
+        if (mediaItem.fields["videoType"] == "Movie") {
+            res.setProperty(mediaVocabulary.videoIsMovie(), Nepomuk::Variant(true));
+            res.removeProperty(mediaVocabulary.videoIsTVShow());
+            QString seriesName = mediaItem.fields["seriesName"].toString();
+            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+        } else if (mediaItem.fields["videoType"] == "TV Show") {
+            res.setProperty(mediaVocabulary.videoIsTVShow(), Nepomuk::Variant(true));
+            res.removeProperty(mediaVocabulary.videoIsMovie());
+            QString seriesName = mediaItem.fields["seriesName"].toString();
+            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
             int season = mediaItem.fields["season"].toInt();
             if (season != 0) {
                 res.setProperty(mediaVocabulary.videoSeriesSeason(), Nepomuk::Variant(season));
+            } else {
+                res.removeProperty(mediaVocabulary.videoSeriesSeason());
             }
             int episode = mediaItem.fields["episode"].toInt();
             if (episode != 0) {
                 res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
+            } else {
+                res.removeProperty(mediaVocabulary.videoSeriesEpisode());
             }
-            QString seriesName = mediaItem.fields["seriesName"].toString();
-            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+        } else if (mediaItem.fields["videoType"] == "Video Clip") {
+            //Remove properties identifying video as a movie or tv show
+            res.removeProperty(mediaVocabulary.videoIsMovie());
+            res.removeProperty(mediaVocabulary.videoIsTVShow());
         }
     }
 }

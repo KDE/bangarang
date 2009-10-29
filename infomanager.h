@@ -74,7 +74,7 @@ class InfoManager : public QObject
         void showVideoType(int index, bool edit = false);
         void showVideoFields();
         void showVideoMovieFields(bool edit = false);
-        void showVideoSeriesFields(bool edit = false);
+        void showVideoTVShowFields(bool edit = false);
         bool multipleVideoTypes();
         bool multipleAudioTypes();
         void setLabel(int row, QString label, int format = NormalFormat);
