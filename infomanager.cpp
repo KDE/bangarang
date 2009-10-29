@@ -133,9 +133,10 @@ void InfoManager::videoTypeChanged(int type)
     if (!multipleVideoTypes()) {
         if (type == 0) {
             showVideoType(0, true);
+            showVideoMovieFields(true);
         } else if (type == 1) {
             showVideoType(1, true);
-            showVideoSeriesFields(true);
+            showVideoTVShowFields(true);
         } else if (type == 2) {
             showVideoType(2, true);
             //No special video clip fields
@@ -195,9 +196,10 @@ void InfoManager::showFields(bool edit)
         if (!multipleVideoTypes()) {
             if (mediaList.at(0).fields["videoType"] == "Movie") {
                 showVideoType(0, edit);
-            } else if (mediaList.at(0).fields["videoType"] == "Series") {
+                showVideoMovieFields(edit);
+            } else if (mediaList.at(0).fields["videoType"] == "TV Show") {
                 showVideoType(1, edit);
-                showVideoSeriesFields(edit);
+                showVideoTVShowFields(edit);
             } else if (mediaList.at(0).fields["videoType"] == "Video Clip") {
                 showVideoType(2, edit);
                 //No special video clip fields
@@ -291,7 +293,7 @@ void InfoManager::showVideoType(int index, bool edit)
 {
     int startRow = ui->infoView->topLevelItemCount();
     QStringList typeList;
-    typeList << "Movie" << "Series" << "Video Clip";
+    typeList << "Movie" << "TV Show" << "Video Clip";
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow, tr2i18n("Type"));
     
@@ -308,24 +310,37 @@ void InfoManager::showVideoFields()
 {
 }
 
-void InfoManager::showVideoSeriesFields(bool edit)
+void InfoManager::showVideoMovieFields(bool edit)
 {
     int startRow = ui->infoView->topLevelItemCount();
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow, tr2i18n("Season"));
+    setLabel(startRow, tr2i18n("Collection/Series Name"));
+    if (!edit) {
+        setInfo(startRow, QString("%1").arg(commonValue("seriesName").toString()));
+    } else {
+        setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
+    }
+    
+}
+
+void InfoManager::showVideoTVShowFields(bool edit)
+{
+    int startRow = ui->infoView->topLevelItemCount();
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 1, tr2i18n("Episode"));
+    setLabel(startRow, tr2i18n("Series Name"));
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 2, tr2i18n("Series Name"));
+    setLabel(startRow + 1, tr2i18n("Season"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 2, tr2i18n("Episode"));
     
     if (!edit) {
-        setInfo(startRow, QString("%1").arg(commonValue("season").toInt()));
-        setInfo(startRow + 1, QString("%1").arg(commonValue("episode").toInt()));
-        setInfo(startRow + 2, QString("%1").arg(commonValue("seriesName").toString()));
+        setInfo(startRow, QString("%1").arg(commonValue("seriesName").toString()));
+        setInfo(startRow + 1, QString("%1").arg(commonValue("season").toInt()));
+        setInfo(startRow + 2, QString("%1").arg(commonValue("episode").toInt()));
     } else {
-        setEditWidget(startRow, new QSpinBox(), commonValue("season").toInt());
-        setEditWidget(startRow + 1, new QSpinBox(), commonValue("episode").toInt());
-        setEditWidget(startRow + 2, new KLineEdit(), commonValue("seriesName").toString());
+        setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
+        setEditWidget(startRow + 1, new QSpinBox(), commonValue("season").toInt());
+        setEditWidget(startRow + 2, new QSpinBox(), commonValue("episode").toInt());
     }
 }
         
@@ -490,27 +505,28 @@ void InfoManager::saveInfoToMediaModel()
             } else if (typeComboBox->currentText() == "Movie") {
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
-            } else if (typeComboBox->currentText() == "Series") {
-                mediaItem.type = "Video";
-                mediaItem.fields["videoType"] = "Series";
-                
-                QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
-                int season = seasonWidget->value();
-                if (season != 0) {
-                    mediaItem.fields["season"] = season;
-                    mediaItem.subTitle = QString("Season %1 ").arg(season);
-                }
-                QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
-                int episode = episodeWidget->value();
-                if (episode != 0) {
-                    mediaItem.fields["episode"] = episode;
-                    mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
-                }
-                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
                 }
+            } else if (typeComboBox->currentText() == "TV Show") {
+                mediaItem.type = "Video";
+                mediaItem.fields["videoType"] = "TV Show";
+                
+                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+                QString seriesName = seriesNameWidget->text();
+                if (!seriesName.isEmpty()) {
+                    mediaItem.fields["seriesName"] = seriesName;
+                }
+                QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                int season = seasonWidget->value();
+                mediaItem.fields["season"] = season;
+                mediaItem.subTitle = QString("Season %1 ").arg(season);
+                QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                int episode = episodeWidget->value();
+                mediaItem.fields["episode"] = episode;
+                mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
             }
         }
             

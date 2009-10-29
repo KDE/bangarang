@@ -22,7 +22,6 @@
 #include "mediavocabulary.h"
 
 #include <Soprano/QueryResultIterator>
-//#include <Soprano/Query>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
@@ -85,16 +84,16 @@ void VideoListEngine::run()
         QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
         "OPTIONAL { ?r <%2> ?season } "
         "OPTIONAL { ?r <%3> ?description } "
-        "OPTIONAL { ?r rdf:type <%4> . "
-        "?r rdf:type ?typeMovie } "
-        "OPTIONAL { ?r rdf:type <%5> . "
-        "?r rdf:type ?typeSeries } ")
+        "OPTIONAL { ?r <%4> ?p . "
+        "?r ?isMovie ?p } "
+        "OPTIONAL { ?r <%5> ?q . "
+        "?r ?isTVShow ?q } ")
         .arg(mediaVocabulary.duration().toString())
         .arg(mediaVocabulary.videoSeriesSeason().toString())
         .arg(mediaVocabulary.description().toString())
-        .arg(mediaVocabulary.typeVideoMovie().toString())
-        .arg(mediaVocabulary.typeVideoSeries().toString());
-        QString filter = QString("FILTER ( !bound(?typeMovie) && !bound(?typeSeries)) ");
+        .arg(mediaVocabulary.videoIsMovie().toString())
+        .arg(mediaVocabulary.videoIsTVShow().toString());
+        QString filter = QString("FILTER ( !bound(?isMovie) && !bound(?isTVShow)) ");
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?title ");
 
@@ -139,7 +138,7 @@ void VideoListEngine::run()
         m_mediaListProperties.name = QString("Video Clips");
         m_mediaListProperties.type = QString("Sources");
         
-    } else if (engineArg.toLower() == "series") {
+    } else if (engineArg.toLower() == "tvshows") {
         QString videoQuery;
         
         //Build clips query 
@@ -154,8 +153,11 @@ void VideoListEngine::run()
         QString select = QString("SELECT DISTINCT ?r ?title ?duration ?season ?episode ?description ?seriesName ");
         QString whereConditions = QString("WHERE { "
         "?r rdf:type <%1> . "
-        "?r <%2> ?title . ")
-        .arg(mediaVocabulary.typeVideoSeries().toString())
+        "?r <%2> %3 . "
+        "?r <%4> ?title . ")
+        .arg(mediaVocabulary.typeVideo().toString())
+        .arg(mediaVocabulary.videoIsTVShow().toString())
+        .arg(Soprano::Node::literalToN3(true))
         .arg(mediaVocabulary.title().toString());
         QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
         "OPTIONAL { ?r <%2> ?season } "
@@ -192,20 +194,33 @@ void VideoListEngine::run()
             if (duration != 0) {
                 mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
             }
+            QString seriesName = it.binding("seriesName").literal().toString();
+            if (!seriesName.isEmpty()) {
+                mediaItem.fields["seriesName"] = seriesName;
+                mediaItem.subTitle = seriesName;
+            }
+            
             int season = it.binding("season").literal().toInt();
             if (season != 0) {
                 mediaItem.fields["season"] = season;
-                mediaItem.subTitle = QString("Season %1 ").arg(season);
+                if (!mediaItem.subTitle.isEmpty()) {
+                    mediaItem.subTitle = QString("%1 - Season %2")
+                                            .arg(mediaItem.subTitle)
+                                            .arg(season);
+                } else {
+                    mediaItem.subTitle = QString("Season %1").arg(season);
+                }
             }
             int episode = it.binding("episode").literal().toInt();
             if (episode != 0) {
                 mediaItem.fields["episode"] = episode;
-                mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
-            }
-            QString seriesName = it.binding("seriesName").literal().toString();
-            if (!seriesName.isEmpty()) {
-                mediaItem.fields["seriesName"] = seriesName;
-                mediaItem.subTitle = seriesName + " - " + mediaItem.subTitle;
+                if (!mediaItem.subTitle.isEmpty()) {
+                    mediaItem.subTitle = QString("%1 - Episode %2")
+                                            .arg(mediaItem.subTitle)
+                                            .arg(episode);
+                } else {
+                    mediaItem.subTitle = QString("Episode %2").arg(episode);
+                }
             }
 
             mediaItem.type = "Video";
@@ -215,7 +230,7 @@ void VideoListEngine::run()
             mediaItem.fields["title"] = it.binding("title").literal().toString();
             mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
             mediaItem.fields["description"] = it.binding("description").literal().toString();
-            mediaItem.fields["videoType"] = "Series";
+            mediaItem.fields["videoType"] = "TV Show";
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
@@ -224,7 +239,6 @@ void VideoListEngine::run()
             ++i;
         }
         
-        m_mediaListProperties.name = QString("Series");
         m_mediaListProperties.type = QString("Sources");
         
     } else if (engineArg.toLower() == "movies") {
@@ -242,8 +256,11 @@ void VideoListEngine::run()
         QString select = QString("SELECT DISTINCT ?r ?title ?duration ?description ");
         QString whereConditions = QString("WHERE { "
         "?r rdf:type <%1> . "
-        "?r <%2> ?title . ")
-        .arg(mediaVocabulary.typeVideoMovie().toString())
+        "?r <%2> %3 . "
+        "?r <%4> ?title . ")
+        .arg(mediaVocabulary.typeVideo().toString())
+        .arg(mediaVocabulary.videoIsMovie().toString())
+        .arg(Soprano::Node::literalToN3(true))
         .arg(mediaVocabulary.title().toString());
         QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
         "OPTIONAL { ?r <%2> ?description } ")
@@ -286,11 +303,15 @@ void VideoListEngine::run()
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
             }
+            QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
+            if (!seriesName.isEmpty()) {
+                mediaItem.fields["seriesName"] = seriesName;
+                mediaItem.subTitle = seriesName;
+            }
             mediaList.append(mediaItem);
             ++i;
         }
         
-        m_mediaListProperties.name = QString("Movies");
         m_mediaListProperties.type = QString("Sources");
         
     } else if (engineArg.toLower() == "search") {
@@ -347,21 +368,47 @@ void VideoListEngine::run()
             mediaItem.fields["duration"] = it.binding("duration").literal().toString();
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
-                if (res.hasType(mediaVocabulary.typeVideoMovie())) {
-                    mediaItem.artwork = KIcon("tool-animator");
-                    mediaItem.fields["videoType"] = "Movie";
-                } else if (res.hasType(mediaVocabulary.typeVideoSeries())) {
-                    mediaItem.artwork = KIcon("video-television");
-                    mediaItem.fields["videoType"] = "Series";
+                if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                    if (res.property(mediaVocabulary.videoIsMovie()).toBool()) {
+                        mediaItem.artwork = KIcon("tool-animator");
+                        mediaItem.fields["videoType"] = "Movie";
+                        QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
+                        if (!seriesName.isEmpty()) {
+                            mediaItem.fields["seriesName"] = seriesName;
+                            mediaItem.subTitle = seriesName;
+                        }
+                    }
+                } else if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                    if (res.property(mediaVocabulary.videoIsTVShow()).toBool()) {
+                        mediaItem.artwork = KIcon("video-television");
+                        mediaItem.fields["videoType"] = "TV Show";
+                    }
+                    QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
+                    if (!seriesName.isEmpty()) {
+                        mediaItem.fields["seriesName"] = seriesName;
+                        mediaItem.subTitle = seriesName;
+                    }
                     int season = res.property(mediaVocabulary.videoSeriesSeason()).toInt();
                     if (season !=0 ) {
                         mediaItem.fields["season"] = season;
-                        mediaItem.subTitle = QString("Season %1 ").arg(season);
+                        if (!mediaItem.subTitle.isEmpty()) {
+                            mediaItem.subTitle = QString("%1 - Season %2")
+                            .arg(mediaItem.subTitle)
+                            .arg(season);
+                        } else {
+                            mediaItem.subTitle = QString("Season %1").arg(season);
+                        }
                     }
                     int episode = res.property(mediaVocabulary.videoSeriesEpisode()).toInt();
                     if (episode !=0 ) {
                         mediaItem.fields["episode"] = episode;
-                        mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                        if (!mediaItem.subTitle.isEmpty()) {
+                            mediaItem.subTitle = QString("%1 - Episode %2")
+                            .arg(mediaItem.subTitle)
+                            .arg(episode);
+                        } else {
+                            mediaItem.subTitle = QString("Episode %2").arg(episode);
+                        }
                     }
                 } else {
                     mediaItem.artwork = KIcon("video-x-generic");

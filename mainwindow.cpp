@@ -596,7 +596,7 @@ void MainWindow::mediaListChanged()
     ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);
     ui->mediaView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
     
-    if ((m_mediaItemModel->rowCount() != 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
+    if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             ui->mediaView->header()->showSection(1);

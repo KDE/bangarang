@@ -345,7 +345,6 @@ void MusicListEngine::run()
     m_requestSignature = QString();
     m_subRequestSignature = QString();
     //exec();
-    
 }
 
 void MusicListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
