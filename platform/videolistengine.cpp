@@ -21,6 +21,8 @@
 #include "listenginefactory.h"
 #include "mediavocabulary.h"
 
+#include <iostream>
+
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -53,6 +55,17 @@ VideoListEngine::~VideoListEngine()
 {
 }
 
+QString VideoListEngine::getPrefix() {
+    return QString("PREFIX xesam: <%1> "
+			"PREFIX rdf: <%2> "
+			"PREFIX nmm: <%3> "
+			"PREFIX xls: <%4> ")
+		.arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
+		.arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
+		.arg("http://www.semanticdesktop.org/ontologies/nmm#")
+		.arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
+}
+
 void VideoListEngine::run()
 {
     
@@ -67,14 +80,6 @@ void VideoListEngine::run()
         QString videoQuery;
         
         //Build clips query 
-        QString prefix = QString("PREFIX xesam: <%1> "
-        "PREFIX rdf: <%2> "
-        "PREFIX nmm: <%3> "
-        "PREFIX xls: <%4> ")
-        .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
-        .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-        .arg("http://www.semanticdesktop.org/ontologies/nmm#")
-        .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?duration ?season ?description ");
         QString whereConditions = QString("WHERE { "
         "?r rdf:type <%1> . "
@@ -97,7 +102,7 @@ void VideoListEngine::run()
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?title ");
 
-        videoQuery = prefix + select + whereConditions + whereOptionalConditions + filter + whereTerminator + order;
+        videoQuery = getPrefix() + select + whereConditions + whereOptionalConditions + filter + whereTerminator + order;
         
         //Execute Query
         Soprano::QueryResultIterator it = m_mainModel->executeQuery( videoQuery,                                   Soprano::Query::QueryLanguageSparql );
@@ -139,44 +144,245 @@ void VideoListEngine::run()
         m_mediaListProperties.type = QString("Sources");
         
     } else if (engineArg.toLower() == "tvshows") {
-        QString videoQuery;
-        
-        //Build clips query 
-        QString prefix = QString("PREFIX xesam: <%1> "
-        "PREFIX rdf: <%2> "
-        "PREFIX nmm: <%3> "
-        "PREFIX xls: <%4> ")
-        .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
-        .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-        .arg("http://www.semanticdesktop.org/ontologies/nmm#")
-        .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
-        QString select = QString("SELECT DISTINCT ?r ?title ?duration ?season ?episode ?description ?seriesName ");
+    	QString videoQuery;
+
+        // get names of the different tv shows
+        QString select = QString("SELECT DISTINCT ?seriesName ");
         QString whereConditions = QString("WHERE { "
-        "?r rdf:type <%1> . "
-        "?r <%2> %3 . "
-        "?r <%4> ?title . ")
-        .arg(mediaVocabulary.typeVideo().toString())
-        .arg(mediaVocabulary.videoIsTVShow().toString())
-        .arg(Soprano::Node::literalToN3(true))
-        .arg(mediaVocabulary.title().toString());
-        QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
-        "OPTIONAL { ?r <%2> ?season } "
-        "OPTIONAL { ?r <%3> ?episode } "
-        "OPTIONAL { ?r <%4> ?seriesName } "
-        "OPTIONAL { ?r <%5> ?description } ")
-        .arg(mediaVocabulary.duration().toString())
-        .arg(mediaVocabulary.videoSeriesSeason().toString())
-        .arg(mediaVocabulary.videoSeriesEpisode().toString())
-        .arg(mediaVocabulary.videoSeriesName().toString())
-        .arg(mediaVocabulary.description().toString());
+				"?r rdf:type <%1> . "
+				"?r <%2> %3 . "
+				"?r <%4> ?seriesName . ")
+			.arg(mediaVocabulary.typeVideo().toString())
+			.arg(mediaVocabulary.videoIsTVShow().toString())
+			.arg(Soprano::Node::literalToN3(true))
+			.arg(mediaVocabulary.videoSeriesName().toString());
         QString whereTerminator = QString("} ");
-        QString order = QString("ORDER BY ?title ");
-        
-        videoQuery = prefix + select + whereConditions + whereOptionalConditions + whereTerminator + order;
-        
+        QString order = QString("ORDER BY ?seriesName ");
+
+        videoQuery = getPrefix()
+        		+ select
+        		+ whereConditions
+        		+ whereTerminator
+        		+ order;
+
         //Execute Query
-        Soprano::QueryResultIterator it = m_mainModel->executeQuery( videoQuery,                                   Soprano::Query::QueryLanguageSparql );
+        Soprano::QueryResultIterator it = m_mainModel->executeQuery(
+        		videoQuery,
+        		Soprano::Query::QueryLanguageSparql );
+
+        //Build media list from results
+        int i = 0;
+        while( it.next() ) {
+            QString name = it.binding("seriesName").literal().toString();
+            if (!name.isEmpty()) {
+                MediaItem mediaItem;
+                mediaItem.url = QString("video://seasons?%1").arg(name);
+                mediaItem.title = name;
+                mediaItem.type = QString("Category");
+                mediaItem.nowPlaying = false;
+                mediaItem.artwork = KIcon("video-television");
+                mediaList.append(mediaItem);
+            }
+            ++i;
+        }
+
+        // check, whether there are episodes without a series name
+        QString ask = QString("ASK { "
+				"?r rdf:type <%1> . "
+				"?r <%2> %3 . "
+				"OPTIONAL { ?r <%6> ?seriesName  } "
+				"FILTER ( !bound(?seriesName) || regex(str(?seriesName), \"^\") ) ")
+			.arg(mediaVocabulary.typeVideo().toString())
+			.arg(mediaVocabulary.videoIsTVShow().toString())
+			.arg(Soprano::Node::literalToN3(true))
+			.arg(mediaVocabulary.videoSeriesSeason().toString());
+        QString askTerminator = QString("} ");
+
+        videoQuery = getPrefix() + ask + askTerminator;
+
+        //Execute Query
+        it = m_mainModel->executeQuery(
+        		videoQuery,
+        		Soprano::Query::QueryLanguageSparql );
+
+        //Build media list from results
+        i = 0;
+        if( it.boolValue() ) {
+			MediaItem mediaItem;
+			mediaItem.url = QString("video://episodes?||");
+			mediaItem.title = QString("Uncategorized TV Shows");
+			mediaItem.type = QString("Category");
+			mediaItem.nowPlaying = false;
+			mediaItem.artwork = KIcon("video-television");
+			mediaList.append(mediaItem);
+            ++i;
+        }
+
+        m_mediaListProperties.name = QString("TV Shows");
+        m_mediaListProperties.type = QString("Categories");
+    } else if (engineArg.toLower() == "seasons") {
+    	QString videoQuery;
+
+        QString seriesName = engineFilter;
+
+        // get season of the given tv show
+        QString select = QString("SELECT DISTINCT ?season ");
+        QString whereConditions = QString("WHERE { "
+				"?r rdf:type <%1> . "
+				"?r <%2> %3 . "
+				"?r <%4> %5 . "
+				"?r <%6> ?season . ")
+			.arg(mediaVocabulary.typeVideo().toString())
+			.arg(mediaVocabulary.videoIsTVShow().toString())
+			.arg(Soprano::Node::literalToN3(true))
+			.arg(mediaVocabulary.videoSeriesName().toString())
+			.arg(Soprano::Node::literalToN3(seriesName))
+			.arg(mediaVocabulary.videoSeriesSeason().toString());
+        QString whereTerminator = QString("} ");
+        QString order = QString("ORDER BY ?season ");
+
+        videoQuery = getPrefix()
+        		+ select
+        		+ whereConditions
+        		+ whereTerminator
+        		+ order;
+
+        //Execute Query
+        Soprano::QueryResultIterator it = m_mainModel->executeQuery(
+        		videoQuery,
+        		Soprano::Query::QueryLanguageSparql );
+
+        //Build media list from results
+        int i = 0;
+        while( it.next() ) {
+            int season = it.binding("season").literal().toInt();
+			MediaItem mediaItem;
+			mediaItem.url = QString("video://episodes?%1||%2")
+					.arg(seriesName).arg(season);
+			mediaItem.title = seriesName;
+			mediaItem.subTitle = QString("Season %1").arg(season);
+			mediaItem.type = QString("Category");
+			mediaItem.nowPlaying = false;
+			mediaItem.artwork = KIcon("video-television");
+			mediaList.append(mediaItem);
+            ++i;
+        }
+
+        // check, whether there are episodes of the tv show
+        // without a season
+        QString ask = QString("ASK { "
+				"?r rdf:type <%1> . "
+				"?r <%2> %3 . "
+				"?r <%4> %5 . "
+				"OPTIONAL { ?r <%6> ?season  } "
+				"FILTER ( !bound(?season) ) ")
+			.arg(mediaVocabulary.typeVideo().toString())
+			.arg(mediaVocabulary.videoIsTVShow().toString())
+			.arg(Soprano::Node::literalToN3(true))
+			.arg(mediaVocabulary.videoSeriesName().toString())
+			.arg(Soprano::Node::literalToN3(seriesName))
+			.arg(mediaVocabulary.videoSeriesSeason().toString());
+        QString askTerminator = QString("} ");
+
+        videoQuery = getPrefix() + ask + askTerminator;
+
+        //Execute Query
+        it = m_mainModel->executeQuery(
+        		videoQuery,
+        		Soprano::Query::QueryLanguageSparql );
+
+        //Build media list from results
+        i = 0;
+        if( it.boolValue() ) {
+			MediaItem mediaItem;
+			mediaItem.url = QString("video://episodes?%1||")
+					.arg(seriesName);
+			mediaItem.title = seriesName;
+			mediaItem.subTitle = QString("Uncategorized seasons");
+			mediaItem.type = QString("Category");
+			mediaItem.nowPlaying = false;
+			mediaItem.artwork = KIcon("video-television");
+			mediaList.append(mediaItem);
+            ++i;
+        }
+
+
+        m_mediaListProperties.name = QString("%1 - Seasons").arg(seriesName);
+        m_mediaListProperties.type = QString("Categories");
+    } else if (engineArg.toLower() == "episodes") {
+    	QString videoQuery;
+        QString seriesName;
+        int season = 0;
+        bool hasSeason = false;
         
+        //Parse filter
+        if (!engineFilter.isNull()) {
+            QStringList argList = engineFilter.split("||");
+            seriesName = argList.at(0);
+            hasSeason = !argList.at(1).isEmpty();
+            if (hasSeason)
+            	season = argList.at(1).toInt();
+        }
+
+        //Build clips query 
+        QString select = QString("SELECT DISTINCT ?r ?title ?duration ?episode ?description ");
+        QString whereConditions = QString("WHERE { "
+				"?r rdf:type <%1> . "
+				"?r <%2> %3 . "
+				"?r <%4> ?title . ")
+			.arg(mediaVocabulary.typeVideo().toString())
+			.arg(mediaVocabulary.videoIsTVShow().toString())
+			.arg(Soprano::Node::literalToN3(true))
+			.arg(mediaVocabulary.title().toString());
+
+        QString seriesNameCondition;
+        if (! seriesName.isEmpty()) {
+        	seriesNameCondition = QString("?r <%1> %2 . ")
+				.arg(mediaVocabulary.videoSeriesName().toString())
+				.arg(Soprano::Node::literalToN3(seriesName));
+        } else {
+        	seriesNameCondition = QString(
+        			"OPTIONAL { ?r <%1> ?seriesName } "
+        			"FILTER( !bound(?seriesName) || regex(str(?seriesName), \"^$\") ) ")
+				.arg(mediaVocabulary.videoSeriesName().toString());
+        }
+
+        QString seasonCondition = QString("");
+        if (hasSeason) {
+        	seasonCondition = QString("?r <%1> %2 . ")
+				.arg(mediaVocabulary.videoSeriesSeason().toString())
+				.arg(Soprano::Node::literalToN3(season));
+        } else {
+        	seasonCondition = QString(
+        			"OPTIONAL { ?r <%1> ?season } "
+        			"FILTER( !bound(?season) ) ")
+				.arg(mediaVocabulary.videoSeriesSeason().toString());
+        }
+
+        QString whereOptionalConditions = QString("OPTIONAL { ?r <%1> ?duration } "
+				"OPTIONAL { ?r <%2> ?episode } "
+				"OPTIONAL { ?r <%3> ?description } ")
+			.arg(mediaVocabulary.duration().toString())
+			.arg(mediaVocabulary.videoSeriesEpisode().toString())
+			.arg(mediaVocabulary.description().toString());
+        QString whereTerminator = QString("} ");
+        QString order = QString("ORDER BY ?episode ");
+        
+
+        videoQuery = getPrefix()
+        		+ select
+        		+ whereConditions
+        		+ seriesNameCondition
+        		+ seasonCondition
+        		+ whereOptionalConditions
+        		+ whereTerminator
+        		+ order;
+
+        //Execute Query
+        Soprano::QueryResultIterator it = m_mainModel->executeQuery(
+        		videoQuery,
+        		Soprano::Query::QueryLanguageSparql );
+
         //Build media list from results
         int i = 0;
         while( it.next() ) {
@@ -194,22 +400,12 @@ void VideoListEngine::run()
             if (duration != 0) {
                 mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
             }
-            QString seriesName = it.binding("seriesName").literal().toString();
             if (!seriesName.isEmpty()) {
                 mediaItem.fields["seriesName"] = seriesName;
-                mediaItem.subTitle = seriesName;
             }
             
-            int season = it.binding("season").literal().toInt();
             if (season != 0) {
                 mediaItem.fields["season"] = season;
-                if (!mediaItem.subTitle.isEmpty()) {
-                    mediaItem.subTitle = QString("%1 - Season %2")
-                                            .arg(mediaItem.subTitle)
-                                            .arg(season);
-                } else {
-                    mediaItem.subTitle = QString("Season %1").arg(season);
-                }
             }
             int episode = it.binding("episode").literal().toInt();
             if (episode != 0) {
@@ -239,20 +435,23 @@ void VideoListEngine::run()
             ++i;
         }
         
+        if (seriesName.isEmpty()) {
+			m_mediaListProperties.name = QString("Uncategorized TV Shows");
+        } else if (hasSeason) {
+			m_mediaListProperties.name = QString("%1 - Season %2 - Episodes")
+				.arg(seriesName)
+				.arg(season);
+        } else {
+			m_mediaListProperties.name = QString(
+					"%1 - Uncategorized Seasons - Episodes")
+				.arg(seriesName);
+        }
         m_mediaListProperties.type = QString("Sources");
         
     } else if (engineArg.toLower() == "movies") {
         QString videoQuery;
         
         //Build clips query 
-        QString prefix = QString("PREFIX xesam: <%1> "
-        "PREFIX rdf: <%2> "
-        "PREFIX nmm: <%3> "
-        "PREFIX xls: <%4> ")
-        .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
-        .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-        .arg("http://www.semanticdesktop.org/ontologies/nmm#")
-        .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
         QString select = QString("SELECT DISTINCT ?r ?title ?duration ?description ");
         QString whereConditions = QString("WHERE { "
         "?r rdf:type <%1> . "
@@ -269,7 +468,7 @@ void VideoListEngine::run()
         QString whereTerminator = QString("} ");
         QString order = QString("ORDER BY ?title ");
         
-        videoQuery = prefix + select + whereConditions + whereOptionalConditions + whereTerminator + order;
+        videoQuery = getPrefix() + select + whereConditions + whereOptionalConditions + whereTerminator + order;
         
         //Execute Query
         Soprano::QueryResultIterator it = m_mainModel->executeQuery( videoQuery,                                   Soprano::Query::QueryLanguageSparql );
@@ -431,7 +630,6 @@ void VideoListEngine::run()
         m_mediaListProperties.type = QString("Sources");
         
     }
-    
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();

@@ -51,6 +51,9 @@ class VideoListEngine : public ListEngine
         QString m_requestSignature;
         QString m_subRequestSignature;
         
+        QString getPrefix();
+
+
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
         #include "mediaitemmodel.h"
