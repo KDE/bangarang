@@ -29,6 +29,66 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
+class VideoQuery {
+public:
+	VideoQuery(bool distinct = true);
+
+	void selectResource();
+	void selectSeason(bool optional=false);
+	void selectSeriesName(bool optional=false);
+	void selectTitle(bool optional=false);
+	void selectDuration(bool optional=false);
+	void selectEpisode(bool optional=false);
+	void selectDescription(bool optional=false);
+	void selectIsTVShow(bool optional=false);
+	void selectIsMovie(bool optional=false);
+
+	void isTVShow(bool flag);
+	void isMovie(bool flag);
+
+	void hasSeason(int season);
+	void hasNoSeason();
+
+	void hasSeriesName(QString seriesName);
+	void hasNoSeriesName();
+
+	void searchString(QString str);
+
+	void orderBy(QString var);
+
+
+	Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
+	bool executeAsk(Soprano::Model* model);
+
+private:
+	bool m_distinct;
+
+	bool m_selectResource;
+	bool m_selectSeason;
+	bool m_selectSeriesName;
+	bool m_selectTitle;
+	bool m_selectDuration;
+	bool m_selectEpisode;
+	bool m_selectDescription;
+	bool m_selectIsTVShow;
+	bool m_selectIsMovie;
+
+	QString m_seasonCondition;
+	QString m_seriesNameCondition;
+	QString m_titleCondition;
+	QString m_durationCondition;
+	QString m_episodeCondition;
+	QString m_descriptionCondition;
+	QString m_TVShowCondition;
+	QString m_movieCondition;
+	QString m_searchCondition;
+
+	QString m_order;
+
+	QString addOptional(bool optional, QString str);
+	QString getPrefix();
+};
+
 class VideoListEngine : public ListEngine
 {
     Q_OBJECT
@@ -51,7 +111,7 @@ class VideoListEngine : public ListEngine
         QString m_requestSignature;
         QString m_subRequestSignature;
         
-        QString getPrefix();
+        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
 
 
     Q_SIGNALS:
