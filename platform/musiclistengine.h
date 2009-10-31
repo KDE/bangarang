@@ -23,11 +23,62 @@
 #include <QtCore>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 
 class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
+
+class MusicQuery {
+    public:
+        MusicQuery(bool distinct = true);
+        
+        void selectResource();
+        void selectArtist(bool optional=false);
+        void selectAlbum(bool optional=false);
+        void selectTitle(bool optional=false);
+        void selectDuration(bool optional=false);
+        void selectTrackNumber(bool optional=false);
+        void selectGenre(bool optional=false);
+        
+        void hasArtist(QString album);
+        void hasNoArtist();
+        void hasAlbum(QString album);
+        void hasNoAlbum();
+        
+        void searchString(QString str);
+        
+        void orderBy(QString var);
+        
+        
+        Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
+        bool executeAsk(Soprano::Model* model);
+        
+    private:
+        bool m_distinct;
+        
+        bool m_selectResource;
+        bool m_selectArtist;
+        bool m_selectAlbum;
+        bool m_selectTitle;
+        bool m_selectDuration;
+        bool m_selectTrackNumber;
+        bool m_selectGenre;
+        
+        QString m_artistCondition;
+        QString m_albumCondition;
+        QString m_titleCondition;
+        QString m_durationCondition;
+        QString m_trackNumberCondition;
+        QString m_genreCondition;
+        QString m_searchCondition;
+        
+        QString m_order;
+        
+        QString addOptional(bool optional, QString str);
+        QString getPrefix();
+};
 
 class MusicListEngine : public ListEngine
 {
@@ -50,6 +101,7 @@ class MusicListEngine : public ListEngine
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
+        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
         
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
