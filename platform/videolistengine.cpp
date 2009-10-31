@@ -283,6 +283,7 @@ void VideoListEngine::run()
             }
 
             mediaItem.artwork = KIcon("video-television");
+            mediaItem.fields["videoType"] = "TV Show";
             mediaList.append(mediaItem);
         }
         
@@ -315,6 +316,7 @@ void VideoListEngine::run()
         while( it.next() ) {
             MediaItem mediaItem = createMediaItem(it);
             mediaItem.artwork = KIcon("tool-animator");
+            mediaItem.fields["videoType"] = "Movie";
 
             Nepomuk::Resource res(mediaItem.url);
             QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
