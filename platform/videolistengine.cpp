@@ -25,6 +25,7 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <Soprano/Vocabulary/NAO>
 #include <QApplication>
 #include <KIcon>
 #include <KUrl>
@@ -101,11 +102,7 @@ MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     mediaItem.fields["title"] = it.binding("title").literal().toString();
     mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
     mediaItem.fields["description"] = it.binding("description").literal().toString();
-
-    Nepomuk::Resource res(mediaItem.url);
-    if (res.exists()) {
-        mediaItem.fields["rating"] = res.rating();
-    }
+    mediaItem.fields["rating"] = it.binding("rating").literal().toInt();
 
     return mediaItem;
 }
@@ -264,7 +261,8 @@ void VideoListEngine::run()
     	}
     	videoQuery.selectDuration(true);
     	videoQuery.selectDescription(true);
-    	videoQuery.selectEpisode(true);
+        videoQuery.selectRating(true);
+        videoQuery.selectEpisode(true);
     	videoQuery.orderBy("?episode");
 
 
@@ -306,6 +304,8 @@ void VideoListEngine::run()
         videoQuery.selectTitle();
         videoQuery.isMovie(true);
         videoQuery.selectDescription(true);
+        videoQuery.selectSeriesName(true);
+        videoQuery.selectRating(true);
         videoQuery.selectDuration(true);
         videoQuery.orderBy("?title");
 
@@ -317,13 +317,6 @@ void VideoListEngine::run()
             MediaItem mediaItem = createMediaItem(it);
             mediaItem.artwork = KIcon("tool-animator");
             mediaItem.fields["videoType"] = "Movie";
-
-            Nepomuk::Resource res(mediaItem.url);
-            QString seriesName = res.property(mediaVocabulary.videoSeriesName()).toString();
-            if (!seriesName.isEmpty()) {
-                mediaItem.fields["seriesName"] = seriesName;
-                mediaItem.subTitle = seriesName;
-            }
             mediaList.append(mediaItem);
         }
         
@@ -334,6 +327,7 @@ void VideoListEngine::run()
         videoQuery.selectResource();
         videoQuery.selectTitle(true);
         videoQuery.selectDescription(true);
+        videoQuery.selectRating(true);
         videoQuery.selectDuration(true);
         videoQuery.selectSeriesName(true);
         videoQuery.selectSeason(true);
@@ -476,6 +470,13 @@ void VideoQuery::selectDescription(bool optional) {
     		.arg(MediaVocabulary().description().toString()));
 }
 
+void VideoQuery::selectRating(bool optional) {
+    m_selectRating = true;
+    m_ratingCondition = addOptional(optional,
+                                    QString("?r <%1> ?rating . ")
+                                    .arg(Soprano::Vocabulary::NAO::numericRating().toString()));
+}
+
 void VideoQuery::selectIsTVShow(bool optional) {
 	m_selectIsTVShow = true;
     m_TVShowCondition = addOptional(optional,
@@ -599,6 +600,8 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     	queryString += "?episode ";
     if (m_selectDescription)
     	queryString += "?description ";
+    if (m_selectRating)
+        queryString += "?rating ";
     if (m_selectIsTVShow)
     	queryString += "?isTVShow ";
     if (m_selectIsMovie)
@@ -613,6 +616,7 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     queryString += m_durationCondition;
     queryString += m_episodeCondition;
     queryString += m_descriptionCondition;
+    queryString += m_ratingCondition;
     queryString += m_TVShowCondition;
     queryString += m_movieCondition;
     queryString += m_searchCondition;
