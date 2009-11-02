@@ -102,7 +102,7 @@ void Playlist::playItemAt(int row, int model)
         } else {
             // - Get album artwork
             MediaItem itemWithArtwork = nextMediaItem;
-            QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
             if (!artwork.isNull()) {
                 itemWithArtwork.artwork = KIcon(artwork);
             }
@@ -185,7 +185,7 @@ void Playlist::playItemAt(int row, int model)
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
         } else {
             // - Get album artwork
-            QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
             if (!artwork.isNull()) {
                 nextMediaItem.artwork = KIcon(artwork);
             }
@@ -432,7 +432,7 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
             queue << Phonon::MediaSource(Phonon::Dvd);
             m_mediaObject->setQueue(queue);
         } else {
-            QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
             if (!artwork.isNull()) {
                 nextMediaItem.artwork = KIcon(artwork);
             }

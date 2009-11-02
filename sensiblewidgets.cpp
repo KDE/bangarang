@@ -18,6 +18,9 @@
 
 #include "sensiblewidgets.h"
 
+#include <KIcon>
+#include <KFileDialog>
+
 SToolButton::SToolButton(QWidget * parent):QToolButton (parent) 
 {
     m_hoverDelay = 0;
@@ -190,4 +193,59 @@ void SListWidget::selectorExited()
 {
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
+
+ArtworkWidget::ArtworkWidget(QWidget * parent):QWidget (parent) 
+{
+    m_parent = parent;
+    m_openUrl = new QToolButton();
+    m_openUrl->setIcon(KIcon("document-open"));
+    m_artworkLabel = new QLabel();
+    m_artworkLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    m_artworkLabel->setMargin(8);
+    m_artworkLabel->setMinimumHeight(136);
+    m_layout = new QHBoxLayout;
+    m_layout->addWidget(m_artworkLabel);
+    m_layout->addWidget(m_openUrl);
+    this->setLayout(m_layout);
+    
+    connect(m_openUrl, SIGNAL(clicked()), this, SLOT(openUrl()));
+}
+
+ArtworkWidget::~ArtworkWidget() 
+{
+    delete m_openUrl;
+    delete m_artworkLabel;
+    delete m_layout;
+}
+
+KUrl ArtworkWidget::url()
+{
+    return m_url;
+}
+
+const QPixmap * ArtworkWidget::artwork()
+{
+    return m_artworkLabel->pixmap();
+}
+
+void ArtworkWidget::openUrl()
+{
+    KUrl url = KFileDialog::getImageOpenUrl(KUrl(), m_parent, tr("Open artwork file"));
+    if (!url.isEmpty()) {
+        setUrl(url);
+    }
+}
+
+void ArtworkWidget::setPixmap(QPixmap pixmap)
+{
+    m_artworkLabel->setPixmap(pixmap);
+}
+
+void ArtworkWidget::setUrl(KUrl url)
+{
+    QPixmap pixmap = QPixmap(url.path()).scaled(QSize(128,128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_artworkLabel->setPixmap(pixmap);
+    m_url = url;
+}
+
 #include "sensiblewidgets.moc"

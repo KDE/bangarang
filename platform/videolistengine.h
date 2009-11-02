@@ -43,6 +43,7 @@ public:
 	void selectIsTVShow(bool optional=false);
 	void selectIsMovie(bool optional=false);
     void selectRating(bool optional=false);
+    void selectArtwork(bool optional=false);
     
 	void isTVShow(bool flag);
 	void isMovie(bool flag);
@@ -74,6 +75,7 @@ private:
 	bool m_selectIsTVShow;
 	bool m_selectIsMovie;
     bool m_selectRating;
+    bool m_selectArtwork;
     
 	QString m_seasonCondition;
 	QString m_seriesNameCondition;
@@ -85,6 +87,7 @@ private:
 	QString m_movieCondition;
 	QString m_searchCondition;
     QString m_ratingCondition;
+    QString m_artworkCondition;
     
 	QString m_order;
 

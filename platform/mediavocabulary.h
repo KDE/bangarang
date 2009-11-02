@@ -47,6 +47,7 @@ class MediaVocabulary {
         QUrl typeAudioMusic();
         QUrl typeAudioStream();
         QUrl typeVideo();
+        QUrl typeImage();
         
         //These properties are applicable to all media types
         QUrl title();
@@ -54,6 +55,7 @@ class MediaVocabulary {
         QUrl duration();
         QUrl lastPlayed();
         QUrl playCount();
+        QUrl artwork();
         
         QUrl musicArtist();
         QUrl musicArtistName();

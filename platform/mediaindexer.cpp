@@ -158,6 +158,14 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
         QString description = mediaItem.fields["description"].toString();
         res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            Nepomuk::Resource artworkRes(artworkUrl);
+            if (!artworkRes.exists()) {
+                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+            }
+            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+        }
         if (mediaItem.fields["audioType"] == "Music") {
             QString artist  = mediaItem.fields["artist"].toString();
             QString album   = mediaItem.fields["album"].toString();
@@ -190,6 +198,14 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
         QString description = mediaItem.fields["description"].toString();
         res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            Nepomuk::Resource artworkRes(artworkUrl);
+            if (!artworkRes.exists()) {
+                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), mediaVocabulary.typeImage());
+            }
+            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+        }
         if (mediaItem.fields["videoType"] == "Movie") {
             res.setProperty(mediaVocabulary.videoIsMovie(), Nepomuk::Variant(true));
             res.removeProperty(mediaVocabulary.videoIsTVShow());

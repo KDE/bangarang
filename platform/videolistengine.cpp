@@ -102,6 +102,7 @@ MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     mediaItem.fields["title"] = it.binding("title").literal().toString();
     mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
     mediaItem.fields["description"] = it.binding("description").literal().toString();
+    mediaItem.fields["artworkUrl"] = it.binding("artwork").uri().toString();
     mediaItem.fields["rating"] = it.binding("rating").literal().toInt();
 
     return mediaItem;
@@ -263,6 +264,7 @@ void VideoListEngine::run()
     	videoQuery.selectDescription(true);
         videoQuery.selectRating(true);
         videoQuery.selectEpisode(true);
+        videoQuery.selectArtwork(true);
     	videoQuery.orderBy("?episode");
 
 
@@ -307,6 +309,7 @@ void VideoListEngine::run()
         videoQuery.selectSeriesName(true);
         videoQuery.selectRating(true);
         videoQuery.selectDuration(true);
+        videoQuery.selectArtwork(true);
         videoQuery.orderBy("?title");
 
         //Execute Query
@@ -334,6 +337,7 @@ void VideoListEngine::run()
         videoQuery.selectEpisode(true);
         videoQuery.selectIsMovie(true);
         videoQuery.selectIsTVShow(true);
+        videoQuery.selectArtwork(true);
         videoQuery.searchString(engineFilter);
         videoQuery.orderBy("?title");
         
@@ -468,6 +472,13 @@ void VideoQuery::selectDescription(bool optional) {
     m_descriptionCondition = addOptional(optional,
     		QString("?r <%1> ?description . ")
     		.arg(MediaVocabulary().description().toString()));
+}
+
+void VideoQuery::selectArtwork(bool optional) {
+    m_selectArtwork = true;
+    m_artworkCondition = addOptional(optional,
+                                         QString("?r <%1> ?artwork . ")
+                                         .arg(MediaVocabulary().artwork().toString()));
 }
 
 void VideoQuery::selectRating(bool optional) {
@@ -606,7 +617,9 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     	queryString += "?isTVShow ";
     if (m_selectIsMovie)
     	queryString += "?isMovie ";
-
+    if (m_selectArtwork)
+        queryString += "?artwork ";
+    
     queryString += QString("WHERE { ?r rdf:type <%1> . ")
 			.arg(MediaVocabulary().typeVideo().toString());
 
@@ -620,6 +633,7 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     queryString += m_TVShowCondition;
     queryString += m_movieCondition;
     queryString += m_searchCondition;
+    queryString += m_artworkCondition;
 
     queryString += "} ";
 
@@ -642,7 +656,7 @@ bool VideoQuery::executeAsk(Soprano::Model* model) {
     queryString += m_descriptionCondition;
     queryString += m_TVShowCondition;
     queryString += m_movieCondition;
-
+    queryString += m_artworkCondition;
     queryString += "} ";
 
     return model->executeQuery(queryString,
