@@ -535,7 +535,6 @@ void InfoManager::saveInfoToMediaModel()
             if (typeComboBox->currentIndex() == 0) {
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
-                ui->Filter->setText("Movie");
                 
                 KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString seriesName = seriesNameWidget->text();
