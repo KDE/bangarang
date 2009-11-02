@@ -249,6 +249,10 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
+                Nepomuk::Resource artworkRes = res.property(mediaVocabulary.artwork()).toResource();
+                if (artworkRes.isValid()) {
+                    mediaItem.fields["artworkUrl"] = artworkRes.resourceUri().toString();
+                }
             }
             //Index all music files
             mediaListToIndex << mediaItem;
@@ -262,6 +266,10 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
                     mediaItem.fields["title"] = title;
                 }
                 mediaItem.fields["rating"] = res.rating();
+                Nepomuk::Resource artworkRes = res.property(mediaVocabulary.artwork()).toResource();
+                if (artworkRes.isValid()) {
+                    mediaItem.fields["artworkUrl"] = artworkRes.resourceUri().toString();
+                }
             } else {
                 //Index Audio Clips not found in nepomuk store
                 mediaListToIndex << mediaItem;
@@ -346,6 +354,10 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
             Nepomuk::Resource res(mediaItem.url);
             if (res.exists()) {
                 mediaItem.fields["rating"] = res.rating();
+                Nepomuk::Resource artworkRes = res.property(mediaVocabulary.artwork()).toResource();
+                if (artworkRes.isValid()) {
+                    mediaItem.fields["artworkUrl"] = artworkRes.resourceUri().toString();
+                }
             }
         } else {
             //Index video items not found in nepomuk store
