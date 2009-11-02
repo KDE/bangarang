@@ -87,8 +87,8 @@ void InfoManager::loadInfoView()
     ui->mediaViewHolder->setCurrentIndex(1);
     ui->previous->setVisible(true);
     ui->previous->setText(ui->listTitle->text());
-    ui->playSelected->setVisible(false);
-    ui->playAll->setVisible(false);
+    //ui->playSelected->setVisible(false);
+    //ui->playAll->setVisible(false);
     
     m_rows.clear();
     QList<MediaItem> mediaList;
@@ -210,6 +210,9 @@ void InfoManager::showFields(bool edit)
     ui->infoView->addTopLevelItem(footer);
     ui->infoView->setFocus();
     ui->saveInfo->setVisible(edit);
+    if (mediaList.count() > 0 ) {
+        ui->playSelected->setVisible(!edit);
+    }    
 }
         
 void InfoManager::showCommonFields(bool edit)
