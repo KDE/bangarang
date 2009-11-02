@@ -463,7 +463,7 @@ void InfoManager::saveInfoToMediaModel()
 {
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
     QList<MediaItem> updatedList;
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
+    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
     
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
@@ -489,7 +489,7 @@ void InfoManager::saveInfoToMediaModel()
         }
 
         if (mediaItem.type == "Audio" ) {
-            if (typeComboBox->currentText() == "Music") {
+            if (typeComboBox->currentIndex() == 0) {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Music";
                 
@@ -524,26 +524,25 @@ void InfoManager::saveInfoToMediaModel()
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
                 }*/
-            } else if (typeComboBox->currentText() == "Audio Clip") {
-                mediaItem.type = "Audio";
-                mediaItem.fields["audioType"] = "Audio Clip";
-            } else if (typeComboBox->currentText() == "Audio Stream") {
+            } else if (typeComboBox->currentIndex() == 1) {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Stream";
+            } else if (typeComboBox->currentIndex() == 2) {
+                mediaItem.type = "Audio";
+                mediaItem.fields["audioType"] = "Audio Clip";
             }
         } else if (mediaItem.type == "Video") {            
-            if (typeComboBox->currentText() == "Video Clip") {
-                mediaItem.type = "Video";
-                mediaItem.fields["videoType"] = "Video Clip";
-            } else if (typeComboBox->currentText() == "Movie") {
+            if (typeComboBox->currentIndex() == 0) {
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
+                ui->Filter->setText("Movie");
+                
                 KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
-                    mediaItem.fields["seriesName"] = seriesName;
+                    mediaItem.fields["seriesName"] = seriesName.trimmed();
                 }
-            } else if (typeComboBox->currentText() == "TV Show") {
+            } else if (typeComboBox->currentIndex() == 1) {
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "TV Show";
                 
@@ -560,6 +559,9 @@ void InfoManager::saveInfoToMediaModel()
                 int episode = episodeWidget->value();
                 mediaItem.fields["episode"] = episode;
                 mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+            } else if (typeComboBox->currentIndex() == 2) {
+                mediaItem.type = "Video";
+                mediaItem.fields["videoType"] = "Video Clip";
             }
         }
             
