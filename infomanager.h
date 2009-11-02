@@ -35,6 +35,7 @@ class MainWindow;
 class MediaItemModel;
 class MediaItemDelegate;
 class MediaIndexer;
+class ArtworkWidget;
 
 class InfoManager : public QObject
 {
@@ -79,11 +80,13 @@ class InfoManager : public QObject
         bool multipleAudioTypes();
         void setLabel(int row, QString label, int format = NormalFormat);
         void setInfo(int row, QString info, int format = NormalFormat);
+        void setInfo(int row, QPixmap pixmap);
         void setEditWidget(int row, KLineEdit *lineEdit, QString value = QString());
         void setEditWidget(int row, QTextEdit *textEdit, QString value = QString());
         void setEditWidget(int row, QComboBox *comboBox, QString value = QString(), QStringList list = QStringList(), bool editable = false);
         void setEditWidget(int row, KUrlRequester *urlRequester, QString value = QString());
         void setEditWidget(int row, QSpinBox *spinBox, int value = 0);
+        void setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap pixmap);
         
         
     private slots:

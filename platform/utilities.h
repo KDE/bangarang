@@ -22,10 +22,14 @@
 #include <KUrl>
 #include <KIcon>
 #include <QPixmap>
+#include <taglib/id3v2tag.h>
+#include <taglib/attachedpictureframe.h>
+
 
 class MediaItem;
 namespace Utilities {
     QPixmap getArtworkFromTag(QString url, QSize size = QSize(128,128));
+    QPixmap getArtworkFromMediaItem(MediaItem mediaItem);
     QString getArtistFromTag(QString url);
     QString getAlbumFromTag(QString url);
     QString getTitleFromTag(QString url);
@@ -33,6 +37,8 @@ namespace Utilities {
     int getYearFromTag(QString url);
     int getDurationFromTag(QString url);
     int getTrackNumberFromTag(QString url);
+    bool saveArtworkToTag(QString url, const QPixmap *pixmap);
+    bool saveArtworkToTag(QString url, QString imageUrl);
     void setArtistTag(QString url, QString artist);
     void setAlbumTag(QString url, QString album);
     void setTitleTag(QString url, QString title);
@@ -48,5 +54,6 @@ namespace Utilities {
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(QList<MediaItem> mediaList);
     KIcon turnIconOff(KIcon icon, QSize size);
+    TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);
 }
 #endif //UTILITIES_H    

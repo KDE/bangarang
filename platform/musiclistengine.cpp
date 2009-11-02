@@ -102,6 +102,7 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     mediaItem.fields["genre"] = it.binding("genre").literal().toString();
     mediaItem.fields["rating"] = it.binding("rating").literal().toInt();
     mediaItem.fields["description"] = it.binding("description").literal().toString();
+    mediaItem.fields["artworkUrl"] = it.binding("artwork").uri().toString();
     mediaItem.fields["audioType"] = "Music";
 
     return mediaItem;
@@ -183,9 +184,11 @@ void MusicListEngine::run()
         musicQuery.selectTitle();
         musicQuery.selectArtist();
         musicQuery.selectAlbum(true);
+        musicQuery.selectTrackNumber(true);
         musicQuery.selectDuration(true);
         musicQuery.selectRating(true);
         musicQuery.selectDescription(true);
+        musicQuery.selectArtwork(true);
         //musicQuery.selectGenre(true);
         if (!artist.isEmpty()) {
             musicQuery.hasArtist(artist);
@@ -223,9 +226,11 @@ void MusicListEngine::run()
         musicQuery.selectTitle();
         musicQuery.selectArtist();
         musicQuery.selectAlbum(true);
+        musicQuery.selectTrackNumber(true);
         musicQuery.selectDuration(true);
         musicQuery.selectRating(true);
         musicQuery.selectDescription(true);
+        musicQuery.selectArtwork(true);
         //musicQuery.selectGenre(true);
         musicQuery.searchString(engineFilter);
         musicQuery.orderBy("?artist ?album ?trackNumber");
@@ -353,6 +358,13 @@ void MusicQuery::selectDescription(bool optional) {
                                     .arg(MediaVocabulary().description().toString()));
 }
 
+void MusicQuery::selectArtwork(bool optional) {
+    m_selectArtwork = true;
+    m_artworkCondition = addOptional(optional,
+                                         QString("?r <%1> ?artwork . ")
+                                         .arg(MediaVocabulary().artwork().toString()));
+}
+
 void MusicQuery::hasArtist(QString artist) {
     m_artistCondition = QString("?r <%1> ?artist . "
                                 "?r <%1> %2 . ")
@@ -442,6 +454,8 @@ Soprano::QueryResultIterator MusicQuery::executeSelect(Soprano::Model* model) {
         queryString += "?rating ";
     if (m_selectDescription)
         queryString += "?description ";
+    if (m_selectArtwork)
+        queryString += "?artwork ";
     
     queryString += QString("WHERE { ?r rdf:type <%1> . ")
     .arg(MediaVocabulary().typeAudioMusic().toString());
@@ -455,6 +469,7 @@ Soprano::QueryResultIterator MusicQuery::executeSelect(Soprano::Model* model) {
     queryString += m_ratingCondition;
     queryString += m_searchCondition;
     queryString += m_descriptionCondition;
+    queryString += m_artworkCondition;
     
     queryString += "} ";
     

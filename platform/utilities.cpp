@@ -32,6 +32,7 @@
 #include <nepomuk/variant.h>
 
 #include <QByteArray>
+#include <QBuffer>
 #include <QFile>
 #include <QPainter>
 #include <QImage>
@@ -46,53 +47,14 @@
 
 QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
 {
-    QByteArray filePath = QFile::encodeName(KUrl(url).path());
-    TagLib::MPEG::File mpegFile(filePath.constData(), true, TagLib::AudioProperties::Accurate);
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
     
     if (!id3tag) {
         return QPixmap();
     }
-    
-    // Look for attached picture frames.
-    TagLib::ID3v2::FrameList frames = id3tag->frameListMap()["APIC"];
-    
-    if (frames.isEmpty()) {
-        return QPixmap();
-    }
-    
-    // According to the spec attached picture frames have different types.
-    // So we should look for the corresponding picture depending on what
-    // type of image (i.e. front cover, file info) we want.  If only 1
-    // frame, just return that (scaled if necessary).
-    
-    TagLib::ID3v2::AttachedPictureFrame *selectedFrame = 0;
-    
-    if (frames.size() != 1) {
-        TagLib::ID3v2::FrameList::Iterator it = frames.begin();
-        for (; it != frames.end(); ++it) {
-            
-            // This must be dynamic_cast<>, TagLib will return UnknownFrame in APIC for
-            // encrypted frames.
-            TagLib::ID3v2::AttachedPictureFrame *frame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(*it);
-            
-            // Both thumbnail and full size should use FrontCover, as
-            // FileIcon may be too small even for thumbnail.
-            if (frame && frame->type() != TagLib::ID3v2::AttachedPictureFrame::FrontCover) {
-                continue;
-            }
-            
-            selectedFrame = frame;
-            break;
-        }
-    }
-    
-    // If we get here we failed to pick a picture, or there was only one,
-    // so just use the first picture.
-    
-    if (!selectedFrame) {
-        selectedFrame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frames.front());
-    }
+
+    TagLib::ID3v2::AttachedPictureFrame *selectedFrame = Utilities::attachedPictureFrame(id3tag);
     
     if (!selectedFrame) { // Could occur for encrypted picture frames.
         return QPixmap();
@@ -106,6 +68,21 @@ QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
     }
     
     return QPixmap::fromImage(attachedImage);
+}
+
+QPixmap Utilities::getArtworkFromMediaItem(MediaItem mediaItem)
+{
+    QPixmap pixmap = QPixmap();
+    if (Utilities::isMusic(mediaItem.url)) {
+        pixmap = Utilities::getArtworkFromTag(mediaItem.url);
+    }
+    if (pixmap.isNull()) {
+        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            pixmap = QPixmap(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+    }
+    return pixmap;
 }
 
 QString Utilities::getArtistFromTag(QString url)
@@ -176,6 +153,48 @@ int Utilities::getTrackNumberFromTag(QString url)
         track   = file.tag()->track();
     }
     return track;
+}
+
+bool Utilities::saveArtworkToTag(QString url, const QPixmap *pixmap)
+{
+    //FIXME:: HELP! Can't figure out why this doesn't work
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+    TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
+    
+    TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
+    
+    QByteArray data;
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::WriteOnly);
+    pixmap->save(&buffer, "PNG");
+    //TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame();
+    frame->setMimeType(TagLib::String("image/png"));
+    frame->setPicture(TagLib::ByteVector(data.data(), data.size()));
+    frame->setDescription("Cover Image");
+    //id3tag->removeFrames("APIC");
+    //id3tag->addFrame(frame);
+    return mpegFile.save();
+}
+
+bool Utilities::saveArtworkToTag(QString url, QString imageurl)
+{
+    //QByteArray filePath = QFile::encodeName(KUrl(url).path());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+    TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
+    
+    TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
+    
+    QFile file(KUrl(imageurl).path());
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    
+    //TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame();
+    frame->setMimeType(TagLib::String("image/png"));
+    frame->setPicture(TagLib::ByteVector(data.data(), data.size()));
+    frame->setDescription("Cover Image");
+    //id3tag->removeFrames("APIC");
+    //id3tag->addFrame(frame);
+    return mpegFile.save();
 }
 
 void Utilities::setArtistTag(QString url, QString artist)
@@ -414,4 +433,65 @@ KIcon Utilities::turnIconOff(KIcon icon, QSize size)
     QImage image = KIcon(icon).pixmap(size).toImage();
     KIconEffect::toGray(image, 0.8);
     return KIcon(QPixmap::fromImage(image));
+}
+
+TagLib::ID3v2::AttachedPictureFrame *Utilities::attachedPictureFrame(TagLib::ID3v2::Tag *id3tag, bool create)
+{
+    // Look for attached picture frames.
+    TagLib::ID3v2::FrameList frames = id3tag->frameListMap()["APIC"];
+    
+    if (frames.isEmpty()) {
+        if (create) {
+            TagLib::ID3v2::AttachedPictureFrame *selectedFrame = new TagLib::ID3v2::AttachedPictureFrame();
+            id3tag->addFrame(selectedFrame);
+            return selectedFrame;
+        } else {
+            return 0;
+        }
+    }
+    
+    // According to the spec attached picture frames have different types.
+    // So we should look for the corresponding picture depending on what
+    // type of image (i.e. front cover, file info) we want.  If only 1
+    // frame, just return that (scaled if necessary).
+    
+    TagLib::ID3v2::AttachedPictureFrame *selectedFrame = 0;
+    
+    if (frames.size() != 1) {
+        TagLib::ID3v2::FrameList::Iterator it = frames.begin();
+        for (; it != frames.end(); ++it) {
+            
+            // This must be dynamic_cast<>, TagLib will return UnknownFrame in APIC for
+            // encrypted frames.
+            TagLib::ID3v2::AttachedPictureFrame *frame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(*it);
+            
+            // Both thumbnail and full size should use FrontCover, as
+            // FileIcon may be too small even for thumbnail.
+            if (frame && frame->type() != TagLib::ID3v2::AttachedPictureFrame::FrontCover) {
+                continue;
+            }
+            
+            selectedFrame = frame;
+            break;
+        }
+    }
+    
+    // If we get here we failed to pick a picture, or there was only one,
+    // so just use the first picture.
+    
+    if (!selectedFrame) {
+        selectedFrame = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frames.front());
+    }
+    
+    if (!selectedFrame) { // Could occur for encrypted picture frames.
+        if (create) {
+            TagLib::ID3v2::AttachedPictureFrame *selectedFrame = new TagLib::ID3v2::AttachedPictureFrame();
+            id3tag->addFrame(selectedFrame);
+            return selectedFrame;
+        } else {
+            return 0;
+        }
+    }
+    
+    return selectedFrame;
 }

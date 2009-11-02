@@ -158,8 +158,8 @@ void InfoManager::saveInfoView()
     connect(m_mediaIndexer, SIGNAL(indexingComplete()), m_parent->m_mediaItemModel, SLOT(reload()));
 
     //Save metadata to files
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
-    if (typeComboBox->currentText() == "Music") {
+    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+    if ((m_infoMediaItemsModel->mediaItemAt(0).type == "Audio") && (typeComboBox->currentIndex() == 0)) {
         saveMusicInfoToFiles();
     }
      
@@ -218,19 +218,34 @@ void InfoManager::showCommonFields(bool edit)
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow, tr2i18n("Title"), TitleFormat);
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 1, tr2i18n("Description"));
+    setLabel(startRow + 1, tr2i18n("Artwork"), TitleFormat);
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 2, tr2i18n("Location"));
+    setLabel(startRow + 2, tr2i18n("Description"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 3, tr2i18n("Location"));
     
     if (!edit) {
         setInfo(startRow, commonValue("title").toString(), TitleFormat);
-        setInfo(startRow + 1, commonValue("description").toString());
-        setInfo(startRow + 2, commonValue("url").toString());
+        if (m_infoMediaItemsModel->rowCount() == 1) {
+            MediaItem mediaItem = m_infoMediaItemsModel->mediaItemAt(0);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            setInfo(startRow + 1, artwork);
+        } else {
+            setInfo(startRow + 1, QPixmap());
+        }
+        setInfo(startRow + 2, commonValue("description").toString());
+        setInfo(startRow + 3, commonValue("url").toString());
     } else {
         setEditWidget(startRow, new KLineEdit(), commonValue("title").toString());
-        setEditWidget(startRow + 1, new QTextEdit(), commonValue("description").toString());
-        setInfo(startRow + 2, commonValue("url").toString());
-        //setEditWidget(startRow + 2, new KUrlRequester(), commonValue("url").toString());
+        if (m_infoMediaItemsModel->rowCount() == 1) {
+            MediaItem mediaItem = m_infoMediaItemsModel->mediaItemAt(0);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            setEditWidget(startRow + 1, new ArtworkWidget(), artwork);
+        } else {
+            setEditWidget(startRow + 1, new ArtworkWidget(), QPixmap());
+        }
+        setEditWidget(startRow + 2, new QTextEdit(), commonValue("description").toString());
+        setInfo(startRow + 3, commonValue("url").toString());
     }
 }
 
@@ -378,9 +393,9 @@ QStringList InfoManager::valueList(QString field)
 
 void InfoManager::saveMusicInfoToFiles()
 {
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
-    if (typeComboBox->currentText() == "Music") {
-        QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+    if ((mediaList.at(0).type == "Audio") && (typeComboBox->currentIndex() == 0)) {
         for (int i = 0; i < mediaList.count(); i++) {
             if (Utilities::isMusic(mediaList.at(i).url)) {
                 TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toUtf8());
@@ -392,27 +407,36 @@ void InfoManager::saveMusicInfoToFiles()
                     file.tag()->setTitle(tTitle);
                 }
                 
-                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+                ArtworkWidget * artworkWidget = static_cast<ArtworkWidget*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
+                QUrl url = artworkWidget->url();
+                const QPixmap *pixmap = artworkWidget->artwork();
+                if (!url.isEmpty() && !pixmap->isNull()) {
+                    //FIXME: Can't understand why this doesn't work.
+                    Utilities::saveArtworkToTag(mediaList.at(i).url, pixmap);
+                    //(Utilities::saveArtworkToTag(mediaList.at(i).url, url.toString()));
+                }
+                
+                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString artist = artistWidget->currentText();
                 if (!artist.isEmpty()) {
                     TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
                     file.tag()->setArtist(tArtist);
                 }
                 
-                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 QString album = albumWidget->currentText();
                 if (!album.isEmpty()) {
                     TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
                     file.tag()->setAlbum(tAlbum);
                 }
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int year = yearWidget->value();
                 if (year != 0) {
                     file.tag()->setYear(year);
                 }
                 
-                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 int trackNumber = trackNumberWidget->value();
                 if (trackNumber != 0) {
                     file.tag()->setTrack(trackNumber);
@@ -448,8 +472,14 @@ void InfoManager::saveInfoToMediaModel()
             mediaItem.title = title;
             mediaItem.fields["title"] = title;
         }
+        
+        ArtworkWidget * artworkWidget = static_cast<ArtworkWidget*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
+        QUrl url = artworkWidget->url();
+        if (!url.isEmpty()) {
+            mediaItem.fields["artworkUrl"] = url.toString();
+        }
 
-        QTextEdit * descriptionWidget = static_cast<QTextEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
+        QTextEdit * descriptionWidget = static_cast<QTextEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(2), 1));
         QString description = descriptionWidget->toPlainText();
         if (!description.isEmpty()) {
             mediaItem.fields["description"] = description;
@@ -460,13 +490,13 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Music";
                 
-                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString artist = artistWidget->currentText();
                 if (!artist.isEmpty()) {
                     mediaItem.fields["artist"] = artist;
                 }
                 
-                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 QString album = albumWidget->currentText();
                 if (!album.isEmpty()) {
                     mediaItem.fields["album"] = album;
@@ -474,13 +504,13 @@ void InfoManager::saveInfoToMediaModel()
                 
                 mediaItem.subTitle = mediaItem.fields["artist"].toString() + QString(" - ") + mediaItem.fields["album"].toString();
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int year = yearWidget->value();
                 if (year != 0) {
                     mediaItem.fields["year"] = year;
                 }
                 
-                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 int trackNumber = trackNumberWidget->value();
                 if (trackNumber != 0) {
                     mediaItem.fields["trackNumber"] = trackNumber;
@@ -505,7 +535,7 @@ void InfoManager::saveInfoToMediaModel()
             } else if (typeComboBox->currentText() == "Movie") {
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
-                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
@@ -514,16 +544,16 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "TV Show";
                 
-                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
                 }
-                QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 int season = seasonWidget->value();
                 mediaItem.fields["season"] = season;
                 mediaItem.subTitle = QString("Season %1 ").arg(season);
-                QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int episode = episodeWidget->value();
                 mediaItem.fields["episode"] = episode;
                 mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
@@ -609,6 +639,15 @@ void InfoManager::setInfo(int row, QString info, int format)
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, infoLabel);
 }
 
+void InfoManager::setInfo(int row, QPixmap pixmap)
+{
+    QLabel * infoLabel= new QLabel();
+    infoLabel->setPixmap(pixmap);
+    infoLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    infoLabel->setMargin(8);
+    ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, infoLabel);
+}
+
 void InfoManager::setEditWidget(int row, KLineEdit *lineEdit, QString value)
 {
     lineEdit->setText(value);
@@ -651,4 +690,10 @@ void InfoManager::setEditWidget(int row, QSpinBox *spinBox, int value)
     spinBox->setSpecialValueText("-");
     spinBox->setValue(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, spinBox);
+}
+
+void InfoManager::setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap pixmap)
+{
+    artworkWidget->setPixmap(pixmap);
+    ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, artworkWidget);
 }

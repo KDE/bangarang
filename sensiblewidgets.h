@@ -19,6 +19,7 @@
 #ifndef SENSIBLEWIDGETS_H
 #define SENSIBLEWIDGETS_H
 
+#include <KUrl>
 #include <QObject>
 #include <QToolButton>
 #include <QFrame>
@@ -28,6 +29,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QTimer>
+#include <QHBoxLayout>
 
 class SToolButton : public QToolButton
 {
@@ -130,6 +132,29 @@ protected Q_SLOTS:
     void compareSelectionChanges();
     void selectorEntered();
     void selectorExited();
+};
+
+class ArtworkWidget : public QWidget
+{
+    Q_OBJECT
+    public:
+        ArtworkWidget(QWidget * parent = 0);
+        ~ArtworkWidget();
+        
+        KUrl url();
+        const QPixmap * artwork();
+        void setPixmap(QPixmap pixmap);
+        void setUrl(KUrl url);
+        
+    private:
+        QWidget * m_parent;
+        QLabel * m_artworkLabel;
+        QToolButton * m_openUrl;
+        QHBoxLayout * m_layout;
+        KUrl m_url;
+        
+    protected Q_SLOTS:
+        void openUrl();
 };
 #endif // SENSIBLEWIDGETS_H
 

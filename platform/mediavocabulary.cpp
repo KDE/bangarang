@@ -171,6 +171,21 @@ QUrl MediaVocabulary::typeVideo()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::typeImage()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::Image();
+    } else if (m_vocabulary == MediaVocabulary::nie) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Image");
+    } else if (m_vocabulary == MediaVocabulary::nmm) {
+        //Draft nmm ontology is extension of nie
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Image");
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::title()
 {
     QUrl returnUrl = QUrl();
@@ -232,6 +247,16 @@ QUrl MediaVocabulary::playCount()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::useCount();
     }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::artwork()
+{
+    QUrl returnUrl = QUrl();
+    
+    //Bangarang extension to nmm ontology draft
+    returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#artwork");
     
     return returnUrl;
 }
