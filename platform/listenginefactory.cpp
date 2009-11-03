@@ -25,11 +25,12 @@
 #include "dvdlistengine.h"
 #include "savedlistsengine.h"
 #include "medialistsengine.h"
+#include "audiostreamlistengine.h"
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -89,6 +90,14 @@ ListEngineFactory::~ListEngineFactory()
             m_mediaListsEngines.at(i)->wait();
         }
         delete m_mediaListsEngines.at(i);
+    }
+    for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
+        if (!m_audioStreamListEngines.at(i)->isFinished()) {
+            //This could be dangerous but list engines can't be left running after main program termination
+            m_audioStreamListEngines.at(i)->terminate();
+            m_audioStreamListEngines.at(i)->wait();
+        }
+        delete m_audioStreamListEngines.at(i);
     }
 }
 
@@ -213,6 +222,23 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         mediaListsEngine->setModel(m_parent);
         return mediaListsEngine;        
+    } else if (engine.toLower() == "audiostreams://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        AudioStreamListEngine * audioStreamListEngine;
+        for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
+            if (!m_audioStreamListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                audioStreamListEngine = m_audioStreamListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            audioStreamListEngine = new AudioStreamListEngine(this);
+            m_audioStreamListEngines << audioStreamListEngine;
+        }
+        audioStreamListEngine->setModel(m_parent);
+        return audioStreamListEngine;        
     }
     return new ListEngine(this);
 }

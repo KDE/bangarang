@@ -77,6 +77,10 @@ void MediaListsEngine::run()
         mediaItem.url = "audioclips://";
         mediaItem.artwork = KIcon("audio-x-wav");
         mediaList << mediaItem;
+        mediaItem.title = "Audio Streams";
+        mediaItem.url = "audiostreams://";
+        mediaItem.artwork = KIcon("x-media-podcast");
+        mediaList << mediaItem;
         
         //Show Audio CD if present
         bool audioCDFound = false;

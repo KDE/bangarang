@@ -146,7 +146,7 @@ QUrl MediaVocabulary::typeAudioStream()
 {
     QUrl returnUrl = QUrl();
     if (m_audioVocabulary == MediaVocabulary::xesam) {
-        returnUrl = Soprano::Vocabulary::Xesam::Music();
+        returnUrl = Soprano::Vocabulary::Xesam::Audio();
     } else if (m_audioVocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#MediaStream");
     } else if (m_audioVocabulary == MediaVocabulary::nmm) {
