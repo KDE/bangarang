@@ -283,6 +283,11 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      }
                 }
             }
+        } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
+            if (event->type() == QEvent::MouseButtonDblClick) {
+                m_parent->addListToHistory();
+                emit categoryActivated(index);
+            }
         }
     } else if (index.column() == 1) {
         if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
