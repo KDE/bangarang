@@ -248,7 +248,16 @@ void InfoManager::showCommonFields(bool edit)
             setEditWidget(startRow + 1, new ArtworkWidget(), QPixmap());
         }
         setEditWidget(startRow + 2, new QTextEdit(), commonValue("description").toString());
-        setInfo(startRow + 3, commonValue("url").toString());
+        if (m_infoMediaItemsModel->rowCount() == 1) {
+            MediaItem mediaItem = m_infoMediaItemsModel->mediaItemAt(0);
+            if (mediaItem.type == "Audio" && mediaItem.fields["audioType"].toString() == "Audio Stream") {
+                setEditWidget(startRow + 3, new KLineEdit(), commonValue("url").toString());
+            } else {
+                setInfo(startRow + 3, commonValue("url").toString());
+            }
+        } else {
+            setInfo(startRow + 3, commonValue("url").toString());
+        }
     }
 }
 
@@ -527,6 +536,14 @@ void InfoManager::saveInfoToMediaModel()
             } else if (typeComboBox->currentIndex() == 1) {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Stream";
+                
+                KLineEdit * urlWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
+                QString url = urlWidget->text();
+                if (!url.isEmpty()) {
+                    mediaItem.url = url;
+                    mediaItem.fields["url"] = url;
+                }
+                
             } else if (typeComboBox->currentIndex() == 2) {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Clip";

@@ -31,6 +31,7 @@ class CDListEngine;
 class DVDListEngine;
 class SavedListsEngine;
 class MediaListsEngine;
+class AudioStreamListEngine;
 
 class ListEngineFactory : public QObject
 {
@@ -54,6 +55,7 @@ class ListEngineFactory : public QObject
         QList<DVDListEngine *> m_dvdListEngines;
         QList<SavedListsEngine *> m_savedListsEngines;
         QList<MediaListsEngine *> m_mediaListsEngines;
+        QList<AudioStreamListEngine *> m_audioStreamListEngines;
 };
 #endif // LISTENGINEFACTORY_H
         
