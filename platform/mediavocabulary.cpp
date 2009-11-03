@@ -256,7 +256,7 @@ QUrl MediaVocabulary::artwork()
     QUrl returnUrl = QUrl();
     
     //Bangarang extension to nmm ontology draft
-    returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#artwork");
+    returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
     
     return returnUrl;
 }
