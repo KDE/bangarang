@@ -107,6 +107,11 @@ class MediaItemModel : public QStandardItemModel
         void replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged = false);
         void setListEngineFactory(ListEngineFactory * listEngineFactory);
         QObject * m_parent;
+        Qt::DropActions supportedDropActions() const;
+        Qt::ItemFlags flags(const QModelIndex &index) const;
+        QStringList mimeTypes() const;
+        QMimeData *mimeData(const QModelIndexList &indexes) const;
+        bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
         
     private:
         QString m_dataEngine;
@@ -118,12 +123,13 @@ class MediaItemModel : public QStandardItemModel
         QStringList m_subRequestSignatures;
         QList< QList<MediaItem> > m_subRequestMediaLists; //stores correctly ordered medialists for selected catgories
         int m_subRequestsDone;
-        QStringList urlList;
+        QStringList m_urlList;
         QList<MediaItem> m_mediaList;
         void showLoadingMessage();
         void hideLoadingMessage();
         void showNoResultsMessage();
         QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
+        bool m_emitChangedAfterDrop;
         
     Q_SIGNALS:
         void propertiesChanged(); 
