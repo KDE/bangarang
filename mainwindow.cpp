@@ -35,6 +35,7 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
+#include <KDebug>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
@@ -327,7 +328,7 @@ void MainWindow::on_mediaPlayPause_released()
     } else {
         if ((!m_pausePressed) && (m_media->state() == Phonon::PausedState)) {
             m_media->play();
-        } else if (m_media->state() == Phonon::StoppedState) {
+        } else if ((m_media->state() == Phonon::StoppedState) || (m_media->state() == Phonon::LoadingState)) {
             if (m_currentPlaylist->rowCount() > 0) {
                 m_playlist->start();
             }
