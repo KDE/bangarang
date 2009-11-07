@@ -42,7 +42,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -294,8 +294,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>139</width>
+                   <height>260</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -617,8 +617,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>139</width>
+                   <height>256</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -4404,8 +4404,17 @@ color: rgb(255, 255, 255);</string>
                            <property name="editTriggers">
                             <set>QAbstractItemView::NoEditTriggers</set>
                            </property>
+                           <property name="dragEnabled">
+                            <bool>true</bool>
+                           </property>
+                           <property name="dragDropMode">
+                            <enum>QAbstractItemView::InternalMove</enum>
+                           </property>
                            <property name="alternatingRowColors">
                             <bool>true</bool>
+                           </property>
+                           <property name="selectionMode">
+                            <enum>QAbstractItemView::ExtendedSelection</enum>
                            </property>
                            <property name="rootIsDecorated">
                             <bool>false</bool>

@@ -23,6 +23,7 @@
 #include <QFontMetrics>
 #include <QDateTime>
 #include <KIcon>
+#include <KDebug>
 
 MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent) 
 {
@@ -30,6 +31,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_mediaListProperties.lri = QString();
     m_filter = QString();
     m_listEngineFactory = new ListEngineFactory(this);
+    m_emitChangedAfterDrop = false;
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
 }
 
@@ -94,7 +96,7 @@ MediaItem MediaItemModel::mediaItemAt(int row)
 
 int MediaItemModel::rowOfUrl(QString url)
 {
-    return urlList.indexOf(url);
+    return m_urlList.indexOf(url);
 }
 
 void MediaItemModel::load()
@@ -167,7 +169,7 @@ void MediaItemModel::loadMediaItem(MediaItem mediaItem, bool emitMediaListChange
         rowData << categoryItem;
     }*/
     m_mediaList << mediaItem;
-    urlList << mediaItem.url;
+    m_urlList << mediaItem.url;
     appendRow(rowDataFromMediaItem(mediaItem));
     if (emitMediaListChanged) {
         emit mediaListChanged();
@@ -305,7 +307,7 @@ void MediaItemModel::clearMediaListData()
 {
     removeRows(0, rowCount());
     m_mediaList.clear();
-    urlList.clear();
+    m_urlList.clear();
 }
 
 void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
@@ -321,10 +323,13 @@ void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
 void MediaItemModel::replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged)
 {
     m_mediaList.replace(row, mediaItem);
-    urlList.replace(row, mediaItem.url);
+    m_urlList.replace(row, mediaItem.url);
     QList<QStandardItem *> rowData = rowDataFromMediaItem(mediaItem);
     for (int i = 0; i < rowData.count(); i++) {
         setItem(row, i, rowData.at(i));
+    }
+    if (emitMediaListChanged) {
+        emit mediaListChanged();
     }
 }
 
@@ -332,7 +337,11 @@ void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int en
 {
     for (int i = start; i <= end; ++i) {
         m_mediaList.removeAt(start);
-        urlList.removeAt(start);
+        m_urlList.removeAt(start);
+    }
+    if (m_emitChangedAfterDrop) {
+        emit mediaListChanged();
+        m_emitChangedAfterDrop = false;
     }
     Q_UNUSED(index);
 }
@@ -421,4 +430,97 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
         rowData << categoryItem;
     }   
     return rowData;
+}
+
+Qt::DropActions MediaItemModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
+Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
+{
+    //Qt::ItemFlags defaultFlags = QStandardItemModel::flags(index);
+    Qt::ItemFlags defaultFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    
+    if (index.isValid())
+        return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled |defaultFlags;
+    else
+        return defaultFlags;
+}
+
+QStringList MediaItemModel::mimeTypes() const
+{
+    QStringList types;
+    types << "text/uri-list" << "text/plain";
+    return types;
+}
+
+QMimeData *MediaItemModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QList<QUrl> urls;
+    QString indexList;
+    foreach (QModelIndex index, indexes) {
+        if (index.isValid() && index.column() != 1) {
+            QUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
+            urls << url;
+            indexList += QString("%1,").arg(index.row());
+        }
+    }
+    
+    mimeData->setUrls(urls);
+    mimeData->setText(indexList);
+    return mimeData;
+}
+
+bool MediaItemModel::dropMimeData(const QMimeData *data,
+                                     Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    if (action == Qt::IgnoreAction)
+     return true;
+
+    if (!data->hasFormat("text/uri-list"))
+    return false;
+
+    if (column > 0)
+     return false;
+    
+    int beginRow;
+    
+    if (row != -1) {
+        beginRow = row;
+    } else if (parent.isValid()) {
+        beginRow = parent.row();
+    } else {
+        beginRow = rowCount(QModelIndex());
+    }
+    
+    QList<QUrl> urls = data->urls();
+    QStringList rowsToMove = data->text().split(",", QString::SkipEmptyParts);
+
+    //insert rows into model
+    QList<MediaItem> mediaItemsToMove;
+    int insertionRow = beginRow;
+    for (int i = 0; i < urls.count(); i++) {
+        if (rowsToMove.count() > 0) {
+            int rowToMove = rowsToMove.at(i).toInt();
+            MediaItem mediaItem = mediaItemAt(rowToMove);
+            mediaItemsToMove << mediaItem;
+            QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
+            insertRow(insertionRow, rowItems);
+            insertionRow = insertionRow + 1;
+        }
+    }
+    
+    //Update cached data to reflect inserted rows
+    insertionRow = beginRow;
+    for (int i = 0; i < urls.count(); i++) {
+        MediaItem mediaItem = mediaItemsToMove.at(i);
+        m_mediaList.insert(insertionRow, mediaItem);
+        m_urlList.insert(insertionRow, mediaItem.url);
+        insertionRow = insertionRow + 1;
+    }
+    m_emitChangedAfterDrop = true;
+    
+    return true;
 }
