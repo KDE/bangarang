@@ -111,6 +111,7 @@ private:
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
     void updateCachedDevicesList();
+    int m_loadingProgress;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -159,6 +160,7 @@ private slots:
     void on_Filter_returnPressed();
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
+    void showLoading();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
