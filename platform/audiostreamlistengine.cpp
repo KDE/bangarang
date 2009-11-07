@@ -182,6 +182,7 @@ void AudioStreamListEngine::activateAction()
     mediaItem.artwork = KIcon("x-media-podcast");
     mediaItem.fields["title"] = "Untitled";
     mediaItem.fields["audioType"] = "Audio Stream";
+    mediaItem.fields["isTemplate"] = true;
     
     QList<MediaItem> mediaList;
     mediaList << mediaItem;

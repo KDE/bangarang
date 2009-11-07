@@ -618,8 +618,10 @@ void MainWindow::mediaListChanged()
     if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            ui->mediaView->header()->showSection(1);
-            ui->playAll->setVisible(true);
+            if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+                ui->mediaView->header()->showSection(1);
+                ui->playAll->setVisible(true);
+            }
         } else if (listItemType == "Category") {
             ui->mediaView->header()->showSection(1);
             ui->playAll->setVisible(true);
@@ -634,7 +636,9 @@ void MainWindow::mediaListChanged()
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
     if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-        ui->playSelected->setVisible(true);
+        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+            ui->playSelected->setVisible(true);
+        }
         ui->playAll->setVisible(false);
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
@@ -643,8 +647,10 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
             }
         }
     } else {
-        ui->playSelected->setVisible(false);
-        ui->playAll->setVisible(true);
+        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+            ui->playSelected->setVisible(false);
+            ui->playAll->setVisible(true);
+        }
         ui->showInfo->setVisible(false);
     }
     ui->saveInfo->setVisible(false);

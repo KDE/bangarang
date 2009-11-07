@@ -211,7 +211,9 @@ void InfoManager::showFields(bool edit)
     ui->infoView->setFocus();
     ui->saveInfo->setVisible(edit);
     if (mediaList.count() > 0 ) {
-        ui->playSelected->setVisible(!edit);
+        if (!mediaList.at(0).fields["isTemplate"].toBool()) {
+            ui->playSelected->setVisible(!edit);
+        }
     }    
 }
         
@@ -580,6 +582,7 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.fields["videoType"] = "Video Clip";
             }
         }
+        mediaItem.fields["isTemplate"] = false;
             
         updatedList << mediaItem;
         m_parent->m_mediaItemModel->replaceMediaItemAt(m_rows.at(i), mediaItem);        
