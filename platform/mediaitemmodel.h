@@ -92,21 +92,20 @@ class MediaItemModel : public QStandardItemModel
         ~MediaItemModel();
         QString dataEngine();
         QString filter();
+        void clearMediaListData();
         void load();
         QList<MediaItem> mediaList();
-        MediaItem mediaItemAt(int row);
         void loadMediaList(QList<MediaItem>, bool emitMediaListChanged = false);
+        MediaItem mediaItemAt(int row);
         void loadMediaItem(MediaItem mediaItem, bool emitMediaListChanged = false);
         MediaListProperties mediaListProperties();
         void setMediaListProperties(MediaListProperties mediaListProperties);
         int rowOfUrl(QString url);
         void loadSources(QList<MediaItem> mediaList);
-        //QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-        void clearMediaListData();
         void removeMediaItemAt(int row, bool emitMediaListChanged = false);
         void replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged = false);
         void setListEngineFactory(ListEngineFactory * listEngineFactory);
-        QObject * m_parent;
+
         Qt::DropActions supportedDropActions() const;
         Qt::ItemFlags flags(const QModelIndex &index) const;
         QStringList mimeTypes() const;
@@ -114,21 +113,21 @@ class MediaItemModel : public QStandardItemModel
         bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
         
     private:
-        QString m_dataEngine;
-        QString m_filter;
-        MediaListProperties m_mediaListProperties;
-        MusicListEngine * m_musicListEngine;
-        ListEngineFactory * m_listEngineFactory;
-        QString m_requestSignature;
-        QStringList m_subRequestSignatures;
-        QList< QList<MediaItem> > m_subRequestMediaLists; //stores correctly ordered medialists for selected catgories
-        int m_subRequestsDone;
-        QStringList m_urlList;
-        QList<MediaItem> m_mediaList;
         void showLoadingMessage();
         void hideLoadingMessage();
         void showNoResultsMessage();
         QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
+        QObject * m_parent;
+        QString m_dataEngine;
+        QString m_filter;
+        MediaListProperties m_mediaListProperties;
+        ListEngineFactory * m_listEngineFactory;
+        QString m_requestSignature;
+        QStringList m_subRequestSignatures;
+        QList< QList<MediaItem> > m_subRequestMediaLists;
+        int m_subRequestsDone;
+        QStringList m_urlList;
+        QList<MediaItem> m_mediaList;
         bool m_emitChangedAfterDrop;
         
     Q_SIGNALS:
