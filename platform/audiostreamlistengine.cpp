@@ -177,7 +177,7 @@ void AudioStreamListEngine::activateAction()
     MediaItem mediaItem;
     mediaItem.type = "Audio";
     mediaItem.url = QString();
-    mediaItem.title = "Audio Stream Template";
+    mediaItem.title = "Untitled Audio Stream";
     mediaItem.subTitle = "Select this item, click Info then Edit to enter audio stream info";
     mediaItem.artwork = KIcon("x-media-podcast");
     mediaItem.fields["title"] = "Untitled";
