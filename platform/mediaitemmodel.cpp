@@ -32,6 +32,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_filter = QString();
     m_listEngineFactory = new ListEngineFactory(this);
     m_emitChangedAfterDrop = false;
+    m_loadingState = false;
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
 }
 
@@ -102,7 +103,7 @@ int MediaItemModel::rowOfUrl(QString url)
 void MediaItemModel::load()
 {
     if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
-        showLoadingMessage();
+        setLoadingState(true);
         
         // Load data from engine
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
@@ -184,7 +185,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
     if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
         m_mediaListProperties = mediaListProperties;
         removeRows(0, rowCount());
-        showLoadingMessage();
+        setLoadingState(true);
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
@@ -201,7 +202,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
     if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
         m_mediaListProperties = mediaListProperties;
         removeRows(0, rowCount());
-        showLoadingMessage();
+        setLoadingState(true);
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
@@ -212,7 +213,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
 
 void MediaItemModel::loadSources(QList<MediaItem> mediaList)
 {
-    showLoadingMessage();
+    setLoadingState(true);
     
     //Load data only for media sources
     m_subRequestMediaLists.clear();
@@ -222,7 +223,7 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
     m_requestSignature = m_listEngineFactory->generateRequestSignature();
     for (int i = 0; i < mediaList.count(); ++i) {
         if ((mediaList.at(i).type == "Audio") || (mediaList.at(i).type == "Video") || (mediaList.at(i).type == "Image")){
-            hideLoadingMessage();
+            setLoadingState(false);
             loadMediaItem(mediaList.at(i));
         } else if (mediaList.at(i).type == "Category") {
             //Generate signatures and media list holders for each subrequest
@@ -263,7 +264,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     //Check request signature of results and ignore results with a different signature
     if (requestSignature == m_requestSignature) {
         if (m_subRequestSignatures.count() == 0) {
-            hideLoadingMessage();
+            setLoadingState(false);
             loadMediaList(mediaList);
             m_mediaListProperties.name = mediaListProperties.name;
             if (done) {
@@ -282,7 +283,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 if (done) {
                     m_subRequestsDone = m_subRequestsDone + 1;
                     if (m_subRequestsDone == m_subRequestSignatures.count()) {
-                        hideLoadingMessage();
+                        setLoadingState(false);
                         //All the subrequests results are in, go ahead and load results in correct order
                         for (int i = 0; i < m_subRequestMediaLists.count(); ++i) {
                             loadMediaList(m_subRequestMediaLists.at(i));
@@ -346,20 +347,40 @@ void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int en
     Q_UNUSED(index);
 }
 
+void MediaItemModel::setLoadingState(bool state)
+{
+    m_loadingState = state;
+    if (m_loadingState) {
+        showLoadingMessage();
+        emit loading();
+    } else {
+        hideLoadingMessage();
+    }
+}
+
 void MediaItemModel::showLoadingMessage()
 {
-    MediaItem loadingMessage;
-    loadingMessage.title = "Loading...";
-    loadingMessage.type = "Message";
-    loadMediaItem(loadingMessage, false);
-    emit loading();
+    if (m_loadingState) {
+        MediaItem loadingMessage;
+        m_loadingProgress += 1;
+        if (m_loadingProgress > 7) {
+            m_loadingProgress = 0;
+        }
+        QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
+        loadingMessage.artwork = KIcon(iconName);
+        loadingMessage.title = "Loading...";
+        loadingMessage.type = "Message";
+        if (rowCount() == 0) {
+            loadMediaItem(loadingMessage, false);
+        } else {
+            replaceMediaItemAt(0, loadingMessage, false);
+        }
+        QTimer::singleShot(100, this, SLOT(showLoadingMessage()));
+    }
 }
 
 void MediaItemModel::hideLoadingMessage()
 {
-    MediaItem loadingMessage;
-    loadingMessage.title = "Loading...";
-    loadingMessage.type = "Message";
     int row = -1;
     for (int i = 0; i < m_mediaList.count(); ++i) {
         if ((m_mediaList.at(i).title == "Loading...") && (m_mediaList.at(i).type == "Message")) {

@@ -113,7 +113,6 @@ class MediaItemModel : public QStandardItemModel
         bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
         
     private:
-        void showLoadingMessage();
         void hideLoadingMessage();
         void showNoResultsMessage();
         QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
@@ -129,6 +128,9 @@ class MediaItemModel : public QStandardItemModel
         QStringList m_urlList;
         QList<MediaItem> m_mediaList;
         bool m_emitChangedAfterDrop;
+        int m_loadingProgress;
+        bool m_loadingState;
+        void setLoadingState(bool state);
         
     Q_SIGNALS:
         void propertiesChanged(); 
@@ -139,6 +141,7 @@ class MediaItemModel : public QStandardItemModel
         void categoryActivated(QModelIndex index);
         void actionActivated(QModelIndex index);
         void synchRemoveRows(const QModelIndex &index, int start, int end);
+        void showLoadingMessage();
     
     public Q_SLOTS:
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
