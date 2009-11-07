@@ -52,6 +52,7 @@
 #include <QStringListModel>
 #include <QFile>
 #include <QScrollBar>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
@@ -188,7 +189,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaLists->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
-    ui->mediaPlayPause->setHoldDelay(1500);
+    ui->mediaPlayPause->setHoldDelay(1000);
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -551,6 +552,7 @@ void MainWindow::updateSeekTime(qint64 time)
     } else {
         displayTime = remainingTime.toString(QString("m:ss"));
     }
+    ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     ui->seekTime->setText(displayTime);
     
     //Update Now Playing Button text
@@ -581,10 +583,26 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
         }
     }
+    if (newstate == Phonon::LoadingState || newstate == Phonon::BufferingState) {
+        showLoading();
+    }
     
     Q_UNUSED(oldstate);
 }
 
+void MainWindow::showLoading()
+{
+    if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState) {
+        m_loadingProgress += 1;
+        if (m_loadingProgress > 7) {
+            m_loadingProgress = 0;
+        }
+        QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
+        ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->seekTime->setIcon(KIcon(iconName));
+        QTimer::singleShot(100, this, SLOT(showLoading()));
+    }
+}
 
 /*---------------------------
   -- SLOTS for media lists --
