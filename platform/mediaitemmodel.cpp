@@ -224,7 +224,9 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
     for (int i = 0; i < mediaList.count(); ++i) {
         if ((mediaList.at(i).type == "Audio") || (mediaList.at(i).type == "Video") || (mediaList.at(i).type == "Image")){
             setLoadingState(false);
-            loadMediaItem(mediaList.at(i));
+            if (!mediaList.at(i).url.isEmpty()) { //url of sources can't be empty
+                loadMediaItem(mediaList.at(i));
+            }
         } else if (mediaList.at(i).type == "Category") {
             //Generate signatures and media list holders for each subrequest
             //This must be complete for all categories before launching subrequests
