@@ -83,14 +83,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_addSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(addSelectedToPlaylist()));  
     m_actionCollection->addAction(tr("Add to playlist"), m_addSelectedToPlayListAction);
     
-    
     //Remove Selected From Playlist Action
     m_removeSelectedToPlayListAction = new QAction(KIcon(), tr("Remove from playlist"), this);
     connect(m_removeSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(removeSelectedFromPlaylist()));
     m_actionCollection->addAction(tr("Remove from playlist"), m_removeSelectedToPlayListAction);
     
-    //Hide Controls Shortcut
-    m_showHideControls = new QAction(this);
+    //Show/Hide Controls Shortcut
+    m_showHideControls = new QAction(KIcon("layer-visible-off"), tr("Hide controls"), this);
     m_showHideControls->setShortcut(Qt::CTRL + Qt::Key_H);
     connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_parent->addAction(m_showHideControls);
@@ -205,9 +204,11 @@ void ActionsManager::toggleControls()
         if (ui->widgetSet->isVisible()) {
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
+            m_showHideControls->setIcon(KIcon("layer-visible-on"));
         } else {
             ui->widgetSet->setVisible(true);
             ui->nowPlayingToolbar->setVisible(true);
+            m_showHideControls->setIcon(KIcon("layer-visible-off"));
         }
     }
 }
@@ -220,6 +221,7 @@ void ActionsManager::cancelFSHC()
         if (ui->stackedWidget->currentIndex() == 1) {
             ui->widgetSet->setVisible(true);
             ui->nowPlayingToolbar->setVisible(true);
+            m_showHideControls->setIcon(KIcon("layer-visible-off"));
         }
     }
 }
