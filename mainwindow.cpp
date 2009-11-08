@@ -29,6 +29,7 @@
 
 
 #include <KCmdLineArgs>
+#include <KCursor>
 #include <KUrl>
 #include <KIcon>
 #include <KIconEffect>
@@ -219,6 +220,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Install event filter for hiding widgets in Now Playing view
     ui->nowPlayingView->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
+
+    // Set up cursor hiding for videos.
+    m_videoWidget->setFocusPolicy(Qt::ClickFocus);
+    KCursor::setAutoHideCursor(m_videoWidget, true);
 }
 
 MainWindow::~MainWindow()
@@ -927,20 +932,26 @@ void MainWindow::updateCachedDevicesList()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if ((event->type() == QEvent::Enter)) {
-        //Hide the widgets in the Now Playing view
-        if ((ui->stackedWidget->currentIndex() == 1) && (isFullScreen()) && (!ui->contextStack->isVisible())) {
-            ui->widgetSet->setVisible(false);
-            ui->nowPlayingToolbar->setVisible(false);
-        }
-    } else if ((event->type() == QEvent::Leave)) {
-        //Show the widgets in the Now Playing view
-        if ((ui->stackedWidget->currentIndex() == 1) && (isFullScreen())) {
-            ui->widgetSet->setVisible(true);
-            ui->nowPlayingToolbar->setVisible(true);
-        }
-    }
-    
+	if (isFullScreen()
+			&& ui->stackedWidget->currentIndex() == 1
+			&& event->type() == QEvent::MouseMove) {
+
+		QMouseEvent * mouseEvent = (QMouseEvent *)event;
+		QWidget* widget = (QWidget* )obj;
+
+		if (mouseEvent->y() <= ui->nowPlayingToolbar->height() ||
+				widget->height() - mouseEvent->y() <= ui->widgetSet->height()) {
+
+			//Show the widgets in the Now Playing view
+			ui->widgetSet->setVisible(true);
+			ui->nowPlayingToolbar->setVisible(true);
+		} else {
+			//Hide the widgets in the Now Playing view
+			ui->widgetSet->setVisible(false);
+			ui->nowPlayingToolbar->setVisible(false);
+		}
+	}
+
     // standard event processing
     return QObject::eventFilter(obj, event);
 }

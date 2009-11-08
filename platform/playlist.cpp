@@ -28,6 +28,9 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <QDBusInterface>
+
+#include <iostream>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
@@ -47,6 +50,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
     connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
+    connect(m_mediaObject, SIGNAL(stateChanged (Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
     connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
     
@@ -496,6 +500,40 @@ void Playlist::confirmPlaylistFinished() //connected to MediaObject::finished()
         emit playlistFinished();
     }
 }
+
+void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
+	/* Change power profile only if the current media has video.
+	 * Since this slot is called only if the state of the current
+	 * media changes, it should be known whether it has video or not,
+	 * so no connecting to Phonon::MediaObject::hasVideoChanged() is
+	 * necessary.
+	 */
+	if (!m_mediaObject->hasVideo()) {
+		return;
+	}
+
+    std::cout << "called" << std::endl;
+
+    QDBusInterface iface(
+    		"org.kde.kded",
+    		"/modules/powerdevil",
+    		"org.kde.PowerDevil");
+	if ((newstate == Phonon::PlayingState || newstate == Phonon::PausedState)
+			&& oldstate != Phonon::PlayingState
+			&& oldstate != Phonon::PausedState) {
+
+	    iface.call("setProfile", "Presentation");
+	} else if (newstate == Phonon::StoppedState &&
+			(oldstate == Phonon::PlayingState || oldstate == Phonon::PausedState)){
+		/* There is no way to reset the profile to the last used one.
+		 * We therefore set the profile always to performance and let the
+		 * refreshStatus call handle the case when the computer runs on battery.
+		 */
+	    iface.call("setProfile", "Performance");
+	    iface.call("refreshStatus");
+	}
+}
+
 
 //--------------------------------
 //--- MediaItemModel SLOTS     ---
