@@ -75,6 +75,11 @@ MediaItemModel * Playlist::nowPlayingModel()
     return m_nowPlaying;
 }
 
+Phonon::MediaObject * Playlist::mediaObject()
+{
+    return m_mediaObject;
+}
+
 //----------------------------------------
 //--- Primary playback control methods ---
 //----------------------------------------
@@ -563,10 +568,13 @@ void Playlist::updateNowPlaying()
     //THIS SHOULD BE THE ONLY PLACE THAT UPDATES THE NOW PLAYING VIEW!
     
     //Get row of previously playing item and add to history
-    MediaItem mediaItem = m_nowPlaying->mediaItemAt(0);
+    MediaItem mediaItem;
     bool itemIsMedia = false;
-    if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Image")) {
-        itemIsMedia = true;
+    if (m_nowPlaying->rowCount() > 0) {
+        mediaItem = m_nowPlaying->mediaItemAt(0);
+        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Image")) {
+            itemIsMedia = true;
+        }
     }
     
     bool itemIsStale = true;
