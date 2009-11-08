@@ -26,16 +26,23 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "Bangarang", 0,
-        ki18n("Bangarang"), "0.9",
-        ki18n("Enterainment... Now."), KAboutData::License_GPL_V2,
+        ki18n("Bangarang"), "0.91",
+        ki18n("A KDE Media Player"), KAboutData::License_GPL_V2,
         ki18n("Copyright 2009, Andrew Lake"), ki18n(""),
         "" );
 
 int main(int argc, char *argv[])
 {
+    aboutData.setProgramIconName("bangarang");
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
-    aboutData.addCredit( ki18n("Andrew Lake"), ki18n("Creator") );
+    aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@yahoo.com");
+    aboutData.addCredit(ki18n("Sebastian Jambor"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
+    aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
+    aboutData.setHomepage("http://gitorious.org/bangarang");
+    aboutData.setLicense(KAboutData::License_GPL_V3);
 
     KCmdLineArgs::init( argc, argv, &aboutData );
 
@@ -48,9 +55,8 @@ int main(int argc, char *argv[])
 
     KApplication application;
 
-
-
     MainWindow w;
+    w.setAboutData(&aboutData);
     w.show();
     return application.exec();
 }

@@ -79,6 +79,11 @@ MediaItemModel * Playlist::nowPlayingModel()
     return m_nowPlaying;
 }
 
+Phonon::MediaObject * Playlist::mediaObject()
+{
+    return m_mediaObject;
+}
+
 //----------------------------------------
 //--- Primary playback control methods ---
 //----------------------------------------
@@ -94,16 +99,20 @@ void Playlist::playItemAt(int row, int model)
         //Play media Item
         m_mediaObject->clearQueue();
         if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
             m_mediaObject->setCurrentSource(Phonon::Cd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            m_mediaObject->play();
             m_nowPlaying->loadMediaItem(nextMediaItem, true);
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
             m_mediaObject->setCurrentSource(Phonon::Dvd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+            m_mediaObject->play();
+            m_nowPlaying->loadMediaItem(nextMediaItem, true);
         } else {
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+            m_mediaObject->play();
             // - Get album artwork
             MediaItem itemWithArtwork = nextMediaItem;
             QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
@@ -111,9 +120,7 @@ void Playlist::playItemAt(int row, int model)
                 itemWithArtwork.artwork = KIcon(artwork);
             }
             m_nowPlaying->loadMediaItem(itemWithArtwork, true);
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
-        m_mediaObject->play();
         m_playlistFinished = false;
         
         //Update Queue Model
@@ -148,28 +155,7 @@ void Playlist::playItemAt(int row, int model)
                 m_queue->loadMediaList(queueMediaList, true);
             }    
         }
-        
-        /*//Get row of previously playing item
-        int oldItemRow = -1;
-        if (m_nowPlaying->rowCount() > 0) {
-            oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-        }
-        
-        //Update Now Playing view
-        m_nowPlaying->clearMediaListData();
-        // - Get album artwork
-        QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
-        if (!artwork.isNull()) {
-            nextMediaItem.artwork = KIcon(artwork);
-        }
-        m_nowPlaying->loadMediaItem(nextMediaItem, true);
-        
-        //Refresh playlist to show currently playing item
-        m_currentPlaylist->item(row,0)->setData(true, MediaItem::NowPlayingRole);
-        if ((oldItemRow != -1) && (oldItemRow != row) && (oldItemRow < m_currentPlaylist->rowCount())) {
-            m_currentPlaylist->item(oldItemRow, 0)->setData(false, MediaItem::NowPlayingRole);
-        }*/
-        
+
     } else if (model == Playlist::QueueModel) {
         //Get media item from queue list
         nextMediaItem = m_queue->mediaItemAt(row);
@@ -212,28 +198,6 @@ void Playlist::playItemAt(int row, int model)
                 m_queue->loadMediaList(queueMediaList, true);
             }
         }
-        
-        /*//Get row of previously playing item
-        int oldItemRow = -1;
-        if (m_nowPlaying->rowCount() > 0) {
-            oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-        }
-        
-        //Update Now Playing view
-        m_nowPlaying->clearMediaListData();       
-        // - Get album artwork
-        QPixmap artwork = Utilities::getArtworkFromTag(nextMediaItem.url);
-        if (!artwork.isNull()) {
-            nextMediaItem.artwork = KIcon(artwork);
-        }
-        m_nowPlaying->loadMediaItem(nextMediaItem, true);
-
-        //Refresh playlist model to ensure views get updated
-        int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
-        if (row >= 0) m_currentPlaylist->item(row,0)->setData(true, MediaItem::NowPlayingRole);
-        if (oldItemRow != row and oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
-            m_currentPlaylist->item(oldItemRow, 0)->setData(false, MediaItem::NowPlayingRole);
-        }*/
     }
     
     
@@ -241,11 +205,11 @@ void Playlist::playItemAt(int row, int model)
 
 void Playlist::playNext()
 {
-    addToQueue();
     if (m_queue->rowCount() > 1) {
         m_queue->removeMediaItemAt(0);
         playItemAt(0, Playlist::QueueModel);
     }
+    addToQueue();
 }
 
 void Playlist::playPrevious()
@@ -642,10 +606,13 @@ void Playlist::updateNowPlaying()
     //THIS SHOULD BE THE ONLY PLACE THAT UPDATES THE NOW PLAYING VIEW!
     
     //Get row of previously playing item and add to history
-    MediaItem mediaItem = m_nowPlaying->mediaItemAt(0);
+    MediaItem mediaItem;
     bool itemIsMedia = false;
-    if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Image")) {
-        itemIsMedia = true;
+    if (m_nowPlaying->rowCount() > 0) {
+        mediaItem = m_nowPlaying->mediaItemAt(0);
+        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Image")) {
+            itemIsMedia = true;
+        }
     }
     
     bool itemIsStale = true;

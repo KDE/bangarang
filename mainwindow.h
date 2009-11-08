@@ -20,12 +20,13 @@
 #define MAINWINDOW_H
 
 #include <KIcon>
+#include <KAboutData>
+#include <KHelpMenu>
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaController>
 #include <Phonon/MediaObject>
 #include <Phonon/VideoPlayer>
 #include <Phonon/VideoWidget>
-#include <QMainWindow>
 #include <QResizeEvent>
 #include <QEvent>
 #include <QGraphicsView>
@@ -36,6 +37,7 @@
 #include <QListWidgetItem>
 #include <QAction>
 #include <QDateTime>
+#include <QMainWindow>
 
 class MediaItem;
 class MediaListProperties;
@@ -77,6 +79,10 @@ public:
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     ActionsManager * actionsManager();
+    void setAboutData(KAboutData *aboutData);
+    Playlist * playlist();
+    Phonon::AudioOutput * audioOutput();
+    
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -111,6 +117,10 @@ private:
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
     void updateCachedDevicesList();
+    int m_loadingProgress;
+    KAboutData *m_aboutData;
+    KHelpMenu *m_helpMenu;
+    KMenu *m_menu;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -122,17 +132,14 @@ public slots:
     void removeSelectedFromPlaylist();
     void on_fullScreen_toggled(bool fullScreen);
     
-    
 private slots:
     void on_nowPlaying_clicked();
     void on_collectionButton_clicked();
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
     void on_mediaPlayPause_released();
-    void on_mediaNext_clicked();
-    void on_mediaPrevious_clicked();
     void updateSeekTime(qint64 time);
-    void on_volumeIcon_toggled(bool muted);
+    void updateMuteStatus(bool muted);
     void on_previous_clicked();
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
@@ -159,6 +166,8 @@ private slots:
     void on_Filter_returnPressed();
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
+    void showLoading();
+    void on_showMenu_clicked();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

@@ -54,10 +54,6 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         return;
     }
     
-    QStyleOptionViewItemV4 opt(option);
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);    
-    
     const int left = option.rect.left();
     const int top = option.rect.top();
     const int width = option.rect.width();
