@@ -72,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
-    //ui->showMenu->setVisible(false);
+    ui->configureAudioList->setVisible(false);
+    ui->configureVideoList->setVisible(false);
     
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
