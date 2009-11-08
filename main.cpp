@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
+    aboutData.setHomepage("http://gitorious.org/bangarang");
     aboutData.setLicense(KAboutData::License_GPL_V3);
 
     KCmdLineArgs::init( argc, argv, &aboutData );
