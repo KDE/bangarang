@@ -30,8 +30,6 @@
 #include <Soprano/Vocabulary/XMLSchema>
 #include <QDBusInterface>
 
-#include <iostream>
-
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
 {
@@ -475,8 +473,6 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 	if (!m_mediaObject->hasVideo()) {
 		return;
 	}
-
-    std::cout << "called" << std::endl;
 
     QDBusInterface iface(
     		"org.kde.kded",

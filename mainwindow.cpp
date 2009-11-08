@@ -295,12 +295,14 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         showFullScreen();
         ui->fullScreen->setIcon(KIcon("view-restore"));
         ui->fullScreen->setToolTip("<b>Fullscreen</b><br>Click to exit fullscreen");
+        ui->fullScreen->setChecked(true);
         ui->widgetSet->setVisible(false);
         ui->nowPlayingToolbar->setVisible(false);
     } else {
         showNormal();
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
         ui->fullScreen->setToolTip("Show fullscreen");
+        ui->fullScreen->setChecked(false);
         ui->widgetSet->setVisible(true);
         ui->nowPlayingToolbar->setVisible(true);
     }
