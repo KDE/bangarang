@@ -20,12 +20,13 @@
 #define MAINWINDOW_H
 
 #include <KIcon>
+#include <KAboutData>
+#include <KHelpMenu>
 #include <Phonon/AudioOutput>
 #include <Phonon/MediaController>
 #include <Phonon/MediaObject>
 #include <Phonon/VideoPlayer>
 #include <Phonon/VideoWidget>
-#include <QMainWindow>
 #include <QResizeEvent>
 #include <QEvent>
 #include <QGraphicsView>
@@ -36,6 +37,7 @@
 #include <QListWidgetItem>
 #include <QAction>
 #include <QDateTime>
+#include <QMainWindow>
 
 class MediaItem;
 class MediaListProperties;
@@ -77,6 +79,8 @@ public:
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     ActionsManager * actionsManager();
+    void setAboutData(KAboutData *aboutData);
+    KAboutData *aboutData();
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -112,6 +116,8 @@ private:
     QList<QString> m_devicesAdded;
     void updateCachedDevicesList();
     int m_loadingProgress;
+    KAboutData *m_aboutData;
+    KHelpMenu *m_helpMenu;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -122,7 +128,6 @@ public slots:
     void addSelectedToPlaylist();
     void removeSelectedFromPlaylist();
     void on_fullScreen_toggled(bool fullScreen);
-    
     
 private slots:
     void on_nowPlaying_clicked();

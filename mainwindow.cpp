@@ -36,6 +36,8 @@
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
 #include <KDebug>
+#include <KHelpMenu>
+#include <KMenu>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
@@ -70,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
-    ui->showVideoSettings->setVisible(false);
+    //ui->showMenu->setVisible(false);
     
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
@@ -1022,4 +1024,20 @@ void MainWindow::deviceRemoved(const QString &udi)
 ActionsManager * MainWindow::actionsManager()
 {
     return m_actionsManager;
+}
+
+void MainWindow::setAboutData(KAboutData *aboutData)
+{
+    m_aboutData = aboutData;
+    //Add help menu
+    m_helpMenu = new KHelpMenu(this, m_aboutData, false);
+    m_helpMenu->menu();
+    KMenu *menu = new KMenu(this);
+    menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
+    ui->showMenu->setMenu(menu);
+}
+
+KAboutData *MainWindow::aboutData()
+{
+    return m_aboutData;
 }

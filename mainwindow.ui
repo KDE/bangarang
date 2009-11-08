@@ -294,8 +294,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>260</height>
+                   <width>154</width>
+                   <height>322</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -1973,13 +1973,16 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="showVideoSettings">
+               <widget class="QToolButton" name="showMenu">
                 <property name="text">
                  <string/>
                 </property>
                 <property name="icon">
                  <iconset>
                   <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
+                </property>
+                <property name="popupMode">
+                 <enum>QToolButton::InstantPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -5431,7 +5434,7 @@ color: rgb(255, 255, 255);</string>
   <tabstop>vListSourceSelection</tabstop>
   <tabstop>vListSourceView</tabstop>
   <tabstop>vListSourcePlaylist</tabstop>
-  <tabstop>showVideoSettings</tabstop>
+  <tabstop>showMenu</tabstop>
  </tabstops>
  <resources/>
  <connections/>
