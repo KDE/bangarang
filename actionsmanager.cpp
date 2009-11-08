@@ -25,6 +25,8 @@
 
 #include <KStandardDirs>
 #include <KMessageBox>
+#include <KHelpMenu>
+#include <KMenu>
 #include <QFile>
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)

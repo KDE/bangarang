@@ -49,7 +49,6 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
     connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
-    connect(m_queue, SIGNAL(mediaListChanged()), this, SLOT(queueChanged()));
     
 }
 
