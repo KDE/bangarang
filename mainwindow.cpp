@@ -36,6 +36,9 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
+#include <KDebug>
+#include <KHelpMenu>
+#include <KMenu>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
@@ -52,6 +55,7 @@
 #include <QStringListModel>
 #include <QFile>
 #include <QScrollBar>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
@@ -69,7 +73,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
-    ui->showVideoSettings->setVisible(false);
+    ui->configureAudioList->setVisible(false);
+    ui->configureVideoList->setVisible(false);
     
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
@@ -108,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Connect to media object signals and slots
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
+    connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
     connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     
     //Set up Audio lists view 
@@ -188,7 +194,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaLists->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
-    ui->mediaPlayPause->setHoldDelay(1500);
+    ui->mediaPlayPause->setHoldDelay(1000);
+    ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
+    ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -197,6 +205,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_shuffle = false;
     m_pausePressed = false;
     m_stopPressed = false;
+    m_loadingProgress = 0;
     
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -277,6 +286,7 @@ void MainWindow::on_collectionButton_clicked()
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
+    ui->contextStack->setCurrentIndex(0);  
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -332,7 +342,7 @@ void MainWindow::on_mediaPlayPause_released()
     } else {
         if ((!m_pausePressed) && (m_media->state() == Phonon::PausedState)) {
             m_media->play();
-        } else if (m_media->state() == Phonon::StoppedState) {
+        } else if ((m_media->state() == Phonon::StoppedState) || (m_media->state() == Phonon::LoadingState)) {
             if (m_currentPlaylist->rowCount() > 0) {
                 m_playlist->start();
             }
@@ -345,33 +355,12 @@ void MainWindow::on_mediaPlayPause_released()
     }
 }
 
-void MainWindow::on_mediaNext_clicked()
-{
-    m_playlist->playNext();        
-}
-
-void MainWindow::on_mediaPrevious_clicked()
-{
-    m_playlist->playPrevious();
-}
-
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
     if (!m_showQueue) {
         m_playlist->playItemAt(index.row(), Playlist::PlaylistModel);
     } else {
         m_playlist->playItemAt(index.row(), Playlist::QueueModel);
-    }
-}
-
-void MainWindow::on_volumeIcon_toggled(bool muted)
-{
-    if (muted) {
-        ui->volumeIcon->setIcon(KIcon("dialog-cancel"));
-        ui->volumeIcon->setToolTip("<b>Muted</b><br>Click to restore volume");
-    } else {
-        ui->volumeIcon->setIcon(KIcon("preferences-desktop-text-to-speech"));
-        ui->volumeIcon->setToolTip("Mute volume");
     }
 }
 
@@ -538,6 +527,21 @@ void MainWindow::on_showQueue_clicked()
     }
 }
 
+void MainWindow::on_showMenu_clicked()
+{
+    m_helpMenu = new KHelpMenu(this, m_aboutData, false);
+    m_helpMenu->menu();
+    m_menu = new KMenu(this);
+    //m_menu->addAction(m_actionsManager->editShortcuts());
+    if (!isFullScreen()) {
+        m_menu->addAction(m_actionsManager->showHideControls());
+        m_menu->addSeparator();
+    }
+    m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
+    QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    m_menu->popup(menuLocation);
+}
+
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
@@ -555,6 +559,7 @@ void MainWindow::updateSeekTime(qint64 time)
     } else {
         displayTime = remainingTime.toString(QString("m:ss"));
     }
+    ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     ui->seekTime->setText(displayTime);
     
     //Update Now Playing Button text
@@ -585,8 +590,36 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
         }
     }
+    if (newstate == Phonon::LoadingState || newstate == Phonon::BufferingState) {
+        showLoading();
+    }
     
     Q_UNUSED(oldstate);
+}
+
+void MainWindow::showLoading()
+{
+    if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState) {
+        m_loadingProgress += 1;
+        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
+            m_loadingProgress = 0;
+        }
+        QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
+        ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->seekTime->setIcon(KIcon(iconName));
+        QTimer::singleShot(100, this, SLOT(showLoading()));
+    }
+}
+
+void MainWindow::updateMuteStatus(bool muted)
+{
+    if (muted) {
+        ui->volumeIcon->setIcon(KIcon("dialog-cancel"));
+        ui->volumeIcon->setToolTip("<b>Muted</b><br>Click to restore volume");
+    } else {
+        ui->volumeIcon->setIcon(KIcon("speaker"));
+        ui->volumeIcon->setToolTip("Mute volume");
+    }
 }
 
 
@@ -604,8 +637,10 @@ void MainWindow::mediaListChanged()
     if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            ui->mediaView->header()->showSection(1);
-            ui->playAll->setVisible(true);
+            if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+                ui->mediaView->header()->showSection(1);
+                ui->playAll->setVisible(true);
+            }
         } else if (listItemType == "Category") {
             ui->mediaView->header()->showSection(1);
             ui->playAll->setVisible(true);
@@ -620,7 +655,9 @@ void MainWindow::mediaListChanged()
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
     if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-        ui->playSelected->setVisible(true);
+        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+            ui->playSelected->setVisible(true);
+        }
         ui->playAll->setVisible(false);
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
@@ -629,8 +666,10 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
             }
         }
     } else {
-        ui->playSelected->setVisible(false);
-        ui->playAll->setVisible(true);
+        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+            ui->playSelected->setVisible(false);
+            ui->playAll->setVisible(true);
+        }
         ui->showInfo->setVisible(false);
     }
     ui->saveInfo->setVisible(false);
@@ -874,10 +913,8 @@ void MainWindow::setupIcons()
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
     ui->fullScreen->setIcon(KIcon("view-fullscreen"));
-    ui->volumeIcon->setIcon(KIcon("preferences-desktop-text-to-speech"));
-    ui->mediaPrevious->setIcon(KIcon("media-skip-backward"));
+    ui->volumeIcon->setIcon(KIcon("speaker"));
     ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
-    ui->mediaNext->setIcon(KIcon("media-skip-forward"));
     
     //Now Playing View top bar
     ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
@@ -1008,4 +1045,19 @@ void MainWindow::deviceRemoved(const QString &udi)
 ActionsManager * MainWindow::actionsManager()
 {
     return m_actionsManager;
+}
+
+void MainWindow::setAboutData(KAboutData *aboutData)
+{
+    m_aboutData = aboutData;
+}
+
+Playlist * MainWindow::playlist()
+{
+    return m_playlist;
+}
+
+Phonon::AudioOutput * MainWindow::audioOutput()
+{
+    return m_audioOutput;
 }
