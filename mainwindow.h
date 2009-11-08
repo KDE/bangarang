@@ -80,7 +80,6 @@ public:
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     ActionsManager * actionsManager();
     void setAboutData(KAboutData *aboutData);
-    KAboutData *aboutData();
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -118,6 +117,7 @@ private:
     int m_loadingProgress;
     KAboutData *m_aboutData;
     KHelpMenu *m_helpMenu;
+    KMenu *m_menu;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -166,6 +166,7 @@ private slots:
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
     void showLoading();
+    void on_showMenu_clicked();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

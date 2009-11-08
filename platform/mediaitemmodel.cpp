@@ -134,41 +134,6 @@ void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaLis
 
 void MediaItemModel::loadMediaItem(MediaItem mediaItem, bool emitMediaListChanged)
 {
-    /*QList<QStandardItem *> rowData;
-    QStandardItem * titleItem = new QStandardItem(mediaItem.artwork, mediaItem.title);
-    titleItem->setData(mediaItem.subTitle, MediaItem::SubTitleRole);
-    titleItem->setData(mediaItem.url, MediaItem::UrlRole);
-    titleItem->setData(mediaItem.type, MediaItem::TypeRole);
-    titleItem->setData(mediaItem.duration, MediaItem::DurationRole);
-    titleItem->setData(mediaItem.playlistIndex, MediaItem::PlaylistIndexRole);
-    titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
-    rowData << titleItem;
-    
-    //if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
-        QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
-        markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
-        markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
-        markPlaylistItem->setData("Mark for playlist/Unmark", Qt::ToolTipRole);
-        rowData << markPlaylistItem;
-    //}
-   
-    if (mediaItem.type == "Category") {
-        KIcon categoryActionIcon;
-        QString tooltip;
-        categoryActionIcon = KIcon("system-run");
-        if (mediaItem.url.startsWith("music://songs")) {
-            tooltip = "Show Songs";
-        } else if (mediaItem.url.startsWith("music://albums")) {
-            tooltip = "Show Albums";
-        } else if (mediaItem.url.startsWith("music://artists")) {
-            tooltip = "Show Artists";
-        }
-        QStandardItem * categoryItem = new QStandardItem(categoryActionIcon, QString());
-        categoryItem->setData(mediaItem.url, MediaItem::UrlRole);
-        categoryItem->setData(mediaItem.type, MediaItem::TypeRole);   
-        categoryItem->setData(tooltip, Qt::ToolTipRole);
-        rowData << categoryItem;
-    }*/
     m_mediaList << mediaItem;
     m_urlList << mediaItem.url;
     appendRow(rowDataFromMediaItem(mediaItem));
@@ -365,7 +330,7 @@ void MediaItemModel::showLoadingMessage()
     if (m_loadingState) {
         MediaItem loadingMessage;
         m_loadingProgress += 1;
-        if (m_loadingProgress > 7) {
+        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
             m_loadingProgress = 0;
         }
         QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
