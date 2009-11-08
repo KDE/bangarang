@@ -111,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Connect to media object signals and slots
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
+    connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
     connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     
     //Set up Audio lists view 
@@ -192,6 +193,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1000);
+    ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
+    ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -277,6 +280,7 @@ void MainWindow::on_collectionButton_clicked()
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
+    ui->contextStack->setCurrentIndex(0);  
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -345,33 +349,12 @@ void MainWindow::on_mediaPlayPause_released()
     }
 }
 
-void MainWindow::on_mediaNext_clicked()
-{
-    m_playlist->playNext();        
-}
-
-void MainWindow::on_mediaPrevious_clicked()
-{
-    m_playlist->playPrevious();
-}
-
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
     if (!m_showQueue) {
         m_playlist->playItemAt(index.row(), Playlist::PlaylistModel);
     } else {
         m_playlist->playItemAt(index.row(), Playlist::QueueModel);
-    }
-}
-
-void MainWindow::on_volumeIcon_toggled(bool muted)
-{
-    if (muted) {
-        ui->volumeIcon->setIcon(KIcon("dialog-cancel"));
-        ui->volumeIcon->setToolTip("<b>Muted</b><br>Click to restore volume");
-    } else {
-        ui->volumeIcon->setIcon(KIcon("preferences-desktop-text-to-speech"));
-        ui->volumeIcon->setToolTip("Mute volume");
     }
 }
 
@@ -543,6 +526,7 @@ void MainWindow::on_showMenu_clicked()
     m_helpMenu = new KHelpMenu(this, m_aboutData, false);
     m_helpMenu->menu();
     m_menu = new KMenu(this);
+    //m_menu->addAction(m_actionsManager->editShortcuts());
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -616,6 +600,18 @@ void MainWindow::showLoading()
         QTimer::singleShot(100, this, SLOT(showLoading()));
     }
 }
+
+void MainWindow::updateMuteStatus(bool muted)
+{
+    if (muted) {
+        ui->volumeIcon->setIcon(KIcon("dialog-cancel"));
+        ui->volumeIcon->setToolTip("<b>Muted</b><br>Click to restore volume");
+    } else {
+        ui->volumeIcon->setIcon(KIcon("speaker"));
+        ui->volumeIcon->setToolTip("Mute volume");
+    }
+}
+
 
 /*---------------------------
   -- SLOTS for media lists --
@@ -907,10 +903,8 @@ void MainWindow::setupIcons()
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
     ui->fullScreen->setIcon(KIcon("view-fullscreen"));
-    ui->volumeIcon->setIcon(KIcon("preferences-desktop-text-to-speech"));
-    ui->mediaPrevious->setIcon(KIcon("media-skip-backward"));
+    ui->volumeIcon->setIcon(KIcon("speaker"));
     ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
-    ui->mediaNext->setIcon(KIcon("media-skip-forward"));
     
     //Now Playing View top bar
     ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
@@ -1040,4 +1034,14 @@ ActionsManager * MainWindow::actionsManager()
 void MainWindow::setAboutData(KAboutData *aboutData)
 {
     m_aboutData = aboutData;
+}
+
+Playlist * MainWindow::playlist()
+{
+    return m_playlist;
+}
+
+Phonon::AudioOutput * MainWindow::audioOutput()
+{
+    return m_audioOutput;
 }

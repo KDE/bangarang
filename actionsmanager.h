@@ -19,6 +19,7 @@
 #ifndef ACTIONSMANAGER_H
 #define ACTIONSMANAGER_H
 
+#include <KActionCollection>
 #include <QObject>
 #include <QAction>
 
@@ -44,6 +45,11 @@ class ActionsManager : public QObject
         QAction *fullScreen();
         QAction *showHideControls();
         QAction *cancelFullScreenHideControls();
+        QAction *editShortcuts();
+        QAction *playPause();
+        QAction *playNext();
+        QAction *playPrevious();
+        QAction *mute();
         
     public slots:
         
@@ -59,12 +65,21 @@ class ActionsManager : public QObject
         QAction *m_showHideControls;
         QAction *m_fullScreen;
         QAction *m_cancelFullScreenHideControls;
+        QAction *m_editShortcuts;
+        QAction *m_playPause;
+        QAction *m_playNext;
+        QAction *m_playPrevious;
+        QAction *m_mute;
+        KActionCollection *m_actionCollection;
         
     private slots:
         void fullScreenToggle();
         void toggleControls();
         void cancelFSHC();
+        void showShortcutsEditor();
+        void hideShortcutsEditor();
+        void simplePlayPause();
+        void muteAudio();
         
-
 };
 #endif //ACTIONSMANAGER_H

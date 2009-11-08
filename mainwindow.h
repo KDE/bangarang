@@ -80,6 +80,9 @@ public:
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     ActionsManager * actionsManager();
     void setAboutData(KAboutData *aboutData);
+    Playlist * playlist();
+    Phonon::AudioOutput * audioOutput();
+    
     
 private:
     Phonon::VideoPlayer *m_player;
@@ -135,10 +138,8 @@ private slots:
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
     void on_mediaPlayPause_released();
-    void on_mediaNext_clicked();
-    void on_mediaPrevious_clicked();
     void updateSeekTime(qint64 time);
-    void on_volumeIcon_toggled(bool muted);
+    void updateMuteStatus(bool muted);
     void on_previous_clicked();
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);

@@ -38,10 +38,9 @@ class Playlist : public QObject
         MediaItemModel * playlistModel();
         MediaItemModel * queueModel();
         MediaItemModel * nowPlayingModel();
+        Phonon::MediaObject * mediaObject();
         void start();
         void playItemAt(int row, int model = 0);
-        void playNext();
-        void playPrevious();
         void stop();
         void playMediaList(QList<MediaItem> mediaList);
         void addMediaList(QList<MediaItem> mediaList);
@@ -74,6 +73,10 @@ class Playlist : public QObject
         bool m_playlistFinished;
         void createUrlHistoryFromIndices();
         void updateNowPlaying();
+        
+    public slots:
+        void playNext();
+        void playPrevious();
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
