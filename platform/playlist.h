@@ -81,6 +81,7 @@ class Playlist : public QObject
         void playlistChanged();
         void queueNextPlaylistItem();
         void confirmPlaylistFinished();
+        void stateChanged(Phonon::State newstate, Phonon::State oldstate);
         
     Q_SIGNALS:
         void playlistFinished();
