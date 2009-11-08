@@ -294,8 +294,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>154</width>
-                   <height>322</height>
+                   <width>139</width>
+                   <height>260</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -1982,10 +1982,13 @@
                   <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
                 </property>
                 <property name="popupMode">
-                 <enum>QToolButton::InstantPopup</enum>
+                 <enum>QToolButton::DelayedPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
+                </property>
+                <property name="arrowType">
+                 <enum>Qt::DownArrow</enum>
                 </property>
                </widget>
               </item>

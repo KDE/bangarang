@@ -200,6 +200,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_shuffle = false;
     m_pausePressed = false;
     m_stopPressed = false;
+    m_loadingProgress = 0;
     
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -537,6 +538,16 @@ void MainWindow::on_showQueue_clicked()
     }
 }
 
+void MainWindow::on_showMenu_clicked()
+{
+    m_helpMenu = new KHelpMenu(this, m_aboutData, false);
+    m_helpMenu->menu();
+    m_menu = new KMenu(this);
+    m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
+    QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    m_menu->popup(menuLocation);
+}
+
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
@@ -596,7 +607,7 @@ void MainWindow::showLoading()
 {
     if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState) {
         m_loadingProgress += 1;
-        if (m_loadingProgress > 7) {
+        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
             m_loadingProgress = 0;
         }
         QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
@@ -1029,15 +1040,4 @@ ActionsManager * MainWindow::actionsManager()
 void MainWindow::setAboutData(KAboutData *aboutData)
 {
     m_aboutData = aboutData;
-    //Add help menu
-    m_helpMenu = new KHelpMenu(this, m_aboutData, false);
-    m_helpMenu->menu();
-    KMenu *menu = new KMenu(this);
-    menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
-    ui->showMenu->setMenu(menu);
-}
-
-KAboutData *MainWindow::aboutData()
-{
-    return m_aboutData;
 }
