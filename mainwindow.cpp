@@ -527,6 +527,10 @@ void MainWindow::on_showMenu_clicked()
     m_helpMenu->menu();
     m_menu = new KMenu(this);
     //m_menu->addAction(m_actionsManager->editShortcuts());
+    if (!isFullScreen()) {
+        m_menu->addAction(m_actionsManager->showHideControls());
+        m_menu->addSeparator();
+    }
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
