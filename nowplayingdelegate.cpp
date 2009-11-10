@@ -220,5 +220,6 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
         }
     }
     return false;
-    //return QItemDelegate::editorEvent(event, model, option, index);
+    Q_UNUSED(model);
+    
 }

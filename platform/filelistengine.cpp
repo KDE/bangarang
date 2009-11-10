@@ -120,13 +120,6 @@ MediaListProperties FileListEngine::mediaListProperties()
     return m_mediaListProperties;
 }
 
-void FileListEngine::setFilterForSources(QString engineFilter)
-{
-    //Always return files
-    //FIXME:Figure out how sources work
-    //m_mediaListProperties.lri = QString("files://getFiles?%1").arg(engineFilter);
-}
-
 void FileListEngine::setRequestSignature(QString requestSignature)
 {
     m_requestSignature = requestSignature;
