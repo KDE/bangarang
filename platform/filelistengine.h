@@ -42,7 +42,6 @@ class FileListEngine : public ListEngine
         void run();
         void setMediaListProperties(MediaListProperties mediaListProperties);
         MediaListProperties mediaListProperties();
-        void setFilterForSources(QString engineFilter);
         void setRequestSignature(QString requestSignature);
         void setSubRequestSignature(QString subRequestSignature);
         void activateAction();

@@ -123,6 +123,7 @@ void SFrame::leaveEvent(QEvent *event)
 void SFrame::mouseMoveEvent(QMouseEvent *event)
 {
     emit mouseMoved();
+    Q_UNUSED(event);
 }
 void SFrame::hoverTimeout()
 {

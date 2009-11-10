@@ -51,6 +51,8 @@ struct MediaItem {
     QHash <QString, QVariant> fields;
 };
 
+Q_DECLARE_METATYPE(MediaItem);
+
 class MediaListProperties {
 
 public:

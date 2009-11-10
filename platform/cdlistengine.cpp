@@ -148,4 +148,5 @@ void CDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
     if ((oldState == Phonon::LoadingState) && m_loadWhenReady) {
         start();
     }
+    Q_UNUSED(newState);
 }
