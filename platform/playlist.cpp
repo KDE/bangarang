@@ -308,12 +308,12 @@ void Playlist::removeMediaItemAt(int row)
         m_playlistIndicesHistory.removeAt(foundAt);
         m_playlistUrlHistory.removeAt(foundAt);
     }
-    m_currentPlaylist->removeMediaItemAt(row);
+    m_currentPlaylist->removeMediaItemAt(row, true);
 }
 
 void Playlist::clearPlaylist()
 {
-    m_currentPlaylist->clearMediaListData();
+    m_currentPlaylist->clearMediaListData(true);
     m_queue->clearMediaListData();
     m_nowPlaying->clearMediaListData();
     m_playlistIndices.clear();

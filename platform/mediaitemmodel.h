@@ -94,7 +94,7 @@ class MediaItemModel : public QStandardItemModel
         ~MediaItemModel();
         QString dataEngine();
         QString filter();
-        void clearMediaListData();
+        void clearMediaListData(bool emitMediaListChanged = false);
         void load();
         QList<MediaItem> mediaList();
         void loadMediaList(QList<MediaItem>, bool emitMediaListChanged = false);

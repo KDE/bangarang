@@ -156,7 +156,7 @@ void FileListEngine::activateAction()
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readAudioUrlList(fileList);
             }
-            m_mediaListProperties.name = "Audio Files";           
+            m_mediaListProperties.name = QString("Audio Files (%1)").arg(mediaList.count());           
         }
         if (m_mediaListProperties.engineArg() == "video") {
             QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), static_cast<QWidget *>(model()->parent()), "Open folder containing video file(s)");           
@@ -166,7 +166,7 @@ void FileListEngine::activateAction()
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readVideoUrlList(fileList);
             }
-            m_mediaListProperties.name = "Video Files";
+            m_mediaListProperties.name = QString("Video Files (%1)").arg(mediaList.count());
         }
     }
     
