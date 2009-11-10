@@ -36,6 +36,7 @@
 #include <KMessageBox>
 #include <KSqueezedTextLabel>
 #include <KColorScheme>
+#include <KGlobalSettings>
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
@@ -68,7 +69,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Hide certain widgets
     ui->previous->setVisible(false);
     ui->contextStack->setVisible(false);
-    ui->playlistNameEdit->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->showInfo->setVisible(false);
     ui->saveInfo->setVisible(false);
@@ -197,6 +197,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaPlayPause->setHoldDelay(1000);
     ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
     ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
+    ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -519,12 +520,12 @@ void MainWindow::on_showQueue_clicked()
     if (m_showQueue) {
         ui->playlistView->setModel(m_playlist->queueModel());
         ui->showQueue->setToolTip("<b>Showing Upcoming</b><br>Click to show playlist");
-        ui->playlistName->setText(ui->playlistName->text() + QString("(Upcoming)"));
+        ui->playlistName->setText(QString("<b>Playlist</b>(Upcoming)"));
         ui->showQueue->setIcon(KIcon("bangarang-preview"));
     } else {
         ui->playlistView->setModel(m_playlist->playlistModel());
         ui->showQueue->setToolTip("Show Upcoming");
-        ui->playlistName->setText(ui->playlistName->text().remove("(Upcoming)"));
+        playlistChanged();
         ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     }
 }
@@ -745,6 +746,17 @@ void MainWindow::playlistChanged()
     ui->playlistView->header()->setStretchLastSection(false);
     ui->playlistView->header()->setResizeMode(0, QHeaderView::Stretch);
     ui->playlistView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    if (!m_showQueue) {
+        ui->playlistName->setText("<b>Playlist</b>");
+        if (m_playlist->playlistModel()->rowCount() > 0) {
+            QString duration = Utilities::mediaListDurationText(m_playlist->playlistModel()->mediaList());
+            ui->playlistDuration->setText(QString("%1 items, %2")
+                .arg(m_playlist->playlistModel()->rowCount())
+                .arg(duration));
+        } else {
+            ui->playlistDuration->setText(QString());
+        }
+    }
 }
 
 void MainWindow::nowPlayingChanged()

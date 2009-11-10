@@ -4276,14 +4276,14 @@ color: rgb(255, 255, 255);</string>
                             </item>
                             <item>
                              <widget class="QLabel" name="playlistName">
-                              <property name="font">
-                               <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
-                               </font>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
                               </property>
                               <property name="text">
-                               <string>Playlist Name</string>
+                               <string>&lt;b&gt;Playlist&lt;/b&gt;</string>
                               </property>
                               <property name="alignment">
                                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -4291,7 +4291,17 @@ color: rgb(255, 255, 255);</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="KLineEdit" name="playlistNameEdit"/>
+                             <widget class="QLabel" name="playlistDuration">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
                             </item>
                             <item>
                              <widget class="QToolButton" name="clearPlaylist">
@@ -5443,7 +5453,6 @@ color: rgb(255, 255, 255);</string>
   <tabstop>showPlaylist</tabstop>
   <tabstop>nowPlayingView</tabstop>
   <tabstop>showQueue</tabstop>
-  <tabstop>playlistNameEdit</tabstop>
   <tabstop>clearPlaylist</tabstop>
   <tabstop>repeat</tabstop>
   <tabstop>shuffle</tabstop>

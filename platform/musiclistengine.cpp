@@ -138,7 +138,7 @@ void MusicListEngine::run()
             }
             ++i;
         }
-        m_mediaListProperties.name = QString("Artists");
+        m_mediaListProperties.name = QString("Artists (%1)").arg(mediaList.count());
         m_mediaListProperties.type = QString("Categories");
         
     } else if (engineArg.toLower() == "albums") {
@@ -165,7 +165,7 @@ void MusicListEngine::run()
             }
             ++i;
         }
-        m_mediaListProperties.name = QString("Albums");
+        m_mediaListProperties.name = QString("Albums (%1)").arg(mediaList.count());
         m_mediaListProperties.type = QString("Categories");
         
     } else if (engineArg.toLower() == "songs") {
@@ -210,13 +210,13 @@ void MusicListEngine::run()
         // Name the newly created media list
         m_mediaListProperties.name = album + QString(" - ") + artist;
         if (!album.isEmpty() && !artist.isEmpty()) {
-            m_mediaListProperties.name = album + QString(" - ") + artist;
+            m_mediaListProperties.name = QString("%1 - %2 (%3 items)").arg(album).arg(artist).arg(mediaList.count());
         } else if (!album.isEmpty()) {
-            m_mediaListProperties.name = album;
+            m_mediaListProperties.name = QString("%1 (%2 items)").arg(album).arg(mediaList.count());
         } else if (!artist.isEmpty()) {
-            m_mediaListProperties.name = artist;
+            m_mediaListProperties.name = QString("%1 (%2 items)").arg(artist).arg(mediaList.count());
         } else {
-            m_mediaListProperties.name = QString("Songs");
+            m_mediaListProperties.name = QString("Songs (%1)").arg(mediaList.count());
         }
         m_mediaListProperties.type = QString("Sources");
         
@@ -244,6 +244,7 @@ void MusicListEngine::run()
             mediaList.append(mediaItem);
         }
         
+        m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
         m_mediaListProperties.type = QString("Sources");
     }
     

@@ -495,3 +495,24 @@ TagLib::ID3v2::AttachedPictureFrame *Utilities::attachedPictureFrame(TagLib::ID3
     
     return selectedFrame;
 }
+
+int Utilities::mediaListDuration(QList<MediaItem> mediaList) 
+{
+    int duration = 0;
+    for (int i = 0; i < mediaList.count(); i++) {
+        duration += mediaList.at(i).fields["duration"].toInt();
+    }
+    return duration;
+}
+
+QString Utilities::mediaListDurationText(QList<MediaItem> mediaList) 
+{
+    int duration = mediaListDuration(mediaList);
+    int hours = duration/3600;
+    int minutes = (duration - (hours*3600))/60;
+    int seconds = duration - (hours*3600) - (minutes*60);
+    QString min = minutes < 10 ? QString("0%1").arg(minutes): QString("%1").arg(minutes);
+    QString sec = seconds < 10 ? QString("0%1").arg(seconds): QString("%1").arg(seconds);
+    
+    return QString("%1:%2:%3").arg(hours).arg(min).arg(sec);
+}

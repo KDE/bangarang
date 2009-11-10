@@ -271,11 +271,14 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     Q_UNUSED(done);
 }
 
-void MediaItemModel::clearMediaListData()
+void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
+    if (emitMediaListChanged) {
+        emit mediaListChanged();
+    }
 }
 
 void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
