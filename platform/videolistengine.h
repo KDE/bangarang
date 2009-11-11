@@ -116,6 +116,7 @@ class VideoListEngine : public ListEngine
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
+        bool m_nepomukInited;
         
         MediaItem createMediaItem(Soprano::QueryResultIterator& it);
 

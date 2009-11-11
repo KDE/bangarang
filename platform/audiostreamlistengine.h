@@ -93,6 +93,7 @@ class AudioStreamListEngine : public ListEngine
         QString m_requestSignature;
         QString m_subRequestSignature;
         MediaItem createMediaItem(Soprano::QueryResultIterator& it);
+        bool m_nepomukInited;
         
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

@@ -30,6 +30,7 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <nepomuk/resource.h>
+#include <Nepomuk/ResourceManager>
 #include <nepomuk/variant.h>
 #include <QComboBox>
 #include <QSpinBox>
@@ -48,6 +49,13 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->editInfo, SIGNAL(clicked()), this, SLOT(editInfoView()));
     connect(ui->mediaViewHolder, SIGNAL(currentChanged(int)), this, SLOT(mediaViewHolderChanged(int)));
     m_editToggle = false;
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        ui->editInfo->setEnabled(true);
+    } else {
+        ui->editInfo->setEnabled(false);
+    }
+    
 }
 
 InfoManager::~InfoManager()

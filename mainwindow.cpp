@@ -79,10 +79,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
-        //resource manager inited successfully
+        m_nepomukInited = true; //resource manager inited successfully
     } else {
-        //no resource manager
-    };
+        m_nepomukInited = false; //no resource manager
+    }
     
     //Set up device notifier
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )), this, SLOT(deviceAdded(const QString & )));
@@ -224,6 +224,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             QList<MediaItem> mediaList;
             mediaList << mediaItem;
             m_playlist->playMediaList(mediaList);
+        }
+    } else {
+        if (!m_nepomukInited) {
+            KMessageBox::information(this, tr("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), tr("Bangarang"), tr("Don't show this message again"));
         }
     }
     

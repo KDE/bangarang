@@ -73,6 +73,7 @@ class Playlist : public QObject
         bool m_playlistFinished;
         void createUrlHistoryFromIndices();
         void updateNowPlaying();
+        bool m_nepomukInited;
         
     public slots:
         void playNext();
