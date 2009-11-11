@@ -39,10 +39,10 @@ MusicListEngine::MusicListEngine(ListEngineFactory * parent) : ListEngine(parent
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
-        //resource manager inited successfully
+        m_nepomukInited = true; //resource manager inited successfully
     } else {
-        //no resource manager
-    };
+        m_nepomukInited = false; //no resource manager
+    }
     
     m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
     
@@ -117,135 +117,137 @@ void MusicListEngine::run()
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
-    if (engineArg.toLower() == "artists") {
-        MusicQuery query = MusicQuery(true);
-        query.selectArtist();
-        query.orderBy("?artist");
-        Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+    if (m_nepomukInited) {
+        if (engineArg.toLower() == "artists") {
+            MusicQuery query = MusicQuery(true);
+            query.selectArtist();
+            query.orderBy("?artist");
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
-        //Build media list from results
-        int i = 0;
-        while( it.next() ) {
-            QString artist = it.binding("artist").literal().toString().trimmed();
+            //Build media list from results
+            int i = 0;
+            while( it.next() ) {
+                QString artist = it.binding("artist").literal().toString().trimmed();
+                if (!artist.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("music://songs?%1||%2").arg(artist, QString());
+                    mediaItem.title = artist;
+                    mediaItem.type = QString("Category");
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("system-users");
+                    mediaList.append(mediaItem);
+                }
+                ++i;
+            }
+            m_mediaListProperties.name = QString("Artists (%1)").arg(mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+            
+        } else if (engineArg.toLower() == "albums") {
+            MusicQuery query = MusicQuery(true);
+            query.selectAlbum(true);
+            query.selectArtist();
+            query.orderBy("?album");
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            int i = 0;
+            while( it.next() ) {
+                QString album = it.binding("album").literal().toString().trimmed();
+                QString artist = it.binding("artist").literal().toString();
+                if (!album.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("music://songs?%1||%2").arg(artist, album);
+                    mediaItem.title = album;
+                    mediaItem.subTitle = artist;
+                    mediaItem.type = QString("Category");
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("media-optical-audio");
+                    mediaList.append(mediaItem);
+                }
+                ++i;
+            }
+            m_mediaListProperties.name = QString("Albums (%1)").arg(mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+            
+        } else if (engineArg.toLower() == "songs") {
+            QString artist;
+            QString album;
+            
+            //Parse filter
+            if (!engineFilter.isNull()) {
+                QStringList argList = engineFilter.split("||");
+                artist = argList.at(0);
+                album = argList.at(1);
+            }
+            
+            MusicQuery musicQuery = MusicQuery(true);
+            musicQuery.selectResource();
+            musicQuery.selectTitle();
+            musicQuery.selectArtist();
+            musicQuery.selectAlbum(true);
+            musicQuery.selectTrackNumber(true);
+            musicQuery.selectDuration(true);
+            musicQuery.selectRating(true);
+            musicQuery.selectDescription(true);
+            musicQuery.selectArtwork(true);
+            //musicQuery.selectGenre(true);
             if (!artist.isEmpty()) {
-                MediaItem mediaItem;
-                mediaItem.url = QString("music://songs?%1||%2").arg(artist, QString());
-                mediaItem.title = artist;
-                mediaItem.type = QString("Category");
-                mediaItem.nowPlaying = false;
-                mediaItem.artwork = KIcon("system-users");
-                mediaList.append(mediaItem);
+                musicQuery.hasArtist(artist);
             }
-            ++i;
-        }
-        m_mediaListProperties.name = QString("Artists (%1)").arg(mediaList.count());
-        m_mediaListProperties.type = QString("Categories");
-        
-    } else if (engineArg.toLower() == "albums") {
-        MusicQuery query = MusicQuery(true);
-        query.selectAlbum(true);
-        query.selectArtist();
-        query.orderBy("?album");
-        Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-        
-        //Build media list from results
-        int i = 0;
-        while( it.next() ) {
-            QString album = it.binding("album").literal().toString().trimmed();
-            QString artist = it.binding("artist").literal().toString();
             if (!album.isEmpty()) {
-                MediaItem mediaItem;
-                mediaItem.url = QString("music://songs?%1||%2").arg(artist, album);
-                mediaItem.title = album;
-                mediaItem.subTitle = artist;
-                mediaItem.type = QString("Category");
-                mediaItem.nowPlaying = false;
-                mediaItem.artwork = KIcon("media-optical-audio");
+                musicQuery.hasAlbum(album);
+            }
+            musicQuery.orderBy("?artist ?album ?trackNumber");
+            
+            //Execute Query
+            Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                MediaItem mediaItem = createMediaItem(it);
                 mediaList.append(mediaItem);
             }
-            ++i;
+            
+            // Name the newly created media list
+            m_mediaListProperties.name = album + QString(" - ") + artist;
+            if (!album.isEmpty() && !artist.isEmpty()) {
+                m_mediaListProperties.name = QString("%1 - %2 (%3 items)").arg(album).arg(artist).arg(mediaList.count());
+            } else if (!album.isEmpty()) {
+                m_mediaListProperties.name = QString("%1 (%2 items)").arg(album).arg(mediaList.count());
+            } else if (!artist.isEmpty()) {
+                m_mediaListProperties.name = QString("%1 (%2 items)").arg(artist).arg(mediaList.count());
+            } else {
+                m_mediaListProperties.name = QString("Songs (%1)").arg(mediaList.count());
+            }
+            m_mediaListProperties.type = QString("Sources");
+            
+        } else if (engineArg.toLower() == "search") {
+            MusicQuery musicQuery = MusicQuery(true);
+            musicQuery.selectResource();
+            musicQuery.selectTitle();
+            musicQuery.selectArtist();
+            musicQuery.selectAlbum(true);
+            musicQuery.selectTrackNumber(true);
+            musicQuery.selectDuration(true);
+            musicQuery.selectRating(true);
+            musicQuery.selectDescription(true);
+            musicQuery.selectArtwork(true);
+            //musicQuery.selectGenre(true);
+            musicQuery.searchString(engineFilter);
+            musicQuery.orderBy("?artist ?album ?trackNumber");
+            
+            //Execute Query
+            Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                MediaItem mediaItem = createMediaItem(it);
+                mediaList.append(mediaItem);
+            }
+            
+            m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
+            m_mediaListProperties.type = QString("Sources");
         }
-        m_mediaListProperties.name = QString("Albums (%1)").arg(mediaList.count());
-        m_mediaListProperties.type = QString("Categories");
-        
-    } else if (engineArg.toLower() == "songs") {
-        QString artist;
-        QString album;
-        
-        //Parse filter
-        if (!engineFilter.isNull()) {
-            QStringList argList = engineFilter.split("||");
-            artist = argList.at(0);
-            album = argList.at(1);
-        }
-        
-        MusicQuery musicQuery = MusicQuery(true);
-        musicQuery.selectResource();
-        musicQuery.selectTitle();
-        musicQuery.selectArtist();
-        musicQuery.selectAlbum(true);
-        musicQuery.selectTrackNumber(true);
-        musicQuery.selectDuration(true);
-        musicQuery.selectRating(true);
-        musicQuery.selectDescription(true);
-        musicQuery.selectArtwork(true);
-        //musicQuery.selectGenre(true);
-        if (!artist.isEmpty()) {
-            musicQuery.hasArtist(artist);
-        }
-        if (!album.isEmpty()) {
-            musicQuery.hasAlbum(album);
-        }
-        musicQuery.orderBy("?artist ?album ?trackNumber");
-        
-        //Execute Query
-        Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
-        
-        //Build media list from results
-        while( it.next() ) {
-            MediaItem mediaItem = createMediaItem(it);
-            mediaList.append(mediaItem);
-        }
-        
-        // Name the newly created media list
-        m_mediaListProperties.name = album + QString(" - ") + artist;
-        if (!album.isEmpty() && !artist.isEmpty()) {
-            m_mediaListProperties.name = QString("%1 - %2 (%3 items)").arg(album).arg(artist).arg(mediaList.count());
-        } else if (!album.isEmpty()) {
-            m_mediaListProperties.name = QString("%1 (%2 items)").arg(album).arg(mediaList.count());
-        } else if (!artist.isEmpty()) {
-            m_mediaListProperties.name = QString("%1 (%2 items)").arg(artist).arg(mediaList.count());
-        } else {
-            m_mediaListProperties.name = QString("Songs (%1)").arg(mediaList.count());
-        }
-        m_mediaListProperties.type = QString("Sources");
-        
-    } else if (engineArg.toLower() == "search") {
-        MusicQuery musicQuery = MusicQuery(true);
-        musicQuery.selectResource();
-        musicQuery.selectTitle();
-        musicQuery.selectArtist();
-        musicQuery.selectAlbum(true);
-        musicQuery.selectTrackNumber(true);
-        musicQuery.selectDuration(true);
-        musicQuery.selectRating(true);
-        musicQuery.selectDescription(true);
-        musicQuery.selectArtwork(true);
-        //musicQuery.selectGenre(true);
-        musicQuery.searchString(engineFilter);
-        musicQuery.orderBy("?artist ?album ?trackNumber");
-        
-        //Execute Query
-        Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
-        
-        //Build media list from results
-        while( it.next() ) {
-            MediaItem mediaItem = createMediaItem(it);
-            mediaList.append(mediaItem);
-        }
-        
-        m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
-        m_mediaListProperties.type = QString("Sources");
     }
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);

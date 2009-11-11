@@ -28,6 +28,8 @@
 #include <Soprano/Vocabulary/NAO>
 #include <nepomuk/variant.h>
 #include <nepomuk/resource.h>
+#include <Nepomuk/ResourceManager>
+
 #include <QUrl>
 #include <QPalette>
 #include <QStyle>
@@ -51,6 +53,13 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     pp.drawImage(QPoint(0,0), image);
     pp.end();
     m_showNotInPlaylist = KIcon(pixmap);
+    
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true; //resource manager inited successfully
+    } else {
+        m_nepomukInited = false; //no resource manager
+    }
     
 }
 
@@ -158,7 +167,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     Qt::AlignBottom | Qt::AlignRight, duration);
         
         //Paint Rating
-        if ((isMediaItem) && (subType != "CD Track")) {
+        if ((m_nepomukInited) && (isMediaItem) && (subType != "CD Track") && (subType != "DVD Title")) {
             int rating = 0;
             if (index.data(MediaItem::RatingRole).isValid()) {
                 rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
@@ -181,14 +190,6 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 icon = m_showInPlaylist;
             } else {
                 if (option.state.testFlag(QStyle::State_MouseOver)) {
-                    /*QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
-                    KIconEffect::toGray(image, 1.0);
-                    QPixmap pixmap(16, 16);
-                    pixmap.fill(Qt::transparent);
-                    QPainter pp(&pixmap);
-                    pp.drawImage(QPoint(0,0), image);
-                    pp.end();
-                    icon = KIcon(pixmap);*/
                     icon = m_showNotInPlaylist;
                 } else {
                     icon = KIcon();
@@ -250,7 +251,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
     if (index.column() == 0) {
         if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
             //Check if rating was clicked and update rating
-            if (event->type() == QEvent::MouseButtonPress) {
+            if ((m_nepomukInited) && (event->type() == QEvent::MouseButtonPress)) {
                 QMouseEvent * mouseEvent = (QMouseEvent *)event;
                 int ratingLeft = option.rect.right() - 50;
                 //int ratingRight = option.rect.left();

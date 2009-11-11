@@ -39,12 +39,12 @@ AudioStreamListEngine::AudioStreamListEngine(ListEngineFactory * parent) : ListE
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
-        //resource manager inited successfully
+        m_nepomukInited = true; //resource manager inited successfully
+        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
     } else {
-        //no resource manager
-    };
+        m_nepomukInited = false; //no resource manager
+    }
     
-    m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();
@@ -90,55 +90,58 @@ void AudioStreamListEngine::run()
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
-    if (engineArg.isEmpty()) {
-        AudioStreamQuery audioStreamQuery = AudioStreamQuery(true);
-        audioStreamQuery.selectResource();
-        audioStreamQuery.selectTitle();
-        audioStreamQuery.selectRating(true);
-        audioStreamQuery.selectDescription(true);
-        audioStreamQuery.selectArtwork(true);
-        //audioStreamQuery.selectGenre(true);
-        audioStreamQuery.orderBy("?title");
-        
-        //Execute Query
-        Soprano::QueryResultIterator it = audioStreamQuery.executeSelect(m_mainModel);
-        
-        //Build media list from results
-        while( it.next() ) {
-            MediaItem mediaItem = createMediaItem(it);
+    
+    if (m_nepomukInited) {
+        if (engineArg.isEmpty()) {
+            AudioStreamQuery audioStreamQuery = AudioStreamQuery(true);
+            audioStreamQuery.selectResource();
+            audioStreamQuery.selectTitle();
+            audioStreamQuery.selectRating(true);
+            audioStreamQuery.selectDescription(true);
+            audioStreamQuery.selectArtwork(true);
+            //audioStreamQuery.selectGenre(true);
+            audioStreamQuery.orderBy("?title");
+            
+            //Execute Query
+            Soprano::QueryResultIterator it = audioStreamQuery.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                MediaItem mediaItem = createMediaItem(it);
+                mediaList.append(mediaItem);
+            }
+            
+            MediaItem mediaItem;
+            mediaItem.type = "Action";
+            mediaItem.url = "audiostreams://";
+            mediaItem.title = "Create new audio stream item";
+            mediaItem.artwork = KIcon("document-new");
             mediaList.append(mediaItem);
+            
+            m_mediaListProperties.type = QString("Sources");
+            
+        } else if (engineArg.toLower() == "search") {
+            AudioStreamQuery audioStreamQuery = AudioStreamQuery(true);
+            audioStreamQuery.selectResource();
+            audioStreamQuery.selectTitle();
+            audioStreamQuery.selectRating(true);
+            audioStreamQuery.selectDescription(true);
+            audioStreamQuery.selectArtwork(true);
+            //audioStreamQuery.selectGenre(true);
+            audioStreamQuery.searchString(engineFilter);
+            audioStreamQuery.orderBy("?title");
+            
+            //Execute Query
+            Soprano::QueryResultIterator it = audioStreamQuery.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                MediaItem mediaItem = createMediaItem(it);
+                mediaList.append(mediaItem);
+            }
+            
+            m_mediaListProperties.type = QString("Sources");
         }
-        
-        MediaItem mediaItem;
-        mediaItem.type = "Action";
-        mediaItem.url = "audiostreams://";
-        mediaItem.title = "Create new audio stream item";
-        mediaItem.artwork = KIcon("document-new");
-        mediaList.append(mediaItem);
-        
-        m_mediaListProperties.type = QString("Sources");
-        
-    } else if (engineArg.toLower() == "search") {
-        AudioStreamQuery audioStreamQuery = AudioStreamQuery(true);
-        audioStreamQuery.selectResource();
-        audioStreamQuery.selectTitle();
-        audioStreamQuery.selectRating(true);
-        audioStreamQuery.selectDescription(true);
-        audioStreamQuery.selectArtwork(true);
-        //audioStreamQuery.selectGenre(true);
-        audioStreamQuery.searchString(engineFilter);
-        audioStreamQuery.orderBy("?title");
-        
-        //Execute Query
-        Soprano::QueryResultIterator it = audioStreamQuery.executeSelect(m_mainModel);
-        
-        //Build media list from results
-        while( it.next() ) {
-            MediaItem mediaItem = createMediaItem(it);
-            mediaList.append(mediaItem);
-        }
-        
-        m_mediaListProperties.type = QString("Sources");
     }
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);

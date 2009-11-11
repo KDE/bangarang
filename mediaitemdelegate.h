@@ -50,6 +50,7 @@ class MediaItemDelegate : public QItemDelegate
         KIcon m_showInPlaylist;
         KIcon m_showNotInPlaylist;
         int calcItemHeight(const QStyleOptionViewItem &option) const;
+        bool m_nepomukInited;
         
         
     Q_SIGNALS:

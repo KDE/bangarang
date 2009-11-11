@@ -25,6 +25,7 @@
 #include <KIcon>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
+#include <Nepomuk/ResourceManager>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
@@ -44,6 +45,13 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_repeat = false;
     m_queueDepth = 10;
     m_playlistFinished = false;
+    
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true; //resource manager inited successfully
+    } else {
+        m_nepomukInited = false; //no resource manager
+    }
     
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
     connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
@@ -657,7 +665,7 @@ void Playlist::updateNowPlaying()
         //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
     } else {
         //Update last played date and play count
-        if (m_nowPlaying->rowCount() > 0) {
+        if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
             MediaVocabulary mediaVocabulary = MediaVocabulary();
             Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
             if (res.exists()) {

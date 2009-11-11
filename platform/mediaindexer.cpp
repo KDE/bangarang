@@ -29,6 +29,7 @@
 #include <Soprano/Vocabulary/XMLSchema>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
+#include <Nepomuk/ResourceManager>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
@@ -250,6 +251,12 @@ void MediaIndexerJob::removeType(Nepomuk::Resource res, QUrl mediaType)
 
 MediaIndexer::MediaIndexer(QObject * parent) : QThread(parent)
 {
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true; //resource manager inited successfully
+    } else {
+        m_nepomukInited = false; //no resource manager
+    }
 }
 
 MediaIndexer::~MediaIndexer()
@@ -258,24 +265,28 @@ MediaIndexer::~MediaIndexer()
 
 void MediaIndexer::run()
 {
-    if (m_indexType == MediaIndexer::IndexUrl) {
-        if (m_urls.count() > 0) {
-            MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
-            indexerJob->setUrlsToIndex(m_urls);
-            KUiServerJobTracker * jt = new KUiServerJobTracker(this);
-            jt->registerJob(indexerJob);
-            indexerJob->start();
+    if (m_nepomukInited) {
+        if (m_indexType == MediaIndexer::IndexUrl) {
+            if (m_urls.count() > 0) {
+                MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
+                indexerJob->setUrlsToIndex(m_urls);
+                KUiServerJobTracker * jt = new KUiServerJobTracker(this);
+                jt->registerJob(indexerJob);
+                indexerJob->start();
+            }
+        } else if (m_indexType == MediaIndexer::IndexMediaItem) {
+            if (m_mediaList.count() > 0) {
+                MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
+                connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
+                indexerJob->setMediaListToIndex(m_mediaList);
+                KUiServerJobTracker * jt = new KUiServerJobTracker(this);
+                jt->registerJob(indexerJob);
+                indexerJob->start();
+            }
         }
-    } else if (m_indexType == MediaIndexer::IndexMediaItem) {
-        if (m_mediaList.count() > 0) {
-            MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
-            connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
-            indexerJob->setMediaListToIndex(m_mediaList);
-            KUiServerJobTracker * jt = new KUiServerJobTracker(this);
-            jt->registerJob(indexerJob);
-            indexerJob->start();
-        }
-    }   
+    } else {
+        emit indexingComplete();
+    }
 }
 
 void MediaIndexer::indexUrls(QList<QString> urls)

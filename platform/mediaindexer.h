@@ -70,7 +70,8 @@ class MediaIndexer : public QThread
         QList<QString> m_urls;
         QList<MediaItem> m_mediaList;
         int m_indexType;
-    
+        bool m_nepomukInited;
+        
     private slots:
         void jobComplete();
         

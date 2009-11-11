@@ -26,8 +26,6 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <KUrl>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
@@ -35,14 +33,6 @@
 SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
     m_parent = parent;
-    
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        //resource manager inited successfully
-    } else {
-        //no resource manager
-    };
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();

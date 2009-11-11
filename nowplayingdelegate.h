@@ -41,6 +41,7 @@ class NowPlayingDelegate : public QItemDelegate
         MainWindow * m_parent;  
         QPixmap m_ratingCount;
         QPixmap m_ratingNotCount;
+        bool m_nepomukInited;
         
 };
 

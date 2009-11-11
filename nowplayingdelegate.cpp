@@ -34,6 +34,7 @@
 #include <QTextOption>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
+#include <Nepomuk/ResourceManager>
 #include "mainwindow.h"
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
@@ -42,6 +43,12 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     m_ratingNotCount = KIcon("rating").pixmap(16, 16, QIcon::Disabled);
     m_ratingCount = KIcon("rating").pixmap(16, 16);
     
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true; //resource manager inited successfully
+    } else {
+        m_nepomukInited = false; //no resource manager
+    }
 }
 
 NowPlayingDelegate::~NowPlayingDelegate()
@@ -128,7 +135,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     p.drawText(QRectF(subTitleRect), subTitle, textOption);
 
     //Draw rating
-    if (isMediaItem && (subType != "CD Track")) {
+    if (m_nepomukInited && isMediaItem && (subType != "CD Track") && (subType != "DVD Title")) {
         int rating = 0;
         if (index.data(MediaItem::RatingRole).isValid()) {
             rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
@@ -188,7 +195,7 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
                 int ratingRight = ratingLeft + 5 * 18;
                 int ratingTop = option.rect.top() + topOffset + iconWidth - 18;
                 int ratingBottom = option.rect.top() + topOffset + iconWidth;
-                if ((mouseEvent->x() > ratingLeft) && (mouseEvent->x() < ratingRight) && (mouseEvent->y() > ratingTop)  && (mouseEvent->y() < ratingBottom)) {
+                if (m_nepomukInited && (mouseEvent->x() > ratingLeft) && (mouseEvent->x() < ratingRight) && (mouseEvent->y() > ratingTop)  && (mouseEvent->y() < ratingBottom)) {
                     int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/(5*18)) + 0.5);
                     MediaItemModel * model = (MediaItemModel *)index.model();
                     MediaItem updatedMediaItem = model->mediaItemAt(index.row());

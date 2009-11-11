@@ -57,6 +57,7 @@ class FileListEngine : public ListEngine
         KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         QList<MediaItem> readAudioUrlList(KUrl::List fileList);
         QList<MediaItem> readVideoUrlList(KUrl::List fileList);
+        bool m_nepomukInited;
 
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

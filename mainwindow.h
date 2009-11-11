@@ -121,6 +121,7 @@ private:
     KAboutData *m_aboutData;
     KHelpMenu *m_helpMenu;
     KMenu *m_menu;
+    bool m_nepomukInited;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
