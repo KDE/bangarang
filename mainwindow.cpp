@@ -326,7 +326,7 @@ void MainWindow::on_seekTime_clicked()
 
 void MainWindow::on_mediaPlayPause_pressed()
 {
-    if ((m_media->state() == Phonon::PlayingState) || (m_media->state() == Phonon::BufferingState)) {
+    if ((m_media->state() == Phonon::PlayingState)) {
         m_media->pause();
         m_pausePressed = true;
         ui->mediaPlayPause->setToolTip("<b>Paused</b><br>Hold to stop");
@@ -339,6 +339,7 @@ void MainWindow::on_mediaPlayPause_held()
         m_pausePressed = false;
         m_stopPressed = true;
         ui->mediaPlayPause->setIcon(KIcon("media-playback-stop"));
+        m_playlist->stop();
     }
 }
 
@@ -346,7 +347,6 @@ void MainWindow::on_mediaPlayPause_released()
 {
     if (m_stopPressed) {
         m_stopPressed = false;
-        m_playlist->stop();
     } else {
         if ((!m_pausePressed) && (m_media->state() == Phonon::PausedState)) {
             m_media->play();
