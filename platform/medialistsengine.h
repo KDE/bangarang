@@ -53,6 +53,7 @@ class MediaListsEngine : public ListEngine
         QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
         KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         bool m_loadWhenReady;
+        bool m_nepomukInited;
     
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

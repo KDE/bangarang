@@ -56,6 +56,7 @@ class SavedListsManager : public QObject
         QList<QString> m_savedAudioLists;
         QList<QString> m_savedVideoLists;
         void updateSavedListsIndex();
+        bool m_nepomukInited;
         
     private slots:
         void enableValidSave(QString newText = QString());

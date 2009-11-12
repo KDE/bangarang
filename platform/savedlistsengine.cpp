@@ -47,9 +47,11 @@ void SavedListsEngine::run()
 {
     QList<MediaItem> mediaList;
     
+    
     if (!m_mediaListProperties.engineArg().isEmpty()) {
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
             return;
         }
         
@@ -99,18 +101,12 @@ void SavedListsEngine::run()
             }
         }
         
-        /*MediaItem mediaItem;
-        mediaItem.url = "-";
-        mediaItem.title = QString("Saved List Engine test").arg(m_mediaListProperties.engineArg());
-        mediaItem.type = "Audio";
-        mediaList << mediaItem;*/
-        
-        m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
-        model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-        m_requestSignature = QString();
-        m_subRequestSignature = QString();
     }
-    //exec();    
+    
+    m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
+    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    m_requestSignature = QString();
+    m_subRequestSignature = QString();
 }
 
 void SavedListsEngine::setMediaListProperties(MediaListProperties mediaListProperties)

@@ -26,6 +26,7 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <QFile>
+#include <Nepomuk/ResourceManager>
 
 SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {
@@ -54,6 +55,14 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true;
+    } else {
+        m_nepomukInited = false;
+    }
+    
 }
 
 SavedListsManager::~SavedListsManager()
@@ -290,9 +299,9 @@ void SavedListsManager::mediaListChanged()
 {
     if (m_parent->m_mediaItemModel->rowCount() > 0) {
         QString listItemType = m_parent->m_mediaItemModel->mediaItemAt(0).type;
-        if (listItemType == "Audio") {
+        if (listItemType == "Audio" && m_nepomukInited) {
             ui->aListSourceView->setEnabled(true);
-        } else if (listItemType == "Video") {
+        } else if (listItemType == "Video" && m_nepomukInited) {
             ui->vListSourceView->setEnabled(true);
         } else {
             ui->aListSourceView->setChecked(false);
@@ -328,7 +337,7 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
             QString indexEntry = QString("%1:::%2:::%3")
             .arg(type)
             .arg(name)
-            .arg(QString("savedlists://%1.m3u").arg(filename));
+            .arg(QString("savedlists://%1-%2.m3u").arg(type).arg(filename));
             QString savedListEntry = QString("Audio:::%1")
             .arg(name);
             QList<int> rowsToRemove;
@@ -345,7 +354,7 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
             QString indexEntry = QString("%1:::%2:::%3")
             .arg(type)
             .arg(name)
-            .arg(QString("savedlists://%1.m3u").arg(filename));
+            .arg(QString("savedlists://%1-%2.m3u").arg(type).arg(filename));
             QString savedListEntry = QString("Video:::%1")
             .arg(name);
             QList<int> rowsToRemove;
