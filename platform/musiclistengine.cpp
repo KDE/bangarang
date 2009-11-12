@@ -139,7 +139,8 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = QString("Artists (%1)").arg(mediaList.count());
+            m_mediaListProperties.name = "Artists";
+            m_mediaListProperties.summary = QString("%1 artists").arg(mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "albums") {
@@ -166,7 +167,8 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = QString("Albums (%1)").arg(mediaList.count());
+            m_mediaListProperties.name = "Albums";
+            m_mediaListProperties.summary = QString("%1 albums").arg(mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "songs") {
@@ -211,14 +213,15 @@ void MusicListEngine::run()
             // Name the newly created media list
             m_mediaListProperties.name = album + QString(" - ") + artist;
             if (!album.isEmpty() && !artist.isEmpty()) {
-                m_mediaListProperties.name = QString("%1 - %2 (%3 items)").arg(album).arg(artist).arg(mediaList.count());
+                m_mediaListProperties.name = QString("%1 - %2").arg(album).arg(artist);
             } else if (!album.isEmpty()) {
-                m_mediaListProperties.name = QString("%1 (%2 items)").arg(album).arg(mediaList.count());
+                m_mediaListProperties.name = QString("%1").arg(album);
             } else if (!artist.isEmpty()) {
-                m_mediaListProperties.name = QString("%1 (%2 items)").arg(artist).arg(mediaList.count());
+                m_mediaListProperties.name = QString("%1").arg(artist);
             } else {
-                m_mediaListProperties.name = QString("Songs (%1)").arg(mediaList.count());
+                m_mediaListProperties.name = QString("Songs");
             }
+            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "search") {
@@ -245,7 +248,7 @@ void MusicListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }

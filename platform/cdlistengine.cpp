@@ -98,6 +98,7 @@ void CDListEngine::run()
             mediaItem.title = QString("Number of tracks: %1").arg(trackCount);
             mediaItem.type = "Audio";
             mediaList << mediaItem;*/
+            m_mediaListProperties.summary = QString("%1 tracks").arg(mediaList.count());
             model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
             m_requestSignature = QString();
             m_subRequestSignature = QString();
