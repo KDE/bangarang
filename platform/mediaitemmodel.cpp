@@ -234,6 +234,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
             setLoadingState(false);
             loadMediaList(mediaList);
             m_mediaListProperties.name = mediaListProperties.name;
+            m_mediaListProperties.summary = mediaListProperties.summary;
             if (done) {
                 if (rowCount() == 0) {
                     showNoResultsMessage();

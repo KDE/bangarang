@@ -57,6 +57,7 @@ class MediaListProperties {
 
 public:
     QString name;
+    QString summary;
     QString lri;  //List Resource Identifier
     QString engine() {
         if (lri.indexOf("://") != -1) {

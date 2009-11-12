@@ -103,7 +103,7 @@ void SavedListsEngine::run()
         
     }
     
-    m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
+    m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();

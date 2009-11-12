@@ -197,6 +197,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaPlayPause->setHoldDelay(1000);
     ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
     ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
+    ui->listSummary->setFont(KGlobalSettings::smallestReadableFont());
     ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
     updateSeekTime(0);
     showApplicationBanner();
@@ -636,6 +637,7 @@ void MainWindow::updateMuteStatus(bool muted)
 void MainWindow::mediaListChanged()
 {
     ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
+    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
     
     ui->mediaView->header()->setStretchLastSection(false);
     ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);

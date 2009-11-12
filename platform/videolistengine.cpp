@@ -144,7 +144,8 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.name = QString("Video Clips (%1 items)").arg(mediaList.count());
+            m_mediaListProperties.name = QString("Video Clips");
+            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         } else if (engineArg.toLower() == "tvshows") {
             VideoQuery query = VideoQuery(true);
@@ -186,7 +187,8 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            m_mediaListProperties.name = QString("TV Shows (%1)").arg(mediaList.count());
+            m_mediaListProperties.name = QString("TV Shows");
+            m_mediaListProperties.summary = QString("%1 shows").arg(mediaList.count());
             m_mediaListProperties.type = QString("Categories");
         } else if (engineArg.toLower() == "seasons") {
             QString seriesName = engineFilter;
@@ -232,7 +234,9 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            m_mediaListProperties.name = QString("%1 - %2 Seasons").arg(seriesName).arg(mediaList.count());
+            m_mediaListProperties.name = QString("%1").arg(seriesName);
+            m_mediaListProperties.summary = QString("%1 seasons").arg(mediaList.count());
+            
             m_mediaListProperties.type = QString("Categories");
         } else if (engineArg.toLower() == "episodes") {
             QString seriesName;
@@ -290,17 +294,18 @@ void VideoListEngine::run()
             }
             
             if (seriesName.isEmpty()) {
-                m_mediaListProperties.name = QString("Uncategorized TV Shows (%1)").arg(mediaList.count());
+                m_mediaListProperties.name = QString("Uncategorized TV Shows");
+                m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             } else if (hasSeason) {
-                m_mediaListProperties.name = QString("%1 - Season %2 - %3 Episodes")
+                m_mediaListProperties.name = QString("%1 - Season %2")
                     .arg(seriesName)
-                    .arg(season)
-                    .arg(mediaList.count());
+                    .arg(season);
+                m_mediaListProperties.summary = QString("%1 episodes").arg(mediaList.count());
             } else {
                 m_mediaListProperties.name = QString(
-                        "%1 - Uncategorized Seasons - %2 Episodes")
-                    .arg(seriesName)
-                    .arg(mediaList.count());
+                        "%1 - Uncategorized Seasons")
+                    .arg(seriesName);
+                    m_mediaListProperties.summary = QString("%1 episodes").arg(mediaList.count());
             }
             m_mediaListProperties.type = QString("Sources");
             
@@ -327,7 +332,8 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.name = QString("Movies (%1 items)").arg(mediaList.count());
+            m_mediaListProperties.name = QString("Movies");
+            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "search") {
@@ -373,7 +379,7 @@ void VideoListEngine::run()
                 mediaList << noResults;
             }
             
-            m_mediaListProperties.name += QString(" (%1 items)").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
         }
