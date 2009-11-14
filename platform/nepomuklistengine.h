@@ -16,39 +16,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SAVEDLISTSENGINE_H
-#define SAVEDLISTSENGINE_H
+#ifndef NEPOMUKLISTENGINE_H
+#define NEPOMUKLISTENGINE_H
 
 #include "listengine.h"
+#include "mediaindexer.h"
+#include "mediaitemmodel.h"
+#include "listenginefactory.h"
 #include <QtCore>
-#include <QDir>
-#include <KUrl>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
-#include <Phonon/MediaObject>
 
-class MediaItem;
-class MediaListProperties;
-class ListEngineFactory;
-class MediaIndexer;
-
-class SavedListsEngine : public ListEngine
+/* This is an abstract base class for all list engines which
+ * use nepomuk. It simply tries to initialize nepomuk during construction
+ * and stores the result in local variables.
+ */
+class NepomukListEngine : public ListEngine
 {
     Q_OBJECT
     
     public:
-        SavedListsEngine(ListEngineFactory *parent);
-        ~SavedListsEngine();
-        void run();
-        
-    private:
+        NepomukListEngine(ListEngineFactory *parent);
+        virtual ~NepomukListEngine();
+
+        virtual void run() = 0;
+
+    protected:
+        MediaIndexer* m_mediaIndexer;
         Soprano::Model * m_mainModel;
-    
-    private slots:
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
+        bool m_nepomukInited;
 };
-#endif // SAVEDLISTSENGINE_H
+#endif // NEPOMUKLISTENGINE_H

@@ -33,22 +33,8 @@
 #include <Solid/OpticalDisc>
 #include <Nepomuk/ResourceManager>
 
-MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : ListEngine(parent)
+MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_parent = parent;
-    
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    
-
 }
 
 MediaListsEngine::~MediaListsEngine()
@@ -210,34 +196,4 @@ void MediaListsEngine::run()
     m_subRequestSignature = QString();
     m_loadWhenReady = false;
     //exec();    
-}
-
-void MediaListsEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties MediaListsEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void MediaListsEngine::setFilterForSources(QString engineFilter)
-{
-    Q_UNUSED(engineFilter);
-}
-
-void MediaListsEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void MediaListsEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
-}
-
-void MediaListsEngine::activateAction()
-{
-        
 }

@@ -32,23 +32,8 @@
 #include <QTime>
 #include <taglib/fileref.h>
 
-AudioStreamListEngine::AudioStreamListEngine(ListEngineFactory * parent) : ListEngine(parent)
+AudioStreamListEngine::AudioStreamListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_parent = parent;
-    
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    
 }
 
 AudioStreamListEngine::~AudioStreamListEngine()
@@ -152,30 +137,11 @@ void AudioStreamListEngine::run()
     m_subRequestSignature = QString();
 }
 
-void AudioStreamListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties AudioStreamListEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void AudioStreamListEngine::setFilterForSources(QString engineFilter)
+void AudioStreamListEngine::setFilterForSources(const QString& engineFilter)
 {
     //Always return songs
+	// FIXME: Is it intentional that %1 is missing?
     m_mediaListProperties.lri = QString("audiostreams://").arg(engineFilter);
-}
-
-void AudioStreamListEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void AudioStreamListEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
 }
 
 void AudioStreamListEngine::activateAction()

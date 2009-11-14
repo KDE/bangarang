@@ -19,12 +19,9 @@
 #ifndef AUDIOSTREAMLISTENGINE_H
 #define AUDIOSTREAMLISTENGINE_H
 
-#include "listengine.h"
+#include "nepomuklistengine.h"
 #include <QtCore>
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
 #include <Soprano/QueryResultIterator>
-#include <Soprano/Model>
 
 class MediaItem;
 class MediaListProperties;
@@ -71,7 +68,7 @@ class AudioStreamQuery {
         QString getPrefix();
 };
 
-class AudioStreamListEngine : public ListEngine
+class AudioStreamListEngine : public NepomukListEngine
 {
     Q_OBJECT
     
@@ -79,21 +76,11 @@ class AudioStreamListEngine : public ListEngine
         AudioStreamListEngine(ListEngineFactory *parent);
         ~AudioStreamListEngine();
         void run();
-        void setMediaListProperties(MediaListProperties mediaListProperties);
-        MediaListProperties mediaListProperties();
-        void setFilterForSources(QString engineFilter);
-        void setRequestSignature(QString requestSignature);
-        void setSubRequestSignature(QString subRequestSignature);
+        void setFilterForSources(const QString& engineFilter);
         void activateAction();
         
     private:
-        ListEngineFactory * m_parent;
-        Soprano::Model * m_mainModel;
-        MediaListProperties m_mediaListProperties;
-        QString m_requestSignature;
-        QString m_subRequestSignature;
         MediaItem createMediaItem(Soprano::QueryResultIterator& it);
-        bool m_nepomukInited;
         
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

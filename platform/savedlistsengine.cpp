@@ -32,11 +32,6 @@
 
 SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
-    m_parent = parent;
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-
 }
 
 SavedListsEngine::~SavedListsEngine()
@@ -108,34 +103,3 @@ void SavedListsEngine::run()
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }
-
-void SavedListsEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties SavedListsEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void SavedListsEngine::setFilterForSources(QString engineFilter)
-{
-    Q_UNUSED(engineFilter);
-}
-
-void SavedListsEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void SavedListsEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
-}
-
-void SavedListsEngine::activateAction()
-{
-        
-}
-

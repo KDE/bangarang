@@ -34,11 +34,6 @@
 
 DVDListEngine::DVDListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
-    m_parent = parent;
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setCurrentSource(Phonon::Dvd);
     connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
@@ -106,36 +101,6 @@ void DVDListEngine::run()
         m_subRequestSignature = QString();
         m_loadWhenReady = false;
     }
-}
-
-void DVDListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties DVDListEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void DVDListEngine::setFilterForSources(QString engineFilter)
-{
-    Q_UNUSED(engineFilter);
-}
-
-void DVDListEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void DVDListEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
-}
-
-void DVDListEngine::activateAction()
-{
-        
 }
 
 void DVDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
