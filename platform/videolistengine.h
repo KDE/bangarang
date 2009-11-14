@@ -19,11 +19,8 @@
 #ifndef VIDEOLISTENGINE_H
 #define VIDEOLISTENGINE_H
 
-#include "listengine.h"
+#include "nepomuklistengine.h"
 #include <QtCore>
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
-#include <Soprano/Model>
 
 class MediaItem;
 class MediaListProperties;
@@ -95,7 +92,7 @@ private:
 	QString getPrefix();
 };
 
-class VideoListEngine : public ListEngine
+class VideoListEngine : public NepomukListEngine
 {
     Q_OBJECT
     
@@ -103,28 +100,14 @@ class VideoListEngine : public ListEngine
         VideoListEngine(ListEngineFactory *parent);
         ~VideoListEngine();
         void run();
-        void setMediaListProperties(MediaListProperties mediaListProperties);
-        MediaListProperties mediaListProperties();
-        void setFilterForSources(QString engineFilter);
-        void setRequestSignature(QString requestSignature);
-        void setSubRequestSignature(QString subRequestSignature);
-        void activateAction();
+        void setFilterForSources(const QString& engineFilter);
         
     private:
-        ListEngineFactory * m_parent;
-        Soprano::Model * m_mainModel;
-        MediaListProperties m_mediaListProperties;
-        QString m_requestSignature;
-        QString m_subRequestSignature;
-        bool m_nepomukInited;
-        
         MediaItem createMediaItem(Soprano::QueryResultIterator& it);
 
 
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        #include "mediaitemmodel.h"
-        
 };
 #endif // VIDEOLISTENGINE_H
 

@@ -29,36 +29,30 @@ class ListEngine : public QThread
     
     public:
         ListEngine(ListEngineFactory *parent);
-        ~ListEngine();
-        virtual void setMediaListProperties(MediaListProperties mediaListProperties)
-        {
-            Q_UNUSED(mediaListProperties)
-        }
-        virtual MediaListProperties mediaListProperties()
-        {
-            //I don't know how else to silence compiler warnings
-            MediaListProperties mediaListProperties;
-            return mediaListProperties;
-        }
-        virtual void setFilterForSources(QString engineFilter)
+        virtual ~ListEngine();
+
+        void setMediaListProperties(const MediaListProperties& mediaListProperties);
+        const MediaListProperties& mediaListProperties() const;
+        void setRequestSignature(const QString& requestSignature);
+        void setSubRequestSignature(const QString& subRequestSignature);
+        const QString& requestSignature() const;
+        const QString& subRequestSignature() const;
+
+        void setModel(MediaItemModel * mediaItemModel);
+        MediaItemModel * model();
+
+        virtual void setFilterForSources(const QString& engineFilter)
         {
             Q_UNUSED(engineFilter);
         }
-        virtual void setRequestSignature(QString requestSignature)
-        {
-            Q_UNUSED(requestSignature);
-        }
-        virtual void setSubRequestSignature(QString subRequestSignature)
-        {
-            Q_UNUSED(subRequestSignature);
-        }
         virtual void activateAction(){}
-        void setModel(MediaItemModel * mediaItemModel);
-        MediaItemModel * model();
-        
+
+    protected:
+        MediaListProperties m_mediaListProperties;
+        QString m_requestSignature;
+        QString m_subRequestSignature;
+
     private:
         MediaItemModel * m_mediaItemModel;
-        
 };
 #endif // LISTENGINE_H
-

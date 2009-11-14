@@ -38,25 +38,8 @@
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>
 
-FileListEngine::FileListEngine(ListEngineFactory * parent) : ListEngine(parent)
+FileListEngine::FileListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_parent = parent;
-    
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    
-    
-    //m_mediaListProperties.dataEngine = "files://";
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    
 }
 
 FileListEngine::~FileListEngine()
@@ -108,26 +91,6 @@ void FileListEngine::run()
     m_requestSignature = QString();
     m_subRequestSignature = QString();
     //exec();    
-}
-
-void FileListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties FileListEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void FileListEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void FileListEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
 }
 
 void FileListEngine::activateAction()

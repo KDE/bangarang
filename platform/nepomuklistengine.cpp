@@ -16,39 +16,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SAVEDLISTSENGINE_H
-#define SAVEDLISTSENGINE_H
+#include "nepomuklistengine.h"
 
-#include "listengine.h"
-#include <QtCore>
-#include <QDir>
-#include <KUrl>
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
-#include <Soprano/Model>
-#include <Phonon/MediaObject>
-
-class MediaItem;
-class MediaListProperties;
-class ListEngineFactory;
-class MediaIndexer;
-
-class SavedListsEngine : public ListEngine
+NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
-    Q_OBJECT
-    
-    public:
-        SavedListsEngine(ListEngineFactory *parent);
-        ~SavedListsEngine();
-        void run();
-        
-    private:
-        Soprano::Model * m_mainModel;
-    
-    private slots:
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
-};
-#endif // SAVEDLISTSENGINE_H
+    Nepomuk::ResourceManager::instance()->init();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        m_nepomukInited = true; //resource manager inited successfully
+        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+        m_mediaIndexer = new MediaIndexer(this);
+    } else {
+        m_nepomukInited = false; //no resource manager
+    }
+
+}
+
+NepomukListEngine::~NepomukListEngine()
+{
+	delete m_mediaIndexer;
+}
+

@@ -40,19 +40,8 @@ class CDListEngine : public ListEngine
         CDListEngine(ListEngineFactory *parent);
         ~CDListEngine();
         void run();
-        void setMediaListProperties(MediaListProperties mediaListProperties);
-        MediaListProperties mediaListProperties();
-        void setFilterForSources(QString engineFilter);
-        void setRequestSignature(QString requestSignature);
-        void setSubRequestSignature(QString subRequestSignature);
-        void activateAction();
         
     private:
-        ListEngineFactory * m_parent;
-        MediaListProperties m_mediaListProperties;
-        QString m_requestSignature;
-        QString m_subRequestSignature;
-        MediaIndexer * m_mediaIndexer;
         QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
         KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         KCompactDisc::KCompactDisc *m_cdObject;

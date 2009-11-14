@@ -35,3 +35,32 @@ MediaItemModel * ListEngine::model()
 {
     return m_mediaItemModel;
 }
+
+void ListEngine::setMediaListProperties(const MediaListProperties& mediaListProperties)
+{
+    m_mediaListProperties = mediaListProperties;
+}
+
+const MediaListProperties& ListEngine::mediaListProperties() const
+{
+    return m_mediaListProperties;
+}
+
+void ListEngine::setRequestSignature(const QString& requestSignature)
+{
+    m_requestSignature = requestSignature;
+}
+
+const QString& ListEngine::requestSignature() const {
+	return m_requestSignature;
+}
+
+void ListEngine::setSubRequestSignature(const QString& subRequestSignature)
+{
+    m_subRequestSignature = subRequestSignature;
+}
+
+const QString& ListEngine::subRequestSignature() const {
+	return m_subRequestSignature;
+}
+

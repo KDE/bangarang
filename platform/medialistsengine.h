@@ -19,7 +19,7 @@
 #ifndef MEDIALISTSENGINE_H
 #define MEDIALISTSENGINE_H
 
-#include "listengine.h"
+#include "nepomuklistengine.h"
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
@@ -29,7 +29,7 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
-class MediaListsEngine : public ListEngine
+class MediaListsEngine : public NepomukListEngine
 {
     Q_OBJECT
     
@@ -37,23 +37,11 @@ class MediaListsEngine : public ListEngine
         MediaListsEngine(ListEngineFactory *parent);
         ~MediaListsEngine();
         void run();
-        void setMediaListProperties(MediaListProperties mediaListProperties);
-        MediaListProperties mediaListProperties();
-        void setFilterForSources(QString engineFilter);
-        void setRequestSignature(QString requestSignature);
-        void setSubRequestSignature(QString subRequestSignature);
-        void activateAction();
         
     private:
-        ListEngineFactory * m_parent;
-        MediaListProperties m_mediaListProperties;
-        QString m_requestSignature;
-        QString m_subRequestSignature;
-        MediaIndexer * m_mediaIndexer;
         QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
         KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         bool m_loadWhenReady;
-        bool m_nepomukInited;
     
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

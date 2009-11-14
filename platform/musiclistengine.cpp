@@ -32,23 +32,8 @@
 #include <QTime>
 #include <taglib/fileref.h>
 
-MusicListEngine::MusicListEngine(ListEngineFactory * parent) : ListEngine(parent)
+MusicListEngine::MusicListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_parent = parent;
-    
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    
-    m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
-    
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    
 }
 
 MusicListEngine::~MusicListEngine()
@@ -258,38 +243,11 @@ void MusicListEngine::run()
     m_subRequestSignature = QString();
 }
 
-void MusicListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties MusicListEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void MusicListEngine::setFilterForSources(QString engineFilter)
+void MusicListEngine::setFilterForSources(const QString& engineFilter)
 {
     //Always return songs
     m_mediaListProperties.lri = QString("music://songs?%1").arg(engineFilter);
 }
-
-void MusicListEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void MusicListEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
-}
-
-void MusicListEngine::activateAction()
-{
-    
-}
-
-
 
 
 MusicQuery::MusicQuery(bool distinct) :

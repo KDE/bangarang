@@ -34,21 +34,8 @@
 #include <nepomuk/variant.h>
 
 
-VideoListEngine::VideoListEngine(ListEngineFactory * parent) : ListEngine(parent)
+VideoListEngine::VideoListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_parent = parent;    
-    
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    
-    m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    
 }
 
 VideoListEngine::~VideoListEngine()
@@ -392,40 +379,11 @@ void VideoListEngine::run()
     
 }
 
-void VideoListEngine::setMediaListProperties(MediaListProperties mediaListProperties)
-{
-    m_mediaListProperties = mediaListProperties;
-}
-
-MediaListProperties VideoListEngine::mediaListProperties()
-{
-    return m_mediaListProperties;
-}
-
-void VideoListEngine::setFilterForSources(QString engineFilter)
+void VideoListEngine::setFilterForSources(const QString& engineFilter)
 {
     //Always return songs
     m_mediaListProperties.lri = QString("video://?%1").arg(engineFilter);
 }
-
-void VideoListEngine::setRequestSignature(QString requestSignature)
-{
-    m_requestSignature = requestSignature;
-}
-
-void VideoListEngine::setSubRequestSignature(QString subRequestSignature)
-{
-    m_subRequestSignature = subRequestSignature;
-}
-
-void VideoListEngine::activateAction()
-{
-    
-}
-
-
-
-
 
 
 
