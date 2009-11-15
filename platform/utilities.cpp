@@ -44,7 +44,7 @@
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
-#include "blur.cpp"
+//#include "blur.cpp"
 
 QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
 {
@@ -298,7 +298,7 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
 
 void Utilities::shadowBlur(QImage &image, int radius, const QColor &color)
 {
-    if (radius < 1) {
+    /*if (radius < 1) {
         return;
     }
     
@@ -307,7 +307,7 @@ void Utilities::shadowBlur(QImage &image, int radius, const QColor &color)
     QPainter p(&image);
     p.setCompositionMode(QPainter::CompositionMode_SourceIn);
     p.fillRect(image.rect(), color);
-    p.end();
+    p.end();*/
 }
 
 MediaItem Utilities::mediaItemFromUrl(KUrl url)
