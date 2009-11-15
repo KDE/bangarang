@@ -37,6 +37,8 @@ public:
 	void selectDuration(bool optional=false);
 	void selectEpisode(bool optional=false);
 	void selectDescription(bool optional=false);
+    void selectCreated(bool optional=false);
+    void selectGenre(bool optional=false);
 	void selectIsTVShow(bool optional=false);
 	void selectIsMovie(bool optional=false);
     void selectRating(bool optional=false);
@@ -69,6 +71,8 @@ private:
 	bool m_selectDuration;
 	bool m_selectEpisode;
 	bool m_selectDescription;
+    bool m_selectCreated;
+    bool m_selectGenre;
 	bool m_selectIsTVShow;
 	bool m_selectIsMovie;
     bool m_selectRating;
@@ -80,6 +84,8 @@ private:
 	QString m_durationCondition;
 	QString m_episodeCondition;
 	QString m_descriptionCondition;
+    QString m_createdCondition;
+    QString m_genreCondition;
 	QString m_TVShowCondition;
 	QString m_movieCondition;
 	QString m_searchCondition;

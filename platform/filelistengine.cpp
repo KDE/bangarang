@@ -192,6 +192,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             QString genre   = TStringToQString(file.tag()->genre()).trimmed();
             int track   = file.tag()->track();
             int duration = file.audioProperties()->length();
+            int year = file.tag()->year();
             if (!title.isEmpty()) {
                 mediaItem.title = title;
             }
@@ -203,6 +204,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             mediaItem.fields["album"] = album;
             mediaItem.fields["genre"] = genre;
             mediaItem.fields["trackNumber"] = track;
+            mediaItem.fields["year"] = year;
             mediaItem.fields["audioType"] = "Music";
             if (m_nepomukInited) {
                 Nepomuk::Resource res(mediaItem.url);

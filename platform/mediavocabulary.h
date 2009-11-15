@@ -56,6 +56,8 @@ class MediaVocabulary {
         QUrl lastPlayed();
         QUrl playCount();
         QUrl artwork();
+        QUrl created();
+        QUrl genre();
         
         QUrl musicArtist();
         QUrl musicArtistName();
