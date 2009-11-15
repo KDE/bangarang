@@ -206,7 +206,7 @@ void MusicListEngine::run()
             } else {
                 m_mediaListProperties.name = QString("Songs");
             }
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 songs").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "search") {
@@ -233,7 +233,7 @@ void MusicListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 songs").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
