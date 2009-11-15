@@ -83,12 +83,19 @@ MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         mediaItem.subTitle += QString("Episode %1").arg(episode);
     }
 
+    if (it.binding("created").isValid()) {
+        QDate created = it.binding("created").literal().toDate();
+        if (created.isValid()) {
+            mediaItem.fields["year"] = created.year();
+        }
+    }
     mediaItem.type = "Video";
     mediaItem.nowPlaying = false;
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["title"] = it.binding("title").literal().toString();
     mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
     mediaItem.fields["description"] = it.binding("description").literal().toString();
+    mediaItem.fields["genre"] = it.binding("genre").literal().toString();
     mediaItem.fields["artworkUrl"] = it.binding("artwork").uri().toString();
     mediaItem.fields["rating"] = it.binding("rating").literal().toInt();
 
@@ -257,8 +264,10 @@ void VideoListEngine::run()
             videoQuery.selectDescription(true);
             videoQuery.selectRating(true);
             videoQuery.selectEpisode(true);
+            videoQuery.selectCreated(true);
+            videoQuery.selectGenre(true);
             videoQuery.selectArtwork(true);
-            videoQuery.orderBy("?episode");
+            videoQuery.orderBy("?episode ?created");
 
 
             //Execute Query
@@ -305,8 +314,10 @@ void VideoListEngine::run()
             videoQuery.selectSeriesName(true);
             videoQuery.selectRating(true);
             videoQuery.selectDuration(true);
+            videoQuery.selectCreated(true);
+            videoQuery.selectGenre(true);
             videoQuery.selectArtwork(true);
-            videoQuery.orderBy("?title");
+            videoQuery.orderBy("?title ?created");
 
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -333,11 +344,13 @@ void VideoListEngine::run()
             videoQuery.selectSeriesName(true);
             videoQuery.selectSeason(true);
             videoQuery.selectEpisode(true);
+            videoQuery.selectCreated(true);
+            videoQuery.selectGenre(true);
             videoQuery.selectIsMovie(true);
             videoQuery.selectIsTVShow(true);
             videoQuery.selectArtwork(true);
             videoQuery.searchString(engineFilter);
-            videoQuery.orderBy("?title");
+            videoQuery.orderBy("?title ?created");
             
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -444,6 +457,19 @@ void VideoQuery::selectDescription(bool optional) {
     m_descriptionCondition = addOptional(optional,
     		QString("?r <%1> ?description . ")
     		.arg(MediaVocabulary().description().toString()));
+}
+
+void VideoQuery::selectCreated(bool optional) {
+    m_selectCreated = true;
+    m_createdCondition = addOptional(optional,
+                                         QString("?r <%1> ?created . ")
+                                         .arg(MediaVocabulary().created().toString()));
+}
+void VideoQuery::selectGenre(bool optional) {
+    m_selectGenre = true;
+    m_genreCondition = addOptional(optional,
+                                         QString("?r <%1> ?genre . ")
+                                         .arg(MediaVocabulary().genre().toString()));
 }
 
 void VideoQuery::selectArtwork(bool optional) {
@@ -583,6 +609,10 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     	queryString += "?episode ";
     if (m_selectDescription)
     	queryString += "?description ";
+    if (m_selectCreated)
+        queryString += "?created ";
+    if (m_selectGenre)
+        queryString += "?genre ";
     if (m_selectRating)
         queryString += "?rating ";
     if (m_selectIsTVShow)
@@ -601,6 +631,8 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     queryString += m_durationCondition;
     queryString += m_episodeCondition;
     queryString += m_descriptionCondition;
+    queryString += m_createdCondition;
+    queryString += m_genreCondition;
     queryString += m_ratingCondition;
     queryString += m_TVShowCondition;
     queryString += m_movieCondition;
@@ -626,6 +658,8 @@ bool VideoQuery::executeAsk(Soprano::Model* model) {
     queryString += m_durationCondition;
     queryString += m_episodeCondition;
     queryString += m_descriptionCondition;
+    queryString += m_createdCondition;
+    queryString += m_genreCondition;
     queryString += m_TVShowCondition;
     queryString += m_movieCondition;
     queryString += m_artworkCondition;

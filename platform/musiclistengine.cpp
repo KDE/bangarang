@@ -22,6 +22,7 @@
 #include "mediavocabulary.h"
 #include <KIcon>
 #include <KUrl>
+#include <KDebug>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -75,6 +76,13 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
     }
     
+    if (it.binding("created").isValid()) {
+        QDate created = it.binding("created").literal().toDate();
+        if (created.isValid()) {
+            mediaItem.fields["year"] = created.year();
+        }
+    }
+    
     int trackNumber = it.binding("trackNumber").literal().toInt();
     if (trackNumber != 0) {
         mediaItem.fields["trackNumber"] = trackNumber;
@@ -102,10 +110,31 @@ void MusicListEngine::run()
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
+    QString artist;
+    QString album;
+    QString genre;
+    
+    //Parse filter
+    if (!engineFilter.isNull()) {
+        QStringList argList = engineFilter.split("||");
+        artist = argList.at(0);
+        album = argList.at(1);
+        genre = argList.at(2);
+    }
+    
     if (m_nepomukInited) {
         if (engineArg.toLower() == "artists") {
             MusicQuery query = MusicQuery(true);
             query.selectArtist();
+            if (!artist.isEmpty()) {
+                query.hasArtist(artist);
+            }
+            if (!album.isEmpty()) {
+                query.hasAlbum(album);
+            }
+            if (!genre.isEmpty()) {
+                query.hasGenre(genre);
+            }
             query.orderBy("?artist");
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
@@ -115,7 +144,7 @@ void MusicListEngine::run()
                 QString artist = it.binding("artist").literal().toString().trimmed();
                 if (!artist.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("music://songs?%1||%2").arg(artist, QString());
+                    mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
                     mediaItem.title = artist;
                     mediaItem.type = QString("Category");
                     mediaItem.nowPlaying = false;
@@ -125,6 +154,9 @@ void MusicListEngine::run()
                 ++i;
             }
             m_mediaListProperties.name = "Artists";
+            if (!genre.isEmpty()) {
+                m_mediaListProperties.name = QString("Artists - %1").arg(genre);
+            }
             m_mediaListProperties.summary = QString("%1 artists").arg(mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
@@ -132,17 +164,26 @@ void MusicListEngine::run()
             MusicQuery query = MusicQuery(true);
             query.selectAlbum(true);
             query.selectArtist();
+            if (!artist.isEmpty()) {
+                query.hasArtist(artist);
+            }
+            if (!album.isEmpty()) {
+                query.hasAlbum(album);
+            }
+            if (!genre.isEmpty()) {
+                query.hasGenre(genre);
+            }
             query.orderBy("?album");
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
             int i = 0;
             while( it.next() ) {
+                QString artist = it.binding("artist").literal().toString().trimmed();
                 QString album = it.binding("album").literal().toString().trimmed();
-                QString artist = it.binding("artist").literal().toString();
                 if (!album.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("music://songs?%1||%2").arg(artist, album);
+                    mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
                     mediaItem.title = album;
                     mediaItem.subTitle = artist;
                     mediaItem.type = QString("Category");
@@ -153,19 +194,54 @@ void MusicListEngine::run()
                 ++i;
             }
             m_mediaListProperties.name = "Albums";
+            if (!artist.isEmpty()) {
+                m_mediaListProperties.name = QString("Albums - %1").arg(artist);
+            }
+            if (!genre.isEmpty()) {
+                m_mediaListProperties.name = QString("Albums - %1").arg(genre);
+            }
+            if (!artist.isEmpty() && !genre.isEmpty()) {
+                m_mediaListProperties.name = QString("Albums - %1 - %2").arg(album, genre);
+            }
+            
             m_mediaListProperties.summary = QString("%1 albums").arg(mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
-        } else if (engineArg.toLower() == "songs") {
-            QString artist;
-            QString album;
-            
-            //Parse filter
-            if (!engineFilter.isNull()) {
-                QStringList argList = engineFilter.split("||");
-                artist = argList.at(0);
-                album = argList.at(1);
+        } else if (engineArg.toLower() == "genres") {
+            MusicQuery query = MusicQuery(true);
+            query.selectGenre();
+            if (!artist.isEmpty()) {
+                query.hasArtist(artist);
             }
+            if (!album.isEmpty()) {
+                query.hasAlbum(album);
+            }
+            if (!genre.isEmpty()) {
+                query.hasGenre(genre);
+            }
+            query.orderBy("?genre");
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            int i = 0;
+            while( it.next() ) {
+                QString genre = it.binding("genre").literal().toString().trimmed();
+                if (!genre.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("music://artists?%1||%2||%3").arg(artist, album, genre);
+                    mediaItem.title = genre;
+                    mediaItem.type = QString("Category");
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("flag-blue");
+                    mediaList.append(mediaItem);
+                }
+                ++i;
+            }
+            m_mediaListProperties.name = "Genres";
+            m_mediaListProperties.summary = QString("%1 genres").arg(mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+            
+        } else if (engineArg.toLower() == "songs") {
             
             MusicQuery musicQuery = MusicQuery(true);
             musicQuery.selectResource();
@@ -174,17 +250,21 @@ void MusicListEngine::run()
             musicQuery.selectAlbum(true);
             musicQuery.selectTrackNumber(true);
             musicQuery.selectDuration(true);
+            musicQuery.selectCreated(true);
             musicQuery.selectRating(true);
             musicQuery.selectDescription(true);
             musicQuery.selectArtwork(true);
-            //musicQuery.selectGenre(true);
+            musicQuery.selectGenre(true);
             if (!artist.isEmpty()) {
                 musicQuery.hasArtist(artist);
             }
             if (!album.isEmpty()) {
                 musicQuery.hasAlbum(album);
             }
-            musicQuery.orderBy("?artist ?album ?trackNumber");
+            if (!genre.isEmpty()) {
+                musicQuery.hasGenre(genre);
+            }
+            musicQuery.orderBy("?artist ?created ?album ?trackNumber");
             
             //Execute Query
             Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
@@ -217,12 +297,13 @@ void MusicListEngine::run()
             musicQuery.selectAlbum(true);
             musicQuery.selectTrackNumber(true);
             musicQuery.selectDuration(true);
+            musicQuery.selectCreated(true);
             musicQuery.selectRating(true);
             musicQuery.selectDescription(true);
             musicQuery.selectArtwork(true);
-            //musicQuery.selectGenre(true);
+            musicQuery.selectGenre(true);
             musicQuery.searchString(engineFilter);
-            musicQuery.orderBy("?artist ?album ?trackNumber");
+            musicQuery.orderBy("?artist ?created ?album ?trackNumber");
             
             //Execute Query
             Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
@@ -294,6 +375,13 @@ void MusicQuery::selectDuration(bool optional) {
                                       .arg(MediaVocabulary().duration().toString()));
 }
 
+void MusicQuery::selectCreated(bool optional) {
+    m_selectCreated = true;
+    m_createdCondition = addOptional(optional,
+                                      QString("?r <%1> ?created . ")
+                                      .arg(MediaVocabulary().created().toString()));
+}
+
 void MusicQuery::selectTrackNumber(bool optional) {
     m_selectTrackNumber = true;
     m_trackNumberCondition = addOptional(optional,
@@ -305,7 +393,7 @@ void MusicQuery::selectGenre(bool optional) {
     m_selectGenre = true;
     m_genreCondition = addOptional(optional,
                                          QString("?r <%1> ?genre . ")
-                                         .arg(MediaVocabulary().musicGenre().toString()));
+                                         .arg(MediaVocabulary().genre().toString()));
 }
 
 void MusicQuery::selectRating(bool optional) {
@@ -355,6 +443,20 @@ void MusicQuery::hasNoAlbum() {
     "OPTIONAL { ?r <%1> ?album  } "
     "FILTER (!bound(?album) || regex(str(?album), \"^$\")) ")
     .arg(MediaVocabulary().musicAlbum().toString());
+}
+
+void MusicQuery::hasGenre(QString genre) {
+    m_genreCondition = QString("?r <%1> ?genre . "
+    "?r <%1> %2 . ")
+    .arg(MediaVocabulary().genre().toString())
+    .arg(Soprano::Node::literalToN3(genre));
+}
+
+void MusicQuery::hasNoGenre() {
+    m_genreCondition = QString(
+    "OPTIONAL { ?r <%1> ?genre  } "
+    "FILTER (!bound(?genre) || regex(str(?genre), \"^$\")) ")
+    .arg(MediaVocabulary().genre().toString());
 }
 
 void MusicQuery::searchString(QString str) {
@@ -410,6 +512,8 @@ Soprano::QueryResultIterator MusicQuery::executeSelect(Soprano::Model* model) {
         queryString += "?title ";
     if (m_selectDuration)
         queryString += "?duration ";
+    if (m_selectCreated)
+        queryString += "?created ";
     if (m_selectTrackNumber)
         queryString += "?trackNumber ";
     if (m_selectGenre)
@@ -428,8 +532,9 @@ Soprano::QueryResultIterator MusicQuery::executeSelect(Soprano::Model* model) {
     queryString += m_albumCondition;
     queryString += m_titleCondition;
     queryString += m_durationCondition;
-    queryString += m_trackNumberCondition;
+    queryString += m_createdCondition;
     queryString += m_genreCondition;
+    queryString += m_trackNumberCondition;
     queryString += m_ratingCondition;
     queryString += m_searchCondition;
     queryString += m_descriptionCondition;
@@ -452,6 +557,7 @@ bool MusicQuery::executeAsk(Soprano::Model* model) {
     queryString += m_albumCondition;
     queryString += m_titleCondition;
     queryString += m_durationCondition;
+    queryString += m_createdCondition;
     queryString += m_trackNumberCondition;
     queryString += m_genreCondition;
     queryString += m_ratingCondition;

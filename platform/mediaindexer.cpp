@@ -22,6 +22,7 @@
 #include "mediavocabulary.h"
 
 #include <KUrl>
+#include <KDebug>
 #include <kuiserverjobtracker.h>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
@@ -173,14 +174,19 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             int track   = mediaItem.fields["trackNumber"].toInt();
             QString genre   = mediaItem.fields["genre"].toString();
             int duration = mediaItem.fields["duration"].toInt();
+            int year = mediaItem.fields["year"].toInt();
             res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
             res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
+            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
             if (track != 0) {
                 res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
             }
-            res.setProperty(mediaVocabulary.musicGenre(), Nepomuk::Variant(genre));
             if (duration != 0) {
                 res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
+            }
+            if (year != 0) {
+                QDate created = QDate(year, 1, 1);
+                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
             }
         } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
             (mediaItem.fields["audioType"] == "Audio Clip")) {
@@ -212,6 +218,14 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             res.removeProperty(mediaVocabulary.videoIsTVShow());
             QString seriesName = mediaItem.fields["seriesName"].toString();
             res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+            QString genre   = mediaItem.fields["genre"].toString();
+            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            int year = mediaItem.fields["year"].toInt();
+            if (year != 0) {
+                QDate created = QDate(year, 1, 1);
+                kDebug() << created.year();
+                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
+            }
         } else if (mediaItem.fields["videoType"] == "TV Show") {
             res.setProperty(mediaVocabulary.videoIsTVShow(), Nepomuk::Variant(true));
             res.removeProperty(mediaVocabulary.videoIsMovie());
@@ -228,6 +242,13 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
                 res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
             } else {
                 res.removeProperty(mediaVocabulary.videoSeriesEpisode());
+            }
+            QString genre   = mediaItem.fields["genre"].toString();
+            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            int year = mediaItem.fields["year"].toInt();
+            if (year != 0) {
+                QDate created = QDate(year, 1, 1);
+                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
             }
         } else if (mediaItem.fields["videoType"] == "Video Clip") {
             //Remove properties identifying video as a movie or tv show

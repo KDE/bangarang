@@ -36,6 +36,7 @@ class MusicQuery {
         void selectAlbum(bool optional=false);
         void selectTitle(bool optional=false);
         void selectDuration(bool optional=false);
+        void selectCreated(bool optional=false);
         void selectTrackNumber(bool optional=false);
         void selectGenre(bool optional=false);
         void selectRating(bool optional=false);
@@ -46,6 +47,8 @@ class MusicQuery {
         void hasNoArtist();
         void hasAlbum(QString album);
         void hasNoAlbum();
+        void hasGenre(QString genre);
+        void hasNoGenre();
         
         void searchString(QString str);
         
@@ -63,6 +66,7 @@ class MusicQuery {
         bool m_selectAlbum;
         bool m_selectTitle;
         bool m_selectDuration;
+        bool m_selectCreated;
         bool m_selectTrackNumber;
         bool m_selectGenre;
         bool m_selectRating;
@@ -73,6 +77,7 @@ class MusicQuery {
         QString m_albumCondition;
         QString m_titleCondition;
         QString m_durationCondition;
+        QString m_createdCondition;
         QString m_trackNumberCondition;
         QString m_genreCondition;
         QString m_searchCondition;

@@ -261,6 +261,32 @@ QUrl MediaVocabulary::artwork()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::created()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
+    } else if (m_vocabulary == MediaVocabulary::nie) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#contentCreated");
+    } else if (m_vocabulary == MediaVocabulary::nmm) {
+        //Draft nmm ontology is extension of nie
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#contentCreated");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::genre()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::genre();
+    } else if (m_vocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
+    }
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::musicArtist()
 {
     QUrl returnUrl = QUrl();
