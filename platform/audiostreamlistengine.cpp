@@ -96,7 +96,7 @@ void AudioStreamListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 streams").arg(mediaList.count());
             
             MediaItem mediaItem;
             mediaItem.type = "Action";
@@ -127,7 +127,7 @@ void AudioStreamListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            m_mediaListProperties.summary = QString("%1 streams").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
