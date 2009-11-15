@@ -33,6 +33,8 @@ NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(pa
 
 NepomukListEngine::~NepomukListEngine()
 {
-	delete m_mediaIndexer;
+	if (m_nepomukInited) {
+        delete m_mediaIndexer;
+    }
 }
 
