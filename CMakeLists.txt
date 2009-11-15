@@ -45,7 +45,6 @@ SET(BangarangSources
     platform/listenginefactory.cpp 
     platform/mediaindexer.cpp 
     platform/mediavocabulary.cpp 
-    platform/blur.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
