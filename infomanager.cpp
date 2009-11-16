@@ -387,15 +387,12 @@ void InfoManager::showVideoTVShowFields(bool edit)
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow + 2, tr2i18n("Episode"));    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow + 3, tr2i18n("Year"));
-    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 4, tr2i18n("Genre"));
     
     if (!edit) {
         setInfo(startRow, QString("%1").arg(commonValue("seriesName").toString()));
         setInfo(startRow + 1, QString("%1").arg(commonValue("season").toInt()));
         setInfo(startRow + 2, QString("%1").arg(commonValue("episode").toInt()));
         setInfo(startRow + 3, QString("%1").arg(commonValue("year").toInt()));
-        setInfo(startRow + 4, commonValue("genre").toString());
     } else {
         setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
         setEditWidget(startRow + 1, new QSpinBox(), commonValue("season").toInt());
@@ -404,7 +401,6 @@ void InfoManager::showVideoTVShowFields(bool edit)
         QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 3), 1));
         yw->setRange(0, 9999);
         yw->setValue(commonValue("year").toInt());
-        setEditWidget(startRow + 4, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
     }
 }
         
@@ -632,12 +628,6 @@ void InfoManager::saveInfoToMediaModel()
                 int year = yearWidget->value();
                 if (year != 0) {
                     mediaItem.fields["year"] = year;
-                }
-                
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
-                QString genre = genreWidget->currentText();
-                if (!genre.isEmpty()) {
-                    mediaItem.fields["genre"] = genre;
                 }
                 
             } else if (typeComboBox->currentIndex() == 2) {
