@@ -238,6 +238,7 @@ void Playlist::start()
     m_playlistIndices.clear();
     m_playlistIndicesHistory.clear();
     m_playlistUrlHistory.clear();
+    m_queue->clearMediaListData();
     for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
         m_playlistIndices.append(i);
     }
@@ -334,33 +335,39 @@ void Playlist::setMode(int mode)
 {
     if (mode <= 1) {
         m_mode = mode;
-        m_queue->clearMediaListData();
-        m_playlistIndices.clear();
-        m_playlistIndicesHistory.clear();
-        m_playlistUrlHistory.clear();
         if (m_currentPlaylist->rowCount() > 0) {
-            int oldItemRow = -1;
-            if (m_nowPlaying->rowCount() > 0) {
-                oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-                m_nowPlaying->removeMediaItemAt(0);
-            }
-            if (oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
-                //Cycle through true and false to ensure data change forces update
-                m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
-                m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
-            }
-            for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
-                m_playlistIndices.append(i);
-            }
-            if (m_mode == Playlist::Normal) {
-                orderByPlaylist();
-            } else if (m_mode == Playlist::Shuffle) {
-                shuffle();
-            }
-            if (m_mediaObject->state() == Phonon::PlayingState) {
-                playItemAt(0, Playlist::QueueModel);
+            if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
+                //Rebuild queue after currently playing item
+                if (m_mode == Playlist::Normal) {
+                    if (m_queue->rowCount() > 1) {
+                        buildQueueFrom(m_queue->mediaItemAt(0).playlistIndex);
+                    } else {
+                        orderByPlaylist();
+                    }
+                } else {
+                    MediaItem nowPlayingItem;
+                    if (m_queue->rowCount() > 1) {
+                        m_queue->removeRows(1, m_queue->rowCount() - 1);
+                        nowPlayingItem = m_queue->mediaItemAt(0);
+                    }
+                    m_playlistIndices.clear();
+                    m_playlistIndicesHistory.clear();
+                    m_playlistUrlHistory.clear();
+                    for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
+                        if (nowPlayingItem.url.isEmpty() || m_currentPlaylist->mediaItemAt(i).url != nowPlayingItem.url) {
+                            m_playlistIndices.append(i);
+                        }
+                    }
+                    shuffle();
+                }
             } else {
-                m_mediaObject->stop();
+                //Rebuild queue from scratch
+                m_queue->clearMediaListData();
+                if (m_mode == Playlist::Normal) {
+                    orderByPlaylist();
+                } else if (m_mode == Playlist::Shuffle) {
+                    shuffle();
+                }
             }
         }
     }
@@ -680,17 +687,17 @@ void Playlist::updateNowPlaying()
 
 void Playlist::shuffle()
 {
-    m_queue->clearMediaListData();
     srand((unsigned)time(0));
-    for (int i = 0; i < qMin(m_queueDepth, m_currentPlaylist->rowCount()); ++i) {
+    int numberToAdd = m_queueDepth - m_queue->rowCount();
+    for (int i = 0; i < qMin(numberToAdd, m_currentPlaylist->rowCount()); ++i) {
         addToQueue();
     }
 }
 
 void Playlist::orderByPlaylist()
 {
-    m_queue->clearMediaListData();
-    for (int i = 0; i < qMin(m_queueDepth, m_currentPlaylist->rowCount()); ++i) {
+    int numberToAdd = m_queueDepth - m_queue->rowCount();
+    for (int i = 0; i < qMin(numberToAdd, m_currentPlaylist->rowCount()); ++i) {
         addToQueue();
     }
 }
