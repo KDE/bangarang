@@ -306,6 +306,14 @@ void VideoListEngine::run()
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "movies") {
+            QString genre;
+            
+            //Parse filter
+            if (!engineFilter.isNull()) {
+                QStringList argList = engineFilter.split("||");
+                genre = argList.at(0);
+            }
+            
             VideoQuery videoQuery = VideoQuery(true);
             videoQuery.selectResource();
             videoQuery.selectTitle();
@@ -317,6 +325,9 @@ void VideoListEngine::run()
             videoQuery.selectCreated(true);
             videoQuery.selectGenre(true);
             videoQuery.selectArtwork(true);
+            if (!genre.isEmpty()) {
+                videoQuery.hasGenre(genre);
+            }
             videoQuery.orderBy("?title ?created");
 
             //Execute Query
@@ -331,8 +342,49 @@ void VideoListEngine::run()
             }
             
             m_mediaListProperties.name = QString("Movies");
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            if (!genre.isEmpty()) {
+                m_mediaListProperties.name = QString("Movies - %1").arg(genre);
+            }
+            m_mediaListProperties.summary = QString("%1 movies").arg(mediaList.count());
             m_mediaListProperties.type = QString("Sources");
+            
+        } else if (engineArg.toLower() == "genres") {
+            QString genre;
+            
+            //Parse filter
+            if (!engineFilter.isNull()) {
+                QStringList argList = engineFilter.split("||");
+                genre = argList.at(0);
+            }
+            
+            VideoQuery videoQuery = VideoQuery(true);
+            videoQuery.selectGenre();
+            videoQuery.isMovie(true);
+            if (!genre.isEmpty()) {
+                videoQuery.hasGenre(genre);
+            }
+            videoQuery.orderBy("?genre");
+            
+            //Execute Query
+            Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                QString genre = it.binding("genre").literal().toString().trimmed();
+                if (!genre.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("video://movies?%1").arg(genre);
+                    mediaItem.title = genre;
+                    mediaItem.type = QString("Category");
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("flag-green");
+                    mediaList.append(mediaItem);
+                }
+            }
+            
+            m_mediaListProperties.name = QString("Genre");
+            m_mediaListProperties.summary = QString("%1 genres").arg(mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "search") {
             VideoQuery videoQuery = VideoQuery(true);
@@ -544,6 +596,12 @@ void VideoQuery::hasSeriesName(QString seriesName) {
 	m_seriesNameCondition = QString("?r <%1> %2 . ")
     		.arg(MediaVocabulary().videoSeriesName().toString())
     		.arg(Soprano::Node::literalToN3(seriesName));
+}
+
+void VideoQuery::hasGenre(QString genre) {
+    m_genreCondition = QString("?r <%1> %2 . ")
+    .arg(MediaVocabulary().genre().toString())
+    .arg(Soprano::Node::literalToN3(genre));
 }
 
 void VideoQuery::hasNoSeriesName() {

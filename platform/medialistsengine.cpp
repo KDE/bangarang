@@ -136,6 +136,10 @@ void MediaListsEngine::run()
             mediaItem.url = "video://movies";
             mediaItem.artwork = KIcon("tool-animator");
             mediaList << mediaItem;
+            mediaItem.title = "Genres";
+            mediaItem.url = "video://genres";
+            mediaItem.artwork = KIcon("flag-green");
+            mediaList << mediaItem;
             mediaItem.title = "TV Shows";
             mediaItem.url = "video://tvshows";
             mediaItem.artwork = KIcon("video-television");

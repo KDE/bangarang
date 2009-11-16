@@ -51,7 +51,8 @@ public:
 	void hasNoSeason();
 
 	void hasSeriesName(QString seriesName);
-	void hasNoSeriesName();
+    void hasGenre(QString genre);
+    void hasNoSeriesName();
 
 	void searchString(QString str);
 
