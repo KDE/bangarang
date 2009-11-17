@@ -101,18 +101,18 @@ void FileListEngine::activateAction()
     
     if (m_mediaListProperties.engineFilter() == "getFiles") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(audioMimeFilter), static_cast<QWidget *>(model()->parent()), "Open audio file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(audioMimeFilter), 0, "Open audio file(s)");
             mediaList = readAudioUrlList(fileList);
             m_mediaListProperties.name = "Audio Files";
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(videoMimeFilter), static_cast<QWidget *>(model()->parent()), "Open video file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(videoMimeFilter), 0, "Open video file(s)");
             mediaList = readVideoUrlList(fileList);
             m_mediaListProperties.name = "Video Files";
         }
     } else if (m_mediaListProperties.engineFilter() == "getFolder") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), static_cast<QWidget *>(model()->parent()), "Open folder containing audio file(s)");       
+            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing audio file(s)");       
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
                 QFileInfoList fileInfoList = crawlDir(directory, audioMimeFilter.split(" "));
@@ -123,7 +123,7 @@ void FileListEngine::activateAction()
             m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());           
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), static_cast<QWidget *>(model()->parent()), "Open folder containing video file(s)");           
+            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing video file(s)");           
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
                 QFileInfoList fileInfoList = crawlDir(directory, videoMimeFilter.split(" "));

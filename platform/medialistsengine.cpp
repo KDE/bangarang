@@ -77,6 +77,18 @@ void MediaListsEngine::run()
             mediaItem.url = "audiostreams://";
             mediaItem.artwork = KIcon("x-media-podcast");
             mediaList << mediaItem;
+            mediaItem.title = "Frequently Played";
+            mediaItem.url = "semantics://frequent?audio";
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            mediaItem.title = "Recently Played";
+            mediaItem.url = "semantics://recent?audio";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = "Highest Rated";
+            mediaItem.url = "semantics://highest?audio";
+            mediaItem.artwork = KIcon("rating");
+            mediaList << mediaItem;
         }
         
         //Show Audio CD if present
@@ -147,6 +159,18 @@ void MediaListsEngine::run()
             mediaItem.title = "Video Clips";
             mediaItem.url = "video://clips";
             mediaItem.artwork = KIcon("video-x-generic");
+            mediaList << mediaItem;
+            mediaItem.title = "Frequently Played";
+            mediaItem.url = "semantics://frequent?video";
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            mediaItem.title = "Recently Played";
+            mediaItem.url = "semantics://recent?video";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = "Highest Rated";
+            mediaItem.url = "semantics://highest?video";
+            mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }
         

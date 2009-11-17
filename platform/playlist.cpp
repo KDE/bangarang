@@ -23,6 +23,7 @@
 #include <time.h>
 #include <KUrl>
 #include <KIcon>
+#include <KDebug>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>
@@ -599,7 +600,7 @@ void Playlist::playlistChanged()
             } else {
                 currentUrl = m_mediaObject->currentSource().url().toString();
             }
-            if (currentUrl != m_queue->mediaItemAt(0).url) {
+            if (currentUrl != QUrl::fromPercentEncoding(m_queue->mediaItemAt(0).url.toUtf8())) {
                 m_mediaObject->stop();
                 playItemAt(0, Playlist::QueueModel);
             }
