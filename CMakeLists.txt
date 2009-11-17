@@ -38,6 +38,7 @@ SET(BangarangSources
     platform/medialistsengine.cpp
     platform/audiostreamlistengine.cpp
     platform/nepomuklistengine.cpp
+    platform/semanticslistengine.cpp
     platform/playlist.cpp 
     platform/utilities.cpp 
     platform/listengine.cpp 
