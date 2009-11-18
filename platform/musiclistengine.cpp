@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "mediavocabulary.h"
+#include "utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KDebug>
@@ -103,7 +104,7 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
 
 void MusicListEngine::run()
 {
-    
+
     //Create media list based on engine argument and filter
     QList<MediaItem> mediaList;
     MediaVocabulary mediaVocabulary = MediaVocabulary();
@@ -324,6 +325,13 @@ void MusicListEngine::run()
     }
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    
+    //Check if MediaItems in mediaList exist
+    QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
+    if (mediaItems.count() > 0) {
+        model()->updateMediaItems(mediaItems);
+    }
+    
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }
@@ -333,7 +341,6 @@ void MusicListEngine::setFilterForSources(const QString& engineFilter)
     //Always return songs
     m_mediaListProperties.lri = QString("music://songs?%1").arg(engineFilter);
 }
-
 
 MusicQuery::MusicQuery(bool distinct) :
 m_distinct(distinct),

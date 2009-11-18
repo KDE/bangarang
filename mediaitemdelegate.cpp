@@ -114,6 +114,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     if (index.column() == 0) {
         //Paint Icon
         KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
+        bool exists = index.data(MediaItem::ExistsRole).toBool();
         if (m_parent->m_nowPlaying->rowCount() > 0) {
             MediaItem nowPlayingItem = m_parent->m_nowPlaying->mediaItemAt(0);
             if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
@@ -126,7 +127,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             icon.paint(&p, left + padding, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
         } else {
             iconWidth = 0;
-        }   
+        }
+        if (!exists) {
+            KIcon("emblem-unmounted").paint(&p, left + padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
+        }
         bool hasSubTitle;
         if (index.data(MediaItem::SubTitleRole).isValid()) {
             if (!index.data(MediaItem::SubTitleRole).toString().isEmpty()) {

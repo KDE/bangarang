@@ -37,7 +37,8 @@ struct MediaItem {
     FilterRole = Qt::UserRole + 6,
     PlaylistIndexRole = Qt::UserRole + 7, 
     NowPlayingRole = Qt::UserRole + 8,
-    IsSavedListRole = Qt::UserRole + 9 };
+    IsSavedListRole = Qt::UserRole + 9,
+    ExistsRole = Qt::UserRole + 10 };
     QIcon artwork;
     QString title;
     QString subTitle;
@@ -48,7 +49,9 @@ struct MediaItem {
     int playlistIndex;
     bool nowPlaying;
     bool isSavedList;
+    bool exists;
     QHash <QString, QVariant> fields;
+    MediaItem() : nowPlaying(false), isSavedList(false), exists(true) {}
 };
 
 Q_DECLARE_METATYPE(MediaItem);
@@ -149,6 +152,7 @@ class MediaItemModel : public QStandardItemModel
     public Q_SLOTS:
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
         void reload();
+        void updateMediaItems(QList<MediaItem> mediaList);
 };
 
 #endif // MEDIAITEMMODEL_H
