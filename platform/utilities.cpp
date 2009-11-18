@@ -581,3 +581,26 @@ QString Utilities::mediaListDurationText(QList<MediaItem> mediaList)
     
     return QString("%1:%2:%3").arg(hours).arg(min).arg(sec);
 }
+
+QList<MediaItem> Utilities::mediaItemsDontExist(QList<MediaItem> mediaList)
+{
+    QList<MediaItem> items;
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaItem mediaItem = mediaList.at(i);
+        KUrl url = KUrl(mediaItem.url);
+        if (url.isValid()) {
+            if (url.isLocalFile()) {
+                if (!QFile(url.path()).exists()) {
+                    mediaItem.exists = false;
+                    kDebug() << mediaItem.url << " missing";
+                    items << mediaItem;
+                }
+            } else if (mediaItem.url.startsWith("trash:/")) {
+                mediaItem.exists = false;
+                kDebug() << mediaItem.url << " missing";
+                items << mediaItem;
+            }
+        }
+    }
+    return items;
+}

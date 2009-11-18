@@ -20,6 +20,7 @@
 
 ListEngine::ListEngine(ListEngineFactory * parent) : QThread(parent)
 {
+    m_checkMediaItemsExist = false;
 }
 
 ListEngine::~ListEngine()

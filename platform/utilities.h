@@ -57,5 +57,6 @@ namespace Utilities {
     TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);
     int mediaListDuration(QList<MediaItem> mediaList);
     QString mediaListDurationText(QList<MediaItem> mediaList);
+    QList<MediaItem> mediaItemsDontExist(QList<MediaItem> mediaList);
 }
 #endif //UTILITIES_H    

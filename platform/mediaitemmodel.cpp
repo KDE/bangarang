@@ -272,6 +272,17 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     Q_UNUSED(done);
 }
 
+void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
+{
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaItem mediaItem = mediaList.at(i);
+        int row = rowOfUrl(mediaItem.url);
+        if (row != -1) {
+            replaceMediaItemAt(row, mediaItem);
+        }
+    }
+}
+
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     removeRows(0, rowCount());
@@ -361,7 +372,11 @@ void MediaItemModel::hideLoadingMessage()
     }
     if (row != -1) {
         if (m_mediaList.count() > 0) {
+            disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
             removeMediaItemAt(row, false);
+            m_urlList.removeAt(row);
+            m_mediaList.removeAt(row);
+            connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         }
     }
 }
@@ -385,6 +400,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.playlistIndex, MediaItem::PlaylistIndexRole);
     titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
+    titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
     if (!mediaItem.fields["description"].toString().isEmpty()) {
         QString tooltip = QString("<b>%1</b><br>%2")
                         .arg(mediaItem.title)
