@@ -45,7 +45,10 @@ VideoListEngine::~VideoListEngine()
 
 MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     MediaItem mediaItem;
-    mediaItem.url = it.binding("r").uri().toString();
+    QUrl url = it.binding("url").uri().isEmpty() ? 
+                    it.binding("r").uri() :
+                    it.binding("url").uri();
+    mediaItem.url = url.toString();
     mediaItem.title = it.binding("title").literal().toString();
     if (mediaItem.title.isEmpty()) {
         if (KUrl(mediaItem.url).isLocalFile()) {
@@ -648,7 +651,8 @@ QString VideoQuery::getPrefix() {
     return QString("PREFIX xesam: <%1> "
 			"PREFIX rdf: <%2> "
 			"PREFIX nmm: <%3> "
-			"PREFIX xls: <%4> ")
+            "PREFIX xls: <%4> "
+            "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> ")
 		.arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
 		.arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
 		.arg("http://www.semanticdesktop.org/ontologies/nmm#")
@@ -662,7 +666,7 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     if (m_distinct)
     	queryString += "DISTINCT ";
     if (m_selectResource)
-    	queryString += "?r ";
+    	queryString += "?r ?url ";
     if (m_selectSeason)
     	queryString += "?season ";
     if (m_selectSeriesName)
@@ -688,7 +692,9 @@ Soprano::QueryResultIterator VideoQuery::executeSelect(Soprano::Model* model) {
     if (m_selectArtwork)
         queryString += "?artwork ";
     
-    queryString += QString("WHERE { ?r rdf:type <%1> . ")
+    //NOTE: nie:url is not in any released nie ontology that I can find.
+    //      In future KDE will use nfo:fileUrl so this will need to be changed.
+    queryString += QString("WHERE { ?r rdf:type <%1> . OPTIONAL { ?r nie:url ?url } . ")
 			.arg(MediaVocabulary().typeVideo().toString());
 
     queryString += m_seasonCondition;

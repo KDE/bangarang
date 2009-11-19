@@ -74,7 +74,10 @@ void SemanticsListEngine::run()
 
                 //Build media list from results
                 while( it.next() ) {
-                    MediaItem mediaItem = Utilities::mediaItemFromUrl(it.binding("r").uri());
+                    QUrl url = it.binding("url").uri().isEmpty() ? 
+                                    it.binding("r").uri() :
+                                    it.binding("url").uri();
+                    MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Played %1 times").arg(it.binding("playcount").literal().toInt());
                     mediaList.append(mediaItem);
                 }
@@ -96,7 +99,10 @@ void SemanticsListEngine::run()
                 
                 //Build media list from results
                 while( it.next() ) {
-                    MediaItem mediaItem = Utilities::mediaItemFromUrl(it.binding("r").uri());
+                    QUrl url = it.binding("url").uri().isEmpty() ? 
+                                    it.binding("r").uri() :
+                                    it.binding("url").uri();
+                    MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     QString lastPlayed = it.binding("lastplayed").literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap") ;
                     mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Last Played: %1").arg(lastPlayed);
                     mediaList.append(mediaItem);
@@ -120,7 +126,10 @@ void SemanticsListEngine::run()
                 
                 //Build media list from results
                 while( it.next() ) {
-                    MediaItem mediaItem = Utilities::mediaItemFromUrl(it.binding("r").uri());
+                    QUrl url = it.binding("url").uri().isEmpty() ? 
+                                    it.binding("r").uri() :
+                                    it.binding("url").uri();
+                    MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = "Highest Rated";
@@ -153,12 +162,15 @@ m_selectLastPlayed(false)
 
 void SemanticsQuery::selectAudioResource() {
     m_selectAudioResource = true;
+    //NOTE: nie:url is not in any released nie ontology that I can find.
+    //      In future KDE will use nfo:fileUrl so this will need to be changed.
     m_audioResourceCondition = addOptional(false,
                                     QString(" { ?r rdf:type <%1> } "
                                             " UNION  "
                                             " { ?r rdf:type <%2> } "
                                             " UNION "
-                                            " { ?r rdf:type <%3> } ")
+                                            " { ?r rdf:type <%3> } "
+                                            " OPTIONAL { ?r nie:url ?url } . ")
                                     .arg(MediaVocabulary().typeAudio().toString())
                                     .arg(MediaVocabulary().typeAudioMusic().toString())
                                     .arg(MediaVocabulary().typeAudioStream().toString()));
@@ -166,9 +178,12 @@ void SemanticsQuery::selectAudioResource() {
 
 void SemanticsQuery::selectVideoResource() {
     m_selectVideoResource = true;
+    //NOTE: nie:url is not in any released nie ontology that I can find.
+    //      In future KDE will use nfo:fileUrl so this will need to be changed.
     m_videoResourceCondition = QString("?r rdf:type <%1> . "
                                     " OPTIONAL { ?r <%2> %3 } "
-                                    " OPTIONAL { ?r <%4> %5 } ")
+                                    " OPTIONAL { ?r <%4> %5 } "
+                                    " OPTIONAL { ?r nie:url ?url } . ")
                                     .arg(MediaVocabulary().typeVideo().toString())
                                     .arg(MediaVocabulary().videoIsMovie().toString())
                                     .arg(Soprano::Node::literalToN3(true))
@@ -228,7 +243,8 @@ QString SemanticsQuery::getPrefix() {
     return QString("PREFIX xesam: <%1> "
     "PREFIX rdf: <%2> "
     "PREFIX nmm: <%3> "
-    "PREFIX xls: <%4> ")
+    "PREFIX xls: <%4> "
+    "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> ")
     .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
     .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
     .arg("http://www.semanticdesktop.org/ontologies/nmm#")
@@ -242,7 +258,7 @@ Soprano::QueryResultIterator SemanticsQuery::executeSelect(Soprano::Model* model
     if (m_distinct)
         queryString += "DISTINCT ";
     if (m_selectAudioResource || m_selectVideoResource)
-        queryString += "?r ";
+        queryString += "?r ?url ";
     if (m_selectRating)
         queryString += "?rating ";
     if (m_selectPlayCount)
