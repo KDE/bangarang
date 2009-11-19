@@ -40,11 +40,19 @@ class NepomukListEngine : public ListEngine
         NepomukListEngine(ListEngineFactory *parent);
         virtual ~NepomukListEngine();
 
-        virtual void run() = 0;
+        virtual void run();
+        
+        virtual void removeSourceInfo(QList<MediaItem> mediaList);
 
     protected:
         MediaIndexer* m_mediaIndexer;
         Soprano::Model * m_mainModel;
         bool m_nepomukInited;
+        bool m_removeSourceInfo;
+        QList<MediaItem> m_mediaItemsInfoToRemove;
+    
+    private Q_SLOTS:
+        void disconnectIndexer();
+               
 };
 #endif // NEPOMUKLISTENGINE_H

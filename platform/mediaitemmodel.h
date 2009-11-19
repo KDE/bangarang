@@ -111,6 +111,7 @@ class MediaItemModel : public QStandardItemModel
         void removeMediaItemAt(int row, bool emitMediaListChanged = false);
         void replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged = false);
         void setListEngineFactory(ListEngineFactory * listEngineFactory);
+        void removeSourceInfo(QList<MediaItem> mediaList);
 
         Qt::DropActions supportedDropActions() const;
         Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -153,6 +154,7 @@ class MediaItemModel : public QStandardItemModel
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
         void reload();
         void updateMediaItems(QList<MediaItem> mediaList);
+        void removeMediaItem(QString url);
 };
 
 #endif // MEDIAITEMMODEL_H

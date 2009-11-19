@@ -82,6 +82,7 @@ public:
     void setAboutData(KAboutData *aboutData);
     Playlist * playlist();
     Phonon::AudioOutput * audioOutput();
+    InfoManager *infoManager();
     
     
 private:
@@ -169,6 +170,7 @@ private slots:
     void deviceRemoved(const QString &udi);
     void showLoading();
     void on_showMenu_clicked();
+    void on_showMediaViewMenu_clicked();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

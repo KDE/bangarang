@@ -54,6 +54,7 @@ class InfoManager : public QObject
         void saveInfoView();
         void showInfoView();
         void editInfoView();
+        void removeSelectedItemsInfo();
         
     private:
         MainWindow *m_parent; 

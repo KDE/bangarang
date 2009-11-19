@@ -17,6 +17,7 @@
 */
 
 #include "nepomuklistengine.h"
+#include <KDebug>
 
 NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -28,6 +29,7 @@ NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(pa
     } else {
         m_nepomukInited = false; //no resource manager
     }
+    m_removeSourceInfo = false;
 
 }
 
@@ -38,3 +40,25 @@ NepomukListEngine::~NepomukListEngine()
     }
 }
 
+void NepomukListEngine::run()
+{
+    if (m_removeSourceInfo) {
+        connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItem(QString)));
+        connect(m_mediaIndexer, SIGNAL(indexingComplete()), this, SLOT(disconnectIndexer()));
+        m_mediaIndexer->removeInfo(m_mediaItemsInfoToRemove);
+    }
+}
+
+void NepomukListEngine::removeSourceInfo(QList<MediaItem> mediaList)
+{
+    if (m_nepomukInited) {
+        m_mediaItemsInfoToRemove = mediaList;
+        m_removeSourceInfo = true;
+        NepomukListEngine::run();
+    }
+}
+
+void NepomukListEngine::disconnectIndexer()
+{
+    disconnect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString url)), model(), SLOT(removeMediaItem(String url)));
+}

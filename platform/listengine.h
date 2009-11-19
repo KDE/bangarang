@@ -46,6 +46,10 @@ class ListEngine : public QThread
             Q_UNUSED(engineFilter);
         }
         virtual void activateAction(){}
+        virtual void removeSourceInfo(QList<MediaItem> mediaList)
+        {
+            Q_UNUSED(mediaList);
+        }
 
     protected:
         MediaListProperties m_mediaListProperties;
