@@ -42,7 +42,10 @@ AudioStreamListEngine::~AudioStreamListEngine()
 
 MediaItem AudioStreamListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     MediaItem mediaItem;
-    mediaItem.url = it.binding("r").uri().toString();
+    QUrl url = it.binding("url").uri().isEmpty() ? 
+                    it.binding("r").uri() :
+                    it.binding("url").uri();
+    mediaItem.url = url.toString();
     mediaItem.title = it.binding("title").literal().toString();
     mediaItem.fields["title"] = it.binding("title").literal().toString();
     if (mediaItem.title.isEmpty()) {
@@ -244,7 +247,8 @@ QString AudioStreamQuery::getPrefix() {
     return QString("PREFIX xesam: <%1> "
     "PREFIX rdf: <%2> "
     "PREFIX nmm: <%3> "
-    "PREFIX xls: <%4> ")
+    "PREFIX xls: <%4> "
+    "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> ")
     .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
     .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
     .arg("http://www.semanticdesktop.org/ontologies/nmm#")
@@ -258,7 +262,7 @@ Soprano::QueryResultIterator AudioStreamQuery::executeSelect(Soprano::Model* mod
     if (m_distinct)
         queryString += "DISTINCT ";
     if (m_selectResource)
-        queryString += "?r ";
+        queryString += "?r ?url ";
     if (m_selectTitle)
         queryString += "?title ";
     if (m_selectGenre)
@@ -270,7 +274,9 @@ Soprano::QueryResultIterator AudioStreamQuery::executeSelect(Soprano::Model* mod
     if (m_selectArtwork)
         queryString += "?artwork ";
     
-    queryString += QString("WHERE { ?r rdf:type <%1> . ")
+    //NOTE: nie:url is not in any released nie ontology that I can find.
+    //      In future KDE will use nfo:fileUrl so this will need to be changed.
+    queryString += QString("WHERE { ?r rdf:type <%1> . OPTIONAL { ?r nie:url ?url } . ")
     .arg(MediaVocabulary().typeAudioStream().toString());
     
     queryString += m_titleCondition;
