@@ -37,7 +37,6 @@ class ListEngine : public QThread
         void setSubRequestSignature(const QString& subRequestSignature);
         const QString& requestSignature() const;
         const QString& subRequestSignature() const;
-        void checkMediaItemsExist(QList<MediaItem> mediaList);
 
         void setModel(MediaItemModel * mediaItemModel);
         MediaItemModel * model();
@@ -52,7 +51,6 @@ class ListEngine : public QThread
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
-        bool m_checkMediaItemsExist;
 
     private:
         MediaItemModel * m_mediaItemModel;
