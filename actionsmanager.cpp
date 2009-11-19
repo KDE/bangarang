@@ -22,6 +22,7 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
+#include "infomanager.h"
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -108,6 +109,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_cancelFullScreenHideControls->setShortcut(Qt::Key_Escape);
     connect(m_cancelFullScreenHideControls, SIGNAL(triggered()), this, SLOT(cancelFSHC()));
     m_parent->addAction(m_cancelFullScreenHideControls);
+
+    //Remove Info for Selected MediaItems
+    m_removeSelectedItemsInfo = new QAction(KIcon("edit-delete-shred"), tr("Remove selected info"), this);
+    connect(m_removeSelectedItemsInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
+    m_parent->addAction(m_removeSelectedItemsInfo);
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
@@ -185,6 +191,12 @@ QAction * ActionsManager::editShortcuts()
 {
     return m_editShortcuts;
 }
+
+QAction * ActionsManager::removeSelectedItemsInfo()
+{
+    return m_removeSelectedItemsInfo;
+}
+
 //------------------
 //-- Action SLOTS --
 //------------------

@@ -51,6 +51,10 @@ void MediaView::contextMenuEvent(QContextMenuEvent * event)
             menu.addSeparator();
             menu.addAction(m_mainWindow->actionsManager()->playSelected());
             menu.addAction(m_mainWindow->actionsManager()->playAll());
+            menu.addSeparator();
+            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
+                menu.addAction(m_mainWindow->actionsManager()->removeSelectedItemsInfo());
+            }
             menu.exec(event->globalPos());
         }
     }

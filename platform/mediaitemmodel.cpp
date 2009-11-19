@@ -283,6 +283,18 @@ void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
     }
 }
 
+void MediaItemModel::removeMediaItem(QString url)
+{
+    int row = rowOfUrl(url);
+    if (row != -1) {
+        disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+        m_urlList.removeAt(row);
+        m_mediaList.removeAt(row);
+        removeMediaItemAt(row, true);
+        connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    }
+}
+
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     removeRows(0, rowCount());
@@ -531,4 +543,13 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     m_emitChangedAfterDrop = true;
     
     return true;
+}
+
+void MediaItemModel::removeSourceInfo(QList<MediaItem> mediaList)
+{
+    //Assumes that items in mediaList are items currently in model
+    if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+        listEngine->removeSourceInfo(mediaList);
+    }
 }

@@ -550,6 +550,31 @@ void MainWindow::on_showMenu_clicked()
     m_menu->popup(menuLocation);
 }
 
+void MainWindow::on_showMediaViewMenu_clicked()
+{
+    QMenu menu(this);
+    if (ui->mediaView->selectionModel()->selectedIndexes().count() != 0) {
+        QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(0);
+        QString type = index.data(MediaItem::TypeRole).toString();
+        if ((type != "Action") && (type != "Message")) {
+            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
+                menu.addAction(m_actionsManager->addSelectedToPlaylist());
+                menu.addAction(m_actionsManager->removeSelectedFromPlaylist());
+            }
+            menu.addSeparator();
+            menu.addAction(m_actionsManager->playSelected());
+            menu.addAction(m_actionsManager->playAll());
+            menu.addSeparator();
+            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
+                menu.addAction(m_actionsManager->removeSelectedItemsInfo());
+            }
+            QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
+            menu.exec(menuLocation);
+        }
+    }
+
+}
+
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
@@ -1080,4 +1105,9 @@ Playlist * MainWindow::playlist()
 Phonon::AudioOutput * MainWindow::audioOutput()
 {
     return m_audioOutput;
+}
+
+InfoManager * MainWindow::infoManager()
+{
+    return m_infoManager;
 }

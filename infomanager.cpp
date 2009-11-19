@@ -62,6 +62,23 @@ InfoManager::~InfoManager()
 {
 }
 
+void InfoManager::removeSelectedItemsInfo()
+{
+    QList<MediaItem> mediaList;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    for (int i = 0 ; i < selectedRows.count() ; ++i) {
+        m_rows << selectedRows.at(i).row();
+        MediaItem mediaItem = m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row());
+        if (mediaItem.type == "Audio" || mediaItem.type == "Video" || mediaItem.type == "Image") {
+            mediaList.append(mediaItem);
+        }
+    }
+    if (mediaList.count() > 0) {
+        m_parent->m_mediaItemModel->removeSourceInfo(mediaList);
+    }
+    
+}
+    
 void InfoManager::mediaViewHolderChanged(int index)
 {
     if (index == 0) {
