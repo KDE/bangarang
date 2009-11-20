@@ -71,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->contextStack->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->showInfo->setVisible(false);
+    ui->infoSep1->setVisible(false);
+    ui->infoSep2->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
     ui->configureAudioList->setVisible(false);
@@ -276,6 +278,8 @@ void MainWindow::on_Filter_returnPressed()
         ui->mediaViewHolder->setCurrentIndex(0);
         ui->saveInfo->setVisible(false);
         ui->showInfo->setVisible(false);
+        ui->infoSep1->setVisible(false);
+        ui->infoSep2->setVisible(false);
     }
 }
 
@@ -398,10 +402,15 @@ void MainWindow::on_previous_clicked()
             ui->playSelected->setVisible(true);
             ui->playAll->setVisible(false);
             ui->showInfo->setVisible(true);
+            ui->infoSep1->setVisible(true);
+            ui->infoSep2->setVisible(true);
+            
         } else {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
             ui->showInfo->setVisible(false);
+            ui->infoSep1->setVisible(false);
+            ui->infoSep2->setVisible(false);
         }
         if (m_mediaListPropertiesHistory.count() > 0) {
             ui->previous->setVisible(true);
@@ -473,6 +482,8 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
             ui->showInfo->setVisible(false);
+            ui->infoSep1->setVisible(false);
+            ui->infoSep2->setVisible(false);
         }
     }
 }
@@ -552,27 +563,9 @@ void MainWindow::on_showMenu_clicked()
 
 void MainWindow::on_showMediaViewMenu_clicked()
 {
-    QMenu menu(this);
-    if (ui->mediaView->selectionModel()->selectedIndexes().count() != 0) {
-        QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(0);
-        QString type = index.data(MediaItem::TypeRole).toString();
-        if ((type != "Action") && (type != "Message")) {
-            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
-                menu.addAction(m_actionsManager->addSelectedToPlaylist());
-                menu.addAction(m_actionsManager->removeSelectedFromPlaylist());
-            }
-            menu.addSeparator();
-            menu.addAction(m_actionsManager->playSelected());
-            menu.addAction(m_actionsManager->playAll());
-            menu.addSeparator();
-            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
-                menu.addAction(m_actionsManager->removeSelectedItemsInfo());
-            }
-            QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
-            menu.exec(menuLocation);
-        }
-    }
-
+    QMenu * menu = m_actionsManager->mediaViewMenu(true);
+    QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
+    menu->exec(menuLocation);
 }
 
 /*----------------------------------------
@@ -697,6 +690,8 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             if (!m_mediaItemModel->mediaItemAt(0).url.startsWith("DVDTRACK") && !m_mediaItemModel->mediaItemAt(0).url.startsWith("CDTRACK")) {
                 ui->showInfo->setVisible(true);
+                ui->infoSep1->setVisible(true);
+                ui->infoSep2->setVisible(true);
             }
         }
     } else {
@@ -705,6 +700,8 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
             ui->playAll->setVisible(true);
         }
         ui->showInfo->setVisible(false);
+        ui->infoSep1->setVisible(false);
+        ui->infoSep2->setVisible(false);
     }
     ui->saveInfo->setVisible(false);
     Q_UNUSED(selected);
@@ -728,6 +725,8 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
             ui->showInfo->setVisible(false);
+            ui->infoSep1->setVisible(false);
+            ui->infoSep2->setVisible(false);
         }
     }
     Q_UNUSED(deselected);
@@ -757,7 +756,9 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);
+            ui->showInfo->setVisible(false);            
+            ui->infoSep1->setVisible(false);
+            ui->infoSep2->setVisible(false);
         }
     }
     Q_UNUSED(deselected);
@@ -1095,6 +1096,11 @@ ActionsManager * MainWindow::actionsManager()
 void MainWindow::setAboutData(KAboutData *aboutData)
 {
     m_aboutData = aboutData;
+}
+
+KAboutData * MainWindow::aboutData()
+{
+    return m_aboutData;
 }
 
 Playlist * MainWindow::playlist()

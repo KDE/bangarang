@@ -40,23 +40,9 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
 {
     if (selectionModel()->selectedIndexes().count() != 0) {
-        QModelIndex index = selectionModel()->selectedIndexes().at(0);
-        QString type = index.data(MediaItem::TypeRole).toString();
-        if ((type != "Action") && (type != "Message")) {
-            QMenu menu(this);
-            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
-                menu.addAction(m_mainWindow->actionsManager()->addSelectedToPlaylist());
-                menu.addAction(m_mainWindow->actionsManager()->removeSelectedFromPlaylist());
-            }
-            menu.addSeparator();
-            menu.addAction(m_mainWindow->actionsManager()->playSelected());
-            menu.addAction(m_mainWindow->actionsManager()->playAll());
-            menu.addSeparator();
-            if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
-                menu.addAction(m_mainWindow->actionsManager()->removeSelectedItemsInfo());
-            }
-            menu.exec(event->globalPos());
-        }
+        QMenu * menu = m_mainWindow->actionsManager()->mediaViewMenu();
+        menu->exec(event->globalPos());
     }
+    
 }
 
