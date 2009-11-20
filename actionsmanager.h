@@ -52,6 +52,8 @@ class ActionsManager : public QObject
         QAction *mute();
         QAction *removeSelectedItemsInfo();
         
+        QMenu * mediaViewMenu(bool showAbout = false);
+        
     public slots:
         
     private:

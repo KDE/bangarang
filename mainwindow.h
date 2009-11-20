@@ -80,6 +80,7 @@ public:
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     ActionsManager * actionsManager();
     void setAboutData(KAboutData *aboutData);
+    KAboutData * aboutData();
     Playlist * playlist();
     Phonon::AudioOutput * audioOutput();
     InfoManager *infoManager();
