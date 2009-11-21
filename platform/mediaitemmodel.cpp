@@ -200,6 +200,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
                 listEngine->start();
                 m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
                 m_lrisLoading.append(m_mediaListProperties.lri);
+                kDebug()<< "started load for " << m_mediaListProperties.lri;
             }
         }
     }
@@ -275,7 +276,7 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
                 listEngine->start();
             } else {
                 if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
-                    if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
+                    if (m_lrisLoading.indexOf(mediaListProperties.lri) == -1) {
                         // Since this lri is not currently being loaded by any list engine
                         // go ahead and start a new load
                         ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
@@ -285,6 +286,9 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
                         listEngine->start();
                         m_lriStartTimes.insert(mediaListProperties.lri, QTime::currentTime());
                         m_lrisLoading.append(m_mediaListProperties.lri);
+                        kDebug()<< "started load for " << mediaListProperties.lri;
+                    } else {
+                        kDebug()<< "waiting for " << mediaListProperties.lri;
                     }
                 }
             }
@@ -294,14 +298,16 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
 
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
 {
+    //Remove lri from loading list
+    int lriIndex = m_lrisLoading.indexOf(mediaListProperties.lri);
+    if (lriIndex != -1) {
+        m_lrisLoading.removeAt(lriIndex);
+    }
+    
     //Check request signature of results and ignore results with a different signature
 //    if (requestSignature == m_requestSignature) {
-    if (mediaListProperties.lri == m_mediaListProperties.lri) {
-        //Remove lri from loading list
-        int lriIndex = m_lrisLoading.indexOf(mediaListProperties.lri);
-        if (lriIndex != -1) {
-            m_lrisLoading.removeAt(lriIndex);
-        }
+   kDebug() << "results returned for " << mediaListProperties.lri;
+   if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         
         if (m_subRequestSignatures.count() == 0) {
             setLoadingState(false);
