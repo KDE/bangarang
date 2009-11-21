@@ -276,10 +276,15 @@ void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
-        int row = rowOfUrl(mediaItem.url);
-        if (row != -1) {
-            replaceMediaItemAt(row, mediaItem);
-        }
+        updateMediaItem(mediaItem);
+    }
+}
+
+void MediaItemModel::updateMediaItem(MediaItem mediaItem)
+{
+    int row = rowOfUrl(mediaItem.url);
+    if (row != -1) {
+        replaceMediaItemAt(row, mediaItem);
     }
 }
 
@@ -551,5 +556,14 @@ void MediaItemModel::removeSourceInfo(QList<MediaItem> mediaList)
     if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
         listEngine->removeSourceInfo(mediaList);
+    }
+}
+
+void MediaItemModel::updateSourceInfo(QList<MediaItem> mediaList)
+{
+    //Assumes that items in mediaList are items currently in model
+    if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+        listEngine->updateSourceInfo(mediaList);
     }
 }

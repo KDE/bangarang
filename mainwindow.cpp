@@ -60,6 +60,8 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
+    qRegisterMetaType<MediaItem>("MediaItem");
+    
     ui->setupUi(this);
     
     //Setup interface icons

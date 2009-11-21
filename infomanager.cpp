@@ -179,14 +179,7 @@ void InfoManager::saveInfoView()
     
     //Save info data to nepomuk store
     saveInfoToMediaModel();
-    m_mediaIndexer->indexMediaItems(m_infoMediaItemsModel->mediaList());
-    connect(m_mediaIndexer, SIGNAL(indexingComplete()), m_parent->m_mediaItemModel, SLOT(reload()));
-
-    //Save metadata to files
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
-    if ((m_infoMediaItemsModel->mediaItemAt(0).type == "Audio") && (typeComboBox->currentIndex() == 0)) {
-        saveMusicInfoToFiles();
-    }
+    m_parent->m_mediaItemModel->updateSourceInfo(m_infoMediaItemsModel->mediaList());
      
     //show non-editable fields
     m_editToggle = false;
@@ -451,71 +444,6 @@ QStringList InfoManager::valueList(QString field)
         }
     }
     return value;   
-}
-
-void InfoManager::saveMusicInfoToFiles()
-{
-    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
-    if ((mediaList.at(0).type == "Audio") && (typeComboBox->currentIndex() == 0)) {
-        for (int i = 0; i < mediaList.count(); i++) {
-            if (Utilities::isMusic(mediaList.at(i).url)) {
-                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toUtf8());
-                
-                KLineEdit * titleWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(0), 1));
-                QString title = titleWidget->text();
-                if (!title.isEmpty()) {
-                    TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                    file.tag()->setTitle(tTitle);
-                }
-                
-                ArtworkWidget * artworkWidget = static_cast<ArtworkWidget*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
-                QUrl url = artworkWidget->url();
-                const QPixmap *pixmap = artworkWidget->artwork();
-                if (!url.isEmpty() && !pixmap->isNull()) {
-                    //FIXME: Can't understand why this doesn't work.
-                    Utilities::saveArtworkToTag(mediaList.at(i).url, pixmap);
-                    //(Utilities::saveArtworkToTag(mediaList.at(i).url, url.toString()));
-                }
-                
-                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
-                QString artist = artistWidget->currentText();
-                if (!artist.isEmpty()) {
-                    TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                    file.tag()->setArtist(tArtist);
-                }
-                
-                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
-                QString album = albumWidget->currentText();
-                if (!album.isEmpty()) {
-                    TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                    file.tag()->setAlbum(tAlbum);
-                }
-                
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
-                int year = yearWidget->value();
-                if (year != 0) {
-                    file.tag()->setYear(year);
-                }
-                
-                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
-                int trackNumber = trackNumberWidget->value();
-                if (trackNumber != 0) {
-                    file.tag()->setTrack(trackNumber);
-                }
-                
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
-                QString genre = genreWidget->currentText();
-                if (!genre.isEmpty()) {
-                    TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                    file.tag()->setGenre(tGenre);
-                }
-                
-                file.save();
-            }
-        }
-    }
-    
 }
 
 void InfoManager::saveInfoToMediaModel()

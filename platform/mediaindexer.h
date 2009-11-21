@@ -54,6 +54,7 @@ class MediaIndexerJob: public KJob
     Q_SIGNALS:
         void jobComplete();
         void urlInfoRemoved(QString url);
+        void sourceInfoUpdated(MediaItem mediaItem);
 };
 
 class MediaIndexer : public QThread
@@ -83,6 +84,7 @@ class MediaIndexer : public QThread
     Q_SIGNALS:
         void indexingComplete();
         void urlInfoRemoved(QString url);
+        void sourceInfoUpdated(MediaItem mediaItem);
         
 };
 #endif // MEDIAINDEXER_H
