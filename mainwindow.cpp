@@ -230,13 +230,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         if (m_nepomukInited) {
             //Preload queries that are likely to be long so that, if necessary, they can be cached early
             //(prehaps this could be configurable in the future)
-            MediaListProperties mediaListProperties;
+            //FIXME:This is disabled for now since it somehow blocks the 
+            // playlist Phonon::MediaObject::setCurrentSource() method
+            
+            /*MediaListProperties mediaListProperties;
             mediaListProperties.lri = "music://songs";
             m_mediaItemModel->setMediaListProperties(mediaListProperties);
             m_mediaItemModel->load();
             mediaListProperties.lri = "video://movies";
             m_mediaItemModel->setMediaListProperties(mediaListProperties);
-            m_mediaItemModel->load();
+            m_mediaItemModel->load();*/
         } else {
             KMessageBox::information(this, tr("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), tr("Bangarang"), tr("Don't show this message again"));
         }

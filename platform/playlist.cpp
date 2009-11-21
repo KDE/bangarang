@@ -190,7 +190,6 @@ void Playlist::playItemAt(int row, int model)
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
         m_mediaObject->play();
-        kDebug() << "starting playback";
         m_playlistFinished = false;
         
         //Update Queue Model
@@ -280,7 +279,6 @@ void Playlist::playMediaList(QList<MediaItem> mediaList)
     //complete (playlistChanged) before starting playback
     // - hence the use of playWhenPlaylistChanges.
     playWhenPlaylistChanges = true;
-    kDebug() << "Loading playlist";
     m_currentPlaylist->loadSources(mediaList); 
     
 }
@@ -520,7 +518,6 @@ void Playlist::playlistChanged()
 {
     if (playWhenPlaylistChanges && m_currentPlaylist->rowCount() > 0) {
         //Start playing with clean playlist, queue and history
-        kDebug() << "playlist loaded";
         start();
         playWhenPlaylistChanges = false;
     } else if (m_currentPlaylist->rowCount() > 0){
