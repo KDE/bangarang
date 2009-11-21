@@ -103,21 +103,35 @@ void Playlist::playItemAt(int row, int model)
         nextMediaItem.playlistIndex = row;
         nextMediaItem.nowPlaying = true;
         
+        bool isNowPlaying = false;
+        if (m_nowPlaying->rowCount() > 0) {
+            if (nextMediaItem.url == m_nowPlaying->mediaItemAt(0).url) {
+                isNowPlaying = true;
+            }
+        }
+        
         //Play media Item
         m_mediaObject->clearQueue();
         if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            if (!isNowPlaying) {
+                m_nowPlaying->loadMediaItem(nextMediaItem, true);
+            }
             m_mediaObject->setCurrentSource(Phonon::Cd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
             m_mediaObject->play();
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
         } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            if (!isNowPlaying) {
+                m_nowPlaying->loadMediaItem(nextMediaItem, true);
+            }
             m_mediaObject->setCurrentSource(Phonon::Dvd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
             m_mediaObject->play();
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
         } else {
+            if (!isNowPlaying) {
+                m_nowPlaying->loadMediaItem(nextMediaItem, true);
+            }
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
             m_mediaObject->play();
             // - Get album artwork
@@ -125,8 +139,8 @@ void Playlist::playItemAt(int row, int model)
             QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
             if (!artwork.isNull()) {
                 itemWithArtwork.artwork = KIcon(artwork);
+                m_nowPlaying->replaceMediaItemAt(0, itemWithArtwork, false);
             }
-            m_nowPlaying->loadMediaItem(itemWithArtwork, true);
         }
         m_playlistFinished = false;
         
