@@ -46,6 +46,8 @@ SET(BangarangSources
     platform/listenginefactory.cpp 
     platform/mediaindexer.cpp 
     platform/mediavocabulary.cpp 
+    platform/medialistcache.cpp
+    platform/cachelistengine.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

@@ -27,6 +27,7 @@
 class MusicListEngine;
 class FileListEngine;
 class ListEngineFactory;
+class MediaListCache;
 
 struct MediaItem {
     enum MediaItemRole { UrlRole = Qt::UserRole + 1,
@@ -113,6 +114,10 @@ class MediaItemModel : public QStandardItemModel
         void setListEngineFactory(ListEngineFactory * listEngineFactory);
         void removeSourceInfo(QList<MediaItem> mediaList);
         void updateSourceInfo(QList<MediaItem> mediaList);
+        void setMediaListCache(MediaListCache * mediaListCache);
+        MediaListCache * mediaListCache();
+        void setCacheThreshold(int msec);
+        int cacheThreshold();
 
         Qt::DropActions supportedDropActions() const;
         Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -139,6 +144,11 @@ class MediaItemModel : public QStandardItemModel
         int m_loadingProgress;
         bool m_loadingState;
         void setLoadingState(bool state);
+        int m_cacheThreshold;
+        MediaListCache * m_mediaListCache;
+        bool m_forceRefreshFromSource;
+        QHash<QString, QTime> m_lriStartTimes;
+        QList<QString> m_lrisLoading;
         
     Q_SIGNALS:
         void propertiesChanged(); 

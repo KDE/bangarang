@@ -20,6 +20,7 @@
 #include "ui_mainwindow.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/medialistcache.h"
 #include "platform/playlist.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
@@ -141,10 +142,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoListsModel->load();
     
     //Set up media list view
-    MediaListProperties mediaListProperties;
-    mediaListProperties.lri = "music://artists";
     m_mediaItemModel = new MediaItemModel(this);
-    m_mediaItemModel->setMediaListProperties(mediaListProperties);
+    m_sharedMediaListCache = m_mediaItemModel->mediaListCache();
     m_itemDelegate = new MediaItemDelegate(this);
     ui->mediaView->setModel(m_mediaItemModel);
     ui->mediaView->setItemDelegate(m_itemDelegate);
@@ -154,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_itemDelegate, SIGNAL(actionActivated(QModelIndex)), m_mediaItemModel, SLOT(actionActivated(QModelIndex)));
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_mediaItemModel, SIGNAL(loading()), this, SLOT(hidePlayButtons()));
-    connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListTitle()));
+    connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     ui->mediaView->setMainWindow(this);
     
@@ -164,9 +163,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
-    MediaListProperties currentPlaylistItemProperties;
-    currentPlaylistItemProperties.name = QString("Current Playlist");
-    m_currentPlaylist->setMediaListProperties(currentPlaylistItemProperties);
+    m_currentPlaylist->setMediaListCache(m_sharedMediaListCache);
     m_playlistItemDelegate = new MediaItemDelegate(this);
     ui->playlistView->setModel(m_currentPlaylist);
     ui->playlistView->setItemDelegate(m_playlistItemDelegate);
@@ -195,7 +192,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up defaults
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
-    ui->mediaLists->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1000);
@@ -231,10 +227,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             m_playlist->playMediaList(mediaList);
         }
     } else {
-        if (!m_nepomukInited) {
+        if (m_nepomukInited) {
+            //Preload queries that are likely to be long so that, if necessary, they can be cached early
+            //(prehaps this could be configurable in the future)
+            MediaListProperties mediaListProperties;
+            mediaListProperties.lri = "music://songs";
+            m_mediaItemModel->setMediaListProperties(mediaListProperties);
+            m_mediaItemModel->load();
+            mediaListProperties.lri = "video://movies";
+            m_mediaItemModel->setMediaListProperties(mediaListProperties);
+            m_mediaItemModel->load();
+        } else {
             KMessageBox::information(this, tr("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), tr("Bangarang"), tr("Don't show this message again"));
         }
     }
+    
+    
+    //Set default media list
+    ui->mediaLists->setCurrentIndex(0);
     
     //Install event filter for hiding widgets in Now Playing view
     ui->nowPlayingView->installEventFilter(this);
@@ -248,6 +258,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_mediaItemModel;
 }
 
 
@@ -717,7 +728,7 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
         int selectedRow = selected.indexes().at(0).row();
         currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
         currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
-        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
+        if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
             m_mediaItemModel->load();
@@ -749,7 +760,7 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
         int selectedRow = selected.indexes().at(0).row();
         currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
         currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
-        if (m_mediaItemModel->mediaListProperties().name != currentProperties.name) {
+        if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
             m_mediaItemModel->load();
@@ -829,9 +840,10 @@ void MainWindow::hidePlayButtons()
     ui->playAll->setVisible(false);
 }
 
-void MainWindow::updateListTitle()
+void MainWindow::updateListHeader()
 {
     ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
+    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
 }
 
 

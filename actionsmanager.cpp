@@ -114,6 +114,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_removeSelectedItemsInfo = new QAction(KIcon("edit-delete-shred"), tr("Remove selected info"), this);
     connect(m_removeSelectedItemsInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
     m_parent->addAction(m_removeSelectedItemsInfo);
+
+    //Refresh Media View
+    m_refreshMediaView = new QAction(KIcon("view-refresh"), tr("Refresh"), this);
+    m_refreshMediaView->setShortcut(Qt::Key_F5);
+    connect(m_refreshMediaView, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
+    m_parent->addAction(m_refreshMediaView);
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
@@ -197,6 +203,11 @@ QAction * ActionsManager::removeSelectedItemsInfo()
     return m_removeSelectedItemsInfo;
 }
 
+QAction * ActionsManager::refreshMediaView()
+{
+    return m_refreshMediaView;
+}
+
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
 {
     KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);
@@ -233,6 +244,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
             menu->addAction(removeSelectedItemsInfo());
             menu->addSeparator();
         }
+        menu->addAction(refreshMediaView());
+        menu->addSeparator();
+        
     } 
     if (showAbout) menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     return menu;

@@ -19,6 +19,7 @@
 #include "mediaitemmodel.h"
 #include "listengine.h"
 #include "listenginefactory.h"
+#include "medialistcache.h"
 
 #include <QFontMetrics>
 #include <QDateTime>
@@ -34,10 +35,14 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_emitChangedAfterDrop = false;
     m_loadingState = false;
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    m_mediaListCache = new MediaListCache(parent);
+    m_cacheThreshold = 3000; //default to 3 second loading threshold for adding to cache
+    m_forceRefreshFromSource = false;
 }
 
 MediaItemModel::~MediaItemModel() 
 {
+    delete m_listEngineFactory;
 }
 
 /*QVariant MediaItemModel::headerData (int section, Qt::Orientation orientation, int role) const 
@@ -102,23 +107,45 @@ int MediaItemModel::rowOfUrl(QString url)
 
 void MediaItemModel::load()
 {
-    if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+    if (m_mediaListCache->isInCache(m_mediaListProperties.lri) && !m_forceRefreshFromSource) {
         setLoadingState(true);
-        
-        // Load data from engine
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+        // Load data from from the cache
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+        MediaListProperties cacheListProperties;
+        cacheListProperties.lri = QString("cache://dummyarg?%1").arg(m_mediaListProperties.lri);
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
-        listEngine->setMediaListProperties(m_mediaListProperties);
+        listEngine->setMediaListProperties(cacheListProperties);
         listEngine->start();
-    } else {
-        showNoResultsMessage();
+        kDebug() << "loading from cache for " << m_mediaListProperties.lri;
+    } else {    
+        if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+            setLoadingState(true);
+            if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
+                // Since this lri is not currently being loaded by any list engine
+                // go ahead and start a new load
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                m_requestSignature = m_listEngineFactory->generateRequestSignature();
+                listEngine->setRequestSignature(m_requestSignature);
+                listEngine->setMediaListProperties(m_mediaListProperties);
+                listEngine->start();
+                m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
+                m_lrisLoading.append(m_mediaListProperties.lri);
+                kDebug() << "started new load for " << m_mediaListProperties.lri;
+            } else {
+                kDebug() << "waiting for " << m_mediaListProperties.lri;
+            }
+        } else {
+            showNoResultsMessage();
+        }
+        m_forceRefreshFromSource = false;
     }
 }
 
 void MediaItemModel::reload()
 {
     clearMediaListData();
+    m_forceRefreshFromSource = true;
     load();
 }
 
@@ -146,16 +173,35 @@ void MediaItemModel::categoryActivated(QModelIndex index)
 {
     MediaListProperties mediaListProperties;
     mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
+    m_mediaListProperties = mediaListProperties;
     
-    if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
-        m_mediaListProperties = mediaListProperties;
+    if (m_mediaListCache->isInCache(m_mediaListProperties.lri)) {
         removeRows(0, rowCount());
         setLoadingState(true);
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+        // Load data from from the cache
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+        MediaListProperties cacheListProperties;
+        cacheListProperties.lri = QString("cache://dummyarg?%1").arg(m_mediaListProperties.lri);
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
-        listEngine->setMediaListProperties(m_mediaListProperties);
+        listEngine->setMediaListProperties(cacheListProperties);
         listEngine->start();
+    } else {    
+        if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+            removeRows(0, rowCount());
+            setLoadingState(true);
+            if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
+                // Since this lri is not currently being loaded by any list engine
+                // go ahead and start a new load
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                m_requestSignature = m_listEngineFactory->generateRequestSignature();
+                listEngine->setRequestSignature(m_requestSignature);
+                listEngine->setMediaListProperties(m_mediaListProperties);
+                listEngine->start();
+                m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
+                m_lrisLoading.append(m_mediaListProperties.lri);
+            }
+        }
     }
 }
 
@@ -197,7 +243,10 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
             //This must be complete for all categories before launching subrequests
             //to ensure full order of subrequests are available when results are returned
             onlySources = false;
-            if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+            MediaListProperties mediaListProperties;
+            mediaListProperties.lri = mediaList.at(i).url;
+            mediaListProperties.name = mediaList.at(i).title;
+            if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
                 QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
                 m_subRequestSignatures.append(subRequestSignature);
                 QList<MediaItem> emptyList;
@@ -215,12 +264,29 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
         for (int i = 0; i < mediaList.count(); ++i) {
             MediaListProperties mediaListProperties;
             mediaListProperties.lri = mediaList.at(i).url;
-            if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+            if (m_mediaListCache->isInCache(mediaListProperties.lri)) {
+                // Load data from from the cache
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+                MediaListProperties cacheListProperties;
+                cacheListProperties.lri = QString("cache://dummyarg?%1").arg(mediaListProperties.lri);
+                m_requestSignature = m_listEngineFactory->generateRequestSignature();
                 listEngine->setRequestSignature(m_requestSignature);
-                listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
-                listEngine->setFilterForSources(mediaListProperties.engineFilter());
+                listEngine->setMediaListProperties(cacheListProperties);
                 listEngine->start();
+            } else {
+                if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+                    if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
+                        // Since this lri is not currently being loaded by any list engine
+                        // go ahead and start a new load
+                        ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
+                        listEngine->setRequestSignature(m_requestSignature);
+                        listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
+                        listEngine->setFilterForSources(mediaListProperties.engineFilter());
+                        listEngine->start();
+                        m_lriStartTimes.insert(mediaListProperties.lri, QTime::currentTime());
+                        m_lrisLoading.append(m_mediaListProperties.lri);
+                    }
+                }
             }
         }
     }
@@ -229,12 +295,18 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
 {
     //Check request signature of results and ignore results with a different signature
-    if (requestSignature == m_requestSignature) {
+//    if (requestSignature == m_requestSignature) {
+    if (mediaListProperties.lri == m_mediaListProperties.lri) {
+        //Remove lri from loading list
+        int lriIndex = m_lrisLoading.indexOf(mediaListProperties.lri);
+        if (lriIndex != -1) {
+            m_lrisLoading.removeAt(lriIndex);
+        }
+        
         if (m_subRequestSignatures.count() == 0) {
             setLoadingState(false);
             loadMediaList(mediaList);
-            m_mediaListProperties.name = mediaListProperties.name;
-            m_mediaListProperties.summary = mediaListProperties.summary;
+            m_mediaListProperties = mediaListProperties;
             if (done) {
                 if (rowCount() == 0) {
                     showNoResultsMessage();
@@ -269,7 +341,14 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
         }
     }
     
-    Q_UNUSED(done);
+    //Cache results if they took long enough to return
+    if (m_lriStartTimes.contains(mediaListProperties.lri)) {
+        int elapsedMSecs = m_lriStartTimes.value(mediaListProperties.lri).msecsTo(QTime::currentTime());
+        if (elapsedMSecs > m_cacheThreshold) {
+            m_mediaListCache->addMediaList(mediaListProperties, mediaList);
+            m_lriStartTimes.remove(mediaListProperties.lri);
+        }
+    }
 }
 
 void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
@@ -567,3 +646,24 @@ void MediaItemModel::updateSourceInfo(QList<MediaItem> mediaList)
         listEngine->updateSourceInfo(mediaList);
     }
 }
+
+void MediaItemModel::setCacheThreshold(int msec)
+{
+    m_cacheThreshold = msec;
+}
+
+int MediaItemModel::cacheThreshold()
+{
+    return m_cacheThreshold;
+}
+
+void MediaItemModel::setMediaListCache(MediaListCache * mediaListCache)
+{
+    m_mediaListCache = mediaListCache;
+}
+
+MediaListCache * MediaItemModel::mediaListCache()
+{
+    return m_mediaListCache;
+}
+
