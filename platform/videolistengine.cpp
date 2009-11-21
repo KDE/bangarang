@@ -73,9 +73,8 @@ MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         mediaItem.fields["season"] = season;
         if (!mediaItem.subTitle.isEmpty()) {
             mediaItem.subTitle += " - ";
-        } else {
-            mediaItem.subTitle += QString("Season %1").arg(season);
         }
+        mediaItem.subTitle += QString("Season %1").arg(season);
     }
 
     int episode = it.binding("episode").literal().toInt();
@@ -254,6 +253,8 @@ void VideoListEngine::run()
             videoQuery.selectResource();
             videoQuery.selectTitle();
             videoQuery.isTVShow(true);
+            videoQuery.selectSeriesName(true);
+            videoQuery.selectSeason(true);
             if (!seriesName.isEmpty()) {
                 videoQuery.hasSeriesName(seriesName);
             } else {
@@ -591,7 +592,8 @@ void VideoQuery::isMovie(bool flag) {
 }
 
 void VideoQuery::hasSeason(int season) {
-	m_seasonCondition = QString("?r <%1> %2 . ")
+	m_seasonCondition = QString("?r <%1> %2 . "
+                                "?r <%1> ?season . ")
     		.arg(MediaVocabulary().videoSeriesSeason().toString())
     		.arg(Soprano::Node::literalToN3(season));
 }
@@ -604,13 +606,15 @@ void VideoQuery::hasNoSeason() {
 }
 
 void VideoQuery::hasSeriesName(QString seriesName) {
-	m_seriesNameCondition = QString("?r <%1> %2 . ")
+	m_seriesNameCondition = QString("?r <%1> %2 . "
+                                    "?r <%1> ?seriesName . ")
     		.arg(MediaVocabulary().videoSeriesName().toString())
     		.arg(Soprano::Node::literalToN3(seriesName));
 }
 
 void VideoQuery::hasGenre(QString genre) {
-    m_genreCondition = QString("?r <%1> %2 . ")
+    m_genreCondition = QString("?r <%1> %2 . "
+                               "?r <%1> ?genre . ")
     .arg(MediaVocabulary().genre().toString())
     .arg(Soprano::Node::literalToN3(genre));
 }
