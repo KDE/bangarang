@@ -51,6 +51,7 @@ class ActionsManager : public QObject
         QAction *playPrevious();
         QAction *mute();
         QAction *removeSelectedItemsInfo();
+        QAction *refreshMediaView();
         
         QMenu * mediaViewMenu(bool showAbout = false);
         
@@ -74,6 +75,7 @@ class ActionsManager : public QObject
         QAction *m_playPrevious;
         QAction *m_mute;
         QAction *m_removeSelectedItemsInfo;
+        QAction *m_refreshMediaView;
         KActionCollection *m_actionCollection;
         
     private slots:

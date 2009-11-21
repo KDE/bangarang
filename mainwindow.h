@@ -42,6 +42,7 @@
 class MediaItem;
 class MediaListProperties;
 class MediaItemModel;
+class MediaListCache;
 class Playlist;
 class MediaItemDelegate;
 class NowPlayingDelegate;
@@ -124,6 +125,7 @@ private:
     KHelpMenu *m_helpMenu;
     KMenu *m_menu;
     bool m_nepomukInited;
+    MediaListCache * m_sharedMediaListCache;
     
     QAction * playAllAction;
     QAction * playSelectedAction;
@@ -159,7 +161,7 @@ private slots:
     void nowPlayingChanged();
     void playlistFinished();
     void hidePlayButtons();
-    void updateListTitle();
+    void updateListHeader();
     void on_clearPlaylist_clicked();
     void on_playlistView_doubleClicked(const QModelIndex & index);
     void on_seekTime_clicked();

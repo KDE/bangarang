@@ -33,6 +33,7 @@ class SavedListsEngine;
 class MediaListsEngine;
 class AudioStreamListEngine;
 class SemanticsListEngine;
+class CacheListEngine;
 
 class ListEngineFactory : public QObject
 {
@@ -58,6 +59,7 @@ class ListEngineFactory : public QObject
         QList<MediaListsEngine *> m_mediaListsEngines;
         QList<AudioStreamListEngine *> m_audioStreamListEngines;
         QList<SemanticsListEngine *> m_semanticsListEngines;
+        QList<CacheListEngine *> m_cacheListEngines;
 };
 #endif // LISTENGINEFACTORY_H
         

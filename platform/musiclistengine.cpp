@@ -107,6 +107,7 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
 
 void MusicListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
 
     //Create media list based on engine argument and filter
     QList<MediaItem> mediaList;
