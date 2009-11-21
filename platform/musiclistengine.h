@@ -100,6 +100,7 @@ class MusicListEngine : public NepomukListEngine
         ~MusicListEngine();
         void run();
         void setFilterForSources(const QString& engineFilter);
+        void updateSourceInfo(QList<MediaItem> mediaList);
         
     private:
         MediaItem createMediaItem(Soprano::QueryResultIterator& it);

@@ -79,7 +79,8 @@ void MediaIndexerJob::index()
         for (int i = 0; i < mediaList.count(); ++i) {
             emit description(this, descriptionTitle, qMakePair(QString("Current Item"), QString("%1").arg(mediaList.at(i).title)));
             
-            indexMediaItem(mediaList.at(i));     
+            indexMediaItem(mediaList.at(i));
+            emit sourceInfoUpdated(mediaList.at(i));
             setPercent(100*i/mediaList.count());
         }
         emit description(this, QString("Bangarang: %1 items indexed").arg(mediaList.count()));
@@ -387,6 +388,7 @@ void MediaIndexer::run()
             if (m_mediaList.count() > 0) {
                 MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
                 connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
+                connect(indexerJob, SIGNAL(sourceInfoUpdated(MediaItem)), this, SIGNAL(sourceInfoUpdated(MediaItem)));
                 indexerJob->setMediaListToIndex(m_mediaList);
                 KUiServerJobTracker * jt = new KUiServerJobTracker(this);
                 jt->registerJob(indexerJob);

@@ -50,7 +50,11 @@ class ListEngine : public QThread
         {
             Q_UNUSED(mediaList);
         }
-
+        virtual void updateSourceInfo(QList<MediaItem> mediaList)
+        {
+            Q_UNUSED(mediaList);
+        }
+        
     protected:
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;

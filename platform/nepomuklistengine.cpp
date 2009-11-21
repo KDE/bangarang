@@ -46,6 +46,15 @@ void NepomukListEngine::run()
         connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItem(QString)));
         connect(m_mediaIndexer, SIGNAL(indexingComplete()), this, SLOT(disconnectIndexer()));
         m_mediaIndexer->removeInfo(m_mediaItemsInfoToRemove);
+        m_removeSourceInfo = false;
+        m_mediaItemsInfoToRemove.clear();
+    }
+    if (m_updateSourceInfo) {
+        connect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
+        connect(m_mediaIndexer, SIGNAL(indexingComplete()), this, SLOT(disconnectIndexer()));
+        m_mediaIndexer->indexMediaItems(m_mediaItemsInfoToUpdate);
+        m_updateSourceInfo = false;
+        m_mediaItemsInfoToUpdate.clear();
     }
 }
 
@@ -54,6 +63,15 @@ void NepomukListEngine::removeSourceInfo(QList<MediaItem> mediaList)
     if (m_nepomukInited) {
         m_mediaItemsInfoToRemove = mediaList;
         m_removeSourceInfo = true;
+        NepomukListEngine::run();
+    }
+}
+
+void NepomukListEngine::updateSourceInfo(QList<MediaItem> mediaList)
+{
+    if (m_nepomukInited) {
+        m_mediaItemsInfoToUpdate = mediaList;
+        m_updateSourceInfo = true;
         NepomukListEngine::run();
     }
 }

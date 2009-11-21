@@ -43,14 +43,17 @@ class NepomukListEngine : public ListEngine
         virtual void run();
         
         virtual void removeSourceInfo(QList<MediaItem> mediaList);
-
+        virtual void updateSourceInfo(QList<MediaItem> mediaList);
+        
     protected:
         MediaIndexer* m_mediaIndexer;
         Soprano::Model * m_mainModel;
         bool m_nepomukInited;
         bool m_removeSourceInfo;
+        bool m_updateSourceInfo;
         QList<MediaItem> m_mediaItemsInfoToRemove;
-    
+        QList<MediaItem> m_mediaItemsInfoToUpdate;
+        
     private Q_SLOTS:
         void disconnectIndexer();
                
