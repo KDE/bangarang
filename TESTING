@@ -1,0 +1,60 @@
+Test Cases
+----------
+NOTE: These test cases are restricted to implemented functions.
+Functions that are not yet implemented belong on the target feature list.
+Test cases for functions are added/updated as they are implemented/fixed.
+All test cases should be run prior to any release.
+
+1 Media Playback
+1.1 Playback control
+1.1.1 Play media
+1.1.2 Pause playback
+1.1.3 Stop playback
+1.1.4 Play-Next item in playlist
+1.1.5 Play-Previous item in playlist
+1.1.6 Seek to position
+1.1.7 Fullscreen
+1.1.8 Hide Controls
+
+2 Media Browsing
+2.1 Select and play single and multiple media items
+2.1.1 Song
+2.1.2 Audio Stream
+2.1.3 Audio Clip
+2.1.4 Movie
+2.1.5 TV Show
+2.1.6 Video Clip
+2.2 Select and play single and multiple categories
+2.2.1 Artist
+2.2.2 Album
+2.2.3 Genre
+2.2.4 Series
+2.2.5 Season
+2.3 Browse categories
+2.3.1 Artist
+2.3.2 Album
+2.3.3 Genre
+2.3.4 Series
+2.3.5 Season
+2.3 Browse highest rated
+2.4 Browse frequently played
+3.5 Browse recently played
+
+
+3 Playlist
+3.1 Add items
+3.2 Remove items
+3.3 Rearrange items
+3.4 Clear playlist
+3.5 Repeat mode
+3.6 Shuffle mode
+
+4 Saved media lists
+4.1 Save selected items
+4.2 Save view
+4.3 Save current playlist
+4.4 Remove saved list
+
+5 Media metadata/library
+5.1 Update media item data for each media type
+
