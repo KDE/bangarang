@@ -128,9 +128,9 @@ void MediaItemModel::load()
                 m_requestSignature = m_listEngineFactory->generateRequestSignature();
                 listEngine->setRequestSignature(m_requestSignature);
                 listEngine->setMediaListProperties(m_mediaListProperties);
-                listEngine->start();
                 m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
                 m_lrisLoading.append(m_mediaListProperties.lri);
+                listEngine->start();
                 kDebug() << "started new load for " << m_mediaListProperties.lri;
             } else {
                 kDebug() << "waiting for " << m_mediaListProperties.lri;
@@ -197,9 +197,9 @@ void MediaItemModel::categoryActivated(QModelIndex index)
                 m_requestSignature = m_listEngineFactory->generateRequestSignature();
                 listEngine->setRequestSignature(m_requestSignature);
                 listEngine->setMediaListProperties(m_mediaListProperties);
-                listEngine->start();
                 m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
                 m_lrisLoading.append(m_mediaListProperties.lri);
+                listEngine->start();
                 kDebug()<< "started load for " << m_mediaListProperties.lri;
             }
         }
@@ -283,9 +283,9 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
                         listEngine->setRequestSignature(m_requestSignature);
                         listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
                         listEngine->setFilterForSources(mediaListProperties.engineFilter());
-                        listEngine->start();
                         m_lriStartTimes.insert(mediaListProperties.lri, QTime::currentTime());
                         m_lrisLoading.append(m_mediaListProperties.lri);
+                        listEngine->start();
                         kDebug()<< "started load for " << mediaListProperties.lri;
                     } else {
                         kDebug()<< "waiting for " << mediaListProperties.lri;
