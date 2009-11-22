@@ -50,6 +50,7 @@ void NepomukListEngine::run()
         m_mediaItemsInfoToRemove.clear();
     }
     if (m_updateSourceInfo) {
+        kDebug() << "updating info start with " << m_mediaItemsInfoToUpdate.at(0).url;
         connect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
         connect(m_mediaIndexer, SIGNAL(indexingComplete()), this, SLOT(disconnectIndexer()));
         m_mediaIndexer->indexMediaItems(m_mediaItemsInfoToUpdate);

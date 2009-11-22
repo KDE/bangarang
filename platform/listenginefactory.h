@@ -34,6 +34,7 @@ class MediaListsEngine;
 class AudioStreamListEngine;
 class SemanticsListEngine;
 class CacheListEngine;
+class AudioClipsListEngine;
 
 class ListEngineFactory : public QObject
 {
@@ -60,6 +61,7 @@ class ListEngineFactory : public QObject
         QList<AudioStreamListEngine *> m_audioStreamListEngines;
         QList<SemanticsListEngine *> m_semanticsListEngines;
         QList<CacheListEngine *> m_cacheListEngines;
+        QList<AudioClipsListEngine *> m_audioClipsListEngines;
 };
 #endif // LISTENGINEFACTORY_H
         

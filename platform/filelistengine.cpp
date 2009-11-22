@@ -51,6 +51,7 @@ void FileListEngine::run()
 {
     MediaItem mediaItem;
     QList<MediaItem> mediaList;
+    kDebug() << m_mediaListProperties.engineFilter();
     if (m_mediaListProperties.engineFilter().isEmpty()) {        
         if (m_mediaListProperties.engineArg() == "audio") {
             mediaItem.artwork = KIcon("document-open");

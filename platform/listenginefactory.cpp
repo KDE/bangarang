@@ -28,12 +28,13 @@
 #include "audiostreamlistengine.h"
 #include "semanticslistengine.h"
 #include "cachelistengine.h"
+#include "audioclipslistengine.h"
 #include <KDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -96,6 +97,12 @@ ListEngineFactory::~ListEngineFactory()
         if (!m_cacheListEngines.at(i)->isFinished()) {
             //This could be dangerous but list engines can't be left running after main program termination
             m_cacheListEngines.at(i)->terminate();
+        }
+    }
+    for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
+        if (!m_audioClipsListEngines.at(i)->isFinished()) {
+            //This could be dangerous but list engines can't be left running after main program termination
+            m_audioClipsListEngines.at(i)->terminate();
         }
     }
 }
@@ -272,6 +279,23 @@ ListEngine * ListEngineFactory::availableListEngine(QString engine)
         }
         cacheListEngine->setModel(m_parent);
         return cacheListEngine;        
+    } else if (engine.toLower() == "audioclips://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        AudioClipsListEngine * audioClipsListEngine;
+        for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
+            if (!m_audioClipsListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                audioClipsListEngine = m_audioClipsListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            audioClipsListEngine = new AudioClipsListEngine(this);
+            m_audioClipsListEngines << audioClipsListEngine;
+        }
+        audioClipsListEngine->setModel(m_parent);
+        return audioClipsListEngine;        
     }
     return new ListEngine(this);
 }
