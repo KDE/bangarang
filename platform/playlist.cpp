@@ -46,6 +46,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_repeat = false;
     m_queueDepth = 10;
     m_playlistFinished = false;
+    m_loadingState = Playlist::LoadingComplete;
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -293,8 +294,9 @@ void Playlist::playMediaList(QList<MediaItem> mediaList)
     //complete (playlistChanged) before starting playback
     // - hence the use of playWhenPlaylistChanges.
     playWhenPlaylistChanges = true;
+    m_loadingState = Playlist::Loading;
+    emit loading();
     m_currentPlaylist->loadSources(mediaList); 
-    
 }
 
 //----------------------------------------
@@ -396,6 +398,11 @@ int Playlist::mode()
 void Playlist::setRepeat(bool repeat)
 {
     m_repeat = repeat;
+}
+
+int Playlist::loadingState()
+{
+    return m_loadingState;
 }
 
 
@@ -530,6 +537,7 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 //--------------------------------
 void Playlist::playlistChanged()
 {
+    m_loadingState = Playlist::LoadingComplete;
     if (playWhenPlaylistChanges && m_currentPlaylist->rowCount() > 0) {
         //Start playing with clean playlist, queue and history
         start();

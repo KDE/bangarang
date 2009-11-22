@@ -160,6 +160,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up playlist
     m_playlist = new Playlist(this, m_media);
     connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
+    connect(m_playlist, SIGNAL(loading()), this, SLOT(showLoading()));
     
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
@@ -643,7 +644,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
 
 void MainWindow::showLoading()
 {
-    if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState) {
+    if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState || m_playlist->loadingState() == Playlist::Loading) {
         m_loadingProgress += 1;
         if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
             m_loadingProgress = 0;
@@ -651,7 +652,20 @@ void MainWindow::showLoading()
         QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
         ui->seekTime->setIcon(KIcon(iconName));
+        if (m_playlist->loadingState() == Playlist::Loading) {
+            ui->seekTime->setToolTip("Loading playlist...");
+        } else if (m_media->state() == Phonon::BufferingState) {
+            ui->seekTime->setToolTip("Buffering...");
+        } else {
+            ui->seekTime->setToolTip("Loading...");
+        }
         QTimer::singleShot(100, this, SLOT(showLoading()));
+    } else {
+        if (showRemainingTime) {
+            ui->seekTime->setToolTip("<b>Time remaining</b><br>Click to show elapsed time");
+        } else {
+            ui->seekTime->setToolTip("<b>Time elapsed</b><br>Click to show remaining time");
+        }
     }
 }
 

@@ -119,7 +119,11 @@ void MediaListsEngine::run()
                         if (nameUrl.at(0) == "Audio") {
                             mediaItem.title = nameUrl.at(1).trimmed();
                             mediaItem.url = nameUrl.at(2).trimmed();
-                            mediaItem.artwork = KIcon("view-media-playlist");
+                            if (mediaItem.url.startsWith("savedlists://")) {
+                                mediaItem.artwork = KIcon("view-list-text");
+                            } else {
+                                mediaItem.artwork = KIcon("view-media-playlist");
+                            }
                             mediaItem.isSavedList = true;
                             if (m_nepomukInited) {
                                 mediaList << mediaItem;
@@ -202,7 +206,11 @@ void MediaListsEngine::run()
                         if (nameUrl.at(0) == "Video") {
                             mediaItem.title = nameUrl.at(1).trimmed();
                             mediaItem.url = nameUrl.at(2).trimmed();
-                            mediaItem.artwork = KIcon("view-media-playlist");
+                            if (mediaItem.url.startsWith("savedlists://")) {
+                                mediaItem.artwork = KIcon("view-list-text");
+                            } else {
+                                mediaItem.artwork = KIcon("view-media-playlist");
+                            }
                             mediaItem.isSavedList = true;
                             if (m_nepomukInited) {
                                 mediaList << mediaItem;
