@@ -189,7 +189,6 @@ void InfoManager::saveInfoView()
     ui->saveInfo->setEnabled(true);
     ui->saveInfo->setVisible(false);
     showFields(false);
-    m_parent->m_mediaItemModel->reload();
 }
 
 void InfoManager::showFields(bool edit)
