@@ -355,8 +355,10 @@ void MainWindow::on_mediaPlayPause_pressed()
 
 void MainWindow::on_mediaPlayPause_held()
 {
-    if (m_pausePressed) {
-        m_pausePressed = false;
+    if ((m_media->state() != Phonon::LoadingState) && (m_media->state() != Phonon::StoppedState)) {
+        if (m_pausePressed) {
+            m_pausePressed = false;
+        }
         m_stopPressed = true;
         ui->mediaPlayPause->setIcon(KIcon("media-playback-stop"));
         m_playlist->stop();
