@@ -166,13 +166,25 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         QUrl audioType;
         if (mediaItem.fields["audioType"] == "Music") {
             audioType = mediaVocabulary.typeAudioMusic();
+            if (!res.exists()) {
+                res = Nepomuk::Resource(mediaItem.url, audioType);
+            }
+            removeType(res, mediaVocabulary.typeAudioStream());
+            removeType(res, mediaVocabulary.typeAudio());
         } else if (mediaItem.fields["audioType"] == "Audio Stream") {
             audioType = mediaVocabulary.typeAudioStream();
+            if (!res.exists()) {
+                res = Nepomuk::Resource(mediaItem.url, audioType);
+            }
+            removeType(res, mediaVocabulary.typeAudioMusic());
+            removeType(res, mediaVocabulary.typeAudio());
         } else if (mediaItem.fields["audioType"] == "Audio Clip") {
             audioType = mediaVocabulary.typeAudio();
-        }
-        if (!res.exists()) {
-            res = Nepomuk::Resource(mediaItem.url, audioType);
+            if (!res.exists()) {
+                res = Nepomuk::Resource(mediaItem.url, audioType);
+            }
+            removeType(res, mediaVocabulary.typeAudioMusic());
+            removeType(res, mediaVocabulary.typeAudioStream());
         }
         if (!res.hasType(audioType)) {
             res.addType(audioType);
