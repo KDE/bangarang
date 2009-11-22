@@ -47,6 +47,7 @@ class FileListEngine : public NepomukListEngine
         KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         QList<MediaItem> readAudioUrlList(KUrl::List fileList);
         QList<MediaItem> readVideoUrlList(KUrl::List fileList);
+        QString engineFilterFromUrlList(KUrl::List fileList);
 
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

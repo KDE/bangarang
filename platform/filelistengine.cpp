@@ -31,6 +31,7 @@
 #include <KIcon>
 #include <KFileDialog>
 #include <KMimeType>
+#include <KDebug>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
@@ -85,6 +86,36 @@ void FileListEngine::run()
             mediaItem.type = "Action";
             mediaList << mediaItem;           
         }
+    } else {
+        QStringList filterList = m_mediaListProperties.engineFilter().split("||");
+        if (filterList.at(0) == "getFiles") {
+            if (filterList.count() > 1) {
+                for (int i = 1; i < filterList.count(); i++) {
+                    MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(filterList.at(i)));
+                    mediaList << mediaItem;
+                }
+            }
+        } else if (filterList.at(0) == "getFolder") {
+            if (filterList.count() > 1) {
+                QString directoryPath = filterList.at(1);
+                if (!directoryPath.isEmpty()) {
+                    QString mimeFilter;
+                    if (m_mediaListProperties.engineArg() == "audio") {
+                        mimeFilter = Utilities::audioMimeFilter();
+                    } else if (m_mediaListProperties.engineArg() == "video") {
+                        mimeFilter = Utilities::videoMimeFilter();
+                    }
+                    QDir directory(directoryPath);
+                    QFileInfoList fileInfoList = crawlDir(directory, mimeFilter.split(" "));
+                    KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
+                    for (int i = 0; i < fileList.count(); i++) {
+                        MediaItem mediaItem = Utilities::mediaItemFromUrl(fileList.at(i));
+                        mediaList << mediaItem;
+                    }
+                }
+            }
+        }
+        m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
     }
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
@@ -96,46 +127,48 @@ void FileListEngine::run()
 void FileListEngine::activateAction()
 {
     QList<MediaItem> mediaList;
-    QString audioMimeFilter = "audio/mpeg audio/mp4 audio/ogg audio/vorbis audio/aac audio/aiff audio/basic audio/flac audio/mp2 audio/mp3 audio/vnd.rn-realaudio audio/wav application/ogg audio/x-flac audio/x-musepack";
-    QString videoMimeFilter = "video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg video/divx video/x-msvideo video/x-wmv video/x-flv video/flv";
-    
+    MediaListProperties mediaListProperties;
     if (m_mediaListProperties.engineFilter() == "getFiles") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(audioMimeFilter), 0, "Open audio file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::audioMimeFilter(), 0, "Open audio file(s)");
             mediaList = readAudioUrlList(fileList);
-            m_mediaListProperties.name = "Audio Files";
+            mediaListProperties.name = "Audio Files";
+            mediaListProperties.lri = QString("files://audio?getFiles||%1").arg(engineFilterFromUrlList(fileList));
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), QString(videoMimeFilter), 0, "Open video file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::videoMimeFilter(), 0, "Open video file(s)");
             mediaList = readVideoUrlList(fileList);
-            m_mediaListProperties.name = "Video Files";
+            mediaListProperties.name = "Video Files";
+            mediaListProperties.lri = QString("files://video?getFiles||%1").arg(engineFilterFromUrlList(fileList));
         }
     } else if (m_mediaListProperties.engineFilter() == "getFolder") {
         if (m_mediaListProperties.engineArg() == "audio") {
             QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing audio file(s)");       
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
-                QFileInfoList fileInfoList = crawlDir(directory, audioMimeFilter.split(" "));
+                QFileInfoList fileInfoList = crawlDir(directory, Utilities::audioMimeFilter().split(" "));
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readAudioUrlList(fileList);
             }
-            m_mediaListProperties.name = "Audio Files";
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());           
+            mediaListProperties.name = "Audio Files";
+            mediaListProperties.summary = QString("%1 items").arg(mediaList.count());           
+            mediaListProperties.lri = QString("files://audio?getFolder||%1").arg(directoryPath);
         }
         if (m_mediaListProperties.engineArg() == "video") {
             QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing video file(s)");           
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
-                QFileInfoList fileInfoList = crawlDir(directory, videoMimeFilter.split(" "));
+                QFileInfoList fileInfoList = crawlDir(directory, Utilities::videoMimeFilter().split(" "));
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readVideoUrlList(fileList);
             }
-            m_mediaListProperties.name = "Video Files";
-            m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            mediaListProperties.name = "Video Files";
+            mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            mediaListProperties.lri = QString("files://video?getFolder||%1").arg(directoryPath);
         }
     }
     
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    model()->addResults(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
 }
 
 QFileInfoList FileListEngine::crawlDir(QDir dir, QStringList mimeFilter)
@@ -339,4 +372,14 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
         m_mediaIndexer->indexMediaItems(mediaListToIndex);
     }
     return mediaList;
+}
+
+QString FileListEngine::engineFilterFromUrlList(KUrl::List fileList)
+{
+    QString engineFilter;
+    for (int i = 0; i < fileList.count(); i++) {
+        QString url = fileList.at(i).url();
+        engineFilter.append(QString("%1||").arg(url));
+    }
+    return engineFilter;
 }
