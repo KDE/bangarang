@@ -606,6 +606,12 @@ void MainWindow::updateSeekTime(qint64 time)
     }
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     ui->seekTime->setText(displayTime);
+    if (showRemainingTime) {
+        ui->seekTime->setToolTip("<b>Time remaining</b><br>Click to show elapsed time");
+    } else {
+        ui->seekTime->setToolTip("<b>Time elapsed</b><br>Click to show remaining time");
+    }
+    
     
     //Update Now Playing Button text
     QString title;
@@ -660,12 +666,6 @@ void MainWindow::showLoading()
             ui->seekTime->setToolTip("Loading...");
         }
         QTimer::singleShot(100, this, SLOT(showLoading()));
-    } else {
-        if (showRemainingTime) {
-            ui->seekTime->setToolTip("<b>Time remaining</b><br>Click to show elapsed time");
-        } else {
-            ui->seekTime->setToolTip("<b>Time elapsed</b><br>Click to show remaining time");
-        }
     }
 }
 
