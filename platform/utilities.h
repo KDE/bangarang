@@ -58,5 +58,7 @@ namespace Utilities {
     int mediaListDuration(QList<MediaItem> mediaList);
     QString mediaListDurationText(QList<MediaItem> mediaList);
     QList<MediaItem> mediaItemsDontExist(QList<MediaItem> mediaList);
+    QString audioMimeFilter();
+    QString videoMimeFilter();
 }
 #endif //UTILITIES_H    
