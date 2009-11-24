@@ -26,7 +26,7 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "Bangarang", 0,
-        ki18n("Bangarang"), "0.92",
+        ki18n("Bangarang"), "0.92 (1.0~beta2)",
         ki18n("A KDE Media Player"), KAboutData::License_GPL_V2,
         ki18n("Copyright 2009, Andrew Lake"), ki18n(""),
         "" );
