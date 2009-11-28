@@ -69,6 +69,10 @@ TARGET_LINK_LIBRARIES(bangarang
     tag 
 )
 
+find_package(Msgfmt REQUIRED)
+find_package(Gettext REQUIRED)
+add_subdirectory( translations )
+
 ########### install files ###############
 
 install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})

@@ -28,6 +28,7 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <QApplication>
+#include <KLocale>
 #include <KIcon>
 #include <KFileDialog>
 #include <KMimeType>
@@ -55,34 +56,34 @@ void FileListEngine::run()
         if (m_mediaListProperties.engineArg() == "audio") {
             mediaItem.artwork = KIcon("document-open");
             mediaItem.url = "files://audio?getFiles";
-            mediaItem.title = "Open audio file(s)";
+            mediaItem.title = i18n("Open audio file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;
             mediaItem.artwork = KIcon("document-open-folder");
             mediaItem.url = "files://audio?getFolder";
-            mediaItem.title = "Open folder containing audio file(s)";
+            mediaItem.title = i18n("Open folder containing audio file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;           
         } else if (m_mediaListProperties.engineArg() == "video") {
             mediaItem.artwork = KIcon("document-open");
             mediaItem.url = "files://video?getFiles";
-            mediaItem.title = "Open video file(s)";
+            mediaItem.title = i18n("Open video file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;
             mediaItem.artwork = KIcon("document-open-folder");
             mediaItem.url = "files://video?getFolder";
-            mediaItem.title = "Open folder containing video file(s)";
+            mediaItem.title = i18n("Open folder containing video file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;           
         } else if (m_mediaListProperties.engineArg() == "images") {
             mediaItem.artwork = KIcon("document-open");
             mediaItem.url = "files://images?getFiles";
-            mediaItem.title = "Open image file(s)";
+            mediaItem.title = i18n("Open image file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;
             mediaItem.artwork = KIcon("document-open-folder");
             mediaItem.url = "files://images?getFolder";
-            mediaItem.title = "Open folder containing image file(s)";
+            mediaItem.title = i18n("Open folder containing image file(s)");
             mediaItem.type = "Action";
             mediaList << mediaItem;           
         }
@@ -115,7 +116,7 @@ void FileListEngine::run()
                 }
             }
         }
-        m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+        m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
     }
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
@@ -130,40 +131,40 @@ void FileListEngine::activateAction()
     MediaListProperties mediaListProperties;
     if (m_mediaListProperties.engineFilter() == "getFiles") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::audioMimeFilter(), 0, "Open audio file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::audioMimeFilter(), 0, i18n("Open audio file(s)"));
             mediaList = readAudioUrlList(fileList);
-            mediaListProperties.name = "Audio Files";
+            mediaListProperties.name = i18n("Audio Files");
             mediaListProperties.lri = QString("files://audio?getFiles||%1").arg(engineFilterFromUrlList(fileList));
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::videoMimeFilter(), 0, "Open video file(s)");
+            KUrl::List fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::videoMimeFilter(), 0, i18n("Open video file(s)"));
             mediaList = readVideoUrlList(fileList);
-            mediaListProperties.name = "Video Files";
+            mediaListProperties.name = i18n("Video Files");
             mediaListProperties.lri = QString("files://video?getFiles||%1").arg(engineFilterFromUrlList(fileList));
         }
     } else if (m_mediaListProperties.engineFilter() == "getFolder") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing audio file(s)");       
+            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Open folder containing audio file(s)"));       
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
                 QFileInfoList fileInfoList = crawlDir(directory, Utilities::audioMimeFilter().split(" "));
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readAudioUrlList(fileList);
             }
-            mediaListProperties.name = "Audio Files";
-            mediaListProperties.summary = QString("%1 items").arg(mediaList.count());           
+            mediaListProperties.name = i18n("Audio Files");
+            mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());           
             mediaListProperties.lri = QString("files://audio?getFolder||%1").arg(directoryPath);
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, "Open folder containing video file(s)");           
+            QString directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Open folder containing video file(s)"));           
             if (!directoryPath.isEmpty()) {
                 QDir directory(directoryPath);
                 QFileInfoList fileInfoList = crawlDir(directory, Utilities::videoMimeFilter().split(" "));
                 KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
                 mediaList = readVideoUrlList(fileList);
             }
-            mediaListProperties.name = "Video Files";
-            mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+            mediaListProperties.name = i18n("Video Files");
+            mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             mediaListProperties.lri = QString("files://video?getFolder||%1").arg(directoryPath);
         }
     }
@@ -252,7 +253,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             //Index all music files
             mediaListToIndex << mediaItem;
         } else {
-            mediaItem.fields["audioType"] = "Audio Clip";
+            mediaItem.fields["audioType"] = i18n("Audio Clip");
             if (m_nepomukInited) {
                 Nepomuk::Resource res(mediaItem.url);
                 if (res.exists()) {
@@ -342,11 +343,9 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
                     if (episode !=0 ) {
                         mediaItem.fields["episode"] = episode;
                         if (!mediaItem.subTitle.isEmpty()) {
-                            mediaItem.subTitle = QString("%1 - Episode %2")
-                            .arg(mediaItem.subTitle)
-                            .arg(episode);
+                            mediaItem.subTitle = i18n("%1 - Episode %2", mediaItem.subTitle, episode);
                         } else {
-                            mediaItem.subTitle = QString("Episode %2").arg(episode);
+                            mediaItem.subTitle = i18n("Episode %1", episode);
                         }
                     }
                 } else {
