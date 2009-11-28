@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <KIcon>
+#include <KLocale>
 #include <KMimeType>
 #include <KStandardDirs>
 #include <QFile>
@@ -48,44 +49,44 @@ void MediaListsEngine::run()
         MediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
-        mediaItem.title = "Files and Folders";
+        mediaItem.title = i18n("Files and Folders");
         mediaItem.url = "files://audio";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaList << mediaItem;
         if (m_nepomukInited) {
-            mediaItem.title = "Artists";
+            mediaItem.title = i18n("Artists");
             mediaItem.url = "music://artists";
             mediaItem.artwork = KIcon("system-users");
             mediaList << mediaItem;
-            mediaItem.title = "Albums";
+            mediaItem.title = i18n("Albums");
             mediaItem.url = "music://albums";
             mediaItem.artwork = KIcon("media-optical");
             mediaList << mediaItem;
-            mediaItem.title = "Songs";
+            mediaItem.title = i18n("Songs");
             mediaItem.url = "music://songs";
             mediaItem.artwork = KIcon("audio-mpeg");
             mediaList << mediaItem;
-            mediaItem.title = "Genres";
+            mediaItem.title = i18n("Genres");
             mediaItem.url = "music://genres";
             mediaItem.artwork = KIcon("flag-blue");
             mediaList << mediaItem;
-            mediaItem.title = "Clips";
+            mediaItem.title = i18n("Clips");
             mediaItem.url = "audioclips://";
             mediaItem.artwork = KIcon("audio-x-wav");
             mediaList << mediaItem;
-            mediaItem.title = "Audio Streams";
+            mediaItem.title = i18n("Audio Streams");
             mediaItem.url = "audiostreams://";
             mediaItem.artwork = KIcon("x-media-podcast");
             mediaList << mediaItem;
-            mediaItem.title = "Frequently Played";
+            mediaItem.title = i18n("Frequently Played");
             mediaItem.url = "semantics://frequent?audio";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
-            mediaItem.title = "Recently Played";
+            mediaItem.title = i18n("Recently Played");
             mediaItem.url = "semantics://recent?audio";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
-            mediaItem.title = "Highest Rated";
+            mediaItem.title = i18n("Highest Rated");
             mediaItem.url = "semantics://highest?audio";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
@@ -101,7 +102,7 @@ void MediaListsEngine::run()
             }
         }
         if (audioCDFound) {
-            mediaItem.title = "Audio CD";
+            mediaItem.title = i18n("Audio CD");
             mediaItem.url = "cdaudio://";
             mediaItem.artwork = KIcon("media-optical-audio");
             mediaList << mediaItem;
@@ -148,31 +149,31 @@ void MediaListsEngine::run()
         mediaItem.artwork = KIcon("document-open-folder");
         mediaList << mediaItem;
         if (m_nepomukInited) {
-            mediaItem.title = "Movies";
+            mediaItem.title = i18n("Movies");
             mediaItem.url = "video://movies";
             mediaItem.artwork = KIcon("tool-animator");
             mediaList << mediaItem;
-            mediaItem.title = "Genres";
+            mediaItem.title = i18n("Genres");
             mediaItem.url = "video://genres";
             mediaItem.artwork = KIcon("flag-green");
             mediaList << mediaItem;
-            mediaItem.title = "TV Shows";
+            mediaItem.title = i18n("TV Shows");
             mediaItem.url = "video://tvshows";
             mediaItem.artwork = KIcon("video-television");
             mediaList << mediaItem;
-            mediaItem.title = "Video Clips";
+            mediaItem.title = i18n("Video Clips");
             mediaItem.url = "video://clips";
             mediaItem.artwork = KIcon("video-x-generic");
             mediaList << mediaItem;
-            mediaItem.title = "Frequently Played";
+            mediaItem.title = i18n("Frequently Played");
             mediaItem.url = "semantics://frequent?video";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
-            mediaItem.title = "Recently Played";
+            mediaItem.title = i18n("Recently Played");
             mediaItem.url = "semantics://recent?video";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
-            mediaItem.title = "Highest Rated";
+            mediaItem.title = i18n("Highest Rated");
             mediaItem.url = "semantics://highest?video";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
@@ -188,7 +189,7 @@ void MediaListsEngine::run()
             }
         }
         if (DVDFound) {
-            mediaItem.title = "DVD Video";
+            mediaItem.title = i18n("DVD Video");
             mediaItem.url = "dvdvideo://";
             mediaItem.artwork = KIcon("media-optical-dvd");
             mediaList << mediaItem;        

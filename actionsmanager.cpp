@@ -43,7 +43,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_quit->setShortcut(Qt::CTRL + Qt::Key_Q);
     connect(m_quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     m_parent->addAction(m_quit);
-    m_actionCollection->addAction(tr("Quit"), m_quit);
+    m_actionCollection->addAction(i18n("Quit"), m_quit);
     
     //Play/Pause Action
     m_playPause = new QAction(this);
@@ -52,13 +52,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_parent->addAction(m_playPause);
     
     //Play Next
-    m_playNext = new QAction(KIcon("media-skip-forward"), tr("Play next"), this);
+    m_playNext = new QAction(KIcon("media-skip-forward"), i18n("Play next"), this);
     m_playNext->setShortcut(Qt::Key_Right);
     connect(m_playNext, SIGNAL(triggered()), m_parent->playlist(), SLOT(playNext()));
     m_parent->addAction(m_playNext);
 
     //Play Previous
-    m_playPrevious = new QAction(KIcon("media-skip-backward"), tr("Play previous"), this);
+    m_playPrevious = new QAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
     m_playPrevious->setShortcut(Qt::Key_Left);
     connect(m_playPrevious, SIGNAL(triggered()), m_parent->playlist(), SLOT(playPrevious()));
     m_parent->addAction(m_playPrevious);
@@ -70,31 +70,31 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_parent->addAction(m_mute);
     
     //Play All Action
-    m_playAllAction = new QAction(KIcon("media-playback-start"), tr("Play all"), this);
+    m_playAllAction = new QAction(KIcon("media-playback-start"), i18n("Play all"), this);
     connect(m_playAllAction, SIGNAL(triggered()), m_parent, SLOT(playAll()));
-    m_actionCollection->addAction(tr("Play All"), m_playAllAction);
+    m_actionCollection->addAction(i18n("Play All"), m_playAllAction);
     
     //Play Selected Action
-    m_playSelectedAction = new QAction(KIcon("media-playback-start"), tr("Play selected"), this);
+    m_playSelectedAction = new QAction(KIcon("media-playback-start"), i18n("Play selected"), this);
     connect(m_playSelectedAction, SIGNAL(triggered()), m_parent, SLOT(playSelected()));
-    m_actionCollection->addAction(tr("Play Selected"), m_playSelectedAction);
+    m_actionCollection->addAction(i18n("Play Selected"), m_playSelectedAction);
     
     //Add Selected To Playlist Action
-    m_addSelectedToPlayListAction = new QAction(KIcon("mail-mark-notjunk"), tr("Add to playlist"), this);
+    m_addSelectedToPlayListAction = new QAction(KIcon("mail-mark-notjunk"), i18n("Add to playlist"), this);
     connect(m_addSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(addSelectedToPlaylist()));  
-    m_actionCollection->addAction(tr("Add to playlist"), m_addSelectedToPlayListAction);
+    m_actionCollection->addAction(i18n("Add to playlist"), m_addSelectedToPlayListAction);
     
     //Remove Selected From Playlist Action
-    m_removeSelectedToPlayListAction = new QAction(KIcon(), tr("Remove from playlist"), this);
+    m_removeSelectedToPlayListAction = new QAction(KIcon(), i18n("Remove from playlist"), this);
     connect(m_removeSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(removeSelectedFromPlaylist()));
-    m_actionCollection->addAction(tr("Remove from playlist"), m_removeSelectedToPlayListAction);
+    m_actionCollection->addAction(i18n("Remove from playlist"), m_removeSelectedToPlayListAction);
     
     //Show/Hide Controls Shortcut
-    m_showHideControls = new QAction(KIcon("layer-visible-off"), tr("Hide controls"), this);
+    m_showHideControls = new QAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
     m_showHideControls->setShortcut(Qt::CTRL + Qt::Key_H);
     connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_parent->addAction(m_showHideControls);
-    m_actionCollection->addAction(tr("Hide controls"), m_showHideControls);
+    m_actionCollection->addAction(i18n("Hide controls"), m_showHideControls);
     
     
     //Full Screen
@@ -102,7 +102,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_fullScreen->setShortcut(Qt::Key_F11);
     connect(m_fullScreen, SIGNAL(triggered()), this, SLOT(fullScreenToggle()));
     m_parent->addAction(m_fullScreen);
-    m_actionCollection->addAction(tr("Toggle fullscreen"), m_fullScreen);
+    m_actionCollection->addAction(i18n("Toggle fullscreen"), m_fullScreen);
     
     //Cancel FullScreen/Cancel Hide Controls
     m_cancelFullScreenHideControls = new QAction(this);
@@ -111,19 +111,19 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_parent->addAction(m_cancelFullScreenHideControls);
 
     //Remove Info for Selected MediaItems
-    m_removeSelectedItemsInfo = new QAction(KIcon("edit-delete-shred"), tr("Remove selected info"), this);
+    m_removeSelectedItemsInfo = new QAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
     connect(m_removeSelectedItemsInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
     m_parent->addAction(m_removeSelectedItemsInfo);
 
     //Refresh Media View
-    m_refreshMediaView = new QAction(KIcon("view-refresh"), tr("Refresh"), this);
+    m_refreshMediaView = new QAction(KIcon("view-refresh"), i18n("Refresh"), this);
     m_refreshMediaView->setShortcut(Qt::Key_F5);
     connect(m_refreshMediaView, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
     m_parent->addAction(m_refreshMediaView);
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
-    m_editShortcuts = new QAction(KIcon("configure-shortcuts"), tr("Configure shortcuts..."), this);
+    m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
     connect(m_editShortcuts, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(hideShortcutsEditor()));
     ui->shortcutsEditor->addCollection(m_actionCollection);

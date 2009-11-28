@@ -242,7 +242,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             m_mediaItemModel->setMediaListProperties(mediaListProperties);
             m_mediaItemModel->load();*/
         } else {
-            KMessageBox::information(this, tr("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), tr("Bangarang"), tr("Don't show this message again"));
+            KMessageBox::information(this, i18n("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), i18n("Bangarang"), i18n("Don't show this message again"));
         }
     }
     
@@ -480,7 +480,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
         }
         ui->audioLists->setFocus();
-        ui->Filter->setClickMessage("Search for audio");
+        ui->Filter->setClickMessage(i18n("Search for audio"));
     } else {
         if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
             selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
@@ -488,7 +488,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
         }
         ui->videoLists->setFocus();
-        ui->Filter->setClickMessage("Search for video");
+        ui->Filter->setClickMessage(i18n("Search for video"));
     }
     if (selectedRow != -1) {
         if ((m_mediaItemModel->mediaListProperties().engine() != currentProperties.engine()) || (m_mediaItemModel->mediaListProperties().engineArg() != currentProperties.engineArg())) {
@@ -511,13 +511,13 @@ void MainWindow::on_clearPlaylist_clicked()
 {
     ui->clearPlaylist->setIcon(KIcon("bangarang-clearplaylist"));
     KGuiItem clearPlaylist;
-    clearPlaylist.setText(QString("Clear Playlist"));
-    if (KMessageBox::warningContinueCancel(this, "Are you sure you want to clear the current playlist?", QString(), clearPlaylist) == KMessageBox::Continue) {
+    clearPlaylist.setText(i18n("Clear Playlist"));
+    if (KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to clear the current playlist?"), QString(), clearPlaylist) == KMessageBox::Continue) {
         m_playlist->clearPlaylist();
         showApplicationBanner();
-        setWindowTitle(QString("Bangarang"));
+        setWindowTitle(i18n("Bangarang"));
         ui->nowPlaying->setIcon(KIcon("tool-animator"));
-        ui->nowPlaying->setText("Now Playing");
+        ui->nowPlaying->setText(i18n("Now Playing"));
     }
     ui->clearPlaylist->setIcon(turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
 }
@@ -527,11 +527,11 @@ void MainWindow::on_shuffle_clicked()
     m_shuffle = !m_shuffle;
     if (m_shuffle) {
         m_playlist->setMode(Playlist::Shuffle);
-        ui->shuffle->setToolTip("<b>Shuffle On</b><br>Click to turn off Shuffle");
+        ui->shuffle->setToolTip(i18n("<b>Shuffle On</b><br>Click to turn off Shuffle"));
         ui->shuffle->setIcon(KIcon("bangarang-shuffle"));
     } else {
         m_playlist->setMode(Playlist::Normal);
-        ui->shuffle->setToolTip("Turn on Shuffle");
+        ui->shuffle->setToolTip(i18n("Turn on Shuffle"));
         ui->shuffle->setIcon(turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     }
 }
@@ -542,10 +542,10 @@ void MainWindow::on_repeat_clicked()
     m_playlist->setRepeat(m_repeat);
     if (m_repeat) {
         ui->repeat->setIcon(KIcon("bangarang-repeat"));
-        ui->repeat->setToolTip("<b>Repeat On</b><br>Click to turn off repeat");
+        ui->repeat->setToolTip(i18n("<b>Repeat On</b><br>Click to turn off repeat"));
     } else {
         ui->repeat->setIcon(turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
-        ui->repeat->setToolTip("Turn on Repeat");
+        ui->repeat->setToolTip(i18n("Turn on Repeat"));
     }    
 }
 
@@ -554,12 +554,12 @@ void MainWindow::on_showQueue_clicked()
     m_showQueue = !m_showQueue;
     if (m_showQueue) {
         ui->playlistView->setModel(m_playlist->queueModel());
-        ui->showQueue->setToolTip("<b>Showing Upcoming</b><br>Click to show playlist");
-        ui->playlistName->setText(QString("<b>Playlist</b>(Upcoming)"));
+        ui->showQueue->setToolTip(i18n("<b>Showing Upcoming</b><br>Click to show playlist"));
+        ui->playlistName->setText(i18n("<b>Playlist</b>(Upcoming)"));
         ui->showQueue->setIcon(KIcon("bangarang-preview"));
     } else {
         ui->playlistView->setModel(m_playlist->playlistModel());
-        ui->showQueue->setToolTip("Show Upcoming");
+        ui->showQueue->setToolTip(i18n("Show Upcoming"));
         playlistChanged();
         ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     }
@@ -607,9 +607,9 @@ void MainWindow::updateSeekTime(qint64 time)
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     ui->seekTime->setText(displayTime);
     if (showRemainingTime) {
-        ui->seekTime->setToolTip("<b>Time remaining</b><br>Click to show elapsed time");
+        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time"));
     } else {
-        ui->seekTime->setToolTip("<b>Time elapsed</b><br>Click to show remaining time");
+        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time"));
     }
     
     
@@ -619,9 +619,9 @@ void MainWindow::updateSeekTime(qint64 time)
         if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") {        
             title = QString("\n") + m_nowPlaying->item(0,0)->data(Qt::DisplayRole).toString();
             QString subTitle = m_nowPlaying->item(0,0)->data(MediaItem::SubTitleRole).toString();
-            ui->nowPlaying->setText(QString("Now Playing") + QString("(")+ displayTime + QString(")") + title);
+            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")") + title);
         } else {
-            ui->nowPlaying->setText(QString("Now Playing"));
+            ui->nowPlaying->setText(i18n("Now Playing"));
         }
     }
 }
@@ -635,7 +635,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         } else {
             ui->viewerStack->setCurrentIndex(0);
         }
-        ui->mediaPlayPause->setToolTip("<b>Playing</b><br>Click to pause<br>Click and hold to stop");
+        ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
     } else {
         if ((!m_pausePressed) && (!m_stopPressed)) {
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
@@ -659,11 +659,11 @@ void MainWindow::showLoading()
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
         ui->seekTime->setIcon(KIcon(iconName));
         if (m_playlist->loadingState() == Playlist::Loading) {
-            ui->seekTime->setToolTip("Loading playlist...");
+            ui->seekTime->setToolTip(i18n("Loading playlist..."));
         } else if (m_media->state() == Phonon::BufferingState) {
-            ui->seekTime->setToolTip("Buffering...");
+            ui->seekTime->setToolTip(i18n("Buffering..."));
         } else {
-            ui->seekTime->setToolTip("Loading...");
+            ui->seekTime->setToolTip(i18n("Loading..."));
         }
         QTimer::singleShot(100, this, SLOT(showLoading()));
     }
@@ -673,10 +673,10 @@ void MainWindow::updateMuteStatus(bool muted)
 {
     if (muted) {
         ui->volumeIcon->setIcon(KIcon("dialog-cancel"));
-        ui->volumeIcon->setToolTip("<b>Muted</b><br>Click to restore volume");
+        ui->volumeIcon->setToolTip(i18n("<b>Muted</b><br>Click to restore volume"));
     } else {
         ui->volumeIcon->setIcon(KIcon("speaker"));
-        ui->volumeIcon->setToolTip("Mute volume");
+        ui->volumeIcon->setToolTip(i18n("Mute volume"));
     }
 }
 
@@ -811,12 +811,10 @@ void MainWindow::playlistChanged()
     ui->playlistView->header()->setResizeMode(0, QHeaderView::Stretch);
     ui->playlistView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
     if (!m_showQueue) {
-        ui->playlistName->setText("<b>Playlist</b>");
+        ui->playlistName->setText(i18n("<b>Playlist</b>"));
         if (m_playlist->playlistModel()->rowCount() > 0) {
             QString duration = Utilities::mediaListDurationText(m_playlist->playlistModel()->mediaList());
-            ui->playlistDuration->setText(QString("%1 items, %2")
-                .arg(m_playlist->playlistModel()->rowCount())
-                .arg(duration));
+            ui->playlistDuration->setText(i18np("1 item, %2", "%1 items, %2", m_playlist->playlistModel()->rowCount(), duration));
         } else {
             ui->playlistDuration->setText(QString());
         }
@@ -847,9 +845,9 @@ void MainWindow::nowPlayingChanged()
 void MainWindow::playlistFinished()
 {
     showApplicationBanner();
-    setWindowTitle(QString("Bangarang"));
+    setWindowTitle(i18n("Bangarang"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
-    ui->nowPlaying->setText("Now Playing");
+    ui->nowPlaying->setText(i18n("Now Playing"));
     ui->seekTime->setText("0:00");
 }
 
@@ -1007,9 +1005,9 @@ void MainWindow::setupIcons()
 
 void MainWindow::setupActions()
 {
-    playAllAction = new QAction(KIcon("media-playback-start"), tr("Play all"), this);
+    playAllAction = new QAction(KIcon("media-playback-start"), i18n("Play all"), this);
     connect(playAllAction, SIGNAL(triggered()), this, SLOT(playAll()));
-    playSelectedAction = new QAction(KIcon("media-playback-start"), tr("Play selected"), this);
+    playSelectedAction = new QAction(KIcon("media-playback-start"), i18n("Play selected"), this);
     connect(playSelectedAction, SIGNAL(triggered()), this, SLOT(playSelected()));
 }
 
@@ -1017,8 +1015,8 @@ void MainWindow::showApplicationBanner()
 {
     MediaItem applicationBanner;
     applicationBanner.artwork = KIcon("bangarang");
-    applicationBanner.title = "Bangarang";
-    applicationBanner.subTitle = "Entertainment... Now";
+    applicationBanner.title = i18n("Bangarang");
+    applicationBanner.subTitle = i18n("Entertainment... Now");
     applicationBanner.type = "Application Banner";
     applicationBanner.url = "-";
     m_nowPlaying->loadMediaItem(applicationBanner, true);
