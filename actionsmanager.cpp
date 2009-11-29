@@ -298,8 +298,9 @@ void ActionsManager::toggleControls()
 void ActionsManager::toggleVideoSettings()
 {
   int currentIndex = ui->contextStack->currentIndex();
-  m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
+
   if(ui->contextStack->currentWidget() != m_videoSettings ) {
+    m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
     ui->contextStack->addWidget(m_videoSettings);
     ui->contextStack->setCurrentWidget(m_videoSettings);
   } else {
