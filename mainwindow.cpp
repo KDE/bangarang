@@ -631,6 +631,8 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     if (newstate == Phonon::PlayingState) {
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_media->hasVideo()) {
+	  ui->viewerStack->setCurrentIndex(1);
+	} else {
 	  ui->viewerStack->setCurrentIndex(0);
         }
         ui->mediaPlayPause->setToolTip("<b>Playing</b><br>Click to pause<br>Click and hold to stop");

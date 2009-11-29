@@ -27,6 +27,7 @@
 #include <QAbstractButton>
 #include <KButtonGroup>
 #include <QLabel>
+#include <KLocale>
 
 #include <phonon/videowidget.h>
 
@@ -68,7 +69,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   videoColorWidget = new QWidget();
   button_layout = new QHBoxLayout();
   
-  brightnessLabel  = new QLabel(tr("Brightness"));
+  brightnessLabel  = new QLabel(i18n("Brightness"));
   brightnessSlider = new QSlider();
 
   brightnessSlider->setMaximum(99);
@@ -78,7 +79,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   colorSettings_layout->addWidget(brightnessLabel , 0,0);
   colorSettings_layout->addWidget(brightnessSlider, 0,1);
 
-  contrastLabel= new QLabel(tr("Contrast"));
+  contrastLabel= new QLabel(i18n("Contrast"));
   contrastSlider = new QSlider();
 
   contrastSlider->setMaximum(99);
@@ -88,7 +89,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   colorSettings_layout->addWidget(contrastLabel , 1,0);
   colorSettings_layout->addWidget(contrastSlider, 1,1);
 
-  hueLabel= new QLabel(tr("Hue"));
+  hueLabel= new QLabel(i18n("Hue"));
   hueSlider = new QSlider();
 
   hueSlider->setMaximum(99);
@@ -98,7 +99,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   colorSettings_layout->addWidget(hueLabel , 2,0);
   colorSettings_layout->addWidget(hueSlider, 2,1);
 
-  saturationLabel= new QLabel(tr("Saturation"));
+  saturationLabel= new QLabel(i18n("Saturation"));
   saturationSlider = new QSlider();
 
   saturationSlider->setMaximum(99);
@@ -113,26 +114,26 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   sizeSettings_layout = new QVBoxLayout();
   aspectRatio_Widget = new QWidget();
   aspectRatio_layout = new QVBoxLayout();
-  aspectRatioLabel = new QLabel(tr("Aspect Ratio Settings"));
+  aspectRatioLabel = new QLabel(i18n("Aspect Ratio Settings"));
   aspectRatio_layout->addWidget(aspectRatioLabel);
-  aspectRatioAuto = new QRadioButton(tr("let ratio be automatically set "));
+  aspectRatioAuto = new QRadioButton(i18n("let ratio be automatically set "));
   aspectRatio_layout->addWidget(aspectRatioAuto);
-  aspectRatioWidget = new QRadioButton(tr("set ratio by widget size"));
+  aspectRatioWidget = new QRadioButton(i18n("set ratio by widget size"));
   aspectRatio_layout->addWidget(aspectRatioWidget);
-  aspectRatio4_3 = new QRadioButton(tr("set ratio to 4:3"));
+  aspectRatio4_3 = new QRadioButton(i18n("set ratio to 4:3"));
   aspectRatio_layout->addWidget(aspectRatio4_3);
-  aspectRatio16_9 = new QRadioButton(tr("set ratio to 16:9"));
+  aspectRatio16_9 = new QRadioButton(i18n("set ratio to 16:9"));
   aspectRatio_layout->addWidget(aspectRatio16_9);
   aspectRatio_Widget->setLayout(aspectRatio_layout);
   
   scaleMode_Widget = new QWidget();
   scaleMode_layout = new QVBoxLayout();
 
-  scaleModeLabel = new QLabel(tr("Scaling Mode")) ;
+  scaleModeLabel = new QLabel(i18n("Scaling Mode")) ;
   scaleMode_layout->addWidget(scaleModeLabel);
-  scaleModeFitInView = new QRadioButton(tr("fit view to video scale"));
+  scaleModeFitInView = new QRadioButton(i18n("fit view to video scale"));
   scaleMode_layout->addWidget(scaleModeFitInView);
-  scaleModeScaleAndCrop = new QRadioButton(tr("scale and crop video"));
+  scaleModeScaleAndCrop = new QRadioButton(i18n("scale and crop video"));
   scaleMode_layout->addWidget(scaleModeScaleAndCrop);
   scaleMode_Widget->setLayout(scaleMode_layout);  
   
@@ -142,7 +143,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   
   restoreButton = new KPushButton();
   restoreButton->setIcon(KIcon("view-restore"));
-  restoreButton->setText(tr("Restore Defaults"));
+  restoreButton->setText(i18n("Restore Defaults"));
   button_layout->addWidget(restoreButton);
   
   
