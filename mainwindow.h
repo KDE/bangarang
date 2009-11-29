@@ -84,6 +84,7 @@ public:
     KAboutData * aboutData();
     Playlist * playlist();
     Phonon::AudioOutput * audioOutput();
+    Phonon::VideoWidget * videoWidget();
     InfoManager *infoManager();
     
     
@@ -174,7 +175,6 @@ private slots:
     void showLoading();
     void on_showMenu_clicked();
     void on_showMediaViewMenu_clicked();
-    
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);

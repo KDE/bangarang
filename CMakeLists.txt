@@ -20,6 +20,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(BangarangSources 
+    videosettings.cpp
     mainwindow.cpp 
     main.cpp 
     sensiblewidgets.cpp 

@@ -23,6 +23,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
 #include "infomanager.h"
+#include "videosettings.h"
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -95,6 +96,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_parent->addAction(m_showHideControls);
     m_actionCollection->addAction(tr("Hide controls"), m_showHideControls);
+   
+    //Show VideoSettings
+    m_showVideoSettings = new QAction(KIcon("video-display"),tr("Edit Videosettings"),this);
+    m_showVideoSettings->setShortcut(Qt::CTRL + Qt::Key_V);
+    connect(m_showVideoSettings, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
+    m_parent->addAction(m_showVideoSettings);
+    m_actionCollection->addAction(tr("Edit Videosettings"),m_showVideoSettings);
     
     
     //Full Screen
@@ -127,6 +135,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_editShortcuts, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(hideShortcutsEditor()));
     ui->shortcutsEditor->addCollection(m_actionCollection);
+          
 }
 
 ActionsManager::~ActionsManager()
@@ -208,6 +217,11 @@ QAction * ActionsManager::refreshMediaView()
     return m_refreshMediaView;
 }
 
+QAction * ActionsManager::showVideoSettings()
+{
+  return m_showVideoSettings;
+}
+
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
 {
     KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);
@@ -244,6 +258,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
             menu->addAction(removeSelectedItemsInfo());
             menu->addSeparator();
         }
+	
         menu->addAction(refreshMediaView());
         menu->addSeparator();
         
@@ -278,6 +293,18 @@ void ActionsManager::toggleControls()
             m_showHideControls->setIcon(KIcon("layer-visible-off"));
         }
     }
+}
+
+void ActionsManager::toggleVideoSettings()
+{
+  int currentIndex = ui->contextStack->currentIndex();
+  m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
+  if(ui->contextStack->currentWidget() != m_videoSettings ) {
+    ui->contextStack->addWidget(m_videoSettings);
+    ui->contextStack->setCurrentWidget(m_videoSettings);
+  } else {
+    ui->contextStack->setCurrentIndex(currentIndex);
+  }
 }
 
 void ActionsManager::cancelFSHC()
