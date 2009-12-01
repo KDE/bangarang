@@ -174,6 +174,10 @@ private slots:
     void showLoading();
     void on_showMenu_clicked();
     void on_showMediaViewMenu_clicked();
+    void showNotification();
+    void delayedNotificationHide();
+    void sourceInfoUpdated(MediaItem mediaItem);
+    void sourceInfoRemoved(QString url);
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

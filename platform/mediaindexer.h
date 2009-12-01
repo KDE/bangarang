@@ -28,63 +28,64 @@ namespace Nepomuk
     class Resource;
 }
 
-class MediaIndexerJob: public KJob
+//class MediaIndexerJob: public KJob
+class MediaIndexerJob: public QThread
 {
     Q_OBJECT
     
     public:
         MediaIndexerJob(QObject *parent);
         ~MediaIndexerJob();
-        void setUrlsToIndex(QList<QString> urls);
         void setMediaListToIndex(QList<MediaItem> mediaList);
-        void indexUrl(QString url);
         void indexMediaItem(MediaItem mediaItem);
         void setInfoToRemove(QList<MediaItem> mediaList);
         void removeInfo(MediaItem mediaItem);
-        void start();
-    
+        void run();
+        void writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
+        
     private:
-        void index();
-        QList<QString> m_urlsToIndex;
-        QList<MediaItem> m_mediaListToIndex;
-        bool running;
+        QList<MediaItem> m_mediaList;
         int m_indexType;
         void removeType(Nepomuk::Resource res, QUrl mediaType);
+        QString m_url;
+        bool m_incrementPlayCount;
+        QDateTime m_playDateTime;
+        
         
     Q_SIGNALS:
         void jobComplete();
         void urlInfoRemoved(QString url);
         void sourceInfoUpdated(MediaItem mediaItem);
+        void percentComplete(int percent);
 };
 
-class MediaIndexer : public QThread
+//class MediaIndexer : public QThread
+class MediaIndexer : public QObject
 {
     Q_OBJECT
     
     public:
         enum IndexType { IndexUrl = Qt::UserRole + 1,
         IndexMediaItem = Qt::UserRole + 2,
-        RemoveInfo = Qt::UserRole + 3};
+        RemoveInfo = Qt::UserRole + 3,
+        WritePlaybackInfo = Qt::UserRole + 4};
         MediaIndexer(QObject *parent);
         ~MediaIndexer();
-        void run();
-        void indexUrls(QList<QString> urls);
         void indexMediaItems(QList<MediaItem> mediaList);
         void removeInfo(QList<MediaItem> mediaList);
+        void writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
         
     private:
-        QList<QString> m_urls;
-        QList<MediaItem> m_mediaList;
-        int m_indexType;
         bool m_nepomukInited;
-        
-    private slots:
-        void jobComplete();
+        QList<MediaIndexerJob *> m_mediaIndexerJobs;
+        MediaIndexerJob * availableIndexerJob();
         
     Q_SIGNALS:
+        void started();
         void indexingComplete();
         void urlInfoRemoved(QString url);
         void sourceInfoUpdated(MediaItem mediaItem);
+        void percentComplete(int percent);
         
 };
 #endif // MEDIAINDEXER_H

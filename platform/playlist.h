@@ -25,6 +25,7 @@
 
 class MediaItemModel;
 class MediaItem;
+class MediaIndexer;
 
 class Playlist : public QObject
 {
@@ -77,6 +78,8 @@ class Playlist : public QObject
         void updateNowPlaying();
         bool m_nepomukInited;
         int m_loadingState;
+        MediaIndexer * m_mediaIndexer;
+        bool m_playbackInfoWritten;
         
     public slots:
         void playNext();
@@ -89,6 +92,7 @@ class Playlist : public QObject
         void queueNextPlaylistItem();
         void confirmPlaylistFinished();
         void stateChanged(Phonon::State newstate, Phonon::State oldstate);
+        void updatePlaybackInfo(qint64 time);
         
     Q_SIGNALS:
         void playlistFinished();
