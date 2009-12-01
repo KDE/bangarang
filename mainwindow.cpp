@@ -157,6 +157,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     ui->mediaView->setMainWindow(this);
     
+    //Set up MediaItemModel notifications
+    ui->notificationWidget->setVisible(false);
+    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateRemovalStarted()), this, SLOT(showNotification()));
+    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
+    connect(m_mediaItemModel, SIGNAL(sourceInfoRemovalProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
+    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateRemovalComplete()), this, SLOT(delayedNotificationHide()));
+    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdated(MediaItem)), this, SLOT(sourceInfoUpdated(MediaItem)));
+    connect(m_mediaItemModel, SIGNAL(sourceInfoRemoved(QString)), this, SLOT(sourceInfoRemoved(QString)));
+    
     //Set up playlist
     m_playlist = new Playlist(this, m_media);
     connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
@@ -709,6 +718,29 @@ void MainWindow::mediaListChanged()
         }
         ui->saveInfo->setVisible(false);
     }
+}
+
+void MainWindow::showNotification()
+{
+    ui->notificationText->setText(i18n("Updating..."));
+    ui->notificationWidget->setVisible(true);
+}
+
+void MainWindow::delayedNotificationHide()
+{
+    QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
+}
+
+void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
+{
+    ui->notificationText->setText(i18n("Updated info for ") + QString("<i>%1, %2</i>").arg(mediaItem.title).arg(mediaItem.subTitle));
+    ui->notificationWidget->setVisible(true);
+}
+
+void MainWindow::sourceInfoRemoved(QString url)
+{
+    ui->notificationText->setText(i18n("Removed info for ") + url);
+    ui->notificationWidget->setVisible(true);
 }
 
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )

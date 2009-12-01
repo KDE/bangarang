@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "utilities.h"
 #include "mediavocabulary.h"
+#include "mediaindexer.h"
 #include <time.h>
 #include <KUrl>
 #include <KIcon>
@@ -51,10 +52,12 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
         m_nepomukInited = true; //resource manager inited successfully
+        m_mediaIndexer = new MediaIndexer(this);
     } else {
         m_nepomukInited = false; //no resource manager
     }
     
+    connect(m_mediaObject, SIGNAL(tick(qint64)), this, SLOT(updatePlaybackInfo(qint64)));
     connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
     connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
@@ -531,6 +534,17 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 	}
 }
 
+void Playlist::updatePlaybackInfo(qint64 time)
+{
+    if (time >= 10000 && !m_playbackInfoWritten) {
+        //Update last played date and play count
+        if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
+            m_mediaIndexer->writePlaybackInfo(m_nowPlaying->mediaItemAt(0).url, true, QDateTime::currentDateTime());
+        }
+        m_playbackInfoWritten = true;
+    }
+}
+
 
 //--------------------------------
 //--- MediaItemModel SLOTS     ---
@@ -696,14 +710,7 @@ void Playlist::updateNowPlaying()
     } else {
         //Update last played date and play count
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
-            MediaVocabulary mediaVocabulary = MediaVocabulary();
-            Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
-            if (res.exists()) {
-                res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
-                int playCount = res.property(mediaVocabulary.playCount()).toInt();
-                playCount = playCount + 1;
-                res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
-            }
+            m_playbackInfoWritten = false;
         }
     }
 }

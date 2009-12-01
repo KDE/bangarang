@@ -154,6 +154,12 @@ class MediaItemModel : public QStandardItemModel
         void propertiesChanged(); 
         void mediaListChanged();
         void loading();
+        void sourceInfoUpdated(MediaItem mediaItem);
+        void sourceInfoUpdateProgress(int percent);
+        void sourceInfoRemoved(QString Url);
+        void sourceInfoRemovalProgress(int percent);
+        void sourceInfoUpdateRemovalComplete();
+        void sourceInfoUpdateRemovalStarted();
         
     protected Q_SLOTS:
         void categoryActivated(QModelIndex index);

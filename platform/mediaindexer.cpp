@@ -23,7 +23,6 @@
 
 #include <KUrl>
 #include <KDebug>
-#include <kuiserverjobtracker.h>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -37,124 +36,71 @@
 
 #include <QApplication>
 
-MediaIndexerJob::MediaIndexerJob(QObject * parent) : KJob(parent)
+MediaIndexerJob::MediaIndexerJob(QObject * parent) : QThread(parent)
 {
-    setCapabilities(KJob::NoCapabilities);
-    running = false;
 }
 
 MediaIndexerJob::~MediaIndexerJob()
 {
-    if (running) {
-        setPercent(100);
-        emitResult();
-    }
 }
 
-void MediaIndexerJob::start()
+void MediaIndexerJob::run()
 {
-    running = true;
-    index();
-}
-
-void MediaIndexerJob::index()
-{
-    if (m_indexType == MediaIndexer::IndexUrl) {
-        QList<QString> urlsToIndex = m_urlsToIndex;
-        m_urlsToIndex.clear();
-        QString descriptionTitle = QString("Bangarang: Indexing %1 items").arg(urlsToIndex.count());
-        for (int i = 0; i < urlsToIndex.count(); ++i) {
-            emit description(this, descriptionTitle, qMakePair(QString("Current Item"), QString("%1").arg(urlsToIndex.at(i))));
-            
-            indexUrl(urlsToIndex.at(i));     
-            setPercent(100*i/urlsToIndex.count());
+    emit percentComplete(0);
+    if (m_indexType == MediaIndexer::IndexMediaItem) {
+        for (int i = 0; i < m_mediaList.count(); ++i) {
+            indexMediaItem(m_mediaList.at(i));
+            emit sourceInfoUpdated(m_mediaList.at(i));
+            emit percentComplete(100*i/m_mediaList.count());
         }
-        emit description(this, QString("Bangarang: %1 items indexed").arg(urlsToIndex.count()));
-        emitResult();
-        running = false;
-    } else if (m_indexType == MediaIndexer::IndexMediaItem) {
-        QList<MediaItem> mediaList = m_mediaListToIndex;
-        m_mediaListToIndex.clear();
-        QString descriptionTitle = QString("Bangarang: Indexing %1 items").arg(mediaList.count());
-        for (int i = 0; i < mediaList.count(); ++i) {
-            emit description(this, descriptionTitle, qMakePair(QString("Current Item"), QString("%1").arg(mediaList.at(i).title)));
-            
-            indexMediaItem(mediaList.at(i));
-            emit sourceInfoUpdated(mediaList.at(i));
-            setPercent(100*i/mediaList.count());
-        }
-        emit description(this, QString("Bangarang: %1 items indexed").arg(mediaList.count()));
-        emitResult();
-        running = false;
     } else if (m_indexType == MediaIndexer::RemoveInfo) {
-        QList<MediaItem> mediaList = m_mediaListToIndex;
-        m_mediaListToIndex.clear();
-        QString descriptionTitle = QString("Bangarang: Removing Info for %1 items").arg(mediaList.count());
-        for (int i = 0; i < mediaList.count(); ++i) {
-            emit description(this, descriptionTitle, qMakePair(QString("Current Item"), QString("%1").arg(mediaList.at(i).title)));
-            
-            removeInfo(mediaList.at(i));     
-            emit urlInfoRemoved(mediaList.at(i).url);
-            setPercent(100*i/mediaList.count());
+        for (int i = 0; i < m_mediaList.count(); ++i) {
+            removeInfo(m_mediaList.at(i));     
+            emit urlInfoRemoved(m_mediaList.at(i).url);
+            emit percentComplete(100*i/m_mediaList.count());
         }
-        emit description(this, QString("Bangarang: Info for %1 items removed").arg(mediaList.count()));
-        emitResult();
-        running = false;
+    } else if (m_indexType == MediaIndexer::WritePlaybackInfo) {
+        MediaVocabulary mediaVocabulary = MediaVocabulary();
+        kDebug() << "start writing playback info";
+        Nepomuk::Resource res(m_url);
+        if (res.exists()) {
+            kDebug() << "setting last played";
+            res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(m_playDateTime));
+            if (m_incrementPlayCount) {
+                int playCount = res.property(mediaVocabulary.playCount()).toInt();
+                playCount = playCount + 1;
+                kDebug() << "setting playcount";
+                res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
+            }
+        }
+        kDebug() << "done writing playback info";
     }
+    emit percentComplete(100);
+    m_mediaList.clear();
     emit jobComplete();
-}
-
-void MediaIndexerJob::setUrlsToIndex(QList<QString> urls)
-{
-    if (!running) {
-        m_urlsToIndex << urls;
-        m_indexType = MediaIndexer::IndexUrl;
-    }
 }
 
 void MediaIndexerJob::setMediaListToIndex(QList<MediaItem> mediaList)
 {
-    if (!running) {
-        m_mediaListToIndex << mediaList;
-        m_indexType = MediaIndexer::IndexMediaItem;
-    }
+    m_mediaList = mediaList;
+    m_indexType = MediaIndexer::IndexMediaItem;
 }
 
 void MediaIndexerJob::setInfoToRemove(QList<MediaItem> mediaList)
 {
-    if (!running) {
-        m_mediaListToIndex << mediaList;
-        m_indexType = MediaIndexer::RemoveInfo;
-    }
+    m_mediaList = mediaList;
+    m_indexType = MediaIndexer::RemoveInfo;
 }
 
-void MediaIndexerJob::indexUrl(QString url)
+void MediaIndexerJob::writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
 {
-    //Update RDF store
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    Nepomuk::Resource res(url);
-    if (Utilities::isMusic(url)) {
-        if (!res.exists()) {
-            res = Nepomuk::Resource(url, mediaVocabulary.typeAudioMusic());
-        }
-        if (!res.hasType(mediaVocabulary.typeAudioMusic())) {
-            res.addType(mediaVocabulary.typeAudioMusic());
-        }
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
-        QString title = TStringToQString(file.tag()->title()).trimmed();
-        QString artist  = TStringToQString(file.tag()->artist()).trimmed();
-        QString album   = TStringToQString(file.tag()->album()).trimmed();
-        int track   = file.tag()->track();
-        QString genre   = TStringToQString(file.tag()->genre()).trimmed();
-        int duration = file.audioProperties()->length();
-        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-        res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
-        res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
-        res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
-        res.setProperty(mediaVocabulary.musicGenre(), Nepomuk::Variant(genre));
-        res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
-    }
-}    
+    m_url = url;
+    m_incrementPlayCount = incrementPlayCount;
+    m_playDateTime = playDateTime;
+
+    m_indexType = MediaIndexer::WritePlaybackInfo;
+    start();
+}
 
 void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
 {
@@ -371,7 +317,8 @@ void MediaIndexerJob::removeType(Nepomuk::Resource res, QUrl mediaType)
     res.setTypes(types);
 }
 
-MediaIndexer::MediaIndexer(QObject * parent) : QThread(parent)
+
+MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
 {
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -383,67 +330,64 @@ MediaIndexer::MediaIndexer(QObject * parent) : QThread(parent)
 
 MediaIndexer::~MediaIndexer()
 {
-}
-
-void MediaIndexer::run()
-{
-    if (m_nepomukInited) {
-        if (m_indexType == MediaIndexer::IndexUrl) {
-            if (m_urls.count() > 0) {
-                MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
-                indexerJob->setUrlsToIndex(m_urls);
-                KUiServerJobTracker * jt = new KUiServerJobTracker(this);
-                jt->registerJob(indexerJob);
-                indexerJob->start();
-            }
-        } else if (m_indexType == MediaIndexer::IndexMediaItem) {
-            if (m_mediaList.count() > 0) {
-                MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
-                connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
-                connect(indexerJob, SIGNAL(sourceInfoUpdated(MediaItem)), this, SIGNAL(sourceInfoUpdated(MediaItem)));
-                indexerJob->setMediaListToIndex(m_mediaList);
-                KUiServerJobTracker * jt = new KUiServerJobTracker(this);
-                jt->registerJob(indexerJob);
-                indexerJob->start();
-            }
-        } else if (m_indexType == MediaIndexer::RemoveInfo) {
-            if (m_mediaList.count() > 0) {
-                MediaIndexerJob * indexerJob = new MediaIndexerJob(this);
-                connect(indexerJob, SIGNAL(jobComplete()), this, SLOT(jobComplete()));
-                connect(indexerJob, SIGNAL(urlInfoRemoved(QString)), this, SIGNAL(urlInfoRemoved(QString)));
-                indexerJob->setInfoToRemove(m_mediaList);
-                KUiServerJobTracker * jt = new KUiServerJobTracker(this);
-                jt->registerJob(indexerJob);
-                indexerJob->start();
-            }
-        }
-    } else {
-        emit indexingComplete();
+    for (int i = 0; i < m_mediaIndexerJobs.count(); i++) {
+        delete m_mediaIndexerJobs.at(i);
     }
-}
-
-void MediaIndexer::indexUrls(QList<QString> urls)
-{
-    m_indexType = MediaIndexer::IndexUrl;
-    m_urls = urls;
-    start();
 }
 
 void MediaIndexer::indexMediaItems(QList<MediaItem> mediaList)
 {
-    m_indexType = MediaIndexer::IndexMediaItem;
-    m_mediaList = mediaList;
-    start();
+    if (m_nepomukInited) {
+        if (mediaList.count() > 0) {
+            MediaIndexerJob * indexerJob = availableIndexerJob();
+            connect(indexerJob, SIGNAL(percentComplete(int)), this, SIGNAL(percentComplete(int)));
+            connect(indexerJob, SIGNAL(jobComplete()), this, SIGNAL(indexingComplete()));
+            connect(indexerJob, SIGNAL(sourceInfoUpdated(MediaItem)), this, SIGNAL(sourceInfoUpdated(MediaItem)));
+            connect(indexerJob, SIGNAL(started()), this, SIGNAL(started()));
+            indexerJob->setMediaListToIndex(mediaList);
+            indexerJob->start();
+        }
+    }
 }
 
 void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
 {
-    m_indexType = MediaIndexer::RemoveInfo;
-    m_mediaList = mediaList;
-    start();
+    if (m_nepomukInited) {
+        if (mediaList.count() > 0) {
+            MediaIndexerJob * indexerJob = availableIndexerJob();
+            connect(indexerJob, SIGNAL(percentComplete(int)), this, SIGNAL(percentComplete(int)));
+            connect(indexerJob, SIGNAL(jobComplete()), this, SIGNAL(indexingComplete()));
+            connect(indexerJob, SIGNAL(urlInfoRemoved(QString)), this, SIGNAL(urlInfoRemoved(QString)));
+            connect(indexerJob, SIGNAL(started()), this, SIGNAL(started()));
+            indexerJob->setInfoToRemove(mediaList);
+            indexerJob->start();
+        }
+    }
 }
 
-void MediaIndexer::jobComplete()
+MediaIndexerJob * MediaIndexer::availableIndexerJob()
 {
-    emit indexingComplete();
+    MediaIndexerJob * mediaIndexerJob;
+    bool found = false;
+    for (int i = 0; i < m_mediaIndexerJobs.count(); i++) {
+        if (!m_mediaIndexerJobs.at(i)->isRunning()) {
+            mediaIndexerJob = m_mediaIndexerJobs.at(i);
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        mediaIndexerJob = new MediaIndexerJob(0);
+        m_mediaIndexerJobs.append(mediaIndexerJob);
+    }
+    
+    return mediaIndexerJob;
+}
+
+void MediaIndexer::writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
+{
+    if (m_nepomukInited) {
+        MediaIndexerJob * indexerJob = availableIndexerJob();
+        indexerJob->writePlaybackInfo(url, incrementPlayCount, playDateTime);
+    }
 }

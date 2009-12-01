@@ -48,6 +48,10 @@ class FileListEngine : public NepomukListEngine
         QList<MediaItem> readAudioUrlList(KUrl::List fileList);
         QList<MediaItem> readVideoUrlList(KUrl::List fileList);
         QString engineFilterFromUrlList(KUrl::List fileList);
+        KUrl::List m_fileList;
+        QString m_directoryPath;
+        bool m_getFilesAction;
+        bool m_getFolderAction;
 
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

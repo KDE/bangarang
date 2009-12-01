@@ -71,6 +71,10 @@ MediaItem AudioClipsListEngine::createMediaItem(Soprano::QueryResultIterator& it
 
 void AudioClipsListEngine::run()
 {
+    if (m_updateSourceInfo || m_removeSourceInfo) {
+        NepomukListEngine::run();
+        return;
+    }
     
     //Create media list based on engine argument and filter
     QList<MediaItem> mediaList;
