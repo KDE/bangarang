@@ -45,6 +45,8 @@ class NepomukListEngine : public ListEngine
         virtual void removeSourceInfo(QList<MediaItem> mediaList);
         virtual void updateSourceInfo(QList<MediaItem> mediaList);
         void connectIndexer();
+        void indexMediaItems(QList<MediaItem> mediaList);
+        void removeInfoForMediaItems(QList<MediaItem> mediaList);
         
     protected:
         MediaIndexer* m_mediaIndexer;
@@ -54,9 +56,19 @@ class NepomukListEngine : public ListEngine
         bool m_updateSourceInfo;
         QList<MediaItem> m_mediaItemsInfoToRemove;
         QList<MediaItem> m_mediaItemsInfoToUpdate;
+        void indexMediaItem(MediaItem mediaItem);
+        void removeInfo(MediaItem mediaItem);
+        void removeType(Nepomuk::Resource res, QUrl mediaType);
         
     private Q_SLOTS:
         void disconnectIndexer();
-               
+        
+    Q_SIGNALS:
+        void updateRemovalStarted();
+        void updateRemovalComplete();
+        void urlInfoRemoved(QString url);
+        void sourceInfoUpdated(MediaItem mediaItem);
+        void percentComplete(int percent);
+        
 };
 #endif // NEPOMUKLISTENGINE_H

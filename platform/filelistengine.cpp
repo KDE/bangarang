@@ -98,9 +98,11 @@ void FileListEngine::run()
                 mediaListProperties.lri = QString("files://video?getFolder||%1").arg(m_directoryPath);
             }
             m_getFolderAction = false;
-            kDebug() << "Test Message";
         }
         model()->addResults(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
+        if (m_nepomukInited && m_mediaListToIndex.count() > 0) {
+            NepomukListEngine::indexMediaItems(m_mediaListToIndex);
+        }
         return;
     } 
     
@@ -174,7 +176,7 @@ void FileListEngine::run()
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();
-    //exec();    
+    //exec();
 }
 
 void FileListEngine::activateAction()
@@ -240,7 +242,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QList<MediaItem> mediaList;
-    QList<MediaItem> mediaListToIndex;
+    //QList<MediaItem> mediaListToIndex;
     for (int i = 0; i < fileList.count(); ++i) {
         MediaItem mediaItem;
         mediaItem.artwork = KIcon("audio-mp4");
@@ -285,7 +287,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
                 }
             }
             //Index all music files
-            mediaListToIndex << mediaItem;
+            m_mediaListToIndex << mediaItem;
         } else {
             mediaItem.fields["audioType"] = i18n("Audio Clip");
             if (m_nepomukInited) {
@@ -303,15 +305,11 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
                     }
                 } else {
                     //Index Audio Clips not found in nepomuk store
-                    mediaListToIndex << mediaItem;
+                    m_mediaListToIndex << mediaItem;
                 }
             }
         }
         mediaList << mediaItem; 
-    }
-    if (m_nepomukInited) {
-        NepomukListEngine::connectIndexer();
-        m_mediaIndexer->indexMediaItems(mediaListToIndex);
     }
     return mediaList;
 }
@@ -320,7 +318,7 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QList<MediaItem> mediaList;
-    QList<MediaItem> mediaListToIndex;
+    //QList<MediaItem> mediaListToIndex;
     for (int i = 0; i < fileList.count(); ++i) {
         MediaItem mediaItem;
         mediaItem.artwork = KIcon("video-x-generic");
@@ -397,14 +395,10 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
                 }
             } else {
                 //Index video items not found in nepomuk store
-                mediaListToIndex << mediaItem;
+                m_mediaListToIndex << mediaItem;
             }
         }
         mediaList << mediaItem;
-    }
-    if (m_nepomukInited) {
-        NepomukListEngine::connectIndexer();
-        m_mediaIndexer->indexMediaItems(mediaListToIndex);
     }
     return mediaList;
 }
@@ -418,3 +412,4 @@ QString FileListEngine::engineFilterFromUrlList(KUrl::List fileList)
     }
     return engineFilter;
 }
+
