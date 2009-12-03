@@ -52,6 +52,7 @@ class FileListEngine : public NepomukListEngine
         QString m_directoryPath;
         bool m_getFilesAction;
         bool m_getFolderAction;
+        QList<MediaItem> m_mediaListToIndex;
 
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);

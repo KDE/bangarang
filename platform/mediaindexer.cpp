@@ -109,6 +109,7 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
     Nepomuk::Resource res(mediaItem.url);
     if (mediaItem.type == "Audio") {
         // Update the media type
+        kDebug() << "Writing type...";
         QUrl audioType;
         if (mediaItem.fields["audioType"] == "Music") {
             audioType = mediaVocabulary.typeAudioMusic();
@@ -138,12 +139,19 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         
         // Update the properties
         QString title = mediaItem.fields["title"].toString();
-        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        if (!title.isEmpty()) {
+            kDebug() << "Writing title...";
+            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        }
         QString description = mediaItem.fields["description"].toString();
-        res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        if (!description.isEmpty()) {
+            kDebug() << "Writing description...";
+            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        }
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
             Nepomuk::Resource artworkRes(artworkUrl);
+            kDebug() << "Writing artworkurl...";
             if (!artworkRes.exists()) {
                 artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
             }
@@ -151,22 +159,34 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         }
         if (mediaItem.fields["audioType"] == "Music") {
             QString artist  = mediaItem.fields["artist"].toString();
+            if (!artist.isEmpty()) {
+                kDebug() << "Writing artist...";
+                res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
+            }
             QString album   = mediaItem.fields["album"].toString();
+            if (!album.isEmpty()) {
+                kDebug() << "Writing album...";
+                res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
+            }
+            QString genre  = mediaItem.fields["genre"].toString();
+            if (!genre.isEmpty()) {
+                kDebug() << "Writing genre...";
+                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            }
             int track   = mediaItem.fields["trackNumber"].toInt();
-            QString genre   = mediaItem.fields["genre"].toString();
-            int duration = mediaItem.fields["duration"].toInt();
-            int year = mediaItem.fields["year"].toInt();
-            res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
-            res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
-            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
             if (track != 0) {
+                kDebug() << "Writing track...";
                 res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
             }
+            int duration = mediaItem.fields["duration"].toInt();
             if (duration != 0) {
+                kDebug() << "Writing duration...";
                 res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
             }
+            int year = mediaItem.fields["year"].toInt();
             if (year != 0) {
                 QDate created = QDate(year, 1, 1);
+                kDebug() << "Writing year..." << year;
                 res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
             }
         } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
@@ -183,24 +203,37 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
         
         //Update the properties
         QString title = mediaItem.fields["title"].toString();
-        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        if (!title.isEmpty()) {
+            kDebug() << "Writing title...";
+            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        }
         QString description = mediaItem.fields["description"].toString();
-        res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        if (!description.isEmpty()) {
+            kDebug() << "Writing description...";
+            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        }
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
             Nepomuk::Resource artworkRes(artworkUrl);
+            kDebug() << "Writing artworkurl...";
             if (!artworkRes.exists()) {
-                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), mediaVocabulary.typeImage());
+                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
             }
             res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
         }
         if (mediaItem.fields["videoType"] == "Movie") {
             res.setProperty(mediaVocabulary.videoIsMovie(), Nepomuk::Variant(true));
-            res.removeProperty(mediaVocabulary.videoIsTVShow());
+            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                res.removeProperty(mediaVocabulary.videoIsTVShow());
+            }
             QString seriesName = mediaItem.fields["seriesName"].toString();
-            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+            if (!seriesName.isEmpty()) {
+                res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+            }
             QString genre   = mediaItem.fields["genre"].toString();
-            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            if (!genre.isEmpty()) {
+                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            }
             int year = mediaItem.fields["year"].toInt();
             if (year != 0) {
                 QDate created = QDate(year, 1, 1);
@@ -208,23 +241,33 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             }
         } else if (mediaItem.fields["videoType"] == "TV Show") {
             res.setProperty(mediaVocabulary.videoIsTVShow(), Nepomuk::Variant(true));
-            res.removeProperty(mediaVocabulary.videoIsMovie());
+            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                res.removeProperty(mediaVocabulary.videoIsMovie());
+            }
             QString seriesName = mediaItem.fields["seriesName"].toString();
-            res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+            if (!seriesName.isEmpty()) {
+                res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
+            }
             int season = mediaItem.fields["season"].toInt();
             if (season != 0) {
                 res.setProperty(mediaVocabulary.videoSeriesSeason(), Nepomuk::Variant(season));
             } else {
-                res.removeProperty(mediaVocabulary.videoSeriesSeason());
+                if (res.hasProperty(mediaVocabulary.videoSeriesSeason())) {
+                    res.removeProperty(mediaVocabulary.videoSeriesSeason());
+                }
             }
             int episode = mediaItem.fields["episode"].toInt();
             if (episode != 0) {
                 res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
             } else {
-                res.removeProperty(mediaVocabulary.videoSeriesEpisode());
+                if (res.hasProperty(mediaVocabulary.videoSeriesEpisode())) {
+                    res.removeProperty(mediaVocabulary.videoSeriesEpisode());
+                }
             }
             QString genre   = mediaItem.fields["genre"].toString();
-            res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            if (!genre.isEmpty()) {
+                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+            }
             int year = mediaItem.fields["year"].toInt();
             if (year != 0) {
                 QDate created = QDate(year, 1, 1);
@@ -232,8 +275,12 @@ void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
             }
         } else if (mediaItem.fields["videoType"] == "Video Clip") {
             //Remove properties identifying video as a movie or tv show
-            res.removeProperty(mediaVocabulary.videoIsMovie());
-            res.removeProperty(mediaVocabulary.videoIsTVShow());
+            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                res.removeProperty(mediaVocabulary.videoIsMovie());
+            }
+            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                res.removeProperty(mediaVocabulary.videoIsTVShow());
+            }
         }
     }
 }
@@ -249,6 +296,7 @@ void MediaIndexerJob::removeInfo(MediaItem mediaItem)
     }
     if (mediaItem.type == "Audio") {
         // Update the media type
+        kDebug() << "Removing type...";
         QUrl audioType;
         if (mediaItem.fields["audioType"] == "Music") {
             audioType = mediaVocabulary.typeAudioMusic();
@@ -262,17 +310,44 @@ void MediaIndexerJob::removeInfo(MediaItem mediaItem)
         }
         
         // Update the properties
-        res.removeProperty(mediaVocabulary.title());
-        res.removeProperty(mediaVocabulary.description());
-        res.removeProperty(mediaVocabulary.artwork());
+        if (res.hasProperty(mediaVocabulary.title())){
+            kDebug() << "Removing title...";
+            res.removeProperty(mediaVocabulary.title());
+        }
+        if (res.hasProperty(mediaVocabulary.description())) {
+            kDebug() << "Removing description...";
+            res.removeProperty(mediaVocabulary.description());
+        }
+        if (res.hasProperty(mediaVocabulary.artwork())) {
+            kDebug() << "Removing artwork...";
+            res.removeProperty(mediaVocabulary.artwork());
+        }
 
         if (mediaItem.fields["audioType"] == "Music") {
-            res.removeProperty(mediaVocabulary.musicArtist());
-            res.removeProperty(mediaVocabulary.musicAlbumName());
-            res.removeProperty(mediaVocabulary.genre());
-            res.removeProperty(mediaVocabulary.musicTrackNumber());
-            res.removeProperty(mediaVocabulary.duration());
-            res.removeProperty(mediaVocabulary.created());
+            if (res.hasProperty(mediaVocabulary.musicArtist())) {
+                kDebug() << "Removing artist...";
+                res.removeProperty(mediaVocabulary.musicArtist());
+            }
+            if (res.hasProperty(mediaVocabulary.musicAlbumName())) {
+                kDebug() << "Removing album...";
+                res.removeProperty(mediaVocabulary.musicAlbumName());
+            }
+            if (res.hasProperty(mediaVocabulary.genre())) {
+                kDebug() << "Removing genre...";
+                res.removeProperty(mediaVocabulary.genre());
+            }
+            if (res.hasProperty(mediaVocabulary.musicTrackNumber())) {
+                kDebug() << "Removing trackNumber...";
+                res.removeProperty(mediaVocabulary.musicTrackNumber());
+            }
+            if (res.hasProperty(mediaVocabulary.duration())) {
+                kDebug() << "Removing duration...";
+                res.removeProperty(mediaVocabulary.duration());
+            }
+            if (res.hasProperty(mediaVocabulary.created())) {
+                kDebug() << "Removing year...";
+                res.removeProperty(mediaVocabulary.created());
+            }
         } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
             (mediaItem.fields["audioType"] == "Audio Clip")) {
         }
@@ -283,24 +358,57 @@ void MediaIndexerJob::removeInfo(MediaItem mediaItem)
         }
         
         //Update the properties
-        res.removeProperty(mediaVocabulary.title());
-        res.removeProperty(mediaVocabulary.description());
-        res.removeProperty(mediaVocabulary.artwork());
+        if (res.hasProperty(mediaVocabulary.title())){
+            kDebug() << "Removing title...";
+            res.removeProperty(mediaVocabulary.title());
+        }
+        if (res.hasProperty(mediaVocabulary.description())) {
+            kDebug() << "Removing description...";
+            res.removeProperty(mediaVocabulary.description());
+        }
+        if (res.hasProperty(mediaVocabulary.artwork())) {
+            kDebug() << "Removing artwork...";
+            res.removeProperty(mediaVocabulary.artwork());
+        }
         if (mediaItem.fields["videoType"] == "Movie") {
-            res.removeProperty(mediaVocabulary.videoIsMovie());
-            res.removeProperty(mediaVocabulary.videoSeriesName());
-            res.removeProperty(mediaVocabulary.genre());
-            res.removeProperty(mediaVocabulary.created());
+            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                res.removeProperty(mediaVocabulary.videoIsMovie());
+            }
+            if (res.hasProperty(mediaVocabulary.videoSeriesName())) {
+                res.removeProperty(mediaVocabulary.videoSeriesName());
+            }
+            if (res.hasProperty(mediaVocabulary.genre())) {
+                res.removeProperty(mediaVocabulary.genre());
+            }
+            if (res.hasProperty(mediaVocabulary.created())) {
+                res.removeProperty(mediaVocabulary.created());
+            }
         } else if (mediaItem.fields["videoType"] == "TV Show") {
-            res.removeProperty(mediaVocabulary.videoIsTVShow());
-            res.removeProperty(mediaVocabulary.videoSeriesName());
-            res.removeProperty(mediaVocabulary.videoSeriesSeason());
-            res.removeProperty(mediaVocabulary.videoSeriesEpisode());
-            res.removeProperty(mediaVocabulary.genre());
-            res.removeProperty(mediaVocabulary.created());
+            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                res.removeProperty(mediaVocabulary.videoIsTVShow());
+            }
+            if (res.hasProperty(mediaVocabulary.videoSeriesName())) {
+                res.removeProperty(mediaVocabulary.videoSeriesName());
+            }
+            if (res.hasProperty(mediaVocabulary.videoSeriesSeason())) {
+                res.removeProperty(mediaVocabulary.videoSeriesSeason());
+            }
+            if (res.hasProperty(mediaVocabulary.videoSeriesEpisode())) {
+                res.removeProperty(mediaVocabulary.videoSeriesEpisode());
+            }
+            if (res.hasProperty(mediaVocabulary.genre())) {
+                res.removeProperty(mediaVocabulary.genre());
+            }
+            if (res.hasProperty(mediaVocabulary.created())) {
+                res.removeProperty(mediaVocabulary.created());
+            }
         } else if (mediaItem.fields["videoType"] == "Video Clip") {
-            res.removeProperty(mediaVocabulary.videoIsMovie());
-            res.removeProperty(mediaVocabulary.videoIsTVShow());
+            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
+                res.removeProperty(mediaVocabulary.videoIsMovie());
+            }
+            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
+                res.removeProperty(mediaVocabulary.videoIsTVShow());
+            }
         }
     }
 }
