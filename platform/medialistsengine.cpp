@@ -78,18 +78,6 @@ void MediaListsEngine::run()
             mediaItem.url = "audiostreams://";
             mediaItem.artwork = KIcon("x-media-podcast");
             mediaList << mediaItem;
-            mediaItem.title = i18n("Frequently Played");
-            mediaItem.url = "semantics://frequent?audio";
-            mediaItem.artwork = KIcon("office-chart-bar");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Recently Played");
-            mediaItem.url = "semantics://recent?audio";
-            mediaItem.artwork = KIcon("chronometer");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Highest Rated");
-            mediaItem.url = "semantics://highest?audio";
-            mediaItem.artwork = KIcon("rating");
-            mediaList << mediaItem;
         }
         
         //Show Audio CD if present
@@ -105,6 +93,21 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Audio CD");
             mediaItem.url = "cdaudio://";
             mediaItem.artwork = KIcon("media-optical-audio");
+            mediaList << mediaItem;
+        }
+        
+        if (m_nepomukInited) {
+            mediaItem.title = i18n("Frequently Played");
+            mediaItem.url = "semantics://frequent?audio";
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Recently Played");
+            mediaItem.url = "semantics://recent?audio";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Highest Rated");
+            mediaItem.url = "semantics://highest?audio";
+            mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }
         
@@ -165,18 +168,6 @@ void MediaListsEngine::run()
             mediaItem.url = "video://clips";
             mediaItem.artwork = KIcon("video-x-generic");
             mediaList << mediaItem;
-            mediaItem.title = i18n("Frequently Played");
-            mediaItem.url = "semantics://frequent?video";
-            mediaItem.artwork = KIcon("office-chart-bar");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Recently Played");
-            mediaItem.url = "semantics://recent?video";
-            mediaItem.artwork = KIcon("chronometer");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Highest Rated");
-            mediaItem.url = "semantics://highest?video";
-            mediaItem.artwork = KIcon("rating");
-            mediaList << mediaItem;
         }
         
         //Show DVD if present
@@ -193,6 +184,21 @@ void MediaListsEngine::run()
             mediaItem.url = "dvdvideo://";
             mediaItem.artwork = KIcon("media-optical-dvd");
             mediaList << mediaItem;        
+        }
+        
+        if (m_nepomukInited) {
+            mediaItem.title = i18n("Frequently Played");
+            mediaItem.url = "semantics://frequent?video";
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Recently Played");
+            mediaItem.url = "semantics://recent?video";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Highest Rated");
+            mediaItem.url = "semantics://highest?video";
+            mediaItem.artwork = KIcon("rating");
+            mediaList << mediaItem;
         }
         
         //Load saved lists from index
