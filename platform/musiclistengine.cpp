@@ -179,10 +179,10 @@ void MusicListEngine::run()
     if (!engineFilter.isNull()) {
         QStringList argList = engineFilter.split("||");
         artist = argList.at(0);
-        if (argList.count() == 2) {
+        if (argList.count() >= 2) {
             album = argList.at(1);
         }
-        if (argList.count() == 3) {
+        if (argList.count() >= 3) {
             genre = argList.at(2);
         }
     }
