@@ -19,55 +19,8 @@ INCLUDE_DIRECTORIES(
     /usr/include/taglib 
 )
 
-SET(BangarangSources 
-    mainwindow.cpp 
-    main.cpp 
-    sensiblewidgets.cpp 
-    mediaitemdelegate.cpp 
-    nowplayingdelegate.cpp 
-    mediaview.cpp 
-    infomanager.cpp 
-    savedlistsmanager.cpp 
-    actionsmanager.cpp
-    platform/mediaitemmodel.cpp 
-    platform/musiclistengine.cpp 
-    platform/videolistengine.cpp 
-    platform/filelistengine.cpp 
-    platform/cdlistengine.cpp 
-    platform/dvdlistengine.cpp 
-    platform/medialistsengine.cpp
-    platform/audiostreamlistengine.cpp
-    platform/nepomuklistengine.cpp
-    platform/semanticslistengine.cpp
-    platform/playlist.cpp 
-    platform/utilities.cpp 
-    platform/listengine.cpp 
-    platform/savedlistsengine.cpp 
-    platform/listenginefactory.cpp 
-    platform/mediaindexer.cpp 
-    platform/mediavocabulary.cpp 
-    platform/medialistcache.cpp
-    platform/cachelistengine.cpp
-    platform/audioclipslistengine.cpp
-)
-
-KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
-
-kde4_add_app_icon(BangarangSources "${CMAKE_CURRENT_SOURCE_DIR}/hi*.png")
-
-
-KDE4_ADD_EXECUTABLE(bangarang ${BangarangSources})
-
-TARGET_LINK_LIBRARIES(bangarang 
-    ${KDE4_KDEUI_LIBS} 
-    ${KDE4_KPARTS_LIBS} 
-    ${KDE4_PHONON_LIBS} 
-    ${NEPOMUK_LIBRARIES} 
-    ${KDEMULTIMEDIA_LIBRARIES} 
-    ${SOPRANO_LIBRARIES} 
-    ${TAGLIB_LIBRARIES} 
-    tag 
-)
+add_subdirectory( icons )
+add_subdirectory( src )
 
 find_package(Msgfmt REQUIRED)
 find_package(Gettext REQUIRED)
@@ -75,10 +28,6 @@ add_subdirectory( translations )
 
 ########### install files ###############
 
-install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES bangarang.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
+install(FILES data/bangarang.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
 #install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang)
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})
-
-kde4_install_icons( ${ICON_INSTALL_DIR}   )
-
