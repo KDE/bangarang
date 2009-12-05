@@ -147,7 +147,7 @@ void MediaListsEngine::run()
         MediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
-        mediaItem.title = "Files and Folders";
+        mediaItem.title = i18n("Files and Folders");
         mediaItem.url = "files://video";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaList << mediaItem;

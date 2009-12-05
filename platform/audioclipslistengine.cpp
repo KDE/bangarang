@@ -22,6 +22,7 @@
 #include "mediavocabulary.h"
 #include <KIcon>
 #include <KUrl>
+#include <KLocale>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -103,7 +104,7 @@ void AudioClipsListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 clips").arg(mediaList.count());
+            m_mediaListProperties.summary = i18n("1 clip", "%1 clips", mediaList.count());
             
             m_mediaListProperties.type = QString("Sources");
             
@@ -127,7 +128,7 @@ void AudioClipsListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 clips").arg(mediaList.count());
+            m_mediaListProperties.summary = i18n("1 clip", "%1 clips", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
@@ -140,8 +141,7 @@ void AudioClipsListEngine::run()
 void AudioClipsListEngine::setFilterForSources(const QString& engineFilter)
 {
     //Always return songs
-    // FIXME: Is it intentional that %1 is missing?
-    m_mediaListProperties.lri = QString("audioclips://").arg(engineFilter);
+    m_mediaListProperties.lri = QString("audioclips://?%1").arg(engineFilter);
 }
 
 

@@ -330,14 +330,14 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
     if (fullScreen) {
         showFullScreen();
         ui->fullScreen->setIcon(KIcon("view-restore"));
-        ui->fullScreen->setToolTip("<b>Fullscreen</b><br>Click to exit fullscreen");
+        ui->fullScreen->setToolTip(i18n("<b>Fullscreen</b><br>Click to exit fullscreen"));
         ui->fullScreen->setChecked(true);
         ui->widgetSet->setVisible(false);
         ui->nowPlayingToolbar->setVisible(false);
     } else {
         showNormal();
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
-        ui->fullScreen->setToolTip("Show fullscreen");
+        ui->fullScreen->setToolTip(i18n("Show fullscreen"));
         ui->fullScreen->setChecked(false);
         ui->widgetSet->setVisible(true);
         ui->nowPlayingToolbar->setVisible(true);
@@ -348,9 +348,9 @@ void MainWindow::on_seekTime_clicked()
 {
     showRemainingTime = !showRemainingTime;
     if (showRemainingTime) {
-        ui->seekTime->setToolTip("<b>Time remaining</b><br>Click to show elapsed time");
+        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time"));
     } else {
-        ui->seekTime->setToolTip("<b>Time elapsed</b><br>Click to show remaining time");
+        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time"));
     }
 }
 
@@ -359,7 +359,7 @@ void MainWindow::on_mediaPlayPause_pressed()
     if ((m_media->state() == Phonon::PlayingState)) {
         m_media->pause();
         m_pausePressed = true;
-        ui->mediaPlayPause->setToolTip("<b>Paused</b><br>Hold to stop");
+        ui->mediaPlayPause->setToolTip(i18n("<b>Paused</b><br>Hold to stop"));
     }
 }
 

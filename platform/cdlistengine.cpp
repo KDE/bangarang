@@ -31,6 +31,7 @@
 #include <KIcon>
 #include <KFileDialog>
 #include <KMimeType>
+#include <KLocale>
 #include <Phonon/MediaController>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
@@ -76,11 +77,11 @@ void CDListEngine::run()
             QString artist;
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
-                title = QString("Track %1").arg(i);
+                title = i18n("Track %1", i);
                 mediaItem.url = QString("CDTRACK%1").arg(i);
                 mediaItem.artwork = KIcon("media-optical-audio");
                 mediaItem.title = title;
-                mediaItem.subTitle = QString("Audio CD - %1 Tracks").arg(trackCount);
+                mediaItem.subTitle = i18n("Audio CD - %1 Tracks", trackCount);
                 mediaItem.type = "Audio";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = mediaItem.title;
@@ -89,11 +90,7 @@ void CDListEngine::run()
                 mediaList << mediaItem;
             }
 
-            /*mediaItem.url = "-";
-            mediaItem.title = QString("Number of tracks: %1").arg(trackCount);
-            mediaItem.type = "Audio";
-            mediaList << mediaItem;*/
-            m_mediaListProperties.summary = QString("%1 tracks").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 track", "%1 tracks", mediaList.count());
             model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
             m_requestSignature = QString();
             m_subRequestSignature = QString();

@@ -26,6 +26,7 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <KUrl>
+#include <KLocale>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
@@ -98,7 +99,7 @@ void SavedListsEngine::run()
         
     }
     
-    m_mediaListProperties.summary = QString("%1 items").arg(mediaList.count());
+    m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();

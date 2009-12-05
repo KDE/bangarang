@@ -22,6 +22,7 @@
 #include "mediavocabulary.h"
 #include <KIcon>
 #include <KUrl>
+#include <KLocale>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -99,12 +100,12 @@ void AudioStreamListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 streams").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 stream", "%1 streams", mediaList.count());
             
             MediaItem mediaItem;
             mediaItem.type = "Action";
             mediaItem.url = "audiostreams://";
-            mediaItem.title = "Create new audio stream item";
+            mediaItem.title = i18n("Create new audio stream item");
             mediaItem.artwork = KIcon("document-new");
             mediaList.append(mediaItem);
             
@@ -130,7 +131,7 @@ void AudioStreamListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 streams").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 stream", "%1 streams", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
@@ -143,8 +144,7 @@ void AudioStreamListEngine::run()
 void AudioStreamListEngine::setFilterForSources(const QString& engineFilter)
 {
     //Always return songs
-	// FIXME: Is it intentional that %1 is missing?
-    m_mediaListProperties.lri = QString("audiostreams://").arg(engineFilter);
+    m_mediaListProperties.lri = QString("audiostreams://?%1").arg(engineFilter);
 }
 
 void AudioStreamListEngine::activateAction()
@@ -152,8 +152,8 @@ void AudioStreamListEngine::activateAction()
     MediaItem mediaItem;
     mediaItem.type = "Audio";
     mediaItem.url = QString();
-    mediaItem.title = "Untitled Audio Stream";
-    mediaItem.subTitle = "Select this item, click Info then Edit to enter audio stream info";
+    mediaItem.title = i18n("Untitled Audio Stream");
+    mediaItem.subTitle = i18n("Select this item, click Info then Edit to enter audio stream info");
     mediaItem.artwork = KIcon("x-media-podcast");
     mediaItem.fields["title"] = "Untitled";
     mediaItem.fields["audioType"] = "Audio Stream";
@@ -162,7 +162,7 @@ void AudioStreamListEngine::activateAction()
     QList<MediaItem> mediaList;
     mediaList << mediaItem;
     
-    m_mediaListProperties.name = "New Audio Stream";
+    m_mediaListProperties.name = i18n("New Audio Stream");
     
     model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
 }

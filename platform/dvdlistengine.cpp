@@ -27,6 +27,7 @@
 #include <KIcon>
 #include <KFileDialog>
 #include <KMimeType>
+#include <KLocale>
 #include <Phonon/MediaController>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
@@ -72,11 +73,11 @@ void DVDListEngine::run()
             QString artist;
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
-                title = QString("Title %1").arg(i);
+                title = i18n("Title %1", i);
                 mediaItem.url = QString("DVDTRACK%1").arg(i);
                 mediaItem.artwork = KIcon("media-optical-dvd");
                 mediaItem.title = title;
-                mediaItem.subTitle = QString("DVD Video - %1 Titles").arg(trackCount);
+                mediaItem.subTitle = i18n("DVD Video - %1 Titles", trackCount);
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = mediaItem.title;
@@ -85,10 +86,6 @@ void DVDListEngine::run()
                 mediaList << mediaItem;
             }
 
-            /*mediaItem.url = "-";
-            mediaItem.title = QString("Number of tracks: %1").arg(trackCount);
-            mediaItem.type = "Audio";
-            mediaList << mediaItem;*/
             model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
             m_requestSignature = QString();
             m_subRequestSignature = QString();

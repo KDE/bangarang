@@ -23,6 +23,7 @@
 #include "utilities.h"
 #include <KIcon>
 #include <KUrl>
+#include <KLocale>
 #include <KDebug>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
@@ -218,11 +219,11 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = "Artists";
+            m_mediaListProperties.name = i18n("Artists");
             if (!genre.isEmpty()) {
-                m_mediaListProperties.name = QString("Artists - %1").arg(genre);
+                m_mediaListProperties.name = i18n("Artists - %1", genre);
             }
-            m_mediaListProperties.summary = QString("%1 artists").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "albums") {
@@ -258,18 +259,18 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = "Albums";
+            m_mediaListProperties.name = i18n("Albums");
             if (!artist.isEmpty()) {
-                m_mediaListProperties.name = QString("Albums - %1").arg(artist);
+                m_mediaListProperties.name = i18n("Albums - %1", artist);
             }
             if (!genre.isEmpty()) {
-                m_mediaListProperties.name = QString("Albums - %1").arg(genre);
+                m_mediaListProperties.name = i18n("Albums - %1", genre);
             }
             if (!artist.isEmpty() && !genre.isEmpty()) {
-                m_mediaListProperties.name = QString("Albums - %1 - %2").arg(album, genre);
+                m_mediaListProperties.name = i18n("Albums - %1 - %2", album, genre);
             }
             
-            m_mediaListProperties.summary = QString("%1 albums").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 album", "%1 albums", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "genres") {
@@ -302,8 +303,8 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = "Genres";
-            m_mediaListProperties.summary = QString("%1 genres").arg(mediaList.count());
+            m_mediaListProperties.name = i18n("Genres");
+            m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "songs") {
@@ -349,9 +350,9 @@ void MusicListEngine::run()
             } else if (!artist.isEmpty()) {
                 m_mediaListProperties.name = QString("%1").arg(artist);
             } else {
-                m_mediaListProperties.name = QString("Songs");
+                m_mediaListProperties.name = i18n("Songs");
             }
-            m_mediaListProperties.summary = QString("%1 songs").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 song", "%1 songs", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "search") {
@@ -379,7 +380,7 @@ void MusicListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = QString("%1 songs").arg(mediaList.count());
+            m_mediaListProperties.summary = i18np("1 song", "%1 songs", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
