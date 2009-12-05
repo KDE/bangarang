@@ -260,7 +260,7 @@ void VideoSettings::restoreClicked()
 {
   videoWidget->setBrightness(0);
   videoWidget->setContrast(0);
-  videoWidget->setHue(0);
+  videoWidget->setHue(70);
   videoWidget->setSaturation(0);
 
   videoWidget->setAspectRatio(VideoWidget::AspectRatioAuto);

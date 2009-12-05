@@ -303,8 +303,9 @@ void ActionsManager::toggleVideoSettings()
     m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
     ui->contextStack->addWidget(m_videoSettings);
     ui->contextStack->setCurrentWidget(m_videoSettings);
+    m_showVideoSettings->setText("Hide VideoSettings");
   } else {
-    ui->contextStack->setCurrentIndex(currentIndex);
+    ui->contextStack->setCurrentIndex(0);
   }
 }
 
