@@ -101,10 +101,10 @@ signals:
     void saturationChanged(qreal num);
     void okClicked();
 private slots:
-    void setBrightness();
-    void setContrast();
-    void setHue();
-    void setSaturation();
+    void setBrightness(int ch);
+    void setContrast(int ch);
+    void setHue(int ch);
+    void setSaturation(int ch);
     
     void setAspectRatioAuto(bool checked);
     void setAspectRatioWidget(bool checked);

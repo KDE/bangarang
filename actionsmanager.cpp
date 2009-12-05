@@ -297,15 +297,16 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-  int currentIndex = ui->contextStack->currentIndex();
-
   if(ui->contextStack->currentWidget() != m_videoSettings ) {
     m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
     ui->contextStack->addWidget(m_videoSettings);
     ui->contextStack->setCurrentWidget(m_videoSettings);
-    m_showVideoSettings->setText("Hide VideoSettings");
+    ui->contextStack->setVisible(true);
+    m_showVideoSettings->setText(i18n("Hide VideoSettings"));
   } else {
+    ui->contextStack->setVisible(false);
     ui->contextStack->setCurrentIndex(0);
+    m_showVideoSettings->setText(i18n("Show VideoSettings"));
   }
 }
 
