@@ -146,8 +146,6 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   restoreButton->setText(i18n("Restore Defaults"));
   button_layout->addWidget(restoreButton);
   
-  
-
   m_layout->addWidget(videoColorWidget);
   m_layout->addLayout(sizeSettings_layout);
   m_layout->addLayout(button_layout);
@@ -173,10 +171,10 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
 void
 VideoSettings::setupConnections()
 {
-  connect(brightnessSlider,SIGNAL(sliderReleased()),this,SLOT(setBrightness()));
-  connect(contrastSlider,SIGNAL(sliderReleased()),this,SLOT(setContrast()));
-  connect(hueSlider,SIGNAL(sliderReleased()),this,SLOT(setHue()));
-  connect(saturationSlider,SIGNAL(sliderReleased()),this,SLOT(setSaturation()));
+  connect(brightnessSlider,SIGNAL(valueChanged(int)),this,SLOT(setBrightness(int)));
+  connect(contrastSlider,SIGNAL(valueChanged(int)),this,SLOT(setContrast(int)));
+  connect(hueSlider,SIGNAL(valueChanged(int)),this,SLOT(setHue(int)));
+  connect(saturationSlider,SIGNAL(valueChanged(int)),this,SLOT(setSaturation(int)));
   
   connect(aspectRatioAuto,SIGNAL(toggled(bool)),
 	  this,SLOT(setAspectRatioAuto(bool)));
@@ -200,24 +198,24 @@ VideoSettings::~VideoSettings()
 
 }
 
-void VideoSettings::setBrightness()
+void VideoSettings::setBrightness(int ch)
 {
-  videoWidget->setBrightness(qreal(brightnessSlider->value())/100);
+  videoWidget->setBrightness(qreal(ch)/100);
 }
 
-void VideoSettings::setContrast()
+void VideoSettings::setContrast(int ch)
 {
-  videoWidget->setContrast(qreal(contrastSlider->value())/100);
+  videoWidget->setContrast(qreal(ch)/100);
 }
 
-void VideoSettings::setHue()
+void VideoSettings::setHue(int ch)
 {
-  videoWidget->setHue(qreal(hueSlider->value())/100);
+  videoWidget->setHue(qreal(ch)/100);
 }
 
-void VideoSettings::setSaturation()
+void VideoSettings::setSaturation(int ch)
 {
-  videoWidget->setSaturation(qreal(saturationSlider->value())/100);
+  videoWidget->setSaturation(qreal(ch)/100);
 }
 
 void VideoSettings::setAspectRatioAuto(bool checked)
@@ -260,7 +258,7 @@ void VideoSettings::restoreClicked()
 {
   videoWidget->setBrightness(0);
   videoWidget->setContrast(0);
-  videoWidget->setHue(70);
+  videoWidget->setHue(0);
   videoWidget->setSaturation(0);
 
   videoWidget->setAspectRatio(VideoWidget::AspectRatioAuto);
