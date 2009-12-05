@@ -24,6 +24,7 @@
 #include <KIcon>
 #include <KUrl>
 #include <KDebug>
+#include <KLocale>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -85,7 +86,7 @@ void SemanticsListEngine::run()
                     mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Played %1 times").arg(it.binding("playcount").literal().toInt());
                     mediaList.append(mediaItem);
                 }
-                m_mediaListProperties.name = "Frequently Played";
+                m_mediaListProperties.name = i18n("Frequently Played");
                 m_mediaListProperties.type = QString("Sources");
             }
         }
@@ -111,7 +112,7 @@ void SemanticsListEngine::run()
                     mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Last Played: %1").arg(lastPlayed);
                     mediaList.append(mediaItem);
                 }
-                m_mediaListProperties.name = "Recently Played";
+                m_mediaListProperties.name = i18n("Recently Played");
                 m_mediaListProperties.type = QString("Sources");
             }
         }
@@ -136,7 +137,7 @@ void SemanticsListEngine::run()
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     mediaList.append(mediaItem);
                 }
-                m_mediaListProperties.name = "Highest Rated";
+                m_mediaListProperties.name = i18n("Highest Rated");
                 m_mediaListProperties.type = QString("Sources");
             }
         }

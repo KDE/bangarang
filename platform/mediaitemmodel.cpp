@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <KIcon>
 #include <KDebug>
+#include <KLocale>
 
 MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent) 
 {
@@ -452,8 +453,9 @@ void MediaItemModel::showLoadingMessage()
         }
         QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
         loadingMessage.artwork = KIcon(iconName);
-        loadingMessage.title = "Loading...";
+        loadingMessage.title = i18n("Loading...");
         loadingMessage.type = "Message";
+        loadingMessage.fields["messageType"] = "Loading";
         if (rowCount() == 0) {
             loadMediaItem(loadingMessage, false);
         } else {
@@ -467,7 +469,7 @@ void MediaItemModel::hideLoadingMessage()
 {
     int row = -1;
     for (int i = 0; i < m_mediaList.count(); ++i) {
-        if ((m_mediaList.at(i).title == "Loading...") && (m_mediaList.at(i).type == "Message")) {
+        if ((m_mediaList.at(i).fields["messageType"].toString() == "Loading") && (m_mediaList.at(i).type == "Message")) {
             row = i;
             break;
         }
@@ -488,6 +490,7 @@ void MediaItemModel::showNoResultsMessage()
     MediaItem loadingMessage;
     loadingMessage.title = "No results";
     loadingMessage.type = "Message";
+    loadingMessage.fields["messageType"] = "No Results";
     loadMediaItem(loadingMessage, false);
 }
 
@@ -516,7 +519,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
        QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
        markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
        markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
-       markPlaylistItem->setData("Add to playlist/Remove from playlist", Qt::ToolTipRole);
+       markPlaylistItem->setData(i18n("Add to playlist/Remove from playlist"), Qt::ToolTipRole);
        rowData << markPlaylistItem;
     } else if (mediaItem.type == "Category") {
        KIcon categoryActionIcon;
