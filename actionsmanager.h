@@ -19,6 +19,7 @@
 #ifndef ACTIONSMANAGER_H
 #define ACTIONSMANAGER_H
 
+#include "videosettings.h"
 #include <KActionCollection>
 #include <QObject>
 #include <QAction>
@@ -52,15 +53,18 @@ class ActionsManager : public QObject
         QAction *mute();
         QAction *removeSelectedItemsInfo();
         QAction *refreshMediaView();
-        
+        QAction *showVideoSettings();
+
         QMenu * mediaViewMenu(bool showAbout = false);
         
     public slots:
         
     private:
+
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
-        
+        VideoSettings *m_videoSettings;
+
         QAction *m_quit;
         QAction *m_playAllAction;
         QAction *m_playSelectedAction;
@@ -76,16 +80,18 @@ class ActionsManager : public QObject
         QAction *m_mute;
         QAction *m_removeSelectedItemsInfo;
         QAction *m_refreshMediaView;
+	QAction *m_showVideoSettings;
+
         KActionCollection *m_actionCollection;
         
     private slots:
         void fullScreenToggle();
         void toggleControls();
+	void toggleVideoSettings();
         void cancelFSHC();
         void showShortcutsEditor();
         void hideShortcutsEditor();
         void simplePlayPause();
         void muteAudio();
-        
 };
 #endif //ACTIONSMANAGER_H

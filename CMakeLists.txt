@@ -1,7 +1,7 @@
 PROJECT(Bangarang)
 
 set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
-
+set( WITHTRANSLATIONS:BOOL YES )
 FIND_PACKAGE(KDE4 REQUIRED)
 FIND_PACKAGE(Nepomuk REQUIRED)
 FIND_PACKAGE(KdeMultimedia REQUIRED)
@@ -20,6 +20,7 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(BangarangSources 
+    videosettings.cpp
     mainwindow.cpp 
     main.cpp 
     sensiblewidgets.cpp 

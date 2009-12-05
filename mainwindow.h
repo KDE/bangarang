@@ -84,6 +84,7 @@ public:
     KAboutData * aboutData();
     Playlist * playlist();
     Phonon::AudioOutput * audioOutput();
+    Phonon::VideoWidget * videoWidget();
     InfoManager *infoManager();
     
     

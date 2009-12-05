@@ -28,7 +28,6 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 
-
 #include <KCmdLineArgs>
 #include <KCursor>
 #include <KUrl>
@@ -580,6 +579,7 @@ void MainWindow::on_showMenu_clicked()
     m_helpMenu->menu();
     m_menu = new KMenu(this);
     //m_menu->addAction(m_actionsManager->editShortcuts());
+    m_menu->addAction(m_actionsManager->showVideoSettings());
     if (!isFullScreen()) {
         m_menu->addAction(m_actionsManager->showHideControls());
         m_menu->addSeparator();
@@ -640,9 +640,9 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     if (newstate == Phonon::PlayingState) {
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_media->hasVideo()) {
-            ui->viewerStack->setCurrentIndex(1);
-        } else {
-            ui->viewerStack->setCurrentIndex(0);
+	  ui->viewerStack->setCurrentIndex(1);
+	} else {
+	  ui->viewerStack->setCurrentIndex(0);
         }
         ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
     } else {
@@ -1041,6 +1041,7 @@ void MainWindow::setupActions()
     connect(playAllAction, SIGNAL(triggered()), this, SLOT(playAll()));
     playSelectedAction = new QAction(KIcon("media-playback-start"), i18n("Play selected"), this);
     connect(playSelectedAction, SIGNAL(triggered()), this, SLOT(playSelected()));
+    
 }
 
 void MainWindow::showApplicationBanner()
@@ -1179,4 +1180,9 @@ Phonon::AudioOutput * MainWindow::audioOutput()
 InfoManager * MainWindow::infoManager()
 {
     return m_infoManager;
+}
+
+Phonon::VideoWidget * MainWindow::videoWidget()
+{
+  return m_videoWidget;
 }
