@@ -116,13 +116,13 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   aspectRatio_layout = new QVBoxLayout();
   aspectRatioLabel = new QLabel(i18n("Aspect Ratio Settings"));
   aspectRatio_layout->addWidget(aspectRatioLabel);
-  aspectRatioAuto = new QRadioButton(i18n("let ratio be automatically set "));
+  aspectRatioAuto = new QRadioButton(i18n("automatically"));
   aspectRatio_layout->addWidget(aspectRatioAuto);
-  aspectRatioWidget = new QRadioButton(i18n("set ratio by widget size"));
+  aspectRatioWidget = new QRadioButton(i18n("widget size"));
   aspectRatio_layout->addWidget(aspectRatioWidget);
-  aspectRatio4_3 = new QRadioButton(i18n("set ratio to 4:3"));
+  aspectRatio4_3 = new QRadioButton(i18n("4:3"));
   aspectRatio_layout->addWidget(aspectRatio4_3);
-  aspectRatio16_9 = new QRadioButton(i18n("set ratio to 16:9"));
+  aspectRatio16_9 = new QRadioButton(i18n("16:9"));
   aspectRatio_layout->addWidget(aspectRatio16_9);
   aspectRatio_Widget->setLayout(aspectRatio_layout);
   
@@ -131,9 +131,9 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
 
   scaleModeLabel = new QLabel(i18n("Scaling Mode")) ;
   scaleMode_layout->addWidget(scaleModeLabel);
-  scaleModeFitInView = new QRadioButton(i18n("fit view to video scale"));
+  scaleModeFitInView = new QRadioButton(i18n("fit to scale"));
   scaleMode_layout->addWidget(scaleModeFitInView);
-  scaleModeScaleAndCrop = new QRadioButton(i18n("scale and crop video"));
+  scaleModeScaleAndCrop = new QRadioButton(i18n("scale and crop"));
   scaleMode_layout->addWidget(scaleModeScaleAndCrop);
   scaleMode_Widget->setLayout(scaleMode_layout);  
   
