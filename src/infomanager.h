@@ -37,6 +37,9 @@ class MediaItemDelegate;
 class MediaIndexer;
 class ArtworkWidget;
 
+/*
+ * This class provides a user interface for updating information associated with MediaItems
+ */
 class InfoManager : public QObject
 {
     Q_OBJECT

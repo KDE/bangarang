@@ -36,15 +36,47 @@ class SemanticsListEngine;
 class CacheListEngine;
 class AudioClipsListEngine;
 
+/**
+ * This class creates ListEngines as needed for the MediaItemModel.
+ */
+
 class ListEngineFactory : public QObject
 {
     Q_OBJECT
     
     public:
+        /**
+         * Constructor
+         */
         ListEngineFactory(MediaItemModel *parent);
+        
+        /**
+         * Destructor
+         */
         ~ListEngineFactory();
+        
+        /** 
+         * Returns an available ListEngine for the specified engine`.
+         * ListEngineFactory factory will reuse ListEngines that are
+         * idle and create a new ListEngine if no idle ListEngines
+         * are available.
+         *
+         * @param engine the engine (from the lri) for which a 
+         *               ListEngine should be returned.
+         */
+        
         virtual ListEngine* availableListEngine(QString engine);
+        
+        /**
+         * Generates a unique request signature the MediaItemModel
+         * can use to uniquely identify a ListEngine load request.
+         */
         QString generateRequestSignature();
+        
+        /**
+         * Returns true if a ListEngine exists for the specified
+         * engine.
+         */
         bool engineExists(QString engine);
         
     private:

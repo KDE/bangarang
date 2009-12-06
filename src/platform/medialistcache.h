@@ -22,6 +22,11 @@
 #include "mediaitemmodel.h"
 #include <QObject>
 
+/**
+* This class caches lists of MediaItems.
+* Media lists are stored with their associated MediaListProperties
+* and are retrieved from the cache using the lri.
+*/
 class MediaListCache : public QObject
 {
     Q_OBJECT

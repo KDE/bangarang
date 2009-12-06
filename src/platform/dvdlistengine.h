@@ -31,6 +31,9 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
+/**
+* This ListEngine retrieves video Titles from an DVD.
+*/
 class DVDListEngine : public ListEngine
 {
     Q_OBJECT

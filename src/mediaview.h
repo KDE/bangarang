@@ -23,6 +23,11 @@
 #include <QAction>
 
 class MainWindow;
+
+/*
+ * This class is mostly to provide custom context menus for the QTreeView
+ * used to display media lists.
+ */
 class MediaView : public QTreeView
 {
     Q_OBJECT

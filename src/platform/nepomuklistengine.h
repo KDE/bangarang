@@ -28,9 +28,11 @@
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
 
-/* This is an abstract base class for all list engines which
+/** This is an abstract base class for all list engines which
  * use nepomuk. It simply tries to initialize nepomuk during construction
  * and stores the result in local variables.
+ * It also provides a common interface to update or remove MediaItem
+ * information in the nepomuk datastore.
  */
 class NepomukListEngine : public ListEngine
 {

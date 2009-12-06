@@ -26,6 +26,9 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
+/**
+* This ListEngine retrieves cached media lists from the cache.
+*/
 class CacheListEngine : public ListEngine
 {
     Q_OBJECT

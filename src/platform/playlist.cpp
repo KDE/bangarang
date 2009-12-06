@@ -98,7 +98,7 @@ Phonon::MediaObject * Playlist::mediaObject()
 //----------------------------------------
 //--- Primary playback control methods ---
 //----------------------------------------
-void Playlist::playItemAt(int row, int model)
+void Playlist::playItemAt(int row, Playlist::Model model)
 {
     MediaItem nextMediaItem;
     if (model == Playlist::PlaylistModel) {
@@ -351,7 +351,7 @@ void Playlist::clearPlaylist()
     m_mediaObject->stop();
 }
 
-void Playlist::setMode(int mode)
+void Playlist::setMode(Playlist::Mode mode)
 {
     if (mode <= 1) {
         m_mode = mode;
@@ -393,7 +393,7 @@ void Playlist::setMode(int mode)
     }
 }
 
-int Playlist::mode()
+Playlist::Mode Playlist::mode()
 {
     return m_mode;
 }
@@ -403,7 +403,7 @@ void Playlist::setRepeat(bool repeat)
     m_repeat = repeat;
 }
 
-int Playlist::loadingState()
+Playlist::State Playlist::loadingState()
 {
     return m_loadingState;
 }

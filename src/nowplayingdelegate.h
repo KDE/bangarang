@@ -25,6 +25,13 @@
 #include <QStyleOptionViewItem>
 
 class MainWindow;
+
+/*
+ * This ItemDelegate is responsible for painting the currently
+ * playing MediaItem in the Playlist::nowPlayingModel(). It is
+ * also responsible for updating the rating when the user changes 
+ * the rating from the now playing view.
+ */
 class NowPlayingDelegate : public QItemDelegate
 {
     Q_OBJECT

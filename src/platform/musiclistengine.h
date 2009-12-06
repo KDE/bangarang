@@ -27,6 +27,27 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
+/**
+* This ListEngine retrieves Music MediaItems from the nepomuk data store.
+*/
+class MusicListEngine : public NepomukListEngine
+{
+    Q_OBJECT
+    
+    public:
+        MusicListEngine(ListEngineFactory *parent);
+        ~MusicListEngine();
+        void run();
+        void setFilterForSources(const QString& engineFilter);
+        
+    private:
+        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
+        
+    Q_SIGNALS:
+        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
+        
+};
+
 class MusicQuery {
     public:
         MusicQuery(bool distinct = true);
@@ -91,22 +112,5 @@ class MusicQuery {
         QString getPrefix();
 };
 
-class MusicListEngine : public NepomukListEngine
-{
-    Q_OBJECT
-    
-    public:
-        MusicListEngine(ListEngineFactory *parent);
-        ~MusicListEngine();
-        void run();
-        void setFilterForSources(const QString& engineFilter);
-        
-    private:
-        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
-};
 #endif // MUSICLISTENGINE_H
 

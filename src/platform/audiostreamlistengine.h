@@ -27,6 +27,28 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
+/**
+* This ListEngine retrieves Audio Streams from the nepomuk data store.
+*/
+class AudioStreamListEngine : public NepomukListEngine
+{
+    Q_OBJECT
+    
+    public:
+        AudioStreamListEngine(ListEngineFactory *parent);
+        ~AudioStreamListEngine();
+        void run();
+        void setFilterForSources(const QString& engineFilter);
+        void activateAction();
+        
+    private:
+        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
+        
+    Q_SIGNALS:
+        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
+        
+};
+
 class AudioStreamQuery {
     public:
         AudioStreamQuery(bool distinct = true);
@@ -68,23 +90,5 @@ class AudioStreamQuery {
         QString getPrefix();
 };
 
-class AudioStreamListEngine : public NepomukListEngine
-{
-    Q_OBJECT
-    
-    public:
-        AudioStreamListEngine(ListEngineFactory *parent);
-        ~AudioStreamListEngine();
-        void run();
-        void setFilterForSources(const QString& engineFilter);
-        void activateAction();
-        
-    private:
-        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
-};
 #endif // AUDIOSTREAMLISTENGINE_H
 

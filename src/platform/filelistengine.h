@@ -32,6 +32,10 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
+/**
+* This ListEngine retrieves media files.
+* It also automatically updates Music file information in the nepomuk data store.
+*/
 class FileListEngine : public NepomukListEngine
 {
     Q_OBJECT

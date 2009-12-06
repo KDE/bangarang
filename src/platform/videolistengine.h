@@ -26,79 +26,9 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
-class VideoQuery {
-public:
-	VideoQuery(bool distinct = true);
-
-	void selectResource();
-	void selectSeason(bool optional=false);
-	void selectSeriesName(bool optional=false);
-	void selectTitle(bool optional=false);
-	void selectDuration(bool optional=false);
-	void selectEpisode(bool optional=false);
-	void selectDescription(bool optional=false);
-    void selectCreated(bool optional=false);
-    void selectGenre(bool optional=false);
-	void selectIsTVShow(bool optional=false);
-	void selectIsMovie(bool optional=false);
-    void selectRating(bool optional=false);
-    void selectArtwork(bool optional=false);
-    
-	void isTVShow(bool flag);
-	void isMovie(bool flag);
-
-	void hasSeason(int season);
-	void hasNoSeason();
-
-	void hasSeriesName(QString seriesName);
-    void hasGenre(QString genre);
-    void hasNoSeriesName();
-
-	void searchString(QString str);
-
-	void orderBy(QString var);
-
-
-	Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
-	bool executeAsk(Soprano::Model* model);
-
-private:
-	bool m_distinct;
-
-	bool m_selectResource;
-	bool m_selectSeason;
-	bool m_selectSeriesName;
-	bool m_selectTitle;
-	bool m_selectDuration;
-	bool m_selectEpisode;
-	bool m_selectDescription;
-    bool m_selectCreated;
-    bool m_selectGenre;
-	bool m_selectIsTVShow;
-	bool m_selectIsMovie;
-    bool m_selectRating;
-    bool m_selectArtwork;
-    
-	QString m_seasonCondition;
-	QString m_seriesNameCondition;
-	QString m_titleCondition;
-	QString m_durationCondition;
-	QString m_episodeCondition;
-	QString m_descriptionCondition;
-    QString m_createdCondition;
-    QString m_genreCondition;
-	QString m_TVShowCondition;
-	QString m_movieCondition;
-	QString m_searchCondition;
-    QString m_ratingCondition;
-    QString m_artworkCondition;
-    
-	QString m_order;
-
-	QString addOptional(bool optional, QString str);
-	QString getPrefix();
-};
-
+/**
+ * This class retrieve video MediaItems from the nepomuk data store.
+ */
 class VideoListEngine : public NepomukListEngine
 {
     Q_OBJECT
@@ -116,5 +46,79 @@ class VideoListEngine : public NepomukListEngine
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
 };
+
+class VideoQuery {
+    public:
+        VideoQuery(bool distinct = true);
+        
+        void selectResource();
+        void selectSeason(bool optional=false);
+        void selectSeriesName(bool optional=false);
+        void selectTitle(bool optional=false);
+        void selectDuration(bool optional=false);
+        void selectEpisode(bool optional=false);
+        void selectDescription(bool optional=false);
+        void selectCreated(bool optional=false);
+        void selectGenre(bool optional=false);
+        void selectIsTVShow(bool optional=false);
+        void selectIsMovie(bool optional=false);
+        void selectRating(bool optional=false);
+        void selectArtwork(bool optional=false);
+        
+        void isTVShow(bool flag);
+        void isMovie(bool flag);
+        
+        void hasSeason(int season);
+        void hasNoSeason();
+        
+        void hasSeriesName(QString seriesName);
+        void hasGenre(QString genre);
+        void hasNoSeriesName();
+        
+        void searchString(QString str);
+        
+        void orderBy(QString var);
+        
+        
+        Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
+        bool executeAsk(Soprano::Model* model);
+        
+    private:
+        bool m_distinct;
+        
+        bool m_selectResource;
+        bool m_selectSeason;
+        bool m_selectSeriesName;
+        bool m_selectTitle;
+        bool m_selectDuration;
+        bool m_selectEpisode;
+        bool m_selectDescription;
+        bool m_selectCreated;
+        bool m_selectGenre;
+        bool m_selectIsTVShow;
+        bool m_selectIsMovie;
+        bool m_selectRating;
+        bool m_selectArtwork;
+        
+        QString m_seasonCondition;
+        QString m_seriesNameCondition;
+        QString m_titleCondition;
+        QString m_durationCondition;
+        QString m_episodeCondition;
+        QString m_descriptionCondition;
+        QString m_createdCondition;
+        QString m_genreCondition;
+        QString m_TVShowCondition;
+        QString m_movieCondition;
+        QString m_searchCondition;
+        QString m_ratingCondition;
+        QString m_artworkCondition;
+        
+        QString m_order;
+        
+        QString addOptional(bool optional, QString str);
+        QString getPrefix();
+};
+
 #endif // VIDEOLISTENGINE_H
 

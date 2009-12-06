@@ -67,27 +67,40 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    
+    /* FIXME: These should be moved to private and provide
+     * getter functions instead.
+     */
+    Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
     MediaItemModel * m_videoListsModel;
     MediaItemModel * m_mediaItemModel;
     MediaItemModel * m_currentPlaylist;
     MediaItemModel * m_nowPlaying;
-    Playlist * m_playlist;
-    void addListToHistory();
-    Ui::MainWindowClass *ui;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
-    ActionsManager * actionsManager();
-    void setAboutData(KAboutData *aboutData);
+    Playlist * m_playlist;
+    
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+    
     KAboutData * aboutData();
-    Playlist * playlist();
+    ActionsManager * actionsManager();
     Phonon::AudioOutput * audioOutput();
-    Phonon::VideoWidget * videoWidget();
+    void addListToHistory();
     InfoManager *infoManager();
+    Playlist * playlist();
+    void setAboutData(KAboutData *aboutData);
+    Phonon::VideoWidget * videoWidget();
     
     
+public slots:
+    void addSelectedToPlaylist();
+    void on_fullScreen_toggled(bool fullScreen);
+    void playAll();
+    void playSelected();
+    void removeSelectedFromPlaylist();
+        
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -100,16 +113,8 @@ private:
     QGraphicsScene *m_Scene;
     QString m_addItemsMessage;
     QTime m_messageTime;
-    bool playWhenPlaylistChanges;
-    bool showRemainingTime;
-    void setupModel();
     QList<MediaItem> m_mediaList;
     QList<int> m_mediaListScrollHistory;
-    KIcon addItemsIcon();
-    void setupIcons();
-    void setupActions();
-    void showApplicationBanner();
-    KIcon turnIconOff(KIcon icon, QSize size);
     bool m_showQueue;
     bool m_repeat;
     bool m_shuffle;
@@ -120,23 +125,24 @@ private:
     bool m_pausePressed;
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
-    void updateCachedDevicesList();
     int m_loadingProgress;
     KAboutData *m_aboutData;
     KHelpMenu *m_helpMenu;
     KMenu *m_menu;
     bool m_nepomukInited;
     MediaListCache * m_sharedMediaListCache;
-    
+    bool playWhenPlaylistChanges;
+    bool showRemainingTime;
     QAction * playAllAction;
     QAction * playSelectedAction;
     
-public slots:
-    void playAll();
-    void playSelected();
-    void addSelectedToPlaylist();
-    void removeSelectedFromPlaylist();
-    void on_fullScreen_toggled(bool fullScreen);
+    void setupModel();
+    KIcon addItemsIcon();
+    void setupIcons();
+    void setupActions();
+    void showApplicationBanner();
+    KIcon turnIconOff(KIcon icon, QSize size);
+    void updateCachedDevicesList();
     
 private slots:
     void on_nowPlaying_clicked();
@@ -144,15 +150,24 @@ private slots:
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
     void on_mediaPlayPause_released();
-    void updateSeekTime(qint64 time);
-    void updateMuteStatus(bool muted);
     void on_previous_clicked();
-    void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
-    void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
     void on_playAll_clicked();
     void on_playSelected_clicked();
     void on_mediaLists_currentChanged(int i);
     void on_showPlaylist_clicked(bool checked);
+    void on_clearPlaylist_clicked();
+    void on_playlistView_doubleClicked(const QModelIndex & index);
+    void on_seekTime_clicked();
+    void on_shuffle_clicked();
+    void on_repeat_clicked();
+    void on_showQueue_clicked();
+    void on_Filter_returnPressed();
+    void on_showMenu_clicked();
+    void on_showMediaViewMenu_clicked();
+    void updateSeekTime(qint64 time);
+    void updateMuteStatus(bool muted);
+    void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
+    void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
     void mediaListChanged();
     void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
     void audioListsChanged();
@@ -163,18 +178,9 @@ private slots:
     void playlistFinished();
     void hidePlayButtons();
     void updateListHeader();
-    void on_clearPlaylist_clicked();
-    void on_playlistView_doubleClicked(const QModelIndex & index);
-    void on_seekTime_clicked();
-    void on_shuffle_clicked();
-    void on_repeat_clicked();
-    void on_showQueue_clicked();
-    void on_Filter_returnPressed();
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
     void showLoading();
-    void on_showMenu_clicked();
-    void on_showMediaViewMenu_clicked();
     void showNotification();
     void delayedNotificationHide();
     void sourceInfoUpdated(MediaItem mediaItem);
@@ -183,7 +189,6 @@ private slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
-    //void keyPressEvent(QKeyEvent *event);
 };
 
 class MouseMoveDetector : public QObject

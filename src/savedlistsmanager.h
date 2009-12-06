@@ -29,6 +29,10 @@ namespace Ui
 class MainWindow;
 class MediaItem;
 
+/*
+ * This class provides a user interface for saving and removing media lists
+ * FIXME: Need interface to rename (or configure?) media lists
+ */
 class SavedListsManager : public QObject
 {
     Q_OBJECT
