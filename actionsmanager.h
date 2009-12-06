@@ -80,7 +80,9 @@ class ActionsManager : public QObject
         QAction *m_mute;
         QAction *m_removeSelectedItemsInfo;
         QAction *m_refreshMediaView;
-	QAction *m_showVideoSettings;
+        QAction *m_showVideoSettings;
+        bool m_contextStackWasVisible;
+        int m_previousContextStackIndex;
 
         KActionCollection *m_actionCollection;
         

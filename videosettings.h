@@ -55,6 +55,7 @@ public:
      * Destructor
      */
     virtual ~VideoSettings();
+    void setHideAction(QAction *hideAction);
 
 private:
     //Qt
@@ -90,9 +91,11 @@ private:
     QRadioButton *scaleModeScaleAndCrop;
 
     KPushButton *restoreButton;
+    KPushButton *hideButton;
     
     VideoWidget *videoWidget;
     void setupConnections();
+    void setScaleSettingsEnabled(bool enabled);
         
 signals:
     void brightnessChanged(qreal num);
