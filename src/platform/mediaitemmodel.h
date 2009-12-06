@@ -208,7 +208,7 @@ class MediaItemModel : public QStandardItemModel
         ~MediaItemModel();
         
         /**
-         * Clears all information contained in the MediaItemModel.
+         * Clears all information contained in the model.
          * This includes MediaListProperties which a call to removeRows()
          * will not clear.
          *
@@ -219,20 +219,20 @@ class MediaItemModel : public QStandardItemModel
         void clearMediaListData(bool emitMediaListChanged = false);
         
         /**
-         * Returns the threshold, in milliseconds, used to cache data load by
-         * by the MediaItemModel.
+         * Returns the threshold, in milliseconds, used to cache data loaded by
+         * by the model.
          *
          */
         int cacheThreshold();
         
         /**
-         * Handler for data that is dropped onto a view associated with this
-         * MediaItemModel.
+         * Handler for data that is dropped onto a view associated with the
+         * mdel.
          */
         bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
         
         /**
-         * Flags for items dragged from a view associated with this MediaItemModel.
+         * Flags for items dragged from a view associated with the model.
          */
         Qt::ItemFlags flags(const QModelIndex &index) const;
         
@@ -245,25 +245,25 @@ class MediaItemModel : public QStandardItemModel
         void load();
         
         /**
-         * Loads a list of MediaItems directly into this MediaItemModel
+         * Loads a list of MediaItems directly into the model
          * 
          * @param mediaList list of MediaItems to load
          *
          * Note: After using this method, MediaListProperties returned by
          *       mediaListProperties() is likely stale.  
-         *       MediaListProperties should either be updated to correspond 
+         *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
         void loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged = false);
         
         /**
-         * Loads a MediaItem directly into this MediaItemModel
+         * Loads a MediaItem directly into the model
          *
          * @param mediaItem MediaItem to load
          *
          * Note: After using this method, MediaListProperties returned by
          *       mediaListProperties() is likely stale.  
-         *       MediaListProperties should either be updated to correspond 
+         *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
         void loadMediaItem(MediaItem mediaItem, bool emitMediaListChanged = false);
@@ -279,11 +279,6 @@ class MediaItemModel : public QStandardItemModel
          *                  If the mediaList contains playable MediaItems
          *                  (type = "Audio" or "Video") then they will be directly 
          *                  loaded into the model.
-         *
-         * Note: After using this method, MediaListProperties returned by
-         *       mediaListProperties() is likely stale.  
-         *       MediaListProperties should either be updated to correspond 
-         *       to mediaList or set to QString().
          */
         void loadSources(QList<MediaItem> mediaList);
         
@@ -305,7 +300,7 @@ class MediaItemModel : public QStandardItemModel
         MediaListCache * mediaListCache();
         
         /**
-         * Returns the MediaListProperties associated with the medialist
+         * Returns the MediaListProperties associated with the media list
          * contained in the model
          */
         MediaListProperties mediaListProperties();
@@ -338,9 +333,9 @@ class MediaItemModel : public QStandardItemModel
          *
          * Note: mediaList does not have to contain the same MediaItems contained
          *       in the model.  However, the current model MediaListProperties
-         *       should refer to an lri whose engine is capable of removing 
+         *       should refer to an lri whose ListEngine is capable of removing 
          *       information from the source.  As a general rule, if the lri
-         *       can be used to retrieve the MediaItem, its engine can
+         *       can be used to retrieve the MediaItem, its ListEngine can
          *       remove information for the MediaItem.
          */
         void removeSourceInfo(QList<MediaItem> mediaList);
@@ -380,8 +375,8 @@ class MediaItemModel : public QStandardItemModel
          * Sets the MediaListProperties for the model
          *
          * @param mediaListProperties MediaListProperties to be used by the
-         *                            model.  A subsequent call will use the
-         *                            MediaListProperties.lri.
+         *                            model.  A subsequent load() call will 
+         *                            use the MediaListProperties.lri.
          */
         void setMediaListProperties(MediaListProperties mediaListProperties);
         
@@ -417,9 +412,9 @@ class MediaItemModel : public QStandardItemModel
         *
         * Note: mediaList does not have to contain the same MediaItems contained
         *       in the model.  However, the current model MediaListProperties
-        *       should refer to an lri whose engine is capable of updating 
+        *       should refer to an lri whose ListEngine is capable of updating 
         *       information in the source.  As a general rule, if the lri
-        *       can be used to retrieve the MediaItem, its engine can
+        *       can be used to retrieve the MediaItem, its ListEngine can
         *       update information for the MediaItem.
         */
         void updateSourceInfo(QList<MediaItem> mediaList);
@@ -481,18 +476,16 @@ class MediaItemModel : public QStandardItemModel
         void sourceInfoUpdateRemovalComplete();
         
         /**
-        * Emitted when the update or removal the list MediaItems has started.
+        * Emitted when the update or removal of the list MediaItems has started.
         */
         void sourceInfoUpdateRemovalStarted();
         
     public Q_SLOTS:
         /**
-        * Activate the action associatned with "Action" mediaItem
+        * Activate the action associated with "Action" mediaItem
         * at the specified model index.
         *
-        * @param index QModelIndex of category.  The url of the "Category" type
-        *              MediaItem associated with the row of this index contains
-        *              the lri whose engine will perform the action.
+        * @param index QModelIndex of action. 
         *              (This slot is useful for View ItemDelegates to tell the
         *              model to activate the action when clicked. e.g. Open File.)
         */
@@ -545,6 +538,11 @@ class MediaItemModel : public QStandardItemModel
          * Remove MediaItem in model that matches the url specified.
          *
          * @param url url of MediaItem to remove.
+         *
+         * Note: This method only removes the information in the model. It
+         *       does not remove information in the source from which the 
+         *       MediaItems were retrieved. Use removeSourceInfo() method 
+         *       to do that.
          */
         void removeMediaItem(QString url);
         
