@@ -29,6 +29,11 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
+/**
+* This ListEngine retrieves a convenient list of "Category" MediaItems
+* that refer to frequently used MediaItems.
+* e.g. Albums, Highest Rated, Movies, Audio CD, etc.
+*/
 class MediaListsEngine : public NepomukListEngine
 {
     Q_OBJECT

@@ -32,6 +32,9 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
+/**
+* This ListEngine retrieves CD tracks from an Audio CD.
+*/
 class CDListEngine : public ListEngine
 {
     Q_OBJECT

@@ -30,6 +30,9 @@ namespace Ui
 }
 class MainWindow;
 
+/*
+ * This class creates and manages all actions for bangarang. 
+ */
 class ActionsManager : public QObject
 {
     Q_OBJECT

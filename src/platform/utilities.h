@@ -27,6 +27,11 @@
 
 
 class MediaItem;
+
+/**
+ * This namespace provides a list of convenience functions
+ * used throughout bangarang.
+ */
 namespace Utilities {
     QPixmap getArtworkFromTag(QString url, QSize size = QSize(128,128));
     QPixmap getArtworkFromMediaItem(MediaItem mediaItem);

@@ -27,6 +27,25 @@ class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 
+/**
+ * This class retrieves a list of MediaItems based on 
+ * playback semantics in the nepomuk data store.
+ * e.g. Highest rated, Frequently played, etc.
+ */
+class SemanticsListEngine : public NepomukListEngine
+{
+    Q_OBJECT
+    
+    public:
+        SemanticsListEngine(ListEngineFactory *parent);
+        ~SemanticsListEngine();
+        void run();
+       
+    Q_SIGNALS:
+        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
+        
+};
+
 class SemanticsQuery {
     public:
         SemanticsQuery(bool distinct = true);
@@ -67,18 +86,5 @@ class SemanticsQuery {
         QString getPrefix();
 };
 
-class SemanticsListEngine : public NepomukListEngine
-{
-    Q_OBJECT
-    
-    public:
-        SemanticsListEngine(ListEngineFactory *parent);
-        ~SemanticsListEngine();
-        void run();
-       
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
-};
 #endif // SEMANTICSLISTENGINE_H
 

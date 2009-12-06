@@ -33,6 +33,9 @@ class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
+/**
+* This ListEngine retrieves saved medialists.
+*/
 class SavedListsEngine : public ListEngine
 {
     Q_OBJECT

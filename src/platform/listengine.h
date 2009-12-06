@@ -23,6 +23,11 @@
 #include "listenginefactory.h"
 #include <QtCore>
 
+/**
+* This is the base ListEngine class.
+* It is a QThread to allow it to run asynchronously with blocking the gui
+* on long queries.
+*/
 class ListEngine : public QThread
 {
     Q_OBJECT

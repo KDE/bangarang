@@ -27,6 +27,13 @@
 #include <QTreeView>
 
 class MainWindow;
+
+/*
+ * This Item Delegate is responsible for painting items in a 
+ * MediaItemModel for a View. It is also responsible for communicating ui
+ * events to the model to activate categories or actions, etc.
+ *
+ */ 
 class MediaItemDelegate : public QItemDelegate
 {
     Q_OBJECT
