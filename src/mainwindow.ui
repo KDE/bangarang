@@ -365,7 +365,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/list-add.png</normaloff>convenience/list-add.png</iconset>
+                             <normaloff>../convenience/list-add.png</normaloff>../convenience/list-add.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -379,7 +379,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/list-remove.png</normaloff>convenience/list-remove.png</iconset>
+                             <normaloff>../convenience/list-remove.png</normaloff>../convenience/list-remove.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -406,7 +406,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
+                             <normaloff>../convenience/configure.png</normaloff>../convenience/configure.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -547,7 +547,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/document-save.png</normaloff>convenience/document-save.png</iconset>
+                             <normaloff>../convenience/document-save.png</normaloff>../convenience/document-save.png</iconset>
                            </property>
                           </widget>
                          </item>
@@ -673,7 +673,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/list-add.png</normaloff>convenience/list-add.png</iconset>
+                             <normaloff>../convenience/list-add.png</normaloff>../convenience/list-add.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -687,7 +687,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/list-remove.png</normaloff>convenience/list-remove.png</iconset>
+                             <normaloff>../convenience/list-remove.png</normaloff>../convenience/list-remove.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -714,7 +714,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
+                             <normaloff>../convenience/configure.png</normaloff>../convenience/configure.png</iconset>
                            </property>
                            <property name="autoRaise">
                             <bool>true</bool>
@@ -846,7 +846,7 @@
                            </property>
                            <property name="icon">
                             <iconset>
-                             <normaloff>convenience/document-save.png</normaloff>convenience/document-save.png</iconset>
+                             <normaloff>../convenience/document-save.png</normaloff>../convenience/document-save.png</iconset>
                            </property>
                           </widget>
                          </item>
@@ -969,7 +969,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/tool-animator.png</normaloff>convenience/tool-animator.png</iconset>
+                  <normaloff>../convenience/tool-animator.png</normaloff>../convenience/tool-animator.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -1142,7 +1142,7 @@
                           </property>
                           <property name="icon">
                            <iconset>
-                            <normaloff>convenience/view-sort-ascending.png</normaloff>convenience/view-sort-ascending.png</iconset>
+                            <normaloff>../convenience/view-sort-ascending.png</normaloff>../convenience/view-sort-ascending.png</iconset>
                           </property>
                           <property name="toolButtonStyle">
                            <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -1549,7 +1549,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/document-save.png</normaloff>convenience/document-save.png</iconset>
+                  <normaloff>../convenience/document-save.png</normaloff>../convenience/document-save.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1578,7 +1578,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/media-playback-start16.png</normaloff>convenience/media-playback-start16.png</iconset>
+                  <normaloff>../convenience/media-playback-start16.png</normaloff>../convenience/media-playback-start16.png</iconset>
                 </property>
                </widget>
               </item>
@@ -1604,7 +1604,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/media-playback-start16.png</normaloff>convenience/media-playback-start16.png</iconset>
+                  <normaloff>../convenience/media-playback-start16.png</normaloff>../convenience/media-playback-start16.png</iconset>
                 </property>
                </widget>
               </item>
@@ -2095,7 +2095,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/mail-mark-notjunk.png</normaloff>convenience/mail-mark-notjunk.png</iconset>
+                  <normaloff>../convenience/mail-mark-notjunk.png</normaloff>../convenience/mail-mark-notjunk.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -2115,7 +2115,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/configure.png</normaloff>convenience/configure.png</iconset>
+                  <normaloff>../convenience/configure.png</normaloff>../convenience/configure.png</iconset>
                 </property>
                 <property name="popupMode">
                  <enum>QToolButton::DelayedPopup</enum>
@@ -4710,7 +4710,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/view-media-playlist.png</normaloff>convenience/view-media-playlist.png</iconset>
+                  <normaloff>../convenience/view-media-playlist.png</normaloff>../convenience/view-media-playlist.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4754,7 +4754,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/view-fullscreen.png</normaloff>convenience/view-fullscreen.png</iconset>
+                  <normaloff>../convenience/view-fullscreen.png</normaloff>../convenience/view-fullscreen.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -4969,7 +4969,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/preferences-desktop-text-to-speech.png</normaloff>convenience/preferences-desktop-text-to-speech.png</iconset>
+                  <normaloff>../convenience/preferences-desktop-text-to-speech.png</normaloff>../convenience/preferences-desktop-text-to-speech.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -5030,7 +5030,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/media-skip-backward.png</normaloff>convenience/media-skip-backward.png</iconset>
+                  <normaloff>../convenience/media-skip-backward.png</normaloff>../convenience/media-skip-backward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -5059,7 +5059,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/media-playback-start.png</normaloff>convenience/media-playback-start.png</iconset>
+                  <normaloff>../convenience/media-playback-start.png</normaloff>../convenience/media-playback-start.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -5079,7 +5079,7 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>convenience/media-skip-forward.png</normaloff>convenience/media-skip-forward.png</iconset>
+                  <normaloff>../convenience/media-skip-forward.png</normaloff>../convenience/media-skip-forward.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
