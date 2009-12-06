@@ -36,7 +36,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -288,8 +288,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>260</height>
+                   <width>154</width>
+                   <height>322</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -611,8 +611,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>256</height>
+                   <width>154</width>
+                   <height>322</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -965,7 +965,7 @@
                  <string>View Now Playing</string>
                 </property>
                 <property name="text">
-                 <string notr="true">Now Playing</string>
+                 <string>Now Playing</string>
                 </property>
                 <property name="icon">
                  <iconset>
