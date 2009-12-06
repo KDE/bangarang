@@ -27,6 +27,7 @@
 #include "actionsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
+#include "videosettings.h"
 
 #include <KCmdLineArgs>
 #include <KCursor>
@@ -198,11 +199,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Setup Actions Manager
     m_actionsManager = new ActionsManager(this);
     
+    //Setup Video Settings
+    VideoSettings *videoSettings = new VideoSettings(m_videoWidget, this);
+    videoSettings->setHideAction(m_actionsManager->showVideoSettings());
+    ui->videoSettingsPage->layout()->addWidget(videoSettings);
+    
     //Set up defaults
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
+    ui->contextStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1000);
     ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
     ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
@@ -322,6 +329,7 @@ void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
     ui->contextStack->setCurrentIndex(0);  
+    m_actionsManager->showVideoSettings()->setText(i18n("Show Video Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)

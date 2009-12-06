@@ -28,6 +28,7 @@
 #include <KButtonGroup>
 #include <QLabel>
 #include <KLocale>
+#include <QAction>
 
 #include <phonon/videowidget.h>
 
@@ -116,14 +117,14 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   aspectRatio_layout = new QVBoxLayout();
   aspectRatioLabel = new QLabel(i18n("Aspect Ratio Settings"));
   aspectRatio_layout->addWidget(aspectRatioLabel);
-  aspectRatioAuto = new QRadioButton(i18n("automatically"));
+  aspectRatioAuto = new QRadioButton(i18n("Automatic"));
   aspectRatio_layout->addWidget(aspectRatioAuto);
-  aspectRatioWidget = new QRadioButton(i18n("widget size"));
-  aspectRatio_layout->addWidget(aspectRatioWidget);
   aspectRatio4_3 = new QRadioButton(i18n("4:3"));
   aspectRatio_layout->addWidget(aspectRatio4_3);
   aspectRatio16_9 = new QRadioButton(i18n("16:9"));
   aspectRatio_layout->addWidget(aspectRatio16_9);
+  aspectRatioWidget = new QRadioButton(i18n("Fit"));
+  aspectRatio_layout->addWidget(aspectRatioWidget);
   aspectRatio_Widget->setLayout(aspectRatio_layout);
   
   scaleMode_Widget = new QWidget();
@@ -131,9 +132,9 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
 
   scaleModeLabel = new QLabel(i18n("Scaling Mode")) ;
   scaleMode_layout->addWidget(scaleModeLabel);
-  scaleModeFitInView = new QRadioButton(i18n("fit to scale"));
+  scaleModeFitInView = new QRadioButton(i18n("Scale to fit"));
   scaleMode_layout->addWidget(scaleModeFitInView);
-  scaleModeScaleAndCrop = new QRadioButton(i18n("scale and crop"));
+  scaleModeScaleAndCrop = new QRadioButton(i18n("Scale and crop"));
   scaleMode_layout->addWidget(scaleModeScaleAndCrop);
   scaleMode_Widget->setLayout(scaleMode_layout);  
   
@@ -144,7 +145,10 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
   restoreButton = new KPushButton();
   restoreButton->setIcon(KIcon("view-restore"));
   restoreButton->setText(i18n("Restore Defaults"));
+  hideButton = new KPushButton();
+  hideButton->setText(i18n("Hide"));
   button_layout->addWidget(restoreButton);
+  button_layout->addWidget(hideButton);
   
   m_layout->addWidget(videoColorWidget);
   m_layout->addLayout(sizeSettings_layout);
@@ -166,6 +170,7 @@ VideoSettings::VideoSettings(VideoWidget *widget ,
     scaleModeScaleAndCrop->setChecked(true);
 
   setLayout(m_layout);
+  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
   setupConnections();
 }
 void
@@ -222,24 +227,28 @@ void VideoSettings::setAspectRatioAuto(bool checked)
 {
   Q_UNUSED(checked);
   videoWidget->setAspectRatio(VideoWidget::AspectRatioAuto);
-}
-
-void VideoSettings::setAspectRatioWidget(bool checked)
-{
-  Q_UNUSED(checked);
-  videoWidget->setAspectRatio(VideoWidget::AspectRatioWidget);
+  setScaleSettingsEnabled(true);
 }
 
 void VideoSettings::setAspectRatio4_3(bool checked)
 {
   Q_UNUSED(checked);
   videoWidget->setAspectRatio(VideoWidget::AspectRatio4_3);
+  setScaleSettingsEnabled(true);
 }
 
 void VideoSettings::setAspectRatio16_9(bool checked)
 {
   Q_UNUSED(checked);
   videoWidget->setAspectRatio(VideoWidget::AspectRatio16_9);
+  setScaleSettingsEnabled(true);
+}
+
+void VideoSettings::setAspectRatioWidget(bool checked)
+{
+    Q_UNUSED(checked);
+    videoWidget->setAspectRatio(VideoWidget::AspectRatioWidget);
+    setScaleSettingsEnabled(false);
 }
 
 void VideoSettings::setScaleModeFitInView(bool checked)
@@ -270,5 +279,16 @@ void VideoSettings::restoreClicked()
   saturationSlider->setValue(0);
   aspectRatioAuto->setChecked(true);
   scaleModeFitInView->setChecked(true);
+}
+
+void VideoSettings::setHideAction(QAction * hideAction)
+{
+    connect(hideButton, SIGNAL(clicked()), hideAction, SLOT(trigger()));
+}
+
+void VideoSettings::setScaleSettingsEnabled(bool enabled)
+{
+    scaleModeFitInView->setEnabled(enabled);
+    scaleModeScaleAndCrop->setEnabled(enabled);
 }
 #include "moc_videosettings.cpp"

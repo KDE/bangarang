@@ -98,11 +98,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_actionCollection->addAction(i18n("Hide controls"), m_showHideControls);
    
     //Show VideoSettings
-    m_showVideoSettings = new QAction(KIcon("video-display"),tr("Edit Videosettings"),this);
+    m_showVideoSettings = new QAction(KIcon("video-display"),tr("Show Video Settings"),this);
     m_showVideoSettings->setShortcut(Qt::CTRL + Qt::Key_V);
     connect(m_showVideoSettings, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
     m_parent->addAction(m_showVideoSettings);
-    m_actionCollection->addAction(tr("Edit Videosettings"),m_showVideoSettings); 
+    m_actionCollection->addAction(i18n("Show Video Settings"),m_showVideoSettings); 
     
     //Full Screen
     m_fullScreen = new QAction(this);
@@ -296,17 +296,17 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-  if(ui->contextStack->currentWidget() != m_videoSettings ) {
-    m_videoSettings = new VideoSettings(m_parent->videoWidget(), m_parent);
-    ui->contextStack->addWidget(m_videoSettings);
-    ui->contextStack->setCurrentWidget(m_videoSettings);
-    ui->contextStack->setVisible(true);
-    m_showVideoSettings->setText(i18n("Hide VideoSettings"));
-  } else {
-    ui->contextStack->setVisible(false);
-    ui->contextStack->setCurrentIndex(0);
-    m_showVideoSettings->setText(i18n("Show VideoSettings"));
-  }
+    if(ui->contextStack->currentIndex() != 1 ) {
+        m_contextStackWasVisible = ui->contextStack->isVisible();
+        m_previousContextStackIndex = ui->contextStack->currentIndex();
+        ui->contextStack->setCurrentIndex(1);
+        ui->contextStack->setVisible(true);
+        m_showVideoSettings->setText(i18n("Hide Video Settings"));
+    } else {
+        ui->contextStack->setVisible(m_contextStackWasVisible);
+        ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+        m_showVideoSettings->setText(i18n("Show Video Settings"));
+    }
 }
 
 void ActionsManager::cancelFSHC()
