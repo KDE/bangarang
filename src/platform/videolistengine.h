@@ -28,6 +28,14 @@ class ListEngineFactory;
 
 /**
  * This class retrieve video MediaItems from the nepomuk data store.
+ * List Resource Identifiers handled are:
+ *   video://clips
+ *   video://tvshows?[genre]
+ *   video://seasons?[genre]||[series name]
+ *   video://episodes?[genre]||[series name]||[season]
+ *   video://movies?[genre]||[series name]
+ *   video://search?[search term]
+ *   video://sources?[genre]||[series name]||[season]
  */
 class VideoListEngine : public NepomukListEngine
 {

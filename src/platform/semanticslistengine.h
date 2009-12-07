@@ -31,6 +31,13 @@ class ListEngineFactory;
  * This class retrieves a list of MediaItems based on 
  * playback semantics in the nepomuk data store.
  * e.g. Highest rated, Frequently played, etc.
+ * List Resource Identifiers handled are:
+ *   semantics://frequent?audio
+ *   semantics://frequent?video
+ *   semantics://recent?audio
+ *   semantics://recent?video
+ *   semantics://highest?audio
+ *   semantics://highest?video
  */
 class SemanticsListEngine : public NepomukListEngine
 {

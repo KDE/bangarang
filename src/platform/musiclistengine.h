@@ -29,6 +29,11 @@ class ListEngineFactory;
 
 /**
 * This ListEngine retrieves Music MediaItems from the nepomuk data store.
+* List Resource Identifiers handled are:
+*   music://artists?[artist]||[album]||[genre]
+*   music://albums?[artist]||[album]||[genre]
+*   music://songs?[artist]||[album]||[genre]
+*   music://search?[search term]
 */
 class MusicListEngine : public NepomukListEngine
 {
