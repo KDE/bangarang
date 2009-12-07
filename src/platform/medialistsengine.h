@@ -30,8 +30,7 @@ class ListEngineFactory;
 class MediaIndexer;
 
 /**
-* This ListEngine retrieves a convenient list of "Category" MediaItems
-* that refer to frequently used MediaItems.
+* This ListEngine retrieves a convenient list of "Category" MediaItems.
 * e.g. Albums, Highest Rated, Movies, Audio CD, etc.
 * List Resource Identifiers handled are:
 *   medialists://audio
