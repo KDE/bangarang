@@ -29,6 +29,9 @@ class ListEngineFactory;
 
 /**
 * This ListEngine retrieves Audio Streams from the nepomuk data store.
+* List Resource Identifiers handled are:
+*   audiostreams://
+*   audiostreams://search
 */
 class AudioStreamListEngine : public NepomukListEngine
 {

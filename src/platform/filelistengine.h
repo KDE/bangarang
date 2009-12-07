@@ -35,6 +35,13 @@ class MediaIndexer;
 /**
 * This ListEngine retrieves media files.
 * It also automatically updates Music file information in the nepomuk data store.
+* List Resource Identifiers handled are:
+*  files://audio
+*  files://video
+*  files://audio?getFiles||[filelist]
+*  files://audio?getFolder||[folder]
+*  files://video?getFiles||[filelist]
+*  files://video?getFolder||[folder]
 */
 class FileListEngine : public NepomukListEngine
 {
