@@ -28,9 +28,9 @@ class MainWindow;
 
 /*
  * This ItemDelegate is responsible for painting the currently
- * playing MediaItem in the Playlist::nowPlayingModel(). It is
+ * playing MediaItem for the Now Playing View. It is
  * also responsible for updating the rating when the user changes 
- * the rating from the now playing view.
+ * the rating from the Now Playing View.
  */
 class NowPlayingDelegate : public QItemDelegate
 {

@@ -25,7 +25,7 @@
 
 /**
 * This is the base ListEngine class.
-* It is a QThread to allow it to run asynchronously with blocking the gui
+* It is a QThread to allow it to run asynchronously without blocking the gui
 * on long queries.
 */
 class ListEngine : public QThread
@@ -33,28 +33,103 @@ class ListEngine : public QThread
     Q_OBJECT
     
     public:
+        /**
+         * Constructor
+         */
         ListEngine(ListEngineFactory *parent);
+        
+        /**
+         * Destructor
+         */
         virtual ~ListEngine();
 
-        void setMediaListProperties(const MediaListProperties& mediaListProperties);
+        /**
+         * Returns MediaListProperties currently used by the ListEngine
+         */
         const MediaListProperties& mediaListProperties() const;
-        void setRequestSignature(const QString& requestSignature);
-        void setSubRequestSignature(const QString& subRequestSignature);
+        
+        /**
+         * Returns the requestSignature currently used by the ListEngine
+         */
         const QString& requestSignature() const;
+        
+        /**
+         * Sets the MediaListProperties to be used by the ListEngine
+         *
+         * @param mediaListProperties the MediaListProperties to be used
+         */
+        void setMediaListProperties(const MediaListProperties& mediaListProperties);
+        
+        /**
+         * Sets the request signature to be used by the ListEngine
+         *
+         * @param requestSignature the request signature to be used
+         */
+        void setRequestSignature(const QString& requestSignature);
+        
+        /**
+         * Sets the sub-request signature to be used by the ListEngine.
+         * This is used by the MediaItemModel when the ListEngine is used
+         * to retrieve a list of MediaItems corresponding to a "Category" 
+         * MediaItem found in while performing MediaItemModel::loadSources().
+         */
+        void setSubRequestSignature(const QString& subRequestSignature);
+        
+        /**
+         * Returns the sub-request signature currently used by the ListEngine.
+         *
+         * @param subRequestSignature the sub-request signature to be used
+         */
         const QString& subRequestSignature() const;
 
+        /**
+         * Sets model using this ListEngine
+         *
+         * @param mediaItemModel MediaItemModel using this ListEngine.
+         */
         void setModel(MediaItemModel * mediaItemModel);
+        
+        /**
+         * Returns the model used by this ListEngine
+         */
         MediaItemModel * model();
 
+        /**
+         * Sets the filter to be used when loading only playable MediaItems.
+         * This supports MediaItemModel::loadSources() method.
+         *
+         * @param engineFilter engine filter to be used for loading playable
+         *                     MediaItems.
+         * 
+         */
         virtual void setFilterForSources(const QString& engineFilter)
         {
             Q_UNUSED(engineFilter);
         }
+        
+        /**
+         * Method called by MediaItemModel to activate and "Action" MediaItem
+         */
         virtual void activateAction(){}
+        
+        /**
+         * Removes information for specified MediaItems from the source of
+         * the mediaItems.
+         * 
+         * @param mediaList list of MediaItems whose information should be
+         *                  removed from the source.
+         */
         virtual void removeSourceInfo(QList<MediaItem> mediaList)
         {
             Q_UNUSED(mediaList);
         }
+        
+        /**
+         * Update source with information from specified MediaItems.
+         *
+         * @param mediaList list of MediaItems whose information should be
+         *                  upated in the source.
+         */
         virtual void updateSourceInfo(QList<MediaItem> mediaList)
         {
             Q_UNUSED(mediaList);
