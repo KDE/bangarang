@@ -30,6 +30,9 @@ class ListEngineFactory;
 
 /**
  * This ListEngine retrieves Audio Clips from the nepmuk data store.
+ * List Resource Identifiers handled are:
+ *   audioclips://
+ *   audioclips://search?[search term]
  */
 class AudioClipsListEngine : public NepomukListEngine
 {

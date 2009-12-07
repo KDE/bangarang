@@ -33,6 +33,8 @@ class MediaIndexer;
 
 /**
 * This ListEngine retrieves video Titles from an DVD.
+* List Resource Identifiers handled are:
+*   dvdvideo://
 */
 class DVDListEngine : public ListEngine
 {
