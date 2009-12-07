@@ -34,6 +34,8 @@ class MediaIndexer;
 
 /**
 * This ListEngine retrieves CD tracks from an Audio CD.
+* List Resource Identifiers handled are:
+*   cdaudio://
 */
 class CDListEngine : public ListEngine
 {

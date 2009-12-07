@@ -28,6 +28,8 @@ class ListEngineFactory;
 
 /**
 * This ListEngine retrieves cached media lists from the cache.
+* List Resource Identifiers handled are:
+*   cache://?[lri]
 */
 class CacheListEngine : public ListEngine
 {
