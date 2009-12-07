@@ -34,7 +34,9 @@ class ListEngineFactory;
 class MediaIndexer;
 
 /**
-* This ListEngine retrieves saved medialists.
+* This ListEngine retrieves saved media lists.
+* List Resource Identifiers handled are:
+*   savedlists://[name]
 */
 class SavedListsEngine : public ListEngine
 {
