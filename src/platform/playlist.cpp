@@ -69,10 +69,6 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
 
 Playlist::~Playlist()
 {
-    delete m_currentPlaylist;
-    delete m_nowPlaying;
-    delete m_queue;
-    //delete m_mediaController;
 }
 
 MediaItemModel * Playlist::playlistModel()
@@ -113,41 +109,7 @@ void Playlist::playItemAt(int row, Playlist::Model model)
                 isNowPlaying = true;
             }
         }
-        
-        //Play media Item
-        m_mediaObject->clearQueue();
-        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            if (!isNowPlaying) {
-                m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            }
-            m_mediaObject->setCurrentSource(Phonon::Cd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-            m_mediaObject->play();
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
-            if (!isNowPlaying) {
-                m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            }
-            m_mediaObject->setCurrentSource(Phonon::Dvd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-            m_mediaObject->play();
-        } else {
-            if (!isNowPlaying) {
-                m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            }
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-            m_mediaObject->play();
-            // - Get album artwork
-            MediaItem itemWithArtwork = nextMediaItem;
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
-            if (!artwork.isNull()) {
-                itemWithArtwork.artwork = KIcon(artwork);
-                m_nowPlaying->replaceMediaItemAt(0, itemWithArtwork, false);
-            }
-        }
-        m_playlistFinished = false;
-        
+
         //Update Queue Model
         if (m_mode == Playlist::Normal) {
             //Just build a new queue from the specified row
@@ -181,34 +143,29 @@ void Playlist::playItemAt(int row, Playlist::Model model)
             }    
         }
 
+        //Play media Item
+        m_mediaObject->clearQueue();
+        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+            m_mediaObject->play();
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            m_mediaObject->setCurrentSource(Phonon::Dvd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+            m_mediaObject->play();
+        } else {
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+            m_mediaObject->play();
+        }
+        m_playlistFinished = false;
+        
+
     } else if (model == Playlist::QueueModel) {
         //Get media item from queue list
         nextMediaItem = m_queue->mediaItemAt(row);
         nextMediaItem.nowPlaying = true;
-        
-        //Play media Item
-        m_mediaObject->clearQueue();
-        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            m_mediaObject->setCurrentSource(Phonon::Cd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            m_mediaObject->setCurrentSource(Phonon::Dvd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-        } else {
-            // - Get album artwork
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
-            if (!artwork.isNull()) {
-                nextMediaItem.artwork = KIcon(artwork);
-            }
-            m_nowPlaying->loadMediaItem(nextMediaItem, true);
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-        }
-        m_mediaObject->play();
-        m_playlistFinished = false;
         
         //Update Queue Model
         if (m_mode == Playlist::Normal) {
@@ -223,6 +180,22 @@ void Playlist::playItemAt(int row, Playlist::Model model)
                 m_queue->loadMediaList(queueMediaList, true);
             }
         }
+        
+        //Play media Item
+        m_mediaObject->clearQueue();
+        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+            m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+            m_mediaObject->setCurrentSource(Phonon::Dvd);
+            m_mediaController->setAutoplayTitles(false);
+            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else {
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+        }
+        m_mediaObject->play();
+        m_playlistFinished = false;
     }
     
     
@@ -230,25 +203,33 @@ void Playlist::playItemAt(int row, Playlist::Model model)
 
 void Playlist::playNext()
 {
-    if (m_queue->rowCount() > 1) {
-        m_queue->removeMediaItemAt(0);
-        playItemAt(0, Playlist::QueueModel);
+    if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
+        //Add currently playing item to history
+        if (m_nowPlaying->rowCount() > 0) {
+            int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
+            m_playlistIndicesHistory.append(row);
+            m_playlistUrlHistory.append(m_nowPlaying->mediaItemAt(0).url);
+        }
+        
+        if (m_queue->rowCount() > 1) {
+            m_queue->removeMediaItemAt(0);
+            playItemAt(0, Playlist::QueueModel);
+        }
+        addToQueue();
     }
-    addToQueue();
 }
 
 void Playlist::playPrevious()
 {
-    if (m_playlistIndicesHistory.count() > 0) {
-        int previousRow = m_playlistIndicesHistory.last();
-        int oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-        m_nowPlaying->removeMediaItemAt(0);
-        if (oldItemRow != previousRow && oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
-            //Cycle through true and false to ensure data change forces update
-            m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
-            m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
+    if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
+        if (m_playlistIndicesHistory.count() > 0) {
+            //Get previously played item and remove from history
+            int previousRow = m_playlistIndicesHistory.last();
+            m_playlistIndicesHistory.removeLast();
+            m_playlistUrlHistory.removeLast();
+            
+            playItemAt(previousRow, Playlist::PlaylistModel);
         }
-        playItemAt(previousRow, Playlist::PlaylistModel);
     }
 }
 
@@ -289,7 +270,6 @@ void Playlist::playMediaList(QList<MediaItem> mediaList)
 {
     //Clear playlist
     clearPlaylist();
-    
     
     //Load playlist with all media items
     //Note: Because playlist loads asynchronously we have to
@@ -438,15 +418,10 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
             queue << Phonon::MediaSource(Phonon::Dvd);
             m_mediaObject->setQueue(queue);
         } else {
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(nextMediaItem);
-            if (!artwork.isNull()) {
-                nextMediaItem.artwork = KIcon(artwork);
-            }
             QList<QUrl> queue;
             queue << QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
             m_mediaObject->setQueue(queue);
         }
-        m_nowPlaying->loadMediaItem(nextMediaItem);
     }
     
 }
@@ -465,19 +440,15 @@ void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //con
             }
         }
     } 
-    if (newSource.discType() == Phonon::NoDisc) {
-        updateNowPlaying();
-    }
+    updateNowPlaying();
 }
 
 void Playlist::titleChanged(int newTitle) //connected to MediaController::titleChanged
 {
-    //TODO:Confirm that titleChanged signal is not emitted for first track on cd
     if ((m_queue->rowCount() > 1)) {
         MediaItem mediaItem = m_queue->mediaItemAt(1);
         if (mediaItem.fields["trackNumber"].toInt() == newTitle) {
             m_queue->removeMediaItemAt(0);
-            m_nowPlaying->loadMediaItem(mediaItem);
         }
     }
     updateNowPlaying();
@@ -537,9 +508,17 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 void Playlist::updatePlaybackInfo(qint64 time)
 {
     if (time >= 10000 && !m_playbackInfoWritten) {
-        //Update last played date and play count
+        //Update last played date and play count after 10 seconds
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
-            m_mediaIndexer->writePlaybackInfo(m_nowPlaying->mediaItemAt(0).url, true, QDateTime::currentDateTime());
+            Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
+            if (res.exists()) {
+                kDebug() << "setting last played";
+                res.setProperty(MediaVocabulary().lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
+                int playCount = res.property(MediaVocabulary().playCount()).toInt();
+                playCount = playCount + 1;
+                kDebug() << "setting playcount";
+                res.setProperty(MediaVocabulary().playCount(), Nepomuk::Variant(playCount));        
+            }
         }
         m_playbackInfoWritten = true;
     }
@@ -580,8 +559,8 @@ void Playlist::playlistChanged()
             buildQueueFrom(currentRow);
         } else {
             //if playlist mode is shuffle
-            // - remove from history any items NOT in the current playlistChanged
-            // - remove from queue any items NOT in the current playlistChanged
+            // - remove from history any items NOT in the current playlist
+            // - remove from queue any items NOT in the current playlist
             // - rebuild playlist indices using remaining items
             // - add items to queu to fill queue depth
             QList<QString> oldPlaylistUrlHistory = m_playlistUrlHistory;
@@ -653,39 +632,41 @@ void Playlist::updateNowPlaying()
     //ACTUALLY UPDATE THE NOW PLAYING VIEW HERE!
     //THIS SHOULD BE THE ONLY PLACE THAT UPDATES THE NOW PLAYING VIEW!
     
-    //Get row of previously playing item and add to history
-    MediaItem mediaItem;
-    bool itemIsMedia = false;
+    //Get row and url of previously playing item and add to history
+    int oldItemRow = -1;
     if (m_nowPlaying->rowCount() > 0) {
-        mediaItem = m_nowPlaying->mediaItemAt(0);
-        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Image")) {
-            itemIsMedia = true;
+        oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
+    }
+    
+    //Find matching item in queue
+    int queueRow = -1;
+    for (int i = 0; i < m_queue->rowCount(); i++) {
+        QString currentUrl;
+        if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
+            currentUrl = QString("CDTRACK%1").arg(m_mediaController->currentTitle());
+        } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
+            currentUrl = QString("DVDTRACK%1").arg(m_mediaController->currentTitle());
+        } else {
+            currentUrl = m_mediaObject->currentSource().url().toString();
+        }    
+        if ((currentUrl == QUrl::fromPercentEncoding(m_queue->mediaItemAt(i).url.toUtf8()))) {
+            queueRow = i;
+            break;
         }
     }
     
-    bool itemIsStale = true;
-    if (itemIsMedia) {
-        if ((mediaItem.fields["audioType"].toString() == "CD Track") || (mediaItem.fields["videoType"].toString() == "DVD Title")) {
-            if (mediaItem.fields["trackNumber"].toInt() == m_mediaController->currentTitle()) {
-                itemIsStale = false;
-            }
+    //Update Now Playing view
+    if (queueRow != -1) {
+        MediaItem nowPlayingItem = m_queue->mediaItemAt(queueRow);
+        QPixmap artwork = Utilities::getArtworkFromMediaItem(nowPlayingItem);
+        if (!artwork.isNull()) {
+            nowPlayingItem.artwork = KIcon(artwork);
+        }
+        if (m_nowPlaying->rowCount() > 0) {
+            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem, false);
         } else {
-            QUrl mediaItemUrl = QUrl::fromPercentEncoding(mediaItem.url.toUtf8());
-            if (mediaItemUrl == m_mediaObject->currentSource().url()) {
-                itemIsStale = false;
-            }
+            m_nowPlaying->loadMediaItem(nowPlayingItem);
         }
-    }
-        
-    int oldItemRow = -1;
-    if (itemIsStale) {
-        if (itemIsMedia) {
-            oldItemRow = m_nowPlaying->mediaItemAt(0).playlistIndex;
-            m_playlistIndicesHistory.append(oldItemRow);
-            m_playlistUrlHistory.append(m_currentPlaylist->mediaItemAt(oldItemRow).url);
-        }
-        //Update Now Playing view
-        m_nowPlaying->removeMediaItemAt(0, true); //remove old now playing item
     }
     
     //Refresh playlist model to ensure views get updated
@@ -703,14 +684,10 @@ void Playlist::updateNowPlaying()
         m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
     }
     
-    if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
-        //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
-    } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
-        //m_mediaController->setCurrentTitle(m_nowPlaying->mediaItemAt(0).fields["trackNumber"].toInt());
-    } else {
+    if ((m_mediaObject->currentSource().discType() != Phonon::Cd) && (m_mediaObject->currentSource().discType() != Phonon::Dvd)) {
         //Update last played date and play count
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
-            m_playbackInfoWritten = false;
+            m_playbackInfoWritten = false; // Written 10 seconds later with updatePlaybackInfo()
         }
     }
 }
