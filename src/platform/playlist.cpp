@@ -470,6 +470,8 @@ void Playlist::confirmPlaylistFinished() //connected to MediaObject::finished()
         //Clear nowPlaying and queue and emit playlistFinished
         m_nowPlaying->removeMediaItemAt(0);
         m_queue->removeMediaItemAt(0);
+        m_playlistIndicesHistory.clear();
+        m_playlistUrlHistory.clear();
         emit playlistFinished();
     }
 }
