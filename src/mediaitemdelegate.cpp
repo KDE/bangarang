@@ -83,7 +83,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QColor subColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText) :
     KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color();
-    
+    QColor nowPlayingColor = option.palette.color(QPalette::Highlight);
+    nowPlayingColor.setAlpha(70);
     
     //Determine item type
     bool isMediaItem = false;
@@ -110,7 +111,6 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
-    
     if (index.column() == 0) {
         //Paint Icon
         KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
@@ -119,6 +119,12 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             MediaItem nowPlayingItem = m_parent->m_nowPlaying->mediaItemAt(0);
             if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
                 icon = m_showPlaying;
+                QLinearGradient linearGrad(QPointF(left, top), QPointF(left+width, top));
+                linearGrad.setColorAt(0, nowPlayingColor);
+                linearGrad.setColorAt(0.5, nowPlayingColor);
+                linearGrad.setColorAt(1.0, Qt::transparent);
+                QBrush brush(linearGrad);
+                p.fillRect(left, top, width, height, brush);
             }
         }
         int iconWidth = 22;
