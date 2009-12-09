@@ -683,6 +683,8 @@ void MainWindow::showLoading()
             ui->seekTime->setToolTip(i18n("Loading..."));
         }
         QTimer::singleShot(100, this, SLOT(showLoading()));
+    } else {
+        ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     }
 }
 
