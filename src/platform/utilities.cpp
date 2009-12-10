@@ -39,6 +39,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QTime>
+#include <Phonon/BackendCapabilities>
 
 #include <taglib/mpegfile.h>
 #include <taglib/fileref.h>
@@ -607,10 +608,41 @@ QList<MediaItem> Utilities::mediaItemsDontExist(QList<MediaItem> mediaList)
 
 QString Utilities::audioMimeFilter()
 {
-    return QString("audio/mpeg audio/mp4 audio/ogg audio/vorbis audio/aac audio/aiff audio/basic audio/flac audio/mp2 audio/mp3 audio/vnd.rn-realaudio audio/wav application/ogg audio/x-flac audio/x-musepack");
+    QStringList supportedList = Phonon::BackendCapabilities::availableMimeTypes().filter("audio");
+    QStringList appList = Phonon::BackendCapabilities::availableMimeTypes().filter("application");
+    QStringList ambiguousList;
+    for (int i = 0; i < appList.count(); i++) {
+        if (!appList.at(i).contains("video") && !appList.at(i).contains("audio")) {
+            ambiguousList.append(appList.at(i));
+        }
+    }
+    supportedList << ambiguousList;
+    return supportedList.join(" ");
+    /* This section might be useful if Phonon doesn't report 
+     * supported mimetypes correctly. For now I'll assume it 
+     * does so it is disabled. */
+    /*QString mimeFilter = QString("audio/mpeg audio/mp4 audio/ogg audio/vorbis audio/aac audio/aiff audio/basic audio/flac audio/mp2 audio/mp3 audio/vnd.rn-realaudio audio/wav application/ogg audio/x-flac audio/x-musepack ");
+    mimeFilter += supportedList.join(" ");
+    return mimeFilter;*/
 }
 
 QString Utilities::videoMimeFilter()
 {
-    return QString("video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg video/divx video/x-msvideo video/x-wmv video/x-flv video/flv");
+    QStringList supportedList = Phonon::BackendCapabilities::availableMimeTypes().filter("video");
+    QStringList appList = Phonon::BackendCapabilities::availableMimeTypes().filter("application");
+    QStringList ambiguousList;
+    for (int i = 0; i < appList.count(); i++) {
+        if (!appList.at(i).contains("video") && !appList.at(i).contains("audio")) {
+            ambiguousList.append(appList.at(i));
+        }
+    }
+    supportedList << ambiguousList;
+    return supportedList.join(" ");
+    
+    /* This section might be useful if Phonon doesn't report 
+    * supported mimetypes correctly. For now I'll assume it 
+    * does so it is disabled. */
+    /*QString mimeFilter =  QString("video/mp4 video/mpeg video/ogg video/quicktime video/msvideo video/x-theora video/x-theora+ogg video/x-ogm video/x-ogm+ogg video/divx video/x-msvideo video/x-wmv video/x-flv video/flv");
+    mimeFilter += supportedList.join(" ");
+    return mimeFilter;*/
 }
