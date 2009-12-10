@@ -378,11 +378,7 @@ void MediaItemModel::removeMediaItem(QString url)
 {
     int row = rowOfUrl(url);
     if (row != -1) {
-        disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
-        m_urlList.removeAt(row);
-        m_mediaList.removeAt(row);
         removeMediaItemAt(row, true);
-        connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     }
 }
 
@@ -399,7 +395,12 @@ void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
 {
     if (row < rowCount()) {
+        disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         removeRows(row, 1);
+        m_urlList.removeAt(row);
+        m_mediaList.removeAt(row);
+        connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+        
     }
     if (emitMediaListChanged) {
         emit mediaListChanged();
@@ -476,11 +477,7 @@ void MediaItemModel::hideLoadingMessage()
     }
     if (row != -1) {
         if (m_mediaList.count() > 0) {
-            disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
             removeMediaItemAt(row, false);
-            m_urlList.removeAt(row);
-            m_mediaList.removeAt(row);
-            connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         }
     }
 }
