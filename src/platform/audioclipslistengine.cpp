@@ -104,7 +104,7 @@ void AudioClipsListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = i18n("1 clip", "%1 clips", mediaList.count());
+            m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             
             m_mediaListProperties.type = QString("Sources");
             
@@ -128,7 +128,7 @@ void AudioClipsListEngine::run()
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = i18n("1 clip", "%1 clips", mediaList.count());
+            m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
