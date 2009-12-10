@@ -591,11 +591,11 @@ void Playlist::playlistChanged()
             m_playlistIndices.clear();
             for (int i = 0; i < m_currentPlaylist->rowCount(); i++) {
                 if (m_playlistIndicesHistory.indexOf(i) == -1) {
-                    MediaItem mediaItem = m_queue->mediaItemAt(i);
+                    MediaItem mediaItem = m_currentPlaylist->mediaItemAt(i);
                     QString urlToSearch = mediaItem.url;
-                    int rowOfUrl = m_queue->rowOfUrl(urlToSearch);
-                    if (rowOfUrl == -1) {
-                        m_playlistIndices.append(rowOfUrl);
+                    int rowInQueue = m_queue->rowOfUrl(urlToSearch);
+                    if (rowInQueue == -1) {
+                        m_playlistIndices.append(i);
                     }
                 }
             }
