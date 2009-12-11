@@ -121,7 +121,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 icon = m_showPlaying;
                 QLinearGradient linearGrad(QPointF(left, top), QPointF(left+width, top));
                 linearGrad.setColorAt(0, nowPlayingColor);
-                linearGrad.setColorAt(0.5, nowPlayingColor);
+                linearGrad.setColorAt(0.7, nowPlayingColor);
                 linearGrad.setColorAt(1.0, Qt::transparent);
                 QBrush brush(linearGrad);
                 p.fillRect(left, top, width, height, brush);
