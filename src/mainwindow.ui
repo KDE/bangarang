@@ -481,7 +481,7 @@
                                <string>Current Selection</string>
                               </property>
                               <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
+                               <string comment="KDE::DoNotExtract">buttonGroup</string>
                               </attribute>
                              </widget>
                             </item>
@@ -491,7 +491,7 @@
                                <string>Current View</string>
                               </property>
                               <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
+                               <string comment="KDE::DoNotExtract">buttonGroup</string>
                               </attribute>
                              </widget>
                             </item>
@@ -501,7 +501,7 @@
                                <string>Current Playlist</string>
                               </property>
                               <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
+                               <string comment="KDE::DoNotExtract">buttonGroup</string>
                               </attribute>
                              </widget>
                             </item>
