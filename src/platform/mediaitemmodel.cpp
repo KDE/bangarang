@@ -485,7 +485,7 @@ void MediaItemModel::hideLoadingMessage()
 void MediaItemModel::showNoResultsMessage()
 {
     MediaItem loadingMessage;
-    loadingMessage.title = "No results";
+    loadingMessage.title = i18n("No results");
     loadingMessage.type = "Message";
     loadingMessage.fields["messageType"] = "No Results";
     loadMediaItem(loadingMessage, false);
