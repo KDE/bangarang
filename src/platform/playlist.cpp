@@ -665,9 +665,9 @@ void Playlist::updateNowPlaying()
             nowPlayingItem.artwork = KIcon(artwork);
         }
         if (m_nowPlaying->rowCount() > 0) {
-            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem, false);
+            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem, true);
         } else {
-            m_nowPlaying->loadMediaItem(nowPlayingItem);
+            m_nowPlaying->loadMediaItem(nowPlayingItem, true);
         }
     }
     
