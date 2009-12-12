@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2009-12-05 20:02-0800\n"
+"POT-Creation-Date: 2009-12-12 11:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Andreas Marschke <xxtjaxx@gmail.com>\n"
 "Language-Team: GERMAN <DE@li.org>\n"
@@ -29,23 +29,23 @@ msgstr "Nächstes abspielen"
 msgid "Play previous"
 msgstr "Vorheriges abspielen"
 
-#: actionsmanager.cpp:74 mainwindow.cpp:1048
+#: actionsmanager.cpp:74 mainwindow.cpp:1050
 msgid "Play all"
 msgstr "Alle abspielen"
 
 #. i18n: file: mainwindow.ui:1577
 #. i18n: ectx: property (text), widget (QPushButton, playAll)
-#: actionsmanager.cpp:76 rc.cpp:119
+#: actionsmanager.cpp:76 rc.cpp:113
 msgid "Play All"
 msgstr "Alle Abspielen"
 
-#: actionsmanager.cpp:79 mainwindow.cpp:1050
+#: actionsmanager.cpp:79 mainwindow.cpp:1052
 msgid "Play selected"
 msgstr "Auswahl abspielen"
 
 #. i18n: file: mainwindow.ui:1603
 #. i18n: ectx: property (text), widget (QPushButton, playSelected)
-#: actionsmanager.cpp:81 rc.cpp:125
+#: actionsmanager.cpp:81 rc.cpp:119
 msgid "Play Selected"
 msgstr "Auswahl Abspielen"
 
@@ -87,7 +87,7 @@ msgstr ""
 
 #. i18n: file: mainwindow.ui:1439
 #. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
-#: infomanager.cpp:241 rc.cpp:104
+#: infomanager.cpp:241 rc.cpp:98
 msgid "Title"
 msgstr "Titel"
 
@@ -109,7 +109,7 @@ msgstr "Typ"
 
 #. i18n: file: mainwindow.ui:1447
 #. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
-#: infomanager.cpp:308 rc.cpp:107
+#: infomanager.cpp:308 rc.cpp:101
 msgid "Artist"
 msgstr "Künstler"
 
@@ -147,8 +147,8 @@ msgstr "Episode"
 
 #. i18n: file: mainwindow.ui:23
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
-#: main.cpp:29 mainwindow.cpp:260 mainwindow.cpp:534 mainwindow.cpp:888
-#: mainwindow.cpp:1059 rc.cpp:5
+#: main.cpp:29 mainwindow.cpp:260 mainwindow.cpp:534 mainwindow.cpp:890
+#: mainwindow.cpp:1061 rc.cpp:5
 msgid "Bangarang"
 msgstr "Bangarang"
 
@@ -246,7 +246,7 @@ msgstr "<b>Verbleibende Zeit</b><br>Hier Clicken um verbleibende Zeit zu sehen"
 
 #. i18n: file: mainwindow.ui:4839
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
-#: mainwindow.cpp:360 mainwindow.cpp:629 rc.cpp:173
+#: mainwindow.cpp:360 mainwindow.cpp:629 rc.cpp:167
 msgid "<b>Time elapsed</b><br>Click to show remaining time"
 msgstr ""
 "<b>Zeit Verstrichen</b><br>Hier Clicken um die verstrichene Zeit zu sehen"
@@ -268,7 +268,7 @@ msgstr "Nach Video-Dateien Suchen"
 
 #. i18n: file: mainwindow.ui:4451
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:530 rc.cpp:137
+#: mainwindow.cpp:530 rc.cpp:131
 msgid "Clear Playlist"
 msgstr "Playlist leeren"
 
@@ -279,8 +279,8 @@ msgstr ""
 
 #. i18n: file: mainwindow.ui:968
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:536 mainwindow.cpp:639 mainwindow.cpp:641 mainwindow.cpp:890
-#: rc.cpp:74
+#: mainwindow.cpp:536 mainwindow.cpp:639 mainwindow.cpp:641 mainwindow.cpp:892
+#: rc.cpp:68
 msgid "Now Playing"
 msgstr "Jetzt Spielt"
 
@@ -291,7 +291,7 @@ msgstr "<b>Shuffle An</b><br>Clicken sie hier um Shuffle ab zu schalten"
 
 #. i18n: file: mainwindow.ui:4507
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:550 rc.cpp:146
+#: mainwindow.cpp:550 rc.cpp:140
 msgid "Turn on Shuffle"
 msgstr "Shuffle Aktivieren"
 
@@ -301,7 +301,7 @@ msgstr "<b>Wiederholen An</b><br>Hier Clicken um Wiederholen ab zu schalten"
 
 #. i18n: file: mainwindow.ui:4478
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:564 rc.cpp:140
+#: mainwindow.cpp:564 rc.cpp:134
 msgid "Turn on Repeat"
 msgstr "Wiederholen Aktivieren"
 
@@ -315,7 +315,7 @@ msgstr "<b>Abspielliste</b>(Nächstes)"
 
 #. i18n: file: mainwindow.ui:4396
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:578 rc.cpp:131
+#: mainwindow.cpp:578 rc.cpp:125
 msgid "Show Upcoming"
 msgstr "Nächstes Anzeigen"
 
@@ -333,48 +333,48 @@ msgstr "Lade Abspielliste..."
 msgid "Buffering..."
 msgstr "Puffern..."
 
-#: mainwindow.cpp:683 platform/mediaitemmodel.cpp:456
+#: mainwindow.cpp:683 platform/mediaitemmodel.cpp:457
 msgid "Loading..."
 msgstr "Laden..."
 
-#: mainwindow.cpp:693
+#: mainwindow.cpp:695
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Ton aus</b>Hier Clicken um Ton einzuschalten"
 
 #. i18n: file: mainwindow.ui:4965
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:696 rc.cpp:179
+#: mainwindow.cpp:698 rc.cpp:171
 msgid "Mute volume"
 msgstr "Ton aus"
 
-#: mainwindow.cpp:733
+#: mainwindow.cpp:735
 #, fuzzy
 msgid "Updating..."
 msgstr "Laden..."
 
-#: mainwindow.cpp:744
+#: mainwindow.cpp:746
 msgid "Updated info for "
 msgstr ""
 
-#: mainwindow.cpp:750
+#: mainwindow.cpp:752
 #, fuzzy
 msgid "Removed info for "
 msgstr "Angewählte Informationen Entfernen"
 
 #. i18n: file: mainwindow.ui:4428
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
-#: mainwindow.cpp:854 rc.cpp:134
+#: mainwindow.cpp:856 rc.cpp:128
 msgid "<b>Playlist</b>"
 msgstr "<b>Abspielliste<b>"
 
-#: mainwindow.cpp:857
+#: mainwindow.cpp:859
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
 msgstr[0] "1 Stück, %2"
 msgstr[1] "%1 Stücke, %2"
 
-#: mainwindow.cpp:1060
+#: mainwindow.cpp:1062
 msgid "Entertainment... Now"
 msgstr "Unterhaltung... Jetzt"
 
@@ -393,7 +393,7 @@ msgstr "Deine E-Mail Adresse"
 #. i18n: ectx: property (text), widget (QLabel, label)
 #. i18n: file: mainwindow.ui:4709
 #. i18n: ectx: property (text), widget (QToolButton, collectionButton)
-#: rc.cpp:8 rc.cpp:164
+#: rc.cpp:8 rc.cpp:158
 msgid "Media Lists"
 msgstr "Medienlisten"
 
@@ -407,7 +407,7 @@ msgstr "Audio"
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
 #. i18n: file: mainwindow.ui:771
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_3)
-#: rc.cpp:17 rc.cpp:50
+#: rc.cpp:17 rc.cpp:44
 msgid "Add list from"
 msgstr "Liste hinzufügen von"
 
@@ -415,25 +415,15 @@ msgstr "Liste hinzufügen von"
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
 #. i18n: file: mainwindow.ui:789
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
-#: rc.cpp:20 rc.cpp:53
+#: rc.cpp:20 rc.cpp:47
 msgid "Current Selection"
 msgstr "Momentane Auswahl"
-
-#. i18n: file: mainwindow.ui:484
-#. i18n: ectx: attribute (buttonGroup), widget (QRadioButton, aListSourceSelection)
-#. i18n: file: mainwindow.ui:494
-#. i18n: ectx: attribute (buttonGroup), widget (QRadioButton, aListSourceView)
-#. i18n: file: mainwindow.ui:504
-#. i18n: ectx: attribute (buttonGroup), widget (QRadioButton, aListSourcePlaylist)
-#: rc.cpp:23 rc.cpp:29 rc.cpp:35
-msgid "buttonGroup"
-msgstr ""
 
 #. i18n: file: mainwindow.ui:491
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
 #. i18n: file: mainwindow.ui:796
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
-#: rc.cpp:26 rc.cpp:56
+#: rc.cpp:24 rc.cpp:50
 msgid "Current View"
 msgstr "Momentane Ansicht"
 
@@ -441,7 +431,7 @@ msgstr "Momentane Ansicht"
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
 #. i18n: file: mainwindow.ui:803
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
-#: rc.cpp:32 rc.cpp:59
+#: rc.cpp:28 rc.cpp:53
 msgid "Current Playlist"
 msgstr "Momentane Abspielliste"
 
@@ -449,7 +439,7 @@ msgstr "Momentane Abspielliste"
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
 #. i18n: file: mainwindow.ui:826
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
-#: rc.cpp:38 rc.cpp:62
+#: rc.cpp:32 rc.cpp:56
 msgid "New List Name"
 msgstr "Neuer Listenname"
 
@@ -459,109 +449,109 @@ msgstr "Neuer Listenname"
 #. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
 #. i18n: file: mainwindow.ui:1548
 #. i18n: ectx: property (text), widget (QPushButton, saveInfo)
-#: rc.cpp:41 rc.cpp:65 rc.cpp:113
+#: rc.cpp:35 rc.cpp:59 rc.cpp:107
 msgid "Save"
 msgstr "Speichern"
 
 #. i18n: file: mainwindow.ui:587
 #. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
-#: rc.cpp:44
+#: rc.cpp:38
 msgid "Return to Lists"
 msgstr "Zurück zu Listen"
 
 #. i18n: file: mainwindow.ui:619
 #. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
-#: rc.cpp:47
+#: rc.cpp:41
 msgid "Video"
 msgstr "Video"
 
 #. i18n: file: mainwindow.ui:865
 #. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
-#: rc.cpp:68
+#: rc.cpp:62
 msgid "Return To Lists"
 msgstr "Zurück zu Listen"
 
 #. i18n: file: mainwindow.ui:965
 #. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: rc.cpp:71
+#: rc.cpp:65
 msgid "View Now Playing"
 msgstr "Jetzt Spielen Ansicht"
 
 #. i18n: file: mainwindow.ui:1118
 #. i18n: ectx: property (text), widget (QLabel, listTitle)
-#: rc.cpp:77
+#: rc.cpp:71
 msgid "List Title"
 msgstr "Listen Titel"
 
 #. i18n: file: mainwindow.ui:1131
 #. i18n: ectx: property (text), widget (QLabel, listSummary)
-#: rc.cpp:80
+#: rc.cpp:74
 msgid "Summary"
 msgstr "Zusammenfassung"
 
 #. i18n: file: mainwindow.ui:1141
 #. i18n: ectx: property (text), widget (QToolButton, sortList)
-#: rc.cpp:83
+#: rc.cpp:77
 msgid "Sort"
 msgstr "Sortieren"
 
 #. i18n: file: mainwindow.ui:1165
 #. i18n: ectx: property (text), widget (QToolButton, showInfo)
-#: rc.cpp:86
+#: rc.cpp:80
 msgid "Info"
 msgstr "Info"
 
 #. i18n: file: mainwindow.ui:1280
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
-#: rc.cpp:89
+#: rc.cpp:83
 msgid "Notification Text"
 msgstr ""
 
 #. i18n: file: mainwindow.ui:1355
 #. i18n: ectx: property (text), widget (QLabel, label_2)
-#: rc.cpp:92
+#: rc.cpp:86
 msgid "Information"
 msgstr "Information"
 
 #. i18n: file: mainwindow.ui:1362
 #. i18n: ectx: property (text), widget (QToolButton, editInfo)
-#: rc.cpp:95
+#: rc.cpp:89
 msgid "Edit"
 msgstr "Editieren"
 
 #. i18n: file: mainwindow.ui:1429
 #. i18n: ectx: property (text), widget (QTreeWidget, infoView)
-#: rc.cpp:98
+#: rc.cpp:92
 msgid "1"
 msgstr "1"
 
 #. i18n: file: mainwindow.ui:1434
 #. i18n: ectx: property (text), widget (QTreeWidget, infoView)
-#: rc.cpp:101
+#: rc.cpp:95
 msgid "2"
 msgstr "2"
 
 #. i18n: file: mainwindow.ui:1513
 #. i18n: ectx: property (text), widget (QToolButton, previous)
-#: rc.cpp:110
+#: rc.cpp:104
 msgid "Previous"
 msgstr "Vorher"
 
 #. i18n: file: mainwindow.ui:1571
 #. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
-#: rc.cpp:116
+#: rc.cpp:110
 msgid "Play all media in list"
 msgstr "Alle von Liste abspielen"
 
 #. i18n: file: mainwindow.ui:1600
 #. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
-#: rc.cpp:122
+#: rc.cpp:116
 msgid "Play selected media in list"
 msgstr "Alle ausgewählten abspielen"
 
 #. i18n: file: mainwindow.ui:2094
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: rc.cpp:128
+#: rc.cpp:122
 msgid "Playlist"
 msgstr "Abspielliste"
 
@@ -571,50 +561,44 @@ msgstr "Abspielliste"
 #. i18n: ectx: property (text), widget (QToolButton, shuffle)
 #. i18n: file: mainwindow.ui:4753
 #. i18n: ectx: property (text), widget (SToolButton, fullScreen)
-#: rc.cpp:143 rc.cpp:149 rc.cpp:170
+#: rc.cpp:137 rc.cpp:143 rc.cpp:164
 msgid "[ ]"
 msgstr "[ ]"
 
 #. i18n: file: mainwindow.ui:4610
 #. i18n: ectx: property (text), widget (QLabel, label_3)
-#: rc.cpp:152
+#: rc.cpp:146
 #, fuzzy
 msgid "Video Settings"
 msgstr "Videodateien"
 
 #. i18n: file: mainwindow.ui:4639
 #. i18n: ectx: property (text), widget (QPushButton, saveShortCuts)
-#: rc.cpp:155
+#: rc.cpp:149
 msgid "Save Shortcuts"
 msgstr "Tastenkürzel Speichern"
 
 #. i18n: file: mainwindow.ui:4646
 #. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: rc.cpp:158
+#: rc.cpp:152
 msgid "Cancel"
 msgstr "Abbrechen"
 
 #. i18n: file: mainwindow.ui:4706
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
-#: rc.cpp:161
+#: rc.cpp:155
 msgid "View Media Lists"
 msgstr "Zeige Medienlisten"
 
 #. i18n: file: mainwindow.ui:4750
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
-#: rc.cpp:167
+#: rc.cpp:161
 msgid "Show full screen"
 msgstr "Vollbild anzeigen"
 
-#. i18n: file: mainwindow.ui:4842
-#. i18n: ectx: property (text), widget (QToolButton, seekTime)
-#: rc.cpp:176
-msgid "03:00"
-msgstr ""
-
 #. i18n: file: mainwindow.ui:5003
 #. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
-#: rc.cpp:182
+#: rc.cpp:174
 msgid "Volume"
 msgstr "Lautstärke"
 
@@ -624,7 +608,7 @@ msgstr "Lautstärke"
 #. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
 #. i18n: file: mainwindow.ui:5078
 #. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:185 rc.cpp:188 rc.cpp:191
+#: rc.cpp:177 rc.cpp:180 rc.cpp:183
 msgid "..."
 msgstr "..."
 
@@ -802,7 +786,11 @@ msgstr "%1 - Episode %2"
 msgid "Episode %1"
 msgstr "Episode %1"
 
-#: platform/mediaitemmodel.cpp:522
+#: platform/mediaitemmodel.cpp:488
+msgid "No results"
+msgstr ""
+
+#: platform/mediaitemmodel.cpp:519
 #, fuzzy
 msgid "Add to playlist/Remove from playlist"
 msgstr "Von Wiedergabeliste entfernen"
