@@ -631,12 +631,10 @@ void MainWindow::updateSeekTime(qint64 time)
     
     
     //Update Now Playing Button text
-    QString title;
     if (m_nowPlaying->rowCount() > 0) {
-        if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") {        
-            title = QString("\n") + m_nowPlaying->item(0,0)->data(Qt::DisplayRole).toString();
-            QString subTitle = m_nowPlaying->item(0,0)->data(MediaItem::SubTitleRole).toString();
-            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")") + title);
+        if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") { 
+            QString title = m_nowPlaying->mediaItemAt(0).title;
+            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
         } else {
             ui->nowPlaying->setText(i18n("Now Playing"));
         }
@@ -868,6 +866,17 @@ void MainWindow::nowPlayingChanged()
     if (m_nowPlaying->rowCount() > 0) {
         if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") {        
             ui->nowPlaying->setIcon(m_nowPlaying->mediaItemAt(0).artwork);  
+            QString title = m_nowPlaying->mediaItemAt(0).title;
+            QString subTitle = m_nowPlaying->mediaItemAt(0).subTitle;
+            QString description = m_nowPlaying->mediaItemAt(0).fields["description"].toString();
+            QString toolTipText = i18n("View Now Playing") + QString("<br><b>%1</b>").arg(title);
+            if (!subTitle.isEmpty()) {
+                toolTipText += QString("<br><i>%2</i>").arg(subTitle);
+            }
+            if (!description.isEmpty()) {
+                toolTipText += QString("<br>%3").arg(description);
+            }
+            ui->nowPlaying->setToolTip(toolTipText);
             setWindowTitle(QString(m_nowPlaying->mediaItemAt(0).title + " - Bangarang"));
         }
     
@@ -890,6 +899,7 @@ void MainWindow::playlistFinished()
     setWindowTitle(i18n("Bangarang"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
     ui->nowPlaying->setText(i18n("Now Playing"));
+    ui->nowPlaying->setToolTip(i18n("View Now Playing"));
     ui->seekTime->setText("0:00");
 }
 
