@@ -266,7 +266,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaLists->setCurrentIndex(0);
     
     //Install event filter for hiding widgets in Now Playing view
-    ui->nowPlayingView->installEventFilter(this);
+    ui->nowPlayingView->setMouseTracking(true);
+    m_videoWidget->setMouseTracking(true);
+    ui->nowPlayingView->viewport()->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
 
     // Set up cursor hiding for videos.
