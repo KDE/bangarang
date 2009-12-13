@@ -21,6 +21,7 @@
 #include "mediavocabulary.h"
 
 #include <KUrl>
+#include <KEncodingProber>
 #include <KMimeType>
 #include <KIcon>
 #include <KIconEffect>
@@ -50,7 +51,7 @@
 
 QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
     
     if (!id3tag) {
@@ -92,7 +93,7 @@ QString Utilities::getArtistFromTag(QString url)
 {
     QString artist;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         artist  = TStringToQString(file.tag()->artist()).trimmed();
     }
     return artist;
@@ -102,7 +103,7 @@ QString Utilities::getAlbumFromTag(QString url)
 {
     QString album;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         album = TStringToQString(file.tag()->album()).trimmed();
     }
     return album;
@@ -112,7 +113,7 @@ QString Utilities::getTitleFromTag(QString url)
 {
     QString title;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         title = TStringToQString(file.tag()->title()).trimmed();
     }
     return title;
@@ -122,7 +123,7 @@ QString Utilities::getGenreFromTag(QString url)
 {
     QString genre;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         genre   = TStringToQString(file.tag()->genre()).trimmed();
     }
     return genre;
@@ -132,7 +133,7 @@ int Utilities::getYearFromTag(QString url)
 {
     int year = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         year = file.tag()->year();
     }
     return year;
@@ -142,7 +143,7 @@ int Utilities::getDurationFromTag(QString url)
 {
     int duration = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         duration = file.audioProperties()->length();
     }
     return duration;
@@ -152,7 +153,7 @@ int Utilities::getTrackNumberFromTag(QString url)
 {
     int track = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         track   = file.tag()->track();
     }
     return track;
@@ -161,7 +162,7 @@ int Utilities::getTrackNumberFromTag(QString url)
 bool Utilities::saveArtworkToTag(QString url, const QPixmap *pixmap)
 {
     //FIXME:: HELP! Can't figure out why this doesn't work
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
     
     TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
@@ -182,7 +183,7 @@ bool Utilities::saveArtworkToTag(QString url, const QPixmap *pixmap)
 bool Utilities::saveArtworkToTag(QString url, QString imageurl)
 {
     //QByteArray filePath = QFile::encodeName(KUrl(url).path());
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
     
     TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
@@ -204,7 +205,7 @@ void Utilities::setArtistTag(QString url, QString artist)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setArtist(tArtist);
         file.save();
     }
@@ -214,7 +215,7 @@ void Utilities::setAlbumTag(QString url, QString album)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setAlbum(tAlbum);
         file.save();
     }
@@ -224,7 +225,7 @@ void Utilities::setTitleTag(QString url, QString title)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setTitle(tTitle);
         file.save();
     }
@@ -234,7 +235,7 @@ void Utilities::setGenreTag(QString url, QString genre)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setGenre(tGenre);
         file.save();
     }
@@ -243,7 +244,7 @@ void Utilities::setGenreTag(QString url, QString genre)
 void Utilities::setYearTag(QString url, int year)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setYear(year);
         file.save();
     }
@@ -252,7 +253,7 @@ void Utilities::setYearTag(QString url, int year)
 void Utilities::setTrackNumberTag(QString url, int trackNumber)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toUtf8());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
         file.tag()->setTrack(trackNumber);
         file.save();
     }
@@ -398,12 +399,37 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         } else if (mediaItem.fields["audioType"] == "Music") {
             mediaItem.artwork = KIcon("audio-mp4");
             //File metadata is always primary for music items.
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
+            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
             if (!file.isNull()) {
                 QString title = TStringToQString(file.tag()->title()).trimmed();
                 QString artist  = TStringToQString(file.tag()->artist()).trimmed();
                 QString album   = TStringToQString(file.tag()->album()).trimmed();
                 QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+                if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
+                    // detect encoding for mpeg id3v2
+                    QString tmp = title + artist + album + genre;
+                    KEncodingProber prober(KEncodingProber::Universal);
+                    KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
+                    if (result != KEncodingProber::NotMe) {
+                        QByteArray encodingname = prober.encoding();
+                        QString track_encoding(encodingname);
+                        if ( ( track_encoding.toLatin1() == "gb18030" ) 
+                            || ( track_encoding.toLatin1() == "big5" )
+                            || ( track_encoding.toLatin1() == "euc-kr" ) 
+                            || ( track_encoding.toLatin1() == "euc-jp" )
+                            || ( track_encoding.toLatin1() == "koi8-r" ) ) {
+                            title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
+                            artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
+                            album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
+                            genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
+                        } else if (QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
+                            title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
+                            artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
+                            album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
+                            genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
+                        }
+                    }
+                }
                 int track   = file.tag()->track();
                 int duration = file.audioProperties()->length();
                 int year = file.tag()->year();

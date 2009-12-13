@@ -119,7 +119,7 @@ void MusicListEngine::run()
                 MediaItem mediaItem = mediaList.at(i);
                 if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
                     if (Utilities::isMusic(mediaList.at(i).url)) {
-                        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toUtf8());
+                        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit());
                         if (!file.isNull()) {
                             QString title = mediaItem.title;
                             if (!title.isEmpty()) {
