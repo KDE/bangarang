@@ -205,6 +205,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
     //Set up defaults
+    ui->nowPlayingSplitter->setCollapsible(0,true);
+    ui->nowPlayingSplitter->setCollapsible(1,false);
     ui->stackedWidget->setCurrentIndex(1);
     ui->mediaViewHolder->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
