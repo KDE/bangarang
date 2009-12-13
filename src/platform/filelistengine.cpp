@@ -28,6 +28,7 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <QApplication>
+#include <KEncodingProber>
 #include <KLocale>
 #include <KIcon>
 #include <KFileDialog>
@@ -252,7 +253,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
         mediaItem.fields["url"] = mediaItem.url;
         mediaItem.fields["title"] = fileList.at(i).fileName();
         if (Utilities::isMusic(mediaItem.url)) {
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toUtf8());
+            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
             if (file.isNull()) {
                 continue;
             }
@@ -260,6 +261,31 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             QString artist  = TStringToQString(file.tag()->artist()).trimmed();
             QString album   = TStringToQString(file.tag()->album()).trimmed();
             QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+            if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
+                // detect encoding for mpeg id3v2
+                QString tmp = title + artist + album + genre;
+                KEncodingProber prober(KEncodingProber::Universal);
+                KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
+                if (result != KEncodingProber::NotMe) {
+                    QByteArray encodingname = prober.encoding();
+                    QString track_encoding(encodingname);
+                    if ( ( track_encoding.toLatin1() == "gb18030" ) 
+                        || ( track_encoding.toLatin1() == "big5" )
+                        || ( track_encoding.toLatin1() == "euc-kr" ) 
+                        || ( track_encoding.toLatin1() == "euc-jp" )
+                        || ( track_encoding.toLatin1() == "koi8-r" ) ) {
+                        title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
+                        artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
+                        album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
+                        genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
+                    } else if (QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
+                        title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
+                        artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
+                        album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
+                        genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
+                    }
+                }
+            }
             int track   = file.tag()->track();
             int duration = file.audioProperties()->length();
             int year = file.tag()->year();
