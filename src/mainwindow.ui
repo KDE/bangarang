@@ -480,9 +480,6 @@
                               <property name="text">
                                <string>Current Selection</string>
                               </property>
-                              <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
-                              </attribute>
                              </widget>
                             </item>
                             <item>
@@ -490,9 +487,6 @@
                               <property name="text">
                                <string>Current View</string>
                               </property>
-                              <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
-                              </attribute>
                              </widget>
                             </item>
                             <item>
@@ -500,9 +494,6 @@
                               <property name="text">
                                <string>Current Playlist</string>
                               </property>
-                              <attribute name="buttonGroup">
-                               <string>buttonGroup</string>
-                              </attribute>
                              </widget>
                             </item>
                            </layout>
@@ -611,8 +602,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>139</width>
-                   <height>256</height>
+                   <width>154</width>
+                   <height>324</height>
                   </rect>
                  </property>
                  <attribute name="label">
@@ -5588,7 +5579,4 @@ color: rgb(255, 255, 255);</string>
  </tabstops>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>
