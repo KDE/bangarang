@@ -411,6 +411,7 @@ void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
     } else {
         m_playlist->playItemAt(index.row(), Playlist::QueueModel);
     }
+    ui->playlistView->selectionModel()->clear();
 }
 
 void MainWindow::on_previous_clicked()
