@@ -36,7 +36,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -278,7 +278,7 @@
                  <number>0</number>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <property name="tabSpacing">
                  <number>0</number>
@@ -317,7 +317,7 @@
                   <item>
                    <widget class="QStackedWidget" name="audioListsStack">
                     <property name="currentIndex">
-                     <number>0</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="page_2">
                      <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -430,7 +430,7 @@
                        <widget class="QWidget" name="widget_4" native="true">
                         <layout class="QVBoxLayout" name="verticalLayout_24">
                          <property name="bottomMargin">
-                          <number>8</number>
+                          <number>4</number>
                          </property>
                          <item>
                           <spacer name="verticalSpacer_2">
@@ -446,25 +446,34 @@
                           </spacer>
                          </item>
                          <item>
-                          <widget class="QGroupBox" name="groupBox">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
+                          <widget class="QLabel" name="label_5">
+                           <property name="text">
+                            <string>Add List</string>
                            </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>150</height>
-                            </size>
+                           <property name="alignment">
+                            <set>Qt::AlignCenter</set>
                            </property>
-                           <property name="title">
-                            <string>Add list from</string>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_2">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
                            </property>
-                           <layout class="QVBoxLayout" name="verticalLayout_26">
-                            <property name="leftMargin">
-                             <number>2</number>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_4">
+                           <property name="text">
+                            <string>Source</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QWidget" name="widget_6" native="true">
+                           <layout class="QVBoxLayout" name="verticalLayout_21">
+                            <property name="spacing">
+                             <number>-1</number>
                             </property>
                             <property name="topMargin">
                              <number>0</number>
@@ -473,19 +482,19 @@
                              <number>0</number>
                             </property>
                             <property name="bottomMargin">
-                             <number>0</number>
+                             <number>10</number>
                             </property>
-                            <item>
-                             <widget class="QRadioButton" name="aListSourceSelection">
-                              <property name="text">
-                               <string>Current Selection</string>
-                              </property>
-                             </widget>
-                            </item>
                             <item>
                              <widget class="QRadioButton" name="aListSourceView">
                               <property name="text">
                                <string>Current View</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QRadioButton" name="aListSourceSelection">
+                              <property name="text">
+                               <string>Current Selection</string>
                               </property>
                              </widget>
                             </item>
@@ -500,22 +509,12 @@
                           </widget>
                          </item>
                          <item>
-                          <spacer name="verticalSpacer">
-                           <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>20</width>
-                             <height>40</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item>
                           <widget class="KLineEdit" name="aNewListName">
                            <property name="clickMessage">
                             <string>New List Name</string>
+                           </property>
+                           <property name="showClearButton" stdset="0">
+                            <bool>true</bool>
                            </property>
                           </widget>
                          </item>
@@ -541,6 +540,19 @@
                              <normaloff>../convenience/document-save.png</normaloff>../convenience/document-save.png</iconset>
                            </property>
                           </widget>
+                         </item>
+                         <item>
+                          <spacer name="verticalSpacer">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>20</width>
+                             <height>40</height>
+                            </size>
+                           </property>
+                          </spacer>
                          </item>
                         </layout>
                        </widget>
@@ -619,7 +631,7 @@
                   <item>
                    <widget class="QStackedWidget" name="videoListsStack">
                     <property name="currentIndex">
-                     <number>0</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="page_4">
                      <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -739,32 +751,38 @@
                            <property name="sizeHint" stdset="0">
                             <size>
                              <width>20</width>
-                             <height>48</height>
+                             <height>100</height>
                             </size>
                            </property>
                           </spacer>
                          </item>
                          <item>
-                          <widget class="QGroupBox" name="groupBox_3">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
+                          <widget class="QLabel" name="label_7">
+                           <property name="text">
+                            <string>Add List</string>
                            </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>150</height>
-                            </size>
+                           <property name="alignment">
+                            <set>Qt::AlignCenter</set>
                            </property>
-                           <property name="title">
-                            <string>Add list from</string>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="Line" name="line_3">
+                           <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
                            </property>
-                           <layout class="QVBoxLayout" name="verticalLayout_28">
-                            <property name="leftMargin">
-                             <number>2</number>
-                            </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_6">
+                           <property name="text">
+                            <string>Source</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QWidget" name="widget_7" native="true">
+                           <layout class="QVBoxLayout" name="verticalLayout_26">
                             <property name="topMargin">
                              <number>0</number>
                             </property>
@@ -799,19 +817,6 @@
                           </widget>
                          </item>
                          <item>
-                          <spacer name="verticalSpacer_4">
-                           <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>20</width>
-                             <height>48</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item>
                           <widget class="KLineEdit" name="vNewListName">
                            <property name="clickMessage">
                             <string>New List Name</string>
@@ -840,6 +845,19 @@
                              <normaloff>../convenience/document-save.png</normaloff>../convenience/document-save.png</iconset>
                            </property>
                           </widget>
+                         </item>
+                         <item>
+                          <spacer name="verticalSpacer_4">
+                           <property name="orientation">
+                            <enum>Qt::Vertical</enum>
+                           </property>
+                           <property name="sizeHint" stdset="0">
+                            <size>
+                             <width>20</width>
+                             <height>100</height>
+                            </size>
+                           </property>
+                          </spacer>
                          </item>
                         </layout>
                        </widget>
@@ -5566,15 +5584,8 @@ color: rgb(255, 255, 255);</string>
   <tabstop>seekTime</tabstop>
   <tabstop>audioLists</tabstop>
   <tabstop>aCancelSaveList</tabstop>
-  <tabstop>aListSourceSelection</tabstop>
-  <tabstop>aListSourceView</tabstop>
-  <tabstop>aListSourcePlaylist</tabstop>
-  <tabstop>aNewListName</tabstop>
   <tabstop>saveAudioList</tabstop>
   <tabstop>videoLists</tabstop>
-  <tabstop>vListSourceSelection</tabstop>
-  <tabstop>vListSourceView</tabstop>
-  <tabstop>vListSourcePlaylist</tabstop>
   <tabstop>showMenu</tabstop>
  </tabstops>
  <resources/>
