@@ -130,15 +130,15 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_parent->addAction(m_refreshMediaView);
     
     //Remove selected from playlist
-    m_removeFromSavedList = new QAction(i18n("Remove selected"), this);
+    m_removeFromSavedList = new QAction(i18n("Remove from list"), this);
     connect(m_removeFromSavedList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(removeSelected()));
     
     //Add selected to saved audio list
-    m_addToAudioSavedList = new QMenu(i18n("Add selected to"), m_parent);
+    m_addToAudioSavedList = new QMenu(i18n("Add to list"), m_parent);
     connect(m_addToAudioSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedAudioList(QAction *)));
     
     //Add selected to saved video list
-    m_addToVideoSavedList = new QMenu(i18n("Add selected to"), m_parent);
+    m_addToVideoSavedList = new QMenu(i18n("Add to list "), m_parent);
     connect(m_addToVideoSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedVideoList(QAction *)));
     
     //Edit Shortcuts
