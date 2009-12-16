@@ -25,6 +25,7 @@
 
 #include <KStandardDirs>
 #include <KMessageBox>
+#include <KDebug>
 #include <QFile>
 #include <Nepomuk/ResourceManager>
 
@@ -192,6 +193,7 @@ void SavedListsManager::removeAudioList()
             m_parent->m_audioListsModel->clearMediaListData();
             m_parent->m_audioListsModel->setMediaListProperties(audioListsProperties);
             m_parent->m_audioListsModel->load();
+            emit savedListsChanged();
         }
     }
 }
@@ -229,6 +231,7 @@ void SavedListsManager::removeVideoList()
             m_parent->m_videoListsModel->clearMediaListData();
             m_parent->m_videoListsModel->setMediaListProperties(videoListsProperties);
             m_parent->m_videoListsModel->load();
+            emit savedListsChanged();
         }
     }
 }
@@ -312,20 +315,28 @@ void SavedListsManager::mediaListChanged()
     }
 }
 
-void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, QString type)
+void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, QString type, bool append)
 {
     if (!name.isEmpty()) {
         
         //Create and populate M3U file
         QString filename = name;
         filename = filename.replace(" ", "");
-        QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), false));
+        QIODevice::OpenMode openMode;
+        if (append) {
+            openMode = QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append;
+        } else {
+            QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), false));
+            openMode = QIODevice::WriteOnly | QIODevice::Text;
+        }
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (!file.open(openMode)) {
             return;
         }
         QTextStream out(&file);
-        out << "#EXTM3U" << "\r\n";
+        if (!append) {
+            out << "#EXTM3U" << "\r\n";
+        }
         for (int i = 0; i < mediaList.count(); i++) {
             out << "#EXTINF:" << mediaList.at(i).fields["duration"].toInt() << "," << mediaList.at(i).title << "\r\n";
             out << mediaList.at(i).url << "\r\n";
@@ -369,6 +380,7 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, QString name, 
             m_savedVideoLists << indexEntry;
         }
         updateSavedListsIndex();
+        emit savedListsChanged();
     }
 }
 
@@ -412,6 +424,7 @@ void SavedListsManager::saveView(QString name, QString type)
             m_savedVideoLists << indexEntry;
         }
         updateSavedListsIndex();
+        emit savedListsChanged();
     }
 }
 
@@ -439,6 +452,7 @@ void SavedListsManager::loadSavedListsIndex()
         }
     }
     indexFile.close();
+    emit savedListsChanged();
 }
 void SavedListsManager::updateSavedListsIndex()
 {
@@ -457,5 +471,71 @@ void SavedListsManager::updateSavedListsIndex()
     indexFile.close();    
 }
 
+QStringList SavedListsManager::savedListNames(QString type)
+{
+    QList<QString> savedLists ;
+    if (type == "Audio") {
+        savedLists = m_savedAudioLists;
+    } else if (type == "Video") {
+        savedLists = m_savedVideoLists;
+    }
+    QStringList savedListNames;
+    for (int i = 0; i < savedLists.count(); i++) {
+        QString name = savedLists.at(i).split(":::").at(1);
+        QString lri = savedLists.at(i).split(":::").at(2);
+        if (lri.startsWith("savedlists://")) {
+            savedListNames.append(name);
+        }
+    }
+    return savedListNames;
+}
 
+void SavedListsManager::removeSelected()
+{
+    if (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")) {
+        QList<MediaItem> mediaList;
+        
+        QList<int> rowsToRemove;
+        //Rebuild mediaList without selected items
+        for (int i = 0; i < m_parent->m_mediaItemModel->rowCount(); i++) {
+            QModelIndex index = m_parent->m_mediaItemModel->index(i, 0);
+            if (!ui->mediaView->selectionModel()->isSelected(index)) {
+                mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(i));
+            } else {
+                rowsToRemove.append(i);
+            }
+        }
+        
+        //Save new medialist        
+        QString lri = m_parent->m_mediaItemModel->mediaListProperties().lri;
+        QString name = savedListLriName(lri);
+        saveMediaList(mediaList, name, m_parent->m_mediaItemModel->mediaItemAt(0).type);
+        
+        //Remove items from model
+        m_parent->m_mediaItemModel->reload();
+    }
+    
+}
+
+QString SavedListsManager::savedListLriName(QString lri)
+{
+    QString name;
+    for (int i = 0; i < m_savedAudioLists.count(); i++) {
+        if (m_savedAudioLists.at(i).endsWith(lri)) {
+            QString indexEntry = m_savedAudioLists.at(i);
+            name = indexEntry.split(":::").at(1);
+        }
+    }
+        
+    for (int i = 0; i < m_savedVideoLists.count(); i++) {
+        if (m_savedAudioLists.at(i).endsWith(lri)) {
+            QString indexEntry = m_savedAudioLists.at(i);
+            name = indexEntry.split(":::").at(1);
+        }
+    }
+    
+    return name;
+}
+        
+        
 

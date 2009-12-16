@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QItemSelection>
+#include <QStringList>
 
 namespace Ui
 {
@@ -40,8 +41,13 @@ class SavedListsManager : public QObject
     public:
         SavedListsManager(MainWindow * parent);
         ~SavedListsManager();
-        void saveMediaList(QList<MediaItem> mediaList, QString name, QString type);
+        void saveMediaList(QList<MediaItem> mediaList, QString name, QString type, bool append = false);
         void saveView(QString name, QString type);
+        QStringList savedListNames(QString type);
+        QString savedListLriName(QString lri);
+        
+    signals:
+        void savedListsChanged();
         
     public slots:
         void showAudioListSave();
@@ -50,6 +56,7 @@ class SavedListsManager : public QObject
         void hideVideoListSave();
         void saveAudioList();
         void saveVideoList();
+        void removeSelected();
         
     private:
         MainWindow *m_parent; 
@@ -57,8 +64,8 @@ class SavedListsManager : public QObject
         int m_startRow;
         QList<int> m_savedAudioListRows;
         QList<int> m_savedVideoListRows;
-        QList<QString> m_savedAudioLists;
-        QList<QString> m_savedVideoLists;
+        QStringList m_savedAudioLists;
+        QStringList m_savedVideoLists;
         void updateSavedListsIndex();
         bool m_nepomukInited;
         

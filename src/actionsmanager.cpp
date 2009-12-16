@@ -23,6 +23,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
 #include "infomanager.h"
+#include "savedlistsmanager.h"
 #include "videosettings.h"
 
 #include <KStandardDirs>
@@ -128,6 +129,18 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_refreshMediaView, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
     m_parent->addAction(m_refreshMediaView);
     
+    //Remove selected from playlist
+    m_removeFromSavedList = new QAction(i18n("Remove selected"), this);
+    connect(m_removeFromSavedList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(removeSelected()));
+    
+    //Add selected to saved audio list
+    m_addToAudioSavedList = new QMenu(i18n("Add selected to"), m_parent);
+    connect(m_addToAudioSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedAudioList(QAction *)));
+    
+    //Add selected to saved video list
+    m_addToVideoSavedList = new QMenu(i18n("Add selected to"), m_parent);
+    connect(m_addToVideoSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedVideoList(QAction *)));
+    
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -226,6 +239,8 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
     KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);
     helpMenu->menu();
     
+    updateSavedListsMenus();
+    
     QMenu *menu = new QMenu(m_parent);
     QString type;
     bool selection = false;
@@ -254,6 +269,21 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
         menu->addAction(playAll());
         menu->addSeparator();
         if (selection && isMedia) {
+            if (type == "Audio") {
+                if (m_addToAudioSavedList->actions().count() > 0) {
+                    menu->addMenu(m_addToAudioSavedList);
+                }
+            } else if (type == "Video") {
+                if (m_addToVideoSavedList->actions().count() > 0) {
+                    menu->addMenu(m_addToVideoSavedList);
+                }
+            }
+            if (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")) {
+                menu->addAction(removeFromSavedList());
+            }
+            menu->addSeparator();
+        }
+        if (selection && isMedia) {
             menu->addAction(removeSelectedItemsInfo());
             menu->addSeparator();
         }
@@ -265,6 +295,22 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
     if (showAbout) menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     return menu;
 }
+
+QAction *ActionsManager::removeFromSavedList()
+{
+    return m_removeFromSavedList;
+}
+
+QMenu *ActionsManager::addToSavedAudioListMenu()
+{
+    return m_addToAudioSavedList;
+}
+
+QMenu *ActionsManager::addToSavedVideoListMenu()
+{
+    return m_addToVideoSavedList;
+}
+
 
 //------------------
 //-- Action SLOTS --
@@ -348,3 +394,79 @@ void ActionsManager::muteAudio()
     bool muted = m_parent->audioOutput()->isMuted();
     m_parent->audioOutput()->setMuted(!muted);
 }
+
+void ActionsManager::updateSavedListsMenus()
+{
+    m_addToAudioSavedList->clear();
+    QStringList audioListNames = m_parent->savedListsManager()->savedListNames("Audio");
+    for (int i = 0; i < audioListNames.count(); i++) {
+        if (!((audioListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
+            && (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")))) { 
+            QAction * addToSavedList = new QAction(KIcon("view-list-text"), audioListNames.at(i), m_addToAudioSavedList);
+            addToSavedList->setData(audioListNames.at(i));
+            m_addToAudioSavedList->addAction(addToSavedList);
+        }
+    }
+    
+    m_addToVideoSavedList->clear();
+    QStringList videoListNames = m_parent->savedListsManager()->savedListNames("Video");
+    for (int i = 0; i < videoListNames.count(); i++) {
+        if (!((videoListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
+            && (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")))) { 
+            QAction * addToSavedList = new QAction(KIcon("view-list-text"), videoListNames.at(i), m_addToVideoSavedList);
+            addToSavedList->setData(audioListNames.at(i));
+            m_addToVideoSavedList->addAction(addToSavedList);
+        }
+    }
+}
+
+void ActionsManager::addToSavedAudioList(QAction *addAction)
+{
+    //Get list of selected items to add
+    QTreeView * view;
+    MediaItemModel * model;
+    if (ui->stackedWidget->currentIndex() == 0 ) {
+        view = ui->mediaView;
+        model = m_parent->m_mediaItemModel;
+    } else {
+        view = ui->playlistView;
+        model = m_parent->playlist()->playlistModel();
+    }
+    QList<MediaItem> mediaList;
+    QModelIndexList selectedRows = view->selectionModel()->selectedRows();
+    for (int i = 0 ; i < selectedRows.count() ; ++i) {
+        mediaList.append(model->mediaItemAt(selectedRows.at(i).row()));
+    }
+    
+    //Add to saved list
+    if (mediaList.count() > 0) {
+        QString audioListName = addAction->data().toString();
+        m_parent->savedListsManager()->saveMediaList(mediaList, audioListName, "Audio", true);
+    }
+}
+
+void ActionsManager::addToSavedVideoList(QAction *addAction)
+{
+    //Get list of selected items to add
+    QTreeView * view;
+    MediaItemModel * model;
+    if (ui->stackedWidget->currentIndex() == 0 ) {
+        view = ui->mediaView;
+        model = m_parent->m_mediaItemModel;
+    } else {
+        view = ui->playlistView;
+        model = m_parent->playlist()->playlistModel();
+    }
+    QList<MediaItem> mediaList;
+    QModelIndexList selectedRows = view->selectionModel()->selectedRows();
+    for (int i = 0 ; i < selectedRows.count() ; ++i) {
+        mediaList.append(model->mediaItemAt(selectedRows.at(i).row()));
+    }
+    
+    //Add to saved list
+    if (mediaList.count() > 0) {
+        QString videoListName = addAction->data().toString();
+        m_parent->savedListsManager()->saveMediaList(mediaList, videoListName, "Video", true);
+    }
+}
+

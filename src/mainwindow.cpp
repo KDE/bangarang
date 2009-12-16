@@ -1182,6 +1182,11 @@ ActionsManager * MainWindow::actionsManager()
     return m_actionsManager;
 }
 
+SavedListsManager * MainWindow::savedListsManager()
+{
+    return m_savedListsManager;
+}
+
 void MainWindow::setAboutData(KAboutData *aboutData)
 {
     m_aboutData = aboutData;
