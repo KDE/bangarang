@@ -86,6 +86,7 @@ public:
     
     KAboutData * aboutData();
     ActionsManager * actionsManager();
+    SavedListsManager * savedListsManager();
     Phonon::AudioOutput * audioOutput();
     void addListToHistory();
     InfoManager *infoManager();

@@ -57,10 +57,14 @@ class ActionsManager : public QObject
         QAction *removeSelectedItemsInfo();
         QAction *refreshMediaView();
         QAction *showVideoSettings();
+        QAction *removeFromSavedList();
+        QMenu *addToSavedAudioListMenu();
+        QMenu *addToSavedVideoListMenu();
 
         QMenu * mediaViewMenu(bool showAbout = false);
         
     public slots:
+        void updateSavedListsMenus();
         
     private:
 
@@ -84,6 +88,9 @@ class ActionsManager : public QObject
         QAction *m_removeSelectedItemsInfo;
         QAction *m_refreshMediaView;
         QAction *m_showVideoSettings;
+        QAction *m_removeFromSavedList;
+        QMenu *m_addToAudioSavedList;
+        QMenu *m_addToVideoSavedList;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
 
@@ -92,11 +99,13 @@ class ActionsManager : public QObject
     private slots:
         void fullScreenToggle();
         void toggleControls();
-	void toggleVideoSettings();
+        void toggleVideoSettings();
         void cancelFSHC();
         void showShortcutsEditor();
         void hideShortcutsEditor();
         void simplePlayPause();
         void muteAudio();
+        void addToSavedAudioList(QAction *addAction);
+        void addToSavedVideoList(QAction *addAction);
 };
 #endif //ACTIONSMANAGER_H
