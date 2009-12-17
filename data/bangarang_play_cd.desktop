@@ -2,6 +2,7 @@
 Exec=bangarang --play-cd %u
 Icon=bangarang
 Name=Play CD with Bangarang
+Name[nl]=CD afspelen met Bangarang
 
 [Desktop Entry]
 Actions=open;
