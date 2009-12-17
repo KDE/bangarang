@@ -118,7 +118,7 @@ void FileListEngine::run()
             mediaItem.url = "files://audio?getFolder";
             mediaItem.title = i18n("Open folder containing audio file(s)");
             mediaItem.type = "Action";
-            mediaList << mediaItem;           
+            mediaList << mediaItem;
         } else if (m_mediaListProperties.engineArg() == "video") {
             mediaItem.artwork = KIcon("document-open");
             mediaItem.url = "files://video?getFiles";

@@ -31,5 +31,6 @@ add_subdirectory( translations )
 ########### install files ###############
 
 install(FILES data/bangarang.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
+install(FILES data/bangarang_play_dvd.desktop data/bangarang_play_cd.desktop DESTINATION ${DATA_INSTALL_DIR}/solid/actions)
 #install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang)
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})

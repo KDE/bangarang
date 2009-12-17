@@ -232,10 +232,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     if (args->count() > 0) {
         if (args->isSet("play-dvd")) {
             //Play DVD
-            
+            kDebug() << "playing DVD";
+            MediaItem mediaItem;
+            mediaItem.title = i18n("DVD Video");
+            mediaItem.url = "dvdvideo://";
+            mediaItem.type = "Category";
+            QList<MediaItem> mediaList;
+            mediaList << mediaItem;
+            m_playlist->playMediaList(mediaList);
         } else if (args->isSet("play-cd")) {
             //Play CD
-        
+            kDebug() << "playing CD";
+            MediaItem mediaItem;
+            mediaItem.title = i18n("Audio CD");
+            mediaItem.url = "cdaudio://";
+            mediaItem.type = "Category";
+            QList<MediaItem> mediaList;
+            mediaList << mediaItem;
+            m_playlist->playMediaList(mediaList);
         } else {
             //Play Url
             KUrl cmdLineKUrl = args->url(0);
