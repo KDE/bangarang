@@ -276,7 +276,7 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            m_mediaListProperties.name = QString("%1").arg(seriesName);
+            m_mediaListProperties.name = i18n("Seasons - %1", seriesName);
             m_mediaListProperties.summary = i18np("1 season", "%1 seasons", mediaList.count());
             
             m_mediaListProperties.type = QString("Categories");
@@ -399,7 +399,7 @@ void VideoListEngine::run()
                 }
             }
             
-            m_mediaListProperties.name = i18n("Genre");
+            m_mediaListProperties.name = i18n("Genres");
             m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
