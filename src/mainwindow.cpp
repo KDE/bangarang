@@ -684,7 +684,10 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
 
 void MainWindow::showLoading()
 {
-    if (m_media->state() == Phonon::LoadingState || m_media->state() == Phonon::BufferingState || m_playlist->loadingState() == Playlist::Loading) {
+    if ((m_media->state() == Phonon::LoadingState || 
+         m_media->state() == Phonon::BufferingState || 
+         m_playlist->state() == Playlist::Loading) && 
+         (m_playlist->state() != Playlist::Finished)) {
         m_loadingProgress += 1;
         if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
             m_loadingProgress = 0;
@@ -692,7 +695,7 @@ void MainWindow::showLoading()
         QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
         ui->seekTime->setIcon(KIcon(iconName));
-        if (m_playlist->loadingState() == Playlist::Loading) {
+        if (m_playlist->state() == Playlist::Loading) {
             ui->seekTime->setToolTip(i18n("Loading playlist..."));
         } else if (m_media->state() == Phonon::BufferingState) {
             ui->seekTime->setToolTip(i18n("Buffering..."));

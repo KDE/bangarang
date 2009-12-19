@@ -275,6 +275,8 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
                     m_subRequestMediaLists.append(emptyList);
                 }
             }
+        } else {
+            setLoadingState(false);
         }
     }
     if (onlySources) {
