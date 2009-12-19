@@ -58,6 +58,8 @@ class ActionsManager : public QObject
         QAction *refreshMediaView();
         QAction *showVideoSettings();
         QAction *removeFromSavedList();
+        QAction *newAudioList();
+        QAction *newVideoList();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -89,6 +91,8 @@ class ActionsManager : public QObject
         QAction *m_refreshMediaView;
         QAction *m_showVideoSettings;
         QAction *m_removeFromSavedList;
+        QAction *m_newAudioList;
+        QAction *m_newVideoList;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         bool m_contextStackWasVisible;
