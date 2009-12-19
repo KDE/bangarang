@@ -248,10 +248,18 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
         } else if (mediaList.at(i).type == "Category") {
             onlySources = false;
             if (mediaList.count() == 1) {
-                //Just directly load the category if it's the only item
                 MediaListProperties mediaListProperties;
                 mediaListProperties.lri =  mediaList.at(i).url;
                 mediaListProperties.name = mediaList.at(i).title;
+                
+                // - Get the lri for loading sources using this category item
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                listEngine->setMediaListProperties(m_mediaListProperties);
+                listEngine->setFilterForSources(m_mediaListProperties.engineFilter());
+                QString loadSourcesLri = listEngine->mediaListProperties().lri;
+                mediaListProperties.lri = loadSourcesLri;
+                
+                //Just directly load the sources since it's one category
                 m_mediaListProperties = mediaListProperties;
             } else {
                 //Generate signatures and media list holders for each subrequest
@@ -275,54 +283,45 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
         }
         emit mediaListChanged();
     } else {
-        if (mediaList.count() == 1) {
-            //Just directly load the category if it's the only item
-            if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
-                // Since this lri is not currently being loaded by any list engine
-                // go ahead and start a new load
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
-                listEngine->setRequestSignature(m_requestSignature);
-                listEngine->setMediaListProperties(m_mediaListProperties);
-                listEngine->setFilterForSources(m_mediaListProperties.engineFilter());
+        //Launch load requests
+        for (int i = 0; i < mediaList.count(); ++i) {
+            MediaListProperties mediaListProperties;
+            mediaListProperties.lri = mediaList.at(i).url;
+            mediaListProperties.name = mediaList.at(i).title;
+            if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+                
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
+                listEngine->setMediaListProperties(mediaListProperties);
+                listEngine->setFilterForSources(mediaListProperties.engineFilter());
                 QString loadSourcesLri = listEngine->mediaListProperties().lri;
-                m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
-                m_lrisLoading.append(loadSourcesLri);
-                listEngine->start();
-                kDebug()<< "started load for " << m_mediaListProperties.lri;
-            } else {
-                kDebug()<< "waiting for " << m_mediaListProperties.lri;
-            }
-        } else {
-            //Launch subrequests
-            for (int i = 0; i < mediaList.count(); ++i) {
-                MediaListProperties mediaListProperties;
-                mediaListProperties.lri = mediaList.at(i).url;
-                if (m_mediaListCache->isInCache(mediaListProperties.lri)) {
+                
+                if (m_mediaListCache->isInCache(loadSourcesLri)) {
                     // Load data from from the cache
-                    ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+                    listEngine = m_listEngineFactory->availableListEngine("cache://");
                     MediaListProperties cacheListProperties;
-                    cacheListProperties.lri = QString("cache://dummyarg?%1").arg(mediaListProperties.lri);
+                    cacheListProperties.lri = QString("cache://dummyarg?%1").arg(loadSourcesLri);
                     m_requestSignature = m_listEngineFactory->generateRequestSignature();
                     listEngine->setRequestSignature(m_requestSignature);
+                    if (mediaList.count() > 1) {
+                        listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
+                    }
                     listEngine->setMediaListProperties(cacheListProperties);
                     listEngine->start();
+                    
                 } else {
-                    if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
-                        if (m_lrisLoading.indexOf(mediaListProperties.lri) == -1) {
-                            // Since this lri is not currently being loaded by any list engine
-                            // go ahead and start a new load
-                            ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
-                            listEngine->setRequestSignature(m_requestSignature);
+                    if (m_lrisLoading.indexOf(loadSourcesLri) == -1) {
+                        // Since this lri is not currently being loaded by any list engine
+                        // go ahead and start a new load
+                        listEngine->setRequestSignature(m_requestSignature);
+                        if (mediaList.count() > 1) {
                             listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
-                            listEngine->setFilterForSources(mediaListProperties.engineFilter());
-                            QString loadSourcesLri = listEngine->mediaListProperties().lri;
-                            m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
-                            m_lrisLoading.append(loadSourcesLri);
-                            listEngine->start();
-                            kDebug()<< "started load for " << loadSourcesLri;
-                        } else {
-                            kDebug()<< "waiting for " << mediaListProperties.lri;
                         }
+                        m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
+                        m_lrisLoading.append(loadSourcesLri);
+                        listEngine->start();
+                        kDebug()<< "started load for " << loadSourcesLri;
+                    } else {
+                        kDebug()<< "waiting for " << mediaListProperties.lri;
                     }
                 }
             }
