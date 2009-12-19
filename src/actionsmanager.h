@@ -60,6 +60,7 @@ class ActionsManager : public QObject
         QAction *removeFromSavedList();
         QAction *newAudioList();
         QAction *newVideoList();
+        QAction *showItems();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -93,6 +94,7 @@ class ActionsManager : public QObject
         QAction *m_removeFromSavedList;
         QAction *m_newAudioList;
         QAction *m_newVideoList;
+        QAction *m_showItems;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         bool m_contextStackWasVisible;
@@ -111,5 +113,6 @@ class ActionsManager : public QObject
         void muteAudio();
         void addToSavedAudioList(QAction *addAction);
         void addToSavedVideoList(QAction *addAction);
+        void loadSelectedSources();
 };
 #endif //ACTIONSMANAGER_H

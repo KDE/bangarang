@@ -141,11 +141,17 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_addToVideoSavedList = new QMenu(i18n("Add to list "), m_parent);
     connect(m_addToVideoSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedVideoList(QAction *)));
     
-    m_newAudioList = new QAction(KIcon("list-add"), i18n("New list"), m_addToAudioSavedList);
+    //Add a new audio list
+    m_newAudioList = new QAction(KIcon("list-add"), i18n("New list"), m_parent);
     connect(m_newAudioList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showAudioListSave()));
     
-    m_newVideoList = new QAction(KIcon("list-add"), i18n("New list"), m_addToVideoSavedList);
+    //Add a new video list
+    m_newVideoList = new QAction(KIcon("list-add"), i18n("New list"), m_parent);
     connect(m_newVideoList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
+    
+    //Show Items
+    m_showItems = new QAction(KIcon("system-run"), i18n("Show items"), m_parent);
+    connect(m_showItems, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
@@ -250,7 +256,8 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
     QMenu *menu = new QMenu(m_parent);
     QString type;
     bool selection = false;
-    if (ui->mediaView->selectionModel()->selectedIndexes().count() != 0) {
+    int selectedCount = ui->mediaView->selectionModel()->selectedIndexes().count();
+    if (selectedCount != 0) {
         QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(0);
         type = index.data(MediaItem::TypeRole).toString();
         selection = true;
@@ -274,6 +281,10 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
         if (selection) menu->addAction(playSelected());
         menu->addAction(playAll());
         menu->addSeparator();
+        if (selection && isCategory) {
+            menu->addAction(m_showItems);
+            menu->addSeparator();
+        }
         if (selection && isMedia) {
             if (type == "Audio") {
                 if (m_addToAudioSavedList->actions().count() > 0) {
@@ -488,3 +499,14 @@ void ActionsManager::addToSavedVideoList(QAction *addAction)
     }
 }
 
+void ActionsManager::loadSelectedSources()
+{
+    m_parent->addListToHistory();
+    QList<MediaItem> mediaList;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    for (int i = 0 ; i < selectedRows.count() ; ++i) {
+        mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+    }
+    m_parent->m_mediaItemModel->clearMediaListData();
+    m_parent->m_mediaItemModel->loadSources(mediaList);
+}
