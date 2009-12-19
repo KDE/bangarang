@@ -141,6 +141,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_addToVideoSavedList = new QMenu(i18n("Add to list "), m_parent);
     connect(m_addToVideoSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedVideoList(QAction *)));
     
+    m_newAudioList = new QAction(KIcon("list-add"), i18n("New list"), m_addToAudioSavedList);
+    connect(m_newAudioList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showAudioListSave()));
+    
+    m_newVideoList = new QAction(KIcon("list-add"), i18n("New list"), m_addToVideoSavedList);
+    connect(m_newVideoList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
+    
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -398,6 +404,7 @@ void ActionsManager::muteAudio()
 void ActionsManager::updateSavedListsMenus()
 {
     m_addToAudioSavedList->clear();
+    m_addToAudioSavedList->addAction(m_newAudioList);
     QStringList audioListNames = m_parent->savedListsManager()->savedListNames("Audio");
     for (int i = 0; i < audioListNames.count(); i++) {
         if (!((audioListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
@@ -409,6 +416,7 @@ void ActionsManager::updateSavedListsMenus()
     }
     
     m_addToVideoSavedList->clear();
+    m_addToVideoSavedList->addAction(m_newVideoList);
     QStringList videoListNames = m_parent->savedListsManager()->savedListNames("Video");
     for (int i = 0; i < videoListNames.count(); i++) {
         if (!((videoListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
