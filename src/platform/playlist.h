@@ -46,7 +46,7 @@ class Playlist : public QObject
     public:
         enum Mode { Normal = 0, Shuffle = 1};
         enum Model { PlaylistModel = 0, QueueModel = 1};
-        enum State { LoadingComplete = 0, Loading = 1};
+        enum State { Finished = 0, Loading = 1, Playing = 2};
         
         /**
          * Constructor
@@ -84,7 +84,7 @@ class Playlist : public QObject
          *
          * @returns Playlist::State (see enum)
          */
-        Playlist::State loadingState();
+        Playlist::State state();
         
         /**
          * Returns the Phonon::MediaObject used by Playlist.
@@ -208,7 +208,7 @@ class Playlist : public QObject
         void createUrlHistoryFromIndices();
         void updateNowPlaying();
         bool m_nepomukInited;
-        Playlist::State m_loadingState;
+        Playlist::State m_state;
         MediaIndexer * m_mediaIndexer;
         bool m_playbackInfoWritten;
         void buildQueueFrom(int playlistRow);

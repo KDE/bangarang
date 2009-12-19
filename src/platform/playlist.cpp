@@ -46,8 +46,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_mode = Playlist::Normal;
     m_repeat = false;
     m_queueDepth = 10;
-    m_playlistFinished = false;
-    m_loadingState = Playlist::LoadingComplete;
+    m_state = Playlist::Finished;
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -159,7 +158,7 @@ void Playlist::playItemAt(int row, Playlist::Model model)
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
             m_mediaObject->play();
         }
-        m_playlistFinished = false;
+        m_state = Playlist::Playing;
         
 
     } else if (model == Playlist::QueueModel) {
@@ -195,7 +194,7 @@ void Playlist::playItemAt(int row, Playlist::Model model)
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
         m_mediaObject->play();
-        m_playlistFinished = false;
+        m_state = Playlist::Playing;
     }
     
     
@@ -277,7 +276,7 @@ void Playlist::playMediaList(QList<MediaItem> mediaList)
     //complete (playlistChanged) before starting playback
     // - hence the use of playWhenPlaylistChanges.
     playWhenPlaylistChanges = true;
-    m_loadingState = Playlist::Loading;
+    m_state = Playlist::Loading;
     emit loading();
     m_currentPlaylist->loadSources(mediaList); 
 }
@@ -383,9 +382,9 @@ void Playlist::setRepeat(bool repeat)
     m_repeat = repeat;
 }
 
-Playlist::State Playlist::loadingState()
+Playlist::State Playlist::state()
 {
-    return m_loadingState;
+    return m_state;
 }
 
 
@@ -403,7 +402,7 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
     addToQueue();
     if (m_queue->rowCount() == 1) {
         //Playlist is finished
-        m_playlistFinished = true;        
+        m_state = Playlist::Finished;
     }
     if (m_queue->rowCount() > 1) {
         m_queue->removeMediaItemAt(0);
@@ -456,7 +455,7 @@ void Playlist::titleChanged(int newTitle) //connected to MediaController::titleC
 
 void Playlist::confirmPlaylistFinished() //connected to MediaObject::finished()
 {
-    if (m_playlistFinished) {
+    if (m_state == Playlist::Finished) {
         //Refresh playlist model to ensure views get updated
         int row = -1;
         if (m_nowPlaying->rowCount() > 0) {
@@ -532,11 +531,20 @@ void Playlist::updatePlaybackInfo(qint64 time)
 //--------------------------------
 void Playlist::playlistChanged()
 {
-    m_loadingState = Playlist::LoadingComplete;
+    m_state = Playlist::Finished;
     if (playWhenPlaylistChanges && m_currentPlaylist->rowCount() > 0) {
         //Start playing with clean playlist, queue and history
-        start();
         playWhenPlaylistChanges = false;
+        if (m_currentPlaylist->mediaItemAt(0).type == "Audio" ||
+            m_currentPlaylist->mediaItemAt(0).type == "Video") {
+            start();
+        } else {
+            if (m_currentPlaylist->mediaItemAt(0).fields["messageType"].toString() == "No Results") {
+                m_currentPlaylist->removeMediaItemAt(0,false);
+            }
+            m_mediaObject->stop();
+            emit playlistFinished();
+        }
     } else if (m_currentPlaylist->rowCount() > 0){
         //if playlist mode is normal (sequential)
         // - rebuild history to just before currently playing/paused url
