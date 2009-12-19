@@ -307,6 +307,16 @@ QAction *ActionsManager::removeFromSavedList()
     return m_removeFromSavedList;
 }
 
+QAction *ActionsManager::newAudioList()
+{
+    return m_newAudioList;
+}
+
+QAction *ActionsManager::newVideoList()
+{
+    return m_newVideoList;
+}
+
 QMenu *ActionsManager::addToSavedAudioListMenu()
 {
     return m_addToAudioSavedList;
