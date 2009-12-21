@@ -22,7 +22,6 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "mediaitemdelegate.h"
-#include "platform/mediaindexer.h"
 #include <KUrlRequester>
 #include <KLineEdit>
 #include <Soprano/QueryResultIterator>
@@ -43,7 +42,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_parent = parent;
     ui = m_parent->ui;
     m_infoMediaItemsModel = new MediaItemModel(this);
-    m_mediaIndexer = new MediaIndexer(this);
     connect(ui->saveInfo, SIGNAL(clicked()), this, SLOT(saveInfoView()));
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(showInfoView()));
     connect(ui->editInfo, SIGNAL(clicked()), this, SLOT(editInfoView()));

@@ -513,12 +513,7 @@ void Playlist::updatePlaybackInfo(qint64 time)
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
             Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
             if (res.exists()) {
-                kDebug() << "setting last played";
-                res.setProperty(MediaVocabulary().lastPlayed(), Nepomuk::Variant(QDateTime::currentDateTime()));
-                int playCount = res.property(MediaVocabulary().playCount()).toInt();
-                playCount = playCount + 1;
-                kDebug() << "setting playcount";
-                res.setProperty(MediaVocabulary().playCount(), Nepomuk::Variant(playCount));        
+                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).url, true, QDateTime::currentDateTime());
             }
         }
         m_playbackInfoWritten = true;

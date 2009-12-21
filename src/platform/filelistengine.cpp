@@ -102,7 +102,13 @@ void FileListEngine::run()
         }
         model()->addResults(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
         if (m_nepomukInited && m_mediaListToIndex.count() > 0) {
-            NepomukListEngine::indexMediaItems(m_mediaListToIndex);
+            NepomukListEngine::updateSourceInfo(m_mediaListToIndex);
+            m_mediaIndexer = new MediaIndexer(this);
+            connectIndexer();
+            m_mediaIndexer->updateInfo(m_mediaListToIndex);
+            m_updateSourceInfo = false;
+            m_mediaListToIndex.clear();
+            exec();
         }
         return;
     } 

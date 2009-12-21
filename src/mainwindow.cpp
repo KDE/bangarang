@@ -758,6 +758,7 @@ void MainWindow::showNotification()
 
 void MainWindow::delayedNotificationHide()
 {
+    ui->notificationText->setText(i18n("Complete"));
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
 }
 
@@ -769,7 +770,7 @@ void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
 
 void MainWindow::sourceInfoRemoved(QString url)
 {
-    ui->notificationText->setText(i18n("Removed info for ") + url);
+    ui->notificationText->setText(i18n("Removed info for ") + QString("<i>%1</i>").arg(url));
     ui->notificationWidget->setVisible(true);
 }
 

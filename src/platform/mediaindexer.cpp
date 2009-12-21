@@ -23,408 +23,14 @@
 
 #include <KUrl>
 #include <KDebug>
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
+#include <KStandardDirs>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>
-#include <taglib/fileref.h>
-#include <taglib/tstring.h>
-#include <id3v2tag.h>
-
-#include <QApplication>
-
-MediaIndexerJob::MediaIndexerJob(QObject * parent) : QThread(parent)
-{
-}
-
-MediaIndexerJob::~MediaIndexerJob()
-{
-}
-
-void MediaIndexerJob::run()
-{
-    emit percentComplete(0);
-    if (m_indexType == MediaIndexer::IndexMediaItem) {
-        for (int i = 0; i < m_mediaList.count(); ++i) {
-            indexMediaItem(m_mediaList.at(i));
-            emit sourceInfoUpdated(m_mediaList.at(i));
-            emit percentComplete(100*i/m_mediaList.count());
-        }
-    } else if (m_indexType == MediaIndexer::RemoveInfo) {
-        for (int i = 0; i < m_mediaList.count(); ++i) {
-            removeInfo(m_mediaList.at(i));     
-            emit urlInfoRemoved(m_mediaList.at(i).url);
-            emit percentComplete(100*i/m_mediaList.count());
-        }
-    } else if (m_indexType == MediaIndexer::WritePlaybackInfo) {
-        MediaVocabulary mediaVocabulary = MediaVocabulary();
-        kDebug() << "start writing playback info";
-        Nepomuk::Resource res(m_url);
-        if (res.exists()) {
-            kDebug() << "setting last played";
-            res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(m_playDateTime));
-            if (m_incrementPlayCount) {
-                int playCount = res.property(mediaVocabulary.playCount()).toInt();
-                playCount = playCount + 1;
-                kDebug() << "setting playcount";
-                res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));        
-            }
-        }
-        kDebug() << "done writing playback info";
-    }
-    emit percentComplete(100);
-    m_mediaList.clear();
-    emit jobComplete();
-}
-
-void MediaIndexerJob::setMediaListToIndex(QList<MediaItem> mediaList)
-{
-    m_mediaList = mediaList;
-    m_indexType = MediaIndexer::IndexMediaItem;
-}
-
-void MediaIndexerJob::setInfoToRemove(QList<MediaItem> mediaList)
-{
-    m_mediaList = mediaList;
-    m_indexType = MediaIndexer::RemoveInfo;
-}
-
-void MediaIndexerJob::writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
-{
-    m_url = url;
-    m_incrementPlayCount = incrementPlayCount;
-    m_playDateTime = playDateTime;
-
-    m_indexType = MediaIndexer::WritePlaybackInfo;
-    start();
-}
-
-void MediaIndexerJob::indexMediaItem(MediaItem mediaItem)
-{
-    //Update RDF store
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    Nepomuk::Resource res(mediaItem.url);
-    if (mediaItem.type == "Audio") {
-        // Update the media type
-        kDebug() << "Writing type...";
-        QUrl audioType;
-        if (mediaItem.fields["audioType"] == "Music") {
-            audioType = mediaVocabulary.typeAudioMusic();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(mediaItem.url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioStream());
-            removeType(res, mediaVocabulary.typeAudio());
-        } else if (mediaItem.fields["audioType"] == "Audio Stream") {
-            audioType = mediaVocabulary.typeAudioStream();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(mediaItem.url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioMusic());
-            removeType(res, mediaVocabulary.typeAudio());
-        } else if (mediaItem.fields["audioType"] == "Audio Clip") {
-            audioType = mediaVocabulary.typeAudio();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(mediaItem.url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioMusic());
-            removeType(res, mediaVocabulary.typeAudioStream());
-        }
-        if (!res.hasType(audioType)) {
-            res.addType(audioType);
-        }
-        
-        // Update the properties
-        QString title = mediaItem.fields["title"].toString();
-        if (!title.isEmpty()) {
-            kDebug() << "Writing title...";
-            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-        }
-        QString description = mediaItem.fields["description"].toString();
-        if (!description.isEmpty()) {
-            kDebug() << "Writing description...";
-            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-        }
-        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
-        if (!artworkUrl.isEmpty()) {
-            Nepomuk::Resource artworkRes(artworkUrl);
-            kDebug() << "Writing artworkurl...";
-            if (!artworkRes.exists()) {
-                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
-            }
-            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
-        }
-        if (mediaItem.fields["audioType"] == "Music") {
-            QString artist  = mediaItem.fields["artist"].toString();
-            if (!artist.isEmpty()) {
-                kDebug() << "Writing artist...";
-                res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artist));
-            }
-            QString album   = mediaItem.fields["album"].toString();
-            if (!album.isEmpty()) {
-                kDebug() << "Writing album...";
-                res.setProperty(mediaVocabulary.musicAlbumName(), Nepomuk::Variant(album));
-            }
-            QString genre  = mediaItem.fields["genre"].toString();
-            if (!genre.isEmpty()) {
-                kDebug() << "Writing genre...";
-                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
-            }
-            int track   = mediaItem.fields["trackNumber"].toInt();
-            if (track != 0) {
-                kDebug() << "Writing track...";
-                res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
-            }
-            int duration = mediaItem.fields["duration"].toInt();
-            if (duration != 0) {
-                kDebug() << "Writing duration...";
-                res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
-            }
-            int year = mediaItem.fields["year"].toInt();
-            if (year != 0) {
-                QDate created = QDate(year, 1, 1);
-                kDebug() << "Writing year..." << year;
-                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
-            }
-        } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
-            (mediaItem.fields["audioType"] == "Audio Clip")) {
-        }
-    } else if (mediaItem.type == "Video") {
-        //Update the media type
-        if (!res.exists()) {
-            res = Nepomuk::Resource(mediaItem.url, mediaVocabulary.typeVideo());
-        }
-        if (!res.hasType(mediaVocabulary.typeVideo())) {
-            res.addType(mediaVocabulary.typeVideo());
-        }
-        
-        //Update the properties
-        QString title = mediaItem.fields["title"].toString();
-        if (!title.isEmpty()) {
-            kDebug() << "Writing title...";
-            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-        }
-        QString description = mediaItem.fields["description"].toString();
-        if (!description.isEmpty()) {
-            kDebug() << "Writing description...";
-            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-        }
-        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
-        if (!artworkUrl.isEmpty()) {
-            Nepomuk::Resource artworkRes(artworkUrl);
-            kDebug() << "Writing artworkurl...";
-            if (!artworkRes.exists()) {
-                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
-            }
-            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
-        }
-        if (mediaItem.fields["videoType"] == "Movie") {
-            res.setProperty(mediaVocabulary.videoIsMovie(), Nepomuk::Variant(true));
-            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
-                res.removeProperty(mediaVocabulary.videoIsTVShow());
-            }
-            QString seriesName = mediaItem.fields["seriesName"].toString();
-            if (!seriesName.isEmpty()) {
-                res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
-            }
-            QString genre   = mediaItem.fields["genre"].toString();
-            if (!genre.isEmpty()) {
-                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
-            }
-            int year = mediaItem.fields["year"].toInt();
-            if (year != 0) {
-                QDate created = QDate(year, 1, 1);
-                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
-            }
-        } else if (mediaItem.fields["videoType"] == "TV Show") {
-            res.setProperty(mediaVocabulary.videoIsTVShow(), Nepomuk::Variant(true));
-            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
-                res.removeProperty(mediaVocabulary.videoIsMovie());
-            }
-            QString seriesName = mediaItem.fields["seriesName"].toString();
-            if (!seriesName.isEmpty()) {
-                res.setProperty(mediaVocabulary.videoSeriesName(), Nepomuk::Variant(seriesName));
-            }
-            int season = mediaItem.fields["season"].toInt();
-            if (season != 0) {
-                res.setProperty(mediaVocabulary.videoSeriesSeason(), Nepomuk::Variant(season));
-            } else {
-                if (res.hasProperty(mediaVocabulary.videoSeriesSeason())) {
-                    res.removeProperty(mediaVocabulary.videoSeriesSeason());
-                }
-            }
-            int episode = mediaItem.fields["episode"].toInt();
-            if (episode != 0) {
-                res.setProperty(mediaVocabulary.videoSeriesEpisode(), Nepomuk::Variant(episode));
-            } else {
-                if (res.hasProperty(mediaVocabulary.videoSeriesEpisode())) {
-                    res.removeProperty(mediaVocabulary.videoSeriesEpisode());
-                }
-            }
-            QString genre   = mediaItem.fields["genre"].toString();
-            if (!genre.isEmpty()) {
-                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
-            }
-            int year = mediaItem.fields["year"].toInt();
-            if (year != 0) {
-                QDate created = QDate(year, 1, 1);
-                res.setProperty(mediaVocabulary.created(), Nepomuk::Variant(created));
-            }
-        } else if (mediaItem.fields["videoType"] == "Video Clip") {
-            //Remove properties identifying video as a movie or tv show
-            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
-                res.removeProperty(mediaVocabulary.videoIsMovie());
-            }
-            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
-                res.removeProperty(mediaVocabulary.videoIsTVShow());
-            }
-        }
-    }
-}
-
-void MediaIndexerJob::removeInfo(MediaItem mediaItem)
-{
-    kDebug() << "removing info for " << mediaItem.url;
-    //Update RDF store
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    Nepomuk::Resource res(mediaItem.url);
-    if (!res.exists()) {
-        return;
-    }
-    if (mediaItem.type == "Audio") {
-        // Update the media type
-        kDebug() << "Removing type...";
-        QUrl audioType;
-        if (mediaItem.fields["audioType"] == "Music") {
-            audioType = mediaVocabulary.typeAudioMusic();
-        } else if (mediaItem.fields["audioType"] == "Audio Stream") {
-            audioType = mediaVocabulary.typeAudioStream();
-        } else if (mediaItem.fields["audioType"] == "Audio Clip") {
-            audioType = mediaVocabulary.typeAudio();
-        }
-        if (res.hasType(audioType)) {
-            removeType(res, audioType);
-        }
-        
-        // Update the properties
-        if (res.hasProperty(mediaVocabulary.title())){
-            kDebug() << "Removing title...";
-            res.removeProperty(mediaVocabulary.title());
-        }
-        if (res.hasProperty(mediaVocabulary.description())) {
-            kDebug() << "Removing description...";
-            res.removeProperty(mediaVocabulary.description());
-        }
-        if (res.hasProperty(mediaVocabulary.artwork())) {
-            kDebug() << "Removing artwork...";
-            res.removeProperty(mediaVocabulary.artwork());
-        }
-
-        if (mediaItem.fields["audioType"] == "Music") {
-            if (res.hasProperty(mediaVocabulary.musicArtist())) {
-                kDebug() << "Removing artist...";
-                res.removeProperty(mediaVocabulary.musicArtist());
-            }
-            if (res.hasProperty(mediaVocabulary.musicAlbumName())) {
-                kDebug() << "Removing album...";
-                res.removeProperty(mediaVocabulary.musicAlbumName());
-            }
-            if (res.hasProperty(mediaVocabulary.genre())) {
-                kDebug() << "Removing genre...";
-                res.removeProperty(mediaVocabulary.genre());
-            }
-            if (res.hasProperty(mediaVocabulary.musicTrackNumber())) {
-                kDebug() << "Removing trackNumber...";
-                res.removeProperty(mediaVocabulary.musicTrackNumber());
-            }
-            if (res.hasProperty(mediaVocabulary.duration())) {
-                kDebug() << "Removing duration...";
-                res.removeProperty(mediaVocabulary.duration());
-            }
-            if (res.hasProperty(mediaVocabulary.created())) {
-                kDebug() << "Removing year...";
-                res.removeProperty(mediaVocabulary.created());
-            }
-        } else if ((mediaItem.fields["audioType"] == "Audio Stream") ||
-            (mediaItem.fields["audioType"] == "Audio Clip")) {
-        }
-    } else if (mediaItem.type == "Video") {
-        //Update the media type
-        if (res.hasType(mediaVocabulary.typeVideo())) {
-            removeType(res, mediaVocabulary.typeVideo());
-        }
-        
-        //Update the properties
-        if (res.hasProperty(mediaVocabulary.title())){
-            kDebug() << "Removing title...";
-            res.removeProperty(mediaVocabulary.title());
-        }
-        if (res.hasProperty(mediaVocabulary.description())) {
-            kDebug() << "Removing description...";
-            res.removeProperty(mediaVocabulary.description());
-        }
-        if (res.hasProperty(mediaVocabulary.artwork())) {
-            kDebug() << "Removing artwork...";
-            res.removeProperty(mediaVocabulary.artwork());
-        }
-        if (mediaItem.fields["videoType"] == "Movie") {
-            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
-                res.removeProperty(mediaVocabulary.videoIsMovie());
-            }
-            if (res.hasProperty(mediaVocabulary.videoSeriesName())) {
-                res.removeProperty(mediaVocabulary.videoSeriesName());
-            }
-            if (res.hasProperty(mediaVocabulary.genre())) {
-                res.removeProperty(mediaVocabulary.genre());
-            }
-            if (res.hasProperty(mediaVocabulary.created())) {
-                res.removeProperty(mediaVocabulary.created());
-            }
-        } else if (mediaItem.fields["videoType"] == "TV Show") {
-            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
-                res.removeProperty(mediaVocabulary.videoIsTVShow());
-            }
-            if (res.hasProperty(mediaVocabulary.videoSeriesName())) {
-                res.removeProperty(mediaVocabulary.videoSeriesName());
-            }
-            if (res.hasProperty(mediaVocabulary.videoSeriesSeason())) {
-                res.removeProperty(mediaVocabulary.videoSeriesSeason());
-            }
-            if (res.hasProperty(mediaVocabulary.videoSeriesEpisode())) {
-                res.removeProperty(mediaVocabulary.videoSeriesEpisode());
-            }
-            if (res.hasProperty(mediaVocabulary.genre())) {
-                res.removeProperty(mediaVocabulary.genre());
-            }
-            if (res.hasProperty(mediaVocabulary.created())) {
-                res.removeProperty(mediaVocabulary.created());
-            }
-        } else if (mediaItem.fields["videoType"] == "Video Clip") {
-            if (res.hasProperty(mediaVocabulary.videoIsMovie())) {
-                res.removeProperty(mediaVocabulary.videoIsMovie());
-            }
-            if (res.hasProperty(mediaVocabulary.videoIsTVShow())) {
-                res.removeProperty(mediaVocabulary.videoIsTVShow());
-            }
-        }
-    }
-}
-
-void MediaIndexerJob::removeType(Nepomuk::Resource res, QUrl mediaType)
-{
-    QList<QUrl> types = res.types();
-    for (int i = 0; i < types.count(); i++) {
-        if (types.at(i).toString() == mediaType.toString()) {
-            types.removeAt(i);
-            break;
-        }
-    }
-    res.setTypes(types);
-}
-
+#include <QTextStream>
+#include <QProcess>
+#include <QFile>
+#include <QHash>
 
 MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
 {
@@ -434,68 +40,201 @@ MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
     } else {
         m_nepomukInited = false; //no resource manager
     }
+    m_state = Idle;
 }
 
 MediaIndexer::~MediaIndexer()
 {
-    for (int i = 0; i < m_mediaIndexerJobs.count(); i++) {
-        delete m_mediaIndexerJobs.at(i);
-    }
 }
 
-void MediaIndexer::indexMediaItems(QList<MediaItem> mediaList)
+void MediaIndexer::updateInfo(QList<MediaItem> mediaList)
 {
-    if (m_nepomukInited) {
-        if (mediaList.count() > 0) {
-            MediaIndexerJob * indexerJob = availableIndexerJob();
-            connect(indexerJob, SIGNAL(percentComplete(int)), this, SIGNAL(percentComplete(int)));
-            connect(indexerJob, SIGNAL(jobComplete()), this, SIGNAL(indexingComplete()));
-            connect(indexerJob, SIGNAL(sourceInfoUpdated(MediaItem)), this, SIGNAL(sourceInfoUpdated(MediaItem)));
-            connect(indexerJob, SIGNAL(started()), this, SIGNAL(started()));
-            indexerJob->setMediaListToIndex(mediaList);
-            indexerJob->start();
+    if (m_nepomukInited && (mediaList.count() > 0)) {
+        QString filename = QString("bangarang/%1.jb")
+                                .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
+        QString path = KStandardDirs::locateLocal("data", filename, true);
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            return;
         }
+        QTextStream out(&file);
+        out << "#Count = " << mediaList.count() << "\n";
+        QList<QString> urls;
+        for (int i = 0; i < mediaList.count(); i++) {
+            writeUpdateInfo(mediaList.at(i), out);
+            out << "\n";
+            urls << mediaList.at(i).url;
+        }
+        out << "\n" <<"\n";
+        file.close();
+        KProcess * writer = new KProcess();
+        writer->setProgram("bangarangnepomukwriter", QStringList(path));
+        writer->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        connect(writer, SIGNAL(readyReadStandardOutput()), this, SLOT(processWriterOutput()));
+        connect(writer, SIGNAL(started()), this, SIGNAL(started()));
+        connect(writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
+        connect(writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+        m_mediaLists.insert(m_writers.count(), mediaList);
+        m_urlLists.insert(m_writers.count(), urls);
+        m_writers.append(writer);
+        writer->start();
+        m_state = Running;
+        emit percentComplete(0);
     }
 }
 
 void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
 {
-    if (m_nepomukInited) {
-        if (mediaList.count() > 0) {
-            MediaIndexerJob * indexerJob = availableIndexerJob();
-            connect(indexerJob, SIGNAL(percentComplete(int)), this, SIGNAL(percentComplete(int)));
-            connect(indexerJob, SIGNAL(jobComplete()), this, SIGNAL(indexingComplete()));
-            connect(indexerJob, SIGNAL(urlInfoRemoved(QString)), this, SIGNAL(urlInfoRemoved(QString)));
-            connect(indexerJob, SIGNAL(started()), this, SIGNAL(started()));
-            indexerJob->setInfoToRemove(mediaList);
-            indexerJob->start();
+    if (m_nepomukInited && (mediaList.count() > 0)) {
+        QString filename = QString("bangarang/%1.jb")
+                               .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
+        QString path = KStandardDirs::locateLocal("data", filename, true);
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            return;
+        }
+        QTextStream out(&file);
+        out << "#Count = " << mediaList.count() << "\n";
+        for (int i = 0; i < mediaList.count(); i++) {
+            writeRemoveInfo(mediaList.at(i), out);
+            out << "\n";
+        }
+        out << "\n" <<"\n";
+        file.close();
+        KProcess * writer = new KProcess();
+        writer->setProgram("bangarangnepomukwriter", QStringList(path));
+        writer->setWorkingDirectory(KStandardDirs::locateLocal("data", "bangarang/", true));
+        writer->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        connect(writer, SIGNAL(readyReadStandardOutput()), this, SLOT(processWriterOutput()));
+        connect(writer, SIGNAL(started()), this, SIGNAL(started()));
+        connect(writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
+        connect(writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+        m_writers.append(writer);
+        writer->start();
+        m_state = Running;
+        emit percentComplete(0);
+    }
+}
+
+void MediaIndexer::updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
+{
+    if (m_nepomukInited && !url.isEmpty()) {
+        QString filename = QString("bangarang/%1.jb")
+        .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
+        QString path = KStandardDirs::locateLocal("data", filename, true);
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            return;
+        }
+        QTextStream out(&file);
+        out << "[" << url << "]\n";
+        out << "lastPlayed = " << playDateTime.toString("yyyyMMddhhmmss") << "\n";
+        if (incrementPlayCount) {
+            int playCount = 0;
+            Nepomuk::Resource res(url);
+            if (res.exists()) {
+                playCount = res.property(MediaVocabulary().playCount()).toInt();
+            }   
+            playCount = playCount + 1;
+            out << "playCount = " << playCount << "\n";
+        }
+        out << "\n" << "\n";
+        KProcess * writer = new KProcess();
+        writer->setProgram("bangarangnepomukwriter", QStringList(path));
+        writer->setWorkingDirectory(KStandardDirs::locateLocal("data", "bangarang/", true));
+        writer->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        connect(writer, SIGNAL(started()), this, SIGNAL(started()));
+        connect(writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
+        connect(writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+        m_writers.append(writer);
+        writer->start();
+        m_state = Running;
+        emit percentComplete(0);
+    }
+}
+
+void MediaIndexer::writeRemoveInfo(MediaItem mediaItem, QTextStream &out)
+{
+    out << "[" << mediaItem.url  << "]\n";;
+    out << "type = " << mediaItem.type  << "\n";;
+    if (mediaItem.type == "Audio") {
+        out << "audioType = " << mediaItem.fields["audioType"].toString() << "\n";
+    } else if (mediaItem.type == "Video") {
+        out << "videoType = " << mediaItem.fields["videoType"].toString() << "\n";
+    }
+    out << "removeInfo = true" << "\n";
+}
+
+void MediaIndexer::writeUpdateInfo(MediaItem mediaItem, QTextStream &out)
+{
+    out << "[" << mediaItem.url  << "]\n";;
+    out << "type = " << mediaItem.type  << "\n";;
+    
+    QHashIterator<QString, QVariant> i(mediaItem.fields);
+    while (i.hasNext()) {
+        i.next();
+        if (i.value().type() == QVariant::DateTime) {
+            out << i.key() << " = " << i.value().toDateTime().toString("yyyyMMddhhmmss") << "\n";
+        } else if (i.value().type() == QVariant::DateTime) {
+            out << i.key() << " = " << i.value().toDateTime().toString("yyyyMMdd") << "\n";
+        } else {
+            out << i.key() << " = " << i.value().toString()  << "\n";
         }
     }
 }
 
-MediaIndexerJob * MediaIndexer::availableIndexerJob()
+void MediaIndexer::processWriterOutput()
 {
-    MediaIndexerJob * mediaIndexerJob;
-    bool found = false;
-    for (int i = 0; i < m_mediaIndexerJobs.count(); i++) {
-        if (!m_mediaIndexerJobs.at(i)->isRunning()) {
-            mediaIndexerJob = m_mediaIndexerJobs.at(i);
-            found = true;
-            break;
+    for (int i = 0; i < m_writers.count(); i++) {
+        m_writers.at(i)->setReadChannel(QProcess::StandardOutput);
+        while (!m_writers.at(i)->atEnd()) {
+            if (m_writers.at(i)->canReadLine()) {
+                char buffer[1024];
+                qint64 lineLength = m_writers.at(i)->readLine(buffer, sizeof(buffer));
+                if (lineLength != -1) {
+                    QString line(buffer);
+                    //kDebug() << line;
+                    if (line.startsWith("BangarangProgress:")) {
+                        int percent = line.remove("BangarangProgress:").trimmed().toInt();
+                        emit percentComplete(percent);
+                    } else if (line.startsWith("BangarangSignal:sourceInfoUpdated:")) {
+                        QString url = line.remove("BangarangSignal:sourceInfoUpdated:").trimmed();
+                        QList<QString> urls = m_urlLists[i];
+                        int index = urls.indexOf(url);
+                        if (index != -1) {
+                            MediaItem mediaItem = m_mediaLists[i].at(index);
+                            emit sourceInfoUpdated(mediaItem);
+                        }
+                    } else if (line.startsWith("BangrangSignal:urlInfoRemoved:")) {
+                        QString url = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
+                        emit urlInfoRemoved(url);
+                    }
+                }
+            }
         }
-    }
-    if (!found) {
-        mediaIndexerJob = new MediaIndexerJob(0);
-        m_mediaIndexerJobs.append(mediaIndexerJob);
+    }                     
+}
+
+void MediaIndexer::finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    emit finished();
+    bool isAllFinished = true;
+    for (int i = 0; i < m_writers.count(); i++) {
+        if (m_writers.at(i)->state() == QProcess::Running ||
+            m_writers.at(i)->state() == QProcess::Starting) {
+            isAllFinished = false;
+        }
     }
     
-    return mediaIndexerJob;
+    if (isAllFinished) {
+        m_state = Idle;
+        emit allFinished();
+    }
+    Q_UNUSED(exitCode);
+    Q_UNUSED(exitStatus);
 }
 
-void MediaIndexer::writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
+void MediaIndexer::error(QProcess::ProcessError error)
 {
-    if (m_nepomukInited) {
-        MediaIndexerJob * indexerJob = availableIndexerJob();
-        indexerJob->writePlaybackInfo(url, incrementPlayCount, playDateTime);
-    }
+    kDebug() << error;
 }
