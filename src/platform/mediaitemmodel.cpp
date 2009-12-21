@@ -87,6 +87,9 @@ MediaListProperties MediaItemModel::mediaListProperties()
 
 void MediaItemModel::setMediaListProperties(MediaListProperties mediaListProperties)
 {
+    if (m_mediaListProperties.lri != mediaListProperties.lri) {
+        setLoadingState(false);
+    }
     m_mediaListProperties = mediaListProperties;
     emit propertiesChanged();
 }

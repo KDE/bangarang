@@ -24,20 +24,93 @@
 
 class MediaItem;
 
+/**
+* MediaIndexer provides a way to asynchronous write to the nepomuk datastore.
+*/
 class MediaIndexer : public QObject
 {
     Q_OBJECT
     
     public:
         enum State {Idle = 0, Running = 1};
+        /**
+         * Constructor
+         */
         MediaIndexer(QObject *parent);
+        
+        /**
+         *Destructor
+         */
         ~MediaIndexer();
+        
+        /**
+         * Update information in the Nepomuk datastore using the specified
+         * mediaList.
+         *
+         * @param mediaList List of MediaItems containing updated information.
+         */
         void updateInfo(QList<MediaItem> mediaList);
+        
+        /**
+         * Remove media information from the Nepomuk datastore corresponding
+         * specified medialist.
+         *
+         * @param mediaList List of MediaItems whose information should be
+         *                  removed from the datastore.
+         */
         void removeInfo(QList<MediaItem> mediaList);
+        
+        /**
+         * Update the playback time and/or play count for the specified url.
+         *
+         * @param url url of media item to updateInfo
+         * @param incrementPlayCount if true, the play count will be incremented
+         * @param playDateTime DateTime of playback
+         */
         void updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
+        
+        /**
+         * Update the rating of the specified url.
+         *
+         * @param url Url of MediaItem
+         * @param rating Rating: and integer between 0 and 10
+         */
         void updateRating(QString url, int rating);
+        
         void state();
         
+    Q_SIGNALS:
+        /**
+         * Emitted when the update/removal has started
+         */
+        void started();
+        
+        /**
+         * Emitted when the update/removal has finished
+         */
+        void finished();
+        
+        /**
+         * Emitted when all update/removal tasks managed by this MediaIndexer
+         * is finished.
+         */
+        void allFinished();
+        
+        /**
+         * Emitted when media information for the url has been removed
+         */
+        void urlInfoRemoved(QString url);
+        
+        /**
+         * Emitted when media information for MediaItem has been updated
+         */
+        void sourceInfoUpdated(MediaItem mediaItem);
+        
+        /**
+         * Emitted when media information has been updated/removed.
+         */
+        void percentComplete(int percent);
+    
     private:
         bool m_nepomukInited;
         QList<KProcess *> m_writers;
@@ -47,15 +120,7 @@ class MediaIndexer : public QObject
         void writeRemoveInfo(MediaItem mediaItem, QTextStream &out);
         void writeUpdateInfo(MediaItem mediaItem, QTextStream &out);
         
-    Q_SIGNALS:
-        void started();
-        void finished();
-        void allFinished();
-        void urlInfoRemoved(QString url);
-        void sourceInfoUpdated(MediaItem mediaItem);
-        void percentComplete(int percent);
-    
-    public Q_SLOTS:
+    private Q_SLOTS:
         void processWriterOutput();
         void finished(int exitCode, QProcess::ExitStatus exitStatus);
         void error(QProcess::ProcessError error);
