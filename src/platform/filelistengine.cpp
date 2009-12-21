@@ -108,6 +108,8 @@ void FileListEngine::run()
             m_mediaIndexer->updateInfo(m_mediaListToIndex);
             m_updateSourceInfo = false;
             m_mediaListToIndex.clear();
+            m_requestSignature = QString();
+            m_subRequestSignature = QString();
             exec();
         }
         return;
