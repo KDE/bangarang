@@ -20,72 +20,44 @@
 #define MEDIAINDEXER_H
 
 #include <QtCore>
-#include <KJob>
+#include <KProcess>
 
 class MediaItem;
-namespace Nepomuk 
-{
-    class Resource;
-}
 
-//class MediaIndexerJob: public KJob
-class MediaIndexerJob: public QThread
-{
-    Q_OBJECT
-    
-    public:
-        MediaIndexerJob(QObject *parent);
-        ~MediaIndexerJob();
-        void setMediaListToIndex(QList<MediaItem> mediaList);
-        void indexMediaItem(MediaItem mediaItem);
-        void setInfoToRemove(QList<MediaItem> mediaList);
-        void removeInfo(MediaItem mediaItem);
-        void run();
-        void writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
-        
-    private:
-        QList<MediaItem> m_mediaList;
-        int m_indexType;
-        void removeType(Nepomuk::Resource res, QUrl mediaType);
-        QString m_url;
-        bool m_incrementPlayCount;
-        QDateTime m_playDateTime;
-        
-        
-    Q_SIGNALS:
-        void jobComplete();
-        void urlInfoRemoved(QString url);
-        void sourceInfoUpdated(MediaItem mediaItem);
-        void percentComplete(int percent);
-};
-
-//class MediaIndexer : public QThread
 class MediaIndexer : public QObject
 {
     Q_OBJECT
     
     public:
-        enum IndexType { IndexUrl = Qt::UserRole + 1,
-        IndexMediaItem = Qt::UserRole + 2,
-        RemoveInfo = Qt::UserRole + 3,
-        WritePlaybackInfo = Qt::UserRole + 4};
+        enum State {Idle = 0, Running = 1};
         MediaIndexer(QObject *parent);
         ~MediaIndexer();
-        void indexMediaItems(QList<MediaItem> mediaList);
+        void updateInfo(QList<MediaItem> mediaList);
         void removeInfo(QList<MediaItem> mediaList);
-        void writePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
+        void updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
+        void updateRating(QString url, int rating);
+        void state();
         
     private:
         bool m_nepomukInited;
-        QList<MediaIndexerJob *> m_mediaIndexerJobs;
-        MediaIndexerJob * availableIndexerJob();
+        QList<KProcess *> m_writers;
+        QHash<int, QList<MediaItem> > m_mediaLists;
+        QHash<int, QList<QString> > m_urlLists;
+        State m_state;
+        void writeRemoveInfo(MediaItem mediaItem, QTextStream &out);
+        void writeUpdateInfo(MediaItem mediaItem, QTextStream &out);
         
     Q_SIGNALS:
         void started();
-        void indexingComplete();
+        void finished();
+        void allFinished();
         void urlInfoRemoved(QString url);
         void sourceInfoUpdated(MediaItem mediaItem);
         void percentComplete(int percent);
-        
+    
+    public Q_SLOTS:
+        void processWriterOutput();
+        void finished(int exitCode, QProcess::ExitStatus exitStatus);
+        void error(QProcess::ProcessError error);
 };
 #endif // MEDIAINDEXER_H

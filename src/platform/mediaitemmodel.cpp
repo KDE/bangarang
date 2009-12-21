@@ -417,6 +417,9 @@ void MediaItemModel::removeMediaItem(QString url)
     int row = rowOfUrl(url);
     if (row != -1) {
         removeMediaItemAt(row, true);
+        if (rowCount() == 0) {
+            showNoResultsMessage();
+        }
     }
 }
 

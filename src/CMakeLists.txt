@@ -10,6 +10,8 @@ INCLUDE(KDE4Defaults)
 
 ADD_DEFINITIONS( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
+add_subdirectory( platform/nepomukwriter )
+
 INCLUDE_DIRECTORIES( 
     ${KDE4_INCLUDES} 
     ${KDEMULTIMEDIA_INCLUDE_DIR} 
