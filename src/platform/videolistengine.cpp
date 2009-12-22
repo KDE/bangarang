@@ -313,7 +313,7 @@ void VideoListEngine::run()
             videoQuery.selectCreated(true);
             videoQuery.selectGenre(true);
             videoQuery.selectArtwork(true);
-            videoQuery.orderBy("?episode ?created");
+            videoQuery.orderBy("?seriesName ?season ?episode");
 
 
             //Execute Query
@@ -419,7 +419,7 @@ void VideoListEngine::run()
             videoQuery.selectIsTVShow(true);
             videoQuery.selectArtwork(true);
             videoQuery.searchString(searchTerm);
-            videoQuery.orderBy("?title ?created");
+            videoQuery.orderBy("?title ?seriesName ?season ?episode");
             
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -485,7 +485,7 @@ void VideoListEngine::run()
             } else if (season == -1) {
                 videoQuery.hasNoSeason();
             }
-            videoQuery.orderBy("?title ?created");
+            videoQuery.orderBy("?seriesName ?season ?episode ?title");
             
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
