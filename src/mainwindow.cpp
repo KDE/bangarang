@@ -217,6 +217,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
     ui->listSummary->setFont(KGlobalSettings::smallestReadableFont());
     ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
+    ui->playbackMessage->clear();
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -676,6 +677,10 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         showLoading();
     }
     
+    if (newstate == Phonon::ErrorState) {
+        ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
+        QTimer::singleShot(3000, ui->playbackMessage, SLOT(clear()));
+    }
     Q_UNUSED(oldstate);
 }
 
