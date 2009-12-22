@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2009-12-15 22:11-0800\n"
+"POT-Creation-Date: 2009-12-21 22:58-0800\n"
 "PO-Revision-Date: 2009-12-12 11:28+0100\n"
 "Last-Translator: Kristof Bal <kristof.bal@gmail.com>\n"
 "Language-Team: Dutch <kde-i18n-nl@kde.org>\n"
@@ -28,23 +28,23 @@ msgstr "Volgende afspelen"
 msgid "Play previous"
 msgstr "Vorige afspelen"
 
-#: actionsmanager.cpp:75 mainwindow.cpp:1065
+#: actionsmanager.cpp:75 mainwindow.cpp:1087
 msgid "Play all"
 msgstr "Alles afspelen"
 
-#. i18n: file: mainwindow.ui:1559
+#. i18n: file: mainwindow.ui:1811
 #. i18n: ectx: property (text), widget (QPushButton, playAll)
-#: actionsmanager.cpp:77 rc.cpp:116
+#: actionsmanager.cpp:77 rc.cpp:158
 msgid "Play All"
 msgstr "Alles afspelen"
 
-#: actionsmanager.cpp:80 mainwindow.cpp:1067
+#: actionsmanager.cpp:80 mainwindow.cpp:1089
 msgid "Play selected"
 msgstr "Geselecteerde afspelen"
 
-#. i18n: file: mainwindow.ui:1585
+#. i18n: file: mainwindow.ui:1837
 #. i18n: ectx: property (text), widget (QPushButton, playSelected)
-#: actionsmanager.cpp:82 rc.cpp:122
+#: actionsmanager.cpp:82 rc.cpp:164
 msgid "Play Selected"
 msgstr "Geselecteerde afspelen"
 
@@ -60,7 +60,7 @@ msgstr "Uit afspeellijst verwijderen"
 msgid "Hide controls"
 msgstr "Bediening verbergen"
 
-#: actionsmanager.cpp:106 actionsmanager.cpp:354 mainwindow.cpp:336
+#: actionsmanager.cpp:106 actionsmanager.cpp:381 mainwindow.cpp:348
 msgid "Show Video Settings"
 msgstr "Video-instellingen tonen"
 
@@ -91,78 +91,88 @@ msgstr "Toevoegen aan afspeellijst"
 msgid "Add to list "
 msgstr "Toevoegen aan afspeellijst"
 
-#: actionsmanager.cpp:146
+#: actionsmanager.cpp:145 actionsmanager.cpp:149
+#, fuzzy
+msgid "New list"
+msgstr "Nieuwe naam van de lijst"
+
+#: actionsmanager.cpp:153
+#, fuzzy
+msgid "Show items"
+msgstr "1 item"
+
+#: actionsmanager.cpp:158
 msgid "Configure shortcuts..."
 msgstr "Sneltoetsen instellen..."
 
-#: actionsmanager.cpp:350
+#: actionsmanager.cpp:377
 msgid "Hide Video Settings"
 msgstr "Video-instellingen verbergen"
 
-#. i18n: file: mainwindow.ui:1421
+#. i18n: file: mainwindow.ui:1673
 #. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
-#: infomanager.cpp:241 rc.cpp:101
+#: infomanager.cpp:239 rc.cpp:143
 msgid "Title"
 msgstr "Titel"
 
-#: infomanager.cpp:243
+#: infomanager.cpp:241
 msgid "Artwork"
 msgstr "Illustraties"
 
-#: infomanager.cpp:245
+#: infomanager.cpp:243
 msgid "Description"
 msgstr "Beschrijving"
 
-#: infomanager.cpp:247
+#: infomanager.cpp:245
 msgid "Location"
 msgstr "Locatie"
 
-#: infomanager.cpp:289 infomanager.cpp:347
+#: infomanager.cpp:287 infomanager.cpp:345
 msgid "Type"
 msgstr "Type"
 
-#. i18n: file: mainwindow.ui:1429
+#. i18n: file: mainwindow.ui:1681
 #. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
-#: infomanager.cpp:308 rc.cpp:104
+#: infomanager.cpp:306 rc.cpp:146
 msgid "Artist"
 msgstr "Artiest"
 
-#: infomanager.cpp:310
+#: infomanager.cpp:308
 msgid "Album"
 msgstr "Album"
 
-#: infomanager.cpp:312 infomanager.cpp:368 infomanager.cpp:398
+#: infomanager.cpp:310 infomanager.cpp:366 infomanager.cpp:396
 msgid "Year"
 msgstr "Jaar"
 
-#: infomanager.cpp:314
+#: infomanager.cpp:312
 msgid "Track Number"
 msgstr "Tracknummer"
 
-#: infomanager.cpp:316 infomanager.cpp:370 platform/videolistengine.cpp:402
+#: infomanager.cpp:314 infomanager.cpp:368
 msgid "Genre"
 msgstr "Genre"
 
-#: infomanager.cpp:366
+#: infomanager.cpp:364
 msgid "Collection/Series Name"
 msgstr "Naam van de verzameling/serie"
 
-#: infomanager.cpp:393
+#: infomanager.cpp:391
 msgid "Series Name"
 msgstr "Naam van de serie"
 
-#: infomanager.cpp:395
+#: infomanager.cpp:393
 msgid "Season"
 msgstr "Seizoen"
 
-#: infomanager.cpp:397
+#: infomanager.cpp:395
 msgid "Episode"
 msgstr "Episode"
 
 #. i18n: file: mainwindow.ui:23
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
-#: main.cpp:29 mainwindow.cpp:262 mainwindow.cpp:539 mainwindow.cpp:904
-#: mainwindow.cpp:1076 rc.cpp:5
+#: main.cpp:29 mainwindow.cpp:274 mainwindow.cpp:551 mainwindow.cpp:924
+#: mainwindow.cpp:1098 rc.cpp:5
 msgid "Bangarang"
 msgstr "Bangarang"
 
@@ -229,7 +239,15 @@ msgstr "CD afspelen"
 msgid "Show Additional Debug Output"
 msgstr "Extra debuguitvoer tonen"
 
-#: mainwindow.cpp:262
+#: mainwindow.cpp:238 platform/medialistsengine.cpp:183
+msgid "DVD Video"
+msgstr "DVD-video"
+
+#: mainwindow.cpp:248 platform/medialistsengine.cpp:93
+msgid "Audio CD"
+msgstr "Audio-cd"
+
+#: mainwindow.cpp:274
 msgid ""
 "Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
 "library, rating and play count functions will be unavailable."
@@ -237,153 +255,161 @@ msgstr ""
 "Bangarang heeft geen toegang tot Nepomuk. De mediabibliotheek, waarderingen "
 "en afspeelteller zullen niet beschikbaar zijn."
 
-#: mainwindow.cpp:262
+#: mainwindow.cpp:274
 msgid "Don't show this message again"
 msgstr "Deze boodschap niet meer tonen"
 
-#: mainwindow.cpp:344
+#: mainwindow.cpp:356
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
 msgstr ""
 "<b>Volledig scherm</b><br>Klik hier om volledig scherm uit te schakelen"
 
-#: mainwindow.cpp:351
+#: mainwindow.cpp:363
 msgid "Show fullscreen"
 msgstr "Volledig scherm tonen"
 
-#: mainwindow.cpp:362 mainwindow.cpp:632
+#: mainwindow.cpp:374 mainwindow.cpp:644
 msgid "<b>Time remaining</b><br>Click to show elapsed time"
 msgstr "<b>Resterende tijd</b><br>Klik hier om de verstreken tijd te tonen"
 
-#. i18n: file: mainwindow.ui:5236
+#. i18n: file: mainwindow.ui:5535
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
-#: mainwindow.cpp:364 mainwindow.cpp:634 rc.cpp:170
+#: mainwindow.cpp:376 mainwindow.cpp:646 rc.cpp:215
 msgid "<b>Time elapsed</b><br>Click to show remaining time"
 msgstr "<b>Verstreken tijd</b><br>Klik hier om de resterende tijd te tonen"
 
-#: mainwindow.cpp:373
+#: mainwindow.cpp:385
 msgid "<b>Paused</b><br>Hold to stop"
 msgstr "<b>Gepauzeerd</b><br>Houden om te stoppen"
 
 #. i18n: file: mainwindow.ui:253
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: mainwindow.cpp:504 rc.cpp:11
+#: mainwindow.cpp:516 rc.cpp:11
 msgid "Search for audio"
 msgstr "Zoeken naar audio"
 
-#: mainwindow.cpp:512
+#: mainwindow.cpp:524
 msgid "Search for video"
 msgstr "Zoeken naar video"
 
-#. i18n: file: mainwindow.ui:4848
+#. i18n: file: mainwindow.ui:5147
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:535 rc.cpp:134
+#: mainwindow.cpp:547 rc.cpp:179
 msgid "Clear Playlist"
 msgstr "Afspeellijst wissen"
 
-#: mainwindow.cpp:536
+#: mainwindow.cpp:548
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "Bent u zeker dat u de huidige afspeellijst wil wissen?"
 
-#. i18n: file: mainwindow.ui:950
+#. i18n: file: mainwindow.ui:1202
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:541 mainwindow.cpp:642 mainwindow.cpp:644 mainwindow.cpp:906
-#: rc.cpp:71
+#: mainwindow.cpp:553 mainwindow.cpp:654 mainwindow.cpp:656 mainwindow.cpp:926
+#: rc.cpp:113
 msgid "Now Playing"
 msgstr "Speelt nu"
 
-#: mainwindow.cpp:551
+#: mainwindow.cpp:563
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr "<b>Shuffle aan</b><br>Klik hier om shuffle uit te schakelen"
 
-#. i18n: file: mainwindow.ui:4904
+#. i18n: file: mainwindow.ui:5203
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:555 rc.cpp:143
+#: mainwindow.cpp:567 rc.cpp:188
 msgid "Turn on Shuffle"
 msgstr "Shuffle inschakelen"
 
-#: mainwindow.cpp:566
+#: mainwindow.cpp:578
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr "<b>Herhalen aan</b><br>Klik hier om herhalen uit te schakelen"
 
-#. i18n: file: mainwindow.ui:4875
+#. i18n: file: mainwindow.ui:5174
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:569 rc.cpp:137
+#: mainwindow.cpp:581 rc.cpp:182
 msgid "Turn on Repeat"
 msgstr "Herhalen inschakelen"
 
-#: mainwindow.cpp:578
+#: mainwindow.cpp:590
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr "<b>Volgende tonen</b><br>Klik om de afspeellijst te tonen"
 
-#: mainwindow.cpp:579
+#: mainwindow.cpp:591
 msgid "<b>Playlist</b>(Upcoming)"
 msgstr "<b>Afspeellijst</b>(Volgende)"
 
-#. i18n: file: mainwindow.ui:4793
+#. i18n: file: mainwindow.ui:5092
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:583 rc.cpp:128
+#: mainwindow.cpp:595 rc.cpp:173
 msgid "Show Upcoming"
 msgstr "Volgende tonen"
 
-#: mainwindow.cpp:658
+#: mainwindow.cpp:670
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
 msgstr ""
 "<b>Aan het spelen</b><br>Klik om te pauzeren<br>Klik en houden om te stoppen"
 
-#: mainwindow.cpp:682
+#: mainwindow.cpp:681
+msgid "An error has been encountered during playback"
+msgstr ""
+
+#: mainwindow.cpp:701
 msgid "Loading playlist..."
 msgstr "Afspeellijst laden..."
 
-#: mainwindow.cpp:684
+#: mainwindow.cpp:703
 msgid "Buffering..."
 msgstr "Bufferen..."
 
-#: mainwindow.cpp:686 platform/mediaitemmodel.cpp:457
+#: mainwindow.cpp:705 platform/mediaitemmodel.cpp:501
 msgid "Loading..."
 msgstr "Bezig met laden..."
 
-#: mainwindow.cpp:698
+#: mainwindow.cpp:717
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Gedempt</b><br>Klik hier om het volume te herstellen"
 
-#. i18n: file: mainwindow.ui:5362
+#. i18n: file: mainwindow.ui:5661
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:701 rc.cpp:176
+#: mainwindow.cpp:720 rc.cpp:221
 msgid "Mute volume"
 msgstr "Volume dempen"
 
-#: mainwindow.cpp:738
+#: mainwindow.cpp:757
 msgid "Updating..."
 msgstr "Bijwerken..."
 
-#: mainwindow.cpp:749
+#: mainwindow.cpp:763
+msgid "Complete"
+msgstr ""
+
+#: mainwindow.cpp:769
 msgid "Updated info for "
 msgstr "Informatie bijgewerkt voor "
 
-#: mainwindow.cpp:755
+#: mainwindow.cpp:775
 msgid "Removed info for "
 msgstr "Informatie verwijderd voor "
 
-#. i18n: file: mainwindow.ui:4825
+#. i18n: file: mainwindow.ui:5124
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
-#: mainwindow.cpp:859 rc.cpp:131
+#: mainwindow.cpp:879 rc.cpp:176
 msgid "<b>Playlist</b>"
 msgstr "<b>Afspeellijst</b>"
 
-#: mainwindow.cpp:862
+#: mainwindow.cpp:882
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
 msgstr[0] "1 item, %2"
 msgstr[1] "%1 items, %2"
 
-#. i18n: file: mainwindow.ui:947
+#. i18n: file: mainwindow.ui:1199
 #. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:877 mainwindow.cpp:907 rc.cpp:68
+#: mainwindow.cpp:897 mainwindow.cpp:927 rc.cpp:110
 msgid "View Now Playing"
 msgstr "Nu afspelende bekijken"
 
-#: mainwindow.cpp:1077
+#: mainwindow.cpp:1099
 msgid "Entertainment... Now"
 msgstr "Amusement... Nu"
 
@@ -399,9 +425,9 @@ msgstr "kristof.bal@gmail.com"
 
 #. i18n: file: mainwindow.ui:149
 #. i18n: ectx: property (text), widget (QLabel, label)
-#. i18n: file: mainwindow.ui:5106
+#. i18n: file: mainwindow.ui:5405
 #. i18n: ectx: property (text), widget (QToolButton, collectionButton)
-#: rc.cpp:8 rc.cpp:161
+#: rc.cpp:8 rc.cpp:206
 msgid "Media Lists"
 msgstr "Medialijst"
 
@@ -411,221 +437,279 @@ msgstr "Medialijst"
 msgid "Audio"
 msgstr "Audio"
 
-#. i18n: file: mainwindow.ui:451
+#. i18n: file: mainwindow.ui:364
+#. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
+#. i18n: file: mainwindow.ui:801
+#. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
+#: rc.cpp:17 rc.cpp:65
+#, fuzzy
+msgid "Add list"
+msgstr "Lijst toevoegen van"
+
+#. i18n: file: mainwindow.ui:381
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
+#. i18n: file: mainwindow.ui:818
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
+#: rc.cpp:20 rc.cpp:68
+#, fuzzy
+msgid "Remove list"
+msgstr "Uit afspeellijst verwijderen"
+
+#. i18n: file: mainwindow.ui:411
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
+#. i18n: file: mainwindow.ui:848
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
+#: rc.cpp:23 rc.cpp:71
+#, fuzzy
+msgid "Settings"
+msgstr "Video-instellingen"
+
+#. i18n: file: mainwindow.ui:460
 #. i18n: ectx: property (text), widget (QLabel, label_5)
-#. i18n: file: mainwindow.ui:762
+#. i18n: file: mainwindow.ui:897
 #. i18n: ectx: property (text), widget (QLabel, label_7)
-#: rc.cpp:17 rc.cpp:44
+#: rc.cpp:26 rc.cpp:74
 #, fuzzy
 msgid "Add List"
 msgstr "Lijst toevoegen van"
 
-#. i18n: file: mainwindow.ui:468
+#. i18n: file: mainwindow.ui:477
 #. i18n: ectx: property (text), widget (QLabel, label_4)
-#. i18n: file: mainwindow.ui:779
+#. i18n: file: mainwindow.ui:914
 #. i18n: ectx: property (text), widget (QLabel, label_6)
-#: rc.cpp:20 rc.cpp:47
+#: rc.cpp:29 rc.cpp:77
 #, fuzzy
 msgid "Source"
 msgstr "Sorteren"
 
-#. i18n: file: mainwindow.ui:490
+#. i18n: file: mainwindow.ui:499
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
-#. i18n: file: mainwindow.ui:805
+#. i18n: file: mainwindow.ui:940
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
-#: rc.cpp:23 rc.cpp:53
+#: rc.cpp:32 rc.cpp:83
 msgid "Current View"
 msgstr "Huidig beeld"
 
-#. i18n: file: mainwindow.ui:497
+#. i18n: file: mainwindow.ui:506
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
-#. i18n: file: mainwindow.ui:798
+#. i18n: file: mainwindow.ui:933
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
-#: rc.cpp:26 rc.cpp:50
+#: rc.cpp:35 rc.cpp:80
 msgid "Current Selection"
 msgstr "Huidige selectie"
 
-#. i18n: file: mainwindow.ui:504
+#. i18n: file: mainwindow.ui:513
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
-#. i18n: file: mainwindow.ui:812
+#. i18n: file: mainwindow.ui:947
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
-#: rc.cpp:29 rc.cpp:56
+#: rc.cpp:38 rc.cpp:86
 msgid "Current Playlist"
 msgstr "Huidige afspeellijst"
 
-#. i18n: file: mainwindow.ui:514
+#. i18n: file: mainwindow.ui:523
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
-#. i18n: file: mainwindow.ui:822
+#. i18n: file: mainwindow.ui:957
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
-#: rc.cpp:32 rc.cpp:59
+#: rc.cpp:41 rc.cpp:89
 msgid "New List Name"
 msgstr "Nieuwe naam van de lijst"
 
-#. i18n: file: mainwindow.ui:536
+#. i18n: file: mainwindow.ui:545
 #. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
-#. i18n: file: mainwindow.ui:841
+#. i18n: file: mainwindow.ui:689
+#. i18n: ectx: property (text), widget (QPushButton, aslsSave)
+#. i18n: file: mainwindow.ui:976
 #. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
-#. i18n: file: mainwindow.ui:1530
+#. i18n: file: mainwindow.ui:1096
+#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
+#. i18n: file: mainwindow.ui:1782
 #. i18n: ectx: property (text), widget (QPushButton, saveInfo)
-#: rc.cpp:35 rc.cpp:62 rc.cpp:110
+#: rc.cpp:44 rc.cpp:56 rc.cpp:92 rc.cpp:104 rc.cpp:152
 msgid "Save"
 msgstr "Opslaan"
 
-#. i18n: file: mainwindow.ui:590
+#. i18n: file: mainwindow.ui:599
 #. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
-#: rc.cpp:38
+#. i18n: file: mainwindow.ui:719
+#. i18n: ectx: property (text), widget (QToolButton, aslsCancel)
+#. i18n: file: mainwindow.ui:1126
+#. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
+#: rc.cpp:47 rc.cpp:59 rc.cpp:107
 msgid "Return to Lists"
 msgstr "Terug naar lijsten"
 
-#. i18n: file: mainwindow.ui:622
+#. i18n: file: mainwindow.ui:638
+#. i18n: ectx: property (text), widget (QLabel, label_8)
+#. i18n: file: mainwindow.ui:1045
+#. i18n: ectx: property (text), widget (QLabel, label_11)
+#: rc.cpp:50 rc.cpp:98
+#, fuzzy
+msgid "Saved List Settings"
+msgstr "Video-instellingen tonen"
+
+#. i18n: file: mainwindow.ui:664
+#. i18n: ectx: property (text), widget (QLabel, label_9)
+#. i18n: file: mainwindow.ui:1071
+#. i18n: ectx: property (text), widget (QLabel, label_10)
+#: rc.cpp:53 rc.cpp:101
+msgid "Name"
+msgstr ""
+
+#. i18n: file: mainwindow.ui:748
 #. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
-#: rc.cpp:41
+#: rc.cpp:62
 msgid "Video"
 msgstr "Video"
 
-#. i18n: file: mainwindow.ui:874
+#. i18n: file: mainwindow.ui:1009
 #. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
-#: rc.cpp:65
+#: rc.cpp:95
 msgid "Return To Lists"
 msgstr "Terug naar lijsten"
 
-#. i18n: file: mainwindow.ui:1100
+#. i18n: file: mainwindow.ui:1352
 #. i18n: ectx: property (text), widget (QLabel, listTitle)
-#: rc.cpp:74
+#: rc.cpp:116
 msgid "List Title"
 msgstr "Titel van de lijst"
 
-#. i18n: file: mainwindow.ui:1113
+#. i18n: file: mainwindow.ui:1365
 #. i18n: ectx: property (text), widget (QLabel, listSummary)
-#: rc.cpp:77
+#: rc.cpp:119
 msgid "Summary"
 msgstr "Samenvatting"
 
-#. i18n: file: mainwindow.ui:1123
+#. i18n: file: mainwindow.ui:1375
 #. i18n: ectx: property (text), widget (QToolButton, sortList)
-#: rc.cpp:80
+#: rc.cpp:122
 msgid "Sort"
 msgstr "Sorteren"
 
-#. i18n: file: mainwindow.ui:1147
+#. i18n: file: mainwindow.ui:1399
 #. i18n: ectx: property (text), widget (QToolButton, showInfo)
-#: rc.cpp:83
+#: rc.cpp:125
 msgid "Info"
 msgstr "Info"
 
-#. i18n: file: mainwindow.ui:1262
+#. i18n: file: mainwindow.ui:1514
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
-#: rc.cpp:86
+#: rc.cpp:128
 msgid "Notification Text"
 msgstr "Notification Text"
 
-#. i18n: file: mainwindow.ui:1337
+#. i18n: file: mainwindow.ui:1589
 #. i18n: ectx: property (text), widget (QLabel, label_2)
-#: rc.cpp:89
+#: rc.cpp:131
 msgid "Information"
 msgstr "Informatie"
 
-#. i18n: file: mainwindow.ui:1344
+#. i18n: file: mainwindow.ui:1596
 #. i18n: ectx: property (text), widget (QToolButton, editInfo)
-#: rc.cpp:92
+#: rc.cpp:134
 msgid "Edit"
 msgstr "Bewerken"
 
-#. i18n: file: mainwindow.ui:1411
+#. i18n: file: mainwindow.ui:1663
 #. i18n: ectx: property (text), widget (QTreeWidget, infoView)
-#: rc.cpp:95
+#: rc.cpp:137
 msgid "1"
 msgstr "1"
 
-#. i18n: file: mainwindow.ui:1416
+#. i18n: file: mainwindow.ui:1668
 #. i18n: ectx: property (text), widget (QTreeWidget, infoView)
-#: rc.cpp:98
+#: rc.cpp:140
 msgid "2"
 msgstr "2"
 
-#. i18n: file: mainwindow.ui:1495
+#. i18n: file: mainwindow.ui:1747
 #. i18n: ectx: property (text), widget (QToolButton, previous)
-#: rc.cpp:107
+#: rc.cpp:149
 msgid "Previous"
 msgstr "Vorige"
 
-#. i18n: file: mainwindow.ui:1553
+#. i18n: file: mainwindow.ui:1805
 #. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
-#: rc.cpp:113
+#: rc.cpp:155
 msgid "Play all media in list"
 msgstr "Alle media in lijst afspelen"
 
-#. i18n: file: mainwindow.ui:1582
+#. i18n: file: mainwindow.ui:1834
 #. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
-#: rc.cpp:119
+#: rc.cpp:161
 msgid "Play selected media in list"
 msgstr "Geselecteerde media in lijst afspelen"
 
-#. i18n: file: mainwindow.ui:2076
+#. i18n: file: mainwindow.ui:2346
+#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
+#: rc.cpp:167
+msgid "Playback message"
+msgstr ""
+
+#. i18n: file: mainwindow.ui:2375
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: rc.cpp:125
+#: rc.cpp:170
 msgid "Playlist"
 msgstr "Afspeellijst"
 
-#. i18n: file: mainwindow.ui:4878
+#. i18n: file: mainwindow.ui:5177
 #. i18n: ectx: property (text), widget (QToolButton, repeat)
-#. i18n: file: mainwindow.ui:4907
+#. i18n: file: mainwindow.ui:5206
 #. i18n: ectx: property (text), widget (QToolButton, shuffle)
-#. i18n: file: mainwindow.ui:5150
+#. i18n: file: mainwindow.ui:5449
 #. i18n: ectx: property (text), widget (SToolButton, fullScreen)
-#: rc.cpp:140 rc.cpp:146 rc.cpp:167
+#: rc.cpp:185 rc.cpp:191 rc.cpp:212
 msgid "[ ]"
 msgstr "[ ]"
 
-#. i18n: file: mainwindow.ui:5007
+#. i18n: file: mainwindow.ui:5306
 #. i18n: ectx: property (text), widget (QLabel, label_3)
-#: rc.cpp:149
+#: rc.cpp:194
 msgid "Video Settings"
 msgstr "Video-instellingen"
 
-#. i18n: file: mainwindow.ui:5036
+#. i18n: file: mainwindow.ui:5335
 #. i18n: ectx: property (text), widget (QPushButton, saveShortCuts)
-#: rc.cpp:152
+#: rc.cpp:197
 msgid "Save Shortcuts"
 msgstr "Sneltoetsen opslaan"
 
-#. i18n: file: mainwindow.ui:5043
+#. i18n: file: mainwindow.ui:5342
 #. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: rc.cpp:155
+#: rc.cpp:200
 msgid "Cancel"
 msgstr "Annuleren"
 
-#. i18n: file: mainwindow.ui:5103
+#. i18n: file: mainwindow.ui:5402
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
-#: rc.cpp:158
+#: rc.cpp:203
 msgid "View Media Lists"
 msgstr "Medialijsten tonen"
 
-#. i18n: file: mainwindow.ui:5147
+#. i18n: file: mainwindow.ui:5446
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
-#: rc.cpp:164
+#: rc.cpp:209
 msgid "Show full screen"
 msgstr "Volledig scherm tonen"
 
-#. i18n: file: mainwindow.ui:5239
+#. i18n: file: mainwindow.ui:5538
 #. i18n: ectx: property (text), widget (QToolButton, seekTime)
-#: rc.cpp:173
+#: rc.cpp:218
 msgid "03:00"
 msgstr "03:00"
 
-#. i18n: file: mainwindow.ui:5400
+#. i18n: file: mainwindow.ui:5699
 #. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
-#: rc.cpp:179
+#: rc.cpp:224
 msgid "Volume"
 msgstr "Volume"
 
-#. i18n: file: mainwindow.ui:5426
+#. i18n: file: mainwindow.ui:5725
 #. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
-#. i18n: file: mainwindow.ui:5455
+#. i18n: file: mainwindow.ui:5754
 #. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
-#. i18n: file: mainwindow.ui:5475
+#. i18n: file: mainwindow.ui:5774
 #. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:182 rc.cpp:185 rc.cpp:188
+#: rc.cpp:227 rc.cpp:230 rc.cpp:233
 msgid "..."
 msgstr "..."
 
@@ -755,57 +839,63 @@ msgid "Video Files"
 msgstr "Videobestanden"
 
 #: platform/filelistengine.cpp:87 platform/filelistengine.cpp:98
-#: platform/filelistengine.cpp:174 platform/savedlistsengine.cpp:102
-#: platform/videolistengine.cpp:451 platform/videolistengine.cpp:517
+#: platform/filelistengine.cpp:182 platform/mediaitemmodel.cpp:381
+#: platform/savedlistsengine.cpp:102 platform/videolistengine.cpp:451
+#: platform/videolistengine.cpp:517
 #, kde-format
 msgid "1 item"
 msgid_plural "%1 items"
 msgstr[0] "1 item"
 msgstr[1] "%1 items"
 
-#: platform/filelistengine.cpp:114 platform/filelistengine.cpp:189
+#: platform/filelistengine.cpp:122 platform/filelistengine.cpp:197
 msgid "Open audio file(s)"
 msgstr "Audiobestanden openen"
 
-#: platform/filelistengine.cpp:119 platform/filelistengine.cpp:200
+#: platform/filelistengine.cpp:127 platform/filelistengine.cpp:208
 msgid "Open folder containing audio file(s)"
 msgstr "Map openen met audiobestanden"
 
-#: platform/filelistengine.cpp:125 platform/filelistengine.cpp:194
+#: platform/filelistengine.cpp:133 platform/filelistengine.cpp:202
 msgid "Open video file(s)"
 msgstr "Videobestanden openen"
 
-#: platform/filelistengine.cpp:130 platform/filelistengine.cpp:205
+#: platform/filelistengine.cpp:138 platform/filelistengine.cpp:213
 msgid "Open folder containing video file(s)"
 msgstr "Map openen met videobestanden"
 
-#: platform/filelistengine.cpp:136
+#: platform/filelistengine.cpp:144
 msgid "Open image file(s)"
 msgstr "Afbeeldingen openen"
 
-#: platform/filelistengine.cpp:141
+#: platform/filelistengine.cpp:149
 msgid "Open folder containing image file(s)"
 msgstr "Map openen met afbeeldingen"
 
-#: platform/filelistengine.cpp:318
+#: platform/filelistengine.cpp:326
 msgid "Audio Clip"
 msgstr "Audioclip"
 
-#: platform/filelistengine.cpp:405
+#: platform/filelistengine.cpp:413
 #, kde-format
 msgid "%1 - Episode %2"
 msgstr "%1 - Episode %2"
 
-#: platform/filelistengine.cpp:407
+#: platform/filelistengine.cpp:415
 #, kde-format
 msgid "Episode %1"
 msgstr "Episode %1"
 
-#: platform/mediaitemmodel.cpp:488
+#: platform/mediaitemmodel.cpp:380
+#, fuzzy, kde-format
+msgid "Multiple %1"
+msgstr "Titel %1"
+
+#: platform/mediaitemmodel.cpp:532
 msgid "No results"
 msgstr "Geen resultaten"
 
-#: platform/mediaitemmodel.cpp:519
+#: platform/mediaitemmodel.cpp:563
 msgid "Add to playlist/Remove from playlist"
 msgstr "Aan afspeellijst toevoegen/Uit afspeellijst verwijderen"
 
@@ -826,7 +916,7 @@ msgid "Songs"
 msgstr "Tracks"
 
 #: platform/medialistsengine.cpp:69 platform/medialistsengine.cpp:159
-#: platform/musiclistengine.cpp:306
+#: platform/musiclistengine.cpp:306 platform/videolistengine.cpp:402
 msgid "Genres"
 msgstr "Genres"
 
@@ -837,10 +927,6 @@ msgstr "Clips"
 #: platform/medialistsengine.cpp:77
 msgid "Audio Streams"
 msgstr "Audiostreams"
-
-#: platform/medialistsengine.cpp:93
-msgid "Audio CD"
-msgstr "Audio-cd"
 
 #: platform/medialistsengine.cpp:100 platform/medialistsengine.cpp:190
 #: platform/semanticslistengine.cpp:89
@@ -868,10 +954,6 @@ msgstr "TV-programma's"
 #: platform/medialistsengine.cpp:167 platform/videolistengine.cpp:175
 msgid "Video Clips"
 msgstr "Videoclips"
-
-#: platform/medialistsengine.cpp:183
-msgid "DVD Video"
-msgstr "DVD-video"
 
 #: platform/musiclistengine.cpp:224
 #, kde-format
@@ -935,6 +1017,11 @@ msgstr "Seizoen %1"
 #: platform/videolistengine.cpp:272
 msgid "Uncategorized seasons"
 msgstr "Seizoenen zonder categorie"
+
+#: platform/videolistengine.cpp:279
+#, fuzzy, kde-format
+msgid "Seasons - %1"
+msgstr "Seizoen %1"
 
 #: platform/videolistengine.cpp:280
 #, kde-format
