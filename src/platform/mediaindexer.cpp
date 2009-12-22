@@ -153,6 +153,35 @@ void MediaIndexer::updatePlaybackInfo(QString url, bool incrementPlayCount, QDat
     }
 }
 
+void MediaIndexer::updateRating(QString url, int rating)
+{
+    if (m_nepomukInited && !url.isEmpty()
+        && (rating >= 0) && (rating <= 10)) {
+        QString filename = QString("bangarang/%1.jb")
+        .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
+        QString path = KStandardDirs::locateLocal("data", filename, true);
+        QFile file(path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            return;
+        }
+        QTextStream out(&file);
+        out << "[" << url << "]\n";
+        out << "rating = " << rating << "\n";
+        out << "\n" << "\n";
+        KProcess * writer = new KProcess();
+        writer->setProgram("bangarangnepomukwriter", QStringList(path));
+        writer->setWorkingDirectory(KStandardDirs::locateLocal("data", "bangarang/", true));
+        writer->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        connect(writer, SIGNAL(started()), this, SIGNAL(started()));
+        connect(writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
+        connect(writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
+        m_writers.append(writer);
+        writer->start();
+        m_state = Running;
+        emit percentComplete(0);
+    }
+}
+
 void MediaIndexer::writeRemoveInfo(MediaItem mediaItem, QTextStream &out)
 {
     out << "[" << mediaItem.url  << "]\n";;

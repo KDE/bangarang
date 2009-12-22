@@ -19,6 +19,7 @@
 #include "nowplayingdelegate.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/mediaindexer.h"
 #include "platform/mediavocabulary.h"
 #include "platform/playlist.h"
 
@@ -46,6 +47,7 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
         m_nepomukInited = true; //resource manager inited successfully
+        m_mediaIndexer = new MediaIndexer(this);
     } else {
         m_nepomukInited = false; //no resource manager
     }
@@ -201,8 +203,7 @@ bool NowPlayingDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
                     MediaItem updatedMediaItem = model->mediaItemAt(index.row());
                     updatedMediaItem.fields["rating"] = newRating;
                     model->replaceMediaItemAt(index.row(), updatedMediaItem);
-                    Nepomuk::Resource res(QUrl(updatedMediaItem.url));
-                    res.setRating(newRating);
+                    m_mediaIndexer->updateRating(updatedMediaItem.url, newRating);
                     //Keep other views of same mediaItem in sync
                     int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
                     if (playlistRow != -1) {

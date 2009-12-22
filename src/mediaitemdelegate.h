@@ -27,6 +27,7 @@
 #include <QTreeView>
 
 class MainWindow;
+class MediaIndexer;
 
 /*
  * This Item Delegate is responsible for painting items in a 
@@ -58,6 +59,7 @@ class MediaItemDelegate : public QItemDelegate
         KIcon m_showNotInPlaylist;
         int calcItemHeight(const QStyleOptionViewItem &option) const;
         bool m_nepomukInited;
+        MediaIndexer * m_mediaIndexer;
         
         
     Q_SIGNALS:

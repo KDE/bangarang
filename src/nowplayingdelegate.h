@@ -25,6 +25,7 @@
 #include <QStyleOptionViewItem>
 
 class MainWindow;
+class MediaIndexer;
 
 /*
  * This ItemDelegate is responsible for painting the currently
@@ -49,6 +50,7 @@ class NowPlayingDelegate : public QItemDelegate
         QPixmap m_ratingCount;
         QPixmap m_ratingNotCount;
         bool m_nepomukInited;
+        MediaIndexer * m_mediaIndexer;
         
 };
 
