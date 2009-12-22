@@ -677,7 +677,7 @@ void SavedListsManager::saveVideoListSettings()
                         lri.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
                     }
                     
-                    //Update Audio ListView
+                    //Update Video ListView
                     mediaItem.title = newName;
                     mediaItem.url = lri;
                     m_parent->m_videoListsModel->replaceMediaItemAt(videoListsRow, mediaItem);
