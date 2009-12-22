@@ -1047,6 +1047,7 @@ void MainWindow::setupIcons()
     ui->removeAudioList->setIcon(KIcon("list-remove"));
     ui->configureAudioList->setIcon(KIcon("configure"));
     ui->saveAudioList->setIcon(KIcon("document-save"));
+    ui->aslsSave->setIcon(KIcon("document-save"));
     
     
     //Video List Icons
@@ -1054,6 +1055,7 @@ void MainWindow::setupIcons()
     ui->removeVideoList->setIcon(KIcon("list-remove"));
     ui->configureVideoList->setIcon(KIcon("configure"));
     ui->saveVideoList->setIcon(KIcon("document-save"));
+    ui->vslsSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
     ui->sortList->setIcon(KIcon("view-sort-ascending"));
