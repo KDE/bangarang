@@ -52,11 +52,13 @@ class SavedListsManager : public QObject
     public slots:
         void showAudioListSave();
         void showVideoListSave();
-        void hideAudioListSave();
-        void hideVideoListSave();
+        void returnToAudioList();
+        void returnToVideoList();
         void saveAudioList();
         void saveVideoList();
         void removeSelected();
+        void saveAudioListSettings();
+        void saveVideoListSettings();
         
     private:
         MainWindow *m_parent; 
@@ -78,7 +80,8 @@ class SavedListsManager : public QObject
         void removeAudioList();
         void removeVideoList();
         void loadSavedListsIndex();
-        
+        void showAudioSavedListSettings();
+        void showVideoSavedListSettings();
 
 };
 #endif //SAVEDLISTSMANAGER_H
