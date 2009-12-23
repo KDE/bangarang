@@ -24,6 +24,8 @@
 #include "mediaitemdelegate.h"
 #include <KUrlRequester>
 #include <KLineEdit>
+#include <KDebug>
+#include <QDateEdit>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -36,6 +38,8 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
+
+//TODO:This module could use a good deal of simplification. :-)
 
 InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
 {
@@ -253,7 +257,13 @@ void InfoManager::showCommonFields(bool edit)
         } else {
             setInfo(startRow + 1, QPixmap());
         }
-        setInfo(startRow + 2, commonValue("description").toString());
+        QString description;
+        if (!commonValue("synopsis").toString().isEmpty()) {
+            description = commonValue("synopsis").toString();
+        } else {
+            description = commonValue("description").toString();
+        }
+        setInfo(startRow + 2, description);
         setInfo(startRow + 3, commonValue("url").toString());
     } else {
         setEditWidget(startRow, new KLineEdit(), commonValue("title").toString());
@@ -264,7 +274,13 @@ void InfoManager::showCommonFields(bool edit)
         } else {
             setEditWidget(startRow + 1, new ArtworkWidget(), QPixmap());
         }
-        setEditWidget(startRow + 2, new QTextEdit(), commonValue("description").toString());
+        QString description;
+        if (!commonValue("synopsis").toString().isEmpty()) {
+            description = commonValue("synopsis").toString();
+        } else {
+            description = commonValue("description").toString();
+        }
+        setEditWidget(startRow + 2, new QTextEdit(), description);
         if (m_infoMediaItemsModel->rowCount() == 1) {
             MediaItem mediaItem = m_infoMediaItemsModel->mediaItemAt(0);
             if (mediaItem.type == "Audio" && mediaItem.fields["audioType"].toString() == "Audio Stream") {
@@ -361,25 +377,41 @@ void InfoManager::showVideoMovieFields(bool edit)
 {
     int startRow = ui->infoView->topLevelItemCount();
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow, tr2i18n("Collection/Series Name"));
+    setLabel(startRow, tr2i18n("Year"));
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 1, tr2i18n("Year"));
+    setLabel(startRow + 1, tr2i18n("Genre"));
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
-    setLabel(startRow + 2, tr2i18n("Genre"));
+    setLabel(startRow + 2, tr2i18n("Writer"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 3, tr2i18n("Director"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 4, tr2i18n("Producer"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 5, tr2i18n("Actor"));
     
     if (!edit) {
-        setInfo(startRow, QString("%1").arg(commonValue("seriesName").toString()));
-        setInfo(startRow + 1, QString("%1").arg(commonValue("year").toInt()));
-        setInfo(startRow + 2, commonValue("genre").toString());
+        QDate releaseDate = commonValue("releaseDate").toDate();
+        QString year;
+        if (releaseDate.isValid()) {
+            year = QString("%1").arg(commonValue("releaseDate").toDate().year());
+        }
+        setInfo(startRow, year);
+        setInfo(startRow + 1, commonValue("genre").toString());
+        setInfo(startRow + 2, commonValue("writer").toString());
+        setInfo(startRow + 3, commonValue("director").toString());
+        setInfo(startRow + 4, commonValue("producer").toString());
+        setInfo(startRow + 5, commonValue("actor").toString());
         
     } else {
-        setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
-        setEditWidget(startRow + 1, new QSpinBox());
-        QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 1), 1));
+        setEditWidget(startRow, new QSpinBox());
+        QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow), 1));
         yw->setRange(0, 9999);
-        yw->setValue(commonValue("year").toInt());
-        setEditWidget(startRow + 2, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
-        
+        yw->setValue(commonValue("releaseDate").toDate().year());
+        setEditWidget(startRow + 1, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
+        setEditWidget(startRow + 2, new QComboBox(), commonValue("writer").toString(), valueList("writer"), true);
+        setEditWidget(startRow + 3, new QComboBox(), commonValue("director").toString(), valueList("director"), true);
+        setEditWidget(startRow + 4, new QComboBox(), commonValue("producer").toString(), valueList("producer"), true);
+        setEditWidget(startRow + 5, new QComboBox(), commonValue("actor").toString(), valueList("actor"), true);
     }
     
 }
@@ -393,13 +425,34 @@ void InfoManager::showVideoTVShowFields(bool edit)
     setLabel(startRow + 1, tr2i18n("Season"));
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow + 2, tr2i18n("Episode"));    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow + 3, tr2i18n("Year"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 4, tr2i18n("Genre"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 5, tr2i18n("Writer"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 6, tr2i18n("Director"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 7, tr2i18n("Producer"));
+    ui->infoView->addTopLevelItem(new QTreeWidgetItem());
+    setLabel(startRow + 8, tr2i18n("Actor"));
     
     if (!edit) {
-        setInfo(startRow, QString("%1").arg(commonValue("seriesName").toString()));
+        setInfo(startRow, commonValue("seriesName").toString());
         setInfo(startRow + 1, QString("%1").arg(commonValue("season").toInt()));
         setInfo(startRow + 2, QString("%1").arg(commonValue("episode").toInt()));
-        setInfo(startRow + 3, QString("%1").arg(commonValue("year").toInt()));
+        QDate releaseDate = commonValue("releaseDate").toDate();
+        QString year;
+        if (releaseDate.isValid()) {
+            year = QString("%1").arg(commonValue("releaseDate").toDate().year());
+        }
+        setInfo(startRow + 3, year);
+        setInfo(startRow + 4, commonValue("genre").toString());
+        setInfo(startRow + 5, commonValue("writer").toString());
+        setInfo(startRow + 6, commonValue("director").toString());
+        setInfo(startRow + 7, commonValue("producer").toString());
+        setInfo(startRow + 8, commonValue("actor").toString());
     } else {
         setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
         setEditWidget(startRow + 1, new QSpinBox(), commonValue("season").toInt());
@@ -407,7 +460,11 @@ void InfoManager::showVideoTVShowFields(bool edit)
         setEditWidget(startRow + 3, new QSpinBox());
         QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 3), 1));
         yw->setRange(0, 9999);
-        yw->setValue(commonValue("year").toInt());
+        setEditWidget(startRow + 4, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
+        setEditWidget(startRow + 5, new QComboBox(), commonValue("writer").toString(), valueList("writer"), true);
+        setEditWidget(startRow + 6, new QComboBox(), commonValue("director").toString(), valueList("director"), true);
+        setEditWidget(startRow + 7, new QComboBox(), commonValue("producer").toString(), valueList("producer"), true);
+        setEditWidget(startRow + 8, new QComboBox(), commonValue("actor").toString(), valueList("actor"), true);
     }
 }
         
@@ -469,7 +526,11 @@ void InfoManager::saveInfoToMediaModel()
         QTextEdit * descriptionWidget = static_cast<QTextEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(2), 1));
         QString description = descriptionWidget->toPlainText();
         if (!description.isEmpty()) {
-            mediaItem.fields["description"] = description;
+            if (mediaItem.type == "Video") {
+                mediaItem.fields["synopsis"] = description;
+            } else {
+                mediaItem.fields["description"] = description;
+            }
         }
 
         if (mediaItem.type == "Audio" ) {
@@ -508,6 +569,7 @@ void InfoManager::saveInfoToMediaModel()
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
                 }
+                
             } else if (typeComboBox->currentIndex() == 1) {
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Stream";
@@ -528,22 +590,41 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
                 
-                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
-                QString seriesName = seriesNameWidget->text();
-                if (!seriesName.isEmpty()) {
-                    mediaItem.fields["seriesName"] = seriesName.trimmed();
-                }
-                
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
-                int year = yearWidget->value();
-                if (year != 0) {
-                    mediaItem.fields["year"] = year;
+                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                if (yearWidget->value() != 0) {
+                    QDate releaseDate = QDate(yearWidget->value(), 1, 1);
+                    mediaItem.fields["releaseDate"] = releaseDate;
                 }
 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
+                }
+                
+                QComboBox *writerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QString writer = writerWidget->currentText();
+                kDebug() << "Writer:" << writer;
+                if (!writer.isEmpty()) {
+                    mediaItem.fields["writer"] = writer;
+                }
+                
+                QComboBox *directorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
+                QString director = directorWidget->currentText();
+                if (!director.isEmpty()) {
+                    mediaItem.fields["director"] = director;
+                }
+                
+                QComboBox *producerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
+                QString producer = producerWidget->currentText();
+                if (!producer.isEmpty()) {
+                    mediaItem.fields["producer"] = producer;
+                }
+                
+                QComboBox *actorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
+                QString actor = actorWidget->currentText();
+                if (!actor.isEmpty()) {
+                    mediaItem.fields["actor"] = actor;
                 }
                 
             } else if (typeComboBox->currentIndex() == 1) {
@@ -563,13 +644,44 @@ void InfoManager::saveInfoToMediaModel()
                 
                 QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int episode = episodeWidget->value();
-                mediaItem.fields["episode"] = episode;
+                mediaItem.fields["episodeNumber"] = episode;
                 mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
-                int year = yearWidget->value();
-                if (year != 0) {
-                    mediaItem.fields["year"] = year;
+                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                if (yearWidget->value() != 0) {
+                    QDate releaseDate = QDate(yearWidget->value(), 1, 1);
+                    mediaItem.fields["releaseDate"] = releaseDate;
+                }
+                
+                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
+                QString genre = genreWidget->currentText();
+                if (!genre.isEmpty()) {
+                    mediaItem.fields["genre"] = genre;
+                }
+                
+                
+                QComboBox *writerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
+                QString writer = writerWidget->currentText();
+                if (!writer.isEmpty()) {
+                    mediaItem.fields["writer"] = genre;
+                }
+                
+                QComboBox *directorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(11), 1));
+                QString director = directorWidget->currentText();
+                if (!director.isEmpty()) {
+                    mediaItem.fields["director"] = director;
+                }
+                
+                QComboBox *producerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(12), 1));
+                QString producer = producerWidget->currentText();
+                if (!producer.isEmpty()) {
+                    mediaItem.fields["producer"] = producer;
+                }
+                
+                QComboBox *actorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(13), 1));
+                QString actor = actorWidget->currentText();
+                if (!actor.isEmpty()) {
+                    mediaItem.fields["actor"] = actor;
                 }
                 
             } else if (typeComboBox->currentIndex() == 2) {
@@ -715,4 +827,12 @@ void InfoManager::setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap p
 {
     artworkWidget->setPixmap(pixmap);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, artworkWidget);
+}
+
+void InfoManager::setEditWidget(int row, QDateEdit *dateEdit, QDate date)
+{
+    dateEdit->setMinimumDate(QDate(-4000,1,1));
+    dateEdit->setDisplayFormat("MMMM dd yyyy");
+    dateEdit->setDate(date);
+    ui->infoView->setItemWidget(ui->infoView->topLevelItem(row ), 1, dateEdit);
 }

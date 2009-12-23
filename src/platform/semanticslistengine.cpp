@@ -75,6 +75,7 @@ void SemanticsListEngine::run()
                 query.selectPlayCount();
                 query.selectLastPlayed(true);
                 query.orderBy("DESC(?playcount) DESC(?lastplayed)");
+                
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
                 //Build media list from results
@@ -185,15 +186,15 @@ void SemanticsQuery::selectVideoResource() {
     m_selectVideoResource = true;
     //NOTE: nie:url is not in any released nie ontology that I can find.
     //      In future KDE will use nfo:fileUrl so this will need to be changed.
-    m_videoResourceCondition = QString("?r rdf:type <%1> . "
-                                    " OPTIONAL { ?r <%2> %3 } "
-                                    " OPTIONAL { ?r <%4> %5 } "
-                                    " OPTIONAL { ?r nie:url ?url } . ")
-                                    .arg(MediaVocabulary().typeVideo().toString())
-                                    .arg(MediaVocabulary().videoIsMovie().toString())
-                                    .arg(Soprano::Node::literalToN3(true))
-                                    .arg(MediaVocabulary().videoIsTVShow().toString())
-                                    .arg(Soprano::Node::literalToN3(true));
+    m_videoResourceCondition = QString(" { ?r rdf:type <%1> } "
+                                           " UNION  "
+                                           " { ?r rdf:type <%2> } "
+                                           " UNION "
+                                           " { ?r rdf:type <%3> } "
+                                           " OPTIONAL { ?r nie:url ?url } . ")
+                                           .arg(MediaVocabulary().typeVideo().toString())
+                                           .arg(MediaVocabulary().typeVideoMovie().toString())
+                                           .arg(MediaVocabulary().typeVideoTVShow().toString());
 }
 
 void SemanticsQuery::selectRating(bool optional) {
@@ -256,7 +257,7 @@ QString SemanticsQuery::getPrefix() {
     .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
 }
 
-Soprano::QueryResultIterator SemanticsQuery::executeSelect(Soprano::Model* model) {
+QString SemanticsQuery::query() {
     QString queryString = getPrefix();
     queryString += "SELECT ";
     
@@ -284,6 +285,11 @@ Soprano::QueryResultIterator SemanticsQuery::executeSelect(Soprano::Model* model
     queryString += m_order;
     queryString += " LIMIT 20 ";
     
+    return queryString;
+}
+
+Soprano::QueryResultIterator SemanticsQuery::executeSelect(Soprano::Model* model) {
+    QString queryString = query();
     return model->executeQuery(queryString,
                                Soprano::Query::QueryLanguageSparql);
 }

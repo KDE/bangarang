@@ -20,12 +20,14 @@
 #define INFOMANAGER_H
 
 #include <KLineEdit>
+#include <QDateEdit>
 #include <KUrlRequester>
 #include <QComboBox>
 #include <QSpinBox>
 #include <QObject>
 #include <QTreeWidgetItem>
 #include <QTextEdit>
+#include <QDate>
 
 namespace Ui
 {
@@ -90,6 +92,7 @@ class InfoManager : public QObject
         void setEditWidget(int row, KUrlRequester *urlRequester, QString value = QString());
         void setEditWidget(int row, QSpinBox *spinBox, int value = 0);
         void setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap pixmap);
+        void setEditWidget(int row, QDateEdit *dateEdit, QDate date = QDate());
         
         
     private slots:
