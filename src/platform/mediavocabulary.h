@@ -27,7 +27,7 @@ class MediaVocabulary {
         MediaVocabulary();
         ~MediaVocabulary();
         
-        enum MediaVocabularies { xesam = Qt::UserRole + 1,
+        enum MediaVocabularyNamespace { xesam = Qt::UserRole + 1,
         nie = Qt::UserRole + 2,
         nmm = Qt::UserRole + 3,
         nid3 = Qt::UserRole + 4};
@@ -47,7 +47,12 @@ class MediaVocabulary {
         QUrl typeAudioMusic();
         QUrl typeAudioStream();
         QUrl typeVideo();
+        QUrl typeVideoMovie();
+        QUrl typeVideoTVShow();
         QUrl typeImage();
+        
+        //Media-related types
+        QUrl typeTVSeries();
         
         //These properties are applicable to all media types
         QUrl title();
@@ -58,6 +63,7 @@ class MediaVocabulary {
         QUrl artwork();
         QUrl created();
         QUrl genre();
+        QUrl releaseDate();
         
         QUrl musicArtist();
         QUrl musicArtistName();
@@ -67,12 +73,18 @@ class MediaVocabulary {
         QUrl musicTrackNumber();
         QUrl musicGenre();
         
-        QUrl videoIsMovie();
-        QUrl videoIsTVShow();
         QUrl videoGenre();
-        QUrl videoSeriesName();
-        QUrl videoSeriesSeason();
-        QUrl videoSeriesEpisode();
+        QUrl videoSeries();
+        QUrl videoSynopsis();
+        QUrl videoSeason();
+        QUrl videoEpisodeNumber();
+        QUrl videoAudienceRating();
+        QUrl videoWriter();
+        QUrl videoDirector();
+        QUrl videoAssistantDirector();
+        QUrl videoProducer();
+        QUrl videoActor();
+        QUrl videoCinematographer();
         
     private:
         int m_vocabulary;

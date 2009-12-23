@@ -67,7 +67,7 @@ class SemanticsQuery {
         
         void orderBy(QString var);
         
-        
+        QString query();
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
         bool executeAsk(Soprano::Model* model);
         

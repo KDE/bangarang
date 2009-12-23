@@ -159,13 +159,42 @@ QUrl MediaVocabulary::typeAudioStream()
 QUrl MediaVocabulary::typeVideo()
 {
     QUrl returnUrl = QUrl();
-    if (m_vocabulary == MediaVocabulary::xesam) {
+    if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Video();
-    } else if (m_vocabulary == MediaVocabulary::nie) {
+    } else if (m_videoVocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
-    } else if (m_vocabulary == MediaVocabulary::nmm) {
-        //Bangarang uses nfo:Video not nmm:Video - can't see semantic benefit
+    } else if (m_videoVocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::typeVideoMovie()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Movie");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::typeVideoTVShow()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#TVShow");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::typeTVSeries()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#TVSeries");
     }
     
     return returnUrl;
@@ -276,6 +305,17 @@ QUrl MediaVocabulary::created()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::releaseDate()
+{
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::nmm) {
+        //Draft nmm ontology is extension of nie
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::genre()
 {
     QUrl returnUrl = QUrl();
@@ -349,7 +389,7 @@ QUrl MediaVocabulary::musicAlbumYear()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#contentCreated");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#recordingYear");
     }
@@ -385,28 +425,6 @@ QUrl MediaVocabulary::musicGenre()
     return returnUrl;
 }
 
-QUrl MediaVocabulary::videoIsMovie()
-{
-    QUrl returnUrl = QUrl();
-    if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang extension to nmm ontology draft
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#isMovie");
-    }
-    
-    return returnUrl;
-}
-
-QUrl MediaVocabulary::videoIsTVShow()
-{
-    QUrl returnUrl = QUrl();
-    if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang extension to nmm ontology draft
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#isTVShow");
-    }
-    
-    return returnUrl;
-}
-
 QUrl MediaVocabulary::videoGenre()
 {
     QUrl returnUrl = QUrl();
@@ -419,18 +437,29 @@ QUrl MediaVocabulary::videoGenre()
     return returnUrl;
 }
 
-QUrl MediaVocabulary::videoSeriesName()
+QUrl MediaVocabulary::videoSeries()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        //Bangarang extension of nmm ontology draft
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#seriesName");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#series");
     }
     
     return returnUrl;
 }
 
-QUrl MediaVocabulary::videoSeriesSeason()
+QUrl MediaVocabulary::videoSynopsis()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::genre();
+    } else if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#synopsis");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoSeason()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
@@ -440,7 +469,7 @@ QUrl MediaVocabulary::videoSeriesSeason()
     return returnUrl;
 }
 
-QUrl MediaVocabulary::videoSeriesEpisode()
+QUrl MediaVocabulary::videoEpisodeNumber()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
@@ -450,3 +479,72 @@ QUrl MediaVocabulary::videoSeriesEpisode()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::videoAudienceRating()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#audienceRating");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoWriter()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#writer");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoDirector()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#director");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoAssistantDirector()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#assistantDirector");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoProducer()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#producer");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoActor()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#actor");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoCinematographer()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#cinematographer");
+    }
+    
+    return returnUrl;
+}
