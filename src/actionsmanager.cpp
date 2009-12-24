@@ -152,6 +152,10 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Show Items
     m_showItems = new QAction(KIcon("system-run"), i18n("Show items"), m_parent);
     connect(m_showItems, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
+
+    //Show Info
+    m_showNowPlayingInfo = new QAction(KIcon("help-about"), i18n("Show info"), m_parent);
+    connect(m_showNowPlayingInfo, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
@@ -244,6 +248,11 @@ QAction * ActionsManager::refreshMediaView()
 QAction * ActionsManager::showVideoSettings()
 {
   return m_showVideoSettings;
+}
+
+QAction * ActionsManager::showNowPlayingInfo()
+{
+    return m_showNowPlayingInfo;
 }
 
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
@@ -509,4 +518,13 @@ void ActionsManager::loadSelectedSources()
     }
     m_parent->m_mediaItemModel->clearMediaListData();
     m_parent->m_mediaItemModel->loadSources(mediaList);
+}
+
+void ActionsManager::showInfoForNowPlaying()
+{
+    MediaItemModel * nowPlayingModel = m_parent->playlist()->nowPlayingModel();
+    if(nowPlayingModel->rowCount() > 0) {
+        MediaItem mediaItem = nowPlayingModel->mediaItemAt(0);
+        m_parent->infoManager()->showInfoViewForMediaItem(mediaItem);
+    }
 }

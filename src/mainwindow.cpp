@@ -618,6 +618,12 @@ void MainWindow::on_showMenu_clicked()
     m_helpMenu->menu();
     m_menu = new KMenu(this);
     //m_menu->addAction(m_actionsManager->editShortcuts());
+    if (m_playlist->nowPlayingModel()->rowCount() > 0) {
+        MediaItem mediaItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
+        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
+            m_menu->addAction(m_actionsManager->showNowPlayingInfo());
+        }
+    }
     m_menu->addAction(m_actionsManager->showVideoSettings());
     if (!isFullScreen()) {
         m_menu->addAction(m_actionsManager->showHideControls());

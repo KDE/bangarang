@@ -35,6 +35,7 @@ namespace Ui
 }
 class MainWindow;
 class MediaItemModel;
+class MediaItem;
 class MediaItemDelegate;
 class MediaIndexer;
 class ArtworkWidget;
@@ -58,6 +59,7 @@ class InfoManager : public QObject
     public slots:
         void saveInfoView();
         void showInfoView();
+        void showInfoViewForMediaItem(MediaItem mediaItem);
         void editInfoView();
         void removeSelectedItemsInfo();
         
