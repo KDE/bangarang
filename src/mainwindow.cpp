@@ -192,6 +192,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_nowPlaying, SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     ui->nowPlayingView->header()->setVisible(false);
     ui->nowPlayingView->header()->hideSection(1);
+    updateNowPlayingStyleSheet();
+    connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateNowPlayingStyleSheet())); 
     
     //Setup Info View
     m_infoManager = new InfoManager(this);
@@ -1209,6 +1211,16 @@ void MainWindow::deviceRemoved(const QString &udi)
         m_videoListsModel->load();
         updateCachedDevicesList();
     }
+}
+
+void MainWindow::updateNowPlayingStyleSheet()
+{
+    QColor highlightColor = QApplication::palette().color(QPalette::Highlight);
+    int r = highlightColor.red();
+    int g = highlightColor.green();
+    int b = highlightColor.blue();
+    QString styleSheet = QString("background-color: qlineargradient(spread:reflect, x1:0.494, y1:0, x2:0.505682, y2:1, stop:0 rgba(0, 0, 0, 0), stop:0.20 rgba(%1, %2, %3, 25), stop:0.5 rgba(%1, %2, %3, 55), stop:0.75 rgba(%1, %2, %3, 30), stop:1 rgba(0, 0, 0, 0)); color: rgb(255, 255, 255);").arg(r).arg(g).arg(b);
+    ui->nowPlayingView->setStyleSheet(styleSheet);
 }
 
 ActionsManager * MainWindow::actionsManager()
