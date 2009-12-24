@@ -215,6 +215,7 @@ class Playlist : public QObject
         void shuffle();
         void orderByPlaylist();
         void addToQueue();
+        bool m_hadVideo;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
