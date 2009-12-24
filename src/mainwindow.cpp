@@ -41,6 +41,9 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
+#include <kio/netaccess.h>
+#include <kio/copyjob.h>
+#include <kio/job.h>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
@@ -254,6 +257,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         } else {
             //Play Url
             KUrl cmdLineKUrl = args->url(0);
+            if (!cmdLineKUrl.isLocalFile()) {
+                QString tmpFile;
+                if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
+                    //KMessageBox::information(this,tmpFile);
+                    cmdLineKUrl = KUrl(tmpFile);
+                } else {
+                    cmdLineKUrl = KUrl();
+                }
+            }
             MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
             QList<MediaItem> mediaList;
             mediaList << mediaItem;

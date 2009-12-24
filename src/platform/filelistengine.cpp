@@ -254,6 +254,14 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
     //QList<MediaItem> mediaListToIndex;
     for (int i = 0; i < fileList.count(); ++i) {
         MediaItem mediaItem;
+        if (Utilities::isM3u(fileList.at(i).url()) || Utilities::isPls(fileList.at(i).url())) {
+            mediaItem.artwork = KIcon("view-list-text");
+            mediaItem.url = QString("savedlists://%1").arg(fileList.at(i).url());
+            mediaItem.title = fileList.at(i).fileName();
+            mediaItem.type = "Category";
+            mediaList << mediaItem; 
+            continue;
+        } 
         mediaItem.artwork = KIcon("audio-mp4");
         mediaItem.url = fileList.at(i).url();
         mediaItem.title = fileList.at(i).fileName();

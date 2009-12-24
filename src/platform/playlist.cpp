@@ -61,6 +61,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
     connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
     connect(m_mediaObject, SIGNAL(stateChanged (Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
+    connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
     
@@ -766,5 +767,17 @@ void Playlist::createUrlHistoryFromIndices()
     m_playlistUrlHistory.clear();
     for (int i = 0; i < m_playlistIndicesHistory.count(); i++) {
         m_playlistUrlHistory.append(m_currentPlaylist->mediaItemAt(m_playlistIndicesHistory.at(i)).url);
+    }
+}
+
+void Playlist::metaDataChanged()
+{
+    if (m_nowPlaying->rowCount()>0) {
+        MediaItem mediaItem = m_nowPlaying->mediaItemAt(0);
+        if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"].toString() == "Audio Stream")) {
+            
+            mediaItem.subTitle = m_mediaObject->metaData("TITLE").join(" ");
+            m_nowPlaying->replaceMediaItemAt(0, mediaItem);
+        }
     }
 }

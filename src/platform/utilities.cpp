@@ -279,6 +279,20 @@ bool Utilities::isVideo(QString url)
     return result->is("video/mp4") || result->is("video/mpeg") || result->is("video/ogg") || result->is("video/quicktime") || result->is("video/msvideo") || result->is("video/x-theora")|| result->is("video/x-theora+ogg") || result->is("video/x-ogm")|| result->is("video/x-ogm+ogg") || result->is("video/divx") || result->is("video/x-msvideo") || result->is("video/x-wmv") || result->is("video/x-flv") || result->is("video/x-flv");
 }
 
+bool Utilities::isM3u(QString url)
+{
+    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+    
+    return result->is("audio/m3u") || result->is("audio/x-mpegurl");
+}
+
+bool Utilities::isPls(QString url)
+{
+    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+    
+    return result->is("audio/x-scpls");
+}
+
 QPixmap Utilities::reflection(QPixmap &pixmap)
 {
     QMatrix flipMatrix;
@@ -315,6 +329,15 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     MediaItem mediaItem;
     url.cleanPath();
     url = QUrl::fromPercentEncoding(url.url().toUtf8());
+
+    if (Utilities::isM3u(url.url()) || Utilities::isPls(url.url())) {
+        mediaItem.artwork = KIcon("view-list-text");
+        mediaItem.url = QString("savedlists://%1").arg(url.url());
+        mediaItem.title = url.fileName();
+        mediaItem.type = "Category";
+        return mediaItem;
+    } 
+    
     mediaItem.url = url.url();
     mediaItem.title = url.fileName();
     mediaItem.fields["url"] = mediaItem.url;
@@ -395,6 +418,11 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         if (isVideo(mediaItem.url)){
             mediaItem.type = "Video";
             mediaItem.fields["videoType"] = "Video Clip";
+        }
+        if (!url.isLocalFile()) {
+            mediaItem.type = "Audio";
+            mediaItem.fields["audioType"] = "Audio Stream";
+            mediaItem.title = url.prettyUrl();
         }
     }
     
@@ -694,6 +722,7 @@ QString Utilities::audioMimeFilter()
         }
     }
     supportedList << ambiguousList;
+    supportedList << "audio/m3u" << "audio/x-mpegurl" << "audio/x-scpls"; //add playlist mimetypes
     return supportedList.join(" ");
     /* This section might be useful if Phonon doesn't report 
      * supported mimetypes correctly. For now I'll assume it 

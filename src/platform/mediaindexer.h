@@ -52,6 +52,14 @@ class MediaIndexer : public QObject
         void updateInfo(QList<MediaItem> mediaList);
         
         /**
+        * Update information in the Nepomuk datastore using the specified
+        * MediaItem.
+        *
+        * @param mediaItem MediaItem containing updated information.
+        */
+        void updateInfo(MediaItem mediaItem);
+        
+        /**
          * Remove media information from the Nepomuk datastore corresponding
          * specified medialist.
          *
@@ -59,6 +67,15 @@ class MediaIndexer : public QObject
          *                  removed from the datastore.
          */
         void removeInfo(QList<MediaItem> mediaList);
+        
+        /**
+        * Remove media information from the Nepomuk datastore corresponding
+        * specified MediaItem.
+        *
+        * @param mediaItem MediaItem whose information should be
+        *                  removed from the datastore.
+        */
+        void removeInfo(MediaItem mediaItem);
         
         /**
          * Update the playback time and/or play count for the specified url.

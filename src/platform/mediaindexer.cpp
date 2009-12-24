@@ -83,6 +83,13 @@ void MediaIndexer::updateInfo(QList<MediaItem> mediaList)
     }
 }
 
+void MediaIndexer::updateInfo(MediaItem mediaItem)
+{
+    QList<MediaItem> mediaList;
+    mediaList << mediaItem;
+    updateInfo(mediaList);
+}
+
 void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
 {
     if (m_nepomukInited && (mediaList.count() > 0)) {
@@ -114,6 +121,13 @@ void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
         m_state = Running;
         emit percentComplete(0);
     }
+}
+
+void MediaIndexer::removeInfo(MediaItem mediaItem)
+{
+    QList<MediaItem> mediaList;
+    mediaList << mediaItem;
+    removeInfo(mediaList);
 }
 
 void MediaIndexer::updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)

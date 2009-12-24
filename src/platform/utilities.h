@@ -54,6 +54,8 @@ namespace Utilities {
     bool isMusic(QString url);
     bool isAudio(QString url);
     bool isVideo(QString url);
+    bool isM3u(QString url);
+    bool isPls(QString url);
     QPixmap reflection(QPixmap &pixmap);
     void shadowBlur(QImage &image, int radius, const QColor &color);
     MediaItem mediaItemFromUrl(KUrl url);
