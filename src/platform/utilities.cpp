@@ -509,23 +509,17 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
             if (season !=0 ) {
                 mediaItem.fields["season"] = season;
                 if (!mediaItem.subTitle.isEmpty()) {
-                    mediaItem.subTitle = QString("%1 - Season %2")
-                    .arg(mediaItem.subTitle)
-                    .arg(season);
-                } else {
-                    mediaItem.subTitle = QString("Season %1").arg(season);
+                    mediaItem.subTitle += " - ";
                 }
+                mediaItem.subTitle += QString("Season %1").arg(season);
             }
             int episodeNumber = res.property(mediaVocabulary.videoEpisodeNumber()).toInt();
             if (episodeNumber !=0 ) {
                 mediaItem.fields["episodeNumber"] = episodeNumber;
                 if (!mediaItem.subTitle.isEmpty()) {
-                    mediaItem.subTitle = QString("%1 - Episode %2")
-                    .arg(mediaItem.subTitle)
-                    .arg(episodeNumber);
-                } else {
-                    mediaItem.subTitle = QString("Episode %2").arg(episodeNumber);
+                    mediaItem.subTitle += " - ";
                 }
+                mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
             }
             QString synopsis = res.property(mediaVocabulary.videoSynopsis()).toString();
             if (!synopsis.isEmpty()) {

@@ -445,9 +445,9 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                         res.removeProperty(mediaVocabulary.videoSeason());
                     }
                 }
-                int episode = fields["episode"].toInt();
-                if (episode != 0) {
-                    res.setProperty(mediaVocabulary.videoEpisodeNumber(), Nepomuk::Variant(episode));
+                int episodeNumber = fields["episodeNumber"].toInt();
+                if (episodeNumber != 0) {
+                    res.setProperty(mediaVocabulary.videoEpisodeNumber(), Nepomuk::Variant(episodeNumber));
                 } else {
                     if (res.hasProperty(mediaVocabulary.videoEpisodeNumber())) {
                         res.removeProperty(mediaVocabulary.videoEpisodeNumber());
@@ -561,7 +561,7 @@ int main(int argc, char *argv[])
                         field == "trackNumber" ||
                         field == "year" ||
                         field == "season" ||
-                        field == "episode" ||
+                        field == "episodeNumber" ||
                         field == "rating" ||
                         field == "playCount") {
                         fields.insert(field, value.toInt());

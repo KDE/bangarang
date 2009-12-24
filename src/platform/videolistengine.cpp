@@ -99,13 +99,13 @@ MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         mediaItem.subTitle += QString("Season %1").arg(season);
     }
 
-    int episode = it.binding("episodeNumber").literal().toInt();
-    if (episode != 0) {
-        mediaItem.fields["episodeNumber"] = episode;
+    int episodeNumber = it.binding("episodeNumber").literal().toInt();
+    if (episodeNumber != 0) {
+        mediaItem.fields["episodeNumber"] = episodeNumber;
         if (!mediaItem.subTitle.isEmpty()) {
         	mediaItem.subTitle += " - ";
         }
-        mediaItem.subTitle += QString("Episode %1").arg(episode);
+        mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
     }
 
     if (it.binding("created").isValid()) {
@@ -194,7 +194,6 @@ void VideoListEngine::run()
             videoQuery.selectDescription(true);
             videoQuery.orderBy("?title");
             
-            kDebug() << videoQuery.query();
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
             
@@ -212,12 +211,13 @@ void VideoListEngine::run()
             m_mediaListProperties.type = QString("Sources");
         } else if (engineArg.toLower() == "tvshows") {
             VideoQuery query = VideoQuery(true);
-            query.selectTVShowResource();
+            query.isTVShow();
             query.selectSeriesName();
             if (!genre.isEmpty()) {
                 query.hasGenre(genre);
             }
             query.orderBy("?seriesName");
+            
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
@@ -242,7 +242,7 @@ void VideoListEngine::run()
              */
             if (genre.isEmpty()) {
                 VideoQuery noSeriesQuery = VideoQuery();
-                noSeriesQuery.selectTVShowResource(true);
+                noSeriesQuery.isTVShow();
                 noSeriesQuery.hasNoSeriesName();
 
                 if(noSeriesQuery.executeAsk(m_mainModel)) {
@@ -261,7 +261,7 @@ void VideoListEngine::run()
             m_mediaListProperties.type = QString("Categories");
         } else if (engineArg.toLower() == "seasons") {
             VideoQuery videoQuery = VideoQuery(true);
-            videoQuery.selectTVShowResource();
+            videoQuery.isTVShow();
             videoQuery.selectSeason();
             if (!genre.isEmpty()) {
                 if (genre == "~") genre = QString();
@@ -296,7 +296,7 @@ void VideoListEngine::run()
              * If so, add an entry which allows access to those files.
              */
             VideoQuery noSeasonsQuery = VideoQuery();
-            noSeasonsQuery.selectTVShowResource();
+            noSeasonsQuery.isTVShow();
             noSeasonsQuery.hasSeriesName(seriesName);
             noSeasonsQuery.hasNoSeason();
 
@@ -355,7 +355,7 @@ void VideoListEngine::run()
             videoQuery.selectProducer(true);
             videoQuery.selectActor(true);
             videoQuery.selectCinematographer(true);
-            videoQuery.orderBy("?seriesName ?season ?episode");
+            videoQuery.orderBy("?seriesName ?season ?episodeNumber");
 
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -384,19 +384,18 @@ void VideoListEngine::run()
             videoQuery.selectTitle();
             videoQuery.selectDuration(true);
             videoQuery.selectDescription(true);
-           // videoQuery.selectSynopsis(true);
+            videoQuery.selectSynopsis(true);
             videoQuery.selectRating(true);
             videoQuery.selectCreated(true);
-            //videoQuery.selectReleaseDate(true);
-            //videoQuery.selectGenre(true);
+            videoQuery.selectReleaseDate(true);
+            videoQuery.selectGenre(true);
             videoQuery.selectArtwork(true);
-            //videoQuery.selectWriter(true);
-            //videoQuery.selectDirector(true);
-            //videoQuery.selectAssistantDirector(true);
-            //videoQuery.selectProducer(true);
-            //videoQuery.selectActor(true);
-            //videoQuery.selectCinematographer(true);
-            kDebug() << videoQuery.query();
+            videoQuery.selectWriter(true);
+            videoQuery.selectDirector(true);
+            videoQuery.selectAssistantDirector(true);
+            videoQuery.selectProducer(true);
+            videoQuery.selectActor(true);
+            videoQuery.selectCinematographer(true);
             if (!genre.isEmpty()) {
                 videoQuery.hasGenre(genre);
             }
@@ -422,6 +421,7 @@ void VideoListEngine::run()
             
         } else if (engineArg.toLower() == "genres") {
             VideoQuery videoQuery = VideoQuery(true);
+            videoQuery.isAnyVideoType();
             videoQuery.selectGenre();
             if (!genre.isEmpty()) {
                 videoQuery.hasGenre(genre);
@@ -456,6 +456,8 @@ void VideoListEngine::run()
             videoQuery.selectDescription(true);
             videoQuery.selectRating(true);
             videoQuery.selectDuration(true);
+            videoQuery.selectSeriesName(true);
+            videoQuery.selectSeason(true);
             videoQuery.selectSynopsis(true);
             videoQuery.selectRating(true);
             videoQuery.selectEpisode(true);
@@ -470,7 +472,7 @@ void VideoListEngine::run()
             videoQuery.selectActor(true);
             videoQuery.selectCinematographer(true);
             videoQuery.searchString(searchTerm);
-            videoQuery.orderBy("?title ?seriesName ?season ?episode");
+            videoQuery.orderBy("?title ?seriesName ?season ?episodeNumber");
             
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -501,6 +503,8 @@ void VideoListEngine::run()
             videoQuery.selectDuration(true);
             videoQuery.selectSynopsis(true);
             videoQuery.selectRating(true);
+            videoQuery.selectSeriesName(true);
+            videoQuery.selectSeason(true);
             videoQuery.selectEpisode(true);
             videoQuery.selectCreated(true);
             videoQuery.selectReleaseDate(true);
@@ -531,7 +535,7 @@ void VideoListEngine::run()
             } else if (season == -1) {
                 videoQuery.hasNoSeason();
             }
-            videoQuery.orderBy("?seriesName ?season ?episode ?title");
+            videoQuery.orderBy("?seriesName ?season ?episodeNumber ?title");
             
             //Execute Query
             Soprano::QueryResultIterator it = videoQuery.executeSelect(m_mainModel);
@@ -580,7 +584,8 @@ void VideoListEngine::setFilterForSources(const QString& engineFilter)
 
 VideoQuery::VideoQuery(bool distinct) :
 		m_distinct(distinct),
-		m_selectVideoResource(false),
+        m_selectAllVideoResources(false),
+        m_selectVideoResource(false),
         m_selectMovieResource(false),
         m_selectTVShowResource(false),
         m_selectSeason(false),
@@ -615,7 +620,8 @@ void VideoQuery::selectAllVideoResources(bool optional) {
                                               " UNION  "
                                               " { ?r rdf:type <%2> } "
                                               " UNION "
-                                              " { ?r rdf:type <%3> } ")
+                                              " { ?r rdf:type <%3> } "
+                                              " OPTIONAL { ?r nie:url ?url } . ")
                                               .arg(MediaVocabulary().typeVideo().toString())
                                               .arg(MediaVocabulary().typeVideoMovie().toString())
                                               .arg(MediaVocabulary().typeVideoTVShow().toString()));
@@ -624,21 +630,24 @@ void VideoQuery::selectAllVideoResources(bool optional) {
 void VideoQuery::selectVideoResource(bool optional) {
     m_selectVideoResource = true;
     m_videoResourceCondition = addOptional(optional,
-                                    QString("?r rdf:type <%1> . ")
+                                    QString("?r rdf:type <%1> . "
+                                    "OPTIONAL { ?r nie:url ?url } . ")
                                     .arg(m_mediaVocabulary.typeVideo().toString()));
 }
 
 void VideoQuery::selectMovieResource(bool optional) {
     m_selectMovieResource = true;
     m_movieResourceCondition = addOptional(optional,
-                                           QString("?r rdf:type <%1> . ")
+                                           QString("?r rdf:type <%1> . "
+                                           "OPTIONAL { ?r nie:url ?url } . ")
                                            .arg(m_mediaVocabulary.typeVideoMovie().toString()));
 }
 
 void VideoQuery::selectTVShowResource(bool optional) {
     m_selectTVShowResource = true;
     m_tVShowResourceCondition = addOptional(optional,
-                                           QString("?r rdf:type <%1> . ")
+                                           QString("?r rdf:type <%1> . "
+                                           "OPTIONAL { ?r nie:url ?url } . ")
                                            .arg(m_mediaVocabulary.typeVideoTVShow().toString()));
 }
 
@@ -675,7 +684,7 @@ void VideoQuery::selectDuration(bool optional) {
 void VideoQuery::selectEpisode(bool optional) {
 	m_selectEpisode = true;
     m_episodeCondition = addOptional(optional,
-    		QString("?r <%1> ?episode . ")
+    		QString("?r <%1> ?episodeNumber . ")
     		.arg(m_mediaVocabulary.videoEpisodeNumber().toString()));
 }
 
@@ -770,6 +779,40 @@ void VideoQuery::selectCinematographer(bool optional) {
                                     .arg(m_mediaVocabulary.videoCinematographer().toString()));
 }
 
+void VideoQuery::isVideo()
+{
+    m_selectVideoResource = false;
+    m_videoResourceCondition = QString("?r rdf:type <%1> . ")
+                                           .arg(m_mediaVocabulary.typeVideo().toString());
+}
+
+void VideoQuery::isMovie()
+{
+    m_selectMovieResource = false;
+    m_movieResourceCondition = QString("?r rdf:type <%1> . ")
+                                           .arg(m_mediaVocabulary.typeVideoMovie().toString());
+}
+
+void VideoQuery::isTVShow()
+{
+    m_selectTVShowResource = false;
+    m_tVShowResourceCondition = QString("?r rdf:type <%1> . ")
+                                            .arg(m_mediaVocabulary.typeVideoTVShow().toString());
+}
+
+void VideoQuery::isAnyVideoType()
+{
+    m_selectAllVideoResources = false;
+    m_allVideoResourcesCondition = QString(" { ?r rdf:type <%1> } "
+                                               " UNION  "
+                                               " { ?r rdf:type <%2> } "
+                                               " UNION "
+                                               " { ?r rdf:type <%3> } ")
+                                               .arg(MediaVocabulary().typeVideo().toString())
+                                               .arg(MediaVocabulary().typeVideoMovie().toString())
+                                               .arg(MediaVocabulary().typeVideoTVShow().toString());
+}
+
 void VideoQuery::hasSeason(int season) {
 	m_seasonCondition = QString("?r <%1> %2 . "
                                 "?r <%1> ?season . ")
@@ -812,7 +855,7 @@ void VideoQuery::hasNoSeriesName() {
 void VideoQuery::searchString(QString str) {
 	if (! str.isEmpty()) {
 		m_searchCondition = QString(
-				"FILTER ((regex(str(?title),\"%1\",\"i\") || "
+				"FILTER (regex(str(?title),\"%1\",\"i\") || "
 			    "regex(str(?description),\"%1\",\"i\") || "
                 "regex(str(?synopsis),\"%1\",\"i\") || "
                 "regex(str(?writer),\"%1\",\"i\") || "
@@ -871,7 +914,7 @@ QString VideoQuery::query()
     if (m_selectDuration)
         queryString += "?duration ";
     if (m_selectEpisode)
-        queryString += "?episode ";
+        queryString += "?episodeNumber ";
     if (m_selectDescription)
         queryString += "?description ";
     if (m_selectSynopsis)
@@ -901,7 +944,7 @@ QString VideoQuery::query()
     
     //NOTE: nie:url is not in any released nie ontology that I can find.
     //      In future KDE will use nfo:fileUrl so this will need to be changed.
-    queryString += QString("WHERE { OPTIONAL { ?r nie:url ?url } . ");
+    queryString += QString("WHERE { ");
     
     queryString += m_allVideoResourcesCondition;
     queryString += m_videoResourceCondition;
@@ -918,7 +961,6 @@ QString VideoQuery::query()
     queryString += m_releaseDateCondition;
     queryString += m_genreCondition;
     queryString += m_ratingCondition;
-    queryString += m_searchCondition;
     queryString += m_artworkCondition;
     queryString += m_writerCondition;
     queryString += m_directorCondition;
@@ -926,6 +968,7 @@ QString VideoQuery::query()
     queryString += m_producerCondition;
     queryString += m_actorCondition;
     queryString += m_cinematographerCondition;
+    queryString += m_searchCondition;
     queryString += "} ";
     
     queryString += m_order;
