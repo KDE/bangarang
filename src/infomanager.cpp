@@ -96,6 +96,29 @@ void InfoManager::showInfoView()
     loadInfoView();
 }
 
+void InfoManager::showInfoViewForMediaItem(MediaItem mediaItem)
+{
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->mediaViewHolder->setCurrentIndex(1);
+    ui->previous->setVisible(true);
+    ui->previous->setText(ui->listTitle->text());
+    
+    m_rows.clear();
+    QList<MediaItem> mediaList;
+    mediaList << mediaItem;
+    if (mediaList.count() == 0) {
+        return;
+    }
+    m_infoMediaItemsModel->clearMediaListData();
+    m_infoMediaItemsModel->loadMediaList(mediaList);
+    showFields();
+    m_editToggle = false;
+    ui->editInfo->setText("Edit");
+    ui->editInfo->setIcon(KIcon("document-edit"));
+    ui->playSelected->setVisible(false);
+    ui->playAll->setVisible(false);
+}
+
 void InfoManager::editInfoView()
 {
     m_editToggle = !m_editToggle;
