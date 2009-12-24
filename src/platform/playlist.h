@@ -224,6 +224,7 @@ class Playlist : public QObject
         void confirmPlaylistFinished();
         void stateChanged(Phonon::State newstate, Phonon::State oldstate);
         void updatePlaybackInfo(qint64 time);
+        void metaDataChanged();
         
 };
 #endif // PLAYLIST_H

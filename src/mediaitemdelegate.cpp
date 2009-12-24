@@ -274,7 +274,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      MediaItem updatedMediaItem = model->mediaItemAt(index.row());
                      updatedMediaItem.fields["rating"] = newRating;
                      model->replaceMediaItemAt(index.row(), updatedMediaItem);
-                     m_mediaIndexer->updateRating(updatedMediaItem.url, newRating);
+                     m_mediaIndexer->updateInfo(updatedMediaItem);
                      //Keep other views of same mediaItem in sync
                      int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
                      if (playlistRow != -1) {

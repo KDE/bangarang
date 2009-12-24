@@ -27,6 +27,7 @@
 #include <KStandardDirs>
 #include <KUrl>
 #include <KLocale>
+#include <KDebug>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
@@ -46,18 +47,33 @@ void SavedListsEngine::run()
     
     if (!m_mediaListProperties.engineArg().isEmpty()) {
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-            return;
+        if (file.exists()) {
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+                return;
+            }
+        } else {
+            KUrl url(m_mediaListProperties.engineArg());
+            file.setFileName(url.path());
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+                return;
+            }
         }
         
         //Make sure it's a valid M3U fileref
         QTextStream in(&file);
         bool valid = false;
+        bool isM3U = false;
+        bool isPLS = false;
         if (!in.atEnd()) {
             QString line = in.readLine();
             if (line.trimmed() == "#EXTM3U") {
                 valid = true;
+                isM3U = true;
+            } else if (line.trimmed() == "[playlist]") {
+                valid = true;
+                isPLS = true;
             }
         }
         
@@ -65,7 +81,7 @@ void SavedListsEngine::run()
         if (valid) {
             while (!in.atEnd()) {
                 QString line = in.readLine();
-                if (line.startsWith("#EXTINF:")) {
+                if ((isM3U) && line.startsWith("#EXTINF:")) {
                     line = line.replace("#EXTINF:","");
                     QStringList durTitle = line.split(",");
                     QString title;
@@ -91,6 +107,40 @@ void SavedListsEngine::run()
                     if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
                         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
                         mediaItem.fields["duration"] = duration;
+                    } else if (duration == -1) {
+                        mediaItem.duration = QString();
+                        mediaItem.fields["audioType"] = "Audio Stream";
+                    }
+                    mediaList << mediaItem;
+                }
+                if ((isPLS) && line.startsWith("File")) {
+                    QString url = line.mid(line.indexOf("=") + 1).trimmed();
+                    QString title;
+                    if (!in.atEnd()) {
+                        line = in.readLine();
+                        title = line.mid(line.indexOf("=") + 1).trimmed();
+                    }
+                    int duration = 0;
+                    if (!in.atEnd()) {
+                        line = in.readLine();
+                        duration = line.mid(line.indexOf("=") + 1).trimmed().toInt();
+                    }
+                    
+                    MediaItem mediaItem;
+                    if (!url.isEmpty()) {
+                        mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                    } else {
+                        continue;
+                    }
+                    if ((!mediaItem.title.isEmpty()) && (url.contains(mediaItem.title))) {
+                        mediaItem.title = title;
+                    }
+                    if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        mediaItem.fields["duration"] = duration;
+                    } else if (duration == -1) {
+                        mediaItem.duration = QString();
+                        mediaItem.fields["audioType"] = "Audio Stream";
                     }
                     mediaList << mediaItem;
                 }
