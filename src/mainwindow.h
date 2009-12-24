@@ -186,6 +186,7 @@ private slots:
     void delayedNotificationHide();
     void sourceInfoUpdated(MediaItem mediaItem);
     void sourceInfoRemoved(QString url);
+    void updateNowPlayingStyleSheet();
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
