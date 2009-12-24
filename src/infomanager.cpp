@@ -441,7 +441,7 @@ void InfoManager::showVideoTVShowFields(bool edit)
     if (!edit) {
         setInfo(startRow, commonValue("seriesName").toString());
         setInfo(startRow + 1, QString("%1").arg(commonValue("season").toInt()));
-        setInfo(startRow + 2, QString("%1").arg(commonValue("episode").toInt()));
+        setInfo(startRow + 2, QString("%1").arg(commonValue("episodeNumber").toInt()));
         QDate releaseDate = commonValue("releaseDate").toDate();
         QString year;
         if (releaseDate.isValid()) {
@@ -456,7 +456,7 @@ void InfoManager::showVideoTVShowFields(bool edit)
     } else {
         setEditWidget(startRow, new KLineEdit(), commonValue("seriesName").toString());
         setEditWidget(startRow + 1, new QSpinBox(), commonValue("season").toInt());
-        setEditWidget(startRow + 2, new QSpinBox(), commonValue("episode").toInt());
+        setEditWidget(startRow + 2, new QSpinBox(), commonValue("episodeNumber").toInt());
         setEditWidget(startRow + 3, new QSpinBox());
         QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 3), 1));
         yw->setRange(0, 9999);
@@ -635,17 +635,24 @@ void InfoManager::saveInfoToMediaModel()
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
+                    mediaItem.subTitle = seriesName;
                 }
                 
                 QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 int season = seasonWidget->value();
                 mediaItem.fields["season"] = season;
-                mediaItem.subTitle = QString("Season %1 ").arg(season);
+                if (!mediaItem.subTitle.isEmpty()) {
+                    mediaItem.subTitle += " - ";
+                }
+                mediaItem.subTitle += QString("Season %1").arg(season);
                 
                 QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
-                int episode = episodeWidget->value();
-                mediaItem.fields["episodeNumber"] = episode;
-                mediaItem.subTitle = mediaItem.subTitle + QString("Episode %1").arg(episode);
+                int episodeNumber = episodeWidget->value();
+                mediaItem.fields["episodeNumber"] = episodeNumber;
+                if (!mediaItem.subTitle.isEmpty()) {
+                    mediaItem.subTitle += " - ";
+                }
+                mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 
                 QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 if (yearWidget->value() != 0) {

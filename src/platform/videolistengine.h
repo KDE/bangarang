@@ -83,6 +83,11 @@ class VideoQuery {
         void selectActor(bool optional=false);
         void selectCinematographer(bool optional=false);
         
+        void isVideo();
+        void isMovie();
+        void isTVShow();
+        void isAnyVideoType();
+        
         void hasSeason(int season);
         void hasNoSeason();
         
