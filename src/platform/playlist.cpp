@@ -47,6 +47,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_repeat = false;
     m_queueDepth = 10;
     m_state = Playlist::Finished;
+    m_hadVideo = false;
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -252,6 +253,7 @@ void Playlist::start()
 
 void Playlist::stop()
 {
+    m_hadVideo = false;
     m_mediaObject->stop();
     m_queue->clearMediaListData();
     if (m_nowPlaying->rowCount() > 0) {
@@ -322,13 +324,13 @@ void Playlist::removeMediaItemAt(int row)
 
 void Playlist::clearPlaylist()
 {
+    stop();
     m_currentPlaylist->clearMediaListData(true);
     m_queue->clearMediaListData();
     m_nowPlaying->clearMediaListData();
     m_playlistIndices.clear();
     m_playlistIndicesHistory.clear();
     m_playlistUrlHistory.clear();
-    m_mediaObject->stop();
 }
 
 void Playlist::setMode(Playlist::Mode mode)
@@ -483,10 +485,17 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 	 * so no connecting to Phonon::MediaObject::hasVideoChanged() is
 	 * necessary.
 	 */
-	if (!m_mediaObject->hasVideo()) {
+    if (!m_mediaObject->hasVideo()) {
 		return;
 	}
-
+    
+    if (m_hadVideo && m_mediaObject->hasVideo()) {
+        return;
+    }
+    if (newstate == Phonon::PlayingState || newstate == Phonon::PausedState) {
+        m_hadVideo = m_mediaObject->hasVideo();
+    }
+    
     QDBusInterface iface(
     		"org.kde.kded",
     		"/modules/powerdevil",
@@ -502,7 +511,7 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 		 * We therefore set the profile always to performance and let the
 		 * refreshStatus call handle the case when the computer runs on battery.
 		 */
-	    iface.call("setProfile", "Performance");
+	    //iface.call("setProfile", "Performance");
 	    iface.call("refreshStatus");
 	}
 }
