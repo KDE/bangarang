@@ -362,7 +362,7 @@ void InfoManager::showAudioMusicFields(bool edit)
         setEditWidget(startRow, new QComboBox(), commonValue("artist").toString(), valueList("artist"), true);
         setEditWidget(startRow + 1, new QComboBox(), commonValue("album").toString(), valueList("album"), true);
         setEditWidget(startRow + 2, new QSpinBox());
-        QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 2), 1));
+        QSpinBox * yw = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 2), 1));
         yw->setRange(0, 9999);
         yw->setValue(commonValue("year").toInt());
         setEditWidget(startRow + 3, new QSpinBox(), commonValue("trackNumber").toInt());
@@ -427,7 +427,7 @@ void InfoManager::showVideoMovieFields(bool edit)
         
     } else {
         setEditWidget(startRow, new QSpinBox());
-        QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow), 1));
+        QSpinBox * yw = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow), 1));
         yw->setRange(0, 9999);
         yw->setValue(commonValue("releaseDate").toDate().year());
         setEditWidget(startRow + 1, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
@@ -481,7 +481,7 @@ void InfoManager::showVideoTVShowFields(bool edit)
         setEditWidget(startRow + 1, new QSpinBox(), commonValue("season").toInt());
         setEditWidget(startRow + 2, new QSpinBox(), commonValue("episodeNumber").toInt());
         setEditWidget(startRow + 3, new QSpinBox());
-        QSpinBox * yw = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 3), 1));
+        QSpinBox * yw = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(startRow + 3), 1));
         yw->setRange(0, 9999);
         setEditWidget(startRow + 4, new QComboBox(), commonValue("genre").toString(), valueList("genre"), true);
         setEditWidget(startRow + 5, new QComboBox(), commonValue("writer").toString(), valueList("writer"), true);
@@ -527,26 +527,26 @@ void InfoManager::saveInfoToMediaModel()
 {
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
     QList<MediaItem> updatedList;
-    QComboBox *typeComboBox = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
+    QComboBox *typeComboBox = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(4), 1));
     
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
         
         //All media types have a title
-        KLineEdit * titleWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(0), 1));
+        KLineEdit * titleWidget = qobject_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(0), 1));
         QString title = titleWidget->text();
         if (!title.isEmpty()) {
             mediaItem.title = title;
             mediaItem.fields["title"] = title;
         }
         
-        ArtworkWidget * artworkWidget = static_cast<ArtworkWidget*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
+        ArtworkWidget * artworkWidget = qobject_cast<ArtworkWidget*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(1), 1));
         QUrl url = artworkWidget->url();
         if (!url.isEmpty()) {
             mediaItem.fields["artworkUrl"] = url.toString();
         }
 
-        QTextEdit * descriptionWidget = static_cast<QTextEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(2), 1));
+        QTextEdit * descriptionWidget = qobject_cast<QTextEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(2), 1));
         QString description = descriptionWidget->toPlainText();
         if (!description.isEmpty()) {
             if (mediaItem.type == "Video") {
@@ -561,13 +561,13 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Music";
                 
-                QComboBox *artistWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QComboBox *artistWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString artist = artistWidget->currentText();
                 if (!artist.isEmpty()) {
                     mediaItem.fields["artist"] = artist;
                 }
                 
-                QComboBox *albumWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QComboBox *albumWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 QString album = albumWidget->currentText();
                 if (!album.isEmpty()) {
                     mediaItem.fields["album"] = album;
@@ -575,19 +575,19 @@ void InfoManager::saveInfoToMediaModel()
                 
                 mediaItem.subTitle = mediaItem.fields["artist"].toString() + QString(" - ") + mediaItem.fields["album"].toString();
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QSpinBox *yearWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int year = yearWidget->value();
                 if (year != 0) {
                     mediaItem.fields["year"] = year;
                 }
                 
-                QSpinBox *trackNumberWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
+                QSpinBox *trackNumberWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 int trackNumber = trackNumberWidget->value();
                 if (trackNumber != 0) {
                     mediaItem.fields["trackNumber"] = trackNumber;
                 }
                 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
+                QComboBox *genreWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
@@ -597,7 +597,7 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Audio";
                 mediaItem.fields["audioType"] = "Audio Stream";
                 
-                KLineEdit * urlWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
+                KLineEdit * urlWidget = qobject_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(3), 1));
                 QString url = urlWidget->text();
                 if (!url.isEmpty()) {
                     mediaItem.url = url;
@@ -613,38 +613,38 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "Movie";
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QSpinBox *yearWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 if (yearWidget->value() != 0) {
                     QDate releaseDate = QDate(yearWidget->value(), 1, 1);
                     mediaItem.fields["releaseDate"] = releaseDate;
                 }
 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QComboBox *genreWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
                 }
                 
-                QComboBox *writerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QComboBox *writerWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 QString writer = writerWidget->currentText();
                 kDebug() << "Writer:" << writer;
                 if (!writer.isEmpty()) {
                     mediaItem.fields["writer"] = writer;
                 }
                 
-                QComboBox *directorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
+                QComboBox *directorWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 QString director = directorWidget->currentText();
                 if (!director.isEmpty()) {
                     mediaItem.fields["director"] = director;
                 }
                 
-                QComboBox *producerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
+                QComboBox *producerWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
                 QString producer = producerWidget->currentText();
                 if (!producer.isEmpty()) {
                     mediaItem.fields["producer"] = producer;
                 }
                 
-                QComboBox *actorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
+                QComboBox *actorWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
                 QString actor = actorWidget->currentText();
                 if (!actor.isEmpty()) {
                     mediaItem.fields["actor"] = actor;
@@ -654,14 +654,14 @@ void InfoManager::saveInfoToMediaModel()
                 mediaItem.type = "Video";
                 mediaItem.fields["videoType"] = "TV Show";
                 
-                KLineEdit * seriesNameWidget = static_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                KLineEdit * seriesNameWidget = qobject_cast<KLineEdit*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 QString seriesName = seriesNameWidget->text();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
                     mediaItem.subTitle = seriesName;
                 }
                 
-                QSpinBox *seasonWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
+                QSpinBox *seasonWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(6), 1));
                 int season = seasonWidget->value();
                 mediaItem.fields["season"] = season;
                 if (!mediaItem.subTitle.isEmpty()) {
@@ -669,7 +669,7 @@ void InfoManager::saveInfoToMediaModel()
                 }
                 mediaItem.subTitle += QString("Season %1").arg(season);
                 
-                QSpinBox *episodeWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
+                QSpinBox *episodeWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 int episodeNumber = episodeWidget->value();
                 mediaItem.fields["episodeNumber"] = episodeNumber;
                 if (!mediaItem.subTitle.isEmpty()) {
@@ -677,38 +677,38 @@ void InfoManager::saveInfoToMediaModel()
                 }
                 mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 
-                QSpinBox *yearWidget = static_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QSpinBox *yearWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
                 if (yearWidget->value() != 0) {
                     QDate releaseDate = QDate(yearWidget->value(), 1, 1);
                     mediaItem.fields["releaseDate"] = releaseDate;
                 }
                 
-                QComboBox *genreWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
+                QComboBox *genreWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(9), 1));
                 QString genre = genreWidget->currentText();
                 if (!genre.isEmpty()) {
                     mediaItem.fields["genre"] = genre;
                 }
                 
                 
-                QComboBox *writerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
+                QComboBox *writerWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(10), 1));
                 QString writer = writerWidget->currentText();
                 if (!writer.isEmpty()) {
                     mediaItem.fields["writer"] = genre;
                 }
                 
-                QComboBox *directorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(11), 1));
+                QComboBox *directorWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(11), 1));
                 QString director = directorWidget->currentText();
                 if (!director.isEmpty()) {
                     mediaItem.fields["director"] = director;
                 }
                 
-                QComboBox *producerWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(12), 1));
+                QComboBox *producerWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(12), 1));
                 QString producer = producerWidget->currentText();
                 if (!producer.isEmpty()) {
                     mediaItem.fields["producer"] = producer;
                 }
                 
-                QComboBox *actorWidget = static_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(13), 1));
+                QComboBox *actorWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(13), 1));
                 QString actor = actorWidget->currentText();
                 if (!actor.isEmpty()) {
                     mediaItem.fields["actor"] = actor;
