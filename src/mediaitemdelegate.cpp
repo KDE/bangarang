@@ -17,10 +17,10 @@
 */
 
 #include "mediaitemdelegate.h"
-#include "platform/playlist.h"
-#include "platform/mediaitemmodel.h"
-#include "platform/mediaindexer.h"
 #include "mainwindow.h"
+#include "platform/playlist.h"
+#include "platform/mediaindexer.h"
+#include "platform/mediaitemmodel.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
