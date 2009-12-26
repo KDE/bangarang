@@ -39,6 +39,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_mediaListCache = new MediaListCache(parent);
     m_cacheThreshold = 3000; //default to 3 second loading threshold for adding to cache
     m_forceRefreshFromSource = false;
+    m_loadSources = false;
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -150,7 +151,10 @@ void MediaItemModel::load()
 
 void MediaItemModel::reload()
 {
-    if (!m_mediaListProperties.lri.isEmpty()) {
+    if (m_loadSources) {
+        // If the model was populated using loadSource then reload 
+        loadSources(m_mediaListForLoadSources);
+    } else if (!m_mediaListProperties.lri.isEmpty()) {
         clearMediaListData();
         m_forceRefreshFromSource = true;
         load();
@@ -234,6 +238,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
 
 void MediaItemModel::loadSources(QList<MediaItem> mediaList)
 {
+
     setLoadingState(true);
     
     //Load data only for media sources
@@ -332,6 +337,9 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
             }
         }
     }
+    
+    m_loadSources = true;
+    m_mediaListForLoadSources = mediaList;
 }
 
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
@@ -376,7 +384,8 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                         if (rowCount() == 0) {
                             showNoResultsMessage();
                         }
-                        m_mediaListProperties.lri = QString();
+                        //Need a basic lri so updateInfo and removeInfo can be performed by a list engine
+                        m_mediaListProperties.lri = mediaListProperties.engine(); 
                         m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
                         m_mediaListProperties.summary = i18np("1 item", "%1 items", count);
                         m_subRequestMediaLists.clear();
@@ -428,9 +437,13 @@ void MediaItemModel::removeMediaItem(QString url)
 
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
+    disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
+    connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    m_loadSources = false;
+    m_mediaListForLoadSources.clear();
     if (emitMediaListChanged) {
         emit mediaListChanged();
     }
