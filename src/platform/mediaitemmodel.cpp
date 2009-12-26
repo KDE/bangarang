@@ -153,7 +153,9 @@ void MediaItemModel::reload()
 {
     if (m_loadSources) {
         // If the model was populated using loadSource then reload 
-        loadSources(m_mediaListForLoadSources);
+        QList<MediaItem> mediaList = m_mediaListForLoadSources;
+        clearMediaListData();
+        loadSources(mediaList);
     } else if (!m_mediaListProperties.lri.isEmpty()) {
         clearMediaListData();
         m_forceRefreshFromSource = true;
@@ -239,6 +241,11 @@ void MediaItemModel::actionActivated(QModelIndex index)
 void MediaItemModel::loadSources(QList<MediaItem> mediaList)
 {
 
+    if (mediaList.count() == 0) {
+        return;
+    }
+    
+    
     setLoadingState(true);
     
     //Load data only for media sources
