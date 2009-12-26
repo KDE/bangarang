@@ -452,7 +452,7 @@ void ActionsManager::updateSavedListsMenus()
         if (!((videoListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
             && (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")))) { 
             QAction * addToSavedList = new QAction(KIcon("view-list-text"), videoListNames.at(i), m_addToVideoSavedList);
-            addToSavedList->setData(audioListNames.at(i));
+            addToSavedList->setData(videoListNames.at(i));
             m_addToVideoSavedList->addAction(addToSavedList);
         }
     }

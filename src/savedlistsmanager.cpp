@@ -716,8 +716,8 @@ QString SavedListsManager::savedListLriName(QString lri)
     }
         
     for (int i = 0; i < m_savedVideoLists.count(); i++) {
-        if (m_savedAudioLists.at(i).endsWith(lri)) {
-            QString indexEntry = m_savedAudioLists.at(i);
+        if (m_savedVideoLists.at(i).endsWith(lri)) {
+            QString indexEntry = m_savedVideoLists.at(i);
             name = indexEntry.split(":::").at(1);
         }
     }
