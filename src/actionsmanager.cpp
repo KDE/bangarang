@@ -150,7 +150,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_newVideoList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
     
     //Show Items
-    m_showItems = new QAction(KIcon("system-run"), i18n("Show items"), m_parent);
+    m_showItems = new QAction(KIcon("bangarang-category-browse"), i18n("Show items"), m_parent);
     connect(m_showItems, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
 
     //Show Info

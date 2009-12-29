@@ -213,9 +213,9 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         } else if (isCategory) {
             //Paint Category Icon
             QIcon catIcon = index.data(Qt::DecorationRole).value<QIcon>();
-            int iconWidth = 16;
+            int iconWidth = 22;
             int topOffset = (height - iconWidth) / 2;
-            catIcon.paint(&p, left + padding , top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
+            catIcon.paint(&p, left, top + topOffset, iconWidth, iconWidth, Qt::AlignLeft, QIcon::Normal);
         }
     }
         

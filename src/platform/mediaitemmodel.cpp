@@ -596,7 +596,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     } else if (mediaItem.type == "Category") {
        KIcon categoryActionIcon;
        QString tooltip;
-       categoryActionIcon = KIcon("system-run");
+       categoryActionIcon = KIcon("bangarang-category-browse");
        if (mediaItem.url.startsWith("music://songs")) {
            tooltip = "Show Songs";
        } else if (mediaItem.url.startsWith("music://albums")) {
