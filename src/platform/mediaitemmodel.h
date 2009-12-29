@@ -254,7 +254,7 @@ class MediaItemModel : public QStandardItemModel
          *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
-        void loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged = false, bool updateExisting = false);
+        void loadMediaList(const QList<MediaItem> &mediaList, bool emitMediaListChanged = false, bool updateExisting = false);
         
         /**
          * Loads a MediaItem directly into the model
@@ -266,7 +266,7 @@ class MediaItemModel : public QStandardItemModel
          *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
-        void loadMediaItem(MediaItem mediaItem, bool emitMediaListChanged = false);
+        void loadMediaItem(const MediaItem &mediaItem, bool emitMediaListChanged = false);
         
         /**
          * Loads playable MediaItems into the model.
@@ -280,7 +280,7 @@ class MediaItemModel : public QStandardItemModel
          *                  (type = "Audio" or "Video") then they will be directly 
          *                  loaded into the model.
          */
-        void loadSources(QList<MediaItem> mediaList);
+        void loadSources(const QList<MediaItem> &mediaList);
         
         /**
          * Returns the MediaItem associated with the specified row in the model.
@@ -338,7 +338,7 @@ class MediaItemModel : public QStandardItemModel
          *       can be used to retrieve the MediaItem, its ListEngine can
          *       remove information for the MediaItem.
          */
-        void removeSourceInfo(QList<MediaItem> mediaList);
+        void removeSourceInfo(const QList<MediaItem> &mediaList);
         
         /**
          * Replace MediaItem at the specified row in the model with the one
@@ -350,7 +350,7 @@ class MediaItemModel : public QStandardItemModel
          *                             otherwise don't emit mediaListChanged().
          *
          */
-        void replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged = false);
+        void replaceMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged = false);
         
         /**
          * Return the row of a MediaItem whose url matches the one provided
@@ -359,7 +359,7 @@ class MediaItemModel : public QStandardItemModel
          *
          * @return row of model
          */
-        int rowOfUrl(QString url);
+        int rowOfUrl(const QString &url);
         
         /**
          * Sets the threshold for the cache.
@@ -378,7 +378,7 @@ class MediaItemModel : public QStandardItemModel
          *                            model.  A subsequent load() call will 
          *                            use the MediaListProperties.lri.
          */
-        void setMediaListProperties(MediaListProperties mediaListProperties);
+        void setMediaListProperties(const MediaListProperties &mediaListProperties);
         
         /**
          * Sets the cache for the model to use.
@@ -417,7 +417,7 @@ class MediaItemModel : public QStandardItemModel
         *       can be used to retrieve the MediaItem, its ListEngine can
         *       update information for the MediaItem.
         */
-        void updateSourceInfo(QList<MediaItem> mediaList);
+        void updateSourceInfo(const QList<MediaItem> &mediaList);
         
         QString dataEngine();
         QString filter();

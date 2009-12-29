@@ -41,10 +41,10 @@ class SavedListsManager : public QObject
     public:
         SavedListsManager(MainWindow * parent);
         ~SavedListsManager();
-        void saveMediaList(QList<MediaItem> mediaList, QString name, QString type, bool append = false);
-        void saveView(QString name, QString type);
-        QStringList savedListNames(QString type);
-        QString savedListLriName(QString lri);
+        void saveMediaList(QList<MediaItem> mediaList, const QString &name, const QString &type, bool append = false);
+        void saveView(const QString &name, const QString &type);
+        QStringList savedListNames(const QString &type);
+        QString savedListLriName(const QString &lri);
         
     signals:
         void savedListsChanged();

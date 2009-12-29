@@ -46,7 +46,7 @@ void MediaListCache::addMediaList(MediaListProperties mediaListProperties, QList
     }
 }
 
-void MediaListCache::removeMediaList(QString lri)
+void MediaListCache::removeMediaList(const QString &lri)
 {
     if (m_lris.indexOf(lri) != -1) {
         int index = m_lris.indexOf(lri);
@@ -57,7 +57,7 @@ void MediaListCache::removeMediaList(QString lri)
     }
 }
 
-QList<MediaItem> MediaListCache::mediaList(QString lri)
+QList<MediaItem> MediaListCache::mediaList(const QString &lri)
 {
     if (m_lris.indexOf(lri) != -1) {
         int index = m_lris.indexOf(lri);
@@ -68,7 +68,7 @@ QList<MediaItem> MediaListCache::mediaList(QString lri)
     }
 }
 
-MediaListProperties MediaListCache::mediaListProperties(QString lri)
+MediaListProperties MediaListCache::mediaListProperties(const QString &lri)
 {
     if (m_lris.indexOf(lri) != -1) {
         int index = m_lris.indexOf(lri);
@@ -79,7 +79,7 @@ MediaListProperties MediaListCache::mediaListProperties(QString lri)
     }
 }
 
-bool MediaListCache::isInCache(QString lri)
+bool MediaListCache::isInCache(const QString &lri)
 {
     if (m_lris.indexOf(lri) != -1) {
         return true;

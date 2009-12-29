@@ -63,9 +63,9 @@ class AudioStreamQuery {
         void selectDescription(bool optional=false);
         void selectArtwork(bool optional=false);
         
-        void searchString(QString str);
+        void searchString(const QString &str);
         
-        void orderBy(QString var);
+        void orderBy(const QString &var);
         
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
         bool executeAsk(Soprano::Model* model);
@@ -89,7 +89,7 @@ class AudioStreamQuery {
         
         QString m_order;
         
-        QString addOptional(bool optional, QString str);
+        QString addOptional(bool optional, const QString &str);
         QString getPrefix();
 };
 

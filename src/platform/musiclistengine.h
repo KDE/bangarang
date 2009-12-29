@@ -69,16 +69,16 @@ class MusicQuery {
         void selectDescription(bool optional=false);
         void selectArtwork(bool optional=false);
         
-        void hasArtist(QString album);
+        void hasArtist(const QString &album);
         void hasNoArtist();
-        void hasAlbum(QString album);
+        void hasAlbum(const QString &album);
         void hasNoAlbum();
-        void hasGenre(QString genre);
+        void hasGenre(const QString &genre);
         void hasNoGenre();
         
-        void searchString(QString str);
+        void searchString(const QString &str);
         
-        void orderBy(QString var);
+        void orderBy(const QString &var);
         
         
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
@@ -113,7 +113,7 @@ class MusicQuery {
         
         QString m_order;
         
-        QString addOptional(bool optional, QString str);
+        QString addOptional(bool optional, const QString &str);
         QString getPrefix();
 };
 

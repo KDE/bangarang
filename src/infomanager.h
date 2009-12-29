@@ -59,7 +59,7 @@ class InfoManager : public QObject
     public slots:
         void saveInfoView();
         void showInfoView();
-        void showInfoViewForMediaItem(MediaItem mediaItem);
+        void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void editInfoView();
         void removeSelectedItemsInfo();
         
@@ -69,8 +69,8 @@ class InfoManager : public QObject
         MediaIndexer *m_mediaIndexer;
         bool m_editToggle;
         void loadInfoView();
-        QVariant commonValue(QString field);
-        QStringList valueList(QString field);
+        QVariant commonValue(const QString &field);
+        QStringList valueList(const QString &field);
         void saveInfoToMediaModel();
         QList<int> m_rows;
         void showFields(bool edit = false);
@@ -85,16 +85,16 @@ class InfoManager : public QObject
         void showVideoTVShowFields(bool edit = false);
         bool multipleVideoTypes();
         bool multipleAudioTypes();
-        void setLabel(int row, QString label, int format = NormalFormat);
-        void setInfo(int row, QString info, int format = NormalFormat);
-        void setInfo(int row, QPixmap pixmap);
-        void setEditWidget(int row, KLineEdit *lineEdit, QString value = QString());
-        void setEditWidget(int row, QTextEdit *textEdit, QString value = QString());
-        void setEditWidget(int row, QComboBox *comboBox, QString value = QString(), QStringList list = QStringList(), bool editable = false);
-        void setEditWidget(int row, KUrlRequester *urlRequester, QString value = QString());
+        void setLabel(int row, const QString &label, int format = NormalFormat);
+        void setInfo(int row, const QString &info, int format = NormalFormat);
+        void setInfo(int row, const QPixmap &pixmap);
+        void setEditWidget(int row, KLineEdit *lineEdit, const QString &value = QString());
+        void setEditWidget(int row, QTextEdit *textEdit, const QString &value = QString());
+        void setEditWidget(int row, QComboBox *comboBox, const QString &value = QString(), const QStringList &list = QStringList(), bool editable = false);
+        void setEditWidget(int row, KUrlRequester *urlRequester, const QString &value = QString());
         void setEditWidget(int row, QSpinBox *spinBox, int value = 0);
-        void setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap pixmap);
-        void setEditWidget(int row, QDateEdit *dateEdit, QDate date = QDate());
+        void setEditWidget(int row, ArtworkWidget *artworkWidget, const QPixmap &pixmap);
+        void setEditWidget(int row, QDateEdit *dateEdit, const QDate &date = QDate());
         
         
     private slots:

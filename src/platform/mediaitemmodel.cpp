@@ -87,7 +87,7 @@ MediaListProperties MediaItemModel::mediaListProperties()
     return m_mediaListProperties;
 }
 
-void MediaItemModel::setMediaListProperties(MediaListProperties mediaListProperties)
+void MediaItemModel::setMediaListProperties(const MediaListProperties &mediaListProperties)
 {
     if (m_mediaListProperties.lri != mediaListProperties.lri) {
         setLoadingState(false);
@@ -106,7 +106,7 @@ MediaItem MediaItemModel::mediaItemAt(int row)
     return m_mediaList.at(row);
 }
 
-int MediaItemModel::rowOfUrl(QString url)
+int MediaItemModel::rowOfUrl(const QString &url)
 {
     return m_urlList.indexOf(url);
 }
@@ -164,7 +164,7 @@ void MediaItemModel::reload()
     }
 }
 
-void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged, bool updateExisting)
+void MediaItemModel::loadMediaList(const QList<MediaItem> &mediaList, bool emitMediaListChanged, bool updateExisting)
 {
     for (int i = 0 ; i < mediaList.count() ; ++i) {
         if (updateExisting) {
@@ -183,7 +183,7 @@ void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaLis
     }
 }
 
-void MediaItemModel::loadMediaItem(MediaItem mediaItem, bool emitMediaListChanged)
+void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaListChanged)
 {
     m_mediaList << mediaItem;
     m_urlList << mediaItem.url;
@@ -248,7 +248,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
     }   
 }
 
-void MediaItemModel::loadSources(QList<MediaItem> mediaList)
+void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
 {
 
     if (mediaList.count() == 0) {
@@ -482,7 +482,7 @@ void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
     }
 }
 
-void MediaItemModel::replaceMediaItemAt(int row, MediaItem mediaItem, bool emitMediaListChanged)
+void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged)
 {
     m_mediaList.replace(row, mediaItem);
     m_urlList.replace(row, mediaItem.url);
@@ -732,7 +732,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     return true;
 }
 
-void MediaItemModel::removeSourceInfo(QList<MediaItem> mediaList)
+void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
 {
     //Assumes that items in mediaList are items currently in model
     if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
@@ -741,7 +741,7 @@ void MediaItemModel::removeSourceInfo(QList<MediaItem> mediaList)
     }
 }
 
-void MediaItemModel::updateSourceInfo(QList<MediaItem> mediaList)
+void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList)
 {
     //Assumes that items in mediaList are items currently in model
     if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {

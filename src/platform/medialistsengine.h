@@ -46,8 +46,6 @@ class MediaListsEngine : public NepomukListEngine
         void run();
         
     private:
-        QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
-        KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         bool m_loadWhenReady;
     
     Q_SIGNALS:

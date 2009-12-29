@@ -54,11 +54,11 @@ class FileListEngine : public NepomukListEngine
         void activateAction();
         
     private:
-        QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
-        KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
-        QList<MediaItem> readAudioUrlList(KUrl::List fileList);
-        QList<MediaItem> readVideoUrlList(KUrl::List fileList);
-        QString engineFilterFromUrlList(KUrl::List fileList);
+        QFileInfoList crawlDir(const QDir &dir, const QStringList &mimeFilter);
+        KUrl::List QFileInfoListToKUrlList(const QFileInfoList &fileInfoList);
+        QList<MediaItem> readAudioUrlList(const KUrl::List &fileList);
+        QList<MediaItem> readVideoUrlList(const KUrl::List &fileList);
+        QString engineFilterFromUrlList(const KUrl::List &fileList);
         KUrl::List m_fileList;
         QString m_directoryPath;
         bool m_getFilesAction;

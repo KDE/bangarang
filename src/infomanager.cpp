@@ -96,7 +96,7 @@ void InfoManager::showInfoView()
     loadInfoView();
 }
 
-void InfoManager::showInfoViewForMediaItem(MediaItem mediaItem)
+void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 {
     ui->stackedWidget->setCurrentIndex(0);
     ui->mediaViewHolder->setCurrentIndex(1);
@@ -491,7 +491,7 @@ void InfoManager::showVideoTVShowFields(bool edit)
     }
 }
         
-QVariant InfoManager::commonValue(QString field)
+QVariant InfoManager::commonValue(const QString &field)
 {
     QVariant value;
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
@@ -508,7 +508,7 @@ QVariant InfoManager::commonValue(QString field)
     return value;
 }
 
-QStringList InfoManager::valueList(QString field)
+QStringList InfoManager::valueList(const QString &field)
 {
     QStringList value;
     value << QString();
@@ -768,7 +768,7 @@ bool InfoManager::multipleAudioTypes()
     return false;
 }
 
-void InfoManager::setLabel(int row, QString label, int format)
+void InfoManager::setLabel(int row, const QString &label, int format)
 {
     QLabel * labelLabel= new QLabel();
     labelLabel->setWordWrap(true);
@@ -784,7 +784,7 @@ void InfoManager::setLabel(int row, QString label, int format)
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 0, labelLabel);    
 }
 
-void InfoManager::setInfo(int row, QString info, int format)
+void InfoManager::setInfo(int row, const QString &info, int format)
 {
     QLabel * infoLabel= new QLabel();
     infoLabel->setWordWrap(true);
@@ -800,7 +800,7 @@ void InfoManager::setInfo(int row, QString info, int format)
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, infoLabel);
 }
 
-void InfoManager::setInfo(int row, QPixmap pixmap)
+void InfoManager::setInfo(int row, const QPixmap &pixmap)
 {
     QLabel * infoLabel= new QLabel();
     infoLabel->setPixmap(pixmap);
@@ -809,19 +809,19 @@ void InfoManager::setInfo(int row, QPixmap pixmap)
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, infoLabel);
 }
 
-void InfoManager::setEditWidget(int row, KLineEdit *lineEdit, QString value)
+void InfoManager::setEditWidget(int row, KLineEdit *lineEdit, const QString &value)
 {
     lineEdit->setText(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row ), 1, lineEdit);
 }
 
-void InfoManager::setEditWidget(int row, QTextEdit *textEdit, QString value)
+void InfoManager::setEditWidget(int row, QTextEdit *textEdit, const QString &value)
 {
     textEdit->setText(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, textEdit);
 }
 
-void InfoManager::setEditWidget(int row, QComboBox *comboBox, QString value, QStringList list, bool editable)
+void InfoManager::setEditWidget(int row, QComboBox *comboBox, const QString &value, const QStringList &list, bool editable)
 {
     comboBox->addItems(list);
     if (editable) {
@@ -839,7 +839,7 @@ void InfoManager::setEditWidget(int row, QComboBox *comboBox, QString value, QSt
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, comboBox);    
 }
 
-void InfoManager::setEditWidget(int row, KUrlRequester *urlRequester, QString value)
+void InfoManager::setEditWidget(int row, KUrlRequester *urlRequester, const QString &value)
 {
     urlRequester->setText(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, urlRequester);
@@ -853,13 +853,13 @@ void InfoManager::setEditWidget(int row, QSpinBox *spinBox, int value)
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, spinBox);
 }
 
-void InfoManager::setEditWidget(int row, ArtworkWidget *artworkWidget, QPixmap pixmap)
+void InfoManager::setEditWidget(int row, ArtworkWidget *artworkWidget, const QPixmap &pixmap)
 {
     artworkWidget->setPixmap(pixmap);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, artworkWidget);
 }
 
-void InfoManager::setEditWidget(int row, QDateEdit *dateEdit, QDate date)
+void InfoManager::setEditWidget(int row, QDateEdit *dateEdit, const QDate &date)
 {
     dateEdit->setMinimumDate(QDate(-4000,1,1));
     dateEdit->setDisplayFormat("MMMM dd yyyy");

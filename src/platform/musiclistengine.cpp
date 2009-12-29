@@ -489,7 +489,7 @@ void MusicQuery::selectArtwork(bool optional) {
                                          .arg(MediaVocabulary().artwork().toString()));
 }
 
-void MusicQuery::hasArtist(QString artist) {
+void MusicQuery::hasArtist(const QString &artist) {
     m_artistCondition = QString("?r <%1> ?artist . "
                                 "?r <%1> %2 . ")
     .arg(MediaVocabulary().musicArtist().toString())
@@ -503,7 +503,7 @@ void MusicQuery::hasNoArtist() {
     .arg(MediaVocabulary().musicArtist().toString());
 }
 
-void MusicQuery::hasAlbum(QString album) {
+void MusicQuery::hasAlbum(const QString &album) {
     m_albumCondition = QString("?r <%1> ?album . "
                                 "?r <%1> %2 . ")
     .arg(MediaVocabulary().musicAlbum().toString())
@@ -517,7 +517,7 @@ void MusicQuery::hasNoAlbum() {
     .arg(MediaVocabulary().musicAlbum().toString());
 }
 
-void MusicQuery::hasGenre(QString genre) {
+void MusicQuery::hasGenre(const QString &genre) {
     m_genreCondition = QString("?r <%1> ?genre . "
     "?r <%1> %2 . ")
     .arg(MediaVocabulary().genre().toString())
@@ -531,7 +531,7 @@ void MusicQuery::hasNoGenre() {
     .arg(MediaVocabulary().genre().toString());
 }
 
-void MusicQuery::searchString(QString str) {
+void MusicQuery::searchString(const QString &str) {
     if (! str.isEmpty()) {
         m_searchCondition = QString(
         "FILTER (regex(str(?artist),\"%1\",\"i\") || " 
@@ -542,14 +542,14 @@ void MusicQuery::searchString(QString str) {
 }
 
 
-void MusicQuery::orderBy(QString var) {
+void MusicQuery::orderBy(const QString &var) {
     if (!var.isEmpty()) {
         m_order = "ORDER BY " + var;
     }
 }
 
 
-QString MusicQuery::addOptional(bool optional, QString str) {
+QString MusicQuery::addOptional(bool optional, const QString &str) {
     if (optional) {
         return QString("OPTIONAL { ") + str + "} . ";
     } else {

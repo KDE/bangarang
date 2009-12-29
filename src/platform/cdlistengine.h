@@ -47,8 +47,6 @@ class CDListEngine : public ListEngine
         void run();
         
     private:
-        QFileInfoList crawlDir(QDir dir, QStringList mimeFilter);
-        KUrl::List QFileInfoListToKUrlList(QFileInfoList fileInfoList);
         KCompactDisc::KCompactDisc *m_cdObject;
         Phonon::MediaObject *m_mediaObject;
         bool m_loadWhenReady;

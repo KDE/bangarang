@@ -218,7 +218,7 @@ void SemanticsQuery::selectLastPlayed(bool optional) {
                                        .arg(MediaVocabulary().lastPlayed().toString()));
 }
 
-void SemanticsQuery::searchString(QString str) {
+void SemanticsQuery::searchString(const QString &str) {
     if (! str.isEmpty()) {
         //FIXME for rating search, etc.
         m_searchCondition = QString(
@@ -230,14 +230,14 @@ void SemanticsQuery::searchString(QString str) {
 }
 
 
-void SemanticsQuery::orderBy(QString var) {
+void SemanticsQuery::orderBy(const QString &var) {
     if (!var.isEmpty()) {
         m_order = "ORDER BY " + var;
     }
 }
 
 
-QString SemanticsQuery::addOptional(bool optional, QString str) {
+QString SemanticsQuery::addOptional(bool optional, const QString &str) {
     if (optional) {
         return QString("OPTIONAL { ") + str + "} . ";
     } else {

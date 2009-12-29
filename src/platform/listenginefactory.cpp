@@ -107,7 +107,7 @@ ListEngineFactory::~ListEngineFactory()
     }
 }
 
-ListEngine * ListEngineFactory::availableListEngine(QString engine)
+ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
 {
     if (engine.toLower() == "music://") {
         //Search for available list engine
@@ -306,7 +306,7 @@ QString ListEngineFactory::generateRequestSignature()
     return QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + m_requestSignatureSeed;
 }
 
-bool ListEngineFactory::engineExists(QString engine)
+bool ListEngineFactory::engineExists(const QString &engine)
 {
     if (m_engines.indexOf(engine) != -1) {
         return true;

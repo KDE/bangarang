@@ -49,7 +49,7 @@
 #include <taglib/attachedpictureframe.h>
 //#include "blur.cpp"
 
-QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
+QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 {
     TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
@@ -74,7 +74,7 @@ QPixmap Utilities::getArtworkFromTag(QString url, QSize size)
     return QPixmap::fromImage(attachedImage);
 }
 
-QPixmap Utilities::getArtworkFromMediaItem(MediaItem mediaItem)
+QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
 {
     QPixmap pixmap = QPixmap();
     if (Utilities::isMusic(mediaItem.url)) {
@@ -89,7 +89,7 @@ QPixmap Utilities::getArtworkFromMediaItem(MediaItem mediaItem)
     return pixmap;
 }
 
-QString Utilities::getArtistFromTag(QString url)
+QString Utilities::getArtistFromTag(const QString &url)
 {
     QString artist;
     if (Utilities::isMusic(url)) {
@@ -99,7 +99,7 @@ QString Utilities::getArtistFromTag(QString url)
     return artist;
 }
 
-QString Utilities::getAlbumFromTag(QString url)
+QString Utilities::getAlbumFromTag(const QString &url)
 {
     QString album;
     if (Utilities::isMusic(url)) {
@@ -109,7 +109,7 @@ QString Utilities::getAlbumFromTag(QString url)
     return album;
 }
 
-QString Utilities::getTitleFromTag(QString url)
+QString Utilities::getTitleFromTag(const QString &url)
 {
     QString title;
     if (Utilities::isMusic(url)) {
@@ -119,7 +119,7 @@ QString Utilities::getTitleFromTag(QString url)
     return title;
 }
 
-QString Utilities::getGenreFromTag(QString url)
+QString Utilities::getGenreFromTag(const QString &url)
 {
     QString genre;
     if (Utilities::isMusic(url)) {
@@ -129,7 +129,7 @@ QString Utilities::getGenreFromTag(QString url)
     return genre;
 }
 
-int Utilities::getYearFromTag(QString url)
+int Utilities::getYearFromTag(const QString &url)
 {
     int year = 0;
     if (Utilities::isMusic(url)) {
@@ -139,7 +139,7 @@ int Utilities::getYearFromTag(QString url)
     return year;
 }
 
-int Utilities::getDurationFromTag(QString url)
+int Utilities::getDurationFromTag(const QString &url)
 {
     int duration = 0;
     if (Utilities::isMusic(url)) {
@@ -149,7 +149,7 @@ int Utilities::getDurationFromTag(QString url)
     return duration;
 }
 
-int Utilities::getTrackNumberFromTag(QString url)
+int Utilities::getTrackNumberFromTag(const QString &url)
 {
     int track = 0;
     if (Utilities::isMusic(url)) {
@@ -159,7 +159,7 @@ int Utilities::getTrackNumberFromTag(QString url)
     return track;
 }
 
-bool Utilities::saveArtworkToTag(QString url, const QPixmap *pixmap)
+bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 {
     //FIXME:: HELP! Can't figure out why this doesn't work
     TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
@@ -180,7 +180,7 @@ bool Utilities::saveArtworkToTag(QString url, const QPixmap *pixmap)
     return mpegFile.save();
 }
 
-bool Utilities::saveArtworkToTag(QString url, QString imageurl)
+bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
     //QByteArray filePath = QFile::encodeName(KUrl(url).path());
     TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
@@ -201,7 +201,7 @@ bool Utilities::saveArtworkToTag(QString url, QString imageurl)
     return mpegFile.save();
 }
 
-void Utilities::setArtistTag(QString url, QString artist)
+void Utilities::setArtistTag(const QString &url, const QString &artist)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
@@ -211,7 +211,7 @@ void Utilities::setArtistTag(QString url, QString artist)
     }
 }
 
-void Utilities::setAlbumTag(QString url, QString album)
+void Utilities::setAlbumTag(const QString &url, const QString &album)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
@@ -221,7 +221,7 @@ void Utilities::setAlbumTag(QString url, QString album)
     }
 }
 
-void Utilities::setTitleTag(QString url, QString title)
+void Utilities::setTitleTag(const QString &url, const QString &title)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
@@ -231,7 +231,7 @@ void Utilities::setTitleTag(QString url, QString title)
     }
 }
 
-void Utilities::setGenreTag(QString url, QString genre)
+void Utilities::setGenreTag(const QString &url, const QString &genre)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
@@ -241,7 +241,7 @@ void Utilities::setGenreTag(QString url, QString genre)
     }
 }
 
-void Utilities::setYearTag(QString url, int year)
+void Utilities::setYearTag(const QString &url, int year)
 {
     if (Utilities::isMusic(url)) {
         TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
@@ -250,7 +250,7 @@ void Utilities::setYearTag(QString url, int year)
     }
 }
 
-void Utilities::setTrackNumberTag(QString url, int trackNumber)
+void Utilities::setTrackNumberTag(const QString &url, int trackNumber)
 {
     if (Utilities::isMusic(url)) {
         TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
@@ -259,34 +259,34 @@ void Utilities::setTrackNumberTag(QString url, int trackNumber)
     }
 }
 
-bool Utilities::isMusic(QString url)
+bool Utilities::isMusic(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
     return result->is("audio/mpeg") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack");
 }
 
-bool Utilities::isAudio(QString url)
+bool Utilities::isAudio(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     return result->is("audio/mpeg") || result->is("audio/mp4") || result->is("audio/ogg") || result->is("audio/vorbis") || result->is("audio/aac") || result->is("audio/aiff") || result->is("audio/basic") || result->is("audio/flac") || result->is("audio/mp2") || result->is("audio/mp3") || result->is("audio/vnd.rn-realaudio") || result->is("audio/wav") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack");
 }
 
-bool Utilities::isVideo(QString url)
+bool Utilities::isVideo(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
     return result->is("video/mp4") || result->is("video/mpeg") || result->is("video/ogg") || result->is("video/quicktime") || result->is("video/msvideo") || result->is("video/x-theora")|| result->is("video/x-theora+ogg") || result->is("video/x-ogm")|| result->is("video/x-ogm+ogg") || result->is("video/divx") || result->is("video/x-msvideo") || result->is("video/x-wmv") || result->is("video/x-flv") || result->is("video/x-flv");
 }
 
-bool Utilities::isM3u(QString url)
+bool Utilities::isM3u(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
     return result->is("audio/m3u") || result->is("audio/x-mpegurl");
 }
 
-bool Utilities::isPls(QString url)
+bool Utilities::isPls(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
@@ -591,7 +591,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     return mediaItem;
 }
 
-QStringList Utilities::mediaListUrls(QList<MediaItem> mediaList)
+QStringList Utilities::mediaListUrls(const QList<MediaItem> &mediaList)
 {
     QStringList urls;
     for (int i = 0; i < mediaList.count(); i++) {
@@ -668,7 +668,7 @@ TagLib::ID3v2::AttachedPictureFrame *Utilities::attachedPictureFrame(TagLib::ID3
     return selectedFrame;
 }
 
-int Utilities::mediaListDuration(QList<MediaItem> mediaList) 
+int Utilities::mediaListDuration(const QList<MediaItem> &mediaList) 
 {
     int duration = 0;
     for (int i = 0; i < mediaList.count(); i++) {
@@ -677,7 +677,7 @@ int Utilities::mediaListDuration(QList<MediaItem> mediaList)
     return duration;
 }
 
-QString Utilities::mediaListDurationText(QList<MediaItem> mediaList) 
+QString Utilities::mediaListDurationText(const QList<MediaItem> &mediaList) 
 {
     int duration = mediaListDuration(mediaList);
     int hours = duration/3600;
@@ -689,7 +689,7 @@ QString Utilities::mediaListDurationText(QList<MediaItem> mediaList)
     return QString("%1:%2:%3").arg(hours).arg(min).arg(sec);
 }
 
-QList<MediaItem> Utilities::mediaItemsDontExist(QList<MediaItem> mediaList)
+QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaList)
 {
     QList<MediaItem> items;
     for (int i = 0; i < mediaList.count(); i++) {
