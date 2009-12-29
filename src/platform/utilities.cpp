@@ -444,18 +444,19 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
                     KEncodingProber prober(KEncodingProber::Universal);
                     KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
                     if (result != KEncodingProber::NotMe) {
-                        QByteArray encodingname = prober.encoding();
-                        QString track_encoding(encodingname);
-                        if ( ( track_encoding.toLatin1() == "gb18030" ) 
-                            || ( track_encoding.toLatin1() == "big5" )
-                            || ( track_encoding.toLatin1() == "euc-kr" ) 
-                            || ( track_encoding.toLatin1() == "euc-jp" )
-                            || ( track_encoding.toLatin1() == "koi8-r" ) ) {
+                        QByteArray encodingname = prober.encoding().toLower();
+                        if ( prober.confidence() > 0.47
+                            && ( ( encodingname == "gb18030" )
+                            || ( encodingname == "big5" )
+                            || ( encodingname == "euc-kr" )
+                            || ( encodingname == "euc-jp" )
+                            || ( encodingname == "koi8-r" ) ) ) {
                             title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
                             artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
                             album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
                             genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
-                        } else if (QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
+                        } else if ((prober.confidence() < 0.3 || encodingname != "utf-8")
+                            && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
                             title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
                             artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
                             album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
