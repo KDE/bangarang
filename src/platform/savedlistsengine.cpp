@@ -46,6 +46,7 @@ void SavedListsEngine::run()
     
     
     if (!m_mediaListProperties.engineArg().isEmpty()) {
+        QString workingDir;
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));
         if (file.exists()) {
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -54,6 +55,7 @@ void SavedListsEngine::run()
             }
         } else {
             KUrl url(m_mediaListProperties.engineArg());
+            workingDir = url.directory(KUrl::AppendTrailingSlash);
             file.setFileName(url.path());
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
@@ -96,12 +98,16 @@ void SavedListsEngine::run()
                     }
                     QString url = in.readLine().trimmed();
                     MediaItem mediaItem;
+                    KUrl itemUrl(url);
                     if (!url.isEmpty()) {
-                        mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                        if (itemUrl.pathOrUrl() == itemUrl.fileName()) {
+                            itemUrl = KUrl(workingDir + itemUrl.fileName());
+                        }
+                        mediaItem = Utilities::mediaItemFromUrl(itemUrl);
                     } else {
                         continue;
                     }
-                    if ((!mediaItem.title.isEmpty()) && (url.contains(mediaItem.title))) {
+                    if (mediaItem.title == itemUrl.fileName()) {
                         mediaItem.title = title;
                     }
                     if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
@@ -127,12 +133,16 @@ void SavedListsEngine::run()
                     }
                     
                     MediaItem mediaItem;
+                    KUrl itemUrl(url);
                     if (!url.isEmpty()) {
-                        mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                        if (itemUrl.pathOrUrl() == itemUrl.fileName()) {
+                            itemUrl = KUrl(workingDir + itemUrl.fileName());
+                        }
+                        mediaItem = Utilities::mediaItemFromUrl(itemUrl);
                     } else {
                         continue;
                     }
-                    if ((!mediaItem.title.isEmpty()) && (url.contains(mediaItem.title))) {
+                    if (mediaItem.title == itemUrl.fileName()) {
                         mediaItem.title = title;
                     }
                     if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {

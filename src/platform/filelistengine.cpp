@@ -263,7 +263,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
             continue;
         } 
         mediaItem.artwork = KIcon("audio-mp4");
-        mediaItem.url = fileList.at(i).url();
+        mediaItem.url = fileList.at(i).prettyUrl();
         mediaItem.title = fileList.at(i).fileName();
         mediaItem.type = "Audio";
         mediaItem.fields["url"] = mediaItem.url;
@@ -366,7 +366,7 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
     for (int i = 0; i < fileList.count(); ++i) {
         MediaItem mediaItem;
         mediaItem.artwork = KIcon("video-x-generic");
-        mediaItem.url = fileList.at(i).url();
+        mediaItem.url = fileList.at(i).prettyUrl();
         mediaItem.title = fileList.at(i).fileName();
         mediaItem.type = "Video";
         mediaItem.fields["url"] = mediaItem.url;

@@ -254,7 +254,7 @@ class MediaItemModel : public QStandardItemModel
          *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
-        void loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged = false);
+        void loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged = false, bool updateExisting = false);
         
         /**
          * Loads a MediaItem directly into the model
