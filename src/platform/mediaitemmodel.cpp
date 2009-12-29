@@ -164,10 +164,19 @@ void MediaItemModel::reload()
     }
 }
 
-void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged)
+void MediaItemModel::loadMediaList(QList<MediaItem> mediaList, bool emitMediaListChanged, bool updateExisting)
 {
     for (int i = 0 ; i < mediaList.count() ; ++i) {
-        loadMediaItem(mediaList.at(i));
+        if (updateExisting) {
+            int rowOfExisting = rowOfUrl(mediaList.at(i).url);
+            if (rowOfExisting != -1) {
+                replaceMediaItemAt(rowOfExisting, mediaList.at(i));
+            } else {
+                loadMediaItem(mediaList.at(i));
+            }
+        } else {
+            loadMediaItem(mediaList.at(i));
+        }
     }
     if (emitMediaListChanged) {
         emit mediaListChanged();
@@ -246,7 +255,6 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
         return;
     }
     
-    
     setLoadingState(true);
     
     //Load data only for media sources
@@ -254,6 +262,7 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
     m_subRequestSignatures.clear();
     m_subRequestsDone = 0;
     bool onlySources = true;
+    QList<MediaItem> categories;
     m_requestSignature = m_listEngineFactory->generateRequestSignature();
     for (int i = 0; i < mediaList.count(); ++i) {
         if ((mediaList.at(i).type == "Audio") || (mediaList.at(i).type == "Video") || (mediaList.at(i).type == "Image")){
@@ -263,6 +272,7 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
             }
         } else if (mediaList.at(i).type == "Category") {
             onlySources = false;
+            categories.append(mediaList.at(i));
             if (mediaList.count() == 1) {
                 MediaListProperties mediaListProperties;
                 mediaListProperties.lri =  mediaList.at(i).url;
@@ -302,10 +312,10 @@ void MediaItemModel::loadSources(QList<MediaItem> mediaList)
         emit mediaListChanged();
     } else {
         //Launch load requests
-        for (int i = 0; i < mediaList.count(); ++i) {
+        for (int i = 0; i < categories.count(); ++i) {
             MediaListProperties mediaListProperties;
-            mediaListProperties.lri = mediaList.at(i).url;
-            mediaListProperties.name = mediaList.at(i).title;
+            mediaListProperties.lri = categories.at(i).url;
+            mediaListProperties.name = categories.at(i).title;
             if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
                 
                 ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
@@ -364,7 +374,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
             setLoadingState(false);
-            loadMediaList(mediaList);
+            loadMediaList(mediaList, false, true);
             m_mediaListProperties = mediaListProperties;
             if (done) {
                 if (rowCount() == 0) {
@@ -386,7 +396,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                         //All the subrequests results are in, go ahead and load results in correct order
                         int count = 0;
                         for (int i = 0; i < m_subRequestMediaLists.count(); ++i) {
-                            loadMediaList(m_subRequestMediaLists.at(i));
+                            loadMediaList(m_subRequestMediaLists.at(i), false, true);
                             count += m_subRequestMediaLists.at(i).count();
                         }
                         if (rowCount() == 0) {
