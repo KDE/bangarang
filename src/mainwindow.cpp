@@ -601,11 +601,13 @@ void MainWindow::on_showQueue_clicked()
     m_showQueue = !m_showQueue;
     if (m_showQueue) {
         ui->playlistView->setModel(m_playlist->queueModel());
+        ui->playlistView->setDragDropMode(QAbstractItemView::InternalMove);
         ui->showQueue->setToolTip(i18n("<b>Showing Upcoming</b><br>Click to show playlist"));
         ui->playlistName->setText(i18n("<b>Playlist</b>(Upcoming)"));
         ui->showQueue->setIcon(KIcon("bangarang-preview"));
     } else {
         ui->playlistView->setModel(m_playlist->playlistModel());
+        ui->playlistView->setDragDropMode(QAbstractItemView::DragDrop);
         ui->showQueue->setToolTip(i18n("Show Upcoming"));
         playlistChanged();
         ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));

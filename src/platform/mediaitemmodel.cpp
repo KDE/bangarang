@@ -20,6 +20,7 @@
 #include "listengine.h"
 #include "listenginefactory.h"
 #include "medialistcache.h"
+#include "utilities.h"
 
 #include <QFontMetrics>
 #include <QDateTime>
@@ -616,10 +617,11 @@ Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
     //Qt::ItemFlags defaultFlags = QStandardItemModel::flags(index);
     Qt::ItemFlags defaultFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     
-    if (index.isValid())
-        return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled |defaultFlags;
-    else
-        return defaultFlags;
+    if (index.isValid()) {
+        return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
+    } else {
+        return Qt::ItemIsDropEnabled | defaultFlags;
+    }
 }
 
 QStringList MediaItemModel::mimeTypes() const
@@ -638,7 +640,7 @@ QMimeData *MediaItemModel::mimeData(const QModelIndexList &indexes) const
         if (index.isValid() && index.column() != 1) {
             QUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
             urls << url;
-            indexList += QString("%1,").arg(index.row());
+            indexList += QString("BangarangRow:%1,").arg(index.row());
         }
     }
     
@@ -670,31 +672,52 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     }
     
     QList<QUrl> urls = data->urls();
-    QStringList rowsToMove = data->text().split(",", QString::SkipEmptyParts);
+    
+    bool internalMove = false;
+    QStringList rowsToMove;
+    if (data->text().startsWith("BangarangRow:")) {
+        rowsToMove = data->text().split(",", QString::SkipEmptyParts);
+        internalMove = true;
+    }
 
     //insert rows into model
-    QList<MediaItem> mediaItemsToMove;
+    QList<MediaItem> mediaItemsInserted;
     int insertionRow = beginRow;
     for (int i = 0; i < urls.count(); i++) {
-        if (rowsToMove.count() > 0) {
-            int rowToMove = rowsToMove.at(i).toInt();
+        if (internalMove) {
+            QString rowEntry = rowsToMove.at(i);
+            int rowToMove = rowEntry.remove("BangarangRow:").toInt();
             MediaItem mediaItem = mediaItemAt(rowToMove);
-            mediaItemsToMove << mediaItem;
+            mediaItemsInserted << mediaItem;
             QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
             insertRow(insertionRow, rowItems);
             insertionRow = insertionRow + 1;
+        } else {
+            QString url = QUrl::fromPercentEncoding(urls.at(i).toString().toUtf8());
+            if (Utilities::isAudio(url) || Utilities::isVideo(url)) {
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                mediaItemsInserted << mediaItem;
+                QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
+                insertRow(insertionRow, rowItems);
+                insertionRow = insertionRow + 1;
+            }
         }
     }
     
     //Update cached data to reflect inserted rows
     insertionRow = beginRow;
-    for (int i = 0; i < urls.count(); i++) {
-        MediaItem mediaItem = mediaItemsToMove.at(i);
+    for (int i = 0; i < mediaItemsInserted.count(); i++) {
+        MediaItem mediaItem = mediaItemsInserted.at(i);
         m_mediaList.insert(insertionRow, mediaItem);
         m_urlList.insert(insertionRow, mediaItem.url);
         insertionRow = insertionRow + 1;
     }
-    m_emitChangedAfterDrop = true;
+    
+    if (internalMove) {
+        m_emitChangedAfterDrop = true;
+    } else {
+        emit mediaListChanged();
+    }
     
     return true;
 }

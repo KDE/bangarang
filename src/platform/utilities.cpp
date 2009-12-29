@@ -338,7 +338,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         return mediaItem;
     } 
     
-    mediaItem.url = url.url();
+    mediaItem.url = url.prettyUrl();
     mediaItem.title = url.fileName();
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["title"] = mediaItem.title;
