@@ -98,7 +98,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     int topOffset = (height - iconWidth) / 2;
     
     if (!icon.isNull()) {
-        icon.paint(&p, left + padding, top + topOffset, iconWidth, iconWidth, Qt::AlignLeft, QIcon::Normal);
+        icon.paint(&p, left + padding, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
     } else {
         iconWidth = 0;
     }   
