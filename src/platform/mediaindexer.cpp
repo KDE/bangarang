@@ -47,7 +47,7 @@ MediaIndexer::~MediaIndexer()
 {
 }
 
-void MediaIndexer::updateInfo(QList<MediaItem> mediaList)
+void MediaIndexer::updateInfo(const QList<MediaItem> &mediaList)
 {
     if (m_nepomukInited && (mediaList.count() > 0)) {
         QString filename = QString("bangarang/%1.jb")
@@ -83,14 +83,14 @@ void MediaIndexer::updateInfo(QList<MediaItem> mediaList)
     }
 }
 
-void MediaIndexer::updateInfo(MediaItem mediaItem)
+void MediaIndexer::updateInfo(const MediaItem &mediaItem)
 {
     QList<MediaItem> mediaList;
     mediaList << mediaItem;
     updateInfo(mediaList);
 }
 
-void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
+void MediaIndexer::removeInfo(const QList<MediaItem> &mediaList)
 {
     if (m_nepomukInited && (mediaList.count() > 0)) {
         QString filename = QString("bangarang/%1.jb")
@@ -123,14 +123,14 @@ void MediaIndexer::removeInfo(QList<MediaItem> mediaList)
     }
 }
 
-void MediaIndexer::removeInfo(MediaItem mediaItem)
+void MediaIndexer::removeInfo(const MediaItem &mediaItem)
 {
     QList<MediaItem> mediaList;
     mediaList << mediaItem;
     removeInfo(mediaList);
 }
 
-void MediaIndexer::updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime)
+void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCount, const QDateTime &playDateTime)
 {
     if (m_nepomukInited && !url.isEmpty()) {
         QString filename = QString("bangarang/%1.jb")
@@ -167,7 +167,7 @@ void MediaIndexer::updatePlaybackInfo(QString url, bool incrementPlayCount, QDat
     }
 }
 
-void MediaIndexer::updateRating(QString url, int rating)
+void MediaIndexer::updateRating(const QString &url, int rating)
 {
     if (m_nepomukInited && !url.isEmpty()
         && (rating >= 0) && (rating <= 10)) {

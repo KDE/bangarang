@@ -217,7 +217,7 @@ void FileListEngine::activateAction()
     }
 }
 
-QFileInfoList FileListEngine::crawlDir(QDir dir, QStringList mimeFilter)
+QFileInfoList FileListEngine::crawlDir(const QDir &dir, const QStringList &mimeFilter)
 {
     QFileInfoList returnList;
     QFileInfoList fileList = dir.entryInfoList(QDir::Files, QDir::Name);
@@ -238,7 +238,7 @@ QFileInfoList FileListEngine::crawlDir(QDir dir, QStringList mimeFilter)
     return returnList;
 }
 
-KUrl::List FileListEngine::QFileInfoListToKUrlList(QFileInfoList fileInfoList)
+KUrl::List FileListEngine::QFileInfoListToKUrlList(const QFileInfoList &fileInfoList)
 {
     KUrl::List urlList;
     for (int i = 0; i < fileInfoList.count(); ++i) {
@@ -247,7 +247,7 @@ KUrl::List FileListEngine::QFileInfoListToKUrlList(QFileInfoList fileInfoList)
     return urlList;
 }
 
-QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
+QList<MediaItem> FileListEngine::readAudioUrlList(const KUrl::List &fileList)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QList<MediaItem> mediaList;
@@ -357,7 +357,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(KUrl::List fileList)
     return mediaList;
 }
 
-QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
+QList<MediaItem> FileListEngine::readVideoUrlList(const KUrl::List &fileList)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
@@ -514,7 +514,7 @@ QList<MediaItem> FileListEngine::readVideoUrlList(KUrl::List fileList)
     return mediaList;
 }
 
-QString FileListEngine::engineFilterFromUrlList(KUrl::List fileList)
+QString FileListEngine::engineFilterFromUrlList(const KUrl::List &fileList)
 {
     QString engineFilter;
     for (int i = 0; i < fileList.count(); i++) {

@@ -36,10 +36,10 @@ class MediaListCache : public QObject
         ~MediaListCache();
         
         void addMediaList(MediaListProperties mediaListProperties, QList<MediaItem> mediaList);
-        void removeMediaList(QString lri);
-        QList<MediaItem> mediaList(QString lri);
-        MediaListProperties mediaListProperties(QString lri);
-        bool isInCache(QString lri);
+        void removeMediaList(const QString &lri);
+        QList<MediaItem> mediaList(const QString &lri);
+        MediaListProperties mediaListProperties(const QString &lri);
+        bool isInCache(const QString &lri);
         
     private:
         QList< QList<MediaItem> > m_mediaListCache;

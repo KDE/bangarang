@@ -91,13 +91,13 @@ class VideoQuery {
         void hasSeason(int season);
         void hasNoSeason();
         
-        void hasSeriesName(QString seriesName);
-        void hasGenre(QString genre);
+        void hasSeriesName(const QString &seriesName);
+        void hasGenre(const QString &genre);
         void hasNoSeriesName();
         
-        void searchString(QString str);
+        void searchString(const QString &str);
         
-        void orderBy(QString var);
+        void orderBy(const QString &var);
         
         QString query();
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
@@ -156,7 +156,7 @@ class VideoQuery {
         
         QString m_order;
         
-        QString addOptional(bool optional, QString str);
+        QString addOptional(bool optional, const QString &str);
         QString getPrefix();
 };
 

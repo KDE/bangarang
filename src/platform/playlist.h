@@ -65,14 +65,14 @@ class Playlist : public QObject
          *
          * @param mediaList List of MediaItems to add
          */
-        void addMediaList(QList<MediaItem> mediaList);
+        void addMediaList(const QList<MediaItem> &mediaList);
         
         /**
          * Adds a MediaItem to playlist.
          *
          * @param mediaItem MediaItem to add.
          */
-        void addMediaItem(MediaItem mediaItem);
+        void addMediaItem(const MediaItem &mediaItem);
         
         /**
          * Clears the playlist
@@ -123,7 +123,7 @@ class Playlist : public QObject
          *
          * @param mediaList list of MediaItems to play
          */
-        void playMediaList(QList<MediaItem> mediaList);
+        void playMediaList(const QList<MediaItem> &mediaList);
         
         /**
          * Returns the MediaItemModel containing the list of MediaItems

@@ -221,7 +221,7 @@ void AudioStreamQuery::selectArtwork(bool optional) {
                                          .arg(MediaVocabulary().artwork().toString()));
 }
 
-void AudioStreamQuery::searchString(QString str) {
+void AudioStreamQuery::searchString(const QString &str) {
     if (! str.isEmpty()) {
         m_searchCondition = QString(
         "FILTER (regex(str(?artist),\"%1\",\"i\") || " 
@@ -232,14 +232,14 @@ void AudioStreamQuery::searchString(QString str) {
 }
 
 
-void AudioStreamQuery::orderBy(QString var) {
+void AudioStreamQuery::orderBy(const QString &var) {
     if (!var.isEmpty()) {
         m_order = "ORDER BY " + var;
     }
 }
 
 
-QString AudioStreamQuery::addOptional(bool optional, QString str) {
+QString AudioStreamQuery::addOptional(bool optional, const QString &str) {
     if (optional) {
         return QString("OPTIONAL { ") + str + "} . ";
     } else {

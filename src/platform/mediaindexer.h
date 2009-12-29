@@ -49,7 +49,7 @@ class MediaIndexer : public QObject
          *
          * @param mediaList List of MediaItems containing updated information.
          */
-        void updateInfo(QList<MediaItem> mediaList);
+        void updateInfo(const QList<MediaItem> &mediaList);
         
         /**
         * Update information in the Nepomuk datastore using the specified
@@ -57,7 +57,7 @@ class MediaIndexer : public QObject
         *
         * @param mediaItem MediaItem containing updated information.
         */
-        void updateInfo(MediaItem mediaItem);
+        void updateInfo(const MediaItem &mediaItem);
         
         /**
          * Remove media information from the Nepomuk datastore corresponding
@@ -66,7 +66,7 @@ class MediaIndexer : public QObject
          * @param mediaList List of MediaItems whose information should be
          *                  removed from the datastore.
          */
-        void removeInfo(QList<MediaItem> mediaList);
+        void removeInfo(const QList<MediaItem> &mediaList);
         
         /**
         * Remove media information from the Nepomuk datastore corresponding
@@ -75,7 +75,7 @@ class MediaIndexer : public QObject
         * @param mediaItem MediaItem whose information should be
         *                  removed from the datastore.
         */
-        void removeInfo(MediaItem mediaItem);
+        void removeInfo(const MediaItem &mediaItem);
         
         /**
          * Update the playback time and/or play count for the specified url.
@@ -84,7 +84,7 @@ class MediaIndexer : public QObject
          * @param incrementPlayCount if true, the play count will be incremented
          * @param playDateTime DateTime of playback
          */
-        void updatePlaybackInfo(QString url, bool incrementPlayCount, QDateTime playDateTime);
+        void updatePlaybackInfo(const QString &url, bool incrementPlayCount, const QDateTime &playDateTime);
         
         /**
          * Update the rating of the specified url.
@@ -92,7 +92,7 @@ class MediaIndexer : public QObject
          * @param url Url of MediaItem
          * @param rating Rating: and integer between 0 and 10
          */
-        void updateRating(QString url, int rating);
+        void updateRating(const QString &url, int rating);
         
         void state();
         

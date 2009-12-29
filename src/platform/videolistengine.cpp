@@ -827,7 +827,7 @@ void VideoQuery::hasNoSeason() {
 			.arg(m_mediaVocabulary.videoSeason().toString());
 }
 
-void VideoQuery::hasSeriesName(QString seriesName) {
+void VideoQuery::hasSeriesName(const QString &seriesName) {
     m_seriesNameCondition = QString("?r <%1> ?series . "
                                     "?series <%2> ?seriesName . "
                                     "?series <%2> %3 . ")
@@ -836,7 +836,7 @@ void VideoQuery::hasSeriesName(QString seriesName) {
                                     .arg(Soprano::Node::literalToN3(seriesName));
 }
 
-void VideoQuery::hasGenre(QString genre) {
+void VideoQuery::hasGenre(const QString &genre) {
     m_genreCondition = QString("?r <%1> %2 . "
                                "?r <%1> ?genre . ")
     .arg(m_mediaVocabulary.genre().toString())
@@ -852,7 +852,7 @@ void VideoQuery::hasNoSeriesName() {
             .arg(m_mediaVocabulary.title().toString());
 }
 
-void VideoQuery::searchString(QString str) {
+void VideoQuery::searchString(const QString &str) {
 	if (! str.isEmpty()) {
 		m_searchCondition = QString(
 				"FILTER (regex(str(?title),\"%1\",\"i\") || "
@@ -869,14 +869,14 @@ void VideoQuery::searchString(QString str) {
 }
 
 
-void VideoQuery::orderBy(QString var) {
+void VideoQuery::orderBy(const QString &var) {
 	if (!var.isEmpty()) {
 		m_order = "ORDER BY " + var;
 	}
 }
 
 
-QString VideoQuery::addOptional(bool optional, QString str) {
+QString VideoQuery::addOptional(bool optional, const QString &str) {
 	if (optional) {
 		return QString("OPTIONAL { ") + str + "} . ";
  	} else {

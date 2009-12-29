@@ -65,7 +65,7 @@ class ListEngineFactory : public QObject
          *               ListEngine should be returned.
          */
         
-        virtual ListEngine* availableListEngine(QString engine);
+        virtual ListEngine* availableListEngine(const QString &engine);
         
         /**
          * Generates a unique request signature the MediaItemModel
@@ -77,7 +77,7 @@ class ListEngineFactory : public QObject
          * Returns true if a ListEngine exists for the specified
          * engine.
          */
-        bool engineExists(QString engine);
+        bool engineExists(const QString &engine);
         
     private:
         MediaItemModel * m_parent;

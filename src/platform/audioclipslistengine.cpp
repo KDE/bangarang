@@ -192,7 +192,7 @@ void AudioClipsQuery::selectArtwork(bool optional) {
                                      .arg(MediaVocabulary().artwork().toString()));
 }
 
-void AudioClipsQuery::searchString(QString str) {
+void AudioClipsQuery::searchString(const QString &str) {
     if (! str.isEmpty()) {
         m_searchCondition = QString(
         "FILTER (regex(str(?artist),\"%1\",\"i\") || " 
@@ -203,14 +203,14 @@ void AudioClipsQuery::searchString(QString str) {
 }
 
 
-void AudioClipsQuery::orderBy(QString var) {
+void AudioClipsQuery::orderBy(const QString &var) {
     if (!var.isEmpty()) {
         m_order = "ORDER BY " + var;
     }
 }
 
 
-QString AudioClipsQuery::addOptional(bool optional, QString str) {
+QString AudioClipsQuery::addOptional(bool optional, const QString &str) {
     if (optional) {
         return QString("OPTIONAL { ") + str + "} . ";
     } else {
