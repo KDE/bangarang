@@ -786,7 +786,7 @@ void Playlist::metaDataChanged()
         if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"].toString() == "Audio Stream")) {
             
             mediaItem.subTitle = m_mediaObject->metaData("TITLE").join(" ");
-            m_nowPlaying->replaceMediaItemAt(0, mediaItem);
+            m_nowPlaying->replaceMediaItemAt(0, mediaItem, true);
         }
     }
 }
