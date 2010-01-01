@@ -226,6 +226,9 @@ class MediaVocabulary {
         static QString videoProducerBinding();
         static QString videoActorBinding();
         static QString videoCinematographerBinding();
+        
+        //RDF storage procedure lookup
+        QStringList storageProcedure(QUrl mediaProperty);
 
     private:
         int m_vocabulary;
