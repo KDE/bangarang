@@ -230,7 +230,17 @@ QUrl MediaVocabulary::typeMusicArtist()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Artist");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#Contact");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::typeMusicAlbum()
+{
+    QUrl returnUrl = QUrl();
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#MusicAlbum");
     }
     
     return returnUrl;
@@ -325,7 +335,16 @@ QUrl MediaVocabulary::created()
 
 QUrl MediaVocabulary::releaseDate()
 {
-    return QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
+    QUrl returnUrl = QUrl();
+    if (m_vocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
+    } else if (m_vocabulary == MediaVocabulary::nmm) {
+        //Draft nmm ontology is extension of nie
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
+    }
+    
+    return returnUrl;
+    
 }
 
 QUrl MediaVocabulary::genre()
@@ -1285,6 +1304,32 @@ QString MediaVocabulary::videoCinematographerBinding()
     return "cinematographer";
 }
 
+QStringList MediaVocabulary::storageProcedure(QUrl mediaProperty)
+{
+    if (mediaProperty == musicArtist()) {
+        if (m_musicVocabulary == nmm) {
+            return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
+                                    QString("[ResourceValue]::[Type]::%1").arg(typeMusicArtist().toString()) <<
+                                    QString("[ResourceValue]::%1::[Value]").arg(musicArtistName().toString());
+        } else {
+            return  QStringList() << QString("[Resource]::[Property]::[Value]");
+        }
+    } else if (mediaProperty == musicAlbum()) {
+        if (m_musicVocabulary == nmm) {
+            return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
+                                    QString("[ResourceValue]::[Type]::%1").arg(typeMusicAlbum().toString()) <<
+                                    QString("[ResourceValue]::%1::[Value]").arg(musicAlbumName().toString());
+        } else {
+            return QStringList() << QString("[Resource]::[Property]::[Value]");
+        }
+    } else if (mediaProperty == videoSeries()) {
+        return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
+                                QString("[ResourceValue]::[Type]::%1").arg(typeTVSeries().toString()) <<
+                                QString("[ResourceValue]::%1::[Value]").arg(videoSeriesTitle().toString());
+    } else {
+        return QStringList() << QString("[Resource]::[Property]::[Value]");
+    }
+}
 
 QString MediaVocabulary::addOptional(const QString &str) {
     return QString("OPTIONAL { ") + str + "} . ";

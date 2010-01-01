@@ -677,7 +677,7 @@ void InfoManager::saveInfoToMediaModel()
                 }
                 mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 
-                QSpinBox *yearWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(5), 1));
+                QSpinBox *yearWidget = qobject_cast<QSpinBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(8), 1));
                 if (yearWidget->value() != 0) {
                     QDate releaseDate = QDate(yearWidget->value(), 1, 1);
                     mediaItem.fields["releaseDate"] = releaseDate;
