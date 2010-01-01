@@ -17,15 +17,26 @@
 */
 
 #include "mediavocabulary.h"
+#include <kdeversion.h>
+#include <KDebug>
+#include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
+#include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/XMLSchema>
 
 
 MediaVocabulary::MediaVocabulary()
 {
-    m_vocabulary = MediaVocabulary::xesam;
-    m_audioVocabulary = MediaVocabulary::nie;
-    m_musicVocabulary = MediaVocabulary::xesam;
+    if (KDE::versionMinor() <= 3) {
+        m_vocabulary = MediaVocabulary::xesam;
+        m_audioVocabulary = MediaVocabulary::nie;
+        m_musicVocabulary = MediaVocabulary::xesam;
+    } else {
+        m_vocabulary = MediaVocabulary::nmm;
+        m_audioVocabulary = MediaVocabulary::nmm;
+        m_musicVocabulary = MediaVocabulary::nmm;
+    }
     m_videoVocabulary = MediaVocabulary::nmm;
 }
 
@@ -215,6 +226,16 @@ QUrl MediaVocabulary::typeImage()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::typeMusicArtist()
+{
+    QUrl returnUrl = QUrl();
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Artist");
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::title()
 {
     QUrl returnUrl = QUrl();
@@ -263,9 +284,10 @@ QUrl MediaVocabulary::duration()
 QUrl MediaVocabulary::lastPlayed()
 {
     QUrl returnUrl = QUrl();
-    if (m_vocabulary == MediaVocabulary::xesam) {
+    //TODO:Waiting for Nepmouk ontology for useCount and lastUsed
+    //if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::lastUsed();
-    }
+    //}
     
     return returnUrl;
 }
@@ -273,21 +295,17 @@ QUrl MediaVocabulary::lastPlayed()
 QUrl MediaVocabulary::playCount()
 {
     QUrl returnUrl = QUrl();
-    if (m_vocabulary == MediaVocabulary::xesam) {
+    //TODO:Waiting for Nepmouk ontology for useCount and lastUsed
+    //if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::useCount();
-    }
+    //}
     
     return returnUrl;
 }
 
 QUrl MediaVocabulary::artwork()
 {
-    QUrl returnUrl = QUrl();
-    
-    //Bangarang extension to nmm ontology draft
-    returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
-    
-    return returnUrl;
+    return QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
 }
 
 QUrl MediaVocabulary::created()
@@ -307,13 +325,7 @@ QUrl MediaVocabulary::created()
 
 QUrl MediaVocabulary::releaseDate()
 {
-    QUrl returnUrl = QUrl();
-    if (m_vocabulary == MediaVocabulary::nmm) {
-        //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
-    }
-    
-    return returnUrl;
+    return QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
 }
 
 QUrl MediaVocabulary::genre()
@@ -327,13 +339,19 @@ QUrl MediaVocabulary::genre()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::rating()
+{
+    return Soprano::Vocabulary::NAO::numericRating();
+    
+}
+
 QUrl MediaVocabulary::musicArtist()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Artist");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#creator");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#leadArtist");
     }
@@ -347,7 +365,7 @@ QUrl MediaVocabulary::musicArtistName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Artist");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#fullName");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#fullName");
     }
@@ -375,7 +393,7 @@ QUrl MediaVocabulary::musicAlbumName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::album();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#albumTitle");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#albumTitle");
     }
@@ -442,6 +460,16 @@ QUrl MediaVocabulary::videoSeries()
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#series");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::videoSeriesTitle()
+{
+    QUrl returnUrl = QUrl();
+    if (m_videoVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
     }
     
     return returnUrl;
@@ -547,4 +575,739 @@ QUrl MediaVocabulary::videoCinematographer()
     }
     
     return returnUrl;
+}
+
+QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeAudio());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+         statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeAudioMusic(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeAudioMusic());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+         statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeAudioStream(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeAudioStream());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+         statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeAnyAudio(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = QString("{%1} UNION  {%2} UNION {%3} ")
+                        .arg(hasType(resourceBinding, typeAudio()))
+                        .arg(hasType(resourceBinding, typeAudioMusic()))
+                        .arg(hasType(resourceBinding, typeAudioStream()));
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeVideo(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeVideo());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeVideoMovie(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeVideoMovie());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeVideoTVShow(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeVideoTVShow());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeAnyVideo(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = QString("{%1} UNION  {%2} UNION {%3} ")
+                        .arg(hasType(resourceBinding, typeVideo()))
+                        .arg(hasType(resourceBinding, typeVideoMovie()))
+                        .arg(hasType(resourceBinding, typeVideoTVShow()));
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeImage(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeImage());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeTVSeries(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeTVSeries());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeMusicArtist(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeMusicArtist());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeMusicAlbum(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = hasType(resourceBinding, typeVideoTVShow());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+
+QString MediaVocabulary::hasTitle(MediaQuery::Match match, 
+                                  const QString &title, 
+                                  MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = titleBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::title(), propertyBinding);
+    if (!title.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, title, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasDescription(MediaQuery::Match match, 
+                                        const QString &description, 
+                                        MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = descriptionBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::description(), propertyBinding);
+    if (!description.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, description, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasDuration(MediaQuery::Match match, 
+                                     int duration,
+                                     MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = durationBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::duration(), propertyBinding);
+    if (duration != -2) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, duration, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasLastPlayed(MediaQuery::Match match, 
+                      const QDateTime &lastPlayed, 
+                      MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = lastPlayedBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::lastPlayed(), propertyBinding);
+    if (lastPlayed.isValid()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, lastPlayed, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasPlayCount(MediaQuery::Match match, 
+                     int playCount, 
+                     MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = playCountBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::playCount(), propertyBinding);
+    if (playCount != -1) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, playCount, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = artworkBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::artwork(), propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasCreated(MediaQuery::Match match, 
+                   const QDate &created, 
+                   MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = createdBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::created(), propertyBinding);
+    if (created.isValid()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, created, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasGenre(MediaQuery::Match match, 
+              const QString &genre, 
+              MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = genreBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::genre(), propertyBinding);
+    if (!genre.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, genre, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasReleaseDate(MediaQuery::Match match, 
+                                        const QDate &releaseDate, 
+                                        MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = releaseDateBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::releaseDate(), propertyBinding);
+    if (releaseDate.isValid()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, releaseDate, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasRating(MediaQuery::Match match, 
+                  int rating, 
+                  MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = ratingBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::rating(), propertyBinding);
+    if (rating != -1) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, rating, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
+                                            const QString &artistName, 
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicArtistNameBinding();
+    QString statement;
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        QString artistResourceBinding = "artistResource";
+        statement = hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding);
+        statement += hasProperty(artistResourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
+    } else {
+        statement = hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
+    }
+        
+    if (!artistName.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, artistName, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicAlbumTitle(MediaQuery::Match match,
+                                            const QString &albumTitle,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicAlbumTitleBinding();
+    QString statement;
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        QString albumResourceBinding = "albumResource";
+        statement = hasProperty(resourceBinding, MediaVocabulary::musicAlbum(), albumResourceBinding);
+        statement += hasProperty(albumResourceBinding, MediaVocabulary::musicAlbumName(), propertyBinding);
+    } else {
+        statement = hasProperty(resourceBinding, MediaVocabulary::musicAlbumName(), propertyBinding);
+    }
+    
+    if (!albumTitle.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, albumTitle, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicAlbumYear(MediaQuery::Match match,
+                                           int year, 
+                                           MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicAlbumYearBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::musicAlbumYear(), propertyBinding);
+    if (year != 0) {
+        QDate yearDate = QDate(year, 1, 1);
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, yearDate, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicTrackNumber(MediaQuery::Match match,
+                                             int trackNumber, 
+                                             MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicTrackNumberBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::musicTrackNumber(), propertyBinding);
+    if (trackNumber != 0) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, trackNumber, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoSeriesTitle(MediaQuery::Match match,
+                                             const QString &seriesTitle,
+                                             MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoSeriesTitleBinding();
+    QString seriesResourceBinding = "seriesResource";
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoSeries(), seriesResourceBinding);
+    statement += hasProperty(seriesResourceBinding, MediaVocabulary::videoSeriesTitle(), propertyBinding);
+    if (!seriesTitle.isNull()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, seriesTitle, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoSynopsis(MediaQuery::Match match,
+                                          const QString &synopsis,
+                                          MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoSynopsisBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoSynopsis(), propertyBinding);
+    if (!synopsis.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, synopsis, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+                                              
+QString MediaVocabulary::hasVideoSeason(MediaQuery::Match match,
+                                        int season, 
+                                        MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoSeasonBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoSeason(), propertyBinding);
+    if (season != 0) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, season, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoEpisodeNumber(MediaQuery::Match match,
+                                               int episodeNumber, 
+                                               MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoEpisodeNumberBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoEpisodeNumber(), propertyBinding);
+    if (episodeNumber != 0) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, episodeNumber, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoAudienceRating(MediaQuery::Match match,
+                                                const QString &audienceRating, 
+                                                MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoAudienceRatingBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoAudienceRating(), propertyBinding);
+    if (!audienceRating.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, audienceRating, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoWriter(MediaQuery::Match match,
+                                        const QString &writer, 
+                                        MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoWriterBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoWriter(), propertyBinding);
+    if (!writer.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, writer, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoDirector(MediaQuery::Match match,
+                                          const QString &director, 
+                                          MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoDirectorBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoDirector(), propertyBinding);
+    if (!director.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, director, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoAssistantDirector(MediaQuery::Match match,
+                                                   const QString &assistantDirector, 
+                                                   MediaQuery::Constraint constraint)
+                                                   
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoAssistantDirectorBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), propertyBinding);
+    if (!assistantDirector.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, assistantDirector, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+QString MediaVocabulary::hasVideoProducer(MediaQuery::Match match,
+                                          const QString &producer, 
+                                          MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoProducerBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoProducer(), propertyBinding);
+    if (!producer.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, producer, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoActor(MediaQuery::Match match,
+                                       const QString &actor, 
+                                       MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoActorBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoActor(), propertyBinding);
+    if (!actor.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, actor, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoCinematographer(MediaQuery::Match match,
+                                                 const QString &cinematographer, 
+                                                 MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoCinematographerBinding();
+    QString statement = hasProperty(resourceBinding, MediaVocabulary::videoCinematographer(), propertyBinding);
+    if (!cinematographer.isEmpty()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, cinematographer, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::mediaResourceBinding()
+{
+    return "r";
+}
+
+QString MediaVocabulary::mediaResourceUrlBinding()
+{
+    return "url";
+}
+
+QString MediaVocabulary::titleBinding()
+{
+    return "title";
+}
+
+QString MediaVocabulary::descriptionBinding()
+{
+    return "description";
+}
+
+QString MediaVocabulary::durationBinding()
+{
+    return "duration";
+}
+
+QString MediaVocabulary::lastPlayedBinding()
+{
+    return "lastPlayed";
+}
+
+QString MediaVocabulary::playCountBinding()
+{
+    return "playCount";
+}
+
+QString MediaVocabulary::artworkBinding()
+{
+    return "artwork";
+}
+
+QString MediaVocabulary::createdBinding()
+{
+    return "created";
+}
+
+QString MediaVocabulary::genreBinding()
+{
+    return "genre";
+}
+
+QString MediaVocabulary::releaseDateBinding()
+{
+    return "releaseDate";
+}
+
+QString MediaVocabulary::ratingBinding()
+{
+    return "rating";
+}
+
+QString MediaVocabulary::musicArtistBinding()
+{
+    return "artist";
+}
+
+QString MediaVocabulary::musicArtistNameBinding()
+{
+    return "artist";
+}
+
+QString MediaVocabulary::musicAlbumBinding()
+{
+    return "album";
+}
+
+QString MediaVocabulary::musicAlbumTitleBinding()
+{
+    return "albumTitle";
+}
+
+QString MediaVocabulary::musicAlbumYearBinding()
+{
+    return "albumYearDate";
+}
+
+QString MediaVocabulary::musicTrackNumberBinding()
+{
+    return "trackNumber";
+}
+
+QString MediaVocabulary::musicGenreBinding()
+{
+    return "genre";
+}
+
+QString MediaVocabulary::videoGenreBinding()
+{
+    return "genre";
+}
+
+QString MediaVocabulary::videoSeriesTitleBinding()
+{
+    return "seriesTitle";
+}
+
+QString MediaVocabulary::videoSynopsisBinding()
+{
+    return "synopsis";
+}
+
+QString MediaVocabulary::videoSeasonBinding()
+{
+    return "season";
+}
+
+QString MediaVocabulary::videoEpisodeNumberBinding()
+{
+    return "episodeNumber";
+}
+
+QString MediaVocabulary::videoAudienceRatingBinding()
+{
+    return "audienceRating";
+}
+
+QString MediaVocabulary::videoWriterBinding()
+{
+    return "writer";
+}
+
+QString MediaVocabulary::videoDirectorBinding()
+{
+    return "director";
+}
+
+QString MediaVocabulary::videoAssistantDirectorBinding()
+{
+    return "assistantDirector";
+}
+
+QString MediaVocabulary::videoProducerBinding()
+{
+    return "producer";
+}
+
+QString MediaVocabulary::videoActorBinding()
+{
+    return "actor";
+}
+
+QString MediaVocabulary::videoCinematographerBinding()
+{
+    return "cinematographer";
+}
+
+
+QString MediaVocabulary::addOptional(const QString &str) {
+    return QString("OPTIONAL { ") + str + "} . ";
+}
+
+QString MediaVocabulary::fileUrl(const QString &resourceBinding)
+{
+    return QString("OPTIONAL { ?%1 nie:url ?%2 } . ")
+                   .arg(resourceBinding)
+                   .arg(mediaResourceUrlBinding());
+}
+
+QString MediaVocabulary::hasType(const QString &resourceBinding, const QUrl &type)
+{
+    return QString("?%1 rdf:type <%2> . ")
+                .arg(resourceBinding)
+                .arg(type.toString());
+}
+
+QString MediaVocabulary::hasProperty(const QString &resourceBinding, const QUrl &property, const QString &propertyBinding)
+{
+    return QString("?%1 <%2> ?%3 . ")
+                .arg(resourceBinding)
+                .arg(property.toString())
+                .arg(propertyBinding);
 }

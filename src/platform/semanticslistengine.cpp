@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "mediavocabulary.h"
+#include "mediaquery.h"
 #include "utilities.h"
 #include <KIcon>
 #include <KUrl>
@@ -56,6 +57,7 @@ void SemanticsListEngine::run()
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
     QString mediaType;
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     //Parse filter
     if (!engineFilter.isNull()) {
@@ -65,26 +67,41 @@ void SemanticsListEngine::run()
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "frequent") {
-            SemanticsQuery query = SemanticsQuery(true);
             if (!mediaType.isEmpty()) {
+                MediaQuery query;
+                QStringList bindings;
+                bindings.append(mediaVocabulary.mediaResourceBinding());
+                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                bindings.append(mediaVocabulary.playCountBinding());
+                query.select(bindings, MediaQuery::Distinct);
+                query.startWhere();
                 if (mediaType == "audio") {
-                    query.selectAudioResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
                 } else if (mediaType == "video") {
-                    query.selectVideoResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.selectPlayCount();
-                query.selectLastPlayed(true);
-                query.orderBy("DESC(?playcount) DESC(?lastplayed)");
+                query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required));
+                query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
+                query.endWhere();
+                QStringList orderByBindings;
+                QList<MediaQuery::Order> order;
+                orderByBindings.append(mediaVocabulary.playCountBinding());
+                order.append(MediaQuery::Descending);
+                orderByBindings.append(mediaVocabulary.lastPlayedBinding());
+                order.append(MediaQuery::Descending);
+                query.orderBy(orderByBindings, order);
+                query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
                 //Build media list from results
                 while( it.next() ) {
-                    QUrl url = it.binding("url").uri().isEmpty() ? 
-                                    it.binding("r").uri() :
-                                    it.binding("url").uri();
+                    QUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding())
+                                   .uri().isEmpty() ? it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
+                                   it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
-                    mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Played %1 times").arg(it.binding("playcount").literal().toInt());
+                    int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
+                    mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Played %1 times").arg(playCount);
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
@@ -92,24 +109,38 @@ void SemanticsListEngine::run()
             }
         }
         if (engineArg.toLower() == "recent") {
-            SemanticsQuery query = SemanticsQuery(true);
             if (!mediaType.isEmpty()) {
+                MediaQuery query;
+                QStringList bindings;
+                bindings.append(mediaVocabulary.mediaResourceBinding());
+                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                bindings.append(mediaVocabulary.lastPlayedBinding());
+                query.select(bindings, MediaQuery::Distinct);
+                query.startWhere();
                 if (mediaType == "audio") {
-                    query.selectAudioResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
                 } else if (mediaType == "video") {
-                    query.selectVideoResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.selectLastPlayed();
-                query.orderBy("DESC(?lastplayed)");
+                query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
+                query.endWhere();
+                QStringList orderByBindings;
+                QList<MediaQuery::Order> order;
+                orderByBindings.append(mediaVocabulary.lastPlayedBinding());
+                order.append(MediaQuery::Descending);
+                query.orderBy(orderByBindings, order);
+                query.addLimit(20);
+                
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
                 while( it.next() ) {
-                    QUrl url = it.binding("url").uri().isEmpty() ? 
-                                    it.binding("r").uri() :
-                                    it.binding("url").uri();
+                    QUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding())
+                                    .uri().isEmpty() ? 
+                                    it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
+                                    it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
-                    QString lastPlayed = it.binding("lastplayed").literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap") ;
+                    QString lastPlayed = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap") ;
                     mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Last Played: %1").arg(lastPlayed);
                     mediaList.append(mediaItem);
                 }
@@ -118,23 +149,39 @@ void SemanticsListEngine::run()
             }
         }
         if (engineArg.toLower() == "highest") {
-            SemanticsQuery query = SemanticsQuery(true);
             if (!mediaType.isEmpty()) {
+                MediaQuery query;
+                QStringList bindings;
+                bindings.append(mediaVocabulary.mediaResourceBinding());
+                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                bindings.append(mediaVocabulary.ratingBinding());
+                query.select(bindings, MediaQuery::Distinct);
+                query.startWhere();
                 if (mediaType == "audio") {
-                    query.selectAudioResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
                 } else if (mediaType == "video") {
-                    query.selectVideoResource();
+                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.selectRating();
-                query.selectPlayCount(true);
-                query.orderBy("DESC(?rating) DESC(?playcount) ");
+                query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required));
+                query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+                query.endWhere();
+                QStringList orderByBindings;
+                QList<MediaQuery::Order> order;
+                orderByBindings.append(mediaVocabulary.ratingBinding());
+                order.append(MediaQuery::Descending);
+                orderByBindings.append(mediaVocabulary.playCountBinding());
+                order.append(MediaQuery::Descending);
+                query.orderBy(orderByBindings, order);
+                query.addLimit(20);
+                
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
                 while( it.next() ) {
-                    QUrl url = it.binding("url").uri().isEmpty() ? 
-                                    it.binding("r").uri() :
-                                    it.binding("url").uri();
+                    QUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding())
+                                .uri().isEmpty() ? 
+                                it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
+                                it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     mediaList.append(mediaItem);
                 }
@@ -154,159 +201,4 @@ void SemanticsListEngine::run()
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();
-}
-
-SemanticsQuery::SemanticsQuery(bool distinct) :
-m_distinct(distinct),
-m_selectAudioResource(false),
-m_selectVideoResource(false),
-m_selectRating(false),
-m_selectPlayCount(false),
-m_selectLastPlayed(false)
-{
-}
-
-void SemanticsQuery::selectAudioResource() {
-    m_selectAudioResource = true;
-    //NOTE: nie:url is not in any released nie ontology that I can find.
-    //      In future KDE will use nfo:fileUrl so this will need to be changed.
-    m_audioResourceCondition = addOptional(false,
-                                    QString(" { ?r rdf:type <%1> } "
-                                            " UNION  "
-                                            " { ?r rdf:type <%2> } "
-                                            " UNION "
-                                            " { ?r rdf:type <%3> } "
-                                            " OPTIONAL { ?r nie:url ?url } . ")
-                                    .arg(MediaVocabulary().typeAudio().toString())
-                                    .arg(MediaVocabulary().typeAudioMusic().toString())
-                                    .arg(MediaVocabulary().typeAudioStream().toString()));
-}
-
-void SemanticsQuery::selectVideoResource() {
-    m_selectVideoResource = true;
-    //NOTE: nie:url is not in any released nie ontology that I can find.
-    //      In future KDE will use nfo:fileUrl so this will need to be changed.
-    m_videoResourceCondition = QString(" { ?r rdf:type <%1> } "
-                                           " UNION  "
-                                           " { ?r rdf:type <%2> } "
-                                           " UNION "
-                                           " { ?r rdf:type <%3> } "
-                                           " OPTIONAL { ?r nie:url ?url } . ")
-                                           .arg(MediaVocabulary().typeVideo().toString())
-                                           .arg(MediaVocabulary().typeVideoMovie().toString())
-                                           .arg(MediaVocabulary().typeVideoTVShow().toString());
-}
-
-void SemanticsQuery::selectRating(bool optional) {
-    m_selectRating = true;
-    m_ratingCondition = addOptional(optional,
-                                   QString("?r <%1> ?rating . ")
-                                   .arg(Soprano::Vocabulary::NAO::numericRating().toString()));
-}
-
-void SemanticsQuery::selectPlayCount(bool optional) {
-    m_selectPlayCount = true;
-    m_playCountCondition = addOptional(optional,
-                                    QString("?r <%1> ?playcount . ")
-                                    .arg(MediaVocabulary().playCount().toString()));
-}
-
-void SemanticsQuery::selectLastPlayed(bool optional) {
-    m_selectLastPlayed = true;
-    m_lastPlayedCondition = addOptional(optional,
-                                       QString("?r <%1> ?lastplayed . ")
-                                       .arg(MediaVocabulary().lastPlayed().toString()));
-}
-
-void SemanticsQuery::searchString(const QString &str) {
-    if (! str.isEmpty()) {
-        //FIXME for rating search, etc.
-        m_searchCondition = QString(
-        "FILTER (regex(str(?artist),\"%1\",\"i\") || " 
-        "regex(str(?album),\"%1\",\"i\") || "
-        "regex(str(?title),\"%1\",\"i\")) ")
-        .arg(str);
-    }
-}
-
-
-void SemanticsQuery::orderBy(const QString &var) {
-    if (!var.isEmpty()) {
-        m_order = "ORDER BY " + var;
-    }
-}
-
-
-QString SemanticsQuery::addOptional(bool optional, const QString &str) {
-    if (optional) {
-        return QString("OPTIONAL { ") + str + "} . ";
-    } else {
-        return str;
-    }
-}
-
-QString SemanticsQuery::getPrefix() {
-    return QString("PREFIX xesam: <%1> "
-    "PREFIX rdf: <%2> "
-    "PREFIX nmm: <%3> "
-    "PREFIX xls: <%4> "
-    "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> ")
-    .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
-    .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-    .arg("http://www.semanticdesktop.org/ontologies/nmm#")
-    .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
-}
-
-QString SemanticsQuery::query() {
-    QString queryString = getPrefix();
-    queryString += "SELECT ";
-    
-    if (m_distinct)
-        queryString += "DISTINCT ";
-    if (m_selectAudioResource || m_selectVideoResource)
-        queryString += "?r ?url ";
-    if (m_selectRating)
-        queryString += "?rating ";
-    if (m_selectPlayCount)
-        queryString += "?playcount ";
-    if (m_selectLastPlayed)
-        queryString += "?lastplayed ";
-    
-    queryString += QString("WHERE { ");
-    
-    queryString += m_audioResourceCondition;
-    queryString += m_videoResourceCondition;
-    queryString += m_ratingCondition;
-    queryString += m_playCountCondition;
-    queryString += m_lastPlayedCondition;
-    
-    queryString += "} ";
-    
-    queryString += m_order;
-    queryString += " LIMIT 20 ";
-    
-    return queryString;
-}
-
-Soprano::QueryResultIterator SemanticsQuery::executeSelect(Soprano::Model* model) {
-    QString queryString = query();
-    return model->executeQuery(queryString,
-                               Soprano::Query::QueryLanguageSparql);
-}
-
-bool SemanticsQuery::executeAsk(Soprano::Model* model) {
-    QString queryString = getPrefix();
-    queryString += QString("ASK { ");
-    
-    queryString += m_audioResourceCondition;
-    queryString += m_videoResourceCondition;
-    queryString += m_ratingCondition;
-    queryString += m_playCountCondition;
-    queryString += m_lastPlayedCondition;
-    
-    queryString += "} ";
-    
-    return model->executeQuery(queryString,
-                               Soprano::Query::QueryLanguageSparql)
-                               .boolValue();
 }
