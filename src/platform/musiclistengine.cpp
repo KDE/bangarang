@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "mediavocabulary.h"
+#include "mediaquery.h"
 #include "utilities.h"
 #include <KIcon>
 #include <KUrl>
@@ -45,12 +46,12 @@ MusicListEngine::~MusicListEngine()
 
 MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     MediaItem mediaItem;
-    QUrl url = it.binding("url").uri().isEmpty() ? 
-                    it.binding("r").uri() :
-                    it.binding("url").uri();
+    QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+                it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
+                it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
     mediaItem.url = url.toString();
-    mediaItem.title = it.binding("title").literal().toString();
-    mediaItem.fields["title"] = it.binding("title").literal().toString();
+    mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
+    mediaItem.fields["title"] = it.binding(MediaVocabulary::titleBinding()).literal().toString();
     if (mediaItem.title.isEmpty()) {
         if (KUrl(mediaItem.url).isLocalFile()) {
             mediaItem.title = KUrl(mediaItem.url).fileName();
@@ -59,13 +60,13 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         }
     }
 
-    QString artist = it.binding("artist").literal().toString();
+    QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
     if (!artist.isEmpty()) {
         mediaItem.fields["artist"] = artist;
         mediaItem.subTitle = artist;
     }
     
-    QString album = it.binding("album").literal().toString();
+    QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
     if (!album.isEmpty()) {
         mediaItem.fields["album"] = album;
         if (!artist.isEmpty()) {
@@ -75,20 +76,20 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
         }
     }
     
-    int duration = it.binding("duration").literal().toInt();
+    int duration = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
     if (duration != 0) {
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-        mediaItem.fields["duration"] = it.binding("duration").literal().toInt();
+        mediaItem.fields["duration"] = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
     }
     
-    if (it.binding("created").isValid()) {
-        QDate created = it.binding("created").literal().toDate();
-        if (created.isValid()) {
-            mediaItem.fields["year"] = created.year();
+    if (it.binding(MediaVocabulary::musicAlbumYearBinding()).isValid()) {
+        QDate yearDate = it.binding(MediaVocabulary::musicAlbumYearBinding()).literal().toDate();
+        if (yearDate.isValid()) {
+            mediaItem.fields["year"] = yearDate.year();
         }
     }
     
-    int trackNumber = it.binding("trackNumber").literal().toInt();
+    int trackNumber = it.binding(MediaVocabulary::musicTrackNumberBinding()).literal().toInt();
     if (trackNumber != 0) {
         mediaItem.fields["trackNumber"] = trackNumber;
     }
@@ -97,10 +98,10 @@ MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
     mediaItem.nowPlaying = false;
     mediaItem.artwork = KIcon("audio-mpeg");
     mediaItem.fields["url"] = mediaItem.url;
-    mediaItem.fields["genre"] = it.binding("genre").literal().toString();
-    mediaItem.fields["rating"] = it.binding("rating").literal().toInt();
-    mediaItem.fields["description"] = it.binding("description").literal().toString();
-    mediaItem.fields["artworkUrl"] = it.binding("artwork").uri().toString();
+    mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+    mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
+    mediaItem.fields["description"] = it.binding(MediaVocabulary::descriptionBinding()).literal().toString();
+    mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
     mediaItem.fields["audioType"] = "Music";
 
     return mediaItem;
@@ -190,24 +191,42 @@ void MusicListEngine::run()
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "artists") {
-            MusicQuery query = MusicQuery(true);
-            query.selectArtist();
-            if (!artist.isEmpty()) {
-                query.hasArtist(artist);
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.musicArtistNameBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            if (!artist.isEmpty()) { 
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                                      artist,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required));
             }
             if (!album.isEmpty()) {
-                query.hasAlbum(album);
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
+                                                                      album,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             }
             if (!genre.isEmpty()) {
-                query.hasGenre(genre);
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                                            genre,
+                                                            MediaQuery::Equal));;
+            } else {
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             }
-            query.orderBy("?artist");
+            query.endWhere();
+            QStringList orderByBindings = bindings;
+            query.orderBy(orderByBindings);
+            
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
             int i = 0;
             while( it.next() ) {
-                QString artist = it.binding("artist").literal().toString().trimmed();
+                QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
                 if (!artist.isEmpty()) {
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
@@ -227,26 +246,44 @@ void MusicListEngine::run()
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "albums") {
-            MusicQuery query = MusicQuery(true);
-            query.selectAlbum(true);
-            query.selectArtist();
-            if (!artist.isEmpty()) {
-                query.hasArtist(artist);
-            }
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            bindings.append(mediaVocabulary.musicArtistNameBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
             if (!album.isEmpty()) {
-                query.hasAlbum(album);
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, 
+                                                                      album,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
+            }
+            if (!artist.isEmpty()) { 
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                                      artist,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
             }
             if (!genre.isEmpty()) {
-                query.hasGenre(genre);
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                                            genre,
+                                                            MediaQuery::Equal));;
+            } else {
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             }
-            query.orderBy("?album");
+            query.endWhere();
+            QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
+            query.orderBy(orderByBindings);
+            
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
             int i = 0;
             while( it.next() ) {
-                QString artist = it.binding("artist").literal().toString().trimmed();
-                QString album = it.binding("album").literal().toString().trimmed();
+                QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
+                QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
@@ -259,6 +296,7 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
+            
             m_mediaListProperties.name = i18n("Albums");
             if (!artist.isEmpty()) {
                 m_mediaListProperties.name = i18n("Albums - %1", artist);
@@ -274,24 +312,44 @@ void MusicListEngine::run()
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "genres") {
-            MusicQuery query = MusicQuery(true);
-            query.selectGenre();
-            if (!artist.isEmpty()) {
-                query.hasArtist(artist);
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.genreBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+            if (!genre.isEmpty()) {
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                                            genre,
+                                                            MediaQuery::Equal));;
+            } else {
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required));
+            }
+            if (!artist.isEmpty()) { 
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                                      artist,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
             }
             if (!album.isEmpty()) {
-                query.hasAlbum(album);
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
+                                                                      album,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             }
-            if (!genre.isEmpty()) {
-                query.hasGenre(genre);
-            }
-            query.orderBy("?genre");
+            query.endWhere();
+            QStringList orderByBindings = bindings;
+            query.orderBy(orderByBindings);
+            
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
             
             //Build media list from results
             int i = 0;
             while( it.next() ) {
-                QString genre = it.binding("genre").literal().toString().trimmed();
+                QString genre = it.binding(mediaVocabulary.genreBinding()).literal().toString().trimmed();
                 if (!genre.isEmpty()) {
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://artists?%1||%2||%3").arg(artist, album, genre);
@@ -308,32 +366,60 @@ void MusicListEngine::run()
             m_mediaListProperties.type = QString("Categories");
             
         } else if (engineArg.toLower() == "songs") {
-            
-            MusicQuery musicQuery = MusicQuery(true);
-            musicQuery.selectResource();
-            musicQuery.selectTitle();
-            musicQuery.selectArtist();
-            musicQuery.selectAlbum(true);
-            musicQuery.selectTrackNumber(true);
-            musicQuery.selectDuration(true);
-            musicQuery.selectCreated(true);
-            musicQuery.selectRating(true);
-            musicQuery.selectDescription(true);
-            musicQuery.selectArtwork(true);
-            musicQuery.selectGenre(true);
-            if (!artist.isEmpty()) {
-                musicQuery.hasArtist(artist);
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+            bindings.append(mediaVocabulary.titleBinding());
+            bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            bindings.append(mediaVocabulary.musicTrackNumberBinding());
+            bindings.append(mediaVocabulary.durationBinding());
+            bindings.append(mediaVocabulary.musicAlbumYearBinding());
+            bindings.append(mediaVocabulary.ratingBinding());
+            bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.genreBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            if (!artist.isEmpty()) { 
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                                      artist,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
             }
             if (!album.isEmpty()) {
-                musicQuery.hasAlbum(album);
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
+                                                                      album,
+                                                                      MediaQuery::Equal));
+            } else {
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             }
             if (!genre.isEmpty()) {
-                musicQuery.hasGenre(genre);
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                                            genre,
+                                                            MediaQuery::Equal));;
+            } else {
+                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             }
-            musicQuery.orderBy("?artist ?created ?album ?trackNumber");
+            query.endWhere();
+            QStringList orderByBindings;
+            orderByBindings.append(mediaVocabulary.musicArtistNameBinding());
+            orderByBindings.append(mediaVocabulary.musicAlbumYearBinding());
+            orderByBindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
+            query.orderBy(orderByBindings);
             
-            //Execute Query
-            Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
             
             //Build media list from results
             while( it.next() ) {
@@ -356,23 +442,50 @@ void MusicListEngine::run()
             m_mediaListProperties.type = QString("Sources");
             
         } else if (engineArg.toLower() == "search") {
-            MusicQuery musicQuery = MusicQuery(true);
-            musicQuery.selectResource();
-            musicQuery.selectTitle();
-            musicQuery.selectArtist();
-            musicQuery.selectAlbum(true);
-            musicQuery.selectTrackNumber(true);
-            musicQuery.selectDuration(true);
-            musicQuery.selectCreated(true);
-            musicQuery.selectRating(true);
-            musicQuery.selectDescription(true);
-            musicQuery.selectArtwork(true);
-            musicQuery.selectGenre(true);
-            musicQuery.searchString(engineFilter);
-            musicQuery.orderBy("?artist ?created ?album ?trackNumber");
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+            bindings.append(mediaVocabulary.titleBinding());
+            bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            bindings.append(mediaVocabulary.musicTrackNumberBinding());
+            bindings.append(mediaVocabulary.durationBinding());
+            bindings.append(mediaVocabulary.musicAlbumYearBinding());
+            bindings.append(mediaVocabulary.ratingBinding());
+            bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.genreBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.startFilter();
+            query.addFilterConstraint(mediaVocabulary.titleBinding(), engineFilter, MediaQuery::Contains);
+            query.addFilterOr();
+            query.addFilterConstraint(mediaVocabulary.musicArtistNameBinding(), engineFilter, MediaQuery::Contains);
+            query.addFilterOr();
+            query.addFilterConstraint(mediaVocabulary.musicAlbumTitleBinding(), engineFilter, MediaQuery::Contains);
+            query.addFilterOr();
+            query.addFilterConstraint(mediaVocabulary.descriptionBinding(), engineFilter, MediaQuery::Contains);
+            query.endFilter();
+            query.endWhere();
+            QStringList orderByBindings;
+            orderByBindings.append(mediaVocabulary.musicArtistNameBinding());
+            orderByBindings.append(mediaVocabulary.musicAlbumYearBinding());
+            orderByBindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
+            query.orderBy(orderByBindings);
             
-            //Execute Query
-            Soprano::QueryResultIterator it = musicQuery.executeSelect(m_mainModel);
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
             while( it.next() ) {
@@ -403,245 +516,3 @@ void MusicListEngine::setFilterForSources(const QString& engineFilter)
     m_mediaListProperties.lri = QString("music://songs?%1").arg(engineFilter);
 }
 
-MusicQuery::MusicQuery(bool distinct) :
-m_distinct(distinct),
-m_selectResource(false),
-m_selectArtist(false),
-m_selectAlbum(false),
-m_selectTitle(false),
-m_selectDuration(false),
-m_selectTrackNumber(false),
-m_selectGenre(false)
-{
-}
-
-void MusicQuery::selectResource() {
-    m_selectResource = true;
-}
-
-void MusicQuery::selectArtist(bool optional) {
-    m_selectArtist = true;
-    m_artistCondition = addOptional(optional,
-                                    QString("?r <%1> ?artist . ")
-                                    .arg(MediaVocabulary().musicArtist().toString()));
-}
-
-void MusicQuery::selectAlbum(bool optional) {
-    m_selectAlbum = true;
-    m_albumCondition = addOptional(optional,
-                                        QString("?r <%1> ?album . ")
-                                        .arg(MediaVocabulary().musicAlbum().toString()));
-}
-
-void MusicQuery::selectTitle(bool optional) {
-    m_selectTitle = true;
-    m_titleCondition = addOptional(optional,
-                                   QString("?r <%1> ?title . ")
-                                   .arg(MediaVocabulary().title().toString()));
-}
-
-void MusicQuery::selectDuration(bool optional) {
-    m_selectDuration = true;
-    m_durationCondition = addOptional(optional,
-                                      QString("?r <%1> ?duration . ")
-                                      .arg(MediaVocabulary().duration().toString()));
-}
-
-void MusicQuery::selectCreated(bool optional) {
-    m_selectCreated = true;
-    m_createdCondition = addOptional(optional,
-                                      QString("?r <%1> ?created . ")
-                                      .arg(MediaVocabulary().created().toString()));
-}
-
-void MusicQuery::selectTrackNumber(bool optional) {
-    m_selectTrackNumber = true;
-    m_trackNumberCondition = addOptional(optional,
-                                     QString("?r <%1> ?trackNumber . ")
-                                     .arg(MediaVocabulary().musicTrackNumber().toString()));
-}
-
-void MusicQuery::selectGenre(bool optional) {
-    m_selectGenre = true;
-    m_genreCondition = addOptional(optional,
-                                         QString("?r <%1> ?genre . ")
-                                         .arg(MediaVocabulary().genre().toString()));
-}
-
-void MusicQuery::selectRating(bool optional) {
-    m_selectRating = true;
-    m_ratingCondition = addOptional(optional,
-                                   QString("?r <%1> ?rating . ")
-                                   .arg(Soprano::Vocabulary::NAO::numericRating().toString()));
-}
-
-void MusicQuery::selectDescription(bool optional) {
-    m_selectDescription = true;
-    m_descriptionCondition = addOptional(optional,
-                                    QString("?r <%1> ?description . ")
-                                    .arg(MediaVocabulary().description().toString()));
-}
-
-void MusicQuery::selectArtwork(bool optional) {
-    m_selectArtwork = true;
-    m_artworkCondition = addOptional(optional,
-                                         QString("?r <%1> ?artwork . ")
-                                         .arg(MediaVocabulary().artwork().toString()));
-}
-
-void MusicQuery::hasArtist(const QString &artist) {
-    m_artistCondition = QString("?r <%1> ?artist . "
-                                "?r <%1> %2 . ")
-    .arg(MediaVocabulary().musicArtist().toString())
-    .arg(Soprano::Node::literalToN3(artist));
-}
-
-void MusicQuery::hasNoArtist() {
-    m_artistCondition = QString(
-    "OPTIONAL { ?r <%1> ?artist  } "
-    "FILTER (!bound(?artist) || regex(str(?artist), \"^$\")) ")
-    .arg(MediaVocabulary().musicArtist().toString());
-}
-
-void MusicQuery::hasAlbum(const QString &album) {
-    m_albumCondition = QString("?r <%1> ?album . "
-                                "?r <%1> %2 . ")
-    .arg(MediaVocabulary().musicAlbum().toString())
-    .arg(Soprano::Node::literalToN3(album));
-}
-
-void MusicQuery::hasNoAlbum() {
-    m_albumCondition = QString(
-    "OPTIONAL { ?r <%1> ?album  } "
-    "FILTER (!bound(?album) || regex(str(?album), \"^$\")) ")
-    .arg(MediaVocabulary().musicAlbum().toString());
-}
-
-void MusicQuery::hasGenre(const QString &genre) {
-    m_genreCondition = QString("?r <%1> ?genre . "
-    "?r <%1> %2 . ")
-    .arg(MediaVocabulary().genre().toString())
-    .arg(Soprano::Node::literalToN3(genre));
-}
-
-void MusicQuery::hasNoGenre() {
-    m_genreCondition = QString(
-    "OPTIONAL { ?r <%1> ?genre  } "
-    "FILTER (!bound(?genre) || regex(str(?genre), \"^$\")) ")
-    .arg(MediaVocabulary().genre().toString());
-}
-
-void MusicQuery::searchString(const QString &str) {
-    if (! str.isEmpty()) {
-        m_searchCondition = QString(
-        "FILTER (regex(str(?artist),\"%1\",\"i\") || " 
-        "regex(str(?album),\"%1\",\"i\") || "
-        "regex(str(?title),\"%1\",\"i\")) ")
-        .arg(str);
-    }
-}
-
-
-void MusicQuery::orderBy(const QString &var) {
-    if (!var.isEmpty()) {
-        m_order = "ORDER BY " + var;
-    }
-}
-
-
-QString MusicQuery::addOptional(bool optional, const QString &str) {
-    if (optional) {
-        return QString("OPTIONAL { ") + str + "} . ";
-    } else {
-        return str;
-    }
-}
-
-QString MusicQuery::getPrefix() {
-    return QString("PREFIX xesam: <%1> "
-    "PREFIX rdf: <%2> "
-    "PREFIX nmm: <%3> "
-    "PREFIX xls: <%4> "
-    "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> ")
-    .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
-    .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-    .arg("http://www.semanticdesktop.org/ontologies/nmm#")
-    .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
-}
-
-Soprano::QueryResultIterator MusicQuery::executeSelect(Soprano::Model* model) {
-    QString queryString = getPrefix();
-    queryString += "SELECT ";
-    
-    if (m_distinct)
-        queryString += "DISTINCT ";
-    if (m_selectResource)
-        queryString += "?r ?url";
-    if (m_selectArtist)
-        queryString += "?artist ";
-    if (m_selectAlbum)
-        queryString += "?album ";
-    if (m_selectTitle)
-        queryString += "?title ";
-    if (m_selectDuration)
-        queryString += "?duration ";
-    if (m_selectCreated)
-        queryString += "?created ";
-    if (m_selectTrackNumber)
-        queryString += "?trackNumber ";
-    if (m_selectGenre)
-        queryString += "?genre ";
-    if (m_selectRating)
-        queryString += "?rating ";
-    if (m_selectDescription)
-        queryString += "?description ";
-    if (m_selectArtwork)
-        queryString += "?artwork ";
-    
-    //NOTE: nie:url is not in any released nie ontology that I can find.
-    //      In future KDE will use nfo:fileUrl so this will need to be changed.
-    queryString += QString("WHERE { ?r rdf:type <%1> . OPTIONAL { ?r nie:url ?url } . ")
-    .arg(MediaVocabulary().typeAudioMusic().toString());
-    
-    queryString += m_artistCondition;
-    queryString += m_albumCondition;
-    queryString += m_titleCondition;
-    queryString += m_durationCondition;
-    queryString += m_createdCondition;
-    queryString += m_genreCondition;
-    queryString += m_trackNumberCondition;
-    queryString += m_ratingCondition;
-    queryString += m_searchCondition;
-    queryString += m_descriptionCondition;
-    queryString += m_artworkCondition;
-    
-    queryString += "} ";
-    
-    queryString += m_order;
-    
-    return model->executeQuery(queryString,
-                               Soprano::Query::QueryLanguageSparql);
-}
-
-bool MusicQuery::executeAsk(Soprano::Model* model) {
-    QString queryString = getPrefix();
-    queryString += QString("ASK { ?r rdf:type <%1> . ")
-    .arg(MediaVocabulary().typeAudioMusic().toString());
-    
-    queryString += m_artistCondition;
-    queryString += m_albumCondition;
-    queryString += m_titleCondition;
-    queryString += m_durationCondition;
-    queryString += m_createdCondition;
-    queryString += m_trackNumberCondition;
-    queryString += m_genreCondition;
-    queryString += m_ratingCondition;
-    queryString += m_searchCondition;
-    queryString += m_descriptionCondition;
-    
-    queryString += "} ";
-    
-    return model->executeQuery(queryString,
-                               Soprano::Query::QueryLanguageSparql)
-                               .boolValue();
-}

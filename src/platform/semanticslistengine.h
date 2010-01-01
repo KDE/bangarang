@@ -53,45 +53,5 @@ class SemanticsListEngine : public NepomukListEngine
         
 };
 
-class SemanticsQuery {
-    public:
-        SemanticsQuery(bool distinct = true);
-        
-        void selectAudioResource();
-        void selectVideoResource();
-        void selectRating(bool optional=false);
-        void selectPlayCount(bool optional=false);
-        void selectLastPlayed(bool optional=false);
-        
-        void searchString(const QString &str);
-        
-        void orderBy(const QString &var);
-        
-        QString query();
-        Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
-        bool executeAsk(Soprano::Model* model);
-        
-    private:
-        bool m_distinct;
-        
-        bool m_selectAudioResource;
-        bool m_selectVideoResource;
-        bool m_selectRating;
-        bool m_selectPlayCount;
-        bool m_selectLastPlayed;
-        
-        QString m_audioResourceCondition;
-        QString m_videoResourceCondition;
-        QString m_ratingCondition;
-        QString m_playCountCondition;
-        QString m_lastPlayedCondition;
-        QString m_searchCondition;
-        
-        QString m_order;
-        
-        QString addOptional(bool optional, const QString &str);
-        QString getPrefix();
-};
-
 #endif // SEMANTICSLISTENGINE_H
 

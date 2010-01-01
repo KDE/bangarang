@@ -49,6 +49,7 @@ SET(BangarangSources
     platform/listenginefactory.cpp
     platform/mediaindexer.cpp
     platform/mediavocabulary.cpp
+    platform/mediaquery.cpp
     platform/medialistcache.cpp
     platform/cachelistengine.cpp
     platform/audioclipslistengine.cpp

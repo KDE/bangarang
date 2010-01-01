@@ -52,49 +52,5 @@ class AudioClipsListEngine : public NepomukListEngine
         
 };
 
-/**
-* This class constructs a SPARQL query to query the nepomuk store.
-*/
-class AudioClipsQuery {
-    public:
-        AudioClipsQuery(bool distinct = true);
-        
-        void selectResource();
-        void selectTitle(bool optional=false);
-        void selectGenre(bool optional=false);
-        void selectRating(bool optional=false);
-        void selectDescription(bool optional=false);
-        void selectArtwork(bool optional=false);
-        
-        void searchString(const QString &str);
-        
-        void orderBy(const QString &var);
-        
-        Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
-        bool executeAsk(Soprano::Model* model);
-        
-    private:
-        bool m_distinct;
-        
-        bool m_selectResource;
-        bool m_selectTitle;
-        bool m_selectGenre;
-        bool m_selectRating;
-        bool m_selectDescription;
-        bool m_selectArtwork;
-        
-        QString m_titleCondition;
-        QString m_genreCondition;
-        QString m_searchCondition;
-        QString m_ratingCondition;
-        QString m_descriptionCondition;
-        QString m_artworkCondition;
-        
-        QString m_order;
-        
-        QString addOptional(bool optional, const QString &str);
-        QString getPrefix();
-};
-
 #endif // AUDIOCLIPSLISTENGINE_H
 
