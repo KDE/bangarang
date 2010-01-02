@@ -73,6 +73,25 @@ class MediaQuery {
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
         bool executeAsk(Soprano::Model* model);
         
+        static QString addOptional(const QString &str) {
+            return QString("OPTIONAL { ") + str + "} . ";
+        }
+
+        static QString hasType(const QString &resourceBinding, const QUrl &type)
+        {
+            return QString("?%1 rdf:type <%2> . ")
+            .arg(resourceBinding)
+            .arg(type.toString());
+        }
+
+        static QString hasProperty(const QString &resourceBinding, const QUrl &property, const QString &propertyBinding)
+        {
+            return QString("?%1 <%2> ?%3 . ")
+            .arg(resourceBinding)
+            .arg(property.toString())
+            .arg(propertyBinding);
+        }
+                
         static QString filterConstraint(const QString &binding, const QString &test,
                                         MediaQuery::Constraint constraint)
         {

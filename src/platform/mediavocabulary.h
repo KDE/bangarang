@@ -241,10 +241,7 @@ class MediaVocabulary {
         QUrl m_musicNameSpace;
         QUrl m_videoNameSpace;
         
-        QString addOptional(const QString &statement);
         QString fileUrl(const QString &resourceBinding);
-        QString hasType(const QString &resourceBinding, const QUrl &type);
-        QString hasProperty(const QString &resourceBinding, const QUrl &property, const QString &propertyBinding);
 };
 
 #endif // MEDIAVOCABULARY_H
