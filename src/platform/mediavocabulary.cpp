@@ -25,10 +25,9 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 
-
 MediaVocabulary::MediaVocabulary()
 {
-    if (KDE::versionMinor() <= 3) {
+    if ((KDE::versionMinor() <= 3) && (KDE::versionRelease() < 83)) {
         m_vocabulary = MediaVocabulary::xesam;
         m_audioVocabulary = MediaVocabulary::nie;
         m_musicVocabulary = MediaVocabulary::xesam;
@@ -114,7 +113,7 @@ QUrl MediaVocabulary::mediaNamespace(int vocabulary)
     if (vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::xesamNamespace();
     } else if (vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#");
     } else if (vocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#");
     } else if (vocabulary == MediaVocabulary::nid3) {
@@ -230,7 +229,7 @@ QUrl MediaVocabulary::typeMusicArtist()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#Contact");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#Contact");
     }
     
     return returnUrl;
@@ -246,16 +245,21 @@ QUrl MediaVocabulary::typeMusicAlbum()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::typeNCOContact()
+{
+    return QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#Contact");
+}
+
 QUrl MediaVocabulary::title()
 {
     QUrl returnUrl = QUrl();
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::title();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     }
     
     return returnUrl;
@@ -267,10 +271,10 @@ QUrl MediaVocabulary::description()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::description();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#description");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#description");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#description");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#description");
     }
     
     return returnUrl;
@@ -324,10 +328,10 @@ QUrl MediaVocabulary::created()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#contentCreated");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#contentCreated");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#contentCreated");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#contentCreated");
     }
     
     return returnUrl;
@@ -364,13 +368,18 @@ QUrl MediaVocabulary::rating()
     
 }
 
+QUrl MediaVocabulary::ncoFullname()
+{
+    return QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname");
+}
+
 QUrl MediaVocabulary::musicArtist()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#creator");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#creator");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#leadArtist");
     }
@@ -384,9 +393,9 @@ QUrl MediaVocabulary::musicArtistName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#fullName");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nco#fullName");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname");
     }
     
     return returnUrl;
@@ -412,7 +421,7 @@ QUrl MediaVocabulary::musicAlbumName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::album();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#albumTitle");
     }
@@ -488,7 +497,7 @@ QUrl MediaVocabulary::videoSeriesTitle()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nie#title");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     }
     
     return returnUrl;
@@ -1059,7 +1068,9 @@ QString MediaVocabulary::hasVideoWriter(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoWriterBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), propertyBinding);
+    QString contactResourceBinding = "writerResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!writer.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, writer, constraint);
     }
@@ -1075,7 +1086,9 @@ QString MediaVocabulary::hasVideoDirector(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoDirectorBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), propertyBinding);
+    QString contactResourceBinding = "directorResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!director.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, director, constraint);
     }
@@ -1092,7 +1105,9 @@ QString MediaVocabulary::hasVideoAssistantDirector(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoAssistantDirectorBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), propertyBinding);
+    QString contactResourceBinding = "assistantDirectorResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!assistantDirector.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, assistantDirector, constraint);
     }
@@ -1107,7 +1122,9 @@ QString MediaVocabulary::hasVideoProducer(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoProducerBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), propertyBinding);
+    QString contactResourceBinding = "producerResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!producer.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, producer, constraint);
     }
@@ -1123,7 +1140,9 @@ QString MediaVocabulary::hasVideoActor(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoActorBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), propertyBinding);
+    QString contactResourceBinding = "actorResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!actor.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, actor, constraint);
     }
@@ -1139,7 +1158,9 @@ QString MediaVocabulary::hasVideoCinematographer(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoCinematographerBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoCinematographer(), propertyBinding);
+    QString contactResourceBinding = "cinematographerResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoCinematographer(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!cinematographer.isEmpty()) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, cinematographer, constraint);
     }
@@ -1326,6 +1347,15 @@ QStringList MediaVocabulary::storageProcedure(QUrl mediaProperty)
         return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
                                 QString("[ResourceValue]::[Type]::%1").arg(typeTVSeries().toString()) <<
                                 QString("[ResourceValue]::%1::[Value]").arg(videoSeriesTitle().toString());
+    } else if (mediaProperty == videoWriter() ||
+        mediaProperty == videoDirector() ||
+        mediaProperty == videoAssistantDirector() ||
+        mediaProperty == videoProducer() ||
+        mediaProperty == videoActor() ||
+        mediaProperty == videoCinematographer() ) {
+        return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
+        QString("[ResourceValue]::[Type]::%1").arg(typeNCOContact().toString()) <<
+        QString("[ResourceValue]::%1::[Value]").arg(ncoFullname().toString());
     } else {
         return QStringList() << QString("[Resource]::[Property]::[Value]");
     }

@@ -22,9 +22,9 @@
 #include <KLocalizedString>
 #include <KAboutData>
 #include <KDebug>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
+#include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
 #include <KApplication>
 #include <QTextStream>
 #include <QFile>
@@ -56,12 +56,12 @@ void writeProperty(MediaVocabulary mediaVocabulary,
     Nepomuk::Resource valueResource;
     for (int i = 0; i < storageProcedure.count(); i++) {
         QString step = storageProcedure.at(i);
-        kDebug() << step;
+        //kdebug() << step << "\n";
         if (step == "[Resource]::[Property]::[Value]") {
             res.setProperty(property, value);
         } else if (step.startsWith("[ResourceValue]") && step.endsWith("[Value]")) {
-            kDebug() << "Setting new resource property";
             QUrl propertyForValueResource = QUrl(step.split("::").at(1));
+            //kDebug() << "Setting new resource property " << propertyForValueResource.toString() << "\n";
             valueResource.setProperty(propertyForValueResource, value);
         } else {
             QString stepValue = step.split("::").at(2);
@@ -75,21 +75,21 @@ void writeProperty(MediaVocabulary mediaVocabulary,
                         QString valueResourceIdentifier;
                         if (property == mediaVocabulary.videoSeries()) {
                             valueResourceIdentifier = QString("nmm-tvseries-%1").arg(value.toString());
-                        } else if (property == mediaVocabulary.musicArtistName()) {
+                        } else if (property == mediaVocabulary.musicArtist()) {
                             valueResourceIdentifier = QString("music-artist-%1").arg(value.toString());
-                        } else if (property == mediaVocabulary.musicAlbumName()) {
+                        } else if (property == mediaVocabulary.musicAlbum()) {
                             valueResourceIdentifier = QString("music-album-%1").arg(value.toString());
                         } else {
                             valueResourceIdentifier = value.toString();
                         }
-                        kDebug() << "Creating resource " << valueResourceIdentifier;
+                        //kdebug() << "Creating resource " << valueResourceIdentifier;
                         valueResource = Nepomuk::Resource(valueResourceIdentifier);
                         if (!valueResource.exists()) {
                             valueResource = Nepomuk::Resource(valueResourceIdentifier, valueResourceType);
                         }
                         
                         //Set property of primary resource to the new value resource
-                        kDebug() << "Pointing to new resource " << valueResourceIdentifier;
+                        //kdebug() << "Pointing to new resource " << valueResource.resourceUri().toString() << "\n";
                         res.setProperty(property, Nepomuk::Variant(valueResource));
                     }
                 }
@@ -108,10 +108,12 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
     
     cout << QString("URL: %1\n").arg(url);
     
+    //Find resource
+    Nepomuk::Resource res(QUrl(url.toUtf8()));
+    
     if (fields["removeInfo"].toString() == "true") {
         
         //Remove metadata for media from nepomuk store
-        Nepomuk::Resource res(url);
         if (!res.exists()) {
             return;
         }
@@ -278,8 +280,13 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
         
     } else {
         //Write media metadata info to nepomuk store;
-        Nepomuk::Resource res(url);
         
+        //Check and add nie:url property if necessary
+        if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
+            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
+                                 QUrl(url.toUtf8()));
+        }
+    
         if (fields.contains("rating")) {
             cout << "Setting Rating...\n";
             int rating = fields["rating"].toInt();
