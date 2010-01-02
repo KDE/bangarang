@@ -188,7 +188,7 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideo(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
@@ -384,7 +384,7 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
@@ -484,7 +484,7 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
@@ -593,7 +593,7 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
@@ -677,7 +677,7 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));

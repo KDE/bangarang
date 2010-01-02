@@ -66,6 +66,8 @@ class MediaVocabulary {
         QUrl typeTVSeries();
         QUrl typeMusicArtist();
         QUrl typeMusicAlbum();
+        QUrl typeNCOContact();
+
         
         //These properties are applicable to all media types
         QUrl title();
@@ -78,6 +80,7 @@ class MediaVocabulary {
         QUrl genre();
         QUrl releaseDate();
         QUrl rating();
+        QUrl ncoFullname();
         
         //These properties are applicable to Music
         QUrl musicArtist();

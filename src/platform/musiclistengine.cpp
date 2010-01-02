@@ -26,6 +26,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <KDebug>
+#include <KMessageBox>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -34,6 +35,8 @@
 #include <nepomuk/variant.h>
 #include <QApplication>
 #include <QTime>
+#include <QTextStream>
+#include <QFile>
 #include <taglib/fileref.h>
 
 MusicListEngine::MusicListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
@@ -196,6 +199,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             if (!artist.isEmpty()) { 
                 query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
                                                                       artist,
@@ -252,6 +256,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             if (!album.isEmpty()) {
                 query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, 
                                                                       album,
