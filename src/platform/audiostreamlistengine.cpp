@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "mediavocabulary.h"
+#include "utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KLocale>
@@ -34,35 +35,6 @@ AudioStreamListEngine::AudioStreamListEngine(ListEngineFactory * parent) : Nepom
 
 AudioStreamListEngine::~AudioStreamListEngine()
 {
-}
-
-MediaItem AudioStreamListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
-    MediaItem mediaItem;
-    QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
-    it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
-    it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-    mediaItem.url = url.toString();
-    mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    mediaItem.fields["title"] = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    if (mediaItem.title.isEmpty()) {
-        if (KUrl(mediaItem.url).isLocalFile()) {
-            mediaItem.title = KUrl(mediaItem.url).fileName();
-        } else {
-            mediaItem.title = mediaItem.url;
-        }
-    }
-    
-    mediaItem.type = "Audio";
-    mediaItem.nowPlaying = false;
-    mediaItem.artwork = KIcon("x-media-podcast");
-    mediaItem.fields["url"] = mediaItem.url;
-    mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
-    mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
-    mediaItem.fields["description"] = it.binding(MediaVocabulary::descriptionBinding()).literal().toString();
-    mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
-    mediaItem.fields["audioType"] = "Audio Stream";
-
-    return mediaItem;
 }
 
 void AudioStreamListEngine::run()
@@ -106,7 +78,7 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"));
                 mediaList.append(mediaItem);
             }
             
@@ -152,7 +124,7 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"));
                 mediaList.append(mediaItem);
             }
             

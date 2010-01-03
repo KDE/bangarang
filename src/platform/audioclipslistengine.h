@@ -43,10 +43,7 @@ class AudioClipsListEngine : public NepomukListEngine
         ~AudioClipsListEngine();
         void run();
         void setFilterForSources(const QString& engineFilter);
-        
-    private:
-        MediaItem createMediaItem(Soprano::QueryResultIterator& it);
-        
+
     Q_SIGNALS:
         void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
         

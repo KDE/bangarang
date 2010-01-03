@@ -120,6 +120,7 @@ class MediaVocabulary {
         QString hasTypeMusicArtist(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeMusicAlbum(MediaQuery::Match match = MediaQuery::Required);
         
+        QString hasResource(const QString &uri);
         QString hasTitle(MediaQuery::Match match = MediaQuery::Required, 
                          const QString &title = QString(), 
                          MediaQuery::Constraint constraint = MediaQuery::Equal);

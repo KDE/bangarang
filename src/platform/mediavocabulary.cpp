@@ -744,6 +744,16 @@ QString MediaVocabulary::hasTypeMusicAlbum(MediaQuery::Match match)
 }
 
 
+QString MediaVocabulary::hasResource(const QString &uri)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = QString("?%1 ?dummyPredicate ?dummyObject ").arg(resourceBinding);
+    statement += QString("FILTER (?%1 = <%2> ) ").arg(resourceBinding)
+                                                .arg(uri);
+    statement += fileUrl(resourceBinding);
+    return statement;
+}
+                    
 QString MediaVocabulary::hasTitle(MediaQuery::Match match, 
                                   const QString &title, 
                                   MediaQuery::Constraint constraint)
