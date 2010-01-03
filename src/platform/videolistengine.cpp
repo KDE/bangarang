@@ -39,98 +39,6 @@ VideoListEngine::~VideoListEngine()
 {
 }
 
-MediaItem VideoListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
-    MediaVocabulary mediaVocabulary;
-    mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
-    mediaVocabulary.setVideoVocabulary(MediaVocabulary::nmm);
-    
-    MediaItem mediaItem;
-    QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
-                it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
-                it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-    mediaItem.url = url.toString();
-    
-    mediaItem.fields["videoType"] = "Video Clip";
-    mediaItem.artwork = KIcon("video-x-generic");
-    
-    Nepomuk::Resource res(url.toString());
-    if (res.exists()) {
-        if (res.hasType(mediaVocabulary.typeVideoMovie())) {
-            mediaItem.fields["videoType"] = "Movie";
-            mediaItem.artwork = KIcon("tool-animator");
-        }
-        if (res.hasType(mediaVocabulary.typeVideoTVShow())) {
-            mediaItem.fields["videoType"] = "TV Show";
-            mediaItem.artwork = KIcon("video-television");
-        }
-    }
-
-    mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    if (mediaItem.title.isEmpty()) {
-        if (KUrl(mediaItem.url).isLocalFile()) {
-            mediaItem.title = KUrl(mediaItem.url).fileName();
-        } else {
-            mediaItem.title = mediaItem.url;
-        }
-    }
-    int duration = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
-    if (duration != 0) {
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-    }
-
-    QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
-    if (!seriesName.isEmpty()) {
-        mediaItem.fields["seriesName"] = seriesName;
-        mediaItem.subTitle = seriesName;
-    }
-
-    int season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toInt();
-    if (season !=0 ) {
-        mediaItem.fields["season"] = season;
-        if (!mediaItem.subTitle.isEmpty()) {
-            mediaItem.subTitle += " - ";
-        }
-        mediaItem.subTitle += QString("Season %1").arg(season);
-    }
-
-    int episodeNumber = it.binding(MediaVocabulary::videoEpisodeNumberBinding()).literal().toInt();
-    if (episodeNumber != 0) {
-        mediaItem.fields["episodeNumber"] = episodeNumber;
-        if (!mediaItem.subTitle.isEmpty()) {
-        	mediaItem.subTitle += " - ";
-        }
-        mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
-    }
-
-    if (it.binding(MediaVocabulary::releaseDateBinding()).isValid()) {
-        QDate releaseDate = it.binding(MediaVocabulary::releaseDateBinding()).literal().toDate();
-        if (releaseDate.isValid()) {
-            mediaItem.fields["releaseDate"] = releaseDate;
-            mediaItem.fields["year"] = releaseDate.year();
-        }
-    }
-    
-    mediaItem.type = "Video";
-    mediaItem.nowPlaying = false;
-    mediaItem.fields["url"] = mediaItem.url;
-    mediaItem.fields["title"] = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    mediaItem.fields["duration"] = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
-    mediaItem.fields["description"] = it.binding(MediaVocabulary::descriptionBinding()).literal().toString();
-    mediaItem.fields["synopsis"] = it.binding(MediaVocabulary::videoSynopsisBinding()).literal().toString();
-    mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
-    mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
-    mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
-    mediaItem.fields["writer"] = it.binding(MediaVocabulary::videoWriterBinding()).literal().toString();
-    mediaItem.fields["director"] = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
-    mediaItem.fields["assistantDirector"] = it.binding(MediaVocabulary::videoAssistantDirectorBinding()).literal().toString();
-    mediaItem.fields["producer"] = it.binding(MediaVocabulary::videoProducerBinding()).literal().toString();
-    mediaItem.fields["actor"] = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
-    mediaItem.fields["cinematographer"] = it.binding(MediaVocabulary::videoCinematographerBinding()).literal().toString();
-    
-    return mediaItem;
-}
-
-
 void VideoListEngine::run()
 {
     
@@ -201,10 +109,7 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
-
-                mediaItem.artwork = KIcon("video-x-generic");
-                mediaItem.fields["videoType"] = "Video Clip";
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
                 mediaList.append(mediaItem);
             }
             
@@ -445,9 +350,7 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
-                mediaItem.artwork = KIcon("video-television");
-                mediaItem.fields["videoType"] = "TV Show";
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
                 mediaList.append(mediaItem);
             }
             
@@ -516,9 +419,7 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
-                mediaItem.artwork = KIcon("tool-animator");
-                mediaItem.fields["videoType"] = "Movie";
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"));
                 mediaList.append(mediaItem);
             }
             
@@ -644,7 +545,21 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+                it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
+                it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
+                Nepomuk::Resource res(url);
+                QString type = "Video Clip";
+                if (res.exists()) {
+                    if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                        type = "Movie";
+                    }
+                    if (res.hasType(mediaVocabulary.typeVideoTVShow())) {
+                        type = "TV Show";
+                    }
+                }
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type);
+                
                 mediaList.append(mediaItem);
             }
             
@@ -740,7 +655,21 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+                it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
+                it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
+                Nepomuk::Resource res(url);
+                QString type = "Video Clip";
+                if (res.exists()) {
+                    if (res.hasType(mediaVocabulary.typeVideoMovie())) {
+                        type = "Movie";
+                    }
+                    if (res.hasType(mediaVocabulary.typeVideoTVShow())) {
+                        type = "TV Show";
+                    }
+                }
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type);
+                
                 mediaList.append(mediaItem);
             }
             

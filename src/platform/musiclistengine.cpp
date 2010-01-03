@@ -47,69 +47,6 @@ MusicListEngine::~MusicListEngine()
 {
 }
 
-MediaItem MusicListEngine::createMediaItem(Soprano::QueryResultIterator& it) {
-    MediaItem mediaItem;
-    QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
-                it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
-                it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-    mediaItem.url = url.toString();
-    mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    mediaItem.fields["title"] = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    if (mediaItem.title.isEmpty()) {
-        if (KUrl(mediaItem.url).isLocalFile()) {
-            mediaItem.title = KUrl(mediaItem.url).fileName();
-        } else {
-            mediaItem.title = mediaItem.url;
-        }
-    }
-
-    QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
-    if (!artist.isEmpty()) {
-        mediaItem.fields["artist"] = artist;
-        mediaItem.subTitle = artist;
-    }
-    
-    QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
-    if (!album.isEmpty()) {
-        mediaItem.fields["album"] = album;
-        if (!artist.isEmpty()) {
-            mediaItem.subTitle += QString(" - %1").arg(album);
-        } else {
-            mediaItem.subTitle = album;
-        }
-    }
-    
-    int duration = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
-    if (duration != 0) {
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-        mediaItem.fields["duration"] = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
-    }
-    
-    if (it.binding(MediaVocabulary::musicAlbumYearBinding()).isValid()) {
-        QDate yearDate = it.binding(MediaVocabulary::musicAlbumYearBinding()).literal().toDate();
-        if (yearDate.isValid()) {
-            mediaItem.fields["year"] = yearDate.year();
-        }
-    }
-    
-    int trackNumber = it.binding(MediaVocabulary::musicTrackNumberBinding()).literal().toInt();
-    if (trackNumber != 0) {
-        mediaItem.fields["trackNumber"] = trackNumber;
-    }
-    
-    mediaItem.type = "Audio";
-    mediaItem.nowPlaying = false;
-    mediaItem.artwork = KIcon("audio-mpeg");
-    mediaItem.fields["url"] = mediaItem.url;
-    mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
-    mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
-    mediaItem.fields["description"] = it.binding(MediaVocabulary::descriptionBinding()).literal().toString();
-    mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
-    mediaItem.fields["audioType"] = "Music";
-
-    return mediaItem;
-}
-
 void MusicListEngine::run()
 {
     QThread::setTerminationEnabled(true);
@@ -428,7 +365,7 @@ void MusicListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
                 mediaList.append(mediaItem);
             }
             
@@ -494,7 +431,7 @@ void MusicListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = createMediaItem(it);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
                 mediaList.append(mediaItem);
             }
             

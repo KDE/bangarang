@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
+#include <Soprano/QueryResultIterator>
+#include <Nepomuk/Resource>
 
 
 class MediaItem;
@@ -67,5 +69,7 @@ namespace Utilities {
     QList<MediaItem> mediaItemsDontExist(const QList<MediaItem> &mediaList);
     QString audioMimeFilter();
     QString videoMimeFilter();
+    MediaItem mediaItemFromNepomuk(Nepomuk::Resource res);
+    MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type);
 }
 #endif //UTILITIES_H    
