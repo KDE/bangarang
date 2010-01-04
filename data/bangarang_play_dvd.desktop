@@ -3,6 +3,7 @@ Exec=bangarang --play-dvd %u
 Icon=bangarang
 Name=Play DVD with Bangarang
 Name[nl]=DVD afspelen met Bangarang
+Name[zh_CN]=使用 Bangarang 播放 DVD
 X-Ubuntu-Gettext-Domain=desktop_kdebase-workspace
 
 [Desktop Entry]
