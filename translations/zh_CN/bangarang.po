@@ -1,0 +1,1046 @@
+# translation of bangarang.po to 简体中文
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Ni Hui <shuizhuyuanluo@126.com>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://bugs.kde.org\n"
+"POT-Creation-Date: 2009-12-24 02:58-0800\n"
+"PO-Revision-Date: 2010-01-01 14:43+0800\n"
+"Last-Translator: Ni Hui <shuizhuyuanluo@126.com>\n"
+"Language-Team: 简体中文 <kde-china@kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Lokalize 1.0\n"
+
+#: actionsmanager.cpp:48
+msgid "Quit"
+msgstr "退出"
+
+#: actionsmanager.cpp:57
+msgid "Play next"
+msgstr "播放下一首"
+
+#: actionsmanager.cpp:63
+msgid "Play previous"
+msgstr "播放上一首"
+
+#: actionsmanager.cpp:75 mainwindow.cpp:1107
+msgid "Play all"
+msgstr "全部播放"
+
+#. i18n: file: mainwindow.ui:1811
+#. i18n: ectx: property (text), widget (QPushButton, playAll)
+#: actionsmanager.cpp:77 rc.cpp:158
+msgid "Play All"
+msgstr "全部播放"
+
+#: actionsmanager.cpp:80 mainwindow.cpp:1109
+msgid "Play selected"
+msgstr "播放选中项"
+
+#. i18n: file: mainwindow.ui:1837
+#. i18n: ectx: property (text), widget (QPushButton, playSelected)
+#: actionsmanager.cpp:82 rc.cpp:164
+msgid "Play Selected"
+msgstr "播放选中项"
+
+#: actionsmanager.cpp:85 actionsmanager.cpp:87
+msgid "Add to playlist"
+msgstr "添加到播放列表"
+
+#: actionsmanager.cpp:90 actionsmanager.cpp:92
+msgid "Remove from playlist"
+msgstr "从播放列表删除"
+
+#: actionsmanager.cpp:95 actionsmanager.cpp:99
+msgid "Hide controls"
+msgstr "隐藏控件"
+
+#: actionsmanager.cpp:106 actionsmanager.cpp:390 mainwindow.cpp:362
+msgid "Show Video Settings"
+msgstr "显示视频设置"
+
+#: actionsmanager.cpp:113
+msgid "Toggle fullscreen"
+msgstr "切换全屏"
+
+#: actionsmanager.cpp:122
+msgid "Remove selected info"
+msgstr "删除选中信息"
+
+#: actionsmanager.cpp:127
+msgid "Refresh"
+msgstr "刷新"
+
+#: actionsmanager.cpp:133
+msgid "Remove from list"
+msgstr "从列表删除"
+
+#: actionsmanager.cpp:137
+msgid "Add to list"
+msgstr "添加到列表"
+
+#: actionsmanager.cpp:141
+msgid "Add to list "
+msgstr "添加到列表 "
+
+#: actionsmanager.cpp:145 actionsmanager.cpp:149
+msgid "New list"
+msgstr "新建列表"
+
+#: actionsmanager.cpp:153
+msgid "Show items"
+msgstr "显示项目"
+
+#: actionsmanager.cpp:157
+msgid "Show info"
+msgstr "显示信息"
+
+#: actionsmanager.cpp:162
+msgid "Configure shortcuts..."
+msgstr "配置快捷键..."
+
+#: actionsmanager.cpp:386
+msgid "Hide Video Settings"
+msgstr "隐藏视频设置"
+
+#. i18n: file: mainwindow.ui:1577
+#. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
+#: infomanager.cpp:266 rc.cpp:140
+msgid "Title"
+msgstr "标题"
+
+#: infomanager.cpp:268
+msgid "Artwork"
+msgstr "艺照"
+
+#: infomanager.cpp:270
+msgid "Description"
+msgstr "描述"
+
+#: infomanager.cpp:272
+msgid "Location"
+msgstr "位置"
+
+#: infomanager.cpp:326 infomanager.cpp:384
+msgid "Type"
+msgstr "类型"
+
+#. i18n: file: mainwindow.ui:1585
+#. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
+#: infomanager.cpp:345 rc.cpp:143
+msgid "Artist"
+msgstr "艺人"
+
+#: infomanager.cpp:347
+msgid "Album"
+msgstr "专辑"
+
+#: infomanager.cpp:349 infomanager.cpp:403 infomanager.cpp:452
+msgid "Year"
+msgstr "年份"
+
+#: infomanager.cpp:351
+msgid "Track Number"
+msgstr "音轨编号"
+
+#: infomanager.cpp:353 infomanager.cpp:405 infomanager.cpp:454
+msgid "Genre"
+msgstr "流派"
+
+#: infomanager.cpp:407 infomanager.cpp:456
+msgid "Writer"
+msgstr "编剧"
+
+#: infomanager.cpp:409 infomanager.cpp:458
+msgid "Director"
+msgstr "导演"
+
+#: infomanager.cpp:411 infomanager.cpp:460
+msgid "Producer"
+msgstr "制片人"
+
+#: infomanager.cpp:413 infomanager.cpp:462
+msgid "Actor"
+msgstr "演员"
+
+#: infomanager.cpp:446
+msgid "Series Name"
+msgstr "剧集名称"
+
+#: infomanager.cpp:448
+msgid "Season"
+msgstr "上演期"
+
+#: infomanager.cpp:450
+msgid "Episode"
+msgstr "片段"
+
+#. i18n: file: mainwindow.ui:23
+#. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
+#: main.cpp:29 mainwindow.cpp:288 mainwindow.cpp:565 mainwindow.cpp:944
+#: mainwindow.cpp:1118 rc.cpp:5
+msgid "Bangarang"
+msgstr "Bangarang"
+
+#: main.cpp:30
+msgid "A Media Player"
+msgstr "媒体播放器"
+
+#: main.cpp:31
+msgid "Copyright 2009, Andrew Lake"
+msgstr "Copyright 2009，Andrew Lake"
+
+#: main.cpp:38
+msgid "Andrew (Jamboarder) Lake"
+msgstr "Andrew (Jamboarder) Lake"
+
+#: main.cpp:38
+msgid "Creator"
+msgstr "缔造者"
+
+#: main.cpp:39
+msgid "Sebastian Jambor"
+msgstr "Sebastian Jambor"
+
+#: main.cpp:39 main.cpp:40 main.cpp:41
+msgid "Contributor"
+msgstr "贡献者"
+
+#: main.cpp:40
+msgid "Janusz Lewandowski"
+msgstr "Janusz Lewandowski"
+
+#: main.cpp:41
+msgid "Andreas Marschke"
+msgstr "Andreas Marschke"
+
+#: main.cpp:43
+msgid ""
+"Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
+msgstr "缺陷请到 http://code.google.com/p/bangarangissuetracking/ 报告"
+
+#: main.cpp:43
+msgid ""
+"Defects may be reported at <a href='http://code.google.com/p/"
+"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
+msgstr ""
+"缺陷请到 <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang "
+"问题跟踪</a>报告"
+
+#: main.cpp:50
+msgid "Play 'URL'"
+msgstr "播放 URL"
+
+#: main.cpp:51
+msgid "Play DVD Video"
+msgstr "播放 DVD 视频"
+
+#: main.cpp:52
+msgid "Play CD Music"
+msgstr "播放 CD 音乐"
+
+#: main.cpp:53
+msgid "Show Additional Debug Output"
+msgstr "显示额外的调试输出"
+
+#: mainwindow.cpp:243 platform/medialistsengine.cpp:183
+msgid "DVD Video"
+msgstr "DVD 视频"
+
+#: mainwindow.cpp:253 platform/medialistsengine.cpp:93
+msgid "Audio CD"
+msgstr "音频 CD"
+
+#: mainwindow.cpp:288
+msgid ""
+"Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
+"library, rating and play count functions will be unavailable."
+msgstr "Bangarang 无法访问 Nepomuk 语义学桌面仓库。媒体库、评分和播放计数功能将不可用。"
+
+#: mainwindow.cpp:288
+msgid "Don't show this message again"
+msgstr "不再显示此信息"
+
+#: mainwindow.cpp:370
+msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
+msgstr "<b>全屏</b><br>点击退出全屏"
+
+#: mainwindow.cpp:377
+msgid "Show fullscreen"
+msgstr "全屏显示"
+
+#: mainwindow.cpp:388 mainwindow.cpp:664
+msgid "<b>Time remaining</b><br>Click to show elapsed time"
+msgstr "<b>剩余时间</b><br>点击显示已用时间"
+
+#. i18n: file: mainwindow.ui:5535
+#. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
+#: mainwindow.cpp:390 mainwindow.cpp:666 rc.cpp:215
+msgid "<b>Time elapsed</b><br>Click to show remaining time"
+msgstr "<b>已用时间</b><br>点击显示剩余时间"
+
+#: mainwindow.cpp:399
+msgid "<b>Paused</b><br>Hold to stop"
+msgstr "<b>已暂停</b><br>按住以停止"
+
+#. i18n: file: mainwindow.ui:253
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
+#: mainwindow.cpp:530 rc.cpp:11
+msgid "Search for audio"
+msgstr "搜索音频"
+
+#: mainwindow.cpp:538
+msgid "Search for video"
+msgstr "搜索视频"
+
+#. i18n: file: mainwindow.ui:5147
+#. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
+#: mainwindow.cpp:561 rc.cpp:179
+msgid "Clear Playlist"
+msgstr "清除播放列表"
+
+#: mainwindow.cpp:562
+msgid "Are you sure you want to clear the current playlist?"
+msgstr "您确定要清除当前播放列表吗？"
+
+#. i18n: file: mainwindow.ui:1202
+#. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
+#: mainwindow.cpp:567 mainwindow.cpp:674 mainwindow.cpp:676 mainwindow.cpp:946
+#: rc.cpp:113
+msgid "Now Playing"
+msgstr "现在播放"
+
+#: mainwindow.cpp:577
+msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
+msgstr "<b>乱序开启</b><br>点击关闭乱序"
+
+#. i18n: file: mainwindow.ui:5203
+#. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
+#: mainwindow.cpp:581 rc.cpp:188
+msgid "Turn on Shuffle"
+msgstr "开启乱序"
+
+#: mainwindow.cpp:592
+msgid "<b>Repeat On</b><br>Click to turn off repeat"
+msgstr "<b>重复开启</b><br>点击关闭重复"
+
+#. i18n: file: mainwindow.ui:5174
+#. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
+#: mainwindow.cpp:595 rc.cpp:182
+msgid "Turn on Repeat"
+msgstr "开启重复"
+
+#: mainwindow.cpp:604
+msgid "<b>Showing Upcoming</b><br>Click to show playlist"
+msgstr "<b>显示即将播放</b><br>点击显示播放列表"
+
+#: mainwindow.cpp:605
+msgid "<b>Playlist</b>(Upcoming)"
+msgstr "<b>播放列表</b>(即将播放)"
+
+#. i18n: file: mainwindow.ui:5092
+#. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
+#: mainwindow.cpp:609 rc.cpp:173
+msgid "Show Upcoming"
+msgstr "显示即将播放"
+
+#: mainwindow.cpp:690
+msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
+msgstr "<b>播放中</b><br>点击以暂停<br>点击并按住以停止"
+
+#: mainwindow.cpp:701
+msgid "An error has been encountered during playback"
+msgstr "播放时遇到错误"
+
+#: mainwindow.cpp:721
+msgid "Loading playlist..."
+msgstr "正在装入播放列表..."
+
+#: mainwindow.cpp:723
+msgid "Buffering..."
+msgstr "正在缓冲..."
+
+#: mainwindow.cpp:725 platform/mediaitemmodel.cpp:501
+msgid "Loading..."
+msgstr "正在装入..."
+
+#: mainwindow.cpp:737
+msgid "<b>Muted</b><br>Click to restore volume"
+msgstr "<b>已静音</b><br>点击还原音量"
+
+#. i18n: file: mainwindow.ui:5661
+#. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
+#: mainwindow.cpp:740 rc.cpp:221
+msgid "Mute volume"
+msgstr "静音"
+
+#: mainwindow.cpp:777
+msgid "Updating..."
+msgstr "正在更新..."
+
+#: mainwindow.cpp:783
+msgid "Complete"
+msgstr "完成"
+
+#: mainwindow.cpp:789
+msgid "Updated info for "
+msgstr "已更新信息 "
+
+#: mainwindow.cpp:795
+msgid "Removed info for "
+msgstr "已删除信息 "
+
+#. i18n: file: mainwindow.ui:5124
+#. i18n: ectx: property (text), widget (QLabel, playlistName)
+#: mainwindow.cpp:899 rc.cpp:176
+msgid "<b>Playlist</b>"
+msgstr "<b>播放列表</b>"
+
+#: mainwindow.cpp:902
+#, kde-format
+msgid "1 item, %2"
+msgid_plural "%1 items, %2"
+msgstr[0] "%1 项，%2"
+
+#. i18n: file: mainwindow.ui:1199
+#. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
+#: mainwindow.cpp:917 mainwindow.cpp:947 rc.cpp:110
+msgid "View Now Playing"
+msgstr "查看现在播放"
+
+#: mainwindow.cpp:1119
+msgid "Entertainment... Now"
+msgstr "影音之乐... 享受吧"
+
+#: rc.cpp:1
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Ni Hui"
+
+#: rc.cpp:2
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "shuizhuyuanluo@126.com"
+
+#. i18n: file: mainwindow.ui:149
+#. i18n: ectx: property (text), widget (QLabel, label)
+#. i18n: file: mainwindow.ui:5405
+#. i18n: ectx: property (text), widget (QToolButton, collectionButton)
+#: rc.cpp:8 rc.cpp:206
+msgid "Media Lists"
+msgstr "媒体列表"
+
+#. i18n: file: mainwindow.ui:296
+#. i18n: ectx: attribute (label), widget (QWidget, AudioTool_2)
+#: rc.cpp:14
+msgid "Audio"
+msgstr "音频"
+
+#. i18n: file: mainwindow.ui:364
+#. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
+#. i18n: file: mainwindow.ui:801
+#. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
+#: rc.cpp:17 rc.cpp:65
+msgid "Add list"
+msgstr "添加列表"
+
+#. i18n: file: mainwindow.ui:381
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
+#. i18n: file: mainwindow.ui:818
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
+#: rc.cpp:20 rc.cpp:68
+msgid "Remove list"
+msgstr "删除列表"
+
+#. i18n: file: mainwindow.ui:411
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
+#. i18n: file: mainwindow.ui:848
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
+#: rc.cpp:23 rc.cpp:71
+msgid "Settings"
+msgstr "设置"
+
+#. i18n: file: mainwindow.ui:460
+#. i18n: ectx: property (text), widget (QLabel, label_5)
+#. i18n: file: mainwindow.ui:897
+#. i18n: ectx: property (text), widget (QLabel, label_7)
+#: rc.cpp:26 rc.cpp:74
+msgid "Add List"
+msgstr "添加列表"
+
+#. i18n: file: mainwindow.ui:477
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#. i18n: file: mainwindow.ui:914
+#. i18n: ectx: property (text), widget (QLabel, label_6)
+#: rc.cpp:29 rc.cpp:77
+msgid "Source"
+msgstr "来源"
+
+#. i18n: file: mainwindow.ui:499
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
+#. i18n: file: mainwindow.ui:940
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
+#: rc.cpp:32 rc.cpp:83
+msgid "Current View"
+msgstr "当前视图"
+
+#. i18n: file: mainwindow.ui:506
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
+#. i18n: file: mainwindow.ui:933
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
+#: rc.cpp:35 rc.cpp:80
+msgid "Current Selection"
+msgstr "当前选中项"
+
+#. i18n: file: mainwindow.ui:513
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
+#. i18n: file: mainwindow.ui:947
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
+#: rc.cpp:38 rc.cpp:86
+msgid "Current Playlist"
+msgstr "当前播放列表"
+
+#. i18n: file: mainwindow.ui:523
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
+#. i18n: file: mainwindow.ui:957
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
+#: rc.cpp:41 rc.cpp:89
+msgid "New List Name"
+msgstr "新列表名称"
+
+#. i18n: file: mainwindow.ui:545
+#. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
+#. i18n: file: mainwindow.ui:689
+#. i18n: ectx: property (text), widget (QPushButton, aslsSave)
+#. i18n: file: mainwindow.ui:976
+#. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
+#. i18n: file: mainwindow.ui:1096
+#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
+#. i18n: file: mainwindow.ui:1782
+#. i18n: ectx: property (text), widget (QPushButton, saveInfo)
+#: rc.cpp:44 rc.cpp:56 rc.cpp:92 rc.cpp:104 rc.cpp:152
+msgid "Save"
+msgstr "保存"
+
+#. i18n: file: mainwindow.ui:599
+#. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
+#. i18n: file: mainwindow.ui:719
+#. i18n: ectx: property (text), widget (QToolButton, aslsCancel)
+#. i18n: file: mainwindow.ui:1126
+#. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
+#: rc.cpp:47 rc.cpp:59 rc.cpp:107
+msgid "Return to Lists"
+msgstr "返回到列表"
+
+#. i18n: file: mainwindow.ui:638
+#. i18n: ectx: property (text), widget (QLabel, label_8)
+#. i18n: file: mainwindow.ui:1045
+#. i18n: ectx: property (text), widget (QLabel, label_11)
+#: rc.cpp:50 rc.cpp:98
+msgid "Saved List Settings"
+msgstr "已保存的列表设置"
+
+#. i18n: file: mainwindow.ui:664
+#. i18n: ectx: property (text), widget (QLabel, label_9)
+#. i18n: file: mainwindow.ui:1071
+#. i18n: ectx: property (text), widget (QLabel, label_10)
+#: rc.cpp:53 rc.cpp:101
+msgid "Name"
+msgstr "名称"
+
+#. i18n: file: mainwindow.ui:748
+#. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
+#: rc.cpp:62
+msgid "Video"
+msgstr "视频"
+
+#. i18n: file: mainwindow.ui:1009
+#. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
+#: rc.cpp:95
+msgid "Return To Lists"
+msgstr "返回到列表"
+
+#. i18n: file: mainwindow.ui:1352
+#. i18n: ectx: property (text), widget (QLabel, listTitle)
+#: rc.cpp:116
+msgid "List Title"
+msgstr "列出标题"
+
+#. i18n: file: mainwindow.ui:1365
+#. i18n: ectx: property (text), widget (QLabel, listSummary)
+#: rc.cpp:119
+msgid "Summary"
+msgstr "摘要"
+
+#. i18n: file: mainwindow.ui:1375
+#. i18n: ectx: property (text), widget (QToolButton, sortList)
+#: rc.cpp:122
+msgid "Sort"
+msgstr "排序"
+
+#. i18n: file: mainwindow.ui:1399
+#. i18n: ectx: property (text), widget (QToolButton, showInfo)
+#: rc.cpp:125
+msgid "Info"
+msgstr "信息"
+
+#. i18n: file: mainwindow.ui:1493
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: rc.cpp:128
+msgid "Information"
+msgstr "信息"
+
+#. i18n: file: mainwindow.ui:1500
+#. i18n: ectx: property (text), widget (QToolButton, editInfo)
+#: rc.cpp:131
+msgid "Edit"
+msgstr "编辑"
+
+#. i18n: file: mainwindow.ui:1567
+#. i18n: ectx: property (text), widget (QTreeWidget, infoView)
+#: rc.cpp:134
+msgid "1"
+msgstr "1"
+
+#. i18n: file: mainwindow.ui:1572
+#. i18n: ectx: property (text), widget (QTreeWidget, infoView)
+#: rc.cpp:137
+msgid "2"
+msgstr "2"
+
+#. i18n: file: mainwindow.ui:1654
+#. i18n: ectx: property (text), widget (QLabel, notificationText)
+#: rc.cpp:146
+msgid "Notification Text"
+msgstr "通知文本"
+
+#. i18n: file: mainwindow.ui:1747
+#. i18n: ectx: property (text), widget (QToolButton, previous)
+#: rc.cpp:149
+msgid "Previous"
+msgstr "向前"
+
+#. i18n: file: mainwindow.ui:1805
+#. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
+#: rc.cpp:155
+msgid "Play all media in list"
+msgstr "播放列表中全部媒体"
+
+#. i18n: file: mainwindow.ui:1834
+#. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
+#: rc.cpp:161
+msgid "Play selected media in list"
+msgstr "播放列表中选中媒体"
+
+#. i18n: file: mainwindow.ui:2346
+#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
+#: rc.cpp:167
+msgid "Playback message"
+msgstr "播放消息"
+
+#. i18n: file: mainwindow.ui:2375
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
+#: rc.cpp:170
+msgid "Playlist"
+msgstr "播放列表"
+
+#. i18n: file: mainwindow.ui:5177
+#. i18n: ectx: property (text), widget (QToolButton, repeat)
+#. i18n: file: mainwindow.ui:5206
+#. i18n: ectx: property (text), widget (QToolButton, shuffle)
+#. i18n: file: mainwindow.ui:5449
+#. i18n: ectx: property (text), widget (SToolButton, fullScreen)
+#: rc.cpp:185 rc.cpp:191 rc.cpp:212
+msgid "[ ]"
+msgstr "[ ]"
+
+#. i18n: file: mainwindow.ui:5306
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: rc.cpp:194
+msgid "Video Settings"
+msgstr "视频设置"
+
+#. i18n: file: mainwindow.ui:5335
+#. i18n: ectx: property (text), widget (QPushButton, saveShortCuts)
+#: rc.cpp:197
+msgid "Save Shortcuts"
+msgstr "保存快捷键"
+
+#. i18n: file: mainwindow.ui:5342
+#. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
+#: rc.cpp:200
+msgid "Cancel"
+msgstr "取消"
+
+#. i18n: file: mainwindow.ui:5402
+#. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
+#: rc.cpp:203
+msgid "View Media Lists"
+msgstr "查看媒体列表"
+
+#. i18n: file: mainwindow.ui:5446
+#. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
+#: rc.cpp:209
+msgid "Show full screen"
+msgstr "全屏显示"
+
+#. i18n: file: mainwindow.ui:5538
+#. i18n: ectx: property (text), widget (QToolButton, seekTime)
+#: rc.cpp:218
+msgid "03:00"
+msgstr "03:00"
+
+#. i18n: file: mainwindow.ui:5699
+#. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
+#: rc.cpp:224
+msgid "Volume"
+msgstr "音量"
+
+#. i18n: file: mainwindow.ui:5725
+#. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
+#. i18n: file: mainwindow.ui:5754
+#. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
+#. i18n: file: mainwindow.ui:5774
+#. i18n: ectx: property (text), widget (QToolButton, mediaNext)
+#: rc.cpp:227 rc.cpp:230 rc.cpp:233
+msgid "..."
+msgstr "..."
+
+#: videosettings.cpp:73
+msgid "Brightness"
+msgstr "亮度"
+
+#: videosettings.cpp:83
+msgid "Contrast"
+msgstr "对比度"
+
+#: videosettings.cpp:93
+msgid "Hue"
+msgstr "色调"
+
+#: videosettings.cpp:103
+msgid "Saturation"
+msgstr "饱和度"
+
+#: videosettings.cpp:118
+msgid "Aspect Ratio Settings"
+msgstr "纵横比设置"
+
+#: videosettings.cpp:120
+msgid "Automatic"
+msgstr "自动"
+
+#: videosettings.cpp:122
+msgid "4:3"
+msgstr "4:3"
+
+#: videosettings.cpp:124
+msgid "16:9"
+msgstr "16:9"
+
+#: videosettings.cpp:126
+msgid "Fit"
+msgstr "自适应"
+
+#: videosettings.cpp:133
+msgid "Scaling Mode"
+msgstr "缩放模式"
+
+#: videosettings.cpp:135
+msgid "Scale to fit"
+msgstr "缩放以适应"
+
+#: videosettings.cpp:137
+msgid "Scale and crop"
+msgstr "缩放并裁剪"
+
+#: videosettings.cpp:147
+msgid "Restore Defaults"
+msgstr "还原为默认值"
+
+#: videosettings.cpp:149
+msgid "Hide"
+msgstr "隐藏"
+
+#: platform/audioclipslistengine.cpp:107 platform/audioclipslistengine.cpp:131
+#: platform/videolistengine.cpp:210
+#, kde-format
+msgid "1 clip"
+msgid_plural "%1 clips"
+msgstr[0] "%1 个剪辑"
+
+#: platform/audiostreamlistengine.cpp:107
+#: platform/audiostreamlistengine.cpp:138
+#, kde-format
+msgid "1 stream"
+msgid_plural "%1 streams"
+msgstr[0] "%1 个媒体流"
+
+#: platform/audiostreamlistengine.cpp:112
+msgid "Create new audio stream item"
+msgstr "创建新音频流项目"
+
+#: platform/audiostreamlistengine.cpp:159
+msgid "Untitled Audio Stream"
+msgstr "未命名音频流"
+
+#: platform/audiostreamlistengine.cpp:160
+msgid "Select this item, click Info then Edit to enter audio stream info"
+msgstr "选中此项，点击信息，然后点击编辑查看音频流信息"
+
+#: platform/audiostreamlistengine.cpp:169
+msgid "New Audio Stream"
+msgstr "新建音频流"
+
+#: platform/cdlistengine.cpp:80
+#, kde-format
+msgid "Track %1"
+msgstr "音轨 %1"
+
+#: platform/cdlistengine.cpp:84
+#, kde-format
+msgid "Audio CD - %1 Tracks"
+msgstr "音频 CD - %1 条音轨"
+
+#: platform/cdlistengine.cpp:93
+#, kde-format
+msgid "1 track"
+msgid_plural "%1 tracks"
+msgstr[0] "%1 条音轨"
+
+#: platform/dvdlistengine.cpp:76
+#, kde-format
+msgid "Title %1"
+msgstr "标题 %1"
+
+#: platform/dvdlistengine.cpp:80
+#, kde-format
+msgid "DVD Video - %1 Titles"
+msgstr "DVD 视频 - %1 个标题"
+
+#: platform/filelistengine.cpp:69 platform/filelistengine.cpp:86
+msgid "Audio Files"
+msgstr "音频文件"
+
+#: platform/filelistengine.cpp:74 platform/filelistengine.cpp:97
+msgid "Video Files"
+msgstr "视频文件"
+
+#: platform/filelistengine.cpp:87 platform/filelistengine.cpp:98
+#: platform/filelistengine.cpp:182 platform/mediaitemmodel.cpp:381
+#: platform/savedlistsengine.cpp:152 platform/videolistengine.cpp:494
+#: platform/videolistengine.cpp:557
+#, kde-format
+msgid "1 item"
+msgid_plural "%1 items"
+msgstr[0] "%1 项"
+
+#: platform/filelistengine.cpp:122 platform/filelistengine.cpp:197
+msgid "Open audio file(s)"
+msgstr "打开音频文件"
+
+#: platform/filelistengine.cpp:127 platform/filelistengine.cpp:208
+msgid "Open folder containing audio file(s)"
+msgstr "打开包含音频文件的文件夹"
+
+#: platform/filelistengine.cpp:133 platform/filelistengine.cpp:202
+msgid "Open video file(s)"
+msgstr "打开视频文件"
+
+#: platform/filelistengine.cpp:138 platform/filelistengine.cpp:213
+msgid "Open folder containing video file(s)"
+msgstr "打开包含视频文件的文件夹"
+
+#: platform/filelistengine.cpp:144
+msgid "Open image file(s)"
+msgstr "打开图像文件"
+
+#: platform/filelistengine.cpp:149
+msgid "Open folder containing image file(s)"
+msgstr "打开包含图像文件的文件夹"
+
+#: platform/filelistengine.cpp:334
+msgid "Audio Clip"
+msgstr "音频剪辑"
+
+#: platform/filelistengine.cpp:452
+#, kde-format
+msgid "%1 - Episode %2"
+msgstr "%1 - 片段 %2"
+
+#: platform/filelistengine.cpp:454
+#, kde-format
+msgid "Episode %1"
+msgstr "片段 %1"
+
+#: platform/mediaitemmodel.cpp:380
+#, kde-format
+msgid "Multiple %1"
+msgstr "多个 %1"
+
+#: platform/mediaitemmodel.cpp:532
+msgid "No results"
+msgstr "无结果"
+
+#: platform/mediaitemmodel.cpp:563
+msgid "Add to playlist/Remove from playlist"
+msgstr "添加到播放列表 / 从播放列表删除"
+
+#: platform/medialistsengine.cpp:52 platform/medialistsengine.cpp:150
+msgid "Files and Folders"
+msgstr "文件和文件夹"
+
+#: platform/medialistsengine.cpp:57 platform/musiclistengine.cpp:222
+msgid "Artists"
+msgstr "艺人"
+
+#: platform/medialistsengine.cpp:61 platform/musiclistengine.cpp:262
+msgid "Albums"
+msgstr "专辑"
+
+#: platform/medialistsengine.cpp:65 platform/musiclistengine.cpp:353
+msgid "Songs"
+msgstr "曲目"
+
+#: platform/medialistsengine.cpp:69 platform/medialistsengine.cpp:159
+#: platform/musiclistengine.cpp:306 platform/videolistengine.cpp:448
+msgid "Genres"
+msgstr "流派"
+
+#: platform/medialistsengine.cpp:73
+msgid "Clips"
+msgstr "剪辑"
+
+#: platform/medialistsengine.cpp:77
+msgid "Audio Streams"
+msgstr "音频流"
+
+#: platform/medialistsengine.cpp:100 platform/medialistsengine.cpp:190
+#: platform/semanticslistengine.cpp:90
+msgid "Frequently Played"
+msgstr "最常播放"
+
+#: platform/medialistsengine.cpp:104 platform/medialistsengine.cpp:194
+#: platform/semanticslistengine.cpp:116
+msgid "Recently Played"
+msgstr "最近播放"
+
+#: platform/medialistsengine.cpp:108 platform/medialistsengine.cpp:198
+#: platform/semanticslistengine.cpp:141
+msgid "Highest Rated"
+msgstr "评分较高"
+
+#: platform/medialistsengine.cpp:155 platform/videolistengine.cpp:415
+msgid "Movies"
+msgstr "影片"
+
+#: platform/medialistsengine.cpp:163 platform/videolistengine.cpp:259
+msgid "TV Shows"
+msgstr "电视节目"
+
+#: platform/medialistsengine.cpp:167 platform/videolistengine.cpp:209
+msgid "Video Clips"
+msgstr "视频剪辑"
+
+#: platform/musiclistengine.cpp:224
+#, kde-format
+msgid "Artists - %1"
+msgstr "艺人 - %1"
+
+#: platform/musiclistengine.cpp:226
+#, kde-format
+msgid "1 artist"
+msgid_plural "%1 artists"
+msgstr[0] "%1 位艺人"
+
+#: platform/musiclistengine.cpp:264 platform/musiclistengine.cpp:267
+#, kde-format
+msgid "Albums - %1"
+msgstr "专辑 - %1"
+
+#: platform/musiclistengine.cpp:270
+#, kde-format
+msgid "Albums - %1 - %2"
+msgstr "专辑 - %1 - %2"
+
+#: platform/musiclistengine.cpp:273
+#, kde-format
+msgid "1 album"
+msgid_plural "%1 albums"
+msgstr[0] "%1 张专辑"
+
+#: platform/musiclistengine.cpp:307 platform/videolistengine.cpp:449
+#, kde-format
+msgid "1 genre"
+msgid_plural "%1 genres"
+msgstr[0] "%1 个流派"
+
+#: platform/musiclistengine.cpp:355 platform/musiclistengine.cpp:383
+#, kde-format
+msgid "1 song"
+msgid_plural "%1 songs"
+msgstr[0] "%1 首曲目"
+
+#: platform/videolistengine.cpp:251 platform/videolistengine.cpp:372
+msgid "Uncategorized TV Shows"
+msgstr "未分类的电视节目"
+
+#: platform/videolistengine.cpp:260
+#, kde-format
+msgid "1 show"
+msgid_plural "%1 shows"
+msgstr[0] "%1 个节目"
+
+#: platform/videolistengine.cpp:288
+#, kde-format
+msgid "Season %1"
+msgstr "上演期 %1"
+
+#: platform/videolistengine.cpp:307
+msgid "Uncategorized seasons"
+msgstr "未分类的上演期"
+
+#: platform/videolistengine.cpp:314
+#, kde-format
+msgid "Seasons - %1"
+msgstr "上演期 - %1"
+
+#: platform/videolistengine.cpp:315
+#, kde-format
+msgid "1 season"
+msgid_plural "%1 seasons"
+msgstr[0] "%1 个上演期"
+
+#: platform/videolistengine.cpp:374
+#, kde-format
+msgid "%1 - Season %2"
+msgstr "%1 - 上演期 %2"
+
+#: platform/videolistengine.cpp:376
+#, kde-format
+msgid "%1 - Uncategorized Seasons"
+msgstr "%1 - 未分类的上演期"
+
+#: platform/videolistengine.cpp:378
+#, kde-format
+msgid "1 episode"
+msgid_plural "%1 episodes"
+msgstr[0] "%1 个片段"
+
+#: platform/videolistengine.cpp:417
+#, kde-format
+msgid "Movies - %1"
+msgstr "影片 - %1"
+
+#: platform/videolistengine.cpp:419
+#, kde-format
+msgid "1 movie"
+msgid_plural "%1 movies"
+msgstr[0] "%1 部影片"
+

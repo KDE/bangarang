@@ -4,6 +4,7 @@ Version=1.0
 Name=Bangarang
 GenericName=Media Player
 GenericName[nl]=Mediaspeler
+GenericName[zh_CN]=媒体播放器
 Icon=bangarang
 X-DocPath=bangarang/index.html
 TryExec=bangarang
