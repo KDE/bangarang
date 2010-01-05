@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>724</width>
     <height>480</height>
    </rect>
   </property>
@@ -43,7 +43,16 @@
         <property name="spacing">
          <number>2</number>
         </property>
-        <property name="margin">
+        <property name="leftMargin">
+         <number>1</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>1</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -1615,7 +1624,7 @@
                  </size>
                 </property>
                 <property name="autoFillBackground">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_21">
                  <property name="leftMargin">
@@ -5376,13 +5385,13 @@ color: rgb(255, 255, 255);</string>
                <number>0</number>
               </property>
               <property name="leftMargin">
-               <number>0</number>
+               <number>1</number>
               </property>
               <property name="topMargin">
                <number>2</number>
               </property>
               <property name="rightMargin">
-               <number>0</number>
+               <number>1</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
