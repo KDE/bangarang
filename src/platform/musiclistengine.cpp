@@ -52,56 +52,6 @@ void MusicListEngine::run()
     QThread::setTerminationEnabled(true);
 
     if (m_updateSourceInfo || m_removeSourceInfo) {
-        
-        if (m_updateSourceInfo) {
-            //Update to file metadata as well
-            QList<MediaItem> mediaList = m_mediaItemsInfoToUpdate;
-            for (int i = 0; i < mediaList.count(); i++) {
-                MediaItem mediaItem = mediaList.at(i);
-                if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
-                    if (Utilities::isMusic(mediaList.at(i).url)) {
-                        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit());
-                        if (!file.isNull()) {
-                            QString title = mediaItem.title;
-                            if (!title.isEmpty()) {
-                                TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                                file.tag()->setTitle(tTitle);
-                            }
-                            QUrl url = mediaItem.fields["artworkUrl"].toString();
-                            if (!url.isEmpty()) {
-                                //FIXME: Can't understand why this doesn't work.
-                                Utilities::saveArtworkToTag(mediaList.at(i).url, url.toString());
-                            }
-                            QString artist = mediaItem.fields["artist"].toString();
-                            if (!artist.isEmpty()) {
-                                TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                                file.tag()->setArtist(tArtist);
-                            }
-                            QString album = mediaItem.fields["album"].toString();
-                            if (!album.isEmpty()) {
-                                TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                                file.tag()->setAlbum(tAlbum);
-                            }
-                            int year = mediaItem.fields["year"].toInt();
-                            if (year != 0) {
-                                file.tag()->setYear(year);
-                            }
-                            int trackNumber = mediaItem.fields["trackNumber"].toInt();
-                            if (trackNumber != 0) {
-                                file.tag()->setTrack(trackNumber);
-                            }
-                            QString genre = mediaItem.fields["genre"].toString();
-                            if (!genre.isEmpty()) {
-                                TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                                file.tag()->setGenre(tGenre);
-                            }
-                            file.save();
-                        }
-                    }
-                }
-            }
-        }
-        
         NepomukListEngine::run();
         return;
     }

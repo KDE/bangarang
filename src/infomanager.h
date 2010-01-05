@@ -101,5 +101,6 @@ class InfoManager : public QObject
         void mediaViewHolderChanged(int index);
         void audioTypeChanged(int index);
         void videoTypeChanged(int index);
+        void saveFileMetaData();
 };
 #endif //INFOMANAGER_H
