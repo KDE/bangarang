@@ -163,7 +163,6 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 
 bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 {
-    //FIXME:: HELP! Can't figure out why this doesn't work
     TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
     
@@ -173,34 +172,42 @@ bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
     QBuffer buffer(&data);
     buffer.open(QIODevice::WriteOnly);
     pixmap->save(&buffer, "PNG");
-    //TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame();
     frame->setMimeType(TagLib::String("image/png"));
     frame->setPicture(TagLib::ByteVector(data.data(), data.size()));
     frame->setDescription("Cover Image");
-    //id3tag->removeFrames("APIC");
-    //id3tag->addFrame(frame);
     return mpegFile.save();
 }
 
 bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
-    //QByteArray filePath = QFile::encodeName(KUrl(url).path());
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
-    TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
-    
-    TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
-    
-    QFile file(KUrl(imageurl).path());
-    file.open(QIODevice::ReadOnly);
-    QByteArray data = file.readAll();
-    
-    //TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame();
-    frame->setMimeType(TagLib::String("image/png"));
-    frame->setPicture(TagLib::ByteVector(data.data(), data.size()));
-    frame->setDescription("Cover Image");
-    //id3tag->removeFrames("APIC");
-    //id3tag->addFrame(frame);
-    return mpegFile.save();
+    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+    if (result->is("audio/mpeg")) {
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+        if (mpegFile.isValid()) {
+            TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
+
+            TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
+            
+            QFile file(KUrl(imageurl).path());
+            file.open(QIODevice::ReadOnly);
+            QByteArray data = file.readAll();
+            
+            KMimeType::Ptr result = KMimeType::findByUrl(KUrl(imageurl), 0, true);
+            if (result->is("image/png")) {
+                frame->setMimeType("image/png");
+            } else if (result->is("image/jpeg")) {
+                frame->setMimeType("image/jpeg");
+            }
+            
+            frame->setPicture(TagLib::ByteVector(data.data(), data.size()));
+            frame->setDescription("Cover Image");
+            return mpegFile.save();
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
 }
 
 void Utilities::setArtistTag(const QString &url, const QString &artist)

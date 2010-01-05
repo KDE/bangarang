@@ -59,7 +59,6 @@ namespace Utilities {
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
     QPixmap reflection(QPixmap &pixmap);
-    void shadowBlur(QImage &image, int radius, const QColor &color);
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
     KIcon turnIconOff(KIcon icon, QSize size);
