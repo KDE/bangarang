@@ -227,7 +227,7 @@ void VideoListEngine::run()
                 mediaItem.url = QString("video://episodes?||%1||%2||%3")
                                     .arg(genre).arg(seriesName).arg(season);
                 mediaItem.title = seriesName;
-                mediaItem.subTitle = i18n("Season %1", season);
+                mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
                 mediaItem.type = QString("Category");
                 mediaItem.nowPlaying = false;
                 mediaItem.artwork = KIcon("video-television");
@@ -258,7 +258,7 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            m_mediaListProperties.name = i18n("Seasons - %1", seriesName);
+            m_mediaListProperties.name = i18nc("%1=Name of the Series", "Seasons - %1", seriesName);
             m_mediaListProperties.summary = i18np("1 season", "%1 seasons", mediaList.count());
             
             m_mediaListProperties.type = QString("Categories");
@@ -357,9 +357,9 @@ void VideoListEngine::run()
             if (seriesName == "~") {
                 m_mediaListProperties.name = i18n("Uncategorized TV Shows");
             } else if (hasSeason) {
-                m_mediaListProperties.name = i18n("%1 - Season %2", seriesName, season);
+                m_mediaListProperties.name = i18nc("%1=Name of the series, %2=Number of the Season", "%1 - Season %2", seriesName, season);
             } else {
-                m_mediaListProperties.name = i18n("%1 - Uncategorized Seasons", seriesName);
+                m_mediaListProperties.name = i18nc("%1=Name of the Series", "%1 - Uncategorized Seasons", seriesName);
             }
             m_mediaListProperties.summary = i18np("1 episode", "%1 episodes", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
@@ -425,7 +425,7 @@ void VideoListEngine::run()
             
             m_mediaListProperties.name = i18n("Movies");
             if (!genre.isEmpty()) {
-                m_mediaListProperties.name = i18n("Movies - %1", genre);
+                m_mediaListProperties.name = i18nc("%1=Genre of the movie", "Movies - %1", genre);
             }
             m_mediaListProperties.summary = i18np("1 movie", "%1 movies", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
