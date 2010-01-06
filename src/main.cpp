@@ -26,9 +26,9 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "0.93 (1.0~beta3)",
+        ki18n("Bangarang"), "0.99 (1.0~RC)",
         ki18n("A Media Player"), KAboutData::License_GPL_V2,
-        ki18n("Copyright 2009, Andrew Lake"), KLocalizedString(),
+        ki18n("Copyright 2010, Andrew Lake"), KLocalizedString(),
         "" );
 
 int main(int argc, char *argv[])
