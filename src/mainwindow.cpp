@@ -790,13 +790,20 @@ void MainWindow::delayedNotificationHide()
 
 void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
 {
-    ui->notificationText->setText(i18n("Updated info for ") + QString("<i>%1, %2</i>").arg(mediaItem.title).arg(mediaItem.subTitle));
+    QFontMetrics fm =  ui->notificationText->fontMetrics();
+    QString notificationText = i18n("Updated info for ") + QString("<i>%1, %2</i>").arg(mediaItem.title).arg(mediaItem.subTitle);
+    notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
+    
+    ui->notificationText->setText(notificationText);
     ui->notificationWidget->setVisible(true);
 }
 
 void MainWindow::sourceInfoRemoved(QString url)
 {
-    ui->notificationText->setText(i18n("Removed info for ") + QString("<i>%1</i>").arg(url));
+    QFontMetrics fm =  ui->notificationText->fontMetrics();
+    QString notificationText = i18n("Removed info for ") + QString("<i>%1</i>").arg(url);
+    notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
+    ui->notificationText->setText(notificationText);
     ui->notificationWidget->setVisible(true);
 }
 
