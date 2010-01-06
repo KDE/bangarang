@@ -223,6 +223,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->listSummary->setFont(KGlobalSettings::smallestReadableFont());
     ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
     ui->playbackMessage->clear();
+    ui->collectionButton->setFocus();
     updateSeekTime(0);
     showApplicationBanner();
     updateCachedDevicesList();
@@ -353,6 +354,7 @@ void MainWindow::on_nowPlaying_clicked()
 void MainWindow::on_collectionButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0); // Show Collection page
+    ui->collectionButton->setFocus();
 }
 
 void MainWindow::on_showPlaylist_clicked(bool checked)
