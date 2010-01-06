@@ -41,6 +41,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_cacheThreshold = 3000; //default to 3 second loading threshold for adding to cache
     m_forceRefreshFromSource = false;
     m_loadSources = false;
+    m_reload = false;
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -148,10 +149,12 @@ void MediaItemModel::load()
             m_forceRefreshFromSource = false;
         }
     }
+    m_loadSources = false;
 }
 
 void MediaItemModel::reload()
 {
+    m_reload = true;
     if (m_loadSources) {
         // If the model was populated using loadSource then reload 
         QList<MediaItem> mediaList = m_mediaListForLoadSources;
@@ -380,6 +383,8 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 if (rowCount() == 0) {
                     showNoResultsMessage();
                 }
+                m_reload = false;
+                m_lriIsLoadable = true;
                 emit mediaListChanged();
             }
         } else {
@@ -404,11 +409,15 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                         }
                         //Need a basic lri so updateInfo and removeInfo can be performed by a list engine
                         m_mediaListProperties.lri = mediaListProperties.engine(); 
-                        m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
+                        if (!m_reload) {
+                            m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
+                        }
                         m_mediaListProperties.summary = i18np("1 item", "%1 items", count);
                         m_subRequestMediaLists.clear();
                         m_subRequestSignatures.clear();
                         m_subRequestsDone = 0;
+                        m_reload = false;
+                        m_lriIsLoadable = false;
                         emit mediaListChanged();
                     }
                 }
@@ -770,3 +779,7 @@ MediaListCache * MediaItemModel::mediaListCache()
     return m_mediaListCache;
 }
 
+bool MediaItemModel::lriIsLoadable()
+{
+    return m_lriIsLoadable;
+}

@@ -350,9 +350,9 @@ void SavedListsManager::mediaListChanged()
 {
     if (m_parent->m_mediaItemModel->rowCount() > 0) {
         QString listItemType = m_parent->m_mediaItemModel->mediaItemAt(0).type;
-        if (listItemType == "Audio" && m_nepomukInited) {
+        if (listItemType == "Audio" && m_nepomukInited && m_parent->m_mediaItemModel->lriIsLoadable()) {
             ui->aListSourceView->setEnabled(true);
-        } else if (listItemType == "Video" && m_nepomukInited) {
+        } else if (listItemType == "Video" && m_nepomukInited && m_parent->m_mediaItemModel->lriIsLoadable()) {
             ui->vListSourceView->setEnabled(true);
         } else {
             ui->aListSourceView->setChecked(false);
