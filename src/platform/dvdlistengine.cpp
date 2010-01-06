@@ -77,7 +77,7 @@ void DVDListEngine::run()
                 mediaItem.url = QString("DVDTRACK%1").arg(i);
                 mediaItem.artwork = KIcon("media-optical-dvd");
                 mediaItem.title = title;
-                mediaItem.subTitle = i18n("DVD Video - %1 Titles", trackCount);
+                mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = mediaItem.title;
