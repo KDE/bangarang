@@ -85,7 +85,7 @@ void InfoManager::mediaViewHolderChanged(int index)
 {
     if (index == 0) {
         m_editToggle = false;
-        ui->editInfo->setText("Edit");
+        ui->editInfo->setText(i18n("Edit"));
         ui->editInfo->setIcon(KIcon("document-edit"));
     }
         
@@ -113,7 +113,7 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
     m_infoMediaItemsModel->loadMediaList(mediaList);
     showFields();
     m_editToggle = false;
-    ui->editInfo->setText("Edit");
+    ui->editInfo->setText(i18n("Edit"));
     ui->editInfo->setIcon(KIcon("document-edit"));
     ui->playSelected->setVisible(false);
     ui->playAll->setVisible(false);
@@ -124,10 +124,10 @@ void InfoManager::editInfoView()
     m_editToggle = !m_editToggle;
     showFields(m_editToggle);
     if (m_editToggle) {
-        ui->editInfo->setText("Cancel Edit");
+        ui->editInfo->setText(i18n("Cancel Edit"));
         ui->editInfo->setIcon(KIcon("dialog-cancel"));
     } else {
-        ui->editInfo->setText("Edit");
+        ui->editInfo->setText(i18n("Edit"));
         ui->editInfo->setIcon(KIcon("document-edit"));
     }
 }
@@ -199,7 +199,7 @@ void InfoManager::videoTypeChanged(int type)
 
 void InfoManager::saveInfoView()
 {
-    ui->saveInfo->setText("Saving...");
+    ui->saveInfo->setText(i18n("Saving..."));
     ui->saveInfo->setEnabled(false);
     
     //Save info data to nepomuk store
@@ -209,15 +209,15 @@ void InfoManager::saveInfoView()
      
     //show non-editable fields
     m_editToggle = false;
-    ui->editInfo->setText("Edit");
+    ui->editInfo->setText(i18n("Edit"));
     ui->editInfo->setIcon(KIcon("document-edit"));
-    ui->saveInfo->setText("Save");
+    ui->saveInfo->setText(i18n("Save"));
     ui->saveInfo->setEnabled(true);
     ui->saveInfo->setVisible(false);
     showFields(false);
 }
 
-void InfoManager::showFields(bool edit)
+void InfoManager::showFields(bool edit) //TODO: Make the following strings (Music, Audio Stream, Audio Clip, Movie, TV Show, Video Clip, translatable too)
 {
     ui->infoView->clear();
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
