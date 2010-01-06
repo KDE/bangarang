@@ -4,3 +4,4 @@
 msgmerge -U nl/bangarang.po bangarang.pot
 msgmerge -U de/bangarang.po bangarang.pot
 msgmerge -U fr/bangarang.po bangarang.pot
+msgmerge -U zh_CN/bangarang.po bangarang.pot
