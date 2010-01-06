@@ -283,6 +283,11 @@ class MediaItemModel : public QStandardItemModel
         void loadSources(const QList<MediaItem> &mediaList);
         
         /**
+         * Returns true if lri is loadable
+         **/
+        bool lriIsLoadable();
+        
+        /**
          * Returns the MediaItem associated with the specified row in the model.
          */
         MediaItem mediaItemAt(int row);
@@ -578,6 +583,8 @@ class MediaItemModel : public QStandardItemModel
         QList<QString> m_lrisLoading; 
         bool m_loadSources;
         QList<MediaItem> m_mediaListForLoadSources;
+        bool m_reload;
+        bool m_lriIsLoadable;
 
 };
 
