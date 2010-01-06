@@ -19,7 +19,7 @@
 #ifndef SAVEDLISTSENGINE_H
 #define SAVEDLISTSENGINE_H
 
-#include "listengine.h"
+#include "nepomuklistengine.h"
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
@@ -38,7 +38,7 @@ class MediaIndexer;
 * List Resource Identifiers handled are:
 *   savedlists://[name]
 */
-class SavedListsEngine : public ListEngine
+class SavedListsEngine : public NepomukListEngine
 {
     Q_OBJECT
     
