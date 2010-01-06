@@ -139,27 +139,27 @@ class MediaQuery {
         {
             QString statement;
             if (constraint == MediaQuery::Equal) {
-                statement += QString(" (int(?%1) = %2) ")
+                statement += QString(" (?%1 = %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::NotEqual) {
-                statement += QString(" (int(?%1) != %2) ")
+                statement += QString(" (?%1 != %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::LessThan) {
-                statement += QString(" (int(?%1) < %2) ")
+                statement += QString(" (?%1 < %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::GreaterThan) {
-                statement += QString(" (int(?%1) > %2) ")
+                statement += QString(" (?%1 > %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::LessThanOrEqual) {
-                statement += QString(" (int(?%1) <= %2) ")
+                statement += QString(" (?%1 <= %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::GreaterThanOrEqual) {
-                statement += QString(" (int(?%1) >= %2) ")
+                statement += QString(" (?%1 >= %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             }
