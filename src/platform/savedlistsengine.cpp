@@ -32,7 +32,7 @@
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
 
-SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : ListEngine(parent)
+SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
 }
 
@@ -42,8 +42,12 @@ SavedListsEngine::~SavedListsEngine()
 
 void SavedListsEngine::run()
 {
-    QList<MediaItem> mediaList;
+    if (m_updateSourceInfo || m_removeSourceInfo) {
+        NepomukListEngine::run();
+        return;
+    }
     
+    QList<MediaItem> mediaList;
     
     if (!m_mediaListProperties.engineArg().isEmpty()) {
         QString workingDir;
