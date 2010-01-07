@@ -791,7 +791,8 @@ void MainWindow::delayedNotificationHide()
 void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
 {
     QFontMetrics fm =  ui->notificationText->fontMetrics();
-    QString notificationText = i18n("Updated info for ") + QString("<i>%1, %2</i>").arg(mediaItem.title).arg(mediaItem.subTitle);
+	//TODO: I tried fixing this word puzzle, I couldn't test it myself, but it should work. Please check if it really is :-) thanks
+    QString notificationText = i18n("Updated info for <i>%1, %2</i>", mediaItem.title, mediaItem.subTitle);
     notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
     
     ui->notificationText->setText(notificationText);
@@ -801,7 +802,8 @@ void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
 void MainWindow::sourceInfoRemoved(QString url)
 {
     QFontMetrics fm =  ui->notificationText->fontMetrics();
-    QString notificationText = i18n("Removed info for ") + QString("<i>%1</i>").arg(url);
+	//TODO: I tried fixing this word puzzle, I couldn't test it myself, but it should work. Please check if it really is :-) thanks
+    QString notificationText = i18n("Removed info for <i>%1</i>", url);
     notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
     ui->notificationText->setText(notificationText);
     ui->notificationWidget->setVisible(true);
