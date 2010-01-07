@@ -131,7 +131,7 @@ void MusicListEngine::run()
             }
             m_mediaListProperties.name = i18n("Artists");
             if (!genre.isEmpty()) {
-                m_mediaListProperties.name = i18n("Artists - %1", genre);
+                m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", genre);
             }
             m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
