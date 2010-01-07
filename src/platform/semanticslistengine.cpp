@@ -101,7 +101,8 @@ void SemanticsListEngine::run()
                                    it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                     int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
-                    mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Played %1 times").arg(playCount);
+				//TODO: I tried to fix a Word puzzle here, you should check whether it really works that way, thanks :-)
+				mediaItem.fields["description"] = i18n("%1 - Played %2 times", mediaItem.fields["description"].toString(), playCount);
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
@@ -140,8 +141,9 @@ void SemanticsListEngine::run()
                                     it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
                                     it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
                     MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
-                    QString lastPlayed = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap") ;
-                    mediaItem.fields["description"] = mediaItem.fields["description"].toString() + QString(" - Last Played: %1").arg(lastPlayed);
+                    QString lastPlayed = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap"); 
+					//TODO: I tried to fix a Word puzzle here, you should check whether it really works that way, thanks :-)
+                    mediaItem.fields["description"] = i18n("%1 - Last Played: %2", mediaItem.fields["description"].toString(), lastPlayed);
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
