@@ -217,7 +217,7 @@ void InfoManager::saveInfoView()
     showFields(false);
 }
 
-void InfoManager::showFields(bool edit) //TODO: Make the following strings (Music, Audio Stream, Audio Clip, Movie, TV Show, Video Clip, translatable too)
+void InfoManager::showFields(bool edit) 
 {
     ui->infoView->clear();
     QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
@@ -322,7 +322,7 @@ void InfoManager::showAudioType(int index, bool edit)
 {
     int startRow = ui->infoView->topLevelItemCount();
     QStringList typeList;
-    typeList << "Music" << "Audio Stream" << "Audio Clip";
+    typeList << i18n("Music") << i18n("Audio Stream") << i18n("Audio Clip");
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow, tr2i18n("Type"));
     
@@ -380,7 +380,7 @@ void InfoManager::showVideoType(int index, bool edit)
 {
     int startRow = ui->infoView->topLevelItemCount();
     QStringList typeList;
-    typeList << "Movie" << "TV Show" << "Video Clip";
+    typeList << i18n("Movie") << i18n("TV Show") << i18n("Video Clip");
     ui->infoView->addTopLevelItem(new QTreeWidgetItem());
     setLabel(startRow, tr2i18n("Type"));
     
@@ -628,7 +628,6 @@ void InfoManager::saveInfoToMediaModel()
                 
                 QComboBox *writerWidget = qobject_cast<QComboBox*>(ui->infoView->itemWidget(ui->infoView->topLevelItem(7), 1));
                 QString writer = writerWidget->currentText();
-                kDebug() << "Writer:" << writer;
                 if (!writer.isEmpty()) {
                     mediaItem.fields["writer"] = writer;
                 }
