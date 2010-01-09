@@ -100,7 +100,7 @@ void FileListEngine::run()
             }
             m_getFolderAction = false;
         }
-        model()->addResults(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
+        emit results(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
         if (m_nepomukInited && m_mediaListToIndex.count() > 0) {
             NepomukListEngine::updateSourceInfo(m_mediaListToIndex);
             m_mediaIndexer = new MediaIndexer(this);
@@ -182,7 +182,7 @@ void FileListEngine::run()
         m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
     }
     
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();
     //exec();

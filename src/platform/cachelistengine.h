@@ -39,9 +39,5 @@ class CacheListEngine : public ListEngine
         CacheListEngine(ListEngineFactory *parent);
         ~CacheListEngine();
         void run();
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 #endif // CACHELISTENGINE_H

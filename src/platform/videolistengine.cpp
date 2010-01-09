@@ -679,7 +679,7 @@ void VideoListEngine::run()
         }
     }
     
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
     //Check if MediaItems in mediaList exist
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);

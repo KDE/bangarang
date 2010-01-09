@@ -179,6 +179,8 @@ public:
                    *             resources (files, streams, etc.). */
     
 };
+Q_DECLARE_METATYPE(MediaListProperties);
+
 
 class MediaList : QList<MediaItem>{};
 

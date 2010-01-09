@@ -47,9 +47,5 @@ class MediaListsEngine : public NepomukListEngine
         
     private:
         bool m_loadWhenReady;
-    
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 #endif // MEDIALISTSENGINE_H

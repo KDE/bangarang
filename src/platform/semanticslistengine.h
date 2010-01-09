@@ -47,10 +47,6 @@ class SemanticsListEngine : public NepomukListEngine
         SemanticsListEngine(ListEngineFactory *parent);
         ~SemanticsListEngine();
         void run();
-       
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 
 #endif // SEMANTICSLISTENGINE_H

@@ -86,14 +86,14 @@ void DVDListEngine::run()
                 mediaList << mediaItem;
             }
 
-            model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+            emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
             m_requestSignature = QString();
             m_subRequestSignature = QString();
             m_loadWhenReady = false;
             delete mediaController;
         }
     } else {
-        model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
         m_requestSignature = QString();
         m_subRequestSignature = QString();
         m_loadWhenReady = false;

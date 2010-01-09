@@ -43,10 +43,6 @@ class AudioStreamListEngine : public NepomukListEngine
         void run();
         void setFilterForSources(const QString& engineFilter);
         void activateAction();
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 
 #endif // AUDIOSTREAMLISTENGINE_H

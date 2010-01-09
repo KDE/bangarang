@@ -50,7 +50,7 @@ MusicListEngine::~MusicListEngine()
 void MusicListEngine::run()
 {
     QThread::setTerminationEnabled(true);
-
+    
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -390,7 +390,7 @@ void MusicListEngine::run()
         }
     }
     
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
     //Check if MediaItems in mediaList exist
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);

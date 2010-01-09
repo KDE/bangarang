@@ -42,7 +42,7 @@ void CacheListEngine::run()
             mediaListProperties = model()->mediaListCache()->mediaListProperties(lri);
         }
     }
-    model()->addResults(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
+    emit results(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }

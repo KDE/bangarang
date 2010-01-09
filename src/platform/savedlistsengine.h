@@ -49,11 +49,5 @@ class SavedListsEngine : public NepomukListEngine
         
     private:
         Soprano::Model * m_mainModel;
-    
-    private slots:
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 #endif // SAVEDLISTSENGINE_H

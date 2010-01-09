@@ -29,6 +29,10 @@ ListEngine::~ListEngine()
 void ListEngine::setModel(MediaItemModel * mediaItemModel)
 {
     m_mediaItemModel = mediaItemModel;
+    connect(this, 
+            SIGNAL(results(QString, QList<MediaItem>, MediaListProperties, bool, QString)),
+            m_mediaItemModel,
+            SLOT(addResults(QString, QList<MediaItem>, MediaListProperties, bool, QString)));
 }
 
 MediaItemModel * ListEngine::model()
