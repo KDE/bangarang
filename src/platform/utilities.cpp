@@ -738,7 +738,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.url = url.toString();
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
-    mediaItem.fields["title"] = it.binding(MediaVocabulary::titleBinding()).literal().toString();
+    mediaItem.fields["title"] = mediaItem.title;
     if (mediaItem.title.isEmpty()) {
         if (KUrl(mediaItem.url).isLocalFile()) {
             mediaItem.title = KUrl(mediaItem.url).fileName();
@@ -752,12 +752,14 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     int duration = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
     if (duration != 0) {
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-        mediaItem.fields["duration"] = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
+        mediaItem.fields["duration"] = duration;
     }
     mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
     mediaItem.fields["playCount"] = it.binding(MediaVocabulary::playCountBinding()).literal().toInt();
-    mediaItem.fields["lastPlayed"] = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+    if (it.binding(MediaVocabulary::lastPlayedBinding()).isValid()) {
+        mediaItem.fields["lastPlayed"] = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+    }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
