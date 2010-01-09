@@ -53,9 +53,5 @@ class CDListEngine : public ListEngine
     
     private slots:
         void stateChanged(Phonon::State newState, Phonon::State oldState);
-        
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 #endif // CDLISTENGINE_H

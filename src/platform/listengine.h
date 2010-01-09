@@ -135,6 +135,9 @@ class ListEngine : public QThread
             Q_UNUSED(mediaList);
         }
         
+    Q_SIGNALS:
+        void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
+        
     protected:
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;

@@ -64,9 +64,5 @@ class FileListEngine : public NepomukListEngine
         bool m_getFilesAction;
         bool m_getFolderAction;
         QList<MediaItem> m_mediaListToIndex;
-
-    Q_SIGNALS:
-        void results(QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done);
-        
 };
 #endif // FILELISTENGINE_H

@@ -164,7 +164,7 @@ void SavedListsEngine::run()
     }
     
     m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }

@@ -65,6 +65,8 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     qRegisterMetaType<MediaItem>("MediaItem");
+    qRegisterMetaType<MediaListProperties>("MediaListProperties");
+    qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
     ui->setupUi(this);
     

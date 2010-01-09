@@ -122,9 +122,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             musicListEngine = new MusicListEngine(this);
+            musicListEngine->setModel(m_parent);
             m_musicListEngines << musicListEngine;
         }
-        musicListEngine->setModel(m_parent);
         return musicListEngine;           
     } else if (engine.toLower() == "files://") {
         //Search for available list engine
@@ -139,9 +139,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             fileListEngine = new FileListEngine(this);
+            fileListEngine->setModel(m_parent);
             m_fileListEngines << fileListEngine;
         }
-        fileListEngine->setModel(m_parent);
         return fileListEngine;        
     } else if (engine.toLower() == "video://") {
         //Search for available list engine
@@ -156,9 +156,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             videoListEngine = new VideoListEngine(this);
+            videoListEngine->setModel(m_parent);
             m_videoListEngines << videoListEngine;
         }
-        videoListEngine->setModel(m_parent);
         return videoListEngine;        
     } else if (engine.toLower() == "cdaudio://") {
         //Search for available list engine
@@ -173,9 +173,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             cdListEngine = new CDListEngine(this);
+            cdListEngine->setModel(m_parent);
             m_cdListEngines << cdListEngine;
         }
-        cdListEngine->setModel(m_parent);
         return cdListEngine;        
     } else if (engine.toLower() == "dvdvideo://") {
         //Search for available list engine
@@ -190,9 +190,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             dvdListEngine = new DVDListEngine(this);
+            dvdListEngine->setModel(m_parent);
             m_dvdListEngines << dvdListEngine;
         }
-        dvdListEngine->setModel(m_parent);
         return dvdListEngine;        
     } else if (engine.toLower() == "savedlists://") {
         //Search for available list engine
@@ -207,9 +207,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             savedListsEngine = new SavedListsEngine(this);
+            savedListsEngine->setModel(m_parent);
             m_savedListsEngines << savedListsEngine;
         }
-        savedListsEngine->setModel(m_parent);
         return savedListsEngine;        
     } else if (engine.toLower() == "medialists://") {
         //Search for available list engine
@@ -224,9 +224,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             mediaListsEngine = new MediaListsEngine(this);
+            mediaListsEngine->setModel(m_parent);
             m_mediaListsEngines << mediaListsEngine;
         }
-        mediaListsEngine->setModel(m_parent);
         return mediaListsEngine;        
     } else if (engine.toLower() == "audiostreams://") {
         //Search for available list engine
@@ -241,9 +241,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             audioStreamListEngine = new AudioStreamListEngine(this);
+            audioStreamListEngine->setModel(m_parent);
             m_audioStreamListEngines << audioStreamListEngine;
         }
-        audioStreamListEngine->setModel(m_parent);
         return audioStreamListEngine;        
     } else if (engine.toLower() == "semantics://") {
         //Search for available list engine
@@ -258,9 +258,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             semanticsListEngine = new SemanticsListEngine(this);
+            semanticsListEngine->setModel(m_parent);
             m_semanticsListEngines << semanticsListEngine;
         }
-        semanticsListEngine->setModel(m_parent);
         return semanticsListEngine;        
     } else if (engine.toLower() == "cache://") {
         //Search for available list engine
@@ -275,9 +275,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             cacheListEngine = new CacheListEngine(this);
+            cacheListEngine->setModel(m_parent);
             m_cacheListEngines << cacheListEngine;
         }
-        cacheListEngine->setModel(m_parent);
         return cacheListEngine;        
     } else if (engine.toLower() == "audioclips://") {
         //Search for available list engine
@@ -292,9 +292,9 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
         }
         if (!foundListEngine) {
             audioClipsListEngine = new AudioClipsListEngine(this);
+            audioClipsListEngine->setModel(m_parent);
             m_audioClipsListEngines << audioClipsListEngine;
         }
-        audioClipsListEngine->setModel(m_parent);
         return audioClipsListEngine;        
     }
     return new ListEngine(this);
