@@ -109,6 +109,8 @@ private:
     NowPlayingDelegate * m_nowPlayingDelegate;
     Phonon::VideoWidget *m_videoWidget;
     Phonon::AudioOutput *m_audioOutput;
+    Phonon::AudioOutput *m_audioOutputMusicCategory;
+    Phonon::AudioOutput *m_audioOutputVideoCategory;
     Phonon::MediaObject *m_media;
     Phonon::MediaController *m_mediaController;
     QGraphicsScene *m_Scene;
