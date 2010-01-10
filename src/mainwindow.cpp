@@ -706,6 +706,11 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     if (newstate == Phonon::ErrorState) {
         ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
         QTimer::singleShot(3000, ui->playbackMessage, SLOT(clear()));
+        if (m_playlist->rowOfNowPlaying() < (m_playlist->playlistModel()->rowCount() - 1)) {
+            m_playlist->playNext();
+        } else {
+            m_playlist->stop();
+        }
     }
     Q_UNUSED(oldstate);
 }

@@ -265,6 +265,7 @@ void Playlist::stop()
             m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);
         }
     }
+    m_state = Playlist::Finished;
     emit playlistFinished();
 }
 
@@ -390,6 +391,17 @@ Playlist::State Playlist::state()
     return m_state;
 }
 
+int Playlist::rowOfNowPlaying()
+{
+    int row  = -1;
+    if (m_nowPlaying->rowCount() > 0) {
+        MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
+        if (nowPlayingItem.type == "Audio" || nowPlayingItem.type == "Video") {
+            row = nowPlayingItem.playlistIndex;
+        }
+    }
+    return row;
+}
 
 //----------------------------------------
 //--- Media Object/Controller SLOTS    ---
