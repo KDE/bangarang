@@ -70,5 +70,6 @@ namespace Utilities {
     QString videoMimeFilter();
     MediaItem mediaItemFromNepomuk(Nepomuk::Resource res);
     MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type);
+    Nepomuk::Resource mediaResourceFromUrl(KUrl Url);
 }
 #endif //UTILITIES_H    

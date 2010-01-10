@@ -336,8 +336,9 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     MediaItem mediaItem;
-    url.cleanPath();
-    url = QUrl::fromPercentEncoding(url.url().toUtf8());
+    kDebug() << url.url();
+    //url.cleanPath();
+    //url = QUrl::fromPercentEncoding(url.url().toUtf8());
 
     if (Utilities::isM3u(url.url()) || Utilities::isPls(url.url())) {
         mediaItem.artwork = KIcon("view-list-text");
@@ -355,7 +356,8 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     //Determine type of file - nepomuk is primary source
     bool foundInNepomuk = false;
     if (nepomukInited) {
-        Nepomuk::Resource res(QUrl(mediaItem.url.toUtf8()));
+        //Try to find the corresponding resource in Nepomuk
+        Nepomuk::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
             res.hasType(mediaVocabulary.typeAudioMusic()) ||
             res.hasType(mediaVocabulary.typeAudioStream()) || 
@@ -732,11 +734,12 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res)
 MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type)
 {
     MediaItem mediaItem;
-    QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+    KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-    mediaItem.url = url.toString();
+    mediaItem.url = url.prettyUrl();
     mediaItem.fields["url"] = mediaItem.url;
+    mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
     mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
     mediaItem.fields["title"] = mediaItem.title;
     if (mediaItem.title.isEmpty()) {
@@ -846,4 +849,33 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     }
     
     return mediaItem;
+}
+
+Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append(mediaVocabulary.mediaResourceBinding());
+    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(mediaVocabulary.hasUrl(MediaQuery::Required, url.url()));
+    query.endWhere();
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+    
+    Nepomuk::Resource res = Nepomuk::Resource();
+    while (it.next()) {
+        res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+        if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
+            res.hasType(mediaVocabulary.typeAudioMusic()) ||
+            res.hasType(mediaVocabulary.typeAudioStream()) || 
+            res.hasType(mediaVocabulary.typeVideo()) ||
+            res.hasType(mediaVocabulary.typeVideoMovie()) ||
+            res.hasType(mediaVocabulary.typeVideoTVShow())) ) {
+            break;//returns first media resource found
+        }
+    }
+    return res;   
 }
