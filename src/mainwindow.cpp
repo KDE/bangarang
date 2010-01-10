@@ -101,7 +101,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up media object
     m_media = new Phonon::MediaObject(this);
     m_videoWidget =  new Phonon::VideoWidget(ui->videoFrame);
-    m_audioOutput = new Phonon::AudioOutput(this);
+    m_audioOutputMusicCategory = new Phonon::AudioOutput(Phonon::MusicCategory, this);
+    m_audioOutputVideoCategory = new Phonon::AudioOutput(Phonon::VideoCategory, this);
+    m_audioOutput = m_audioOutputMusicCategory; // default to music category;
     Phonon::createPath(m_media, m_videoWidget);
     Phonon::createPath(m_media, m_audioOutput);
     m_media->setTickInterval(500);
@@ -943,6 +945,12 @@ void MainWindow::nowPlayingChanged()
             }
             ui->nowPlaying->setToolTip(toolTipText);
             setWindowTitle(QString(m_nowPlaying->mediaItemAt(0).title + " - Bangarang"));
+        }
+        //Switch the audio output to the appropriate phonon category
+        if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
+            m_audioOutput = m_audioOutputMusicCategory;
+        } else if (m_nowPlaying->mediaItemAt(0).type == "Video") {
+            m_audioOutput = m_audioOutputVideoCategory;
         }
     
         ui->nowPlayingView->header()->setStretchLastSection(false);
