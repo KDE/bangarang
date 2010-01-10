@@ -198,19 +198,20 @@ void MediaIndexer::updateRating(const QString &url, int rating)
 
 void MediaIndexer::writeRemoveInfo(MediaItem mediaItem, QTextStream &out)
 {
-    out << "[" << mediaItem.url  << "]\n";;
+    out << "[" << mediaItem.fields["resourceUri"].toString()  << "]\n";;
     out << "type = " << mediaItem.type  << "\n";;
     if (mediaItem.type == "Audio") {
         out << "audioType = " << mediaItem.fields["audioType"].toString() << "\n";
     } else if (mediaItem.type == "Video") {
         out << "videoType = " << mediaItem.fields["videoType"].toString() << "\n";
     }
+    out << "url = " << mediaItem.fields["url"].toString() << "\n";
     out << "removeInfo = true" << "\n";
 }
 
 void MediaIndexer::writeUpdateInfo(MediaItem mediaItem, QTextStream &out)
 {
-    out << "[" << mediaItem.url  << "]\n";;
+    out << "[" << mediaItem.fields["resourceUri"].toString()  << "]\n";;
     out << "type = " << mediaItem.type  << "\n";;
     
     QHashIterator<QString, QVariant> i(mediaItem.fields);
@@ -235,8 +236,7 @@ void MediaIndexer::processWriterOutput()
                 char buffer[1024];
                 qint64 lineLength = m_writers.at(i)->readLine(buffer, sizeof(buffer));
                 if (lineLength != -1) {
-                    QString line(buffer);
-                    //kDebug() << line;
+                    QString line = QUrl::fromPercentEncoding(buffer);
                     if (line.startsWith("BangarangProgress:")) {
                         int percent = line.remove("BangarangProgress:").trimmed().toInt();
                         emit percentComplete(percent);

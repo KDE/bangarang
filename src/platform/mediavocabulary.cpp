@@ -753,7 +753,22 @@ QString MediaVocabulary::hasResource(const QString &uri)
     statement += fileUrl(resourceBinding);
     return statement;
 }
-                    
+
+QString MediaVocabulary::hasUrl(MediaQuery::Match match, 
+                                  const QString &url)
+{
+    QString statement = QString("?%1 nie:url ?%2 . ")
+                        .arg(mediaResourceBinding())
+                        .arg(mediaResourceUrlBinding());
+    statement += QString("FILTER (?%1 = <%2> ) ")
+                 .arg(mediaResourceUrlBinding())
+                 .arg(url);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
 QString MediaVocabulary::hasTitle(MediaQuery::Match match, 
                                   const QString &title, 
                                   MediaQuery::Constraint constraint)

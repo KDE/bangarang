@@ -335,7 +335,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(const KUrl::List &fileList)
             if (m_nepomukInited) {
                 bool foundInNepomuk = false;
                 MediaItem foundMediaItem;
-                Nepomuk::Resource res(QUrl(mediaItem.url.toUtf8()));
+                Nepomuk::Resource res(fileList.at(i));
                 if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
                     res.hasType(mediaVocabulary.typeAudioMusic()) ||
                     res.hasType(mediaVocabulary.typeAudioStream())) ) {
@@ -375,7 +375,7 @@ QList<MediaItem> FileListEngine::readVideoUrlList(const KUrl::List &fileList)
         if (m_nepomukInited) {
             bool foundInNepomuk = false;
             MediaItem foundMediaItem;
-            Nepomuk::Resource res(QUrl(mediaItem.url.toUtf8()));
+            Nepomuk::Resource res(fileList.at(i));
             if (res.exists() && (res.hasType(mediaVocabulary.typeVideo()) ||
                 res.hasType(mediaVocabulary.typeVideoMovie()) ||
                 res.hasType(mediaVocabulary.typeVideoTVShow())) ) {

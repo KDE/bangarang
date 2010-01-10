@@ -103,13 +103,14 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
     //QTextStream cout(stdout, QIODevice::WriteOnly);
     
     MediaVocabulary mediaVocabulary = MediaVocabulary();
+    QString resourceUri = fields["resourceUri"].toString();
     QString url = fields["url"].toString();
     QString type = fields["type"].toString();
     
     cout << QString("URL: %1\n").arg(url);
     
     //Find resource
-    Nepomuk::Resource res(QUrl(url.toUtf8()));
+    Nepomuk::Resource res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
     
     if (fields["removeInfo"].toString() == "true") {
         
@@ -274,41 +275,14 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                 }
             }
         }
-        cout << QString("BangrangSignal:urlInfoRemoved:%1\n").arg(url);
+        cout << "BangrangSignal:urlInfoRemoved:" << QUrl::toPercentEncoding(url) << "\n";
         cout.flush();
         //debug << QString("BangrangSignal:urlInfoRemoved:%1\n").arg(url);
         
     } else {
         //Write media metadata info to nepomuk store;
-        
-        //Check and add nie:url property if necessary
-        if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
-            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
-                                 QUrl(url.toUtf8()));
-        }
-    
-        if (fields.contains("rating")) {
-            cout << "Setting Rating...\n";
-            int rating = fields["rating"].toInt();
-            res.setRating(rating);
-        }
-        
-        if (fields.contains("playCount")) {
-            cout << "Setting Play Count...\n";
-            int playCount = fields["playCount"].toInt();
-            writeProperty(mediaVocabulary, res, mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
-            //res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
-        }
-        
-        if (fields.contains("lastPlayed")) {
-            cout << "Setting Last Played...\n";
-            QDateTime lastPlayed = fields["lastPlayed"].toDateTime();
-            writeProperty(mediaVocabulary, res, mediaVocabulary.lastPlayed(), Nepomuk::Variant(lastPlayed));
-            //res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(lastPlayed));
-        }
-
+        // Update the media type
         if (type == "Audio") {
-            // Update the media type
             cout << "Writing type...\n";
             QUrl audioType;
             if (fields["audioType"] == "Music") {
@@ -336,29 +310,83 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
             if (!res.hasType(audioType)) {
                 res.addType(audioType);
             }
-            
-            // Update the properties
-           QString title = fields["title"].toString();
-            if (!title.isEmpty()) {
-                cout << "Writing title...\n";
-                writeProperty(mediaVocabulary, res, mediaVocabulary.title(), Nepomuk::Variant(title));
-                //res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-            }
-            QString description = fields["description"].toString();
-            if (!description.isEmpty()) {
-                cout << "Writing description...\n";
-                writeProperty(mediaVocabulary, res, mediaVocabulary.description(), Nepomuk::Variant(description));
-                //res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-            }
-            QString artworkUrl = fields["artworkUrl"].toString();
-            if (!artworkUrl.isEmpty()) {
-                Nepomuk::Resource artworkRes(artworkUrl);
-                cout << "Writing artworkurl...\n";
-                if (!artworkRes.exists()) {
-                    artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+        } else if (type == "Video") {
+            //Update the media type
+            mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
+            QUrl videoType;
+            if (fields["videoType"] == "Movie") {
+                videoType = mediaVocabulary.typeVideoMovie();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
                 }
-                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+                removeType(res, mediaVocabulary.typeVideoTVShow());
+                removeType(res, mediaVocabulary.typeVideo());
+            } else if (fields["videoType"] == "TV Show") {
+                videoType = mediaVocabulary.typeVideoTVShow();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
+                }
+                removeType(res, mediaVocabulary.typeVideoMovie());
+                removeType(res, mediaVocabulary.typeVideo());
+            } else if (fields["videoType"] == "Video Clip") {
+                videoType = mediaVocabulary.typeVideo();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
+                }
+                removeType(res, mediaVocabulary.typeVideoMovie());
+                removeType(res, mediaVocabulary.typeVideoTVShow());
             }
+            if (!res.hasType(videoType)) {
+                res.addType(videoType);
+            }
+        }
+        
+        //Set properties common to all media types
+        if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
+            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
+                            QUrl(url));
+        }
+        if (fields.contains("rating")) {
+            cout << "Setting Rating...\n";
+            int rating = fields["rating"].toInt();
+            res.setRating(rating);
+        }
+        if (fields.contains("playCount")) {
+            cout << "Setting Play Count...\n";
+            int playCount = fields["playCount"].toInt();
+            writeProperty(mediaVocabulary, res, mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
+            //res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
+        }
+        if (fields.contains("lastPlayed")) {
+            cout << "Setting Last Played...\n";
+            QDateTime lastPlayed = fields["lastPlayed"].toDateTime();
+            writeProperty(mediaVocabulary, res, mediaVocabulary.lastPlayed(), Nepomuk::Variant(lastPlayed));
+            //res.setProperty(mediaVocabulary.lastPlayed(), Nepomuk::Variant(lastPlayed));
+        }
+        QString title = fields["title"].toString();
+        if (!title.isEmpty()) {
+            cout << "Writing title...\n";
+            writeProperty(mediaVocabulary, res, mediaVocabulary.title(), Nepomuk::Variant(title));
+            //res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+        }
+        QString description = fields["description"].toString();
+        if (!description.isEmpty()) {
+            cout << "Writing description...\n";
+            writeProperty(mediaVocabulary, res, mediaVocabulary.description(), Nepomuk::Variant(description));
+            //res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        }
+        QString artworkUrl = fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            Nepomuk::Resource artworkRes(artworkUrl);
+            cout << "Writing artworkurl...\n";
+            if (!artworkRes.exists()) {
+                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+            }
+            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+        }
+        
+        //Set type-specific properties
+        if (type == "Audio") {
             if (fields["audioType"] == "Music") {
                 QString artist  = fields["artist"].toString();
                 if (!artist.isEmpty()) {
@@ -402,56 +430,6 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
             }
         } else if (type == "Video") {
             mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
-            //Update the media type
-            QUrl videoType;
-            if (fields["videoType"] == "Movie") {
-                videoType = mediaVocabulary.typeVideoMovie();
-                if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
-                }
-                removeType(res, mediaVocabulary.typeVideoTVShow());
-                removeType(res, mediaVocabulary.typeVideo());
-            } else if (fields["videoType"] == "TV Show") {
-                videoType = mediaVocabulary.typeVideoTVShow();
-                if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
-                }
-                removeType(res, mediaVocabulary.typeVideoMovie());
-                removeType(res, mediaVocabulary.typeVideo());
-            } else if (fields["videoType"] == "Video Clip") {
-                videoType = mediaVocabulary.typeVideo();
-                if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
-                }
-                removeType(res, mediaVocabulary.typeVideoMovie());
-                removeType(res, mediaVocabulary.typeVideoTVShow());
-            }
-            if (!res.hasType(videoType)) {
-                res.addType(videoType);
-            }
-            
-            //Update the properties
-            QString title = fields["title"].toString();
-            if (!title.isEmpty()) {
-                cout << "Writing title...\n";
-                writeProperty(mediaVocabulary, res, mediaVocabulary.title(), Nepomuk::Variant(title));
-                //res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-            }
-            QString description = fields["description"].toString();
-            if (!description.isEmpty()) {
-                cout << "Writing description...\n";
-                writeProperty(mediaVocabulary, res, mediaVocabulary.description(), Nepomuk::Variant(description));
-                //res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-            }
-            QString artworkUrl = fields["artworkUrl"].toString();
-            if (!artworkUrl.isEmpty()) {
-                Nepomuk::Resource artworkRes(artworkUrl);
-                cout << "Writing artworkurl...\n";
-                if (!artworkRes.exists()) {
-                    artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
-                }
-                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
-            }
             if (fields["videoType"] == "Movie") {
                 QString genre   = fields["genre"].toString();
                 if (!genre.isEmpty()) {
@@ -587,7 +565,7 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                 }
             }
         }
-        cout << QString("BangarangSignal:sourceInfoUpdated:%1\n").arg(url);
+        cout << "BangarangSignal:sourceInfoUpdated:" << QUrl::toPercentEncoding(url) << "\n";
         cout.flush();
         //debug << QString("BangarangSignal:sourceInfoUpdated:%1\n").arg(url);
     }
@@ -638,8 +616,8 @@ int main(int argc, char *argv[])
                 if (line.startsWith("#Count")) {
                     count = line.split("=").at(1).trimmed().toInt();
                 } else if (line.startsWith("[") && line.endsWith("]")) {
-                    QString url = line.mid(1, line.length()-2);
-                    fields.insert("url",url);
+                    QString resourceUri = line.mid(1, line.length()-2);
+                    fields.insert("resourceUri",resourceUri);
                 } else {
                     int equalLocation = line.indexOf("=");
                     QString field;
@@ -680,7 +658,6 @@ int main(int argc, char *argv[])
             }
         }
         file.close();
-        file.remove();
         cout << "Done!\n";
         cout.flush();
     } else {
