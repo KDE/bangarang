@@ -105,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_audioOutputVideoCategory = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     m_audioOutput = m_audioOutputMusicCategory; // default to music category;
     Phonon::createPath(m_media, m_videoWidget);
-    Phonon::createPath(m_media, m_audioOutput);
+    m_audioPath = Phonon::createPath(m_media, m_audioOutput);
     m_media->setTickInterval(500);
     
     //Add video widget to video frame on viewer stack
@@ -948,9 +948,15 @@ void MainWindow::nowPlayingChanged()
         }
         //Switch the audio output to the appropriate phonon category
         if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
-            m_audioOutput = m_audioOutputMusicCategory;
+            if (m_audioOutput->category() != Phonon::MusicCategory) {
+                m_audioOutput = m_audioOutputMusicCategory;
+                m_audioPath.reconnect(m_media, m_audioOutput);
+            }
         } else if (m_nowPlaying->mediaItemAt(0).type == "Video") {
-            m_audioOutput = m_audioOutputVideoCategory;
+            if (m_audioOutput->category() != Phonon::VideoCategory) {
+                m_audioOutput = m_audioOutputVideoCategory;
+                m_audioPath.reconnect(m_media, m_audioOutput);
+            }
         }
     
         ui->nowPlayingView->header()->setStretchLastSection(false);
