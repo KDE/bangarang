@@ -111,6 +111,7 @@ private:
     Phonon::AudioOutput *m_audioOutput;
     Phonon::AudioOutput *m_audioOutputMusicCategory;
     Phonon::AudioOutput *m_audioOutputVideoCategory;
+    Phonon::Path m_audioPath;
     Phonon::MediaObject *m_media;
     Phonon::MediaController *m_mediaController;
     QGraphicsScene *m_Scene;
