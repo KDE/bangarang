@@ -336,7 +336,6 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     MediaItem mediaItem;
-    kDebug() << url.url();
     //url.cleanPath();
     //url = QUrl::fromPercentEncoding(url.url().toUtf8());
 
