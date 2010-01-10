@@ -852,11 +852,14 @@ QString MediaVocabulary::hasPlayCount(MediaQuery::Match match,
 QString MediaVocabulary::hasArtwork(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
     QString propertyBinding = artworkBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
+    
     return statement;
 }
 
@@ -1352,7 +1355,13 @@ QString MediaVocabulary::videoCinematographerBinding()
 
 QStringList MediaVocabulary::storageProcedure(QUrl mediaProperty)
 {
-    if (mediaProperty == musicArtist()) {
+    if (mediaProperty == artwork()) {
+        return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
+        QString("[ResourceValue]::[Type]::%1")
+               .arg("http://http://www.semanticdesktop.org/ontologies/nfo#Image") <<
+               QString("[ResourceValue]::%1::[Value]")
+               .arg("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
+    } else if (mediaProperty == musicArtist()) {
         if (m_musicVocabulary == nmm) {
             return QStringList() << QString("[Resource]::[Property]::[ResourceValue]") <<
                                     QString("[ResourceValue]::[Type]::%1").arg(typeMusicArtist().toString()) <<
