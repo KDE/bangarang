@@ -395,7 +395,7 @@ void MusicListEngine::run()
     //Check if MediaItems in mediaList exist
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
-        model()->updateMediaItems(mediaItems);
+        emit updateMediaItems(mediaItems);
     }
     
     m_requestSignature = QString();

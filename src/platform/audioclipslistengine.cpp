@@ -128,6 +128,12 @@ void AudioClipsListEngine::run()
     }
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+
+    //Check if MediaItems in mediaList exist
+    QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
+    if (mediaItems.count() > 0) {
+        emit updateMediaItems(mediaItems);
+    }
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }

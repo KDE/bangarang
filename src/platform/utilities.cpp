@@ -556,18 +556,20 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
     QList<MediaItem> items;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
-        KUrl url = KUrl(mediaItem.url);
-        if (url.isValid()) {
-            if (url.isLocalFile()) {
-                if (!QFile(url.path()).exists()) {
+        if (mediaItem.type == "Audio" || mediaItem.type == "Video") {
+            KUrl url = KUrl(mediaItem.url);
+            if (url.isValid()) {
+                if (url.isLocalFile()) {
+                    if (!QFile(url.path()).exists()) {
+                        mediaItem.exists = false;
+                        kDebug() << mediaItem.url << " missing";
+                        items << mediaItem;
+                    }
+                } else if (mediaItem.url.startsWith("trash:/")) {
                     mediaItem.exists = false;
                     kDebug() << mediaItem.url << " missing";
                     items << mediaItem;
                 }
-            } else if (mediaItem.url.startsWith("trash:/")) {
-                mediaItem.exists = false;
-                kDebug() << mediaItem.url << " missing";
-                items << mediaItem;
             }
         }
     }
