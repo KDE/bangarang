@@ -619,6 +619,7 @@ void VideoListEngine::run()
                                                                            seriesName,
                                                                            MediaQuery::Equal));
                 } else {
+                    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
                     query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
                     query.startFilter();
                     query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
