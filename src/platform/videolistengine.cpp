@@ -413,10 +413,9 @@ void VideoListEngine::run()
             orderByBindings.append(mediaVocabulary.titleBinding());
             orderByBindings.append(mediaVocabulary.releaseDateBinding());
             query.orderBy(orderByBindings);
-            
+
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
-            
+
             //Build media list from results
             while( it.next() ) {
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"));
@@ -684,7 +683,7 @@ void VideoListEngine::run()
     //Check if MediaItems in mediaList exist
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
-        model()->updateMediaItems(mediaItems);
+        emit updateMediaItems(mediaItems);
     }
     
     m_requestSignature = QString();
