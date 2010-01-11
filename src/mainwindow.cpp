@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         m_nepomukInited = true; //resource manager inited successfully
     } else {
         m_nepomukInited = false; //no resource manager
+        ui->Filter->setVisible(false);
     }
     
     //Set up device notifier
