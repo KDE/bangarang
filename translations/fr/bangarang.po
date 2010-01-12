@@ -60,7 +60,7 @@ msgstr "Cacher les contrôles"
 
 #: actionsmanager.cpp:106 actionsmanager.cpp:390 mainwindow.cpp:364
 msgid "Show Video Settings"
-msgstr "Afficher les réglages video"
+msgstr "Afficher les réglages vidéo"
 
 #: actionsmanager.cpp:113
 msgid "Toggle fullscreen"
@@ -104,7 +104,7 @@ msgstr "Configurer les raccourcis claviers..."
 
 #: actionsmanager.cpp:386
 msgid "Hide Video Settings"
-msgstr "Cacher les réglages video"
+msgstr "Cacher les réglages vidéo"
 
 #. i18n: file: mainwindow.ui:1586
 #. i18n: ectx: property (text), item, widget (QTreeWidget, infoView)
@@ -296,10 +296,10 @@ msgstr "<b>Pause</b><br>Tenir pour arrêter"
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
 #: mainwindow.cpp:532 rc.cpp:11
 msgid "Search for audio"
-msgstr "Rechercher de l'audio"
+msgstr "Rechercher de l'audio"
 
 #: mainwindow.cpp:540
-msgid "Search for video"
+msgid "Search for vidéo"
 msgstr "Recherche des vidéos"
 
 #. i18n: file: mainwindow.ui:5156
@@ -443,7 +443,7 @@ msgstr "ryanakca@kubuntu.org"
 #. i18n: ectx: property (text), widget (QToolButton, collectionButton)
 #: rc.cpp:8 rc.cpp:206
 msgid "Media Lists"
-msgstr "Listes de médias"
+msgstr "Listes de média"
 
 #. i18n: file: mainwindow.ui:305
 #. i18n: ectx: attribute (label), widget (QWidget, AudioTool_2)
@@ -639,13 +639,13 @@ msgstr "Précédent"
 #. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
 #: rc.cpp:155
 msgid "Play all media in list"
-msgstr "Lire tout les médias dans la liste"
+msgstr "Lire tout les média dans la liste"
 
 #. i18n: file: mainwindow.ui:1843
 #. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
 #: rc.cpp:161
 msgid "Play selected media in list"
-msgstr "Lire les médias sélectionnés dans la liste"
+msgstr "Lire les média sélectionnés dans la liste"
 
 #. i18n: file: mainwindow.ui:2355
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
@@ -673,7 +673,7 @@ msgstr "[ ]"
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: rc.cpp:194
 msgid "Video Settings"
-msgstr "Réglages video"
+msgstr "Réglages vidéo"
 
 #. i18n: file: mainwindow.ui:5347
 #. i18n: ectx: property (text), widget (QPushButton, saveShortCuts)
@@ -691,7 +691,7 @@ msgstr "Annuler"
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
 #: rc.cpp:203
 msgid "View Media Lists"
-msgstr "Afficher les listes de médias"
+msgstr "Afficher les listes de média"
 
 #. i18n: file: mainwindow.ui:5458
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
@@ -804,7 +804,7 @@ msgstr "Flux audio sans titre"
 #: platform/audiostreamlistengine.cpp:153
 msgid "Select this item, click Info then Edit to enter audio stream info"
 msgstr ""
-"Sélectionnez cet élément, cliquez Info et Editer pour entrer les détails du "
+"Sélectionnez cet élément, cliquez Info et Éditer pour saisir les détails du "
 "flux audio"
 
 #: platform/audiostreamlistengine.cpp:162
@@ -814,7 +814,7 @@ msgstr "Nouveau flux audio"
 #: platform/cdlistengine.cpp:80
 #, kde-format
 msgid "Track %1"
-msgstr "Piste %1"
+msgstr "Piste %1"
 
 #: platform/cdlistengine.cpp:84
 #, kde-format
@@ -1064,7 +1064,7 @@ msgstr[1] "%1 films"
 #~ msgstr "Épisode %1"
 
 #~ msgid "Collection/Series Name"
-#~ msgstr "Nom de la collection / série"
+#~ msgstr "Nom de la collection&ubsp;/ série"
 
 #~ msgid "buttonGroup"
 #~ msgstr "buttonGroup"
