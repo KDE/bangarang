@@ -105,9 +105,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_audioOutputMusicCategory = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     m_audioOutputVideoCategory = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     m_audioOutput = m_audioOutputMusicCategory; // default to music category;
-    Phonon::createPath(m_media, m_videoWidget);
+    m_videoPath = Phonon::createPath(m_media, m_videoWidget);
     m_audioPath = Phonon::createPath(m_media, m_audioOutput);
     m_media->setTickInterval(500);
+    m_volume = m_audioOutput->volume();
     
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
@@ -127,6 +128,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
     connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
+    connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
     connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     
     //Set up Audio lists view 
@@ -653,6 +655,13 @@ void MainWindow::on_showMediaViewMenu_clicked()
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
+void MainWindow::volumeChanged(qreal newVolume)
+{
+    //Phonon::AudioOutput::volume() only return the volume at app start.
+    //Therefore I need to track volume changes independently.
+    m_volume = newVolume;
+}
+
 void MainWindow::updateSeekTime(qint64 time)
 {
     //Update seek time
@@ -692,9 +701,9 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     if (newstate == Phonon::PlayingState) {
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_media->hasVideo()) {
-	  ui->viewerStack->setCurrentIndex(1);
-	} else {
-	  ui->viewerStack->setCurrentIndex(0);
+            ui->viewerStack->setCurrentIndex(1);
+        } else {
+            ui->viewerStack->setCurrentIndex(0);
         }
         ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
     } else {
@@ -707,13 +716,35 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     }
     
     if (newstate == Phonon::ErrorState) {
-        ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
+        if (m_media->errorString().isEmpty()) {
+            ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
+        } else {
+            ui->playbackMessage->setText(m_media->errorString());
+        }
         QTimer::singleShot(3000, ui->playbackMessage, SLOT(clear()));
+        
+        //Use a new media object instead and discard
+        //the old media object (whose state appears to be broken after errors) 
+        Phonon::MediaObject *oldMediaObject = m_media;
+        m_media = new Phonon::MediaObject(this);
+        m_videoPath.reconnect(m_media, m_videoWidget);
+        m_audioPath.reconnect(m_media, m_audioOutput);
+        m_media->setTickInterval(500);
+        ui->seekSlider->setMediaObject(m_media);
+        connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
+        connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+        m_playlist->setMediaObject(m_media);
+        delete oldMediaObject;
+        oldMediaObject = 0;
+        
         if (m_playlist->rowOfNowPlaying() < (m_playlist->playlistModel()->rowCount() - 1)) {
             m_playlist->playNext();
         } else {
             m_playlist->stop();
         }
+        m_audioOutput->setVolume(m_volume);
+        ui->volumeSlider->setAudioOutput(m_audioOutput);
+        ui->volumeIcon->setChecked(false);
     }
     Q_UNUSED(oldstate);
 }
@@ -764,9 +795,11 @@ void MainWindow::mediaListChanged()
     ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
     ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
     
-    ui->mediaView->header()->setStretchLastSection(false);
-    ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);
-    ui->mediaView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    if (m_mediaItemModel->rowCount() > 0) {
+        ui->mediaView->header()->setStretchLastSection(false);
+        ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);
+        ui->mediaView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    }
     
     if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
@@ -915,9 +948,11 @@ void MainWindow::videoListsChanged()
 void MainWindow::playlistChanged()
 {
 
-    ui->playlistView->header()->setStretchLastSection(false);
-    ui->playlistView->header()->setResizeMode(0, QHeaderView::Stretch);
-    ui->playlistView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    if (ui->playlistView->model()->rowCount() > 0) {
+        ui->playlistView->header()->setStretchLastSection(false);
+        ui->playlistView->header()->setResizeMode(0, QHeaderView::Stretch);
+        ui->playlistView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+    }
     if (!m_showQueue) {
         ui->playlistName->setText(i18n("<b>Playlist</b>"));
         if (m_playlist->playlistModel()->rowCount() > 0) {

@@ -204,7 +204,7 @@ void Playlist::playItemAt(int row, Playlist::Model model)
 
 void Playlist::playNext()
 {
-    if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
+    if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState || m_mediaObject->state() == Phonon::ErrorState) {
         //Add currently playing item to history
         if (m_nowPlaying->rowCount() > 0) {
             int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
@@ -332,6 +332,23 @@ void Playlist::clearPlaylist()
     m_playlistIndices.clear();
     m_playlistIndicesHistory.clear();
     m_playlistUrlHistory.clear();
+}
+
+void Playlist::setMediaObject(Phonon::MediaObject *mediaObject)
+{
+    //NOTE:Not disconnecting signals here.  Calling routing is responsible for deletion/disconnection of old media object.  If object is not deleted/disconnected, playlist slot will continue to respond to old media object signals.
+    delete m_mediaController;
+    m_mediaObject = mediaObject;
+    m_mediaController = new Phonon::MediaController(m_mediaObject);
+
+    connect(m_mediaObject, SIGNAL(tick(qint64)), this, SLOT(updatePlaybackInfo(qint64)));
+    connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
+    connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
+    connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
+    connect(m_mediaObject, SIGNAL(stateChanged (Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
+    connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
+    
 }
 
 void Playlist::setMode(Playlist::Mode mode)
