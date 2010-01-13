@@ -112,6 +112,7 @@ private:
     Phonon::AudioOutput *m_audioOutputMusicCategory;
     Phonon::AudioOutput *m_audioOutputVideoCategory;
     Phonon::Path m_audioPath;
+    Phonon::Path m_videoPath;
     Phonon::MediaObject *m_media;
     Phonon::MediaController *m_mediaController;
     QGraphicsScene *m_Scene;
@@ -139,6 +140,7 @@ private:
     bool showRemainingTime;
     QAction * playAllAction;
     QAction * playSelectedAction;
+    qreal m_volume;
     
     void setupModel();
     KIcon addItemsIcon();
@@ -190,6 +192,7 @@ private slots:
     void sourceInfoUpdated(MediaItem mediaItem);
     void sourceInfoRemoved(QString url);
     void updateNowPlayingStyleSheet();
+    void volumeChanged(qreal newVolume);
     
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
