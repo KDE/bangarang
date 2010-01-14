@@ -79,3 +79,4 @@ All test cases should be run prior to any release.
 7.2 Open media file via command line
 7.3 Open CD from Device Notifier
 7.4 Open DVD from Device Notifier
+7.5 Open Shoutcast url from browser
