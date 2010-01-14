@@ -1,19 +1,19 @@
-# Copyright (C) YEAR This_file_is_part_of_KDE
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) 2009, 2010 Kristof Bal <kristof.bal@gmail.com>
+# This file is distributed under the same license as the Bangarang package.
 #
-# Kristof Bal <kristof.bal@gmail.com>, 2009.
+# Kristof Bal <kristof.bal@gmail.com>, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2010-01-05 21:18-0800\n"
-"PO-Revision-Date: 2009-12-12 11:28+0100\n"
+"PO-Revision-Date: 2010-01-13 17:02+0100\n"
 "Last-Translator: Kristof Bal <kristof.bal@gmail.com>\n"
 "Language-Team: Dutch <kde-i18n-nl@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.0 \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: actionsmanager.cpp:48
@@ -77,34 +77,28 @@ msgid "Refresh"
 msgstr "Vernieuwen"
 
 #: actionsmanager.cpp:133
-#, fuzzy
 msgid "Remove from list"
-msgstr "Uit afspeellijst verwijderen"
+msgstr "Uit lijst verwijderen"
 
 #: actionsmanager.cpp:137
-#, fuzzy
 msgid "Add to list"
-msgstr "Toevoegen aan afspeellijst"
+msgstr "Aan lijst toevoegen"
 
 #: actionsmanager.cpp:141
-#, fuzzy
 msgid "Add to list "
-msgstr "Toevoegen aan afspeellijst"
+msgstr "Aan lijst toevoegen "
 
 #: actionsmanager.cpp:145 actionsmanager.cpp:149
-#, fuzzy
 msgid "New list"
-msgstr "Nieuwe naam van de lijst"
+msgstr "Nieuwe lijst"
 
 #: actionsmanager.cpp:153
-#, fuzzy
 msgid "Show items"
-msgstr "1 item"
+msgstr "Items tonen"
 
 #: actionsmanager.cpp:157
-#, fuzzy
 msgid "Show info"
-msgstr "Volgende tonen"
+msgstr "Informatie tonen"
 
 #: actionsmanager.cpp:162
 msgid "Configure shortcuts..."
@@ -160,21 +154,19 @@ msgstr "Genre"
 
 #: infomanager.cpp:408 infomanager.cpp:457
 msgid "Writer"
-msgstr ""
+msgstr "Schrijver"
 
 #: infomanager.cpp:410 infomanager.cpp:459
-#, fuzzy
 msgid "Director"
-msgstr "Maker"
+msgstr "Regisseur"
 
 #: infomanager.cpp:412 infomanager.cpp:461
 msgid "Producer"
-msgstr ""
+msgstr "Producer"
 
 #: infomanager.cpp:414 infomanager.cpp:463
-#, fuzzy
 msgid "Actor"
-msgstr "Illustraties"
+msgstr "Acteur"
 
 #: infomanager.cpp:447
 msgid "Series Name"
@@ -369,7 +361,7 @@ msgstr ""
 
 #: mainwindow.cpp:705
 msgid "An error has been encountered during playback"
-msgstr ""
+msgstr "Er trad een fout op bij het afspelen"
 
 #: mainwindow.cpp:725
 msgid "Loading playlist..."
@@ -399,7 +391,7 @@ msgstr "Bijwerken..."
 
 #: mainwindow.cpp:787
 msgid "Complete"
-msgstr ""
+msgstr "Voltooid"
 
 #: mainwindow.cpp:794
 msgid "Updated info for "
@@ -461,45 +453,40 @@ msgstr "Audio"
 #. i18n: file: mainwindow.ui:810
 #. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
 #: rc.cpp:17 rc.cpp:65
-#, fuzzy
 msgid "Add list"
-msgstr "Lijst toevoegen van"
+msgstr "Lijst toevoegen"
 
 #. i18n: file: mainwindow.ui:390
 #. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
 #. i18n: file: mainwindow.ui:827
 #. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
 #: rc.cpp:20 rc.cpp:68
-#, fuzzy
 msgid "Remove list"
-msgstr "Uit afspeellijst verwijderen"
+msgstr "Lijst verwijderen"
 
 #. i18n: file: mainwindow.ui:420
 #. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
 #. i18n: file: mainwindow.ui:857
 #. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
 #: rc.cpp:23 rc.cpp:71
-#, fuzzy
 msgid "Settings"
-msgstr "Video-instellingen"
+msgstr "Instellingen"
 
 #. i18n: file: mainwindow.ui:469
 #. i18n: ectx: property (text), widget (QLabel, label_5)
 #. i18n: file: mainwindow.ui:906
 #. i18n: ectx: property (text), widget (QLabel, label_7)
 #: rc.cpp:26 rc.cpp:74
-#, fuzzy
 msgid "Add List"
-msgstr "Lijst toevoegen van"
+msgstr "Lijst toevoegen"
 
 #. i18n: file: mainwindow.ui:486
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #. i18n: file: mainwindow.ui:923
 #. i18n: ectx: property (text), widget (QLabel, label_6)
 #: rc.cpp:29 rc.cpp:77
-#, fuzzy
 msgid "Source"
-msgstr "Sorteren"
+msgstr "Bron"
 
 #. i18n: file: mainwindow.ui:508
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
@@ -562,9 +549,8 @@ msgstr "Terug naar lijsten"
 #. i18n: file: mainwindow.ui:1054
 #. i18n: ectx: property (text), widget (QLabel, label_11)
 #: rc.cpp:50 rc.cpp:98
-#, fuzzy
 msgid "Saved List Settings"
-msgstr "Video-instellingen tonen"
+msgstr "Opgeslagen lijstinstellingen"
 
 #. i18n: file: mainwindow.ui:673
 #. i18n: ectx: property (text), widget (QLabel, label_9)
@@ -572,7 +558,7 @@ msgstr "Video-instellingen tonen"
 #. i18n: ectx: property (text), widget (QLabel, label_10)
 #: rc.cpp:53 rc.cpp:101
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #. i18n: file: mainwindow.ui:757
 #. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
@@ -662,7 +648,7 @@ msgstr "Geselecteerde media in lijst afspelen"
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
 #: rc.cpp:167
 msgid "Playback message"
-msgstr ""
+msgstr "Afspeelbericht"
 
 #. i18n: file: mainwindow.ui:2384
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
@@ -896,9 +882,9 @@ msgid "Audio Clip"
 msgstr "Audioclip"
 
 #: platform/mediaitemmodel.cpp:413
-#, fuzzy, kde-format
+#, kde-format
 msgid "Multiple %1"
-msgstr "Titel %1"
+msgstr "Meerdere %1"
 
 #: platform/mediaitemmodel.cpp:572
 msgid "No results"
@@ -1028,9 +1014,9 @@ msgid "Uncategorized seasons"
 msgstr "Seizoenen zonder categorie"
 
 #: platform/videolistengine.cpp:261
-#, fuzzy, kde-format
+#, kde-format
 msgid "Seasons - %1"
-msgstr "Seizoen %1"
+msgstr "Seizoenen - %1"
 
 #: platform/videolistengine.cpp:262
 #, kde-format
@@ -1076,3 +1062,4 @@ msgstr[1] "%1 films"
 
 #~ msgid "Collection/Series Name"
 #~ msgstr "Naam van de verzameling/serie"
+
