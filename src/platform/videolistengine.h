@@ -21,7 +21,8 @@
 
 #include "nepomuklistengine.h"
 #include "mediavocabulary.h"
-#include <QtCore>
+#include <QObject>
+#include <QString>
 
 class MediaItem;
 class MediaListProperties;

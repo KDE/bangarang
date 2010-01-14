@@ -20,7 +20,10 @@
 #define FILELISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QtCore>
+#include <QObject>
+#include <QFileInfoList>
+#include <QList>
+#include <QString>
 #include <QDir>
 #include <KUrl>
 #include <Nepomuk/Resource>

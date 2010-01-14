@@ -20,7 +20,7 @@
 #define DVDLISTENGINE_H
 
 #include "listengine.h"
-#include <QtCore>
+#include <QObject>
 #include <QDir>
 #include <KUrl>
 #include <libkcompactdisc/kcompactdisc.h>
