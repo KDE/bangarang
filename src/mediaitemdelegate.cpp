@@ -279,6 +279,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
                      if (playlistRow != -1) {
                          MediaItem playlistItem = m_parent->m_playlist->playlistModel()->mediaItemAt(playlistRow);
+                         playlistItem.fields["rating"] = newRating;
                          m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, playlistItem);
                      }
                      int queueRow = m_parent->m_playlist->queueModel()->rowOfUrl(updatedMediaItem.url);
@@ -292,6 +293,12 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                          MediaItem nowPlayingItem = m_parent->m_playlist->nowPlayingModel()->mediaItemAt(nowPlayingRow);
                          nowPlayingItem.fields["rating"] = newRating;
                          m_parent->m_playlist->nowPlayingModel()->replaceMediaItemAt(nowPlayingRow, nowPlayingItem);
+                     }
+                     int mediaListRow = m_parent->m_mediaItemModel->rowOfUrl(updatedMediaItem.url);
+                     if (mediaListRow != -1) {
+                         MediaItem mediaListItem = m_parent->m_mediaItemModel->mediaItemAt(nowPlayingRow);
+                         mediaListItem.fields["rating"] = newRating;
+                         m_parent->m_mediaItemModel->replaceMediaItemAt(mediaListRow, mediaListItem);
                      }
                 }
             }
