@@ -126,9 +126,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Connect to media object signals and slots
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
-    connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
-    connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
-    connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
+    connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutputMusicCategory, SLOT(setMuted(bool)));
+    connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutputVideoCategory, SLOT(setMuted(bool)));
+    connect(m_audioOutputMusicCategory, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
+    connect(m_audioOutputMusicCategory, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
+    connect(m_audioOutputVideoCategory, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
+    connect(m_audioOutputVideoCategory, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
     connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     
     //Set up Audio lists view 
@@ -987,11 +990,19 @@ void MainWindow::nowPlayingChanged()
             if (m_audioOutput->category() != Phonon::MusicCategory) {
                 m_audioOutput = m_audioOutputMusicCategory;
                 m_audioPath.reconnect(m_media, m_audioOutput);
+                m_audioOutput->setVolume(m_volume);
+                ui->volumeSlider->setAudioOutput(m_audioOutput);
+                ui->volumeIcon->setChecked(false);
+                updateMuteStatus(false);
             }
         } else if (m_nowPlaying->mediaItemAt(0).type == "Video") {
             if (m_audioOutput->category() != Phonon::VideoCategory) {
                 m_audioOutput = m_audioOutputVideoCategory;
                 m_audioPath.reconnect(m_media, m_audioOutput);
+                m_audioOutput->setVolume(m_volume);
+                ui->volumeSlider->setAudioOutput(m_audioOutput);
+                ui->volumeIcon->setChecked(false);
+                updateMuteStatus(false);
             }
         }
     
