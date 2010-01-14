@@ -26,7 +26,7 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "0.99 (1.0~RC)",
+        ki18n("Bangarang"), "1.0",
         ki18n("A Media Player"), KAboutData::License_GPL_V2,
         ki18n("Copyright 2010, Andrew Lake"), KLocalizedString(),
         "" );
@@ -36,9 +36,13 @@ int main(int argc, char *argv[])
     aboutData.setProgramIconName("bangarang");
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
     aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@yahoo.com");
-    aboutData.addCredit(ki18n("Sebastian Jambor"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Buschmann"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Kristof Bal"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Ryan Kavanagh"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Sebastian Jambor"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Shuizhuyuanluo"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
     aboutData.setHomepage("http://gitorious.org/bangarang");
