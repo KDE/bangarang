@@ -299,7 +299,7 @@ msgid "Search for audio"
 msgstr "Rechercher de l'audio"
 
 #: mainwindow.cpp:540
-msgid "Search for vidéo"
+msgid "Search for video"
 msgstr "Recherche des vidéos"
 
 #. i18n: file: mainwindow.ui:5156
