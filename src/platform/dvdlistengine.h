@@ -46,7 +46,7 @@ class DVDListEngine : public ListEngine
         void run();
         
     private:
-        KCompactDisc::KCompactDisc *m_cdObject;
+        KCompactDisc *m_cdObject;
         Phonon::MediaObject *m_mediaObject;
         bool m_loadWhenReady;
     
