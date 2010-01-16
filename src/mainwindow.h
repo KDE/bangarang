@@ -22,11 +22,11 @@
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
-#include <Phonon/AudioOutput>
-#include <Phonon/MediaController>
-#include <Phonon/MediaObject>
-#include <Phonon/VideoPlayer>
-#include <Phonon/VideoWidget>
+#include <phonon/audiooutput.h>
+#include <phonon/mediacontroller.h>
+#include <phonon/mediaobject.h>
+#include <phonon/videoplayer.h>
+#include <phonon/videowidget.h>
 #include <QResizeEvent>
 #include <QEvent>
 #include <QGraphicsView>
