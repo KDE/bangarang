@@ -25,7 +25,7 @@
 #include <KUrl>
 #include <libkcompactdisc/kcompactdisc.h>
 #include <Soprano/Model>
-#include <Phonon/MediaObject>
+#include <phonon/mediaobject.h>
 
 class MediaItem;
 class MediaListProperties;

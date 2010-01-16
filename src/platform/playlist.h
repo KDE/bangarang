@@ -20,8 +20,8 @@
 #define PLAYLIST_H
 
 #include <QObject>
-#include <Phonon/MediaObject>
-#include <Phonon/MediaController>
+#include <phonon/mediaobject.h>
+#include <phonon/mediacontroller.h>
 
 class MediaItemModel;
 class MediaItem;
