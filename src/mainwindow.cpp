@@ -834,7 +834,7 @@ void MainWindow::delayedNotificationHide()
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
 }
 
-void MainWindow::sourceInfoUpdated(MediaItem mediaItem)
+void MainWindow::sourceInfoUpdated(const MediaItem &mediaItem)
 {
     QFontMetrics fm =  ui->notificationText->fontMetrics();
 	//TODO: I tried fixing this word puzzle, I couldn't test it myself, but it should work. Please check if it really is :-) thanks
