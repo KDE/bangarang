@@ -39,7 +39,7 @@
 #include <QDateTime>
 #include <QMainWindow>
 
-class MediaItem;
+struct MediaItem;
 class MediaListProperties;
 class MediaItemModel;
 class MediaListCache;
@@ -189,7 +189,7 @@ private slots:
     void showLoading();
     void showNotification();
     void delayedNotificationHide();
-    void sourceInfoUpdated(MediaItem mediaItem);
+    void sourceInfoUpdated(const MediaItem &mediaItem);
     void sourceInfoRemoved(QString url);
     void updateNowPlayingStyleSheet();
     void volumeChanged(qreal newVolume);
