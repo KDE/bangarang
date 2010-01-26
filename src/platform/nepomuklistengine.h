@@ -23,8 +23,7 @@
 #include "mediaindexer.h"
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
-#include <QObject>
-#include <QList>
+#include <QtCore>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>

@@ -20,7 +20,7 @@
 #define MUSICLISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QObject>
+#include <QtCore>
 #include <QString>
 #include <Soprano/QueryResultIterator>
 
