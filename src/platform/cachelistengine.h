@@ -20,7 +20,7 @@
 #define CACHELISTENGINE_H
 
 #include "listengine.h"
-#include <QtCore>
+#include <QObject>
 
 class MediaItem;
 class MediaListProperties;
