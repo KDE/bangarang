@@ -296,7 +296,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                      }
                      int mediaListRow = m_parent->m_mediaItemModel->rowOfUrl(updatedMediaItem.url);
                      if (mediaListRow != -1) {
-                         MediaItem mediaListItem = m_parent->m_mediaItemModel->mediaItemAt(nowPlayingRow);
+                         MediaItem mediaListItem = m_parent->m_mediaItemModel->mediaItemAt(mediaListRow);
                          mediaListItem.fields["rating"] = newRating;
                          m_parent->m_mediaItemModel->replaceMediaItemAt(mediaListRow, mediaListItem);
                      }
