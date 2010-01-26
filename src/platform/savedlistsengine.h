@@ -26,7 +26,7 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
-#include <Phonon/MediaObject>
+#include <phonon/mediaobject.h>
 
 class MediaItem;
 class MediaListProperties;

@@ -32,7 +32,7 @@
 #include <KFileDialog>
 #include <KMimeType>
 #include <KLocale>
-#include <Phonon/MediaController>
+#include <phonon/mediacontroller.h>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
