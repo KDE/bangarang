@@ -20,8 +20,7 @@
 #define AUDIOCLIPSLISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QObject>
-#include <QString>
+#include <QtCore>
 #include <Soprano/QueryResultIterator>
 
 class MediaItem;

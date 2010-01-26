@@ -20,7 +20,7 @@
 #define SEMANTICSLISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QObject>
+#include <QtCore>
 #include <Soprano/QueryResultIterator>
 
 class MediaItem;

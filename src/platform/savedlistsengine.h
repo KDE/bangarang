@@ -20,8 +20,7 @@
 #define SAVEDLISTSENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QObject>
-#include <QString>
+#include <QtCore>
 #include <QDir>
 #include <KUrl>
 #include <Nepomuk/Resource>
