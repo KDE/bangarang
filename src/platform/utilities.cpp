@@ -42,7 +42,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QTime>
-#include <Phonon/BackendCapabilities>
+#include <phonon/backendcapabilities.h>
 
 #include <taglib/mpegfile.h>
 #include <taglib/fileref.h>
