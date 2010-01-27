@@ -1,3 +1,10 @@
+[Desktop Entry]
+Name="Play DVD with Bangarang"
+Actions=open;
+Type=Service
+X-KDE-Action-Custom=true
+X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Data|VideoDvd' AND StorageVolume.ignored == false ]
+
 [Desktop Action open]
 Exec=bangarang --play-dvd %u
 Icon=bangarang
@@ -6,9 +13,3 @@ Name[nl]=DVD afspelen met Bangarang
 Name[de]=DVD mit Bangarang wiedergeben
 Name[zh_CN]=使用 Bangarang 播放 DVD
 X-Ubuntu-Gettext-Domain=desktop_kdebase-workspace
-
-[Desktop Entry]
-Actions=open;
-Type=Service
-X-KDE-Action-Custom=true
-X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Data|VideoDvd' AND StorageVolume.ignored == false ]
