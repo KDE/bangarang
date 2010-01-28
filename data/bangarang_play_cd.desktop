@@ -1,3 +1,10 @@
+[Desktop Entry]
+Name=Play CD with Bangarang
+Actions=open;
+Type=Service
+X-KDE-Action-Custom=true
+X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Audio' AND StorageVolume.ignored == false ]
+
 [Desktop Action open]
 Exec=bangarang --play-cd %u
 Icon=bangarang
@@ -5,9 +12,3 @@ Name=Play CD with Bangarang
 Name[nl]=CD afspelen met Bangarang
 Name[de]=CD mit Bangarang wiedergeben
 Name[zh_CN]=使用 Bangarang 播放 CD
-
-[Desktop Entry]
-Actions=open;
-Type=Service
-X-KDE-Action-Custom=true
-X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Audio' AND StorageVolume.ignored == false ]
