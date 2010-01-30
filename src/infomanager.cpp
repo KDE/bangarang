@@ -21,6 +21,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/playlist.h"
 #include "mediaitemdelegate.h"
 #include <KUrlRequester>
 #include <KLineEdit>
@@ -206,7 +207,11 @@ void InfoManager::saveInfoView()
     saveInfoToMediaModel();
     saveFileMetaData();
     m_parent->m_mediaItemModel->updateSourceInfo(m_infoMediaItemsModel->mediaList());
-     
+    
+    //Update Now Playing and Playlist views
+    m_parent->playlist()->nowPlayingModel()->updateMediaItems(m_infoMediaItemsModel->mediaList());
+    m_parent->playlist()->playlistModel()->updateMediaItems(m_infoMediaItemsModel->mediaList());
+    
     //show non-editable fields
     m_editToggle = false;
     ui->editInfo->setText(i18n("Edit"));
