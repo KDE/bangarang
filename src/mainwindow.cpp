@@ -29,6 +29,7 @@
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
 
+#include <KAction>
 #include <KCmdLineArgs>
 #include <KCursor>
 #include <KUrl>
@@ -41,6 +42,9 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+#include <KStatusNotifierItem>
+#endif
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/job.h>
@@ -69,7 +73,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
     ui->setupUi(this);
-    
+
+    // Set up system tray icon
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+    m_sysTray = new KStatusNotifierItem(i18n("Bangarang"), this);
+#else
+    m_sysTray = new KNotificationItem(i18n("Bangarang"), this);
+#endif
+    m_sysTray->setIconByName("bangarang");
+
     //Setup interface icons
     setupIcons();
     setupActions();
@@ -313,6 +325,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up cursor hiding for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
+
+    // Set up system tray actions
+    m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
+    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
+    m_sysTray->contextMenu()->addAction(playPause);
+    m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 }
 
 MainWindow::~MainWindow()
@@ -496,6 +515,20 @@ void MainWindow::on_previous_clicked()
         } else {
             ui->previous->setVisible(false);
         }
+    }
+}
+
+void MainWindow::playPauseToggled()
+{
+    // if there is something in the playlist, play it, else try the playall button
+    if (m_currentPlaylist->rowCount() > 0) {
+        if (m_media->state() == Phonon::PlayingState) {
+            m_media->pause();
+        } else {
+            on_mediaPlayPause_released();
+        }
+    } else {
+        on_playAll_clicked();
     }
 }
 
@@ -1016,6 +1049,20 @@ void MainWindow::nowPlayingChanged()
         } else if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
             ui->viewerStack->setCurrentIndex(0);
         }
+
+        m_sysTray->setToolTip("bangarang", m_nowPlaying->mediaItemAt(0).title, m_nowPlaying->mediaItemAt(0).subTitle);
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+        m_sysTray->setStatus(KStatusNotifierItem::Active);
+#else
+        m_sysTray->setStatus(KNotificationItem::Active);
+#endif
+    } else {
+        m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+        m_sysTray->setStatus(KStatusNotifierItem::Passive);
+#else
+        m_sysTray->setStatus(KNotificationItem::Passive);
+#endif
     }
 }
 

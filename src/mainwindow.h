@@ -19,6 +19,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "config-bangarang.h"
+
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -49,6 +51,12 @@ class NowPlayingDelegate;
 class InfoManager;
 class SavedListsManager;
 class ActionsManager;
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+class KStatusNotifierItem;
+#else
+#include <knotificationitem-1/knotificationitem.h>
+using ::Experimental::KNotificationItem;
+#endif
 
 namespace Ui
 {
@@ -101,6 +109,8 @@ public slots:
     void playAll();
     void playSelected();
     void removeSelectedFromPlaylist();
+
+    void playPauseToggled();
         
 private:
     Phonon::VideoPlayer *m_player;
@@ -149,7 +159,13 @@ private:
     void showApplicationBanner();
     KIcon turnIconOff(KIcon icon, QSize size);
     void updateCachedDevicesList();
-    
+
+#ifdef HAVE_KSTATUSNOTIFIERITEM
+    KStatusNotifierItem *m_sysTray;
+#else
+    KNotificationItem *m_sysTray;
+#endif
+
 private slots:
     void on_nowPlaying_clicked();
     void on_collectionButton_clicked();
