@@ -327,11 +327,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     KCursor::setAutoHideCursor(m_videoWidget, true);
 
     // Set up system tray actions
+    m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
     KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
     connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
+
 }
 
 MainWindow::~MainWindow()
@@ -687,6 +689,7 @@ void MainWindow::on_showMediaViewMenu_clicked()
     QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
     menu->exec(menuLocation);
 }
+
 
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
@@ -1050,7 +1053,9 @@ void MainWindow::nowPlayingChanged()
             ui->viewerStack->setCurrentIndex(0);
         }
 
-        m_sysTray->setToolTip("bangarang", m_nowPlaying->mediaItemAt(0).title, m_nowPlaying->mediaItemAt(0).subTitle);
+        m_sysTray->setToolTip(m_nowPlaying->mediaItemAt(0).artwork, 
+                              m_nowPlaying->mediaItemAt(0).title, 
+                              m_nowPlaying->mediaItemAt(0).subTitle);
 #ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Active);
 #else
