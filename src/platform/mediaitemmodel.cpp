@@ -104,6 +104,9 @@ QList<MediaItem> MediaItemModel::mediaList()
 
 MediaItem MediaItemModel::mediaItemAt(int row)
 {
+    if (row < 0 || row >= m_mediaList.size()) {
+        return MediaItem();
+    }
     return m_mediaList.at(row);
 }
 
