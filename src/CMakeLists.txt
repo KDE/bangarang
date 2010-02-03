@@ -10,6 +10,10 @@ INCLUDE(KDE4Defaults)
 
 ADD_DEFINITIONS( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
+macro_ensure_version( "4.3.80" ${KDE_VERSION} HAVEKDE4_4 )
+macro_bool_to_01(HAVEKDE4_4 HAVE_KSTATUSNOTIFIERITEM)
+configure_file(config-bangarang.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-bangarang.h )
+
 add_subdirectory( platform/nepomukwriter )
 
 INCLUDE_DIRECTORIES( 
@@ -71,6 +75,9 @@ TARGET_LINK_LIBRARIES(bangarang
     ${TAGLIB_LIBRARIES} 
     tag 
 )
+if( NOT HAVEKDE4_4 )
+TARGET_LINK_LIBRARIES(bangarang knotificationitem-1)
+endif( NOT HAVEKDE4_4 )
 
 ########### install files ###############
 
