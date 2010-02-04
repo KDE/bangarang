@@ -1,4 +1,5 @@
 add_subdirectory( de )
 add_subdirectory( fr )
 add_subdirectory( nl )
+add_subdirectory( pl )
 add_subdirectory( zh_CN )
