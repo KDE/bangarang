@@ -272,13 +272,13 @@ bool Utilities::isMusic(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
-    return result->is("audio/mpeg") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack");
+    return result->is("audio/mpeg") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack") || result->is("audio/x-oma") || result->is("audio/x-m4a") || result->is("audio/mp4") || result->is("audio/x-monkeys-audio") || result->is("audio/x-wv") || result->is("audio/x-ms-wma") || result->is("audio/aac") || result->is("audio/3gpp")  || result->is("audio/3gpp2");
 }
 
 bool Utilities::isAudio(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-    return result->is("audio/mpeg") || result->is("audio/mp4") || result->is("audio/ogg") || result->is("audio/vorbis") || result->is("audio/aac") || result->is("audio/aiff") || result->is("audio/basic") || result->is("audio/flac") || result->is("audio/mp2") || result->is("audio/mp3") || result->is("audio/vnd.rn-realaudio") || result->is("audio/wav") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack");
+    return result->is("audio/mpeg") || result->is("audio/mp4") || result->is("audio/ogg") || result->is("audio/vorbis") || result->is("audio/aac") || result->is("audio/aiff") || result->is("audio/basic") || result->is("audio/flac") || result->is("audio/mp2") || result->is("audio/mp3") || result->is("audio/vnd.rn-realaudio") || result->is("audio/wav") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack") || result->is("audio/x-m4a") || result->is("audio/x-oma") || result->is("audio/x-monkeys-audio") || result->is("audio/x-wv") || result->is("audio/x-ms-wma") || result->is("audio/3gpp")  || result->is("audio/3gpp2");
 }
 
 bool Utilities::isVideo(const QString &url)
