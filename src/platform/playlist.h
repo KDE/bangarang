@@ -19,6 +19,7 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
+#include <KNotificationRestrictions>
 #include <QObject>
 #include <phonon/mediaobject.h>
 #include <phonon/mediacontroller.h>
@@ -228,6 +229,7 @@ class Playlist : public QObject
         void orderByPlaylist();
         void addToQueue();
         bool m_hadVideo;
+        KNotificationRestrictions * m_notificationRestrictions;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
