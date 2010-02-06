@@ -209,9 +209,11 @@ void Playlist::playNext()
     if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState || m_mediaObject->state() == Phonon::ErrorState) {
         //Add currently playing item to history
         if (m_nowPlaying->rowCount() > 0) {
-            int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
-            m_playlistIndicesHistory.append(row);
-            m_playlistUrlHistory.append(m_nowPlaying->mediaItemAt(0).url);
+            if (m_nowPlaying->mediaItemAt(0).type == "Audio" || m_nowPlaying->mediaItemAt(0).type == "Video") {
+                int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
+                m_playlistIndicesHistory.append(row);
+                m_playlistUrlHistory.append(m_nowPlaying->mediaItemAt(0).url);
+            }
         }
         
         if (m_queue->rowCount() > 1) {
