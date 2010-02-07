@@ -680,6 +680,12 @@ void MainWindow::on_showMediaViewMenu_clicked()
     menu->exec(menuLocation);
 }
 
+void MainWindow::on_showMediaViewMenu2_clicked()
+{
+    QMenu * menu = m_actionsManager->mediaViewMenu(true);
+    QPoint menuLocation = ui->showMediaViewMenu2->mapToGlobal(QPoint(0,ui->showMediaViewMenu2->height()));
+    menu->exec(menuLocation);
+}
 
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --

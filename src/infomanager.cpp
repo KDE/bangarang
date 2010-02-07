@@ -97,6 +97,7 @@ void InfoManager::showInfoView()
 {
     loadInfoView();
     ui->showInfo->setVisible(false);
+    ui->showMediaViewMenu->setVisible(false);
 }
 
 void InfoManager::hideInfoView()
@@ -105,6 +106,7 @@ void InfoManager::hideInfoView()
     if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
         ui->showInfo->setVisible(true);
     }
+    ui->showMediaViewMenu->setVisible(true);
 }
 
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
