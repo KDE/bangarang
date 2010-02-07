@@ -207,7 +207,7 @@ private slots:
     void delayedNotificationHide();
     void sourceInfoUpdated(const MediaItem &mediaItem);
     void sourceInfoRemoved(QString url);
-    void updateNowPlayingStyleSheet();
+    void updateCustomColors();
     void volumeChanged(qreal newVolume);
     
 protected:
