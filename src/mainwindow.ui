@@ -1399,6 +1399,9 @@
                         <property name="handleWidth">
                          <number>1</number>
                         </property>
+                        <property name="childrenCollapsible">
+                         <bool>false</bool>
+                        </property>
                         <widget class="QWidget" name="widget_10" native="true">
                          <layout class="QVBoxLayout" name="verticalLayout_35">
                           <property name="spacing">
