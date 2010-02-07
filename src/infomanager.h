@@ -59,6 +59,8 @@ class InfoManager : public QObject
     public slots:
         void saveInfoView();
         void showInfoView();
+        void hideInfoView();
+        void loadInfoView();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void editInfoView();
         void removeSelectedItemsInfo();
@@ -68,7 +70,6 @@ class InfoManager : public QObject
         Ui::MainWindowClass *ui;
         MediaIndexer *m_mediaIndexer;
         bool m_editToggle;
-        void loadInfoView();
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
         void saveInfoToMediaModel();

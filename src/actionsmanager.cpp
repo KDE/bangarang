@@ -153,9 +153,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_showItems = new QAction(KIcon("bangarang-category-browse"), i18n("Show items"), m_parent);
     connect(m_showItems, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
 
-    //Show Info
-    m_showNowPlayingInfo = new QAction(KIcon("help-about"), i18n("Show info"), m_parent);
+    //Show Now Playing Info
+    m_showNowPlayingInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
     connect(m_showNowPlayingInfo, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
+    
+    //Show Info View
+    m_showInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
+    connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
     
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
@@ -253,6 +257,11 @@ QAction * ActionsManager::showVideoSettings()
 QAction * ActionsManager::showNowPlayingInfo()
 {
     return m_showNowPlayingInfo;
+}
+
+QAction * ActionsManager::showInfo()
+{
+    return m_showInfo;
 }
 
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
