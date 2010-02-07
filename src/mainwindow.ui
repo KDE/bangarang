@@ -759,8 +759,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>154</width>
-                    <height>324</height>
+                    <width>131</width>
+                    <height>224</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1329,70 +1329,6 @@
                       </property>
                       <item>
                        <widget class="QSplitter" name="splitter">
-                        <property name="palette">
-                         <palette>
-                          <active>
-                           <colorrole role="Base">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </active>
-                          <inactive>
-                           <colorrole role="Base">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </inactive>
-                          <disabled>
-                           <colorrole role="Base">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                           <colorrole role="Window">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>255</red>
-                              <green>255</green>
-                              <blue>255</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </disabled>
-                         </palette>
-                        </property>
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
                         </property>
@@ -1521,70 +1457,6 @@
                           </item>
                           <item>
                            <widget class="MediaView" name="mediaView">
-                            <property name="palette">
-                             <palette>
-                              <active>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </active>
-                              <inactive>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </inactive>
-                              <disabled>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </disabled>
-                             </palette>
-                            </property>
                             <property name="autoFillBackground">
                              <bool>true</bool>
                             </property>
@@ -1711,77 +1583,13 @@
                               <verstretch>0</verstretch>
                              </sizepolicy>
                             </property>
-                            <property name="palette">
-                             <palette>
-                              <active>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </active>
-                              <inactive>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </inactive>
-                              <disabled>
-                               <colorrole role="Base">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                               <colorrole role="Window">
-                                <brush brushstyle="SolidPattern">
-                                 <color alpha="255">
-                                  <red>255</red>
-                                  <green>255</green>
-                                  <blue>255</blue>
-                                 </color>
-                                </brush>
-                               </colorrole>
-                              </disabled>
-                             </palette>
-                            </property>
                             <property name="autoFillBackground">
                              <bool>true</bool>
                             </property>
                             <property name="currentIndex">
                              <number>1</number>
                             </property>
-                            <widget class="QWidget" name="stackedWidget_12Page1" native="true"/>
+                            <widget class="QWidget" name="stackedWidget_12Page1"/>
                             <widget class="QWidget" name="mediaItemSemantics">
                              <layout class="QVBoxLayout" name="verticalLayout_36">
                               <property name="spacing">
@@ -1851,9 +1659,6 @@
                                    </property>
                                    <attribute name="headerVisible">
                                     <bool>false</bool>
-                                   </attribute>
-                                   <attribute name="headerDefaultSectionSize">
-                                    <number>70</number>
                                    </attribute>
                                    <attribute name="headerDefaultSectionSize">
                                     <number>70</number>
