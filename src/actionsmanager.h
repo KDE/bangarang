@@ -62,6 +62,7 @@ class ActionsManager : public QObject
         QAction *newVideoList();
         QAction *showItems();
         QAction *showNowPlayingInfo();
+        QAction *showInfo();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -96,6 +97,7 @@ class ActionsManager : public QObject
         QAction *m_newAudioList;
         QAction *m_newVideoList;
         QAction *m_showItems;
+        QAction *m_showInfo;
         QAction *m_showNowPlayingInfo;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;

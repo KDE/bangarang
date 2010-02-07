@@ -49,6 +49,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_infoMediaItemsModel = new MediaItemModel(this);
     connect(ui->saveInfo, SIGNAL(clicked()), this, SLOT(saveInfoView()));
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(showInfoView()));
+    connect(ui->hideInfo, SIGNAL(clicked()), this, SLOT(hideInfoView()));
     connect(ui->editInfo, SIGNAL(clicked()), this, SLOT(editInfoView()));
     connect(ui->mediaViewHolder, SIGNAL(currentChanged(int)), this, SLOT(mediaViewHolderChanged(int)));
     m_editToggle = false;
@@ -95,14 +96,25 @@ void InfoManager::mediaViewHolderChanged(int index)
 void InfoManager::showInfoView()
 {
     loadInfoView();
+    ui->showInfo->setVisible(false);
+}
+
+void InfoManager::hideInfoView()
+{
+    ui->semanticsHolder->setVisible(false);
+    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
+        ui->showInfo->setVisible(true);
+    }
 }
 
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 {
     ui->stackedWidget->setCurrentIndex(0);
-    ui->mediaViewHolder->setCurrentIndex(1);
-    ui->previous->setVisible(true);
-    ui->previous->setText(ui->listTitle->text());
+    ui->semanticsHolder->setVisible(true);
+    ui->semanticsStack->setCurrentIndex(1);
+    //ui->mediaViewHolder->setCurrentIndex(1);
+    //ui->previous->setVisible(true);
+    //ui->previous->setText(ui->listTitle->text());
     
     m_rows.clear();
     QList<MediaItem> mediaList;
@@ -135,9 +147,11 @@ void InfoManager::editInfoView()
 
 void InfoManager::loadInfoView()
 {
-    ui->mediaViewHolder->setCurrentIndex(1);
-    ui->previous->setVisible(true);
-    ui->previous->setText(ui->listTitle->text());
+    //ui->mediaViewHolder->setCurrentIndex(1);
+    ui->semanticsHolder->setVisible(true);
+    ui->semanticsStack->setCurrentIndex(1);
+    //ui->previous->setVisible(true);
+    //ui->previous->setText(ui->listTitle->text());
     //ui->playSelected->setVisible(false);
     //ui->playAll->setVisible(false);
     

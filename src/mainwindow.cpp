@@ -91,12 +91,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->contextStack->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->showInfo->setVisible(false);
-    ui->infoSep1->setVisible(false);
-    ui->infoSep2->setVisible(false);
     ui->saveInfo->setVisible(false);
     ui->sortList->setVisible(false);
     ui->configureAudioList->setVisible(false);
     ui->configureVideoList->setVisible(false);
+    ui->semanticsHolder->setVisible(false);
     
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
@@ -372,8 +371,6 @@ void MainWindow::on_Filter_returnPressed()
         ui->mediaViewHolder->setCurrentIndex(0);
         ui->saveInfo->setVisible(false);
         ui->showInfo->setVisible(false);
-        ui->infoSep1->setVisible(false);
-        ui->infoSep2->setVisible(false);
     }
 }
 
@@ -501,15 +498,10 @@ void MainWindow::on_previous_clicked()
             ui->playSelected->setVisible(true);
             ui->playAll->setVisible(false);
             ui->showInfo->setVisible(true);
-            ui->infoSep1->setVisible(true);
-            ui->infoSep2->setVisible(true);
-            
         } else {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
             ui->showInfo->setVisible(false);
-            ui->infoSep1->setVisible(false);
-            ui->infoSep2->setVisible(false);
         }
         if (m_mediaListPropertiesHistory.count() > 0) {
             ui->previous->setVisible(true);
@@ -595,8 +587,6 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
             ui->showInfo->setVisible(false);
-            ui->infoSep1->setVisible(false);
-            ui->infoSep2->setVisible(false);
         }
     }
 }
@@ -901,9 +891,12 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             if (!m_mediaItemModel->mediaItemAt(0).url.startsWith("DVDTRACK") && !m_mediaItemModel->mediaItemAt(0).url.startsWith("CDTRACK")) {
-                ui->showInfo->setVisible(true);
-                ui->infoSep1->setVisible(true);
-                ui->infoSep2->setVisible(true);
+                if (!ui->semanticsHolder->isVisible()) {
+                    ui->showInfo->setVisible(true);
+                }
+            }
+            if (ui->semanticsStack->isVisible()) {
+                infoManager()->loadInfoView();
             }
         }
     } else {
@@ -912,8 +905,6 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
             ui->playAll->setVisible(true);
         }
         ui->showInfo->setVisible(false);
-        ui->infoSep1->setVisible(false);
-        ui->infoSep2->setVisible(false);
     }
     ui->saveInfo->setVisible(false);
     Q_UNUSED(selected);
@@ -937,8 +928,6 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
             ui->showInfo->setVisible(false);
-            ui->infoSep1->setVisible(false);
-            ui->infoSep2->setVisible(false);
         }
     }
     Q_UNUSED(deselected);
@@ -969,8 +958,6 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->mediaViewHolder->setCurrentIndex(0);
             ui->saveInfo->setVisible(false);
             ui->showInfo->setVisible(false);            
-            ui->infoSep1->setVisible(false);
-            ui->infoSep2->setVisible(false);
         }
     }
     Q_UNUSED(deselected);
@@ -1217,6 +1204,9 @@ void MainWindow::setupIcons()
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
     ui->saveInfo->setIcon(KIcon("document-save"));
     ui->showInfo->setIcon(KIcon("help-about"));
+    
+    //Info View Icons
+    ui->hideInfo->setIcon(KIcon("dialog-close"));
     ui->editInfo->setIcon(KIcon("document-edit"));
     
     //Now Playing View bottom bar
