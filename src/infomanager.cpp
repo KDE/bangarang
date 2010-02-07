@@ -25,6 +25,7 @@
 #include "mediaitemdelegate.h"
 #include <KUrlRequester>
 #include <KLineEdit>
+#include <KGlobalSettings>
 #include <KDebug>
 #include <QDateEdit>
 #include <Soprano/QueryResultIterator>
@@ -796,7 +797,8 @@ void InfoManager::setLabel(int row, const QString &label, int format)
     labelLabel->setText(label);
     labelLabel->setAlignment(Qt::AlignRight | Qt::AlignTop);
     labelLabel->setMargin(4);
-    QFont font = QFont();
+    //QFont font = QFont();
+    QFont font = KGlobalSettings::smallestReadableFont();
     font.setItalic(true);
     if (format == TitleFormat) {
         labelLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -812,7 +814,8 @@ void InfoManager::setInfo(int row, const QString &info, int format)
     infoLabel->setText(info);
     infoLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     infoLabel->setMargin(4);
-    QFont font = QFont();
+    //QFont font = QFont();
+    QFont font = KGlobalSettings::smallestReadableFont();
     if (format == TitleFormat) {
         font.setPointSize(1.5*font.pointSize());
         infoLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -832,18 +835,24 @@ void InfoManager::setInfo(int row, const QPixmap &pixmap)
 
 void InfoManager::setEditWidget(int row, KLineEdit *lineEdit, const QString &value)
 {
+    QFont font = KGlobalSettings::smallestReadableFont();
+    lineEdit->setFont(font);
     lineEdit->setText(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row ), 1, lineEdit);
 }
 
 void InfoManager::setEditWidget(int row, QTextEdit *textEdit, const QString &value)
 {
+    QFont font = KGlobalSettings::smallestReadableFont();
+    textEdit->setFont(font);
     textEdit->setText(value);
     ui->infoView->setItemWidget(ui->infoView->topLevelItem(row), 1, textEdit);
 }
 
 void InfoManager::setEditWidget(int row, QComboBox *comboBox, const QString &value, const QStringList &list, bool editable)
 {
+    QFont font = KGlobalSettings::smallestReadableFont();
+    comboBox->setFont(font);
     comboBox->addItems(list);
     if (editable) {
         comboBox->setEditable(true);
@@ -868,6 +877,8 @@ void InfoManager::setEditWidget(int row, KUrlRequester *urlRequester, const QStr
 
 void InfoManager::setEditWidget(int row, QSpinBox *spinBox, int value)
 {
+    QFont font = KGlobalSettings::smallestReadableFont();
+    spinBox->setFont(font);
     spinBox->setRange(0,999);
     spinBox->setSpecialValueText("-");
     spinBox->setValue(value);
@@ -882,6 +893,8 @@ void InfoManager::setEditWidget(int row, ArtworkWidget *artworkWidget, const QPi
 
 void InfoManager::setEditWidget(int row, QDateEdit *dateEdit, const QDate &date)
 {
+    QFont font = KGlobalSettings::smallestReadableFont();
+    dateEdit->setFont(font);
     dateEdit->setMinimumDate(QDate(-4000,1,1));
     dateEdit->setDisplayFormat("MMMM dd yyyy");
     dateEdit->setDate(date);
