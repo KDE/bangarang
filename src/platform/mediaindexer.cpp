@@ -281,3 +281,4 @@ void MediaIndexer::error(QProcess::ProcessError error)
 {
     kDebug() << error;
 }
+#include "mediaindexer.moc"
