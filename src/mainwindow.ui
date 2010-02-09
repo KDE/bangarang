@@ -759,8 +759,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>131</width>
-                    <height>224</height>
+                    <width>154</width>
+                    <height>324</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1555,7 +1555,7 @@
                              <item>
                               <widget class="QToolButton" name="hideInfo">
                                <property name="toolTip">
-                                <string>Hide Information</string>
+                                <string>&lt;b&gt;Showing Information&lt;/b&gt;&lt;br&gt;Click to hide information</string>
                                </property>
                                <property name="text">
                                 <string>Info</string>
