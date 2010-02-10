@@ -1212,7 +1212,7 @@ void MainWindow::setupIcons()
     ui->showInfo->setIcon(KIcon("help-about"));
     
     //Info View Icons
-    ui->hideInfo->setIcon(KIcon("dialog-close"));
+    ui->hideInfo->setIcon(turnIconOff(KIcon("help-about"), QSize(16, 16)));
     ui->editInfo->setIcon(KIcon("document-edit"));
     
     //Now Playing View bottom bar
