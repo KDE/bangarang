@@ -57,7 +57,6 @@ SET(BangarangSources
     platform/medialistcache.cpp
     platform/cachelistengine.cpp
     platform/audioclipslistengine.cpp
-    platform/imdbqueryengine.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
