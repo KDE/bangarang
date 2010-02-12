@@ -210,7 +210,8 @@ private slots:
     void sourceInfoRemoved(QString url);
     void updateCustomColors();
     void volumeChanged(qreal newVolume);
-    
+    void skipForward(int i);
+    void skipBackward(int i);
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);

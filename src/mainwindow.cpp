@@ -22,12 +22,14 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
+#include "platform/bangarangvideowidget.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "actionsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
+
 
 #include <KAction>
 #include <KCmdLineArgs>
@@ -65,7 +67,7 @@
 #include <QFile>
 #include <QScrollBar>
 #include <QTimer>
-
+ 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     qRegisterMetaType<MediaItem>("MediaItem");
@@ -112,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up media object
     m_media = new Phonon::MediaObject(this);
-    m_videoWidget =  new Phonon::VideoWidget(ui->videoFrame);
+    m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
     m_audioOutputMusicCategory = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     m_audioOutputVideoCategory = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     m_audioOutput = m_audioOutputMusicCategory; // default to music category;
@@ -120,7 +122,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_audioPath = Phonon::createPath(m_media, m_audioOutput);
     m_media->setTickInterval(500);
     m_volume = m_audioOutput->volume();
-    
+    connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
+    connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
+
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
@@ -1364,6 +1368,19 @@ void MainWindow::updateCustomColors()
     ui->mediaView->setPalette(viewPalette);
     ui->semanticsStack->setPalette(viewPalette);
     
+}
+
+void MainWindow::skipForward(int i)
+{
+  kDebug() << "Scrolls" << i;
+  m_media->seek(qint64(i)*100);
+  
+}
+
+void MainWindow::skipBackward(int i)
+{
+  kDebug() << "Scrolls" << i;
+  m_media->seek(qint64(i)*100);
 }
 
 ActionsManager * MainWindow::actionsManager()
