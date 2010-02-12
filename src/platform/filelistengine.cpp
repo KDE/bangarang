@@ -268,7 +268,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(const KUrl::List &fileList)
         mediaItem.type = "Audio";
         mediaItem.fields["url"] = mediaItem.url;
         mediaItem.fields["title"] = fileList.at(i).fileName();
-        if (Utilities::isMusic(mediaItem.url)) {
+        if (Utilities::isMusic(mediaItem.url) && fileList.at(i).isLocalFile()) {
             TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
             if (file.isNull()) {
                 continue;
@@ -331,7 +331,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(const KUrl::List &fileList)
             //Index all music files
             m_mediaListToIndex << mediaItem;
         } else {
-            mediaItem.fields["audioType"] = i18n("Audio Clip");
+            mediaItem.fields["audioType"] = "Audio Clip";
             if (m_nepomukInited) {
                 bool foundInNepomuk = false;
                 MediaItem foundMediaItem;
