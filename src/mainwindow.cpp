@@ -1359,6 +1359,8 @@ void MainWindow::updateCustomColors()
     
 }
 
+// TODO Please see if we can make it a setup point 
+// Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
   kDebug() << "Scrolls" << i;

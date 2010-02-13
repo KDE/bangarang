@@ -41,18 +41,26 @@ class BangarangVideoWidget : public Phonon::VideoWidget
      * create new instance 
      **/
     BangarangVideoWidget(QWidget * parent = 0);
+
     /**
      * delete instance
      **/
     ~BangarangVideoWidget();
-  
+
     /**
-     * override the wheelEvent of Phonon::VideoWidget to enable @func skip() 
+     * override of wheelEvent. If mousewheel is vertically scrolled it emits @func skip().
      **/
     virtual void wheelEvent ( QWheelEvent * event );
+ 
+   /**
+     * @param set if @param fullscreen should be true or false
+     * This emits @SIGNAL fullscreenChanged() so  the rest of Bangarang can Hook into it.
+     **/
     void setIsFullscreen(bool fullscreen);
+
  protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
+    
  Q_SIGNALS:
     void skipForward(int i);
     void skipBackward(int i); 
