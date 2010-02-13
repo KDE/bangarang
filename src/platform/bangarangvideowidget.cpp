@@ -49,4 +49,24 @@ BangarangVideoWidget::wheelEvent(QWheelEvent *event)
   Phonon::VideoWidget::wheelEvent(event);
 }
 
+void
+BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
+{
+  if(event->button() == Qt::LeftButton){
+    if (fullscreen) {
+      emit fullscreenChanged(false);
+      setIsFullscreen(false);
+    }
+    else {
+      emit fullscreenChanged(true);
+      setIsFullscreen(true);
+    }
+  }
+}
+void
+BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
+{ 
+  fullscreen = isFullscreen;
+}
+
 #include "bangarangvideowidget.moc"
