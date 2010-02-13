@@ -50,14 +50,17 @@ class BangarangVideoWidget : public Phonon::VideoWidget
      * override the wheelEvent of Phonon::VideoWidget to enable @func skip() 
      **/
     virtual void wheelEvent ( QWheelEvent * event );
-
+    void setIsFullscreen(bool fullscreen);
+ protected:
+    void mouseDoubleClickEvent(QMouseEvent *event);
  Q_SIGNALS:
     void skipForward(int i);
     void skipBackward(int i); 
+    void fullscreenChanged(bool);
  private:
     friend class BangarangVideoWidgetPrivate;
     BangarangVideoWidgetPrivate* const d;
-  
+    bool fullscreen;
 };
 
 #endif //BANGARANGVIDEOWIDGET_H

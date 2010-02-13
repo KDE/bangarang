@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_volume = m_audioOutput->volume();
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
-
+    connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
@@ -1302,17 +1302,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
 }
-
-void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
-{
-  if(event->button() == Qt::LeftButton){
-    if(isFullScreen())
-      on_fullScreen_toggled(false);
-    else
-      on_fullScreen_toggled(true);
-  }
-}
-
 
 /*-------------------------
 -- Device Notifier Slots --
