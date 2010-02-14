@@ -234,6 +234,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     videoSettings->setHideAction(m_actionsManager->showVideoSettings());
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
+    // moved up here so we can use it in the contextmenu aswell as the systray
+    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
+
+    m_videoWidget->addContextAction(m_actionsManager->playPrevious());
+    m_videoWidget->addContextAction(playPause);
+    m_videoWidget->addContextAction(m_actionsManager->playNext());
+    m_videoWidget->addContextAction(m_actionsManager->showVideoSettings());
+    m_videoWidget->addContextAction(m_actionsManager->showHideControls());
+
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -332,8 +342,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
-    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
-    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 

@@ -52,12 +52,15 @@ class BangarangVideoWidget : public Phonon::VideoWidget
      **/
     virtual void wheelEvent ( QWheelEvent * event );
  
-   /**
+    /**
      * @param set if @param fullscreen should be true or false
      * This emits @SIGNAL fullscreenChanged() so  the rest of Bangarang can Hook into it.
      **/
     void setIsFullscreen(bool fullscreen);
-
+    /**
+     * @param action adds an QAction to the list of Actions in the Widgets ContextMenu
+     **/
+    void addContextAction(QAction *action);
  protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
     
@@ -65,10 +68,15 @@ class BangarangVideoWidget : public Phonon::VideoWidget
     void skipForward(int i);
     void skipBackward(int i); 
     void fullscreenChanged(bool);
+
  private:
     friend class BangarangVideoWidgetPrivate;
     BangarangVideoWidgetPrivate* const d;
     bool fullscreen;
+    QList<QAction*> actionsList;
+
+ private slots:
+    void makeCustomContext(QPoint);
 };
 
 #endif //BANGARANGVIDEOWIDGET_H

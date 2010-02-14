@@ -20,7 +20,7 @@
 #define MAINWINDOW_H
 
 #include "config-bangarang.h"
-
+#include "platform/bangarangvideowidget.h"
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -117,7 +117,7 @@ private:
     MediaItemDelegate * m_itemDelegate;
     MediaItemDelegate * m_playlistItemDelegate;
     NowPlayingDelegate * m_nowPlayingDelegate;
-    Phonon::VideoWidget *m_videoWidget;
+    BangarangVideoWidget *m_videoWidget;
     Phonon::AudioOutput *m_audioOutput;
     Phonon::AudioOutput *m_audioOutputMusicCategory;
     Phonon::AudioOutput *m_audioOutputVideoCategory;

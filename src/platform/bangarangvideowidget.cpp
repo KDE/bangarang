@@ -20,8 +20,13 @@
 
 #include <QWheelEvent>
 #include <QMouseEvent>
+#include <QPoint>
+#include <QMenu> 
 #include <phonon/videowidget.h>
-
+#include <QList>
+#include <QAction>
+#include <KLocale>
+#include <KDebug>
 class BangarangVideoWidgetPrivate
 {
   public: 
@@ -31,7 +36,11 @@ class BangarangVideoWidgetPrivate
 
 BangarangVideoWidget::BangarangVideoWidget(QWidget * parent) : Phonon::VideoWidget(parent) ,
 							       d(new BangarangVideoWidgetPrivate)
-{ }
+{
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(makeCustomContext(QPoint)));
+  QList<QAction> actionsList;
+}
 
 BangarangVideoWidget::~BangarangVideoWidget()
 {
@@ -67,6 +76,24 @@ void
 BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
 { 
   fullscreen = isFullscreen;
+}
+
+void
+BangarangVideoWidget::makeCustomContext(QPoint pos) 
+{
+  Q_UNUSED(pos);
+  kDebug() << "custom Context called";
+  QMenu *menu = new QMenu(i18n("VideoMenu"),this);
+  foreach(QAction* a ,actionsList )
+    menu->addAction(a);
+  menu->exec(QCursor::pos());
+}
+
+void 
+BangarangVideoWidget::addContextAction(QAction *action)
+{
+  actionsList << action;
+  kDebug() << "Action Added";
 }
 
 #include "bangarangvideowidget.moc"
