@@ -28,6 +28,9 @@
 #include <QTreeWidgetItem>
 #include <QTextEdit>
 #include <QDate>
+#include <QStandardItemModel>
+#include <QItemDelegate>
+
 
 namespace Ui
 {
@@ -68,6 +71,16 @@ class InfoManager : public QObject
     private:
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
+        
+        QStandardItemModel *m_commonValuesModel;
+        QStandardItemModel *m_uncommonValuesModel;
+        QItemDelegate *m_commonItemDelegate;
+        QItemDelegate *m_uncommonItemDelegate;
+        QItemEditorFactory *m_editorFactory;
+        
+        void addFieldToValuesModel(const QString &fieldTitle, const QString &field);
+        bool hasMultipleValues(const QString &field);
+        
         MediaIndexer *m_mediaIndexer;
         bool m_editToggle;
         QVariant commonValue(const QString &field);
@@ -103,5 +116,7 @@ class InfoManager : public QObject
         void audioTypeChanged(int index);
         void videoTypeChanged(int index);
         void saveFileMetaData();
+        
+        void updateValuesModels();
 };
 #endif //INFOMANAGER_H

@@ -17,6 +17,7 @@
 */
 
 #include "infomanager.h"
+#include "infoitemdelegate.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -60,12 +61,207 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     } else {
         ui->editInfo->setEnabled(false);
     }
+
+    
+    m_commonValuesModel = new QStandardItemModel(this);
+    m_uncommonValuesModel = new QStandardItemModel(this);
+    ui->infoCommonView->setModel(m_commonValuesModel);
+    InfoItemDelegate * infoItemDelegate = new InfoItemDelegate(m_parent);
+    infoItemDelegate->setView(ui->infoCommonView);
+    ui->infoCommonView->setItemDelegate(infoItemDelegate);
+    ui->infoUncommonView->setModel(m_uncommonValuesModel);
+    infoItemDelegate = new InfoItemDelegate(m_parent);
+    infoItemDelegate->setView(ui->infoUncommonView);
+    ui->infoUncommonView->setItemDelegate(infoItemDelegate);
+
+    connect(m_infoMediaItemsModel, SIGNAL(mediaListChanged()), this, SLOT(updateValuesModels()));
+    connect(ui->infoMore, SIGNAL(toggled(bool)), ui->infoUncommonView, SLOT(setVisible(bool)));
+    ui->infoUncommonView->setVisible(false);
+    ui->infoSaveHolder->setVisible(false);
+    ui->infoView->setVisible(false);
     
 }
 
 InfoManager::~InfoManager()
 {
 }
+
+void InfoManager::updateValuesModels()
+{
+    //Update commonValuesModel and uncommonValuesModel
+    m_commonValuesModel->clear();
+    m_uncommonValuesModel->clear();
+    ui->infoCommonView->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+    ui->infoUncommonView->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+    
+    if (m_infoMediaItemsModel->rowCount() > 0) {
+        // Get fields shared by all media types
+        QString type = m_infoMediaItemsModel->mediaItemAt(0).type;
+        
+        if (type == "Audio") {
+            addFieldToValuesModel(i18n("Type"), "audioType");
+            addFieldToValuesModel(i18n("Artwork"), "artwork");
+            addFieldToValuesModel(i18n("Title"), "title");
+            QString subType = m_infoMediaItemsModel->mediaItemAt(0).fields["audioType"].toString();
+            if (subType == "Music") {
+                addFieldToValuesModel(i18n("Artist"), "artist");
+                addFieldToValuesModel(i18n("Album"), "album");
+                addFieldToValuesModel(i18n("Track"), "trackNumber");
+                addFieldToValuesModel(i18n("Year"), "year");
+                addFieldToValuesModel(i18n("Genre"), "genre");
+            }
+        } else {
+            addFieldToValuesModel(i18n("Type"), "videoType");
+            addFieldToValuesModel(i18n("Artwork"), "artwork");
+            addFieldToValuesModel(i18n("Title"), "title");
+            QString subType = m_infoMediaItemsModel->mediaItemAt(0).fields["videoType"].toString();
+            if (subType == "Movie" || subType == "TV Show") {
+                addFieldToValuesModel(i18n("Year"), "year");
+                addFieldToValuesModel(i18n("Genre"), "genre");
+                if (subType == "TV Show") {
+                    addFieldToValuesModel(i18n("Series"), "series");
+                    addFieldToValuesModel(i18n("Season"), "season");
+                    addFieldToValuesModel(i18n("Episode"), "episodeNumber");
+                }
+                addFieldToValuesModel(i18n("Writer"), "writer");
+                addFieldToValuesModel(i18n("Producer"), "producer");
+                addFieldToValuesModel(i18n("Director"), "director");
+                addFieldToValuesModel(i18n("Actor"), "actor");
+            }
+        }
+        addFieldToValuesModel(i18n("Location"), "url");
+        addFieldToValuesModel(i18n("Description"), "description");
+        if (m_infoMediaItemsModel->rowCount() == 1) {
+            addFieldToValuesModel(i18n("Play Count"), "playCount");
+            addFieldToValuesModel(i18n("Last Played"), "lastPlayed");
+        }
+    }
+    
+    //Show or hide uncommon views
+    if (m_uncommonValuesModel->rowCount() == 0) {
+        ui->infoMoreHolder->setVisible(false);
+        ui->infoUncommonView->setVisible(false);
+    } else {
+        ui->infoMoreHolder->setVisible(true);
+    }
+        
+}
+
+void InfoManager::addFieldToValuesModel(const QString &fieldTitle, const QString &field)
+{
+    QList<QStandardItem *> rowData;
+    
+    // Create field title
+    QStandardItem *fieldTitleItem = new QStandardItem(fieldTitle);
+    fieldTitleItem->setData(field, Qt::UserRole);
+    fieldTitleItem->setEditable(false);
+    rowData.append(fieldTitleItem);
+    
+    QStandardItem *fieldItem = new QStandardItem();
+    fieldItem->setData(field, Qt::UserRole);
+    bool hasMultiple = hasMultipleValues(field);
+    fieldItem->setData(hasMultiple, Qt::UserRole + 1);
+    
+    if (field == "artwork") {
+        if (m_infoMediaItemsModel->rowCount() == 1) {
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(m_infoMediaItemsModel->mediaItemAt(0));
+            fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+            rowData.append(fieldItem);
+            m_commonValuesModel->appendRow(rowData);
+        } else {
+            rowData.append(fieldItem);
+            m_uncommonValuesModel->appendRow(rowData);
+        }
+        return;
+    }
+    
+    bool isEditable = true;
+    if (field == "playCount" || field == "lastPlayed") {
+        isEditable = false;
+    }
+    fieldItem->setEditable(isEditable);
+
+    if (!hasMultiple) {
+        //Create field
+        
+        QVariant value = commonValue(field);
+        if (field == "audioType" || field == "videoType") {
+            if (value.toString() == "Music" || value.toString() == "Movie") {
+                value = QVariant(0);
+            } else if (value.toString() == "Audio Stream" || value.toString() == "TV Show") {
+                value = QVariant(1);
+            } else if (value.toString() == "Audio Clip" || value.toString() == "Video Clip") {
+                value = QVariant(2);
+            }
+        }
+        if (value.type() == QVariant::String) {
+            fieldItem->setData(value.toString(), Qt::DisplayRole);
+            fieldItem->setData(value.toString(), Qt::EditRole);
+        } else if (value.type() == QVariant::Int) {
+            fieldItem->setData(value.toInt(), Qt::DisplayRole);
+            fieldItem->setData(value.toInt(), Qt::EditRole);
+        }
+        rowData.append(fieldItem);
+        //Add to common values
+        m_commonValuesModel->appendRow(rowData);
+    } else {
+        //Create empty field
+        QVariant value = m_infoMediaItemsModel->mediaItemAt(0).fields[field];
+        if (value.type() == QVariant::String) {
+            fieldItem->setData(QString(), Qt::EditRole);
+        } else if (value.type() == QVariant::Int) {
+            fieldItem->setData(0, Qt::EditRole);
+        }
+        rowData.append(fieldItem);
+        //Add to uncommon values
+        m_uncommonValuesModel->appendRow(rowData);
+    }
+}
+
+bool InfoManager::hasMultipleValues(const QString &field)
+{
+    QVariant value;
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+
+    if (field == "artwork") {
+        if (mediaList.count() == 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+        
+    for (int i = 0; i < mediaList.count(); i++) {
+        if (mediaList.at(i).fields.contains(field)) {
+            if (value.isNull()) {
+                value = mediaList.at(i).fields.value(field);
+            } else if (mediaList.at(i).fields.value(field) != value) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+QVariant InfoManager::commonValue(const QString &field)
+{
+    QVariant value;
+    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
+    for (int i = 0; i < mediaList.count(); i++) {
+        if (mediaList.at(i).fields.contains(field)) {
+            if (value.isNull()) {
+                value = mediaList.at(i).fields.value(field);
+            } else if (mediaList.at(i).fields.value(field) != value) {
+                value = QVariant();
+                break;
+            }
+        }
+    }
+        return value;
+}
+
+
+
 
 void InfoManager::removeSelectedItemsInfo()
 {
@@ -169,7 +365,7 @@ void InfoManager::loadInfoView()
         return;
     }
     m_infoMediaItemsModel->clearMediaListData();
-    m_infoMediaItemsModel->loadMediaList(mediaList);
+    m_infoMediaItemsModel->loadMediaList(mediaList, true);
     showFields();
 }
 
@@ -514,23 +710,6 @@ void InfoManager::showVideoTVShowFields(bool edit)
     }
 }
         
-QVariant InfoManager::commonValue(const QString &field)
-{
-    QVariant value;
-    QList<MediaItem> mediaList = m_infoMediaItemsModel->mediaList();
-    for (int i = 0; i < mediaList.count(); i++) {
-        if (mediaList.at(i).fields.contains(field)) {
-            if (value.isNull()) {
-                value = mediaList.at(i).fields.value(field);
-            } else if (mediaList.at(i).fields.value(field) != value) {
-                value = QVariant();
-                break;
-            }
-        }
-    }
-    return value;
-}
-
 QStringList InfoManager::valueList(const QString &field)
 {
     QStringList value;
