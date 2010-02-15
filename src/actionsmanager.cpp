@@ -377,10 +377,12 @@ void ActionsManager::toggleControls()
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
             m_showHideControls->setIcon(KIcon("layer-visible-on"));
+	    m_showHideControls->setText(i18n("Show Controls"));
         } else {
             ui->widgetSet->setVisible(true);
             ui->nowPlayingToolbar->setVisible(true);
             m_showHideControls->setIcon(KIcon("layer-visible-off"));
+	    m_showHideControls->setText(i18n("Hide Controls"));
         }
     }
 }
