@@ -238,11 +238,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
     connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
 
-    m_videoWidget->addContextAction(m_actionsManager->playPrevious());
-    m_videoWidget->addContextAction(playPause);
-    m_videoWidget->addContextAction(m_actionsManager->playNext());
-    m_videoWidget->addContextAction(m_actionsManager->showVideoSettings());
-    m_videoWidget->addContextAction(m_actionsManager->showHideControls());
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
+    m_videoWidget->contextMenu()->addAction(playPause);
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->playNext());
+    m_videoWidget->contextMenu()->addSeparator();
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->showVideoSettings());
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->showHideControls());
 
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
