@@ -39,7 +39,7 @@ BangarangVideoWidget::BangarangVideoWidget(QWidget * parent) : Phonon::VideoWidg
 {
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(makeCustomContext(QPoint)));
-  QList<QAction> actionsList;
+  m_contextMenu = new QMenu();
 }
 
 BangarangVideoWidget::~BangarangVideoWidget()
@@ -82,18 +82,16 @@ void
 BangarangVideoWidget::makeCustomContext(QPoint pos) 
 {
   Q_UNUSED(pos);
-  kDebug() << "custom Context called";
-  QMenu *menu = new QMenu(i18n("VideoMenu"),this);
-  foreach(QAction* a ,actionsList )
-    menu->addAction(a);
-  menu->exec(QCursor::pos());
+  m_contextMenu->exec(QCursor::pos());
 }
 
-void 
-BangarangVideoWidget::addContextAction(QAction *action)
+QMenu* BangarangVideoWidget::contextMenu()
 {
-  actionsList << action;
-  kDebug() << "Action Added";
+  return m_contextMenu;
 }
 
+void BangarangVideoWidget::setContextMenu(QMenu * menu)
+{
+  m_contextMenu = menu;
+}
 #include "bangarangvideowidget.moc"
