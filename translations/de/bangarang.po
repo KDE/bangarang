@@ -4,14 +4,15 @@
 #
 # Andreas Marschke <xxtjaxx@gmail.com>, 2009.
 # Panagiotis Papadopoulos <pano_90@gmx.net>, 2010.
+# Moritz N. <ferahgo.de@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2010-02-06 07:59-0800\n"
-"PO-Revision-Date: 2010-01-06 17:02+0100\n"
-"Last-Translator: Panagiotis Papadopoulos <pano_90@gmx.net>\n"
-"Language-Team: German <kde-i18n-de@kde.org>\n"
+"PO-Revision-Date: 2010-02-15 23:48+0100\n"
+"Last-Translator: Moritz N. <ferahgo.de@gmail.com>\n"
+"Language-Team: Deutsch <kde-i18n-de@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -94,9 +95,8 @@ msgid "Add to list "
 msgstr "Zur Wiedergabeliste hinzufügen"
 
 #: actionsmanager.cpp:145 actionsmanager.cpp:149
-#, fuzzy
 msgid "New list"
-msgstr "Neuer Listenname"
+msgstr "Neue Liste"
 
 #: actionsmanager.cpp:153
 #, fuzzy
@@ -128,9 +128,8 @@ msgid "Cancel Edit"
 msgstr "Abbrechen"
 
 #: infomanager.cpp:203
-#, fuzzy
 msgid "Saving..."
-msgstr "Ladevorgang läuft …"
+msgstr "Speichern …"
 
 #. i18n: file: mainwindow.ui:561
 #. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
@@ -166,7 +165,7 @@ msgstr "Ort"
 
 #: infomanager.cpp:330
 msgid "Music"
-msgstr ""
+msgstr "Musik"
 
 #: infomanager.cpp:330
 #, fuzzy
@@ -220,7 +219,7 @@ msgstr "Video-Clips"
 
 #: infomanager.cpp:413 infomanager.cpp:462
 msgid "Writer"
-msgstr ""
+msgstr "Autor"
 
 #: infomanager.cpp:415 infomanager.cpp:464
 msgid "Director"
@@ -260,7 +259,7 @@ msgstr "Ein Medienabspieler"
 #: main.cpp:31
 #, fuzzy
 msgid "Copyright 2010, Andrew Lake"
-msgstr "Copyright 2009, Andrew Lake"
+msgstr "Copyright 2010, Andrew Lake"
 
 #: main.cpp:38
 msgid "Andrew (Jamboarder) Lake"
@@ -281,7 +280,7 @@ msgstr "Entwickler"
 
 #: main.cpp:40
 msgid "Buschmann"
-msgstr ""
+msgstr "Buschmann"
 
 #: main.cpp:41
 msgid "Janusz Lewandowski"
@@ -289,11 +288,11 @@ msgstr "Janusz Lewandowski"
 
 #: main.cpp:42
 msgid "Kristof Bal"
-msgstr ""
+msgstr "Kristof Bal"
 
 #: main.cpp:43
 msgid "Ryan Kavanagh"
-msgstr ""
+msgstr "Ryan Kavanagh"
 
 #: main.cpp:44
 msgid "Sebastian Jambor"
@@ -301,11 +300,10 @@ msgstr "Sebastian Jambor"
 
 #: main.cpp:45
 msgid "Shuizhuyuanluo"
-msgstr ""
+msgstr "Shuizhuyuanluo"
 
 #: main.cpp:47
-msgid ""
-"Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
+msgid "Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
 msgstr ""
 "Melden Sie Fehlerberichte für Bangarang bitte hier: http://code.google.com/p/"
 "bangarangissuetracking/"
@@ -347,7 +345,7 @@ msgstr "Audio-CD"
 msgid ""
 "Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
 "library, rating and play count functions will be unavailable."
-msgstr ""
+msgstr "Bangarang kann nicht auf Nepomuk, den semantischen Desktop-Dienst, zugreifen. Medienbibliothek, Bewertung und Wiedergabe-Statistik werden nicht verfügbar sein."
 
 #: mainwindow.cpp:311
 msgid "Don't show this message again"
@@ -355,7 +353,7 @@ msgstr "Diese Meldung nicht mehr anzeigen"
 
 #: mainwindow.cpp:332
 msgid "Play/Pause"
-msgstr ""
+msgstr "Wiedergabe/Pause"
 
 # @TODO feels fishy!!
 #: mainwindow.cpp:403
@@ -383,7 +381,7 @@ msgstr ""
 #: mainwindow.cpp:432
 #, fuzzy
 msgid "<b>Paused</b><br>Hold to stop"
-msgstr "<b>Ton aus</b>Hier Clicken um Ton einzuschalten"
+msgstr "<b>Pause</b>Gedrückt halten, um zu stoppen"
 
 #. i18n: file: mainwindow.ui:269
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
@@ -427,17 +425,17 @@ msgstr "Zufallswiedergabe aktivieren"
 
 #: mainwindow.cpp:639
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
-msgstr "<b>Wiederholen An</b><br>Hier Clicken um Wiederholen ab zu schalten"
+msgstr "<b>Wiederholen An</b><br>Hier klicken um Wiederholen zu deaktivieren"
 
 #. i18n: file: mainwindow.ui:5183
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
 #: mainwindow.cpp:642 rc.cpp:182
 msgid "Turn on Repeat"
-msgstr "Wiederholen Aktivieren"
+msgstr "Wiederholen aktivieren"
 
 #: mainwindow.cpp:652
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
-msgstr ""
+msgstr "<b>Zeigt die nächsten Titel an</b><br>Klicken, um die Playlist anzuzeigen"
 
 #: mainwindow.cpp:653
 #, fuzzy
@@ -452,9 +450,7 @@ msgstr "Nächstes Anzeigen"
 
 #: mainwindow.cpp:747
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
-msgstr ""
-"<b>Spielt</b><br>Hier clicken für Pause<br>Hier clicken und halt um zu "
-"Stoppen "
+msgstr "<b>Spielt</b><br>Klicken, um zu pausieren<br>Klicken und gedrückt halten, um zu stoppen"
 
 #: mainwindow.cpp:759
 msgid "An error has been encountered during playback"
@@ -488,17 +484,17 @@ msgstr "Aktualisierung läuft …"
 
 #: mainwindow.cpp:869
 msgid "Complete"
-msgstr ""
+msgstr "Vollständig"
 
 #: mainwindow.cpp:877
 #, kde-format
 msgid "Updated info for <i>%1, %2</i>"
-msgstr ""
+msgstr "Informationen aktualisiert für <i>%1, %2</i>"
 
 #: mainwindow.cpp:888
 #, kde-format
 msgid "Removed info for <i>%1</i>"
-msgstr ""
+msgstr "Informationen gelöscht für <i>%1</i>"
 
 #. i18n: file: mainwindow.ui:5133
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
@@ -635,7 +631,7 @@ msgstr "Neuer Listenname"
 #. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
 #: rc.cpp:47 rc.cpp:59 rc.cpp:107
 msgid "Return to Lists"
-msgstr ""
+msgstr "Zu Playlisten zurückkehren"
 
 #. i18n: file: mainwindow.ui:654
 #. i18n: ectx: property (text), widget (QLabel, label_8)
@@ -644,7 +640,7 @@ msgstr ""
 #: rc.cpp:50 rc.cpp:98
 #, fuzzy
 msgid "Saved List Settings"
-msgstr "Videodateien"
+msgstr "Einstellungen für gespeicherte Playlisten"
 
 #. i18n: file: mainwindow.ui:680
 #. i18n: ectx: property (text), widget (QLabel, label_9)
@@ -664,13 +660,13 @@ msgstr "Video"
 #. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
 #: rc.cpp:95
 msgid "Return To Lists"
-msgstr ""
+msgstr "Zu Playlisten zurückkehren"
 
 #. i18n: file: mainwindow.ui:1366
 #. i18n: ectx: property (text), widget (QLabel, listTitle)
 #: rc.cpp:116
 msgid "List Title"
-msgstr ""
+msgstr "Playlist-Titel"
 
 #. i18n: file: mainwindow.ui:1379
 #. i18n: ectx: property (text), widget (QLabel, listSummary)
@@ -712,7 +708,7 @@ msgstr "2"
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
 #: rc.cpp:146
 msgid "Notification Text"
-msgstr ""
+msgstr "Benachrichtigungstext"
 
 #. i18n: file: mainwindow.ui:1755
 #. i18n: ectx: property (text), widget (QToolButton, previous)
@@ -730,13 +726,13 @@ msgstr "Alle von Liste abspielen"
 #. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
 #: rc.cpp:161
 msgid "Play selected media in list"
-msgstr "Alle ausgewählten abspielen"
+msgstr "Alle Ausgewählten abspielen"
 
 #. i18n: file: mainwindow.ui:2355
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
 #: rc.cpp:167
 msgid "Playback message"
-msgstr ""
+msgstr "Wiedergabe-Nachricht"
 
 #. i18n: file: mainwindow.ui:2384
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
@@ -840,7 +836,7 @@ msgstr "16:9"
 
 #: videosettings.cpp:126
 msgid "Fit"
-msgstr ""
+msgstr "Einpassen"
 
 #: videosettings.cpp:133
 msgid "Scaling Mode"
@@ -848,7 +844,7 @@ msgstr "Skalierungsmodus"
 
 #: videosettings.cpp:135
 msgid "Scale to fit"
-msgstr ""
+msgstr "In den Bildschirm einpassen"
 
 #: videosettings.cpp:137
 msgid "Scale and crop"
@@ -888,7 +884,7 @@ msgstr "Unbenannter Audiostream"
 
 #: platform/audiostreamlistengine.cpp:153
 msgid "Select this item, click Info then Edit to enter audio stream info"
-msgstr ""
+msgstr "Diesen Eintrag auswählen, Info und dann Editieren anklicken, um Audiostream-Informationen einzugeben"
 
 #: platform/audiostreamlistengine.cpp:162
 msgid "New Audio Stream"
@@ -1075,18 +1071,18 @@ msgstr[1] "%1 Genres"
 #, kde-format
 msgid "1 song"
 msgid_plural "%1 songs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 Lied"
+msgstr[1] "%1 Lieder"
 
 #: platform/semanticslistengine.cpp:102
 #, kde-format
 msgid "%1 - Played %2 times"
-msgstr ""
+msgstr "%1 - %2-mal wiedergegeben"
 
 #: platform/semanticslistengine.cpp:139
 #, kde-format
 msgid "%1 - Last Played: %2"
-msgstr ""
+msgstr "%1 - Zuletzt wiedergegeben: %2"
 
 #: platform/videolistengine.cpp:173 platform/videolistengine.cpp:358
 msgid "Uncategorized TV Shows"
