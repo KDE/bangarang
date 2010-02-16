@@ -51,9 +51,9 @@ void
 BangarangVideoWidget::wheelEvent(QWheelEvent *event)
 {
   if(event->delta() > 0 ) {
-    emit skipForward(event->delta());
-  } else if (event->delta() < 0 ) {
     emit skipBackward(event->delta());
+  } else if (event->delta() < 0 ) {
+    emit skipForward(event->delta());
   }
   Phonon::VideoWidget::wheelEvent(event);
 }
