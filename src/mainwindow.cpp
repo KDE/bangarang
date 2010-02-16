@@ -1372,15 +1372,18 @@ void MainWindow::updateCustomColors()
 // Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
-  kDebug() << "Scrolls" << i;
-  m_media->seek(qint64(i)*100);
+  //kDebug() << "Scrolls" << i;
+  
+  if (m_media->isSeekable())
+    m_media->seek(m_media->currentTime() + qint64(i)*100);
   
 }
 
 void MainWindow::skipBackward(int i)
 {
-  kDebug() << "Scrolls" << i;
-  m_media->seek(qint64(i)*100);
+  //kDebug() << "Scrolls" << i;
+  if (m_media->isSeekable())
+    m_media->seek(m_media->currentTime() + qint64(i)*100);
 }
 
 ActionsManager * MainWindow::actionsManager()
