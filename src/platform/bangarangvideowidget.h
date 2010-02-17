@@ -21,7 +21,7 @@
 
 #include <phonon/videowidget.h>
 #include <QWheelEvent>
-
+#include <QMenu>
 /**
  * This class is there to override the Phonon::VideoWidget to get the QWheelEvent
  * and thus be able to skip over parts of a video.
@@ -41,23 +41,48 @@ class BangarangVideoWidget : public Phonon::VideoWidget
      * create new instance 
      **/
     BangarangVideoWidget(QWidget * parent = 0);
+
     /**
      * delete instance
      **/
     ~BangarangVideoWidget();
-  
+
     /**
-     * override the wheelEvent of Phonon::VideoWidget to enable @func skip() 
+     * override of wheelEvent. If mousewheel is vertically scrolled it emits @func skip().
      **/
     virtual void wheelEvent ( QWheelEvent * event );
+ 
+    /**
+     * @param set if @param fullscreen should be true or false
+     * This emits @SIGNAL fullscreenChanged() so  the rest of Bangarang can Hook into it.
+     **/
+    void setIsFullscreen(bool fullscreen);
 
+    /**
+     * Context menu shown when the widget is rightclicked.
+     **/
+    QMenu * contextMenu();
+    /**
+     * You can either work with the QMenu returned by contextMenu() or set 
+     * your own menu with @param menu.
+     **/
+    void setContextMenu(QMenu * menu);
+        
+ protected:
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    
  Q_SIGNALS:
     void skipForward(int i);
     void skipBackward(int i); 
+    void fullscreenChanged(bool);
+
  private:
     friend class BangarangVideoWidgetPrivate;
     BangarangVideoWidgetPrivate* const d;
-  
+    bool fullscreen;
+    QMenu *m_contextMenu;
+ private slots:
+    void makeCustomContext(QPoint);
 };
 
 #endif //BANGARANGVIDEOWIDGET_H
