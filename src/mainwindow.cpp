@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_volume = m_audioOutput->volume();
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
-
+    connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
@@ -234,6 +234,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     videoSettings->setHideAction(m_actionsManager->showVideoSettings());
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
+    // moved up here so we can use it in the contextmenu aswell as the systray
+    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
+
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
+    m_videoWidget->contextMenu()->addAction(playPause);
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->playNext());
+    m_videoWidget->contextMenu()->addSeparator();
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->showVideoSettings());
+    m_videoWidget->contextMenu()->addAction(m_actionsManager->showHideControls());
+
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -332,8 +343,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
-    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
-    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 
@@ -1303,17 +1312,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void MainWindow::mouseDoubleClickEvent (QMouseEvent *event)
-{
-  if(event->button() == Qt::LeftButton){
-    if(isFullScreen())
-      on_fullScreen_toggled(false);
-    else
-      on_fullScreen_toggled(true);
-  }
-}
-
-
 /*-------------------------
 -- Device Notifier Slots --
 ---------------------------*/
@@ -1370,17 +1368,22 @@ void MainWindow::updateCustomColors()
     
 }
 
+// TODO Please see if we can make it a setup point 
+// Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
-  kDebug() << "Scrolls" << i;
-  m_media->seek(qint64(i)*100);
+  //kDebug() << "Scrolls" << i;
+  
+  if (m_media->isSeekable())
+    m_media->seek(m_media->currentTime() + qint64(i)*100);
   
 }
 
 void MainWindow::skipBackward(int i)
 {
-  kDebug() << "Scrolls" << i;
-  m_media->seek(qint64(i)*100);
+  //kDebug() << "Scrolls" << i;
+  if (m_media->isSeekable())
+    m_media->seek(m_media->currentTime() + qint64(i)*100);
 }
 
 ActionsManager * MainWindow::actionsManager()

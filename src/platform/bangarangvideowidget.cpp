@@ -20,8 +20,13 @@
 
 #include <QWheelEvent>
 #include <QMouseEvent>
+#include <QPoint>
+#include <QMenu> 
 #include <phonon/videowidget.h>
-
+#include <QList>
+#include <QAction>
+#include <KLocale>
+#include <KDebug>
 class BangarangVideoWidgetPrivate
 {
   public: 
@@ -31,7 +36,11 @@ class BangarangVideoWidgetPrivate
 
 BangarangVideoWidget::BangarangVideoWidget(QWidget * parent) : Phonon::VideoWidget(parent) ,
 							       d(new BangarangVideoWidgetPrivate)
-{ }
+{
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(makeCustomContext(QPoint)));
+  m_contextMenu = new QMenu();
+}
 
 BangarangVideoWidget::~BangarangVideoWidget()
 {
@@ -42,11 +51,47 @@ void
 BangarangVideoWidget::wheelEvent(QWheelEvent *event)
 {
   if(event->delta() > 0 ) {
-    emit skipForward(event->delta());
-  } else if (event->delta() < 0 ) {
     emit skipBackward(event->delta());
+  } else if (event->delta() < 0 ) {
+    emit skipForward(event->delta());
   }
   Phonon::VideoWidget::wheelEvent(event);
 }
 
+void
+BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
+{
+  if(event->button() == Qt::LeftButton){
+    if (fullscreen) {
+      emit fullscreenChanged(false);
+      setIsFullscreen(false);
+    }
+    else {
+      emit fullscreenChanged(true);
+      setIsFullscreen(true);
+    }
+  }
+}
+void
+BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
+{ 
+  fullscreen = isFullscreen;
+}
+
+void
+BangarangVideoWidget::makeCustomContext(QPoint pos) 
+{
+  Q_UNUSED(pos);
+  m_contextMenu->exec(QCursor::pos());
+}
+
+QMenu* BangarangVideoWidget::contextMenu()
+{
+  return m_contextMenu;
+}
+
+void BangarangVideoWidget::setContextMenu(QMenu * menu)
+{
+  m_contextMenu = menu;
+}
 #include "bangarangvideowidget.moc"
