@@ -24,7 +24,7 @@
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionViewItem>
-#include <QTreeView>
+#include <QAbstractItemView>
 
 class MainWindow;
 class MediaIndexer;
@@ -48,11 +48,11 @@ class InfoItemDelegate : public QItemDelegate
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
         QWidget *createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
-        void setView(QTreeView * view);
+        void setView(QAbstractItemView * view);
             
     private:
         MainWindow * m_parent;
-        QTreeView * m_view;
+        QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
         
