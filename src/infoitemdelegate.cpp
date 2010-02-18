@@ -64,13 +64,13 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 {
     /*QStyleOptionViewItemV4 opt(option);
     QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);*/    
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);*/
     
     const int left = option.rect.left();
     const int top = option.rect.top();
     const int width = option.rect.width();
     const int height = option.rect.height();   
-    int padding = 2;
+    int padding = 1;
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
     
@@ -80,79 +80,83 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
+    bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
-        //Paint label
-        int textWidth = width - 2 * padding;
-        QString text = index.data(Qt::DisplayRole).toString();
-        QFont textFont = KGlobalSettings::smallestReadableFont();
-        textFont.setItalic(true);
-        p.setFont(textFont);
-        p.setPen(foregroundColor);
-        p.drawText(left, top, textWidth, height,
-                    Qt::AlignRight | Qt::AlignVCenter, text);
-    } else if (index.column() == 1) {
-        //Paint value
-        bool multipleValues = index.data(Qt::UserRole + 1).toBool();
-        if (multipleValues) {
-            int textWidth = width - 2 * padding;
+        //Paint first column containing artwork, titel and field labels
+        if (index.data(Qt::UserRole).toString() == "artwork") {
+            QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
+            artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
+        } else {
+            Qt::AlignmentFlag hAlign;
             QFont textFont = option.font;
+            QString text = index.data(Qt::DisplayRole).toString();
             if (index.data(Qt::UserRole).toString() == "title") {
                 textFont.setPointSize(1.5*textFont.pointSize());
+                hAlign = Qt::AlignHCenter;
+                if (multipleValues) {
+                    foregroundColor.setAlphaF(0.7);
+                    text = i18n("Multiple Values");
+                    textFont.setItalic(true);
+                } else if (index.data(Qt::DisplayRole) != index.data(Qt::UserRole + 2)) {
+                    textFont.setBold(true);
+                }
             } else {
-                textFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
+                textFont = KGlobalSettings::smallestReadableFont();
+                textFont.setItalic(true);
+                hAlign = Qt::AlignRight;
             }
+            int textWidth = width - 2 * padding;
+            QTextOption textOption(hAlign | Qt::AlignVCenter);
+            textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+            QRect textRect(left + padding, top, textWidth, height);
+            p.setFont(textFont);
+            p.setPen(foregroundColor);
+            p.drawText(QRectF(textRect), text, textOption);
+        }
+                                        
+    } else if (index.column() == 1) {
+        //Paint second column containing field values
+        if (multipleValues) {
+            int textWidth = width - 2 * padding;
+            QFont textFont = KGlobalSettings::smallestReadableFont();
             textFont.setItalic(true);
             p.setFont(textFont);
             foregroundColor.setAlphaF(0.7);
             p.setPen(foregroundColor);
-            p.drawText(left, top, textWidth, height,
+            p.drawText(left + padding, top, textWidth, height,
                        Qt::AlignLeft | Qt::AlignVCenter, i18n("Multiple Values"));
         } else {
-            if (index.data(Qt::UserRole).toString() == "artwork") {
-                QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-                artwork.paint(&p, left + padding, top + padding, 128, 128, Qt::AlignLeft, QIcon::Normal);
-                //p.drawPixmap(top + padding, left + padding, index.data(Qt::DecorationRole).value<QPixmap>());
-            } else {
-                QString text = index.data(Qt::DisplayRole).toString();
-                if (index.data(Qt::UserRole).toString() == "audioType") {
-                    int typeIndex = index.data(Qt::DisplayRole).toInt();
-                    if (typeIndex == 0) {
-                        text = i18n("Music");
-                    } else if (typeIndex == 1) {
-                        text = i18n("Audio Stream");
-                    } else if (typeIndex == 2) {
-                        text = i18n("Audio Clip");
-                    }
-                } else if (index.data(Qt::UserRole).toString() == "videoType") {
-                    int typeIndex = index.data(Qt::UserRole).toInt();
-                    if (typeIndex == 0) {
-                        text = i18n("Movie");
-                    } else if (typeIndex == 1) {
-                        text = i18n("TV Show");
-                    } else if (typeIndex == 2) {
-                        text = i18n("Video Clip");
-                    }
+            QString text = index.data(Qt::DisplayRole).toString();
+            if (index.data(Qt::UserRole).toString() == "audioType") {
+                int typeIndex = index.data(Qt::DisplayRole).toInt();
+                if (typeIndex == 0) {
+                    text = i18n("Music");
+                } else if (typeIndex == 1) {
+                    text = i18n("Audio Stream");
+                } else if (typeIndex == 2) {
+                    text = i18n("Audio Clip");
                 }
-                QFont textFont = option.font;
-                if (index.data(Qt::UserRole).toString() == "title") {
-                    textFont.setPointSize(1.5*textFont.pointSize());
-                } else {
-                    textFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
+            } else if (index.data(Qt::UserRole).toString() == "videoType") {
+                int typeIndex = index.data(Qt::UserRole).toInt();
+                if (typeIndex == 0) {
+                    text = i18n("Movie");
+                } else if (typeIndex == 1) {
+                    text = i18n("TV Show");
+                } else if (typeIndex == 2) {
+                    text = i18n("Video Clip");
                 }
-                //p.setFont(textFont);
-                //p.setPen(foregroundColor);
-                int textWidth = width - 2 * padding;
-                //p.drawText(left, top, textWidth, height,
-                //           Qt::AlignLeft | Qt::AlignVCenter, text);
-                           
-                QTextOption textOption(Qt::AlignLeft | Qt::AlignVCenter);
-                textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-                QRect textRect(left + padding, top, textWidth, height);
-                p.setFont(textFont);
-                p.setPen(foregroundColor);
-                p.drawText(QRectF(textRect), text, textOption);
-
             }
+            QFont textFont = KGlobalSettings::smallestReadableFont();
+            if (index.data(Qt::DisplayRole) != index.data(Qt::UserRole + 2)) {
+                textFont.setBold(true);
+            }
+            int textWidth = width - 2 * padding;
+            QTextOption textOption(Qt::AlignLeft | Qt::AlignVCenter);
+            textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+            QRect textRect(left + padding, top, textWidth, height);
+            p.setFont(textFont);
+            p.setPen(foregroundColor);
+            p.drawText(QRectF(textRect), text, textOption);
         }
     }
         
@@ -166,27 +170,32 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
-    int padding = 2;
+    QString field = index.data(Qt::UserRole).toString();
+    int padding = 1;
     int width;
-    QFontMetrics fm(option.font);
-    int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
-    int heightMultiplier = 1 + fmWidth / (columnWidth(index.column()));
-    int height = heightMultiplier * fm.height() + 2 * padding;
-    bool multipleValues = index.data(Qt::UserRole + 1).toBool();
-    if (index.column() == 0)  {
-        width = 100;
-    } else {
+    if (field == "artwork" || field == "title" || index.column() == 1) {
         width = 0;
-        if (index.data(Qt::UserRole).toString() == "artwork" && !multipleValues) {
-            height = 128 + 2 * padding;
-        } else if (index.data(Qt::UserRole).toString() == "title") {
-            QFont textFont = option.font;
+    } else {
+        width = 100;
+    }
+    
+    int height;
+    if (field == "artwork") {
+        height = 128 + 2*padding;
+    } else {
+        QFont textFont = option.font;
+        int availableWidth = m_view->width() - 100 - 2*padding;
+        if (field == "title") { 
             textFont.setPointSize(1.5*textFont.pointSize());
-            QFontMetrics fm(textFont);
-            int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
-            int heightMultiplier = 1 + fmWidth / (columnWidth(index.column()));
-            int height = heightMultiplier * fm.height() + 4 * padding;
+            availableWidth = m_view->width();
         }
+        if (availableWidth <= 0) {
+            availableWidth = 100;
+        }
+        QFontMetrics fm(textFont);
+        int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
+        int heightMultiplier = 1 + (fmWidth / availableWidth);
+        height = heightMultiplier * fm.height();
     }
        
     return QSize(width, height);
@@ -280,9 +289,14 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     } else {
         QItemDelegate::setModelData(editor, model, index);
     }
+    
+    //If the data has changed then make sure the multipleValues flag is set to false
+    if (index.data(Qt::EditRole) != index.data(Qt::UserRole+2)) {
+        model->setData(index, false, Qt::UserRole+1); 
+    }
 }   
 
-void InfoItemDelegate::setView(QTreeView * view) 
+void InfoItemDelegate::setView(QAbstractItemView * view) 
 {
     m_view = view;
     m_defaultViewSelectionMode = view->selectionMode();
