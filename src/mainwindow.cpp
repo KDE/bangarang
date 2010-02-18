@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
     ui->setupUi(this);
+    setGeometry(0,0,700,500);
 
     // Set up system tray icon
 #ifdef HAVE_KSTATUSNOTIFIERITEM
@@ -1226,7 +1227,6 @@ void MainWindow::setupIcons()
     
     //Info View Icons
     ui->hideInfo->setIcon(turnIconOff(KIcon("help-about"), QSize(16, 16)));
-    ui->editInfo->setIcon(KIcon("document-edit"));
     
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));

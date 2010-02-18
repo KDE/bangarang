@@ -202,8 +202,8 @@ ArtworkWidget::ArtworkWidget(QWidget * parent):QWidget (parent)
     m_openUrl->setIcon(KIcon("document-open"));
     m_artworkLabel = new QLabel();
     m_artworkLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    m_artworkLabel->setMargin(8);
-    m_artworkLabel->setMinimumHeight(136);
+    m_artworkLabel->setMargin(1);
+    m_artworkLabel->setMinimumHeight(128);
     m_layout = new QHBoxLayout;
     m_layout->addWidget(m_artworkLabel);
     m_layout->addWidget(m_openUrl);
