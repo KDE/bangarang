@@ -356,7 +356,6 @@ QMenu *ActionsManager::addToSavedVideoListMenu()
     return m_addToVideoSavedList;
 }
 
-
 //------------------
 //-- Action SLOTS --
 //------------------
