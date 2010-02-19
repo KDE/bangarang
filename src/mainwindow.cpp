@@ -281,46 +281,48 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_stopPressed = false;
     m_loadingProgress = 0;
     
+    QList<MediaItem> mediaList;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
+      for(int i = 0; i < args->count(); i++) {
         if (args->isSet("play-dvd")) {
-            //Play DVD
-            kDebug() << "playing DVD";
-            MediaItem mediaItem;
-            mediaItem.title = i18n("DVD Video");
-            mediaItem.url = "dvdvideo://";
-            mediaItem.type = "Category";
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
+	  //Play DVD
+	  kDebug() << "playing DVD";
+	  MediaItem mediaItem;
+	  mediaItem.title = i18n("DVD Video");
+	  mediaItem.url = "dvdvideo://";
+	  mediaItem.type = "Category";
+	  QList<MediaItem> mediaList;
+	  mediaList << mediaItem;
+	  m_playlist->playMediaList(mediaList);
         } else if (args->isSet("play-cd")) {
-            //Play CD
-            kDebug() << "playing CD";
-            MediaItem mediaItem;
-            mediaItem.title = i18n("Audio CD");
-            mediaItem.url = "cdaudio://";
-            mediaItem.type = "Category";
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
+	  //Play CD
+	  kDebug() << "playing CD";
+	  MediaItem mediaItem;
+	  mediaItem.title = i18n("Audio CD");
+	  mediaItem.url = "cdaudio://";
+	  mediaItem.type = "Category";
+	  QList<MediaItem> mediaList;
+	  mediaList << mediaItem;
+	  m_playlist->playMediaList(mediaList);
         } else {
-            //Play Url
-            KUrl cmdLineKUrl = args->url(0);
-            if (!cmdLineKUrl.isLocalFile()) {
-                QString tmpFile;
-                if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
-                    //KMessageBox::information(this,tmpFile);
-                    cmdLineKUrl = KUrl(tmpFile);
-                } else {
-                    cmdLineKUrl = KUrl();
-                }
-            }
-            MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
+	  //Play Url
+	  KUrl cmdLineKUrl = args->url(i);
+	  if (!cmdLineKUrl.isLocalFile()) {
+	    QString tmpFile;
+	    if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
+	      //KMessageBox::information(this,tmpFile);
+	      cmdLineKUrl = KUrl(tmpFile);
+	    } else {
+	      cmdLineKUrl = KUrl();
+	    }
+	  }
+	  MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
+	  mediaList << mediaItem;
+	  m_playlist->playMediaList(mediaList);
         }
+      }
     } else {
         if (m_nepomukInited) {
             //Preload queries that are likely to be long so that, if necessary, they can be cached early
