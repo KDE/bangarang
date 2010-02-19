@@ -35,6 +35,8 @@
 #include <phonon/videowidget.h>
 
 /**
+ * This class provides Settings for the VideoWidget 
+ * such as it AspectRatio and Colorization
  * @short Video Settings
  * @author Andreas Marschke xxtjaxx@gmail.com
  * @version 0.1

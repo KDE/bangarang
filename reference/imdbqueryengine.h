@@ -63,18 +63,19 @@
  * @author Andreas Marschke <xxtjaxx@gmail.com> 
  *
  * @version 1.0.5~beta
- **/
+ */
 
 class IMDBQueryEngine : public QHttp
 {
   Q_OBJECT
     public:
+
       IMDBQueryEngine(void);
       ~IMDBQueryEngine(void);
      
       /**
        * @info this is the list of genres possible 
-       **/
+       */
       enum Genre {
 	Action       =  0,
 	Adventure    =  1,
@@ -111,88 +112,88 @@ class IMDBQueryEngine : public QHttp
        * initialize searching IMDB for information
        * if the information is fetched and parsed it 
        * sends the @signal dataFetched() and further progress can made.
-       **/
+       */
       void queryIMDB(QString query); //e.g. "harry potter"
       
       /**
        * get IMDB data from custom URL such as 
        * QUrl("http://www.imdb.com/title/tt0436339/")
-       **/
+       */
       void IMDBMovieInfo(QUrl); 
       
       /**
        * Original Query 
-       **/
+       */
       QString imdbQueryString();
 
       /**
        * @info Rating (Votes) e.g. "7.5/10 (45,348 votes)"
-       **/
+       */
       qreal rating();
       
       /**
        * @info Director
-       **/
+       */
       QString director();
       
       /**
        * @info Movie Title
-       **/
+       */
       QString title();
    
       /**
        * Conversions for Genre to either String or int
-       **/
+       */
       QString genreToString( Genre genre_ );
       int genreToInt(Genre genre_ );
 
       /**
        * Returns IMDBquery::Genre of @param QString genre.
        * If @param localized is true uses localized string.
-       **/
+       */
       Genre genreFromString(QString genre , bool localized );
 
       /**
        * @info genre
-       **/
+       */
       Genre genre();
       /**
        * @info Release Date
-       **/
+       */
       QDate releaseDate();
       /**
        * @info Country of creation
-       **/
+       */
       QString country();
       
       /**
        * @info original Language 
-       **/
+       */
       QString language();
       
       /**
        * @info Runtime
-      **/
+       */
       QTime runtime();
       
       /**
        * @info Color e.g. Color or Black/White
-       **/
+       */
       QString color();
       
       /**
        * @info Aspect Ratio
-       **/
+       */
       QString aspectRatio();
       
       /**
        * @info Filming Locations
-       **/
+       */
       QString locations();
       
       /**
        * @info Company e.g. "Jerry Bruckheimer Films"
-       **/
+       */
       QString company();
       
       /**
@@ -202,12 +203,12 @@ class IMDBQueryEngine : public QHttp
       
       /**
        * @info Prod Year
-       **/
+       */
       QString productionYear();
       
       /**
        * @info shows an image of the Movie
-       **/
+       */
       QImage titleImage();
 
     private:
@@ -247,7 +248,7 @@ class IMDBQueryEngine : public QHttp
        * if the site and data was found return true and empty @param sourceUrl
        * if no website was found return false and a @param QStringList of all search 
        * result URL's.
-      **/
+       */
       void dataFetched(QStringList sourceUrl, bool found);
       
 };

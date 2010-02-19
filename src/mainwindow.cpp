@@ -236,9 +236,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
     // moved up here so we can use it in the contextmenu aswell as the systray
-    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    playPause = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
+    playPause->setShortcut(Qt::Key_Space);
     connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
-
+    if (m_currentPlaylist->rowCount() > 0) {
+      if (m_media->state() == Phonon::PlayingState) {
+	playPause->setIcon(KIcon("media-playback-start"));
+	playPause->setText(i18n("Play"));   
+      } else {
+	playPause->setIcon(KIcon("media-playback-pause"));
+	playPause->setText(i18n("Pause"));
+      }
+    }
+    
     m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
     m_videoWidget->contextMenu()->addAction(playPause);
     m_videoWidget->contextMenu()->addAction(m_actionsManager->playNext());
@@ -532,12 +542,25 @@ void MainWindow::playPauseToggled()
     if (m_currentPlaylist->rowCount() > 0) {
         if (m_media->state() == Phonon::PlayingState) {
             m_media->pause();
+	    playPause->setIcon(KIcon("media-playback-start"));
+	    playPause->setText(i18n("Play"));   
         } else {
             on_mediaPlayPause_released();
+	    playPause->setIcon(KIcon("media-playback-pause"));
+	    playPause->setText(i18n("Pause"));
         }
     } else {
         on_playAll_clicked();
     }
+    //     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+    //   
+    // } else if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
+    //   
+    // } else {
+    //   m_playPause->setIcon(KIcon("media-playback-start"));
+    //   m_playPause->setText(i18n("Play"));
+    // }
+
 }
 
 void MainWindow::on_playAll_clicked()
