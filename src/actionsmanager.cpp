@@ -53,6 +53,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_playPause, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
     m_parent->addAction(m_playPause);
     
+    
     //Play Next
     m_playNext = new QAction(KIcon("media-skip-forward"), i18n("Play next"), this);
     m_playNext->setShortcut(Qt::Key_Right);
@@ -429,9 +430,13 @@ void ActionsManager::hideShortcutsEditor()
 void ActionsManager::simplePlayPause()
 {
     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-        m_parent->playlist()->mediaObject()->pause();
+      m_parent->playlist()->mediaObject()->pause();
+      m_playPause->setIcon(KIcon("media-playback-start"));
+      m_playPause->setText(i18n("Play"));
     } else if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
-        m_parent->playlist()->mediaObject()->play();
+      m_parent->playlist()->mediaObject()->play();
+      m_playPause->setIcon(KIcon("media-playback-pause"));
+      m_playPause->setText(i18n("Pause"));
     }
 }
 
