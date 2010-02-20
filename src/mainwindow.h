@@ -25,6 +25,7 @@
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
+#include <KAction>
 #include <phonon/audiooutput.h>
 #include <phonon/mediacontroller.h>
 #include <phonon/mediaobject.h>
@@ -154,7 +155,7 @@ private:
     QAction * playSelectedAction;
     qreal m_volume;
     ScriptConsole *m_scriptConsole;
-    
+    KAction *playPause;    
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
@@ -162,7 +163,7 @@ private:
     void showApplicationBanner();
     KIcon turnIconOff(KIcon icon, QSize size);
     void updateCachedDevicesList();
-
+    void on_showScriptingConsole();
 #ifdef HAVE_KSTATUSNOTIFIERITEM
     KStatusNotifierItem *m_sysTray;
 #else
@@ -215,7 +216,7 @@ private slots:
     void volumeChanged(qreal newVolume);
     void skipForward(int i);
     void skipBackward(int i);
-protected:
+ protected:
     bool eventFilter(QObject *obj, QEvent *event);
     
 };

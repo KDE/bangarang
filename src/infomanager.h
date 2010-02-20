@@ -19,15 +19,10 @@
 #ifndef INFOMANAGER_H
 #define INFOMANAGER_H
 
-#include <KLineEdit>
-#include <QDateEdit>
-#include <KUrlRequester>
-#include <QComboBox>
-#include <QSpinBox>
-#include <QObject>
-#include <QTreeWidgetItem>
-#include <QTextEdit>
-#include <QDate>
+#include <QtCore>
+#include <QStandardItemModel>
+#include <QItemDelegate>
+
 
 namespace Ui
 {
@@ -62,46 +57,28 @@ class InfoManager : public QObject
         void hideInfoView();
         void loadInfoView();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
-        void editInfoView();
         void removeSelectedItemsInfo();
         
     private:
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
-        MediaIndexer *m_mediaIndexer;
-        bool m_editToggle;
+        
+        QStandardItemModel *m_infoItemModel;
+        QItemDelegate *m_commonItemDelegate;
+        bool m_nepomukInited;
+
+        void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
+        bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
         void saveInfoToMediaModel();
         QList<int> m_rows;
-        void showFields(bool edit = false);
-        void showCommonFields(bool edit = false);
-        void showAudioType(int index, bool edit = false);
-        void showAudioFields();
-        void showAudioMusicFields(bool edit = false);
-        void showAudioStreamFields(bool edit = false);
-        void showVideoType(int index, bool edit = false);
-        void showVideoFields();
-        void showVideoMovieFields(bool edit = false);
-        void showVideoTVShowFields(bool edit = false);
-        bool multipleVideoTypes();
-        bool multipleAudioTypes();
-        void setLabel(int row, const QString &label, int format = NormalFormat);
-        void setInfo(int row, const QString &info, int format = NormalFormat);
-        void setInfo(int row, const QPixmap &pixmap);
-        void setEditWidget(int row, KLineEdit *lineEdit, const QString &value = QString());
-        void setEditWidget(int row, QTextEdit *textEdit, const QString &value = QString());
-        void setEditWidget(int row, QComboBox *comboBox, const QString &value = QString(), const QStringList &list = QStringList(), bool editable = false);
-        void setEditWidget(int row, KUrlRequester *urlRequester, const QString &value = QString());
-        void setEditWidget(int row, QSpinBox *spinBox, int value = 0);
-        void setEditWidget(int row, ArtworkWidget *artworkWidget, const QPixmap &pixmap);
-        void setEditWidget(int row, QDateEdit *dateEdit, const QDate &date = QDate());
         
         
     private slots:
-        void mediaViewHolderChanged(int index);
-        void audioTypeChanged(int index);
-        void videoTypeChanged(int index);
+        void updateInfoItemModel();
+        void checkInfoItemChanged(QStandardItem *item);
+        void saveInfoItemsToMediaModel();
         void saveFileMetaData();
 };
 #endif //INFOMANAGER_H
