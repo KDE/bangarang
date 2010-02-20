@@ -59,6 +59,7 @@ SET(BangarangSources
     platform/cachelistengine.cpp
     platform/audioclipslistengine.cpp
     platform/bangarangvideowidget.cpp
+    platform/infoitemmodel.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

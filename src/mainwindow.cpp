@@ -916,7 +916,7 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
                 }
             }
             if (ui->semanticsStack->isVisible()) {
-                infoManager()->loadInfoView();
+                infoManager()->loadSelectedInfo();
             }
         }
     } else {

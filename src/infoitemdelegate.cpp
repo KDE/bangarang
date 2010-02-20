@@ -20,6 +20,7 @@
 #include "mainwindow.h"
 #include "sensiblewidgets.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/infoitemmodel.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
@@ -170,7 +171,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
-    QString field = index.data(Qt::UserRole).toString();
+    QString field = index.data(InfoItemModel::FieldRole).toString();
     int padding = 1;
     int width;
     if (field == "artwork" || field == "title" || index.column() == 1) {
