@@ -347,6 +347,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //add as much as you want!
     m_scriptConsole = new ScriptConsole();
+    m_scriptConsole->action()->addObject(m_videoWidget,"videoWidget");
+    m_scriptConsole->action()->addObject(this,"MainWindow");
     m_scriptConsole->show();
 
 }

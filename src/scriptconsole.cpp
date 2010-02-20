@@ -26,29 +26,56 @@
 #include <QTextEdit>
 #include <QByteArray>
 #include <KPushButton>
-#include <kross/core/action.h>
 #include <KLocale>
 #include <KUrl>
 #include <KDebug>
 
+#include <kross/core/action.h>
+#include <kross/core/manager.h>
+
 ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
 						m_action(0) ,
 						m_layout(0) ,
+						m_toolLayout(0) ,
 						m_listWidget(0) ,
+						m_language(0) ,
 						m_sourceEdit(0) ,
 						m_runScriptButton(0)
+						
 {
   m_layout = new QVBoxLayout(this);
   m_listWidget = new QListWidget();
+  m_toolLayout = new QHBoxLayout(this);
   m_sourceEdit = new KTextEdit();
   m_runScriptButton = new KPushButton(i18n("Run Script"));
+  m_language = new QComboBox();
+
+  m_toolLayout->addWidget(m_language);
+  m_toolLayout->addWidget(m_runScriptButton);
   
   m_layout->addWidget(m_listWidget);
   m_layout->addWidget(m_sourceEdit);
-  m_layout->addWidget(m_runScriptButton);
-
+  m_layout->addLayout(m_toolLayout);
+  
   setLayout(m_layout);
+  
   connect(m_runScriptButton,SIGNAL(clicked()),this,SLOT(runScript()));
+  connect(m_language,SIGNAL(activated(const QString & )),this, SLOT(interpreterActivated(const QString &)));
+  
+  //these are the objects we definitely _will_ make avaiable
+  //@TODO decide which parts of bangarang should be avaiable to the Script developer. 
+  //UseCase: Make a scrobbler for last.fm/libre.fm you want the data off the played song.
+  //UseCase: You want to create a graph from your listening/watching Statistics.
+  m_action = new Kross::Action(this,KUrl(""));
+  m_action->addObject(this,"ScriptConsole"); 
+  m_action->addObject(m_layout,"ConsoleLayout");
+  m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
+
+  m_language->addItem(i18n("Choose Interpreter:"),"");
+  foreach(QString str,Kross::Manager::self().interpreters()) {
+    m_language->addItem(str);
+  }
+  
 }
 
 ScriptConsole::~ScriptConsole()
@@ -57,29 +84,38 @@ ScriptConsole::~ScriptConsole()
 void 
 ScriptConsole::runScript()
 { 
-  m_action = new Kross::Action(this,KUrl(""));
-  m_action->setInterpreter("javascript");
   
   QByteArray code;
   code =  m_sourceEdit->document()->toPlainText().toAscii();
-  m_action->addObject(this,"ScriptConsole");
-  m_action->addObject(m_layout,"ConsoleLayout");
-  m_action->setCode(code);
-  
+  m_action->setCode(code);  
   m_action->trigger();
   if( m_action->hadError() ) {
     kDebug() << m_action->errorMessage();
     m_listWidget->addItem(m_action->errorMessage());
+    m_action->finalize();
+  } else {
+    kDebug() << "code: Succeeded" << code;
+    m_action->finalize();
   }
-
 }
 
 
-// Kross::Action*
-// ScriptConsole::action()
-// {
-//   return m_action;
-// }
+void
+ScriptConsole::interpreterActivated(const QString &selectedInterpreter)
+{
+  if(selectedInterpreter.isEmpty()) {
+    m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
+    return;
+  } else { 
+    m_action->setInterpreter(selectedInterpreter);
+  }
+}
+
+Kross::Action*
+ScriptConsole::action()
+{
+  return m_action;
+}
 
 #include "moc_scriptconsole.cpp"
 

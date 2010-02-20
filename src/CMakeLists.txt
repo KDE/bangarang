@@ -81,7 +81,7 @@ TARGET_LINK_LIBRARIES(bangarang
     ${KDE4_KROSSCORE_LIBS}
     ${SOPRANO_LIBRARIES} 
     ${TAGLIB_LIBRARIES} 
-    ${QT_QTSCRIPT_LIBRARY}
+    ${KDE4_KROSSUI_LIBS}
     tag 
 )
 
@@ -99,7 +99,7 @@ TARGET_LINK_LIBRARIES(bangarang
 #     tag 
 #     ${KDE4_KROSSCORE_LIBS}
 #     )
-  
+ 
 if( NOT HAVEKDE4_4 )
 TARGET_LINK_LIBRARIES(bangarang knotificationitem-1)
 endif( NOT HAVEKDE4_4 )
@@ -107,7 +107,7 @@ endif( NOT HAVEKDE4_4 )
 ########### install files ###############
 
 install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})
-# install(TARGETS  krossmodulebangarangmod DESTINATION ${PLUGIN_INSTALL_DIR})
-#install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang)
+# install(TARGETS  krossmodulebangarangmod DESTINATION ${PLUGIN_INSTALL_DIR}) # modules one might want to link against in c++ plugins (using dynamic libload magic) 
+#install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins 
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
