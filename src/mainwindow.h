@@ -24,6 +24,7 @@
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
+#include <KAction>
 #include <phonon/audiooutput.h>
 #include <phonon/mediacontroller.h>
 #include <phonon/mediaobject.h>
@@ -151,7 +152,7 @@ private:
     QAction * playAllAction;
     QAction * playSelectedAction;
     qreal m_volume;
-    
+    KAction *playPause;    
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
