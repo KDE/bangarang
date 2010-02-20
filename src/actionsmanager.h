@@ -99,7 +99,7 @@ class ActionsManager : public QObject
         QAction *m_showItems;
         QAction *m_showInfo;
         QAction *m_showNowPlayingInfo;
-        QMenu *m_addToAudioSavedList;
+	QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;

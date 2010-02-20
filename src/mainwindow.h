@@ -21,6 +21,7 @@
 
 #include "config-bangarang.h"
 #include "platform/bangarangvideowidget.h"
+#include "scriptconsole.h"
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -40,6 +41,7 @@
 #include <QAction>
 #include <QDateTime>
 #include <QMainWindow>
+#include <kross/core/action.h>
 
 struct MediaItem;
 class MediaListProperties;
@@ -151,6 +153,7 @@ private:
     QAction * playAllAction;
     QAction * playSelectedAction;
     qreal m_volume;
+    ScriptConsole *m_scriptConsole;
     
     void setupModel();
     KIcon addItemsIcon();
@@ -237,4 +240,5 @@ class MouseMoveDetector : public QObject
         }
         
 };
+
 #endif // MAINWINDOW_H
