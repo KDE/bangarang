@@ -30,10 +30,9 @@ namespace Ui
 }
 class MainWindow;
 class MediaItemModel;
+class InfoItemModel;
 class MediaItem;
-class MediaItemDelegate;
-class MediaIndexer;
-class ArtworkWidget;
+class InfoItemDelegate;
 
 /*
  * This class provides a user interface for updating information associated with MediaItems
@@ -43,42 +42,28 @@ class InfoManager : public QObject
     Q_OBJECT
     
     public:
-        enum Format { NormalFormat = 0,
-        TitleFormat = 1};
         InfoManager(MainWindow * parent);
         ~InfoManager();
         
-        MediaItemModel *m_infoMediaItemsModel;
-        MediaItemDelegate *m_infoItemDelegate;
-        
     public slots:
-        void saveInfoView();
+        void saveItemInfo();
         void showInfoView();
         void hideInfoView();
-        void loadInfoView();
+        void loadSelectedInfo();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void removeSelectedItemsInfo();
         
     private:
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
-        
-        QStandardItemModel *m_infoItemModel;
-        QItemDelegate *m_commonItemDelegate;
+        InfoItemModel *m_infoItemModel;
+        InfoItemDelegate *m_infoItemDelegate;
         bool m_nepomukInited;
+        QList<MediaItem> m_infoMediaList;
 
-        void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
-        bool hasMultipleValues(const QString &field);
-        QVariant commonValue(const QString &field);
-        QStringList valueList(const QString &field);
-        void saveInfoToMediaModel();
-        QList<int> m_rows;
-        
-        
     private slots:
-        void updateInfoItemModel();
-        void checkInfoItemChanged(QStandardItem *item);
-        void saveInfoItemsToMediaModel();
-        void saveFileMetaData();
+        void saveFileMetaData(QList<MediaItem> mediaList);
+        void updateItemViewLayout();
+        void cancelItemEdit();
 };
 #endif //INFOMANAGER_H
