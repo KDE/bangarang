@@ -160,7 +160,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Show Info View
     m_showInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
     connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
-    
+  
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);

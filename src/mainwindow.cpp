@@ -29,7 +29,7 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
-
+#include "scriptconsole.h"
 
 #include <KAction>
 #include <KCmdLineArgs>
@@ -55,7 +55,6 @@
 #include <Solid/OpticalDisc>
 #include <Solid/DeviceNotifier>
 #include <Nepomuk/ResourceManager>
-
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QtGlobal>
@@ -67,7 +66,7 @@
 #include <QFile>
 #include <QScrollBar>
 #include <QTimer>
- 
+#include <kross/core/action.h> 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     qRegisterMetaType<MediaItem>("MediaItem");
@@ -244,7 +243,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoWidget->contextMenu()->addSeparator();
     m_videoWidget->contextMenu()->addAction(m_actionsManager->showVideoSettings());
     m_videoWidget->contextMenu()->addAction(m_actionsManager->showHideControls());
-
+    
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -345,6 +344,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
+
+    //add as much as you want!
+    m_scriptConsole = new ScriptConsole();
+    m_scriptConsole->show();
 
 }
 
