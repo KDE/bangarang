@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
     ui->setupUi(this);
+    setGeometry(0,0,700,500);
 
     // Set up system tray icon
 #ifdef HAVE_KSTATUSNOTIFIERITEM
@@ -234,9 +235,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
     // moved up here so we can use it in the contextmenu aswell as the systray
-    KAction *playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    playPause = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
+    playPause->setShortcut(Qt::Key_Space);
     connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
-
+    if (m_currentPlaylist->rowCount() > 0) {
+      if (m_media->state() == Phonon::PlayingState) {
+	playPause->setIcon(KIcon("media-playback-start"));
+	playPause->setText(i18n("Play"));   
+      } else {
+	playPause->setIcon(KIcon("media-playback-pause"));
+	playPause->setText(i18n("Pause"));
+      }
+    }
+    
     m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
     m_videoWidget->contextMenu()->addAction(playPause);
     m_videoWidget->contextMenu()->addAction(m_actionsManager->playNext());
@@ -268,11 +279,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_pausePressed = false;
     m_stopPressed = false;
     m_loadingProgress = 0;
-    
+    on_showScriptingConsole();
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
-        if (args->isSet("play-dvd")) {
+        if(args->isSet("console")){
+	  kDebug() << "found console";
+	}
+      if (args->isSet("play-dvd")) {
             //Play DVD
             kDebug() << "playing DVD";
             MediaItem mediaItem;
@@ -293,7 +308,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             mediaList << mediaItem;
             m_playlist->playMediaList(mediaList);
         } else {
-            //Play Url
+	    //Play Url
             KUrl cmdLineKUrl = args->url(0);
             if (!cmdLineKUrl.isLocalFile()) {
                 QString tmpFile;
@@ -345,11 +360,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 
-    //add as much as you want!
-    m_scriptConsole = new ScriptConsole();
-    m_scriptConsole->action()->addObject(m_videoWidget,"videoWidget");
-    m_scriptConsole->action()->addObject(this,"MainWindow");
-    m_scriptConsole->show();
 
 }
 
@@ -536,12 +546,25 @@ void MainWindow::playPauseToggled()
     if (m_currentPlaylist->rowCount() > 0) {
         if (m_media->state() == Phonon::PlayingState) {
             m_media->pause();
+	    playPause->setIcon(KIcon("media-playback-start"));
+	    playPause->setText(i18n("Play"));   
         } else {
             on_mediaPlayPause_released();
+	    playPause->setIcon(KIcon("media-playback-pause"));
+	    playPause->setText(i18n("Pause"));
         }
     } else {
         on_playAll_clicked();
     }
+    //     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+    //   
+    // } else if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
+    //   
+    // } else {
+    //   m_playPause->setIcon(KIcon("media-playback-start"));
+    //   m_playPause->setText(i18n("Play"));
+    // }
+
 }
 
 void MainWindow::on_playAll_clicked()
@@ -1231,7 +1254,6 @@ void MainWindow::setupIcons()
     
     //Info View Icons
     ui->hideInfo->setIcon(turnIconOff(KIcon("help-about"), QSize(16, 16)));
-    ui->editInfo->setIcon(KIcon("document-edit"));
     
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
@@ -1429,4 +1451,12 @@ InfoManager * MainWindow::infoManager()
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
+}
+
+void MainWindow::on_showScriptingConsole()
+{
+  m_scriptConsole = new ScriptConsole();
+  m_scriptConsole->action()->addObject(m_videoWidget,"videoWidget");
+  m_scriptConsole->action()->addObject(this,"mainwindow");
+  m_scriptConsole->show();
 }

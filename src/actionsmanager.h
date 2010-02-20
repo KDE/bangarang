@@ -76,7 +76,7 @@ class ActionsManager : public QObject
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         VideoSettings *m_videoSettings;
-
+	
         QAction *m_quit;
         QAction *m_playAllAction;
         QAction *m_playSelectedAction;

@@ -49,10 +49,12 @@ class ScriptConsole : public QWidget
     QComboBox *m_language;
     KTextEdit *m_sourceEdit;
     KPushButton *m_runScriptButton;
-
+    KPushButton *m_stopButton;
   private slots:
     void runScript();
     void interpreterActivated(const QString &);
+    void finished(Kross::Action*);
+    void hardfinish();
 };
 
 #endif //SCRIPTCONSOLE_H

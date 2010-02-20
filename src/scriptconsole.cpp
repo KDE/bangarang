@@ -40,7 +40,8 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
 						m_listWidget(0) ,
 						m_language(0) ,
 						m_sourceEdit(0) ,
-						m_runScriptButton(0)
+						m_runScriptButton(0) ,
+						m_stopButton(0)
 						
 {
   m_layout = new QVBoxLayout(this);
@@ -48,8 +49,10 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   m_toolLayout = new QHBoxLayout(this);
   m_sourceEdit = new KTextEdit();
   m_runScriptButton = new KPushButton(i18n("Run Script"));
+  m_stopButton = new KPushButton(i18n("Stop"));
   m_language = new QComboBox();
-
+  
+  m_toolLayout->addWidget(m_stopButton);
   m_toolLayout->addWidget(m_language);
   m_toolLayout->addWidget(m_runScriptButton);
   
@@ -59,6 +62,7 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   
   setLayout(m_layout);
   
+  connect(m_stopButton,SIGNAL(clicked()),this,SLOT(hardfinish()));
   connect(m_runScriptButton,SIGNAL(clicked()),this,SLOT(runScript()));
   connect(m_language,SIGNAL(activated(const QString & )),this, SLOT(interpreterActivated(const QString &)));
   
@@ -70,12 +74,13 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   m_action->addObject(this,"ScriptConsole"); 
   m_action->addObject(m_layout,"ConsoleLayout");
   m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
+  connect(m_action,SIGNAL(finalized(Kross::Action*)),this ,SLOT(finished(Kross::Action*)));
 
   m_language->addItem(i18n("Choose Interpreter:"),"");
   foreach(QString str,Kross::Manager::self().interpreters()) {
     m_language->addItem(str);
   }
-  
+
 }
 
 ScriptConsole::~ScriptConsole()
@@ -84,19 +89,11 @@ ScriptConsole::~ScriptConsole()
 void 
 ScriptConsole::runScript()
 { 
-  
   QByteArray code;
   code =  m_sourceEdit->document()->toPlainText().toAscii();
   m_action->setCode(code);  
   m_action->trigger();
-  if( m_action->hadError() ) {
-    kDebug() << m_action->errorMessage();
-    m_listWidget->addItem(m_action->errorMessage());
-    m_action->finalize();
-  } else {
-    kDebug() << "code: Succeeded" << code;
-    m_action->finalize();
-  }
+  //m_runScriptButton->setEnabled(false);
 }
 
 
@@ -117,6 +114,24 @@ ScriptConsole::action()
   return m_action;
 }
 
+void 
+ScriptConsole::finished(Kross::Action *action)
+{
+  m_runScriptButton->setEnabled(true);
+  if( action->hadError() ) {
+      kDebug() << action->errorMessage();
+      m_listWidget->addItem(action->errorMessage());
+  } else {
+    kDebug() << "code: Succeeded" << action->code();
+  }
+  
+}
+void ScriptConsole::hardfinish()
+{
+  if(m_action != NULL){
+    m_action->~Action();
+  }
+}
 #include "moc_scriptconsole.cpp"
 
 
