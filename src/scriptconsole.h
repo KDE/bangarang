@@ -26,7 +26,9 @@
 #include <QListWidget>
 #include <KTextEdit>
 #include <KPushButton>
+#include <QComboBox>
 #include <kross/core/action.h>
+#include <kross/core/manager.h>
 
 class ScriptConsole : public QWidget
 {
@@ -35,19 +37,22 @@ class ScriptConsole : public QWidget
   public: 
     ScriptConsole(QWidget *parent = 0 );
     ~ScriptConsole();
+    
+    Kross::Action* action();
 
   private:
+
     Kross::Action *m_action;
     QVBoxLayout *m_layout;
+    QHBoxLayout *m_toolLayout;
     QListWidget *m_listWidget;
+    QComboBox *m_language;
     KTextEdit *m_sourceEdit;
     KPushButton *m_runScriptButton;
-    
+
   private slots:
     void runScript();
-    
-   
-  
+    void interpreterActivated(const QString &);
 };
 
 #endif //SCRIPTCONSOLE_H
