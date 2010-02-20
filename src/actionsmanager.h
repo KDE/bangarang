@@ -76,7 +76,7 @@ class ActionsManager : public QObject
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         VideoSettings *m_videoSettings;
-
+	
         QAction *m_quit;
         QAction *m_playAllAction;
         QAction *m_playSelectedAction;
@@ -99,7 +99,7 @@ class ActionsManager : public QObject
         QAction *m_showItems;
         QAction *m_showInfo;
         QAction *m_showNowPlayingInfo;
-        QMenu *m_addToAudioSavedList;
+	QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
