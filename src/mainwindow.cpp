@@ -240,13 +240,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     playPause->setShortcut(Qt::Key_Space);
     connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
     if (m_currentPlaylist->rowCount() > 0) {
-      if (m_media->state() == Phonon::PlayingState) {
-	playPause->setIcon(KIcon("media-playback-start"));
-	playPause->setText(i18n("Play"));   
-      } else {
-	playPause->setIcon(KIcon("media-playback-pause"));
-	playPause->setText(i18n("Pause"));
-      }
+        if (m_media->state() == Phonon::PlayingState) {
+            playPause->setIcon(KIcon("media-playback-start"));
+            playPause->setText(i18n("Play"));   
+        } else {
+            playPause->setIcon(KIcon("media-playback-pause"));
+            playPause->setText(i18n("Pause"));
+        }
     }
     
     m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
