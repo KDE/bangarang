@@ -1456,7 +1456,7 @@ Phonon::VideoWidget * MainWindow::videoWidget()
 void MainWindow::on_showScriptingConsole()
 {
   m_scriptConsole = new ScriptConsole();
-  m_scriptConsole->action()->addObject(m_videoWidget,"videoWidget");
-  m_scriptConsole->action()->addObject(this,"mainwindow");
+  m_scriptConsole->addObject(m_videoWidget,"videoWidget");
+  m_scriptConsole->addObject(this,"mainwindow");
   m_scriptConsole->show();
 }
