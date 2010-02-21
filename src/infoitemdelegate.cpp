@@ -27,6 +27,7 @@
 #include <KIcon>
 #include <KIconEffect>
 #include <KLineEdit>
+#include <KFileDialog>
 #include <KDebug>
 #include <Soprano/Vocabulary/NAO>
 #include <nepomuk/variant.h>
@@ -212,14 +213,29 @@ int InfoItemDelegate::columnWidth (int column) const {
 
 bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    return QItemDelegate::editorEvent(event, model, option, index);
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    if (field == "artwork") {
+        if (event->type() == QEvent::MouseButtonDblClick) {
+            KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
+            if (newUrl.isValid()) {
+                QPixmap pixmap = QPixmap(newUrl.path()).scaled(QSize(128,128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                if (!pixmap.isNull()) {
+                    model->setData(index, QIcon(pixmap), Qt::DecorationRole);
+                    model->setData(index, newUrl, Qt::EditRole);
+                }
+            }
+        }
+        return true;
+    } else {
+        return QItemDelegate::editorEvent(event, model, option, index);
+    }
 }
 
 QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    QString field = index.data(Qt::UserRole).toString();
+    QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
-    bool multipleValues = index.data(Qt::UserRole + 1).toBool();
+    bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
     if (value.type() == QVariant::Int) {
         if (field == "audioType") {
             QStringList list;
@@ -263,19 +279,14 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             lineEdit->setAutoFillBackground(true);
             return lineEdit;
         }
-    } else {
-        if (field == "artwork") {
-            ArtworkWidget *artworkWidget = new ArtworkWidget(parent);
-            if (!multipleValues) artworkWidget->setPixmap(value.value<QIcon>().pixmap(128,128));
-            artworkWidget->setFocusPolicy(Qt::StrongFocus);
-            return artworkWidget;
-        } else {
+    } else if (field != "artwork") {
             KLineEdit *lineEdit = new KLineEdit(parent);
             lineEdit->setFont(KGlobalSettings::smallestReadableFont());
             if (!multipleValues) lineEdit->setText(value.toString());
             lineEdit->setAutoFillBackground(true);
             return lineEdit;
-        }
+    } else {
+        return 0;
     }
     Q_UNUSED(option);
         

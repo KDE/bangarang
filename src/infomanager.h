@@ -62,7 +62,6 @@ class InfoManager : public QObject
         QList<MediaItem> m_infoMediaList;
 
     private slots:
-        void saveFileMetaData(QList<MediaItem> mediaList);
         void updateItemViewLayout();
         void cancelItemEdit();
 };

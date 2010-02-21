@@ -21,6 +21,10 @@
 #include "utilities.h"
 #include <KLocale>
 #include <KDebug>
+#include <KUrl>
+#include <taglib/fileref.h>
+#include <taglib/tstring.h>
+#include <taglib/id3v2tag.h>
 
 InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
@@ -125,7 +129,9 @@ void InfoItemModel::saveChanges()
                         mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
                         mediaItem.url = currentItem->data(Qt::EditRole).toString();
                     }
-                } else if (field != "artwork") {              
+                } else if (field == "artwork") {              
+                    mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).value<KUrl>().url();
+                } else {
                     mediaItem.fields[field] = currentItem->data(Qt::EditRole);
                 }
             }
@@ -133,7 +139,15 @@ void InfoItemModel::saveChanges()
         updatedList << mediaItem;
     }
     m_mediaList = updatedList;
-    loadInfo(m_mediaList); //This to ensure that original values in the model are updated
+    
+    //Update File Metadata
+    saveFileMetaData(m_mediaList);
+    
+    //Update source information
+    m_sourceModel->updateSourceInfo(m_mediaList);
+    
+    //Ensure original values in model are updated to reflect saved(no-edits) state
+    loadInfo(m_mediaList); 
 }
 
 void InfoItemModel::cancelChanges()
@@ -144,6 +158,11 @@ void InfoItemModel::cancelChanges()
 QList<MediaItem> InfoItemModel::mediaList()
 {
     return m_mediaList;
+}
+
+void InfoItemModel::setSourceModel(MediaItemModel * sourceModel)
+{
+    m_sourceModel = sourceModel;
 }
 
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
@@ -173,6 +192,10 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
 
     if (field == "artwork") {
         if (m_mediaList.count() == 1) {
+            KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["artworkUrl"].toString());
+            fieldItem->setData(artworkUrl, Qt::DisplayRole);
+            fieldItem->setData(artworkUrl, Qt::EditRole);
+            fieldItem->setData(artworkUrl, InfoItemModel::OriginalValueRole); //stores copy of original data
             QPixmap artwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(0));
             if (!artwork.isNull()) {
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
@@ -293,6 +316,53 @@ void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
     }
     emit infoChanged(modified);
     
+}
+
+void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
+{
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaItem mediaItem = mediaList.at(i);
+        if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
+            if (Utilities::isMusic(mediaList.at(i).url)) {
+                QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+                if (!artworkUrl.isEmpty()) {
+                    Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
+                }
+                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit());
+                if (!file.isNull()) {
+                    QString title = mediaItem.title;
+                    if (!title.isEmpty()) {
+                        TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                        file.tag()->setTitle(tTitle);
+                    }
+                    QString artist = mediaItem.fields["artist"].toString();
+                    if (!artist.isEmpty()) {
+                        TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                        file.tag()->setArtist(tArtist);
+                    }
+                    QString album = mediaItem.fields["album"].toString();
+                    if (!album.isEmpty()) {
+                        TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                        file.tag()->setAlbum(tAlbum);
+                    }
+                    int year = mediaItem.fields["year"].toInt();
+                    if (year != 0) {
+                        file.tag()->setYear(year);
+                    }
+                    int trackNumber = mediaItem.fields["trackNumber"].toInt();
+                    if (trackNumber != 0) {
+                        file.tag()->setTrack(trackNumber);
+                    }
+                    QString genre = mediaItem.fields["genre"].toString();
+                    if (!genre.isEmpty()) {
+                        TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                        file.tag()->setGenre(tGenre);
+                    }
+                    file.save();
+                }
+            }
+        }
+    }
 }
 
         

@@ -134,28 +134,6 @@ protected Q_SLOTS:
     void selectorExited();
 };
 
-class ArtworkWidget : public QWidget
-{
-    Q_OBJECT
-    public:
-        ArtworkWidget(QWidget * parent = 0);
-        ~ArtworkWidget();
-        
-        KUrl url();
-        const QPixmap * artwork();
-        void setPixmap(QPixmap pixmap);
-        void setUrl(KUrl url);
-        
-    private:
-        QWidget * m_parent;
-        QLabel * m_artworkLabel;
-        QToolButton * m_openUrl;
-        QHBoxLayout * m_layout;
-        KUrl m_url;
-        
-    protected Q_SLOTS:
-        void openUrl();
-};
 #endif // SENSIBLEWIDGETS_H
 
 
