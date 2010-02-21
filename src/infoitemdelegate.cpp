@@ -64,10 +64,6 @@ InfoItemDelegate::~InfoItemDelegate()
 
 void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    /*QStyleOptionViewItemV4 opt(option);
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);*/
-    
     const int left = option.rect.left();
     const int top = option.rect.top();
     const int width = option.rect.width();
@@ -85,7 +81,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
-        if (index.data(Qt::UserRole).toString() == "artwork") {
+        if (index.data(InfoItemModel::FieldRole).toString() == "artwork") {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
         } else {
