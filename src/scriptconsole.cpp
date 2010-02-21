@@ -17,21 +17,25 @@
 */
 
 #include "scriptconsole.h"
-#include <QWidget>
+
+#include <QUrl>
 #include <QList>
-#include <KPushButton>
-#include <QVBoxLayout>
-#include <QListWidget>
-#include <KTextEdit>
+#include <QWidget>
 #include <QTextEdit>
 #include <QByteArray>
-#include <KPushButton>
-#include <KLocale>
-#include <KUrl>
+#include <QVBoxLayout> 
+#include <QListWidget>
+#include <QTemporaryFile>
+
 #include <KDebug>
+#include <KLocale>
+#include <KTextEdit>
+#include <KPushButton>
+#include <KPushButton>
 
 #include <kross/core/action.h>
 #include <kross/core/manager.h>
+#include <kross/core/actioncollection.h>
 
 ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
 						m_action(0) ,
@@ -41,8 +45,10 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
 						m_language(0) ,
 						m_sourceEdit(0) ,
 						m_runScriptButton(0) ,
-						m_stopButton(0)
-						
+						m_stopButton(0) , 
+						m_objectList(0) ,
+						m_stringList(0)
+												
 {
   m_layout = new QVBoxLayout(this);
   m_listWidget = new QListWidget();
@@ -55,7 +61,8 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   m_toolLayout->addWidget(m_stopButton);
   m_toolLayout->addWidget(m_language);
   m_toolLayout->addWidget(m_runScriptButton);
-  
+  m_objectList = new QList<QObject*>();
+  m_stringList = new QStringList();
   m_layout->addWidget(m_listWidget);
   m_layout->addWidget(m_sourceEdit);
   m_layout->addLayout(m_toolLayout);
@@ -65,17 +72,11 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   connect(m_stopButton,SIGNAL(clicked()),this,SLOT(hardfinish()));
   connect(m_runScriptButton,SIGNAL(clicked()),this,SLOT(runScript()));
   connect(m_language,SIGNAL(activated(const QString & )),this, SLOT(interpreterActivated(const QString &)));
-  
+
   //these are the objects we definitely _will_ make avaiable
   //@TODO decide which parts of bangarang should be avaiable to the Script developer. 
   //UseCase: Make a scrobbler for last.fm/libre.fm you want the data off the played song.
   //UseCase: You want to create a graph from your listening/watching Statistics.
-  m_action = new Kross::Action(this,KUrl(""));
-  m_action->addObject(this,"ScriptConsole"); 
-  m_action->addObject(m_layout,"ConsoleLayout");
-  m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
-  connect(m_action,SIGNAL(finalized(Kross::Action*)),this ,SLOT(finished(Kross::Action*)));
-
   m_language->addItem(i18n("Choose Interpreter:"),"");
   foreach(QString str,Kross::Manager::self().interpreters()) {
     m_language->addItem(str);
@@ -89,11 +90,29 @@ ScriptConsole::~ScriptConsole()
 void 
 ScriptConsole::runScript()
 { 
-  QByteArray code;
-  code =  m_sourceEdit->document()->toPlainText().toAscii();
-  m_action->setCode(code);  
+  QTemporaryFile *file = new QTemporaryFile();
+  file->open();
+  file->setFileTemplate("XXX.js");
+  m_action = new Kross::Action(this,QUrl(file->fileName()).path());
+  kDebug() << "Temporary file is : " << file->fileName();
+  m_action->addObject(this,"ScriptConsole"); 
+  m_action->addObject(m_layout,"ConsoleLayout");
+  if(interpreter.isEmpty()) {
+    m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
+  } else {
+    m_action->setInterpreter(interpreter);
+  }  
+    
+  //blame Kross::Action
+  for(int i = 0; i < m_objectList->size() && i < m_stringList->size() ; i++) {
+    m_action->addObject(m_objectList->at(i),m_stringList->at(i));
+  }
+  
+  file << m_sourceEdit->document()->toPlainText().toAscii();
+  kDebug() << file;
+  m_action->setCode(m_sourceEdit->document()->toPlainText().toAscii());  
   m_action->trigger();
-  //m_runScriptButton->setEnabled(false);
+  connect(m_action,SIGNAL(finalized(Kross::Action*)),this ,SLOT(finished(Kross::Action*)));
 }
 
 
@@ -101,17 +120,13 @@ void
 ScriptConsole::interpreterActivated(const QString &selectedInterpreter)
 {
   if(selectedInterpreter.isEmpty()) {
-    m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
-    return;
+    interpreter = Kross::Manager::self().interpreters().at(0);
+    kDebug() << "Interpreter:" << interpreter;
+   return;
   } else { 
-    m_action->setInterpreter(selectedInterpreter);
+    interpreter = selectedInterpreter;
+    kDebug() << "Interpreter:" << interpreter;
   }
-}
-
-Kross::Action*
-ScriptConsole::action()
-{
-  return m_action;
 }
 
 void 
@@ -121,16 +136,19 @@ ScriptConsole::finished(Kross::Action *action)
   if( action->hadError() ) {
       kDebug() << action->errorMessage();
       m_listWidget->addItem(action->errorMessage());
+      kDebug() << action->code();
   } else {
     kDebug() << "code: Succeeded" << action->code();
   }
   
 }
-void ScriptConsole::hardfinish()
+
+//Blame Kross::Action
+void ScriptConsole::addObject(QObject* obj, QString str)
 {
-  if(m_action != NULL){
-    m_action->~Action();
-  }
+  m_objectList->append(obj);
+  m_stringList->append(str);
+  kDebug() << "Add " << str << " as " << obj << " to the list";
 }
 #include "moc_scriptconsole.cpp"
 
