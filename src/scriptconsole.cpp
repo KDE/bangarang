@@ -45,7 +45,6 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
 						m_language(0) ,
 						m_sourceEdit(0) ,
 						m_runScriptButton(0) ,
-						m_stopButton(0) , 
 						m_objectList(0) ,
 						m_stringList(0)
 												
@@ -55,10 +54,8 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   m_toolLayout = new QHBoxLayout(this);
   m_sourceEdit = new KTextEdit();
   m_runScriptButton = new KPushButton(i18n("Run Script"));
-  m_stopButton = new KPushButton(i18n("Stop"));
   m_language = new QComboBox();
   
-  m_toolLayout->addWidget(m_stopButton);
   m_toolLayout->addWidget(m_language);
   m_toolLayout->addWidget(m_runScriptButton);
   m_objectList = new QList<QObject*>();
@@ -69,50 +66,61 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   
   setLayout(m_layout);
   
-  connect(m_stopButton,SIGNAL(clicked()),this,SLOT(hardfinish()));
   connect(m_runScriptButton,SIGNAL(clicked()),this,SLOT(runScript()));
   connect(m_language,SIGNAL(activated(const QString & )),this, SLOT(interpreterActivated(const QString &)));
 
-  //these are the objects we definitely _will_ make avaiable
-  //@TODO decide which parts of bangarang should be avaiable to the Script developer. 
-  //UseCase: Make a scrobbler for last.fm/libre.fm you want the data off the played song.
-  //UseCase: You want to create a graph from your listening/watching Statistics.
   m_language->addItem(i18n("Choose Interpreter:"),"");
   foreach(QString str,Kross::Manager::self().interpreters()) {
     m_language->addItem(str);
   }
-
+  m_listWidget->addItem(i18n("BANGARANG MEDIA PLAYER\nCopyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)\n<http://gitorious.org/bangarang>"));
 }
 
 ScriptConsole::~ScriptConsole()
-{}
+{
+  
+}
 
 void 
 ScriptConsole::runScript()
 { 
-  QTemporaryFile *file = new QTemporaryFile();
-  file->open();
-  file->setFileTemplate("XXX.js");
-  m_action = new Kross::Action(this,QUrl(file->fileName()).path());
-  kDebug() << "Temporary file is : " << file->fileName();
-  m_action->addObject(this,"ScriptConsole"); 
-  m_action->addObject(m_layout,"ConsoleLayout");
+  // QTemporaryFile *file = new QTemporaryFile();
+  // file->open();
+  // m_action = new Kross::Action(m_action,QUrl(file->fileName()).path());
+  m_action = new Kross::Action(m_action,QUrl(""));
+  // kDebug() << "Temporary file is : " << file->fileName();
+  m_action->setCode(m_sourceEdit->document()->toPlainText().toAscii());  
+ 
   if(interpreter.isEmpty()) {
     m_action->setInterpreter(Kross::Manager::self().interpreters().at(0));
   } else {
     m_action->setInterpreter(interpreter);
   }  
-    
-  //blame Kross::Action
+  
   for(int i = 0; i < m_objectList->size() && i < m_stringList->size() ; i++) {
     m_action->addObject(m_objectList->at(i),m_stringList->at(i));
   }
-  
-  file << m_sourceEdit->document()->toPlainText().toAscii();
-  kDebug() << file;
-  m_action->setCode(m_sourceEdit->document()->toPlainText().toAscii());  
-  m_action->trigger();
+  m_action->addObject(this,"ScriptConsole"); 
+  m_action->addObject(m_layout,"ConsoleLayout");
   connect(m_action,SIGNAL(finalized(Kross::Action*)),this ,SLOT(finished(Kross::Action*)));
+  connect(m_action,SIGNAL(finished(Kross::Action* )),this ,SLOT(finished(Kross::Action*)));
+  m_action->trigger();
+  
+}
+
+void 
+ScriptConsole::finished(Kross::Action *action)
+{
+  m_runScriptButton->setEnabled(true);
+  if( action->hadError() ) {
+      kDebug() << action->errorMessage();
+      m_listWidget->addItem(action->errorMessage());
+      kDebug() << action->code();
+  } else {
+    kDebug() << "code: Succeeded" << action->code();
+    m_listWidget->addItem("success!");
+  }
+  
 }
 
 
@@ -127,20 +135,6 @@ ScriptConsole::interpreterActivated(const QString &selectedInterpreter)
     interpreter = selectedInterpreter;
     kDebug() << "Interpreter:" << interpreter;
   }
-}
-
-void 
-ScriptConsole::finished(Kross::Action *action)
-{
-  m_runScriptButton->setEnabled(true);
-  if( action->hadError() ) {
-      kDebug() << action->errorMessage();
-      m_listWidget->addItem(action->errorMessage());
-      kDebug() << action->code();
-  } else {
-    kDebug() << "code: Succeeded" << action->code();
-  }
-  
 }
 
 //Blame Kross::Action
