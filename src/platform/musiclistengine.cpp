@@ -222,14 +222,14 @@ void MusicListEngine::run()
                                                                       artist,
                                                                       MediaQuery::Equal));
             } else {
-                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
+                //query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
             }
             if (!album.isEmpty()) {
                 query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
                                                                       album,
                                                                       MediaQuery::Equal));
             } else {
-                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
+                //query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             }
             query.endWhere();
             QStringList orderByBindings = bindings;
