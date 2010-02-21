@@ -71,7 +71,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(i18n("Year"), "year");
                 addFieldToValuesModel(i18n("Genre"), "genre");
                 if (subType == "TV Show") {
-                    addFieldToValuesModel(i18n("Series"), "series");
+                    addFieldToValuesModel(i18n("Series"), "seriesName");
                     addFieldToValuesModel(i18n("Season"), "season");
                     addFieldToValuesModel(i18n("Episode"), "episodeNumber");
                 }
@@ -231,6 +231,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         QVariant value = m_mediaList.at(0).fields[field];
         if (value.type() == QVariant::String) {
             fieldItem->setData(QString(), Qt::EditRole);
+            fieldItem->setData(valueList(field), InfoItemModel::ValueListRole);
         } else if (value.type() == QVariant::Int) {
             fieldItem->setData(0, Qt::EditRole);
         }
@@ -252,12 +253,10 @@ bool InfoItemModel::hasMultipleValues(const QString &field)
     }
                 
     for (int i = 0; i < m_mediaList.count(); i++) {
-        if (m_mediaList.at(i).fields.contains(field)) {
-            if (value.isNull()) {
-                value = m_mediaList.at(i).fields.value(field);
-            } else if (m_mediaList.at(i).fields.value(field) != value) {
-                return true;
-            }
+        if (value.isNull()) {
+            value = m_mediaList.at(i).fields.value(field);
+        } else if (m_mediaList.at(i).fields.value(field) != value) {
+            return true;
         }
     }
     return false;
