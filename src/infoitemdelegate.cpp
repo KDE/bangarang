@@ -273,11 +273,23 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             textEdit->setAutoFillBackground(true);
             return textEdit;
         } else {
-            KLineEdit *lineEdit = new KLineEdit(parent);
-            lineEdit->setFont(KGlobalSettings::smallestReadableFont());
-            if (!multipleValues) lineEdit->setText(value.toString());
-            lineEdit->setAutoFillBackground(true);
-            return lineEdit;
+            QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+            if (valueList.count() == 0) {
+                KLineEdit *lineEdit = new KLineEdit(parent);
+                lineEdit->setFont(KGlobalSettings::smallestReadableFont());
+                if (!multipleValues) lineEdit->setText(value.toString());
+                lineEdit->setAutoFillBackground(true);
+                return lineEdit;
+            } else {
+                SComboBox *comboBox = new SComboBox(parent);
+                for (int i = 0; i < valueList.count(); i++) {
+                    comboBox->addItem(valueList.at(i), valueList.at(i));
+                }
+                comboBox->setEditable(true);
+                comboBox->setFont(KGlobalSettings::smallestReadableFont());
+                comboBox->setAutoFillBackground(true);
+                return comboBox;
+            }
         }
     } else if (field != "artwork") {
             KLineEdit *lineEdit = new KLineEdit(parent);
