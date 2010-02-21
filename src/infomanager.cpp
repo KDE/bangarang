@@ -56,6 +56,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     }
     
     m_infoItemModel = new InfoItemModel(this);
+    m_infoItemModel->setSourceModel(m_parent->m_mediaItemModel);
     ui->infoItemView->setModel(m_infoItemModel);
     InfoItemDelegate * infoItemDelegate = new InfoItemDelegate(m_parent);
     infoItemDelegate->setView(ui->infoItemView);
@@ -98,12 +99,6 @@ void InfoManager::saveItemInfo()
     //Save changed info in model
     m_infoItemModel->saveChanges();
     updateItemViewLayout();
-
-    //Update file metadata
-    saveFileMetaData(m_infoItemModel->mediaList());
-    
-    //Update source information
-    m_parent->m_mediaItemModel->updateSourceInfo(m_infoItemModel->mediaList());
     
     //Update Now Playing and Playlist views
     m_parent->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
@@ -187,51 +182,4 @@ void InfoManager::updateItemViewLayout()
     }
     ui->infoItemView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->infoItemView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-}
-
-void InfoManager::saveFileMetaData(QList<MediaItem> mediaList)
-{
-    for (int i = 0; i < mediaList.count(); i++) {
-        MediaItem mediaItem = mediaList.at(i);
-        if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
-            if (Utilities::isMusic(mediaList.at(i).url)) {
-                QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
-                if (!artworkUrl.isEmpty()) {
-                    Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
-                }
-                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit());
-                if (!file.isNull()) {
-                    QString title = mediaItem.title;
-                    if (!title.isEmpty()) {
-                       TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                       file.tag()->setTitle(tTitle);
-                    }
-                    QString artist = mediaItem.fields["artist"].toString();
-                    if (!artist.isEmpty()) {
-                      TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                      file.tag()->setArtist(tArtist);
-                    }
-                    QString album = mediaItem.fields["album"].toString();
-                    if (!album.isEmpty()) {
-                     TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                     file.tag()->setAlbum(tAlbum);
-                    }
-                    int year = mediaItem.fields["year"].toInt();
-                    if (year != 0) {
-                        file.tag()->setYear(year);
-                    }
-                    int trackNumber = mediaItem.fields["trackNumber"].toInt();
-                    if (trackNumber != 0) {
-                       file.tag()->setTrack(trackNumber);
-                    }
-                    QString genre = mediaItem.fields["genre"].toString();
-                    if (!genre.isEmpty()) {
-                      TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                      file.tag()->setGenre(tGenre);
-                    }
-                    file.save();
-                }
-            }
-        }
-    }
 }

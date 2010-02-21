@@ -24,6 +24,7 @@
 #include <QStandardItemModel>
 
 class MediaItem;
+class MediaItemModel;
 
 /*
 * This model is responsible for 
@@ -43,19 +44,22 @@ class InfoItemModel : public QStandardItemModel
         void saveChanges();
         void cancelChanges();
         QList<MediaItem> mediaList();
+        void setSourceModel(MediaItemModel *sourceModel);
                    
     private:
         QList<MediaItem> m_mediaList;
+        MediaItemModel * m_sourceModel;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
+        void saveFileMetaData(QList<MediaItem> mediaList);
 
     Q_SIGNALS:
         void infoChanged(bool modified);
         
     private Q_SLOTS:
-        void checkInfoModified(QStandardItem *);
+        void checkInfoModified(QStandardItem *changedItem);
 };
 
 #endif // INFOITEMDELEGATE_H
