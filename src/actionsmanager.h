@@ -20,6 +20,7 @@
 #define ACTIONSMANAGER_H
 
 #include "videosettings.h"
+#include <KMenu>
 #include <KActionCollection>
 #include <QObject>
 #include <QAction>
@@ -51,6 +52,8 @@ class ActionsManager : public QObject
         QAction *cancelFullScreenHideControls();
         QAction *editShortcuts();
         QAction *playPause();
+        QAction *play();
+        QAction *pause();
         QAction *playNext();
         QAction *playPrevious();
         QAction *mute();
@@ -67,6 +70,8 @@ class ActionsManager : public QObject
         QMenu *addToSavedVideoListMenu();
 
         QMenu * mediaViewMenu(bool showAbout = false);
+        QMenu * nowPlayingContextMenu();
+        KMenu * notifierMenu();
         
     public slots:
         void updateSavedListsMenus();
@@ -87,6 +92,8 @@ class ActionsManager : public QObject
         QAction *m_cancelFullScreenHideControls;
         QAction *m_editShortcuts;
         QAction *m_playPause;
+        QAction *m_play;
+        QAction *m_pause;
         QAction *m_playNext;
         QAction *m_playPrevious;
         QAction *m_mute;
@@ -99,8 +106,10 @@ class ActionsManager : public QObject
         QAction *m_showItems;
         QAction *m_showInfo;
         QAction *m_showNowPlayingInfo;
-	QMenu *m_addToAudioSavedList;
+        QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
+        QMenu *m_nowPlayingContextMenu;
+        KMenu *m_notifierMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
 
@@ -114,6 +123,7 @@ class ActionsManager : public QObject
         void showShortcutsEditor();
         void hideShortcutsEditor();
         void simplePlayPause();
+        void smartPlay();
         void muteAudio();
         void addToSavedAudioList(QAction *addAction);
         void addToSavedVideoList(QAction *addAction);

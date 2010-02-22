@@ -48,11 +48,18 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_actionCollection->addAction(i18n("Quit"), m_quit);
     
     //Play/Pause Action
-    m_playPause = new QAction(this);
+    m_playPause = new QAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
     m_playPause->setShortcut(Qt::Key_Space);
     connect(m_playPause, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
     m_parent->addAction(m_playPause);
     
+    //Play Action
+    m_play = new QAction(KIcon("media-playback-start"), i18n("Play"), this);
+    connect(m_play, SIGNAL(triggered()), this, SLOT(smartPlay()));
+    
+    //Pause Action
+    m_pause = new QAction(KIcon("media-playback-pause"), i18n("Pause"), this);
+    connect(m_pause, SIGNAL(triggered()), m_parent->playlist()->mediaObject(), SLOT(pause()));
     
     //Play Next
     m_playNext = new QAction(KIcon("media-skip-forward"), i18n("Play next"), this);
@@ -168,7 +175,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_editShortcuts, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(hideShortcutsEditor()));
     ui->shortcutsEditor->addCollection(m_actionCollection);
-          
+    
+    m_nowPlayingContextMenu = new QMenu(m_parent);
+    m_notifierMenu = new KMenu(m_parent);
 }
 
 ActionsManager::~ActionsManager()
@@ -183,6 +192,16 @@ QAction * ActionsManager::quit()
 QAction * ActionsManager::playPause()
 {
     return m_playPause;
+}
+
+QAction * ActionsManager::play()
+{
+    return m_play;
+}
+
+QAction * ActionsManager::pause()
+{
+    return m_pause;
 }
 
 QAction * ActionsManager::playNext()
@@ -332,6 +351,38 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout)
     return menu;
 }
 
+QMenu *ActionsManager::nowPlayingContextMenu()
+{
+    m_nowPlayingContextMenu->clear();
+    if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState ||
+        m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        m_nowPlayingContextMenu->addAction(m_playPrevious);
+        if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+            m_nowPlayingContextMenu->addAction(m_pause);
+        } else {
+            m_nowPlayingContextMenu->addAction(m_play);
+        }
+    } else {
+        m_nowPlayingContextMenu->addAction(m_play);
+    }
+    m_nowPlayingContextMenu->addAction(m_playNext);
+    m_nowPlayingContextMenu->addSeparator();
+    if (m_parent->playlist()->mediaObject()->hasVideo()) {
+        m_nowPlayingContextMenu->addAction(m_showVideoSettings);
+    }
+    m_nowPlayingContextMenu->addAction(m_showHideControls);
+    return m_nowPlayingContextMenu;
+}
+
+KMenu *ActionsManager::notifierMenu()
+{
+    m_notifierMenu->clear();
+    m_notifierMenu->addAction(m_playPrevious);
+    m_notifierMenu->addAction(m_playPause);
+    m_notifierMenu->addAction(m_playNext);
+    return m_notifierMenu;
+}
+
 QAction *ActionsManager::removeFromSavedList()
 {
     return m_removeFromSavedList;
@@ -430,13 +481,18 @@ void ActionsManager::hideShortcutsEditor()
 void ActionsManager::simplePlayPause()
 {
     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-      m_parent->playlist()->mediaObject()->pause();
-      m_playPause->setIcon(KIcon("media-playback-start"));
-      m_playPause->setText(i18n("Play"));
-    } else if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
-      m_parent->playlist()->mediaObject()->play();
-      m_playPause->setIcon(KIcon("media-playback-pause"));
-      m_playPause->setText(i18n("Pause"));
+        m_parent->playlist()->mediaObject()->pause();
+    } else {
+        smartPlay();
+    }
+}
+
+void ActionsManager::smartPlay()
+{
+    if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        m_parent->playlist()->mediaObject()->play();
+    } else if (m_parent->playlist()->mediaObject()->state() != Phonon::PlayingState) {
+        m_parent->playlist()->start();
     }
 }
 
