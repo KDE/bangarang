@@ -235,27 +235,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     videoSettings->setHideAction(m_actionsManager->showVideoSettings());
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
-    // moved up here so we can use it in the contextmenu aswell as the systray
-    playPause = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
-    playPause->setShortcut(Qt::Key_Space);
-    connect(playPause, SIGNAL(triggered()), this, SLOT(playPauseToggled()));
-    if (m_currentPlaylist->rowCount() > 0) {
-        if (m_media->state() == Phonon::PlayingState) {
-            playPause->setIcon(KIcon("media-playback-start"));
-            playPause->setText(i18n("Play"));   
-        } else {
-            playPause->setIcon(KIcon("media-playback-pause"));
-            playPause->setText(i18n("Pause"));
-        }
-    }
-    
-    m_videoWidget->contextMenu()->addAction(m_actionsManager->playPrevious());
-    m_videoWidget->contextMenu()->addAction(playPause);
-    m_videoWidget->contextMenu()->addAction(m_actionsManager->playNext());
-    m_videoWidget->contextMenu()->addSeparator();
-    m_videoWidget->contextMenu()->addAction(m_actionsManager->showVideoSettings());
-    m_videoWidget->contextMenu()->addAction(m_actionsManager->showHideControls());
-
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -347,16 +326,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->nowPlayingView->viewport()->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
 
-    // Set up cursor hiding for videos.
+    // Set up cursor hiding and context menu for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
+    m_videoWidget->setContextMenu(m_actionsManager->nowPlayingContextMenu());
 
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
-    m_sysTray->contextMenu()->addAction(m_actionsManager->playPrevious());
-    m_sysTray->contextMenu()->addAction(playPause);
-    m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
-
+    m_sysTray->setContextMenu(m_actionsManager->notifierMenu());
 }
 
 MainWindow::~MainWindow()
@@ -534,33 +511,6 @@ void MainWindow::on_previous_clicked()
             ui->previous->setVisible(false);
         }
     }
-}
-
-void MainWindow::playPauseToggled()
-{
-    // if there is something in the playlist, play it, else try the playall button
-    if (m_currentPlaylist->rowCount() > 0) {
-        if (m_media->state() == Phonon::PlayingState) {
-            m_media->pause();
-	    playPause->setIcon(KIcon("media-playback-start"));
-	    playPause->setText(i18n("Play"));   
-        } else {
-            on_mediaPlayPause_released();
-	    playPause->setIcon(KIcon("media-playback-pause"));
-	    playPause->setText(i18n("Pause"));
-        }
-    } else {
-        on_playAll_clicked();
-    }
-    //     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-    //   
-    // } else if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
-    //   
-    // } else {
-    //   m_playPause->setIcon(KIcon("media-playback-start"));
-    //   m_playPause->setText(i18n("Play"));
-    // }
-
 }
 
 void MainWindow::on_playAll_clicked()
@@ -818,6 +768,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         ui->volumeSlider->setAudioOutput(m_audioOutput);
         ui->volumeIcon->setChecked(false);
     }
+    m_videoWidget->setContextMenu(m_actionsManager->nowPlayingContextMenu());
     Q_UNUSED(oldstate);
 }
 

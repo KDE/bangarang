@@ -111,8 +111,6 @@ public slots:
     void playSelected();
     void removeSelectedFromPlaylist();
 
-    void playPauseToggled();
-        
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
