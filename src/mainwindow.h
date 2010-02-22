@@ -105,7 +105,6 @@ public:
     void setAboutData(KAboutData *aboutData);
     Phonon::VideoWidget * videoWidget();
     
-    
 public slots:
     void addSelectedToPlaylist();
     void on_fullScreen_toggled(bool fullScreen);
@@ -114,7 +113,7 @@ public slots:
     void removeSelectedFromPlaylist();
 
     void playPauseToggled();
-        
+    void on_showScriptingConsole();        
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -163,7 +162,7 @@ private:
     void showApplicationBanner();
     KIcon turnIconOff(KIcon icon, QSize size);
     void updateCachedDevicesList();
-    void on_showScriptingConsole();
+
 #ifdef HAVE_KSTATUSNOTIFIERITEM
     KStatusNotifierItem *m_sysTray;
 #else

@@ -60,10 +60,12 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   m_toolLayout->addWidget(m_runScriptButton);
   m_objectList = new QList<QObject*>();
   m_stringList = new QStringList();
+  
   m_layout->addWidget(m_listWidget);
+  
   m_layout->addWidget(m_sourceEdit);
   m_layout->addLayout(m_toolLayout);
-  
+    
   setLayout(m_layout);
   
   connect(m_runScriptButton,SIGNAL(clicked()),this,SLOT(runScript()));
@@ -73,6 +75,7 @@ ScriptConsole::ScriptConsole(QWidget *parent) : QWidget(parent) ,
   foreach(QString str,Kross::Manager::self().interpreters()) {
     m_language->addItem(str);
   }
+  setWindowTitle(i18n("Bangarang - Scripting Console"));
   m_listWidget->addItem(i18n("BANGARANG MEDIA PLAYER\nCopyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)\n<http://gitorious.org/bangarang>"));
 }
 
@@ -84,11 +87,7 @@ ScriptConsole::~ScriptConsole()
 void 
 ScriptConsole::runScript()
 { 
-  // QTemporaryFile *file = new QTemporaryFile();
-  // file->open();
-  // m_action = new Kross::Action(m_action,QUrl(file->fileName()).path());
   m_action = new Kross::Action(m_action,QUrl(""));
-  // kDebug() << "Temporary file is : " << file->fileName();
   m_action->setCode(m_sourceEdit->document()->toPlainText().toAscii());  
  
   if(interpreter.isEmpty()) {
@@ -100,6 +99,7 @@ ScriptConsole::runScript()
   for(int i = 0; i < m_objectList->size() && i < m_stringList->size() ; i++) {
     m_action->addObject(m_objectList->at(i),m_stringList->at(i));
   }
+  
   m_action->addObject(this,"ScriptConsole"); 
   m_action->addObject(m_layout,"ConsoleLayout");
   connect(m_action,SIGNAL(finalized(Kross::Action*)),this ,SLOT(finished(Kross::Action*)));
@@ -131,19 +131,23 @@ ScriptConsole::interpreterActivated(const QString &selectedInterpreter)
     interpreter = Kross::Manager::self().interpreters().at(0);
     kDebug() << "Interpreter:" << interpreter;
    return;
-  } else { 
-    interpreter = selectedInterpreter;
+  } else { //make sure its really an interpreter
+    for(int i= 0; i < Kross::Manager::self().interpreters().size();i++) {
+      if( Kross::Manager::self().interpreters().at(i) == selectedInterpreter){
+	interpreter = selectedInterpreter;
+      } 
+    }
     kDebug() << "Interpreter:" << interpreter;
   }
 }
 
-//Blame Kross::Action
 void ScriptConsole::addObject(QObject* obj, QString str)
 {
   m_objectList->append(obj);
   m_stringList->append(str);
   kDebug() << "Add " << str << " as " << obj << " to the list";
 }
+
 #include "moc_scriptconsole.cpp"
 
 

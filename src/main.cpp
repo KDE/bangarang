@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
     KCmdLineArgs::init( argc, argv, &aboutData );
 
     KCmdLineOptions options;
-    options.add("console", ki18n( "Show Scripting Console" ));
     options.add("+[URL]", ki18n( "Play 'URL'" ));
     options.add("play-dvd", ki18n( "Play DVD Video" ));
     options.add("play-cd", ki18n( "Play CD Music" ));

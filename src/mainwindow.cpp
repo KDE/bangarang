@@ -208,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
-    
+
     //Setup Now Playing view
     m_nowPlaying = m_playlist->nowPlayingModel();
     m_nowPlayingDelegate = new NowPlayingDelegate(this);
@@ -279,14 +279,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_pausePressed = false;
     m_stopPressed = false;
     m_loadingProgress = 0;
-    on_showScriptingConsole();
+    
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
-        if(args->isSet("console")){
-	  kDebug() << "found console";
-	}
+      
       if (args->isSet("play-dvd")) {
             //Play DVD
             kDebug() << "playing DVD";
@@ -307,7 +305,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             QList<MediaItem> mediaList;
             mediaList << mediaItem;
             m_playlist->playMediaList(mediaList);
-        } else {
+	} else {
 	    //Play Url
             KUrl cmdLineKUrl = args->url(0);
             if (!cmdLineKUrl.isLocalFile()) {
@@ -360,7 +358,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 
-
+    m_scriptConsole = new ScriptConsole();
+    m_scriptConsole->addObject(m_videoWidget,"videoWidget");
+    m_scriptConsole->addObject(m_media,"media");
+    m_scriptConsole->addObject(m_actionsManager,"actionsManager");
+    m_scriptConsole->addObject(m_playlist,"playlist");
+    m_scriptConsole->addObject(m_sysTray,"sysTray");
+    m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
+    m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
+    m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
+    m_scriptConsole->addObject(this,"mainwindow");
 }
 
 MainWindow::~MainWindow()
@@ -709,6 +716,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addAction(m_actionsManager->showHideControls());
         m_menu->addSeparator();
     }
+    m_menu->addAction(m_actionsManager->showScriptingConsole());
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -1455,8 +1463,5 @@ Phonon::VideoWidget * MainWindow::videoWidget()
 
 void MainWindow::on_showScriptingConsole()
 {
-  m_scriptConsole = new ScriptConsole();
-  m_scriptConsole->addObject(m_videoWidget,"videoWidget");
-  m_scriptConsole->addObject(this,"mainwindow");
   m_scriptConsole->show();
 }
