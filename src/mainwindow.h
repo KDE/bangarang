@@ -21,6 +21,7 @@
 
 #include "config-bangarang.h"
 #include "platform/bangarangvideowidget.h"
+#include "scriptconsole.h"
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -41,6 +42,7 @@
 #include <QAction>
 #include <QDateTime>
 #include <QMainWindow>
+#include <kross/core/action.h>
 
 struct MediaItem;
 class MediaListProperties;
@@ -103,7 +105,6 @@ public:
     void setAboutData(KAboutData *aboutData);
     Phonon::VideoWidget * videoWidget();
     
-    
 public slots:
     void addSelectedToPlaylist();
     void on_fullScreen_toggled(bool fullScreen);
@@ -112,7 +113,7 @@ public slots:
     void removeSelectedFromPlaylist();
 
     void playPauseToggled();
-        
+    void on_showScriptingConsole();        
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -152,6 +153,7 @@ private:
     QAction * playAllAction;
     QAction * playSelectedAction;
     qreal m_volume;
+    ScriptConsole *m_scriptConsole;
     KAction *playPause;    
     void setupModel();
     KIcon addItemsIcon();
@@ -213,7 +215,7 @@ private slots:
     void volumeChanged(qreal newVolume);
     void skipForward(int i);
     void skipBackward(int i);
-protected:
+ protected:
     bool eventFilter(QObject *obj, QEvent *event);
     
 };
@@ -238,4 +240,5 @@ class MouseMoveDetector : public QObject
         }
         
 };
+
 #endif // MAINWINDOW_H

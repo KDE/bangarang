@@ -29,7 +29,7 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
-
+#include "scriptconsole.h"
 
 #include <KAction>
 #include <KCmdLineArgs>
@@ -55,7 +55,6 @@
 #include <Solid/OpticalDisc>
 #include <Solid/DeviceNotifier>
 #include <Nepomuk/ResourceManager>
-
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QtGlobal>
@@ -67,7 +66,7 @@
 #include <QFile>
 #include <QScrollBar>
 #include <QTimer>
- 
+#include <kross/core/action.h> 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     qRegisterMetaType<MediaItem>("MediaItem");
@@ -209,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
-    
+
     //Setup Now Playing view
     m_nowPlaying = m_playlist->nowPlayingModel();
     m_nowPlayingDelegate = new NowPlayingDelegate(this);
@@ -255,7 +254,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoWidget->contextMenu()->addSeparator();
     m_videoWidget->contextMenu()->addAction(m_actionsManager->showVideoSettings());
     m_videoWidget->contextMenu()->addAction(m_actionsManager->showHideControls());
-
+    
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -284,6 +283,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QList<MediaItem> mediaList;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
       for(int i = 0; i < args->count(); i++) {
         if (args->isSet("play-dvd")) {
@@ -359,6 +359,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_sysTray->contextMenu()->addAction(playPause);
     m_sysTray->contextMenu()->addAction(m_actionsManager->playNext());
 
+    m_scriptConsole = new ScriptConsole();
+    m_scriptConsole->addObject(m_videoWidget,"videoWidget");
+    m_scriptConsole->addObject(m_media,"media");
+    m_scriptConsole->addObject(m_actionsManager,"actionsManager");
+    m_scriptConsole->addObject(m_playlist,"playlist");
+    m_scriptConsole->addObject(m_sysTray,"sysTray");
+    m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
+    m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
+    m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
+    m_scriptConsole->addObject(this,"mainwindow");
 }
 
 MainWindow::~MainWindow()
@@ -707,6 +717,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addAction(m_actionsManager->showHideControls());
         m_menu->addSeparator();
     }
+    m_menu->addAction(m_actionsManager->showScriptingConsole());
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -1449,4 +1460,9 @@ InfoManager * MainWindow::infoManager()
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
+}
+
+void MainWindow::on_showScriptingConsole()
+{
+  m_scriptConsole->show();
 }
