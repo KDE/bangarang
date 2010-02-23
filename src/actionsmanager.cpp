@@ -161,14 +161,17 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Show Info View
     m_showInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
     connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
-    
+  
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
     connect(m_editShortcuts, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(hideShortcutsEditor()));
     ui->shortcutsEditor->addCollection(m_actionCollection);
-          
+    
+    //show the scriptingconsole
+    m_showScriptingConsole = new QAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
+    connect(m_showScriptingConsole,SIGNAL(triggered()),m_parent,SLOT(on_showScriptingConsole()));
 }
 
 ActionsManager::~ActionsManager()
@@ -265,6 +268,10 @@ QAction * ActionsManager::showInfo()
     return m_showInfo;
 }
 
+QAction * ActionsManager::showScriptingConsole()
+{
+  return m_showScriptingConsole;
+}
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
 {
     KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);

@@ -17,12 +17,15 @@ configure_file(config-bangarang.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-banga
 add_subdirectory( platform/nepomukwriter )
 
 INCLUDE_DIRECTORIES( 
+    ${QT_QTSCRIPT_INCLUDES}
     ${KDE4_INCLUDES} 
     ${KDEMULTIMEDIA_INCLUDE_DIR} 
     ${NEPOMUK_INCLUDE_DIR} 
     ${TAGLIB_INCLUDES} 
     ${TAGLIB_INCLUDES}/.. 
+    ${KROSS_INCLUDES}
     /usr/include/taglib 
+    
 )
 
 SET(BangarangSources 
@@ -37,6 +40,8 @@ SET(BangarangSources
     savedlistsmanager.cpp 
     actionsmanager.cpp
     videosettings.cpp
+    pluginexport.cpp
+    scriptconsole.cpp
     platform/mediaitemmodel.cpp
     platform/musiclistengine.cpp
     platform/videolistengine.cpp
@@ -66,17 +71,37 @@ KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
 KDE4_ADD_EXECUTABLE(bangarang ${BangarangSources})
 
 kde4_add_app_icon(BangarangSources "${CMAKE_CURRENT_SOURCE_DIR}/../icons/hi*.png")
-
+# Executable
 TARGET_LINK_LIBRARIES(bangarang 
     ${KDE4_KDEUI_LIBS} 
     ${KDE4_KPARTS_LIBS} 
     ${KDE4_PHONON_LIBS} 
+    ${KDE4_KROSSCORE_LIBS}
     ${NEPOMUK_LIBRARIES} 
     ${KDEMULTIMEDIA_LIBRARIES} 
+    ${KDE4_KROSSCORE_LIBS}
     ${SOPRANO_LIBRARIES} 
     ${TAGLIB_LIBRARIES} 
+    ${KDE4_KROSSUI_LIBS}
+    ${KDE4_KROSSCORE_LIBS}
     tag 
 )
+
+# # Plugin-Module
+# kde4_add_plugin(krossmodulebangarangmod  ${BangarangSources})
+# target_link_libraries( krossmodulebangarangmod
+#     ${KDE4_KDEUI_LIBS} 
+#     ${KDE4_KPARTS_LIBS} 
+#     ${KDE4_PHONON_LIBS} 
+#     ${KDE4_KROSSCORE_LIBS}
+#     ${NEPOMUK_LIBRARIES} 
+#     ${KDEMULTIMEDIA_LIBRARIES} 
+#     ${SOPRANO_LIBRARIES} 
+#     ${TAGLIB_LIBRARIES} 
+#     tag 
+#     ${KDE4_KROSSCORE_LIBS}
+#     )
+ 
 if( NOT HAVEKDE4_4 )
 TARGET_LINK_LIBRARIES(bangarang knotificationitem-1)
 endif( NOT HAVEKDE4_4 )
@@ -84,6 +109,7 @@ endif( NOT HAVEKDE4_4 )
 ########### install files ###############
 
 install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})
-#install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang)
+# install(TARGETS  krossmodulebangarangmod DESTINATION ${PLUGIN_INSTALL_DIR}) # modules one might want to link against in c++ plugins (using dynamic libload magic) 
+#install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins 
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})
 kde4_install_icons( ${ICON_INSTALL_DIR}   )
