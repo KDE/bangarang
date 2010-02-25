@@ -29,7 +29,7 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
-
+#include "scriptconsole.h"
 
 #include <KAction>
 #include <KCmdLineArgs>
@@ -55,7 +55,6 @@
 #include <Solid/OpticalDisc>
 #include <Solid/DeviceNotifier>
 #include <Nepomuk/ResourceManager>
-
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QtGlobal>
@@ -67,7 +66,7 @@
 #include <QFile>
 #include <QScrollBar>
 #include <QTimer>
- 
+#include <kross/core/action.h> 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     qRegisterMetaType<MediaItem>("MediaItem");
@@ -209,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
-    
+
     //Setup Now Playing view
     m_nowPlaying = m_playlist->nowPlayingModel();
     m_nowPlayingDelegate = new NowPlayingDelegate(this);
@@ -260,45 +259,48 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_stopPressed = false;
     m_loadingProgress = 0;
     
+    QList<MediaItem> mediaList;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
-        if (args->isSet("play-dvd")) {
-            //Play DVD
-            kDebug() << "playing DVD";
-            MediaItem mediaItem;
-            mediaItem.title = i18n("DVD Video");
-            mediaItem.url = "dvdvideo://";
-            mediaItem.type = "Category";
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
-        } else if (args->isSet("play-cd")) {
-            //Play CD
-            kDebug() << "playing CD";
-            MediaItem mediaItem;
-            mediaItem.title = i18n("Audio CD");
-            mediaItem.url = "cdaudio://";
-            mediaItem.type = "Category";
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
-        } else {
-            //Play Url
-            KUrl cmdLineKUrl = args->url(0);
-            if (!cmdLineKUrl.isLocalFile()) {
-                QString tmpFile;
-                if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
-                    //KMessageBox::information(this,tmpFile);
-                    cmdLineKUrl = KUrl(tmpFile);
-                } else {
-                    cmdLineKUrl = KUrl();
+        for(int i = 0; i < args->count(); i++) {
+            if (args->isSet("play-dvd")) {
+                //Play DVD
+                kDebug() << "playing DVD";
+                MediaItem mediaItem;
+                mediaItem.title = i18n("DVD Video");
+                mediaItem.url = "dvdvideo://";
+                mediaItem.type = "Category";
+                QList<MediaItem> mediaList;
+                mediaList << mediaItem;
+                m_playlist->playMediaList(mediaList);
+            } else if (args->isSet("play-cd")) {
+                //Play CD
+                kDebug() << "playing CD";
+                MediaItem mediaItem;
+                mediaItem.title = i18n("Audio CD");
+                mediaItem.url = "cdaudio://";
+                mediaItem.type = "Category";
+                QList<MediaItem> mediaList;
+                mediaList << mediaItem;
+                m_playlist->playMediaList(mediaList);
+            } else {
+                //Play Url
+                KUrl cmdLineKUrl = args->url(i);
+                if (!cmdLineKUrl.isLocalFile()) {
+                    QString tmpFile;
+                    if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
+                        //KMessageBox::information(this,tmpFile);
+                        cmdLineKUrl = KUrl(tmpFile);
+                    } else {
+                        cmdLineKUrl = KUrl();
+                    }
                 }
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
+                mediaList << mediaItem;
+                m_playlist->playMediaList(mediaList);
             }
-            MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
-            QList<MediaItem> mediaList;
-            mediaList << mediaItem;
-            m_playlist->playMediaList(mediaList);
         }
     } else {
         if (m_nepomukInited) {
@@ -315,7 +317,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             KMessageBox::information(this, i18n("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), i18n("Bangarang"), i18n("Don't show this message again"));
         }
     }
-    
     
     //Set default media list
     ui->mediaLists->setCurrentIndex(0);
@@ -334,6 +335,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->setContextMenu(m_actionsManager->notifierMenu());
+
+    m_scriptConsole = new ScriptConsole();
+    m_scriptConsole->addObject(m_videoWidget,"videoWidget");
+    m_scriptConsole->addObject(m_media,"media");
+    m_scriptConsole->addObject(m_actionsManager,"actionsManager");
+    m_scriptConsole->addObject(m_playlist,"playlist");
+    m_scriptConsole->addObject(m_sysTray,"sysTray");
+    m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
+    m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
+    m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
+    m_scriptConsole->addObject(this,"mainwindow");
 }
 
 MainWindow::~MainWindow()
@@ -655,6 +667,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addAction(m_actionsManager->showHideControls());
         m_menu->addSeparator();
     }
+    m_menu->addAction(m_actionsManager->showScriptingConsole());
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -1398,4 +1411,9 @@ InfoManager * MainWindow::infoManager()
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
+}
+
+ScriptConsole *MainWindow::scriptConsole()
+{
+  return m_scriptConsole;
 }

@@ -168,7 +168,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Show Info View
     m_showInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
     connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
-    
+  
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -176,6 +176,10 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(hideShortcutsEditor()));
     ui->shortcutsEditor->addCollection(m_actionCollection);
     
+    //Show the Scripting Console
+    m_showScriptingConsole = new QAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
+    connect(m_showScriptingConsole,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
+        
     m_nowPlayingContextMenu = new QMenu(m_parent);
     m_notifierMenu = new KMenu(m_parent);
 }
@@ -282,6 +286,11 @@ QAction * ActionsManager::showNowPlayingInfo()
 QAction * ActionsManager::showInfo()
 {
     return m_showInfo;
+}
+
+QAction * ActionsManager::showScriptingConsole()
+{
+  return m_showScriptingConsole;
 }
 
 QMenu * ActionsManager::mediaViewMenu(bool showAbout)
@@ -598,4 +607,9 @@ void ActionsManager::showInfoForNowPlaying()
         MediaItem mediaItem = nowPlayingModel->mediaItemAt(0);
         m_parent->infoManager()->showInfoViewForMediaItem(mediaItem);
     }
+}
+
+void ActionsManager::showScriptConsoleSlot()
+{
+    m_parent->scriptConsole()->show();
 }
