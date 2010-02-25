@@ -21,13 +21,6 @@
 #ifndef  IMDBQUERYENGINE_H
 #define  IMDBQUERYENGINE_H
 
-#include <QHttp>
-#include <QBuffer>
-#include <QUrl>
-#include <QDate>
-#include <QTime>
-#include <QImage>
-
 /**
  * This class is for getting data from imdb.com for a particular film
  * Following things can be gathered with this class:
@@ -64,6 +57,13 @@
  *
  * @version 1.0.5~beta
  */
+
+#include <QHttp>
+#include <QBuffer>
+#include <QUrl>
+#include <QDate>
+#include <QTime>
+#include <QImage>
 
 class IMDBQueryEngine : public QHttp
 {
