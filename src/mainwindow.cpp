@@ -93,8 +93,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->contextStack->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->showInfo->setVisible(false);
-    ui->saveInfo->setVisible(false);
-    ui->sortList->setVisible(false);
     ui->configureAudioList->setVisible(false);
     ui->configureVideoList->setVisible(false);
     ui->semanticsHolder->setVisible(false);
@@ -382,8 +380,6 @@ void MainWindow::on_Filter_returnPressed()
         m_mediaListPropertiesHistory.clear();
         ui->previous->setVisible(false);
         ui->mediaViewHolder->setCurrentIndex(0);
-        ui->saveInfo->setVisible(false);
-        ui->showInfo->setVisible(false);
     }
 }
 
@@ -506,15 +502,12 @@ void MainWindow::on_previous_clicked()
         ui->playSelected->setVisible(false);
     } else {
         ui->mediaViewHolder->setCurrentIndex(0);
-        ui->saveInfo->setVisible(false);
         if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
             ui->playSelected->setVisible(true);
             ui->playAll->setVisible(false);
-            ui->showInfo->setVisible(true);
         } else {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
-            ui->showInfo->setVisible(false);
         }
         if (m_mediaListPropertiesHistory.count() > 0) {
             ui->previous->setVisible(true);
@@ -584,8 +577,6 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
-            ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);
         }
     }
 }
@@ -602,7 +593,7 @@ void MainWindow::on_clearPlaylist_clicked()
         ui->nowPlaying->setIcon(KIcon("tool-animator"));
         ui->nowPlaying->setText(i18n("Now Playing"));
     }
-    ui->clearPlaylist->setIcon(turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
+    ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
 }
 
 void MainWindow::on_shuffle_clicked()
@@ -615,7 +606,7 @@ void MainWindow::on_shuffle_clicked()
     } else {
         m_playlist->setMode(Playlist::Normal);
         ui->shuffle->setToolTip(i18n("Turn on Shuffle"));
-        ui->shuffle->setIcon(turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
+        ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     }
 }
 
@@ -627,7 +618,7 @@ void MainWindow::on_repeat_clicked()
         ui->repeat->setIcon(KIcon("bangarang-repeat"));
         ui->repeat->setToolTip(i18n("<b>Repeat On</b><br>Click to turn off repeat"));
     } else {
-        ui->repeat->setIcon(turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
+        ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
         ui->repeat->setToolTip(i18n("Turn on Repeat"));
     }    
 }
@@ -646,7 +637,7 @@ void MainWindow::on_showQueue_clicked()
         ui->playlistView->setDragDropMode(QAbstractItemView::DragDrop);
         ui->showQueue->setToolTip(i18n("Show Upcoming"));
         playlistChanged();
-        ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
+        ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     }
 }
 
@@ -677,13 +668,6 @@ void MainWindow::on_showMediaViewMenu_clicked()
 {
     QMenu * menu = m_actionsManager->mediaViewMenu(true);
     QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
-    menu->exec(menuLocation);
-}
-
-void MainWindow::on_showMediaViewMenu2_clicked()
-{
-    QMenu * menu = m_actionsManager->mediaViewMenu(true);
-    QPoint menuLocation = ui->showMediaViewMenu2->mapToGlobal(QPoint(0,ui->showMediaViewMenu2->height()));
     menu->exec(menuLocation);
 }
 
@@ -851,7 +835,6 @@ void MainWindow::mediaListChanged()
             ui->mediaView->header()->hideSection(1);
             ui->playAll->setVisible(false);
         }
-        ui->saveInfo->setVisible(false);
     }
 }
 
@@ -895,25 +878,12 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
             ui->playSelected->setVisible(true);
         }
         ui->playAll->setVisible(false);
-        QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
-        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            if (!m_mediaItemModel->mediaItemAt(0).url.startsWith("DVDTRACK") && !m_mediaItemModel->mediaItemAt(0).url.startsWith("CDTRACK")) {
-                if (!ui->semanticsHolder->isVisible()) {
-                    ui->showInfo->setVisible(true);
-                }
-            }
-            if (ui->semanticsStack->isVisible()) {
-                infoManager()->loadSelectedInfo();
-            }
-        }
     } else {
         if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
         }
-        ui->showInfo->setVisible(false);
     }
-    ui->saveInfo->setVisible(false);
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
 }
@@ -933,8 +903,6 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
-            ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);
         }
     }
     Q_UNUSED(deselected);
@@ -963,8 +931,6 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
-            ui->saveInfo->setVisible(false);
-            ui->showInfo->setVisible(false);            
         }
     }
     Q_UNUSED(deselected);
@@ -1205,15 +1171,10 @@ void MainWindow::setupIcons()
     ui->vslsSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
-    ui->sortList->setIcon(KIcon("view-sort-ascending"));
     ui->playSelected->setIcon(KIcon("media-playback-start"));
     ui->playAll->setIcon(KIcon("media-playback-start"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
-    ui->saveInfo->setIcon(KIcon("document-save"));
     ui->showInfo->setIcon(KIcon("help-about"));
-    
-    //Info View Icons
-    ui->hideInfo->setIcon(turnIconOff(KIcon("help-about"), QSize(16, 16)));
     
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
@@ -1225,10 +1186,10 @@ void MainWindow::setupIcons()
     ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
     
     //Playlist View
-    ui->repeat->setIcon(turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
-    ui->shuffle->setIcon(turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
-    ui->showQueue->setIcon(turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
-    ui->clearPlaylist->setIcon(turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
+    ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
+    ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
+    ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
+    ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
 }
 
 void MainWindow::setupActions()
@@ -1250,13 +1211,6 @@ void MainWindow::showApplicationBanner()
     applicationBanner.url = "-";
     m_nowPlaying->loadMediaItem(applicationBanner, true);
     ui->viewerStack->setCurrentIndex(0);
-}
-
-KIcon MainWindow::turnIconOff(KIcon icon, QSize size)
-{
-    QImage image = KIcon(icon).pixmap(size).toImage();
-    KIconEffect::toGray(image, 0.8);
-    return KIcon(QPixmap::fromImage(image));
 }
 
 void MainWindow::updateCachedDevicesList()
@@ -1350,8 +1304,8 @@ void MainWindow::updateCustomColors()
     //Update custom colors in Media Lists View
     QPalette viewPalette = ui->mediaViewHolder->palette();
     viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::Base));
-    ui->mediaView->setPalette(viewPalette);
-    ui->semanticsStack->setPalette(viewPalette);
+    ui->mediaListHolder->setPalette(viewPalette);
+    ui->semanticsHolder->setPalette(viewPalette);
     
 }
 

@@ -63,11 +63,11 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoItemView->setItemDelegate(infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     
-    connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(showInfoView()));
-    connect(ui->hideInfo, SIGNAL(clicked()), this, SLOT(hideInfoView()));
+    connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
+    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
 }
 
 InfoManager::~InfoManager()
@@ -78,20 +78,60 @@ InfoManager::~InfoManager()
 //---------------------
 //-- UI Widget Slots --
 //---------------------
+void InfoManager::toggleInfoView()
+{
+    bool makeVisible = !ui->semanticsHolder->isVisible();
+    ui->semanticsHolder->setVisible(makeVisible);
+    
+    if (makeVisible) {
+        loadSelectedInfo();
+        ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
+        ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
+    } else {
+        ui->showInfo->setToolTip(i18n("Show Information"));
+        ui->showInfo->setIcon(KIcon("help-about"));
+    } 
+}
+
 void InfoManager::showInfoView()
 {
+    ui->semanticsHolder->setVisible(true);
     loadSelectedInfo();
-    ui->showInfo->setVisible(false);
-    ui->showMediaViewMenu->setVisible(false);
 }
 
 void InfoManager::hideInfoView()
 {
     ui->semanticsHolder->setVisible(false);
-    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-        ui->showInfo->setVisible(true);
+}
+
+void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
+{
+    //Conditionally show the showInfo button
+    //NOTE: This will eventually be whittled down to nothing as we add more info views
+    //to the semantics stack.
+    if (selected.indexes().count() > 0) {
+        int row = selected.indexes().at(0).row();
+        MediaItem firstItem = m_parent->m_mediaItemModel->mediaItemAt(row);
+        QString listItemType = firstItem.type;
+        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
+            if (!firstItem.url.startsWith("DVDTRACK") && !firstItem.url.startsWith("CDTRACK")) {
+                ui->showInfo->setVisible(true);
+            } else {
+                ui->showInfo->setVisible(false);
+            }
+        } else {
+            ui->showInfo->setVisible(false);
+        }
+    } else {
+        ui->showInfo->setVisible(false);
     }
-        ui->showMediaViewMenu->setVisible(true);
+    
+    //Load info
+    if (ui->semanticsHolder->isVisible()) {
+        loadSelectedInfo();
+    }
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
 }
 
 void InfoManager::saveItemInfo()
@@ -154,7 +194,7 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 void InfoManager::loadSelectedInfo()
 {
     //Show the Info Item page
-    ui->semanticsHolder->setVisible(true);
+    //NOTE:For each selection type a page will be added to the semantics stack
     ui->semanticsStack->setCurrentIndex(1);
     
     //Get selected items

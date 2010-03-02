@@ -159,7 +159,6 @@ private:
     void setupIcons();
     void setupActions();
     void showApplicationBanner();
-    KIcon turnIconOff(KIcon icon, QSize size);
     void updateCachedDevicesList();
 
 #ifdef HAVE_KSTATUSNOTIFIERITEM
@@ -188,7 +187,6 @@ private slots:
     void on_Filter_returnPressed();
     void on_showMenu_clicked();
     void on_showMediaViewMenu_clicked();
-    void on_showMediaViewMenu2_clicked();
     void updateSeekTime(qint64 time);
     void updateMuteStatus(bool muted);
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);

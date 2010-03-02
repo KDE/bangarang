@@ -22,6 +22,7 @@
 #include <QtCore>
 #include <QStandardItemModel>
 #include <QItemDelegate>
+#include <QAbstractItemView>
 
 
 namespace Ui
@@ -46,9 +47,11 @@ class InfoManager : public QObject
         ~InfoManager();
         
     public slots:
-        void saveItemInfo();
+        void toggleInfoView();
         void showInfoView();
         void hideInfoView();
+        void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+        void saveItemInfo();
         void loadSelectedInfo();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void removeSelectedItemsInfo();
