@@ -34,6 +34,8 @@ class MediaItemModel;
 class InfoItemModel;
 class MediaItem;
 class InfoItemDelegate;
+class InfoArtistModel;
+class InfoArtistDelegate;
 
 /*
  * This class provides a user interface for updating information associated with MediaItems
@@ -61,6 +63,8 @@ class InfoManager : public QObject
         Ui::MainWindowClass *ui;
         InfoItemModel *m_infoItemModel;
         InfoItemDelegate *m_infoItemDelegate;
+        InfoArtistModel *m_infoArtistModel;
+        InfoArtistDelegate *m_infoArtistDelegate;
         bool m_nepomukInited;
         QList<MediaItem> m_infoMediaList;
 

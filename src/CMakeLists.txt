@@ -37,6 +37,7 @@ SET(BangarangSources
     mediaview.cpp 
     infomanager.cpp 
     infoitemdelegate.cpp
+    infoartistdelegate.cpp
     savedlistsmanager.cpp 
     actionsmanager.cpp
     videosettings.cpp
@@ -65,6 +66,7 @@ SET(BangarangSources
     platform/audioclipslistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
+    platform/infoartistmodel.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

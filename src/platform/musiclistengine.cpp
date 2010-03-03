@@ -123,8 +123,11 @@ void MusicListEngine::run()
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
                     mediaItem.title = artist;
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Artist");
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("system-users");
+                    mediaItem.fields["fullName"] = artist;
+                    mediaItem.fields["description"] = QString("This artist is really fascinating.  They grew up in Wonderfulville in the 60s learning to live the hippie life. They migrated to Pissystrum in Bilburn where they started playing in a coffee house by the local university.");
                     mediaList.append(mediaItem);
                 }
                 ++i;

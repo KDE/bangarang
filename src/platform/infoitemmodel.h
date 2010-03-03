@@ -62,4 +62,4 @@ class InfoItemModel : public QStandardItemModel
         void checkInfoModified(QStandardItem *changedItem);
 };
 
-#endif // INFOITEMDELEGATE_H
+#endif // INFOITEMMODEL_H
