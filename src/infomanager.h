@@ -71,5 +71,6 @@ class InfoManager : public QObject
     private slots:
         void updateItemViewLayout();
         void cancelItemEdit();
+        void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
 };
 #endif //INFOMANAGER_H

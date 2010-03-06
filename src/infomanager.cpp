@@ -77,6 +77,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
+    connect(m_infoArtistModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
 }
 
 InfoManager::~InfoManager()
@@ -230,13 +232,21 @@ void InfoManager::loadSelectedInfo()
     if (mediaList.at(0).type == "Audio" || mediaList.at(0).type == "Video") {
         m_infoItemModel->loadInfo(mediaList);
         ui->semanticsStack->setCurrentIndex(1);
+        updateItemViewLayout();
     } else if (mediaList.at(0).type == "Category") {
         if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
             m_infoArtistModel->loadInfo(mediaList);
             ui->semanticsStack->setCurrentIndex(0);
+            updateItemViewLayout();
+            
+            //NOTE:This following is present here for development and debugging purposes only.
+            // The expected workflow is to display info contained in the nepomuk and
+            // allow use of downloadInfo to populate nepomuk. We could provide
+            // automatic display of downloaded info as an option...
+            m_infoArtistModel->downloadInfo();
+            updateItemViewLayout();
         }
     }
-    updateItemViewLayout();
 }
 
 void InfoManager::updateItemViewLayout()
@@ -249,4 +259,13 @@ void InfoManager::updateItemViewLayout()
     }
     ui->infoItemView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->infoItemView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->infoArtistView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->infoArtistView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+}
+
+void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
+{
+    updateItemViewLayout();
+    Q_UNUSED(topleft);
+    Q_UNUSED(bottomright);
 }
