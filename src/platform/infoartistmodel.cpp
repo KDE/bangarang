@@ -264,66 +264,6 @@ void InfoArtistModel::getDBPediaInfo(const QString &artistName)
               SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
               this,
               SLOT(dbPediaDownloadComplete(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
-     return;
-              
-     QString resultFile;
-     if ( KIO::NetAccess::download(dbPediaUrl, resultFile, 0)) {
-         QFile file(resultFile);
-         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-             kDebug() << QString("Couldn't open dbpedia query result file:%1").arg(resultFile);
-             return;
-         }
-         QTextStream in(&file);
-         int fields = 3;
-         QString line;
-         
-         //read past headers
-         for (int i = 0; i < fields + 4; i++) {
-             line = in.readLine();
-         }
-         
-         //read fields
-         if (!in.atEnd()) {
-             line = in.readLine(); //read past artist name - we already have it
-         }
-         
-         //Get Description
-         if (!in.atEnd()) {
-             QString dbPediaDescription = in.readLine().trimmed(); 
-             dbPediaDescription.remove(0, 4); //remove <tr>
-             dbPediaDescription.chop(5);
-             dbPediaDescription = dbPediaDescription.trimmed(); //remove </tr>
-             if (!dbPediaDescription.isEmpty()) {
-                 item(2)->setData(dbPediaDescription, Qt::DisplayRole);
-                 item(2)->setData(dbPediaDescription, Qt::EditRole);
-             } else {
-                 kDebug() << "No description found";
-             } 
-         }
-         
-         //Get thumbnail
-         if (!in.atEnd()) {
-             QString thumbnailUrlString = in.readLine().trimmed(); //read past artist name - we already have it
-             thumbnailUrlString.remove(0, 4); //remove <tr>
-             thumbnailUrlString.chop(5); //remove </tr>
-             KUrl thumbnailUrl = KUrl(thumbnailUrlString);
-             if (thumbnailUrl.isValid()) {
-                 QString thumbnailFile;
-                 QPixmap dbPediaThumbnail = QPixmap();
-                 if (KIO::NetAccess::download(thumbnailUrl, thumbnailFile, 0)) {
-                     kDebug() << thumbnailFile;
-                     dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                 }
-                 if (!dbPediaThumbnail.isNull())  {
-                     item(0)->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
-                 }
-             } else {
-                 kDebug() << "No thumbnail found";
-             }
-         }
-     } else {
-         kDebug() << "dbPedia query unsuccessful";
-     }
 }
 
 
