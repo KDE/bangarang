@@ -244,7 +244,6 @@ void InfoManager::loadSelectedInfo()
             // allow use of downloadInfo to populate nepomuk. We could provide
             // automatic display of downloaded info as an option...
             m_infoArtistModel->downloadInfo();
-            updateItemViewLayout();
         }
     }
 }
