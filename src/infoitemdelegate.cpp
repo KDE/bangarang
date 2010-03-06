@@ -179,7 +179,8 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     
     int height;
     if (field == "artwork") {
-        height = 128 + 2*padding;
+        QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
+        height = artwork.actualSize(QSize(128,128)).height() + 4*padding;
     } else {
         QFont textFont = option.font;
         int availableWidth = m_view->width() - 100 - 2*padding;
