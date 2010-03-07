@@ -173,7 +173,7 @@ void MediaListsEngine::run()
             mediaItem.artwork = KIcon("video-x-generic");
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
-            mediaItem.url = "tag://?audio";
+            mediaItem.url = "tag://?video";
             mediaItem.artwork = KIcon("nepomuk");
             mediaList << mediaItem;
 
