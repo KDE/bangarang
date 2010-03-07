@@ -78,6 +78,10 @@ void MediaListsEngine::run()
             mediaItem.url = "audiostreams://";
             mediaItem.artwork = KIcon("x-media-podcast");
             mediaList << mediaItem;
+            mediaItem.title = i18n("Tags");
+            mediaItem.url = "tag://?audio";
+            mediaItem.artwork = KIcon("nepomuk");
+            mediaList << mediaItem;
         }
         
         //Show Audio CD if present
@@ -168,6 +172,11 @@ void MediaListsEngine::run()
             mediaItem.url = "video://clips";
             mediaItem.artwork = KIcon("video-x-generic");
             mediaList << mediaItem;
+            mediaItem.title = i18n("Tags");
+            mediaItem.url = "tag://?audio";
+            mediaItem.artwork = KIcon("nepomuk");
+            mediaList << mediaItem;
+
         }
         
         //Show DVD if present

@@ -104,6 +104,7 @@ void AudioClipsListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+	    query.addCondition(mediaVocabulary.hasTag(MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), engineFilter, MediaQuery::Contains);
             query.addFilterOr();

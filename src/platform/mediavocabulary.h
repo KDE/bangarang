@@ -81,6 +81,7 @@ class MediaVocabulary {
         QUrl releaseDate();
         QUrl rating();
         QUrl ncoFullname();
+	QUrl tag();
         
         //These properties are applicable to Music
         QUrl musicArtist();
@@ -126,6 +127,9 @@ class MediaVocabulary {
         QString hasTitle(MediaQuery::Match match = MediaQuery::Required, 
                          const QString &title = QString(), 
                          MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasTag(MediaQuery::Match match = MediaQuery::Required,
+                       const QString &tag_url = QString(),
+		       MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasDescription(MediaQuery::Match match = MediaQuery::Required, 
                                const QString &description = QString(), 
                                MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -211,6 +215,7 @@ class MediaVocabulary {
         static QString genreBinding();
         static QString releaseDateBinding();
         static QString ratingBinding();
+	static QString tagBinding();
         
         static QString musicArtistBinding();
         static QString musicArtistNameBinding();

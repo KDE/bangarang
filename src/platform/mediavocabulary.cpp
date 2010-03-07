@@ -107,6 +107,7 @@ int MediaVocabulary::videoVocabulary()
     return m_videoVocabulary;
 }
 
+
 QUrl MediaVocabulary::mediaNamespace(int vocabulary)
 {
     QUrl returnUrl = QUrl();
@@ -263,6 +264,13 @@ QUrl MediaVocabulary::title()
     }
     
     return returnUrl;
+}
+
+QUrl MediaVocabulary::tag()
+{
+  QUrl returnUrl = QUrl();
+  returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag");
+  return returnUrl;
 }
 
 QUrl MediaVocabulary::description()
@@ -785,6 +793,16 @@ QString MediaVocabulary::hasTitle(MediaQuery::Match match,
     return statement;
 }
 
+QString MediaVocabulary::hasTag(MediaQuery::Match match,
+                                const QString &tag_url,
+                                MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = QString(" ?%1 %2 %3 . ").arg(resourceBinding).arg(Soprano::Node::resourceToN3(MediaVocabulary::tag().toString())).arg(tag_url);  
+    
+    return statement;
+}
+
 QString MediaVocabulary::hasDescription(MediaQuery::Match match, 
                                         const QString &description, 
                                         MediaQuery::Constraint constraint)
@@ -1211,6 +1229,11 @@ QString MediaVocabulary::mediaResourceUrlBinding()
 QString MediaVocabulary::titleBinding()
 {
     return "title";
+}
+
+QString MediaVocabulary::tagBinding()
+{
+    return "tag";
 }
 
 QString MediaVocabulary::descriptionBinding()
