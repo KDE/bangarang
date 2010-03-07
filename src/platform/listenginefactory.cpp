@@ -29,12 +29,13 @@
 #include "semanticslistengine.h"
 #include "cachelistengine.h"
 #include "audioclipslistengine.h"
+#include "taglistengine.h"	 
 #include <KDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://" << "tag://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -296,6 +297,24 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
             m_audioClipsListEngines << audioClipsListEngine;
         }
         return audioClipsListEngine;        
+    }
+    else if (engine.toLower() == "tag://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+       TagListEngine * tagListEngine;
+        for (int i = 0; i < m_tagListEngines.count(); ++i) {
+            if (!m_tagListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                tagListEngine = m_tagListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            tagListEngine = new TagListEngine(this);
+            tagListEngine->setModel(m_parent);
+            m_tagListEngines << tagListEngine;
+        }
+        return tagListEngine;        
     }
     return new ListEngine(this);
 }
