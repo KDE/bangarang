@@ -21,6 +21,7 @@
 
 #include <KIcon>
 #include <kio/copyjob.h>
+#include <Soprano/BindingSet>
 #include <QtCore>
 #include <QStandardItemModel>
 
@@ -65,7 +66,7 @@ class InfoArtistModel : public QStandardItemModel
         
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);
-        void dbPediaDownloadComplete(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
+        void gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
 };
 
 #endif // INFOARTISTMODEL_H

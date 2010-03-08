@@ -19,6 +19,7 @@
 #include "infoartistmodel.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
+#include "dbpediaquery.h"
 #include <KLocale>
 #include <KDebug>
 #include <KUrl>
@@ -228,109 +229,38 @@ void InfoArtistModel::saveFileMetaData(QList<MediaItem> mediaList)
 
 void InfoArtistModel::getDBPediaInfo(const QString &artistName)
 {
-    QString dbPediaSPARQL = QString("PREFIX owl: <http://www.w3.org/2002/07/owl#> "
-                            "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
-                            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-                            "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-                            "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
-                            "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
-                            "PREFIX : <http://dbpedia.org/resource/> "
-                            "PREFIX dbpedia2: <http://dbpedia.org/property/> "
-                            "PREFIX dbpedia: <http://dbpedia.org/> "
-                            "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
-                            "PREFIX dbo: <http://dbpedia.org/ontology/> "
-                            "SELECT DISTINCT ?name ?description ?thumbnail "
-                            "WHERE { "
-                            "{ ?person rdf:type dbo:Band . } "
-                            "UNION "
-                            "{?person rdf:type dbo:MusicalArtist . } "
-                            "?person foaf:name ?name . "
-                            "?person rdfs:comment ?description . "
-                            "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
-                            "FILTER (?name ='%1') . "
-                            "FILTER (LANG(?description) = 'en') . "
-                            "} "
-                            "ORDER BY ?name ")
-                            .arg(artistName);
-     dbPediaSPARQL = QString(QUrl::toPercentEncoding(dbPediaSPARQL));
-     QString dbPediaUrlString= QString("http://dbpedia.org/sparql/?query=%1").arg(dbPediaSPARQL);
-     KUrl dbPediaUrl = KUrl(dbPediaUrlString);
-     
-     m_dbPediaDownloadUrl = KUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1.tmp").arg(artistName.trimmed()), true));
-     QFile downloadTarget(m_dbPediaDownloadUrl.path());
-     downloadTarget.remove();
-     KIO::CopyJob *copyJob = KIO::copy(dbPediaUrl, m_dbPediaDownloadUrl, KIO::Overwrite | KIO::HideProgressInfo);
-     connect (copyJob, 
-              SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
-              this,
-              SLOT(dbPediaDownloadComplete(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+    DBPediaQuery *query = new DBPediaQuery(this);
+    connect (query, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+    query->getArtistInfo(artistName);
+    
 }
 
-
-
-void InfoArtistModel::dbPediaDownloadComplete(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
+void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
-    Q_UNUSED(job);
-    Q_UNUSED(mtime);
-    Q_UNUSED(directory);
-    Q_UNUSED(renamed);
-    
-    QFile file(to.path());
-    file.rename(QString("consumable%1").arg(file.fileName()));
-    
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        kDebug() << QString("Couldn't open dbpedia query result file:%1").arg(from.path());
-        return;
-    }
-    QTextStream in(&file);
-    int fields = 3;
-    QString line;
-
-    //read past headers
-    for (int i = 0; i < fields + 4; i++) {
-        line = in.readLine();
-    }
-
-    //read fields
-    if (!in.atEnd()) {
-        line = in.readLine(); //read past artist name - we already have it
-    }
-
-    //Get Description
-    if (!in.atEnd()) {
-        QString dbPediaDescription = in.readLine().trimmed(); 
-        dbPediaDescription.remove(0, 4); //remove <tr>
-        dbPediaDescription.chop(5);
-        dbPediaDescription = dbPediaDescription.trimmed(); //remove </tr>
-        if (!dbPediaDescription.isEmpty()) {
-            item(2)->setData(dbPediaDescription, Qt::DisplayRole);
-            item(2)->setData(dbPediaDescription, Qt::EditRole);
-        } else {
-            kDebug() << "No description found";
-        } 
-    }
-
-    //Get thumbnail
-    if (!in.atEnd()) {
-        QString thumbnailUrlString = in.readLine().trimmed(); //read past artist name - we already have it
-        thumbnailUrlString.remove(0, 4); //remove <tr>
-        thumbnailUrlString.chop(5); //remove </tr>
-        KUrl thumbnailUrl = KUrl(thumbnailUrlString);
-        if (thumbnailUrl.isValid()) {
-            QString thumbnailFile;
-            QPixmap dbPediaThumbnail = QPixmap();
-            if (KIO::NetAccess::download(thumbnailUrl, thumbnailFile, 0)) {
-                kDebug() << thumbnailFile;
-                dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QString keyForCurrentData = QString("Artist:%1").arg(commonValue("fullName").toString());
+    if (successful && requestKey == keyForCurrentData) {
+        if (results.count() > 0) {
+            Soprano::BindingSet binding = results.at(0);
+            
+            //Get Description
+            QString description = binding.value("description").literal().toString();
+            item(2)->setData(description, Qt::DisplayRole);
+            item(2)->setData(description, Qt::EditRole);
+            
+            //Get Thumbnail
+            KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
+            if (thumbnailUrl.isValid()) {
+                QString thumbnailFile;
+                QPixmap dbPediaThumbnail = QPixmap();
+                //TODO:This should probably be asynchronous
+                if (KIO::NetAccess::download(thumbnailUrl, thumbnailFile, 0)) {
+                    kDebug() << thumbnailFile;
+                    dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                }
+                if (!dbPediaThumbnail.isNull())  {
+                    item(0)->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
+                }
             }
-            if (!dbPediaThumbnail.isNull())  {
-                item(0)->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
-            }
-        } else {
-            kDebug() << "No thumbnail found";
         }
     }
-    
-    file.remove();
-
 }

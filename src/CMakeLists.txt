@@ -67,6 +67,7 @@ SET(BangarangSources
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
     platform/infoartistmodel.cpp
+    platform/dbpediaquery.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
