@@ -798,7 +798,15 @@ QString MediaVocabulary::hasTag(MediaQuery::Match match,
                                 MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = QString(" ?%1 %2 %3 . ").arg(resourceBinding).arg(Soprano::Node::resourceToN3(MediaVocabulary::tag().toString())).arg(tag_url);  
+    QString propertyBinding = tagBinding();
+    QString statement = MediaQuery::hasProperty(propertyBinding, MediaVocabulary::tag(), propertyBinding);
+    
+    if(!tag_url.isEmpty()) {
+      statement += QString("Filter ") + MediaQuery::filterConstraint(propertyBinding, tag_url, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+      statement = MediaQuery::addOptional(statement);
+    }
     
     return statement;
 }
