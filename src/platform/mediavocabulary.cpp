@@ -799,10 +799,10 @@ QString MediaVocabulary::hasTag(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = tagBinding();
-    QString statement = MediaQuery::hasProperty(propertyBinding, MediaVocabulary::tag(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::tag(), propertyBinding);
     
     if(!tag_url.isEmpty()) {
-      statement += QString("Filter ") + MediaQuery::filterConstraint(propertyBinding, tag_url, constraint);
+      statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, tag_url, constraint);
     }
     if (match == MediaQuery::Optional) {
       statement = MediaQuery::addOptional(statement);
