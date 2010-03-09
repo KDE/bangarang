@@ -36,6 +36,7 @@
 #include <QApplication>
 #include <QTime>
 #include <taglib/fileref.h>
+#include <QDebug>
 
 TagListEngine::TagListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
@@ -91,8 +92,10 @@ void TagListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 } 
-                query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required,Soprano::Node::resourceToN3(Nepomuk::Tag(engineArg).resourceUri())));
+                query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required,Nepomuk::Tag(engineArg).resourceUri().toString()));
 		query.endWhere();
+		kDebug() << "taglistengine: " << query.query();
+		qDebug() << query.query();
 		Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
                 //Build media list from results
