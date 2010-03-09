@@ -65,12 +65,9 @@ SET(BangarangSources
     platform/audioclipslistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
-<<<<<<< HEAD
     platform/taglistengine.cpp
-=======
     platform/infoartistmodel.cpp
     platform/dbpediaquery.cpp
->>>>>>> e4b350bdc00cdc3be20d124a1c2b98ba8d9eb3c3
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)
