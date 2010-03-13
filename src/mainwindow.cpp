@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
     ui->setupUi(this);
-    setGeometry(0,0,700,500);
+    setGeometry(0,0,740,520);
 
     // Set up system tray icon
 #ifdef HAVE_KSTATUSNOTIFIERITEM
