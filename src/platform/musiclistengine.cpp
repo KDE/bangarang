@@ -123,8 +123,10 @@ void MusicListEngine::run()
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(artist, album, genre);
                     mediaItem.title = artist;
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Artist");
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("system-users");
+                    mediaItem.fields["fullName"] = artist;
                     mediaList.append(mediaItem);
                 }
                 ++i;

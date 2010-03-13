@@ -18,11 +18,13 @@
 
 #include "infomanager.h"
 #include "infoitemdelegate.h"
+#include "infoartistdelegate.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
+#include "platform/infoartistmodel.h"
 #include "platform/playlist.h"
 #include "mediaitemdelegate.h"
 #include <KUrlRequester>
@@ -63,11 +65,20 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoItemView->setItemDelegate(infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     
+    m_infoArtistModel = new InfoArtistModel(this);
+    m_infoArtistModel->setSourceModel(m_parent->m_mediaItemModel);
+    ui->infoArtistView->setModel(m_infoArtistModel);
+    InfoArtistDelegate * infoArtistDelegate = new InfoArtistDelegate(m_parent);
+    infoArtistDelegate->setView(ui->infoArtistView);
+    ui->infoArtistView->setItemDelegate(infoArtistDelegate);
+    
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
+    connect(m_infoArtistModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
 }
 
 InfoManager::~InfoManager()
@@ -115,6 +126,12 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
         QString listItemType = firstItem.type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             if (!firstItem.url.startsWith("DVDTRACK") && !firstItem.url.startsWith("CDTRACK")) {
+                ui->showInfo->setVisible(true);
+            } else {
+                ui->showInfo->setVisible(false);
+            }
+        } else if (listItemType == "Category") {
+            if (firstItem.fields["categoryType"].toString() == "Artist") {
                 ui->showInfo->setVisible(true);
             } else {
                 ui->showInfo->setVisible(false);
@@ -174,7 +191,11 @@ void InfoManager::removeSelectedItemsInfo()
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 {
     ui->stackedWidget->setCurrentIndex(0);
-    ui->semanticsHolder->setVisible(true);
+    if (!ui->semanticsHolder->isVisible()) {
+        ui->semanticsHolder->setVisible(true);
+        ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
+        ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
+    }
     ui->semanticsStack->setCurrentIndex(1);
     
     QList<MediaItem> mediaList;
@@ -195,7 +216,7 @@ void InfoManager::loadSelectedInfo()
 {
     //Show the Info Item page
     //NOTE:For each selection type a page will be added to the semantics stack
-    ui->semanticsStack->setCurrentIndex(1);
+    //ui->semanticsStack->setCurrentIndex(1);
     
     //Get selected items
     QList<MediaItem> mediaList;
@@ -208,8 +229,23 @@ void InfoManager::loadSelectedInfo()
     }
     
     //Load selected items into info model
-    m_infoItemModel->loadInfo(mediaList);
-    updateItemViewLayout();
+    if (mediaList.at(0).type == "Audio" || mediaList.at(0).type == "Video") {
+        m_infoItemModel->loadInfo(mediaList);
+        ui->semanticsStack->setCurrentIndex(1);
+        updateItemViewLayout();
+    } else if (mediaList.at(0).type == "Category") {
+        if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
+            m_infoArtistModel->loadInfo(mediaList);
+            ui->semanticsStack->setCurrentIndex(0);
+            updateItemViewLayout();
+            
+            //NOTE:This following is present here for development and debugging purposes only.
+            // The expected workflow is to display info contained in the nepomuk and
+            // allow use of downloadInfo to populate nepomuk. We could provide
+            // automatic display of downloaded info as an option...
+            m_infoArtistModel->downloadInfo();
+        }
+    }
 }
 
 void InfoManager::updateItemViewLayout()
@@ -222,4 +258,13 @@ void InfoManager::updateItemViewLayout()
     }
     ui->infoItemView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->infoItemView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->infoArtistView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->infoArtistView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+}
+
+void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
+{
+    updateItemViewLayout();
+    Q_UNUSED(topleft);
+    Q_UNUSED(bottomright);
 }

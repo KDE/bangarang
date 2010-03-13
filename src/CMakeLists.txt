@@ -37,6 +37,7 @@ SET(BangarangSources
     mediaview.cpp 
     infomanager.cpp 
     infoitemdelegate.cpp
+    infoartistdelegate.cpp
     savedlistsmanager.cpp 
     actionsmanager.cpp
     videosettings.cpp
@@ -63,9 +64,9 @@ SET(BangarangSources
     platform/medialistcache.cpp
     platform/cachelistengine.cpp
     platform/audioclipslistengine.cpp
+    platform/taglistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
-    platform/taglistengine.cpp
     platform/infoartistmodel.cpp
     platform/dbpediaquery.cpp
 )
