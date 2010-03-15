@@ -39,6 +39,10 @@ class MediaItemDelegate : public QItemDelegate
 {
     Q_OBJECT
     public:
+        enum RenderMode {NormalMode = 0,
+                          MiniPlaybackTimeMode = 1,
+                          MiniRatingMode = 2,
+                          MiniPlayCountMode = 3};
         MediaItemDelegate(QObject * parent = 0);
         ~MediaItemDelegate();
         void paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -46,20 +50,25 @@ class MediaItemDelegate : public QItemDelegate
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int columnWidth (int column, int viewWidth) const;
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
-        void setView(QTreeView * view);
+        void setView(QAbstractItemView * view);
+        void setRenderMode(MediaItemDelegate::RenderMode mMode);
+        MediaItemDelegate::RenderMode currentRenderMode();
+        int heightForAllRows();
             
     private:
         MainWindow * m_parent;
-        QTreeView * m_view;
+        QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         QPixmap m_ratingCount;
         QPixmap m_ratingNotCount;
         KIcon m_showPlaying;
         KIcon m_showInPlaylist;
         KIcon m_showNotInPlaylist;
-        int calcItemHeight(const QStyleOptionViewItem &option) const;
+        int calcItemHeight() const;
         bool m_nepomukInited;
         MediaIndexer * m_mediaIndexer;
+        MediaItemDelegate::RenderMode m_renderMode;
+        
         
         
     Q_SIGNALS:

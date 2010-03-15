@@ -23,6 +23,8 @@
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 
+class MediaVocabulary;
+
 class MediaQuery {
     
     public:
@@ -72,6 +74,7 @@ class MediaQuery {
         
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
         bool executeAsk(Soprano::Model* model);
+        void addLRIFilterConditions(const QStringList &lriFilterList, MediaVocabulary mediaVocabulary);
         
         static QString addOptional(const QString &str) {
             return QString("OPTIONAL { ") + str + "} . ";
@@ -236,5 +239,7 @@ class MediaQuery {
         QString m_queryForm;
         QString m_queryCondition;
         QString m_querySuffix;
+        QStringList m_filterOperators;
+        QHash<QString, Constraint> m_filterOperatorConstraint;
 };
 #endif // MEDIAQUERY_H

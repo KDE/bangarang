@@ -63,6 +63,7 @@ class InfoArtistModel : public QStandardItemModel
         
     Q_SIGNALS:
         void infoChanged(bool modified);
+        void modelDataChanged();
         
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);

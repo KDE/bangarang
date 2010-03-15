@@ -64,14 +64,37 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     infoItemDelegate->setView(ui->infoItemView);
     ui->infoItemView->setItemDelegate(infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
+    ui->infoCategoryRecentlyPlayedTitle->setFont(KGlobalSettings::smallestReadableFont());
+    ui->infoCategoryHighestRatedTitle->setFont(KGlobalSettings::smallestReadableFont());
+    ui->infoCategoryFrequentlyPlayedTitle->setFont(KGlobalSettings::smallestReadableFont());
     
     m_infoArtistModel = new InfoArtistModel(this);
-    m_infoArtistModel->setSourceModel(m_parent->m_mediaItemModel);
-    ui->infoArtistView->setModel(m_infoArtistModel);
-    InfoArtistDelegate * infoArtistDelegate = new InfoArtistDelegate(m_parent);
-    infoArtistDelegate->setView(ui->infoArtistView);
-    ui->infoArtistView->setItemDelegate(infoArtistDelegate);
+    m_infoArtistDelegate = new InfoArtistDelegate(m_parent);
     
+    //Set up Recently Played Info box
+    m_recentlyPlayedModel = new MediaItemModel(this);
+    m_recentlyPlayedDelegate = new MediaItemDelegate(m_parent);
+    m_recentlyPlayedDelegate->setRenderMode(MediaItemDelegate::MiniPlaybackTimeMode);
+    ui->infoCategoryRecentlyPlayed->setModel(m_recentlyPlayedModel);
+    ui->infoCategoryRecentlyPlayed->setItemDelegate(m_recentlyPlayedDelegate);
+    m_recentlyPlayedDelegate->setView(ui->infoCategoryRecentlyPlayed);
+
+    //Set up Recently Played Info box
+    m_highestRatedModel = new MediaItemModel(this);
+    m_highestRatedDelegate = new MediaItemDelegate(m_parent);
+    m_highestRatedDelegate->setRenderMode(MediaItemDelegate::MiniRatingMode);
+    ui->infoCategoryHighestRated->setModel(m_highestRatedModel);
+    ui->infoCategoryHighestRated->setItemDelegate(m_highestRatedDelegate);
+    m_highestRatedDelegate->setView(ui->infoCategoryHighestRated);
+
+    //Set up Frequently Played Info box
+    m_frequentlyPlayedModel = new MediaItemModel(this);
+    m_frequentlyPlayedDelegate = new MediaItemDelegate(m_parent);
+    m_frequentlyPlayedDelegate->setRenderMode(MediaItemDelegate::MiniPlayCountMode);
+    ui->infoCategoryFrequentlyPlayed->setModel(m_frequentlyPlayedModel);
+    ui->infoCategoryFrequentlyPlayed->setItemDelegate(m_frequentlyPlayedDelegate);
+    m_frequentlyPlayedDelegate->setView(ui->infoCategoryFrequentlyPlayed);
+
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
@@ -79,6 +102,10 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoArtistModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
+    connect(m_infoArtistModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
+    connect(m_recentlyPlayedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
+    connect(m_highestRatedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
+    connect(m_frequentlyPlayedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
 }
 
 InfoManager::~InfoManager()
@@ -155,7 +182,7 @@ void InfoManager::saveItemInfo()
 {
     //Save changed info in model
     m_infoItemModel->saveChanges();
-    updateItemViewLayout();
+    updateViewsLayout();
     
     //Update Now Playing and Playlist views
     m_parent->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
@@ -169,7 +196,7 @@ void InfoManager::cancelItemEdit()
 {
     m_infoItemModel->cancelChanges();
     ui->infoSaveHolder->setVisible(false);
-    updateItemViewLayout();
+    updateViewsLayout();
 }
 
 void InfoManager::removeSelectedItemsInfo()
@@ -204,7 +231,7 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
         return;
     }
     m_infoItemModel->loadInfo(mediaList);
-    updateItemViewLayout();
+    updateViewsLayout();
 }
 
 
@@ -232,39 +259,90 @@ void InfoManager::loadSelectedInfo()
     if (mediaList.at(0).type == "Audio" || mediaList.at(0).type == "Video") {
         m_infoItemModel->loadInfo(mediaList);
         ui->semanticsStack->setCurrentIndex(1);
-        updateItemViewLayout();
+        updateViewsLayout();
     } else if (mediaList.at(0).type == "Category") {
         if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
+            setCategoryToArtist();
             m_infoArtistModel->loadInfo(mediaList);
             ui->semanticsStack->setCurrentIndex(0);
-            updateItemViewLayout();
             
             //NOTE:This following is present here for development and debugging purposes only.
             // The expected workflow is to display info contained in the nepomuk and
             // allow use of downloadInfo to populate nepomuk. We could provide
             // automatic display of downloaded info as an option...
             m_infoArtistModel->downloadInfo();
+            
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            m_recentlyPlayedModel->clearMediaListData();
+            m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
+            m_recentlyPlayedModel->load();
+            
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            m_highestRatedModel->clearMediaListData();
+            m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
+            m_highestRatedModel->load();
+
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            m_frequentlyPlayedModel->clearMediaListData();
+            m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
+            m_frequentlyPlayedModel->load();
+            
+            updateViewsLayout();
         }
     }
 }
 
-void InfoManager::updateItemViewLayout()
+void InfoManager::setCategoryToArtist()
 {
+    m_infoArtistModel->setSourceModel(m_parent->m_mediaItemModel);
+    ui->infoCategoryView->setModel(m_infoArtistModel);
+    m_infoArtistDelegate->setView(ui->infoCategoryView);
+    ui->infoCategoryView->setItemDelegate(m_infoArtistDelegate);
+    m_currentCategory = "Artist";
+}
+
+void InfoManager::updateViewsLayout()
+{
+    //Update infoItemView
     for (int row = 0; row < m_infoItemModel->rowCount(); row++) {
         QString field = m_infoItemModel->item(row)->data(InfoItemModel::FieldRole).toString();
         if (field == "artwork" || field == "title") {
             ui->infoItemView->setSpan(row,0,1,2);
         }
     }
-    ui->infoItemView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->infoItemView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->infoArtistView->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->infoArtistView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->infoItemView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->infoItemView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    
+    //Update infoCategoryView
+    ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    if (m_currentCategory == "Artist") {
+        ui->infoCategoryView->setMinimumHeight(m_infoArtistDelegate->heightForAllRows());
+        ui->infoCategoryView->setMaximumHeight(m_infoArtistDelegate->heightForAllRows());
+    }
+    
 }
 
 void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
 {
-    updateItemViewLayout();
+    updateViewsLayout();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
+}
+
+void InfoManager::updateCategoryViews()
+{
+    //Update category views for Recently Played, Highest Rated, Frequently Played, Never Played views
+    ui->infoCategoryRecentlyPlayed->horizontalHeader()->hideSection(1);
+    ui->infoCategoryRecentlyPlayed->setMinimumHeight(m_recentlyPlayedDelegate->heightForAllRows());
+    ui->infoCategoryRecentlyPlayed->setMaximumHeight(m_recentlyPlayedDelegate->heightForAllRows());
+    ui->infoCategoryRecentlyPlayed->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->infoCategoryHighestRated->horizontalHeader()->hideSection(1);
+    ui->infoCategoryHighestRated->setMinimumHeight(m_highestRatedDelegate->heightForAllRows());
+    ui->infoCategoryHighestRated->setMaximumHeight(m_highestRatedDelegate->heightForAllRows());
+    ui->infoCategoryHighestRated->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->infoCategoryFrequentlyPlayed->horizontalHeader()->hideSection(1);
+    ui->infoCategoryFrequentlyPlayed->setMinimumHeight(m_frequentlyPlayedDelegate->heightForAllRows());
+    ui->infoCategoryFrequentlyPlayed->setMaximumHeight(m_frequentlyPlayedDelegate->heightForAllRows());
+    ui->infoCategoryFrequentlyPlayed->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }

@@ -102,15 +102,15 @@ void MediaListsEngine::run()
         
         if (m_nepomukInited) {
             mediaItem.title = i18n("Frequently Played");
-            mediaItem.url = "semantics://frequent?audio";
+            mediaItem.url = "semantics://frequent?audio||limit=20";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
-            mediaItem.url = "semantics://recent?audio";
+            mediaItem.url = "semantics://recent?audio||limit=20";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
-            mediaItem.url = "semantics://highest?audio";
+            mediaItem.url = "semantics://highest?audio||limit=20";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }
@@ -197,15 +197,15 @@ void MediaListsEngine::run()
         
         if (m_nepomukInited) {
             mediaItem.title = i18n("Frequently Played");
-            mediaItem.url = "semantics://frequent?video";
+            mediaItem.url = "semantics://frequent?video||limit=20";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
-            mediaItem.url = "semantics://recent?video";
+            mediaItem.url = "semantics://recent?video||limit=20";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
-            mediaItem.url = "semantics://highest?video";
+            mediaItem.url = "semantics://highest?video||limit=20";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }

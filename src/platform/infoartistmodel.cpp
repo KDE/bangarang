@@ -112,14 +112,14 @@ void InfoArtistModel::addFieldToValuesModel(const QString &fieldTitle, const QSt
                 if (!artwork.isNull()) {
                     fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
                 } else {
-                    fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
+                    //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
                 }
             } else {
-                fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
+                //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
             }
         } else {
             //We should eventually check for common artwork and set it here.
-            fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
+            //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
         }
         rowData.append(fieldItem);
         appendRow(rowData);
@@ -242,11 +242,7 @@ void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::Bindin
         if (results.count() > 0) {
             Soprano::BindingSet binding = results.at(0);
             
-            //Get Description
-            QString description = binding.value("description").literal().toString();
-            item(2)->setData(description, Qt::DisplayRole);
-            item(2)->setData(description, Qt::EditRole);
-            
+            clear();
             //Get Thumbnail
             KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
             if (thumbnailUrl.isValid()) {
@@ -258,9 +254,41 @@ void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::Bindin
                     dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 }
                 if (!dbPediaThumbnail.isNull())  {
-                    item(0)->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
+                    QList<QStandardItem *> rowData;
+                    QStandardItem *fieldItem = new QStandardItem();
+                    fieldItem->setData("associatedImage", InfoArtistModel::FieldRole);
+                    fieldItem->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
+                    rowData.append(fieldItem);
+                    appendRow(rowData);
                 }
             }
+
+            {
+                QList<QStandardItem *> rowData;
+                QStandardItem *fieldItem = new QStandardItem();
+                fieldItem->setData("fullName", InfoArtistModel::FieldRole);
+                fieldItem->setData(commonValue("fullName").toString(), Qt::DisplayRole);
+                fieldItem->setData(commonValue("fullName").toString(), Qt::EditRole);
+                fieldItem->setData(commonValue("fullName").toString(), InfoArtistModel::OriginalValueRole);
+                rowData.append(fieldItem);
+                appendRow(rowData);
+            }
+            
+            //Get Description
+            QString description = binding.value("description").literal().toString();
+            if (!description.isEmpty()) {
+                QList<QStandardItem *> rowData;
+                QStandardItem *fieldItem = new QStandardItem();
+                fieldItem->setData("description", InfoArtistModel::FieldRole);
+                fieldItem->setData(description, Qt::DisplayRole);
+                fieldItem->setData(description, Qt::EditRole);
+                fieldItem->setData(description, InfoArtistModel::OriginalValueRole);
+                rowData.append(fieldItem);
+                appendRow(rowData);
+            }
+            
+            emit modelDataChanged();
+            
         }
     }
 }

@@ -36,6 +36,7 @@ class MediaItem;
 class InfoItemDelegate;
 class InfoArtistModel;
 class InfoArtistDelegate;
+class MediaItemDelegate;
 
 /*
  * This class provides a user interface for updating information associated with MediaItems
@@ -61,16 +62,26 @@ class InfoManager : public QObject
     private:
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
+        bool m_nepomukInited;
         InfoItemModel *m_infoItemModel;
         InfoItemDelegate *m_infoItemDelegate;
         InfoArtistModel *m_infoArtistModel;
         InfoArtistDelegate *m_infoArtistDelegate;
-        bool m_nepomukInited;
         QList<MediaItem> m_infoMediaList;
+        QString m_currentCategory;
+        MediaItemModel *m_recentlyPlayedModel;
+        MediaItemDelegate *m_recentlyPlayedDelegate;
+        MediaItemModel *m_highestRatedModel;
+        MediaItemDelegate *m_highestRatedDelegate;
+        MediaItemModel *m_frequentlyPlayedModel;
+        MediaItemDelegate *m_frequentlyPlayedDelegate;
+        
+        void setCategoryToArtist();
 
     private slots:
-        void updateItemViewLayout();
+        void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
+        void updateCategoryViews();
 };
 #endif //INFOMANAGER_H

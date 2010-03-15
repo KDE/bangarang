@@ -44,17 +44,22 @@ class InfoArtistDelegate : public QItemDelegate
         void paint(QPainter *painter, const QStyleOptionViewItem &option,
                     const QModelIndex &index) const;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        int rowHeight(int row) const;
         int columnWidth (int column) const;
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
         QWidget *createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
         void setView(QTableView * view);
-            
+        int heightForAllRows();
+        void setExtraInfoVisible(bool visible = true);
+        bool extraInfoIsVisible();
+        
     private:
         MainWindow * m_parent;
         QTableView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
+        bool m_extraInfoVisible;
         
         
     Q_SIGNALS:
