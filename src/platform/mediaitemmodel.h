@@ -57,20 +57,24 @@ struct MediaItem {
     
     RatingRole = Qt::UserRole + 4, /** QStandardItem role containing MediaItem rating.*/
     
-    TypeRole = Qt::UserRole + 5, /** QStandardItem role containing MediaItem type.*/
+    PlayCountRole = Qt::UserRole + 5, /** QStandardItem role containing MediaItem type.*/
     
-    FilterRole = Qt::UserRole + 6, /** QStandardItem role containing MediaItem filter.*/
+    LastPlayedRole = Qt::UserRole + 6, /** QStandardItem role containing MediaItem type.*/
     
-    PlaylistIndexRole = Qt::UserRole + 7,  /** QStandardItem role containing Playlist 
+    TypeRole = Qt::UserRole + 7, /** QStandardItem role containing MediaItem type.*/
+    
+    FilterRole = Qt::UserRole + 8, /** QStandardItem role containing MediaItem filter.*/
+    
+    PlaylistIndexRole = Qt::UserRole + 9,  /** QStandardItem role containing Playlist 
                                              *index of MediaItem.*/
                                              
-    NowPlayingRole = Qt::UserRole + 8, 
+    NowPlayingRole = Qt::UserRole + 10, 
     
-    IsSavedListRole = Qt::UserRole + 9, /** QStandardItem role containing whether
+    IsSavedListRole = Qt::UserRole + 11, /** QStandardItem role containing whether
                                          *or not the media list represented by the 
                                          *MediaItem is a saved list.*/
     
-    ExistsRole = Qt::UserRole + 10 }; /** QStandardItem role containing whether or
+    ExistsRole = Qt::UserRole + 12 }; /** QStandardItem role containing whether or
                                         *the file the MediaItem.url refers to exists.*/
                                         
     QString url; /** Url of MediaItem. The may be a standard url representing a 
@@ -131,6 +135,13 @@ Q_DECLARE_METATYPE(MediaItem);
 class MediaListProperties {
 
 public:
+    MediaListProperties(QString startingLri = QString()) 
+    {
+        lri = startingLri;
+    }
+    
+    ~MediaListProperties(){}
+    
     QString name; /** Name of media list */
     
     QString summary; /** Summary text describing the number of items in the media list */

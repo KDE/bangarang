@@ -60,9 +60,15 @@ void SemanticsListEngine::run()
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     //Parse filter
+    QStringList lriFilterList;
     if (!engineFilter.isNull()) {
         QStringList argList = engineFilter.split("||");
         mediaType = argList.at(0);
+        if (argList.count() > 1) {
+            for (int i = 1; i < argList.count(); i++) {
+                lriFilterList << argList.at(i);
+            }
+        }
     }
     
     if (m_nepomukInited) {
@@ -80,7 +86,8 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required));
+                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
                 query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
                 query.endWhere();
                 QStringList orderByBindings;
@@ -90,7 +97,7 @@ void SemanticsListEngine::run()
                 orderByBindings.append(mediaVocabulary.lastPlayedBinding());
                 order.append(MediaQuery::Descending);
                 query.orderBy(orderByBindings, order);
-                query.addLimit(20);
+                //query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
@@ -120,14 +127,15 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
+                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Required));
                 query.endWhere();
                 QStringList orderByBindings;
                 QList<MediaQuery::Order> order;
                 orderByBindings.append(mediaVocabulary.lastPlayedBinding());
                 order.append(MediaQuery::Descending);
                 query.orderBy(orderByBindings, order);
-                query.addLimit(20);
+                //query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
@@ -157,7 +165,8 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required));
+                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 0, MediaQuery::GreaterThan));
                 query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
                 query.endWhere();
                 QStringList orderByBindings;
@@ -167,7 +176,7 @@ void SemanticsListEngine::run()
                 orderByBindings.append(mediaVocabulary.playCountBinding());
                 order.append(MediaQuery::Descending);
                 query.orderBy(orderByBindings, order);
-                query.addLimit(20);
+                //query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 

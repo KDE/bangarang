@@ -597,6 +597,8 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
         titleItem->setData(tooltip, Qt::ToolTipRole);
     }
     titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
+    titleItem->setData(mediaItem.fields["playCount"].toInt(), MediaItem::PlayCountRole);
+    titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), MediaItem::LastPlayedRole);
     rowData << titleItem;
     
     if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {

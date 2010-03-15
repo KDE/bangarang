@@ -880,3 +880,12 @@ Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
     }
     return res;   
 }
+
+QString Utilities::lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator)
+{
+    QString lriFilter;
+    for (int i = 0; i < mediaList.count(); i++) {
+        lriFilter = lriFilter + QString("||") + filterFieldName + lriFilterOperator + mediaList.at(i).fields[mediaItemField].toString();
+    }
+    return lriFilter;
+}
