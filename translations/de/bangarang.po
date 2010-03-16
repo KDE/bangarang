@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2010-03-16 15:47+0100\n"
-"PO-Revision-Date: 2010-03-16 15:57+0100\n"
+"PO-Revision-Date: 2010-03-16 16:12+0100\n"
 "Last-Translator: Moritz N. <ferahgo.de@gmail.com>\n"
 "Language-Team: Deutsch <kde-i18n-de@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -116,7 +116,7 @@ msgstr "Elemente anzeigen"
 #: actionsmanager.cpp:165 actionsmanager.cpp:169 infomanager.cpp:129
 #: rc.cpp:122
 msgid "Show Information"
-msgstr "Information anzeigen "
+msgstr "Information anzeigen"
 
 #: actionsmanager.cpp:174
 msgid "Configure shortcuts..."
@@ -124,11 +124,11 @@ msgstr "Kurzbefehle festlegen..."
 
 #: actionsmanager.cpp:180
 msgid "Show Scripting-Console"
-msgstr "Skript-Konsole anzeigen "
+msgstr "Skript-Konsole anzeigen"
 
 #: actionsmanager.cpp:440
 msgid "Show Controls"
-msgstr "Steuerelemente anzeigen "
+msgstr "Steuerelemente anzeigen"
 
 #: actionsmanager.cpp:445
 msgid "Hide Controls"
@@ -141,11 +141,11 @@ msgstr "Videoeinstellungen ausblenden"
 #: infoartistdelegate.cpp:97 infoartistdelegate.cpp:115
 #: infoitemdelegate.cpp:96 infoitemdelegate.cpp:125
 msgid "Multiple Values"
-msgstr "Mehrere Werte "
+msgstr "Mehrere Werte"
 
 #: infoartistdelegate.cpp:188 infoitemdelegate.cpp:215
 msgid "Open artwork file"
-msgstr "Cover-Datei öffnen "
+msgstr "Cover-Datei öffnen"
 
 #: infoitemdelegate.cpp:131 infoitemdelegate.cpp:238
 msgid "Music"
@@ -174,7 +174,7 @@ msgstr "Video-Clip"
 #: infomanager.cpp:126 infomanager.cpp:223
 msgid "<b>Showing Information</b><br>Click to hide information."
 msgstr ""
-"<b>Zeigt Informationen</b><br>Klicken, um die Informationen auszublenden."
+"<b>Informations-Anzeige</b><br>Klicken, um die Informationen auszublenden."
 
 #. i18n: file: mainwindow.ui:17
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
