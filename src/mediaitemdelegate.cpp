@@ -298,7 +298,7 @@ int MediaItemDelegate::calcItemHeight() const
         padding = 3;
     } else {
         titleFont = KGlobalSettings::smallestReadableFont();
-        textHeight = QFontInfo(titleFont).pixelSize()+1; // Height for title
+        textHeight = QFontInfo(titleFont).pixelSize()+4; // Height for title
         minHeight = 0;
         padding = 2;
     }
@@ -416,5 +416,5 @@ MediaItemDelegate::RenderMode MediaItemDelegate::currentRenderMode()
 
 int MediaItemDelegate::heightForAllRows()
 {
-    return m_view->model()->rowCount()*(calcItemHeight()+6);
+    return m_view->model()->rowCount()*(calcItemHeight())+10;
 }

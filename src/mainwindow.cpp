@@ -168,20 +168,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoListsModel->load();
     
     //Set up media list view
-    m_mediaItemModel = new MediaItemModel(this);
+    ui->mediaView->setMainWindow(this);
+    m_mediaItemModel = (MediaItemModel *)ui->mediaView->model();
     m_sharedMediaListCache = m_mediaItemModel->mediaListCache();
-    m_itemDelegate = new MediaItemDelegate(this);
-    ui->mediaView->setModel(m_mediaItemModel);
-    ui->mediaView->setItemDelegate(m_itemDelegate);
-    m_itemDelegate->setView(ui->mediaView);
-    ui->mediaView->header()->setVisible(false);
-    connect(m_itemDelegate, SIGNAL(categoryActivated(QModelIndex)), m_mediaItemModel, SLOT(categoryActivated(QModelIndex)));
-    connect(m_itemDelegate, SIGNAL(actionActivated(QModelIndex)), m_mediaItemModel, SLOT(actionActivated(QModelIndex)));
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_mediaItemModel, SIGNAL(loading()), this, SLOT(hidePlayButtons()));
     connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
-    ui->mediaView->setMainWindow(this);
     
     //Set up MediaItemModel notifications
     ui->notificationWidget->setVisible(false);
@@ -815,24 +808,15 @@ void MainWindow::mediaListChanged()
     ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
     ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
     
-    if (m_mediaItemModel->rowCount() > 0) {
-        ui->mediaView->header()->setStretchLastSection(false);
-        ui->mediaView->header()->setResizeMode(0, QHeaderView::Stretch);
-        ui->mediaView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    }
-    
     if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
         QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
             if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
-                ui->mediaView->header()->showSection(1);
                 ui->playAll->setVisible(true);
             }
         } else if (listItemType == "Category") {
-            ui->mediaView->header()->showSection(1);
             ui->playAll->setVisible(true);
         } else if ((listItemType == "Action") || (listItemType == "Message")) {
-            ui->mediaView->header()->hideSection(1);
             ui->playAll->setVisible(false);
         }
     }

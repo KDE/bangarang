@@ -19,10 +19,13 @@
 #ifndef MEDIAVIEW_H
 #define MEDIAVIEW_H
 
+#include <QtCore>
 #include <QTreeView>
 #include <QAction>
 
 class MainWindow;
+class MediaItemModel;
+class MediaItemDelegate;
 
 /*
  * This class is mostly to provide custom context menus for the QTreeView
@@ -32,18 +35,30 @@ class MediaView : public QTreeView
 {
     Q_OBJECT
     public:
+        enum RenderMode {NormalMode = 0,
+                          MiniPlaybackTimeMode = 1,
+                          MiniRatingMode = 2,
+                          MiniPlayCountMode = 3};
         MediaView(QWidget * parent = 0);
         ~MediaView();
         void setMainWindow(MainWindow * mainWindow);
+        void setMode(RenderMode Mode);
+        RenderMode mode();
 
     protected:
         void contextMenuEvent (QContextMenuEvent * event);
         
     private:
         MainWindow * m_mainWindow;
+        MediaItemModel * m_mediaItemModel;
+        MediaItemDelegate * m_mediaItemDelegate;
+        RenderMode m_mode;
         QAction * playAllAction;
         QAction * playSelectedAction;   
         QAction * addSelectedToPlayListAction;
         QAction * removeSelectedToPlayListAction;
+    
+    private slots:
+        void mediaListChanged();
 };
 #endif // MEDIAVIEW_H

@@ -70,11 +70,8 @@ class InfoManager : public QObject
         QList<MediaItem> m_infoMediaList;
         QString m_currentCategory;
         MediaItemModel *m_recentlyPlayedModel;
-        MediaItemDelegate *m_recentlyPlayedDelegate;
         MediaItemModel *m_highestRatedModel;
-        MediaItemDelegate *m_highestRatedDelegate;
         MediaItemModel *m_frequentlyPlayedModel;
-        MediaItemDelegate *m_frequentlyPlayedDelegate;
         
         void setCategoryToArtist();
 
@@ -82,6 +79,5 @@ class InfoManager : public QObject
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
-        void updateCategoryViews();
 };
 #endif //INFOMANAGER_H

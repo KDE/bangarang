@@ -1507,8 +1507,14 @@
                          <property name="allColumnsShowFocus">
                           <bool>true</bool>
                          </property>
+                         <attribute name="headerVisible">
+                          <bool>false</bool>
+                         </attribute>
                          <attribute name="headerMinimumSectionSize">
                           <number>0</number>
+                         </attribute>
+                         <attribute name="headerVisible">
+                          <bool>false</bool>
                          </attribute>
                          <attribute name="headerMinimumSectionSize">
                           <number>0</number>
@@ -1831,7 +1837,7 @@
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QTableView" name="infoCategoryRecentlyPlayed">
+                                   <widget class="MediaView" name="infoCategoryRecentlyPlayed">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -1865,47 +1871,20 @@
                                     <property name="verticalScrollMode">
                                      <enum>QAbstractItemView::ScrollPerPixel</enum>
                                     </property>
-                                    <property name="showGrid">
+                                    <property name="rootIsDecorated">
                                      <bool>false</bool>
                                     </property>
-                                    <property name="cornerButtonEnabled">
-                                     <bool>false</bool>
-                                    </property>
-                                    <attribute name="horizontalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
                                    </widget>
                                   </item>
@@ -1993,7 +1972,7 @@
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QTableView" name="infoCategoryHighestRated">
+                                   <widget class="MediaView" name="infoCategoryHighestRated">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -2027,47 +2006,20 @@
                                     <property name="verticalScrollMode">
                                      <enum>QAbstractItemView::ScrollPerPixel</enum>
                                     </property>
-                                    <property name="showGrid">
+                                    <property name="rootIsDecorated">
                                      <bool>false</bool>
                                     </property>
-                                    <property name="cornerButtonEnabled">
-                                     <bool>false</bool>
-                                    </property>
-                                    <attribute name="horizontalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
                                    </widget>
                                   </item>
@@ -2155,7 +2107,7 @@
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QTableView" name="infoCategoryFrequentlyPlayed">
+                                   <widget class="MediaView" name="infoCategoryFrequentlyPlayed">
                                     <property name="sizePolicy">
                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                                       <horstretch>0</horstretch>
@@ -2195,47 +2147,20 @@
                                     <property name="verticalScrollMode">
                                      <enum>QAbstractItemView::ScrollPerPixel</enum>
                                     </property>
-                                    <property name="showGrid">
+                                    <property name="rootIsDecorated">
                                      <bool>false</bool>
                                     </property>
-                                    <property name="cornerButtonEnabled">
-                                     <bool>false</bool>
-                                    </property>
-                                    <attribute name="horizontalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
+                                    <attribute name="headerVisible">
                                      <bool>false</bool>
                                     </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="verticalHeaderDefaultSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderStretchLastSection">
-                                     <bool>true</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderVisible">
-                                     <bool>false</bool>
-                                    </attribute>
-                                    <attribute name="horizontalHeaderMinimumSectionSize">
-                                     <number>2</number>
-                                    </attribute>
-                                    <attribute name="verticalHeaderMinimumSectionSize">
-                                     <number>2</number>
+                                    <attribute name="headerMinimumSectionSize">
+                                     <number>1</number>
                                     </attribute>
                                    </widget>
                                   </item>
