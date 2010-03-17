@@ -72,28 +72,19 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_infoArtistDelegate = new InfoArtistDelegate(m_parent);
     
     //Set up Recently Played Info box
-    m_recentlyPlayedModel = new MediaItemModel(this);
-    m_recentlyPlayedDelegate = new MediaItemDelegate(m_parent);
-    m_recentlyPlayedDelegate->setRenderMode(MediaItemDelegate::MiniPlaybackTimeMode);
-    ui->infoCategoryRecentlyPlayed->setModel(m_recentlyPlayedModel);
-    ui->infoCategoryRecentlyPlayed->setItemDelegate(m_recentlyPlayedDelegate);
-    m_recentlyPlayedDelegate->setView(ui->infoCategoryRecentlyPlayed);
+    ui->infoCategoryRecentlyPlayed->setMainWindow(m_parent);
+    m_recentlyPlayedModel = (MediaItemModel *)ui->infoCategoryRecentlyPlayed->model();
+    ui->infoCategoryRecentlyPlayed->setMode(MediaView::MiniPlaybackTimeMode);
 
     //Set up Recently Played Info box
-    m_highestRatedModel = new MediaItemModel(this);
-    m_highestRatedDelegate = new MediaItemDelegate(m_parent);
-    m_highestRatedDelegate->setRenderMode(MediaItemDelegate::MiniRatingMode);
-    ui->infoCategoryHighestRated->setModel(m_highestRatedModel);
-    ui->infoCategoryHighestRated->setItemDelegate(m_highestRatedDelegate);
-    m_highestRatedDelegate->setView(ui->infoCategoryHighestRated);
+    ui->infoCategoryHighestRated->setMainWindow(m_parent);
+    m_highestRatedModel = (MediaItemModel *)ui->infoCategoryHighestRated->model();
+    ui->infoCategoryHighestRated->setMode(MediaView::MiniRatingMode);
 
     //Set up Frequently Played Info box
-    m_frequentlyPlayedModel = new MediaItemModel(this);
-    m_frequentlyPlayedDelegate = new MediaItemDelegate(m_parent);
-    m_frequentlyPlayedDelegate->setRenderMode(MediaItemDelegate::MiniPlayCountMode);
-    ui->infoCategoryFrequentlyPlayed->setModel(m_frequentlyPlayedModel);
-    ui->infoCategoryFrequentlyPlayed->setItemDelegate(m_frequentlyPlayedDelegate);
-    m_frequentlyPlayedDelegate->setView(ui->infoCategoryFrequentlyPlayed);
+    ui->infoCategoryFrequentlyPlayed->setMainWindow(m_parent);
+    m_frequentlyPlayedModel = (MediaItemModel *)ui->infoCategoryFrequentlyPlayed->model();
+    ui->infoCategoryFrequentlyPlayed->setMode(MediaView::MiniPlayCountMode);
 
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
@@ -103,9 +94,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoArtistModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoArtistModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
-    connect(m_recentlyPlayedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
-    connect(m_highestRatedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
-    connect(m_frequentlyPlayedModel, SIGNAL(mediaListChanged()), this, SLOT(updateCategoryViews()));
 }
 
 InfoManager::~InfoManager()
@@ -328,21 +316,4 @@ void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIn
     updateViewsLayout();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
-}
-
-void InfoManager::updateCategoryViews()
-{
-    //Update category views for Recently Played, Highest Rated, Frequently Played, Never Played views
-    ui->infoCategoryRecentlyPlayed->horizontalHeader()->hideSection(1);
-    ui->infoCategoryRecentlyPlayed->setMinimumHeight(m_recentlyPlayedDelegate->heightForAllRows());
-    ui->infoCategoryRecentlyPlayed->setMaximumHeight(m_recentlyPlayedDelegate->heightForAllRows());
-    ui->infoCategoryRecentlyPlayed->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->infoCategoryHighestRated->horizontalHeader()->hideSection(1);
-    ui->infoCategoryHighestRated->setMinimumHeight(m_highestRatedDelegate->heightForAllRows());
-    ui->infoCategoryHighestRated->setMaximumHeight(m_highestRatedDelegate->heightForAllRows());
-    ui->infoCategoryHighestRated->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->infoCategoryFrequentlyPlayed->horizontalHeader()->hideSection(1);
-    ui->infoCategoryFrequentlyPlayed->setMinimumHeight(m_frequentlyPlayedDelegate->heightForAllRows());
-    ui->infoCategoryFrequentlyPlayed->setMaximumHeight(m_frequentlyPlayedDelegate->heightForAllRows());
-    ui->infoCategoryFrequentlyPlayed->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
