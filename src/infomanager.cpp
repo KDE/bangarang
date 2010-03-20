@@ -153,7 +153,8 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
             if (firstItem.fields["categoryType"].toString() == "Artist" ||
                 firstItem.fields["categoryType"].toString() == "Album" ||
                 firstItem.fields["categoryType"].toString() == "MusicGenre" ||
-                firstItem.fields["categoryType"].toString() == "AudioTag") {
+                firstItem.fields["categoryType"].toString() == "AudioTag" ||
+                firstItem.fields["categoryType"].toString() == "TVShow") {
                 ui->showInfo->setVisible(true);
             } else {
                 ui->showInfo->setVisible(false);
@@ -325,6 +326,22 @@ void InfoManager::loadSelectedInfo()
             m_highestRatedModel->loadLRI(highestRatedLRI);
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            
+            updateViewsLayout();
+        } else if (mediaList.at(0).fields["categoryType"].toString() == "TVShow") {
+            m_infoCategoryModel->setMode(InfoCategoryModel::TVShowMode);
+            m_currentCategory = "TVShow";
+            m_infoCategoryModel->loadInfo(mediaList);
+            ui->semanticsStack->setCurrentIndex(0);
+            
+            QString recentlyPlayedLRI = QString("semantics://recent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
+            m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
+            
+            QString highestRatedLRI = QString("semantics://highest?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
+            m_highestRatedModel->loadLRI(highestRatedLRI);
+            
+            QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
