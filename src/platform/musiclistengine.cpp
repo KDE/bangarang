@@ -184,6 +184,8 @@ void MusicListEngine::run()
                     mediaItem.title = album;
                     mediaItem.subTitle = artist;
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Album");
+                    mediaItem.fields["title"] = album;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("media-optical-audio");
                     mediaList.append(mediaItem);

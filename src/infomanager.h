@@ -73,8 +73,6 @@ class InfoManager : public QObject
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
         
-        void setCategoryToArtist();
-
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();

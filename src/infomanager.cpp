@@ -150,7 +150,8 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
                 ui->showInfo->setVisible(false);
             }
         } else if (listItemType == "Category") {
-            if (firstItem.fields["categoryType"].toString() == "Artist") {
+            if (firstItem.fields["categoryType"].toString() == "Artist" ||
+                firstItem.fields["categoryType"].toString() == "Album") {
                 ui->showInfo->setVisible(true);
             } else {
                 ui->showInfo->setVisible(false);
@@ -253,8 +254,11 @@ void InfoManager::loadSelectedInfo()
         ui->semanticsStack->setCurrentIndex(1);
         updateViewsLayout();
     } else if (mediaList.at(0).type == "Category") {
+        m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
+        
         if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
-            setCategoryToArtist();
+            m_infoCategoryModel->setMode(InfoCategoryModel::ArtistMode);
+            m_currentCategory = "Artist";
             m_infoCategoryModel->loadInfo(mediaList);
             ui->semanticsStack->setCurrentIndex(0);
             
@@ -280,15 +284,30 @@ void InfoManager::loadSelectedInfo()
             m_frequentlyPlayedModel->load();
             
             updateViewsLayout();
+        } else if (mediaList.at(0).fields["categoryType"].toString() == "Album") {
+            m_infoCategoryModel->setMode(InfoCategoryModel::AlbumMode);
+            m_currentCategory = "Album";
+            m_infoCategoryModel->loadInfo(mediaList);
+            ui->semanticsStack->setCurrentIndex(0);
+            
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            m_recentlyPlayedModel->clearMediaListData();
+            m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
+            m_recentlyPlayedModel->load();
+            
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            m_highestRatedModel->clearMediaListData();
+            m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
+            m_highestRatedModel->load();
+
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            m_frequentlyPlayedModel->clearMediaListData();
+            m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
+            m_frequentlyPlayedModel->load();
+            
+            updateViewsLayout();
         }
     }
-}
-
-void InfoManager::setCategoryToArtist()
-{
-    m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
-    m_infoCategoryModel->setMode(InfoCategoryModel::ArtistMode);
-    m_currentCategory = "Artist";
 }
 
 void InfoManager::updateViewsLayout()
@@ -306,10 +325,8 @@ void InfoManager::updateViewsLayout()
     //Update infoCategoryView
     ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    if (m_currentCategory == "Artist") {
-        ui->infoCategoryView->setMinimumHeight(m_infoCategoryDelegate->heightForAllRows());
-        ui->infoCategoryView->setMaximumHeight(m_infoCategoryDelegate->heightForAllRows());
-    }
+    ui->infoCategoryView->setMinimumHeight(m_infoCategoryDelegate->heightForAllRows());
+    ui->infoCategoryView->setMaximumHeight(m_infoCategoryDelegate->heightForAllRows());
     
 }
 
