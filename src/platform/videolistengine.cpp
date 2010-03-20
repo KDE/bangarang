@@ -459,6 +459,8 @@ void VideoListEngine::run()
                     mediaItem.url = QString("video://sources?||%1").arg(genre);
                     mediaItem.title = genre;
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("VideoGenre");
+                    mediaItem.fields["title"] = genre;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("flag-green");
                     mediaList.append(mediaItem);
