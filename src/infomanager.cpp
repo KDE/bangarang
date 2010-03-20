@@ -24,7 +24,7 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
-#include "platform/infoartistmodel.h"
+#include "platform/infocategorymodel.h"
 #include "platform/playlist.h"
 #include "mediaitemdelegate.h"
 #include <KUrlRequester>
@@ -68,7 +68,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoCategoryHighestRatedTitle->setFont(KGlobalSettings::smallestReadableFont());
     ui->infoCategoryFrequentlyPlayedTitle->setFont(KGlobalSettings::smallestReadableFont());
     
-    m_infoArtistModel = new InfoArtistModel(this);
+    m_infoCategoryModel = new InfoCategoryModel(this);
     m_infoArtistDelegate = new InfoArtistDelegate(m_parent);
     
     //Set up Recently Played Info box
@@ -92,8 +92,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
-    connect(m_infoArtistModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
-    connect(m_infoArtistModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
+    connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
+    connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
 }
 
 InfoManager::~InfoManager()
@@ -251,26 +251,26 @@ void InfoManager::loadSelectedInfo()
     } else if (mediaList.at(0).type == "Category") {
         if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
             setCategoryToArtist();
-            m_infoArtistModel->loadInfo(mediaList);
+            m_infoCategoryModel->loadInfo(mediaList);
             ui->semanticsStack->setCurrentIndex(0);
             
             //NOTE:This following is present here for development and debugging purposes only.
             // The expected workflow is to display info contained in the nepomuk and
             // allow use of downloadInfo to populate nepomuk. We could provide
             // automatic display of downloaded info as an option...
-            m_infoArtistModel->downloadInfo();
+            m_infoCategoryModel->downloadInfo();
             
-            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
             m_recentlyPlayedModel->clearMediaListData();
             m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
             m_recentlyPlayedModel->load();
             
-            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
             m_highestRatedModel->clearMediaListData();
             m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
             m_highestRatedModel->load();
 
-            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "fullName", "artist", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
             m_frequentlyPlayedModel->clearMediaListData();
             m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
             m_frequentlyPlayedModel->load();
@@ -282,8 +282,9 @@ void InfoManager::loadSelectedInfo()
 
 void InfoManager::setCategoryToArtist()
 {
-    m_infoArtistModel->setSourceModel(m_parent->m_mediaItemModel);
-    ui->infoCategoryView->setModel(m_infoArtistModel);
+    m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
+    m_infoCategoryModel->setMode(InfoCategoryModel::ArtistMode);
+    ui->infoCategoryView->setModel(m_infoCategoryModel);
     m_infoArtistDelegate->setView(ui->infoCategoryView);
     ui->infoCategoryView->setItemDelegate(m_infoArtistDelegate);
     m_currentCategory = "Artist";

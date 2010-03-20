@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INFOARTISTMODEL_H
-#define INFOARTISTMODEL_H
+#ifndef INFOCATEGORYMODEL_H
+#define INFOCATEGORYMODEL_H
 
 #include <KIcon>
 #include <kio/copyjob.h>
@@ -32,27 +32,39 @@ class MediaItemModel;
 * This model is responsible for 
 *
 */ 
-class InfoArtistModel : public QStandardItemModel
+class InfoCategoryModel : public QStandardItemModel
 {
     Q_OBJECT
     public:
-        enum InfoArtistRoles {FieldRole = Qt::UserRole,
+        enum InfoCategoryRole {FieldRole = Qt::UserRole,
                             MultipleValuesRole = Qt::UserRole + 1,
                             OriginalValueRole = Qt::UserRole +2,
                             ValueListRole = Qt::UserRole +3};
-        InfoArtistModel(QObject * parent = 0);
-        ~InfoArtistModel();
+        enum InfoCategoryMode {ArtistMode = 0,
+                                AlbumMode = 1,
+                                AudioGenreMode = 2,
+                                AudioTagMode = 3,
+                                TVShowMode = 4,
+                                VideoGenreMode = 5,
+                                VideoTagMode = 6,
+                                VideoActorMode = 7,
+                                VideoDirectorMode = 8};
+        InfoCategoryModel(QObject * parent = 0);
+        ~InfoCategoryModel();
         void loadInfo(const QList<MediaItem> & mediaList);
         void downloadInfo();
         void saveChanges();
         void cancelChanges();
         QList<MediaItem> mediaList();
         void setSourceModel(MediaItemModel *sourceModel);
+        void setMode(InfoCategoryMode mode);
+        InfoCategoryMode mode();
                    
     private:
         QList<MediaItem> m_mediaList;
         MediaItemModel * m_sourceModel;
         KUrl m_dbPediaDownloadUrl;
+        InfoCategoryMode m_mode;
         
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);

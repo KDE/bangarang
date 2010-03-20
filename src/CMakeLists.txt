@@ -67,7 +67,7 @@ SET(BangarangSources
     platform/taglistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
-    platform/infoartistmodel.cpp
+    platform/infocategorymodel.cpp
     platform/dbpediaquery.cpp
 )
 

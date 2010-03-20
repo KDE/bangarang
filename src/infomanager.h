@@ -34,7 +34,7 @@ class MediaItemModel;
 class InfoItemModel;
 class MediaItem;
 class InfoItemDelegate;
-class InfoArtistModel;
+class InfoCategoryModel;
 class InfoArtistDelegate;
 class MediaItemDelegate;
 
@@ -65,7 +65,7 @@ class InfoManager : public QObject
         bool m_nepomukInited;
         InfoItemModel *m_infoItemModel;
         InfoItemDelegate *m_infoItemDelegate;
-        InfoArtistModel *m_infoArtistModel;
+        InfoCategoryModel *m_infoCategoryModel;
         InfoArtistDelegate *m_infoArtistDelegate;
         QList<MediaItem> m_infoMediaList;
         QString m_currentCategory;
