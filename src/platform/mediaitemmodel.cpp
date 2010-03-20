@@ -155,6 +155,13 @@ void MediaItemModel::load()
     m_loadSources = false;
 }
 
+void MediaItemModel::loadLRI(const QString &lri)
+{
+    clearMediaListData();
+    setMediaListProperties(MediaListProperties(lri));
+    load();
+}
+
 void MediaItemModel::reload()
 {
     m_reload = true;

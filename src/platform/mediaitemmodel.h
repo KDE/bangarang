@@ -258,6 +258,14 @@ class MediaItemModel : public QStandardItemModel
         void load();
         
         /**
+        * Loads list of MediaItems as specified by the provided lri
+        *
+        * Note: Loading is asynchronous. Use mediaListChanged() signal to detect
+        *       when loading is complete. This method will clear existing data.
+        */
+        void loadLRI(const QString &lri);
+        
+        /**
          * Loads a list of MediaItems directly into the model
          * 
          * @param mediaList list of MediaItems to load
