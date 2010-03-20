@@ -152,7 +152,8 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
         } else if (listItemType == "Category") {
             if (firstItem.fields["categoryType"].toString() == "Artist" ||
                 firstItem.fields["categoryType"].toString() == "Album" ||
-                firstItem.fields["categoryType"].toString() == "MusicGenre") {
+                firstItem.fields["categoryType"].toString() == "MusicGenre" ||
+                firstItem.fields["categoryType"].toString() == "AudioTag") {
                 ui->showInfo->setVisible(true);
             } else {
                 ui->showInfo->setVisible(false);
@@ -270,19 +271,13 @@ void InfoManager::loadSelectedInfo()
             m_infoCategoryModel->downloadInfo();
             
             QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
-            m_recentlyPlayedModel->clearMediaListData();
-            m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
-            m_recentlyPlayedModel->load();
+            m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
             QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
-            m_highestRatedModel->clearMediaListData();
-            m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
-            m_highestRatedModel->load();
+            m_highestRatedModel->loadLRI(highestRatedLRI);
 
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
-            m_frequentlyPlayedModel->clearMediaListData();
-            m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
-            m_frequentlyPlayedModel->load();
+            m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "Album") {
@@ -292,19 +287,13 @@ void InfoManager::loadSelectedInfo()
             ui->semanticsStack->setCurrentIndex(0);
             
             QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
-            m_recentlyPlayedModel->clearMediaListData();
-            m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
-            m_recentlyPlayedModel->load();
+            m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
             QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
-            m_highestRatedModel->clearMediaListData();
-            m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
-            m_highestRatedModel->load();
+            m_highestRatedModel->loadLRI(highestRatedLRI);
 
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
-            m_frequentlyPlayedModel->clearMediaListData();
-            m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
-            m_frequentlyPlayedModel->load();
+            m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "MusicGenre") {
@@ -314,19 +303,29 @@ void InfoManager::loadSelectedInfo()
             ui->semanticsStack->setCurrentIndex(0);
             
             QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
-            m_recentlyPlayedModel->clearMediaListData();
-            m_recentlyPlayedModel->setMediaListProperties(MediaListProperties(recentlyPlayedLRI));
-            m_recentlyPlayedModel->load();
+            m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
             QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
-            m_highestRatedModel->clearMediaListData();
-            m_highestRatedModel->setMediaListProperties(MediaListProperties(highestRatedLRI));
-            m_highestRatedModel->load();
+            m_highestRatedModel->loadLRI(highestRatedLRI);
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
-            m_frequentlyPlayedModel->clearMediaListData();
-            m_frequentlyPlayedModel->setMediaListProperties(MediaListProperties(frequentlyPlayedLRI));
-            m_frequentlyPlayedModel->load();
+            m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            
+            updateViewsLayout();
+        } else if (mediaList.at(0).fields["categoryType"].toString() == "AudioTag") {
+            m_infoCategoryModel->setMode(InfoCategoryModel::AudioTagMode);
+            m_currentCategory = "AudioTag";
+            m_infoCategoryModel->loadInfo(mediaList);
+            ui->semanticsStack->setCurrentIndex(0);
+            
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
+            
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            m_highestRatedModel->loadLRI(highestRatedLRI);
+            
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         }

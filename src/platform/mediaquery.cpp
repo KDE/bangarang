@@ -20,6 +20,7 @@
 #include "mediavocabulary.h"
 #include <kdeversion.h>
 #include <KDebug>
+#include <nepomuk/tag.h>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -245,8 +246,8 @@ void MediaQuery::addLRIFilterConditions(const QStringList &lriFilterList, MediaV
                                                             constraint));
         } else if (field == "tag") {
             addCondition(mediaVocabulary.hasTag(MediaQuery::Required,
-                                                            value,
-                                                            constraint));
+                                                Nepomuk::Tag(value).resourceUri().toString(),
+                                                constraint));
         } else if (field == "desription") {
             addCondition(mediaVocabulary.hasDescription(MediaQuery::Required,
                                                             value,
