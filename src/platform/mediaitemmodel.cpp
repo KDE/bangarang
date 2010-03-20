@@ -590,6 +590,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     QList<QStandardItem *> rowData;
     QStandardItem * titleItem = new QStandardItem(mediaItem.artwork, mediaItem.title);
     titleItem->setData(mediaItem.subTitle, MediaItem::SubTitleRole);
+    titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
     titleItem->setData(mediaItem.url, MediaItem::UrlRole);
     titleItem->setData(mediaItem.type, MediaItem::TypeRole);
     titleItem->setData(mediaItem.duration, MediaItem::DurationRole);

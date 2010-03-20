@@ -159,8 +159,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         }
         
         bool hasSubTitle;
-        if (index.data(MediaItem::SubTitleRole).isValid()) {
-            if (!index.data(MediaItem::SubTitleRole).toString().isEmpty()) {
+        if (index.data(MediaItem::SubTitleRole).isValid() || 
+            index.data(MediaItem::SemanticCommentRole).isValid()) {
+            if (!index.data(MediaItem::SubTitleRole).toString().isEmpty() ||
+                !index.data(MediaItem::SemanticCommentRole).toString().isEmpty()) {
                 hasSubTitle = true;
             } else {
                 hasSubTitle = false;
@@ -197,11 +199,22 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     vAlign | hAlign, text);
         if (hasSubTitle && m_renderMode == NormalMode) {
             QString subTitle = index.data(MediaItem::SubTitleRole).toString();
-            QFont subTitleFont = KGlobalSettings::smallestReadableFont();
+            QFontMetrics fm(textFont);
             p.setPen(subColor);
             p.drawText(left + textInner,
-                        top, textWidth, height,
+                        top, qMax(fm.width(subTitle),textWidth), height,
                         Qt::AlignBottom | hAlign, subTitle);
+            if (fm.width(subTitle) < textWidth) {
+                QFont commentFont = KGlobalSettings::smallestReadableFont();
+                commentFont.setItalic(true);
+                QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
+                QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
+                p.setFont(commentFont);
+                p.drawText(left + textInner + fm.width(subTitle),
+                           top, textWidth, height,
+                           Qt::AlignBottom | hAlign, comment);
+                p.setFont(textFont);
+            }
         }
         
         //Paint duration

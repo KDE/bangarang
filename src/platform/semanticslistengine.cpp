@@ -26,6 +26,7 @@
 #include <KUrl>
 #include <KDebug>
 #include <KLocale>
+#include <KDateTime>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -53,27 +54,21 @@ void SemanticsListEngine::run()
     
     //Create media list based on engine argument and filter
     QList<MediaItem> mediaList;
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
-    QString mediaType;
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    QStringList engineFilterList = m_mediaListProperties.engineFilterList();
     
     //Parse filter
-    QStringList lriFilterList;
-    if (!engineFilter.isNull()) {
-        QStringList argList = engineFilter.split("||");
-        mediaType = argList.at(0);
-        if (argList.count() > 1) {
-            for (int i = 1; i < argList.count(); i++) {
-                lriFilterList << argList.at(i);
-            }
-        }
+    QString mediaType;
+    if (engineFilterList.count() != 0) {
+        mediaType = engineFilterList.at(0);
     }
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "frequent") {
-            if (!mediaType.isEmpty()) {
+            if (mediaType == "audio" || mediaType == "video") {
                 MediaQuery query;
                 QStringList bindings;
                 bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -86,7 +81,7 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
                 query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
                 query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
                 query.endWhere();
@@ -106,7 +101,8 @@ void SemanticsListEngine::run()
                     Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                     MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
                     int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
-                    mediaItem.fields["description"] = i18n("%1 - Played %2 times", mediaItem.fields["description"].toString(), playCount);
+                    mediaItem.subTitle = mediaItem.subTitle;
+                    mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
@@ -127,7 +123,7 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
                 query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Required));
                 query.endWhere();
                 QStringList orderByBindings;
@@ -143,8 +139,8 @@ void SemanticsListEngine::run()
                 while( it.next() ) {
                     Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                     MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
-                    QString lastPlayed = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime().toString("ddd MMMM d yyyy h:mm:ss ap"); 
-                    mediaItem.fields["description"] = i18n("%1 - Last Played: %2", mediaItem.fields["description"].toString(), lastPlayed);
+                    KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
+                    mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
@@ -165,7 +161,7 @@ void SemanticsListEngine::run()
                 } else if (mediaType == "video") {
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
-                query.addLRIFilterConditions(lriFilterList, mediaVocabulary);
+                query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
                 query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 0, MediaQuery::GreaterThan));
                 query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
                 query.endWhere();
