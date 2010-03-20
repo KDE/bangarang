@@ -126,7 +126,7 @@ void MusicListEngine::run()
                     mediaItem.fields["categoryType"] = QString("Artist");
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("system-users");
-                    mediaItem.fields["fullName"] = artist;
+                    mediaItem.fields["title"] = artist;
                     mediaList.append(mediaItem);
                 }
                 ++i;

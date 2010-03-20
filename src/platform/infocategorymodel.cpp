@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "infoartistmodel.h"
+#include "infocategorymodel.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
 #include "dbpediaquery.h"
@@ -30,16 +30,16 @@
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
 
-InfoArtistModel::InfoArtistModel(QObject *parent) : QStandardItemModel(parent)
+InfoCategoryModel::InfoCategoryModel(QObject *parent) : QStandardItemModel(parent)
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
 }
 
-InfoArtistModel::~InfoArtistModel()
+InfoCategoryModel::~InfoCategoryModel()
 {
 }
 
-void InfoArtistModel::loadInfo(const QList<MediaItem> & mediaList) 
+void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
     m_mediaList = mediaList;
     clear();
@@ -50,50 +50,58 @@ void InfoArtistModel::loadInfo(const QList<MediaItem> & mediaList)
         
         if (type == "Category") {
             QString subType = m_mediaList.at(0).fields["categoryType"].toString();
-            if (subType == "Artist") {
-                addFieldToValuesModel(i18n("Image"), "associatedImage");
-                addFieldToValuesModel(i18n("Name"), "fullName");
-                addFieldToValuesModel(i18n("Description"), "description");
-                addFieldToValuesModel(i18n("Rating"), "rating");
-            }
+            addFieldToValuesModel(i18n("Image"), "associatedImage");
+            addFieldToValuesModel(i18n("Name"), "title");
+            addFieldToValuesModel(i18n("Description"), "description");
+            addFieldToValuesModel(i18n("Rating"), "rating");
         }
     }
 }
 
-void InfoArtistModel::downloadInfo()
+void InfoCategoryModel::downloadInfo()
 {
-    if (!hasMultipleValues("fullName")) {
-        getDBPediaInfo(commonValue("fullName").toString());
+    if (!hasMultipleValues("title")) {
+        getDBPediaInfo(commonValue("title").toString());
     }
 }
 
-void InfoArtistModel::saveChanges()
+void InfoCategoryModel::saveChanges()
 {
 }
 
-void InfoArtistModel::cancelChanges()
+void InfoCategoryModel::cancelChanges()
 {
     loadInfo(m_mediaList);
 }
 
-QList<MediaItem> InfoArtistModel::mediaList()
+QList<MediaItem> InfoCategoryModel::mediaList()
 {
     return m_mediaList;
 }
 
-void InfoArtistModel::setSourceModel(MediaItemModel * sourceModel)
+void InfoCategoryModel::setSourceModel(MediaItemModel * sourceModel)
 {
     m_sourceModel = sourceModel;
 }
 
-void InfoArtistModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
+void InfoCategoryModel::setMode(InfoCategoryMode mode)
+{
+    m_mode = mode;
+}
+
+InfoCategoryModel::InfoCategoryMode InfoCategoryModel::mode()
+{
+    return m_mode;
+}
+
+void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
 {
     QList<QStandardItem *> rowData;
     
     QStandardItem *fieldItem = new QStandardItem();
-    fieldItem->setData(field, InfoArtistModel::FieldRole);
+    fieldItem->setData(field, InfoCategoryModel::FieldRole);
     bool hasMultiple = hasMultipleValues(field);
-    fieldItem->setData(hasMultiple, InfoArtistModel::MultipleValuesRole);
+    fieldItem->setData(hasMultiple, InfoCategoryModel::MultipleValuesRole);
     bool isEditable = true;
     fieldItem->setEditable(isEditable);
     if (isEditable) {
@@ -105,7 +113,7 @@ void InfoArtistModel::addFieldToValuesModel(const QString &fieldTitle, const QSt
             KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["associatedImage"].toString());
             fieldItem->setData(artworkUrl, Qt::DisplayRole);
             fieldItem->setData(artworkUrl, Qt::EditRole);
-            fieldItem->setData(artworkUrl, InfoArtistModel::OriginalValueRole); //stores copy of original data
+            fieldItem->setData(artworkUrl, InfoCategoryModel::OriginalValueRole); //stores copy of original data
             if (artworkUrl.isValid()) {
                 kDebug() << "artworkUrl:" << artworkUrl.path();
                 QPixmap artwork = QPixmap(artworkUrl.path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -131,13 +139,13 @@ void InfoArtistModel::addFieldToValuesModel(const QString &fieldTitle, const QSt
         QVariant value = commonValue(field);
         fieldItem->setData(value, Qt::DisplayRole);
         fieldItem->setData(value, Qt::EditRole);
-        fieldItem->setData(value, InfoArtistModel::OriginalValueRole); //stores copy of original data
+        fieldItem->setData(value, InfoCategoryModel::OriginalValueRole); //stores copy of original data
     } else {
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
         if (value.type() == QVariant::String) {
             fieldItem->setData(QString(), Qt::EditRole);
-            fieldItem->setData(valueList(field), InfoArtistModel::ValueListRole);
+            fieldItem->setData(valueList(field), InfoCategoryModel::ValueListRole);
         } else if (value.type() == QVariant::Int) {
             fieldItem->setData(0, Qt::EditRole);
         }
@@ -149,7 +157,7 @@ void InfoArtistModel::addFieldToValuesModel(const QString &fieldTitle, const QSt
     Q_UNUSED(forceEditable);
 }
 
-bool InfoArtistModel::hasMultipleValues(const QString &field)
+bool InfoCategoryModel::hasMultipleValues(const QString &field)
 {
     QVariant value;
     
@@ -171,7 +179,7 @@ bool InfoArtistModel::hasMultipleValues(const QString &field)
     return false;
 }
 
-QVariant InfoArtistModel::commonValue(const QString &field)
+QVariant InfoCategoryModel::commonValue(const QString &field)
 {
     QVariant value;
     for (int i = 0; i < m_mediaList.count(); i++) {
@@ -187,7 +195,7 @@ QVariant InfoArtistModel::commonValue(const QString &field)
     return value;
 }
 
-QStringList InfoArtistModel::valueList(const QString &field)
+QStringList InfoCategoryModel::valueList(const QString &field)
 {
     QStringList value;
     value << QString();
@@ -201,17 +209,17 @@ QStringList InfoArtistModel::valueList(const QString &field)
     return value;   
 }
 
-void InfoArtistModel::checkInfoModified(QStandardItem *changedItem)
+void InfoCategoryModel::checkInfoModified(QStandardItem *changedItem)
 {
     bool modified;
-    if (changedItem->data(Qt::DisplayRole) != changedItem->data(InfoArtistModel::OriginalValueRole)) {
+    if (changedItem->data(Qt::DisplayRole) != changedItem->data(InfoCategoryModel::OriginalValueRole)) {
         modified = true;
     } else {
         modified = false;
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *otherItem = item(row, 0);
             if (otherItem->data(Qt::UserRole).toString() != "associatedImage") {
-                if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoArtistModel::OriginalValueRole)) {
+                if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoCategoryModel::OriginalValueRole)) {
                     modified = true;
                     break;
                 }
@@ -222,22 +230,31 @@ void InfoArtistModel::checkInfoModified(QStandardItem *changedItem)
     
 }
 
-void InfoArtistModel::saveFileMetaData(QList<MediaItem> mediaList)
+void InfoCategoryModel::saveFileMetaData(QList<MediaItem> mediaList)
 {
     Q_UNUSED(mediaList);
 }
 
-void InfoArtistModel::getDBPediaInfo(const QString &artistName)
+void InfoCategoryModel::getDBPediaInfo(const QString &artistName)
 {
+    //TODO:Fix memory leak
     DBPediaQuery *query = new DBPediaQuery(this);
-    connect (query, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)));
-    query->getArtistInfo(artistName);
-    
+    if (m_mode == ArtistMode) {
+        connect (query, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+        query->getArtistInfo(artistName);
+    }    
 }
 
-void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
+void InfoCategoryModel::gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
-    QString keyForCurrentData = QString("Artist:%1").arg(commonValue("fullName").toString());
+    //Determine request key for current mode
+    QString keyPrefix;
+    if (m_mode == ArtistMode) {
+        keyPrefix = "Artist:";
+    } 
+    QString keyForCurrentData = keyPrefix + commonValue("title").toString();
+    
+    
     if (successful && requestKey == keyForCurrentData) {
         if (results.count() > 0) {
             Soprano::BindingSet binding = results.at(0);
@@ -256,7 +273,7 @@ void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::Bindin
                 if (!dbPediaThumbnail.isNull())  {
                     QList<QStandardItem *> rowData;
                     QStandardItem *fieldItem = new QStandardItem();
-                    fieldItem->setData("associatedImage", InfoArtistModel::FieldRole);
+                    fieldItem->setData("associatedImage", InfoCategoryModel::FieldRole);
                     fieldItem->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
                     rowData.append(fieldItem);
                     appendRow(rowData);
@@ -265,11 +282,12 @@ void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::Bindin
 
             {
                 QList<QStandardItem *> rowData;
+                QString title = commonValue("title").toString();
                 QStandardItem *fieldItem = new QStandardItem();
-                fieldItem->setData("fullName", InfoArtistModel::FieldRole);
-                fieldItem->setData(commonValue("fullName").toString(), Qt::DisplayRole);
-                fieldItem->setData(commonValue("fullName").toString(), Qt::EditRole);
-                fieldItem->setData(commonValue("fullName").toString(), InfoArtistModel::OriginalValueRole);
+                fieldItem->setData("title", InfoCategoryModel::FieldRole);
+                fieldItem->setData(title, Qt::DisplayRole);
+                fieldItem->setData(title, Qt::EditRole);
+                fieldItem->setData(title, InfoCategoryModel::OriginalValueRole);
                 rowData.append(fieldItem);
                 appendRow(rowData);
             }
@@ -279,10 +297,10 @@ void InfoArtistModel::gotArtistInfo(bool successful, const QList<Soprano::Bindin
             if (!description.isEmpty()) {
                 QList<QStandardItem *> rowData;
                 QStandardItem *fieldItem = new QStandardItem();
-                fieldItem->setData("description", InfoArtistModel::FieldRole);
+                fieldItem->setData("description", InfoCategoryModel::FieldRole);
                 fieldItem->setData(description, Qt::DisplayRole);
                 fieldItem->setData(description, Qt::EditRole);
-                fieldItem->setData(description, InfoArtistModel::OriginalValueRole);
+                fieldItem->setData(description, InfoCategoryModel::OriginalValueRole);
                 rowData.append(fieldItem);
                 appendRow(rowData);
             }

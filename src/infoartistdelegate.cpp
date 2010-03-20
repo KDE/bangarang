@@ -19,7 +19,7 @@
 #include "mainwindow.h"
 #include "sensiblewidgets.h"
 #include "platform/mediaitemmodel.h"
-#include "platform/infoartistmodel.h"
+#include "platform/infocategorymodel.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
@@ -82,12 +82,12 @@ void InfoArtistDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
-        QString field = index.data(InfoArtistModel::FieldRole).toString();
+        QString field = index.data(InfoCategoryModel::FieldRole).toString();
         if (field == "associatedImage") {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
             //KIcon("download").paint(&p, 0, 0, 22, 22, Qt::AlignCenter, QIcon::Normal);
-        } else if (field == "fullName") {
+        } else if (field == "title") {
             Qt::AlignmentFlag hAlign = Qt::AlignHCenter;
             QFont textFont = option.font;
             QString text = index.data(Qt::DisplayRole).toString();
@@ -114,7 +114,7 @@ void InfoArtistDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
                 foregroundColor.setAlphaF(0.7);
                 text = i18n("Multiple Values");
                 textFont.setItalic(true);
-            } else if (index.data(Qt::DisplayRole) != index.data(InfoArtistModel::OriginalValueRole)) {
+            } else if (index.data(Qt::DisplayRole) != index.data(InfoCategoryModel::OriginalValueRole)) {
                 textFont.setBold(true);
             }
             int textWidth = width - 2 * padding;
@@ -145,13 +145,13 @@ QSize InfoArtistDelegate::sizeHint(const QStyleOptionViewItem &option,
 int InfoArtistDelegate::rowHeight(int row) const
 {
     QModelIndex index = m_view->model()->index(row,0);
-    QString field = index.data(InfoArtistModel::FieldRole).toString();
+    QString field = index.data(InfoCategoryModel::FieldRole).toString();
     int height = 1;
     int padding = 2;
     if (field == "associatedImage") {
         QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
         height = artwork.actualSize(QSize(200,200)).height() + 2*padding;
-    } else if (field == "fullName") {
+    } else if (field == "title") {
         QFont textFont;
         int availableWidth = m_view->width() - 2*padding;
         textFont.setPointSize(1.5*textFont.pointSize());
@@ -182,7 +182,7 @@ int InfoArtistDelegate::columnWidth (int column) const
 
 bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-    QString field = index.data(InfoArtistModel::FieldRole).toString();
+    QString field = index.data(InfoCategoryModel::FieldRole).toString();
     if (field == "associatedImage") {
         if (event->type() == QEvent::MouseButtonDblClick) {
             KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
@@ -195,14 +195,14 @@ bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
             }
         }
         return true;
-    } else if (field == "fullName") {
+    } else if (field == "title") {
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent * mouseEvent = (QMouseEvent *)event;
             int downloadLeft = option.rect.left() + option.rect.width() - 16;
             int downloadBottom = option.rect.top() + 16;
             if ((mouseEvent->x() >= downloadLeft) && (mouseEvent->y() <= downloadBottom)) {
                 if (m_extraInfoVisible) {
-                    InfoArtistModel * artistModel = (InfoArtistModel *)model;
+                    InfoCategoryModel * artistModel = (InfoCategoryModel *)model;
                     artistModel->downloadInfo();
                 }
             }
@@ -215,9 +215,9 @@ bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
 
 QWidget *InfoArtistDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    QString field = index.data(InfoArtistModel::FieldRole).toString();
+    QString field = index.data(InfoCategoryModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
-    bool multipleValues = index.data(InfoArtistModel::MultipleValuesRole).toBool();
+    bool multipleValues = index.data(InfoCategoryModel::MultipleValuesRole).toBool();
     if (value.type() == QVariant::String) {
         if (field == "description") {
             QTextEdit *textEdit = new QTextEdit(parent);
@@ -226,7 +226,7 @@ QWidget *InfoArtistDelegate::createEditor( QWidget * parent, const QStyleOptionV
             textEdit->setAutoFillBackground(true);
             return textEdit;
         } else {
-            QStringList valueList = index.data(InfoArtistModel::ValueListRole).toStringList();
+            QStringList valueList = index.data(InfoCategoryModel::ValueListRole).toStringList();
             if (valueList.count() == 0) {
                 KLineEdit *lineEdit = new KLineEdit(parent);
                 lineEdit->setFont(KGlobalSettings::smallestReadableFont());
