@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INFOARTISTDELEGATE_H
-#define INFOARTISTDELEGATE_H
+#ifndef INFOCATEGORYDELEGATE_H
+#define INFOCATEGORYDELEGATE_H
 
 #include <KIcon>
 #include <QItemDelegate>
@@ -30,17 +30,17 @@ class MainWindow;
 class MediaIndexer;
 
 /*
- * This Item Delegate is responsible for painting items in a 
- * values model for items' infoview. It is also responsible for 
+ * This Category Delegate is responsible for painting data in a 
+ * values model for category's infoview. It is also responsible for 
  * providing editing widgets.
  *
  */ 
-class InfoArtistDelegate : public QItemDelegate
+class InfoCategoryDelegate : public QItemDelegate
 {
     Q_OBJECT
     public:
-        InfoArtistDelegate(QObject * parent = 0);
-        ~InfoArtistDelegate();
+        InfoCategoryDelegate(QObject * parent = 0);
+        ~InfoCategoryDelegate();
         void paint(QPainter *painter, const QStyleOptionViewItem &option,
                     const QModelIndex &index) const;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -65,4 +65,4 @@ class InfoArtistDelegate : public QItemDelegate
     Q_SIGNALS:
 };
 
-#endif // INFOARTISTDELEGATE_H
+#endif // INFOCATEGORYDELEGATE_H
