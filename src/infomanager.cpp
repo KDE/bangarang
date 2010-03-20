@@ -18,7 +18,7 @@
 
 #include "infomanager.h"
 #include "infoitemdelegate.h"
-#include "infoartistdelegate.h"
+#include "infocategorydelegate.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -68,8 +68,12 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoCategoryHighestRatedTitle->setFont(KGlobalSettings::smallestReadableFont());
     ui->infoCategoryFrequentlyPlayedTitle->setFont(KGlobalSettings::smallestReadableFont());
     
+    //Set up Category View
     m_infoCategoryModel = new InfoCategoryModel(this);
-    m_infoArtistDelegate = new InfoArtistDelegate(m_parent);
+    m_infoCategoryDelegate = new InfoCategoryDelegate(m_parent);
+    ui->infoCategoryView->setModel(m_infoCategoryModel);
+    m_infoCategoryDelegate->setView(ui->infoCategoryView);
+    ui->infoCategoryView->setItemDelegate(m_infoCategoryDelegate);
     
     //Set up Recently Played Info box
     ui->infoCategoryRecentlyPlayed->setMainWindow(m_parent);
@@ -284,9 +288,6 @@ void InfoManager::setCategoryToArtist()
 {
     m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
     m_infoCategoryModel->setMode(InfoCategoryModel::ArtistMode);
-    ui->infoCategoryView->setModel(m_infoCategoryModel);
-    m_infoArtistDelegate->setView(ui->infoCategoryView);
-    ui->infoCategoryView->setItemDelegate(m_infoArtistDelegate);
     m_currentCategory = "Artist";
 }
 
@@ -306,8 +307,8 @@ void InfoManager::updateViewsLayout()
     ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     if (m_currentCategory == "Artist") {
-        ui->infoCategoryView->setMinimumHeight(m_infoArtistDelegate->heightForAllRows());
-        ui->infoCategoryView->setMaximumHeight(m_infoArtistDelegate->heightForAllRows());
+        ui->infoCategoryView->setMinimumHeight(m_infoCategoryDelegate->heightForAllRows());
+        ui->infoCategoryView->setMaximumHeight(m_infoCategoryDelegate->heightForAllRows());
     }
     
 }

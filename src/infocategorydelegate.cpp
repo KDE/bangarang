@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "infoartistdelegate.h"
+#include "infocategorydelegate.h"
 #include "mainwindow.h"
 #include "sensiblewidgets.h"
 #include "platform/mediaitemmodel.h"
@@ -45,7 +45,7 @@
 #include <QComboBox>
 #include <QHeaderView>
 
-InfoArtistDelegate::InfoArtistDelegate(QObject *parent) : QItemDelegate(parent)
+InfoCategoryDelegate::InfoCategoryDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_parent = (MainWindow *)parent;
     
@@ -59,11 +59,11 @@ InfoArtistDelegate::InfoArtistDelegate(QObject *parent) : QItemDelegate(parent)
     m_extraInfoVisible = false;
 }
 
-InfoArtistDelegate::~InfoArtistDelegate()
+InfoCategoryDelegate::~InfoCategoryDelegate()
 {
 }
 
-void InfoArtistDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const int left = option.rect.left();
     const int top = option.rect.top();
@@ -135,14 +135,14 @@ void InfoArtistDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     
 }
 
-QSize InfoArtistDelegate::sizeHint(const QStyleOptionViewItem &option,
+QSize InfoCategoryDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
     Q_UNUSED(option);
     return QSize(0, rowHeight(index.row()));
 }
 
-int InfoArtistDelegate::rowHeight(int row) const
+int InfoCategoryDelegate::rowHeight(int row) const
 {
     QModelIndex index = m_view->model()->index(row,0);
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
@@ -171,7 +171,7 @@ int InfoArtistDelegate::rowHeight(int row) const
     return height;
 }
 
-int InfoArtistDelegate::columnWidth (int column) const 
+int InfoCategoryDelegate::columnWidth (int column) const 
 {
     if (column == 0) {
         return 70;
@@ -180,7 +180,7 @@ int InfoArtistDelegate::columnWidth (int column) const
     }
 }
 
-bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
+bool InfoCategoryDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
     if (field == "associatedImage") {
@@ -202,8 +202,8 @@ bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
             int downloadBottom = option.rect.top() + 16;
             if ((mouseEvent->x() >= downloadLeft) && (mouseEvent->y() <= downloadBottom)) {
                 if (m_extraInfoVisible) {
-                    InfoCategoryModel * artistModel = (InfoCategoryModel *)model;
-                    artistModel->downloadInfo();
+                    InfoCategoryModel * categoryModel = (InfoCategoryModel *)model;
+                    categoryModel->downloadInfo();
                 }
             }
         }
@@ -213,7 +213,7 @@ bool InfoArtistDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, 
     }
 }
 
-QWidget *InfoArtistDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+QWidget *InfoCategoryDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
@@ -257,7 +257,7 @@ QWidget *InfoArtistDelegate::createEditor( QWidget * parent, const QStyleOptionV
         
 }
 
-void InfoArtistDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
+void InfoCategoryDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
 {
     QItemDelegate::setModelData(editor, model, index);
     
@@ -267,13 +267,13 @@ void InfoArtistDelegate::setModelData(QWidget * editor, QAbstractItemModel * mod
     }
 }   
 
-void InfoArtistDelegate::setView(QTableView * view) 
+void InfoCategoryDelegate::setView(QTableView * view) 
 {
     m_view = view;
     m_defaultViewSelectionMode = view->selectionMode();
 }
 
-int InfoArtistDelegate::heightForAllRows()
+int InfoCategoryDelegate::heightForAllRows()
 {
     int height = 0;
     for (int i = 0; i < m_view->model()->rowCount(); i++) {

@@ -35,7 +35,7 @@ class InfoItemModel;
 class MediaItem;
 class InfoItemDelegate;
 class InfoCategoryModel;
-class InfoArtistDelegate;
+class InfoCategoryDelegate;
 class MediaItemDelegate;
 
 /*
@@ -66,7 +66,7 @@ class InfoManager : public QObject
         InfoItemModel *m_infoItemModel;
         InfoItemDelegate *m_infoItemDelegate;
         InfoCategoryModel *m_infoCategoryModel;
-        InfoArtistDelegate *m_infoArtistDelegate;
+        InfoCategoryDelegate *m_infoCategoryDelegate;
         QList<MediaItem> m_infoMediaList;
         QString m_currentCategory;
         MediaItemModel *m_recentlyPlayedModel;
