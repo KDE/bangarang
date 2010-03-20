@@ -251,6 +251,8 @@ void MusicListEngine::run()
                     mediaItem.url = QString("music://artists?%1||%2||%3").arg(artist, album, genre);
                     mediaItem.title = genre;
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("MusicGenre");
+                    mediaItem.fields["title"] = genre;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("flag-blue");
                     mediaList.append(mediaItem);

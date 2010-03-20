@@ -42,7 +42,7 @@ class InfoCategoryModel : public QStandardItemModel
                             ValueListRole = Qt::UserRole +3};
         enum InfoCategoryMode {ArtistMode = 0,
                                 AlbumMode = 1,
-                                AudioGenreMode = 2,
+                                MusicGenreMode = 2,
                                 AudioTagMode = 3,
                                 TVShowMode = 4,
                                 VideoGenreMode = 5,
