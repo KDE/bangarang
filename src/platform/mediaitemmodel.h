@@ -53,28 +53,30 @@ struct MediaItem {
     
     SubTitleRole = Qt::UserRole + 2, /** QStandardItem role containing MediaItem sub title.*/
     
-    DurationRole = Qt::UserRole + 3, /** QStandardItem role containing MediaItem duration.*/
+    SemanticCommentRole = Qt::UserRole + 3, /** QStandardItem role containing MediaItem sub title.*/
+
+    DurationRole = Qt::UserRole + 4, /** QStandardItem role containing MediaItem duration.*/
     
-    RatingRole = Qt::UserRole + 4, /** QStandardItem role containing MediaItem rating.*/
+    RatingRole = Qt::UserRole + 5, /** QStandardItem role containing MediaItem rating.*/
     
-    PlayCountRole = Qt::UserRole + 5, /** QStandardItem role containing MediaItem type.*/
+    PlayCountRole = Qt::UserRole + 6, /** QStandardItem role containing MediaItem type.*/
     
-    LastPlayedRole = Qt::UserRole + 6, /** QStandardItem role containing MediaItem type.*/
+    LastPlayedRole = Qt::UserRole + 7, /** QStandardItem role containing MediaItem type.*/
     
-    TypeRole = Qt::UserRole + 7, /** QStandardItem role containing MediaItem type.*/
+    TypeRole = Qt::UserRole + 8, /** QStandardItem role containing MediaItem type.*/
     
-    FilterRole = Qt::UserRole + 8, /** QStandardItem role containing MediaItem filter.*/
+    FilterRole = Qt::UserRole + 9, /** QStandardItem role containing MediaItem filter.*/
     
-    PlaylistIndexRole = Qt::UserRole + 9,  /** QStandardItem role containing Playlist 
+    PlaylistIndexRole = Qt::UserRole + 10,  /** QStandardItem role containing Playlist 
                                              *index of MediaItem.*/
                                              
-    NowPlayingRole = Qt::UserRole + 10, 
+    NowPlayingRole = Qt::UserRole + 11, 
     
-    IsSavedListRole = Qt::UserRole + 11, /** QStandardItem role containing whether
+    IsSavedListRole = Qt::UserRole + 12, /** QStandardItem role containing whether
                                          *or not the media list represented by the 
                                          *MediaItem is a saved list.*/
     
-    ExistsRole = Qt::UserRole + 12 }; /** QStandardItem role containing whether or
+    ExistsRole = Qt::UserRole + 13 }; /** QStandardItem role containing whether or
                                         *the file the MediaItem.url refers to exists.*/
                                         
     QString url; /** Url of MediaItem. The may be a standard url representing a 
@@ -85,6 +87,8 @@ struct MediaItem {
     QString title; /** Title of the Media Item. */
     
     QString subTitle; /** Subtitle of the Media Item. */
+    
+    QString semanticComment; /** Comment containing info like play count, lastplayed, etc. */
     
     QString duration;  /** Displayed representation of duration of the Media Item. */
     
