@@ -69,10 +69,13 @@ void TagListEngine::run()
     
     if (m_nepomukInited) { 
       if (engineArg.isEmpty()) { //without arguments, list tags 
+          //TODO:This should be restricted to audio resources
 	foreach(Nepomuk::Tag tag, Nepomuk::Tag::allTags()) {
 	      MediaItem mediaItem;
 	      mediaItem.title = tag.label();
 	      mediaItem.type = "Category";
+          mediaItem.fields["categoryType"] = QString("AudioTag");
+          mediaItem.fields["title"] = tag.label();
 	      mediaItem.url = QString("tag://%1?%2").arg(mediaItem.title).arg(engineFilter);
 	      mediaList.append(mediaItem);
 	}
