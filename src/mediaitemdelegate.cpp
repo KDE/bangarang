@@ -199,11 +199,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     vAlign | hAlign, text);
         if (hasSubTitle && m_renderMode == NormalMode) {
             QString subTitle = index.data(MediaItem::SubTitleRole).toString();
-            QFontMetrics fm(textFont);
             p.setPen(subColor);
             p.drawText(left + textInner,
-                        top, qMax(fm.width(subTitle),textWidth), height,
+                        top, textWidth, height,
                         Qt::AlignBottom | hAlign, subTitle);
+            QFontMetrics fm(textFont);
             if (fm.width(subTitle) < textWidth) {
                 QFont commentFont = KGlobalSettings::smallestReadableFont();
                 commentFont.setItalic(true);
@@ -211,7 +211,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
                 p.setFont(commentFont);
                 p.drawText(left + textInner + fm.width(subTitle),
-                           top, textWidth, height,
+                           top, textWidth - fm.width(subTitle), height,
                            Qt::AlignBottom | hAlign, comment);
                 p.setFont(textFont);
             }
