@@ -184,6 +184,22 @@ public:
         }
     }
     
+    /**
+     * Returns a parsed list of filters from the enginefilter portion
+     * of the lri string
+     **/
+    QStringList engineFilterList() {
+        QStringList lriFilterList;
+        QString filter = engineFilter();
+        if (!filter.isNull()) {
+            QStringList argList = filter.split("||");
+            for (int i = 0; i < argList.count(); i++) {
+                lriFilterList << argList.at(i);
+            }
+        }
+        return lriFilterList;
+    }
+    
     QString type; /** The type of media list.
                    * "Categories" - a list of MediaItems that are categories.
                    * "Sources" - a list of MediaItems that are playable media 
