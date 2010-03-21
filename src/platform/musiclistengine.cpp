@@ -278,6 +278,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             bindings.append(mediaVocabulary.genreBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
@@ -287,6 +288,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
             if (!artist.isEmpty()) { 
                 query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
                                                                       artist,
