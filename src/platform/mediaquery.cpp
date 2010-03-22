@@ -49,6 +49,14 @@ MediaQuery::MediaQuery()
     m_filterOperatorConstraint["<"] = LessThan;
     m_filterOperatorConstraint[".contains."] = Contains;
     
+    fieldBindingDictionary["artist"] = MediaVocabulary::musicArtistNameBinding();
+    fieldBindingDictionary["album"] = MediaVocabulary::musicAlbumTitleBinding();
+    fieldBindingDictionary["genre"] = MediaVocabulary::genreBinding();
+    fieldBindingDictionary["tag"] = MediaVocabulary::tagBinding();
+    fieldBindingDictionary["seriesName"] = MediaVocabulary::videoSeriesTitleBinding();
+    fieldBindingDictionary["season"] = MediaVocabulary::videoSeasonBinding();
+    
+    
 }
 
 MediaQuery::~MediaQuery()
@@ -57,18 +65,26 @@ MediaQuery::~MediaQuery()
 
 void MediaQuery::select(const QStringList &bindings, SelectType selectType)
 {
-    m_queryForm += "SELECT ";
+    m_querySelect += "SELECT ";
     if (selectType == Distinct) {
-        m_queryForm += "DISTINCT ";
+        m_querySelect += "DISTINCT ";
     }
     for (int i = 0; i < bindings.count(); i++) {
-        m_queryForm += QString("?%1 ").arg(bindings.at(i));
+        if (bindings.at(i).contains("SUM(") ||
+            bindings.at(i).contains("COUNT(") ||
+            bindings.at(i).contains("AVG(") ||
+            bindings.at(i).contains("MIN(") ||
+            bindings.at(i).contains("MAX(") ) {
+            m_querySelect += bindings.at(i);
+        } else {
+            m_querySelect += QString("?%1 ").arg(bindings.at(i));
+        }
     }
 }
 
 void MediaQuery::startWhere()
 {
-    m_queryForm += "WHERE { ";
+    m_queryWhere += "WHERE { ";
 }
 
 void MediaQuery::addCondition(const QString &condition)
@@ -174,20 +190,31 @@ void MediaQuery::addOffset(int offset)
     }
 }
 
+void MediaQuery::addSubQuery(MediaQuery subQuery)
+{
+    bool excludePrefix = true;
+    m_queryCondition += QString("{ %1 } ").arg(subQuery.query(excludePrefix));
+}
 
 void MediaQuery::addExtra(const QString &extra)
 {
     m_querySuffix += extra + QString(" ");
 }
 
-QString MediaQuery::query()
+QString MediaQuery::query(bool excludeQuery)
 {
-    return m_queryPrefix + m_queryForm + m_queryCondition + m_querySuffix;
+    QString query;
+    if (excludeQuery) {
+        query = m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
+    } else {
+        query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
+    }
+    return query;
 }
 
 Soprano::QueryResultIterator MediaQuery::executeSelect(Soprano::Model* model)
 {
-    QString query = m_queryPrefix + m_queryForm + m_queryCondition + m_querySuffix;
+    QString query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
     return model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
 }
 
@@ -201,150 +228,163 @@ void MediaQuery::addLRIFilterConditions(const QStringList &lriFilterList, MediaV
 {
     for (int i = 0; i < lriFilterList.count(); i++) {
         QString lriFilter = lriFilterList.at(i).trimmed();
-        
-        //Parse filter
-        QString field;
-        Constraint constraint = Equal;
-        QString value;
-        for (int j = 0; j < m_filterOperators.count(); j ++) {
-            QString oper = m_filterOperators.at(j);
-            if (lriFilter.indexOf(oper) != -1) {
-                constraint = m_filterOperatorConstraint[oper];
-                field = lriFilter.left(lriFilter.indexOf(oper)).trimmed();
-                value = lriFilter.mid(lriFilter.indexOf(oper) + oper.length()).trimmed();
-                break;
-            }
+        addLRIFilterCondition(lriFilter, mediaVocabulary);
+    }
+}
+
+void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary mediaVocabulary)
+{
+    //Parse filter
+    QString field;
+    Constraint constraint = Equal;
+    QString value;
+    for (int j = 0; j < m_filterOperators.count(); j ++) {
+        QString oper = m_filterOperators.at(j);
+        if (lriFilter.indexOf(oper) != -1) {
+            constraint = m_filterOperatorConstraint[oper];
+            field = lriFilter.left(lriFilter.indexOf(oper)).trimmed();
+            value = lriFilter.mid(lriFilter.indexOf(oper) + oper.length()).trimmed();
+            break;
         }
+    }
+    
+    //Special handling for groupBy field
+    if (field == "groupBy") {
+        m_querySelect += QString("?%1 ").arg(fieldBindingDictionary[value]);
         
-        
-        //Add filter condition
-        if (field == "type" && constraint == Equal) {
-            if (value.toLower() == "audio") {
-                addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
-            } else if (value.toLower() == "video") {
-                addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-            }
-        } else if (field == "audioType" && constraint == Equal) {
-            if (value.toLower() == "audio clip") {
-                addCondition(mediaVocabulary.hasTypeAudio(MediaQuery::Required));
-            } else if (value.toLower() == "music") {
-                addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-            } else if (value.toLower() == "audio stream") {
-                addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
-            }          
-        } else if (field == "videoType") {
-            if (value.toLower() == "video clip") {
-                addCondition(mediaVocabulary.hasTypeVideo(MediaQuery::Required));
-            } else if (value.toLower() == "movie") {
-                addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
-            } else if (value.toLower() == "tv show") {
-                addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
-            }          
-        } else if (field == "title") {
-            addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
-                                                            value,
-                                                            constraint));
-        } else if (field == "tag") {
-            addCondition(mediaVocabulary.hasTag(MediaQuery::Required,
-                                                Nepomuk::Tag(value).resourceUri().toString(),
-                                                constraint));
-        } else if (field == "desription") {
-            addCondition(mediaVocabulary.hasDescription(MediaQuery::Required,
-                                                            value,
-                                                            constraint));
-        } else if (field == "duration") {
-            addCondition(mediaVocabulary.hasDuration(MediaQuery::Required,
-                                                            value.toInt(),
-                                                            constraint));
-        } else if (field == "lastPlayed") {
-            QDateTime valueDateTime = QDateTime::fromString(value, "yyyyMMddHHmmss");
-            addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Required,
-                                                            valueDateTime,
-                                                            constraint));
-        } else if (field == "playCount") {
-            addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required,
-                                                            value.toInt(),
-                                                            constraint));
-        } else if (field == "created") {
-            QDate valueDate = QDate::fromString(value, "yyyyMMdd");
-            addCondition(mediaVocabulary.hasCreated(MediaQuery::Required,
-                                                            valueDate,
-                                                            constraint));
-        } else if (field == "genre") {
-            addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                  value,
-                                                  constraint));
-        } else if (field == "releaseDate") {
-            QDate valueDate = QDate::fromString(value, "yyyyMMdd");
-            addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Required,
+        //Set the field to ensure SPARQL triple match is also added to the query condition
+        field = value;
+        value = QString();
+    }
+    
+    
+    //Add filter condition
+    if (field == "type" && constraint == Equal) {
+        if (value.toLower() == "audio") {
+            addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+        } else if (value.toLower() == "video") {
+            addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+        }
+    } else if (field == "audioType" && constraint == Equal) {
+        if (value.toLower() == "audio clip") {
+            addCondition(mediaVocabulary.hasTypeAudio(MediaQuery::Required));
+        } else if (value.toLower() == "music") {
+            addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+        } else if (value.toLower() == "audio stream") {
+            addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
+        }          
+    } else if (field == "videoType") {
+        if (value.toLower() == "video clip") {
+            addCondition(mediaVocabulary.hasTypeVideo(MediaQuery::Required));
+        } else if (value.toLower() == "movie") {
+            addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
+        } else if (value.toLower() == "tv show") {
+            addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+        }          
+    } else if (field == "title") {
+        addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                        value,
+                                                        constraint));
+    } else if (field == "tag") {
+        addCondition(mediaVocabulary.hasTag(MediaQuery::Required,
+                                            Nepomuk::Tag(value).resourceUri().toString(),
+                                            constraint));
+    } else if (field == "desription") {
+        addCondition(mediaVocabulary.hasDescription(MediaQuery::Required,
+                                                        value,
+                                                        constraint));
+    } else if (field == "duration") {
+        addCondition(mediaVocabulary.hasDuration(MediaQuery::Required,
+                                                        value.toInt(),
+                                                        constraint));
+    } else if (field == "lastPlayed") {
+        QDateTime valueDateTime = QDateTime::fromString(value, "yyyyMMddHHmmss");
+        addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Required,
+                                                        valueDateTime,
+                                                        constraint));
+    } else if (field == "playCount") {
+        addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required,
+                                                        value.toInt(),
+                                                        constraint));
+    } else if (field == "created") {
+        QDate valueDate = QDate::fromString(value, "yyyyMMdd");
+        addCondition(mediaVocabulary.hasCreated(MediaQuery::Required,
                                                         valueDate,
                                                         constraint));
-        } else if (field == "rating") {
-            addCondition(mediaVocabulary.hasRating(MediaQuery::Required,
-                                                            value.toInt(),
-                                                            constraint));
-        } else if (field == "artist") {
-            addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
-                                                            value,
-                                                            constraint));
-        } else if (field == "album") {
-            addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
-                                                           value,
-                                                           constraint));
-        } else if (field == "albumYear") {
-            addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Required,
-                                                           value.toInt(),
-                                                           constraint));
-        } else if (field == "trackNumber") {
-            addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Required,
-                                                  value.toInt(),
-                                                  constraint));
-        } else if (field == "seriesName") {
-            addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
-                                                value,
-                                                constraint));
-        } else if (field == "synopsis") {
-            addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Required,
-                                                value,
-                                                constraint));
-        } else if (field == "season") {
-            addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
-                                                          value.toInt(),
-                                                          constraint));
-        } else if (field == "episodeNumber") {
-            addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Required,
-                                                          value.toInt(),
-                                                          constraint));
-        } else if (field == "audienceRating") {
-            addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "writer") {
-            addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "director") {
-            addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "assistantDirector") {
-            addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "producer") {
-            addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "actor") {
-            addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "cinematographer") {
-            addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Required,
-                                                          value,
-                                                          constraint));
-        } else if (field == "limit") {
-            addLimit(value.toInt());
-        }
+    } else if (field == "genre") {
+        addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                              value,
+                                              constraint));
+    } else if (field == "releaseDate") {
+        QDate valueDate = QDate::fromString(value, "yyyyMMdd");
+        addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Required,
+                                                    valueDate,
+                                                    constraint));
+    } else if (field == "rating") {
+        addCondition(mediaVocabulary.hasRating(MediaQuery::Required,
+                                                        value.toInt(),
+                                                        constraint));
+    } else if (field == "artist") {
+        addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+                                                        value,
+                                                        constraint));
+    } else if (field == "album") {
+        addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required,
+                                                       value,
+                                                       constraint));
+    } else if (field == "albumYear") {
+        addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Required,
+                                                       value.toInt(),
+                                                       constraint));
+    } else if (field == "trackNumber") {
+        addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Required,
+                                              value.toInt(),
+                                              constraint));
+    } else if (field == "seriesName") {
+        addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
+                                            value,
+                                            constraint));
+    } else if (field == "synopsis") {
+        addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Required,
+                                            value,
+                                            constraint));
+    } else if (field == "season") {
+        addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
+                                                      value.toInt(),
+                                                      constraint));
+    } else if (field == "episodeNumber") {
+        addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Required,
+                                                      value.toInt(),
+                                                      constraint));
+    } else if (field == "audienceRating") {
+        addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "writer") {
+        addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "director") {
+        addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "assistantDirector") {
+        addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "producer") {
+        addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "actor") {
+        addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "cinematographer") {
+        addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Required,
+                                                      value,
+                                                      constraint));
+    } else if (field == "limit") {
+        addLimit(value.toInt());
     }
 }

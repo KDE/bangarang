@@ -19,6 +19,7 @@
 #ifndef INFOMANAGER_H
 #define INFOMANAGER_H
 
+#include "platform/mediaitemmodel.h"
 #include <QtCore>
 #include <QStandardItemModel>
 #include <QItemDelegate>
@@ -30,9 +31,7 @@ namespace Ui
     class MainWindowClass;
 }
 class MainWindow;
-class MediaItemModel;
 class InfoItemModel;
-class MediaItem;
 class InfoItemDelegate;
 class InfoCategoryModel;
 class InfoCategoryDelegate;
@@ -58,6 +57,7 @@ class InfoManager : public QObject
         void loadSelectedInfo();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void removeSelectedItemsInfo();
+        void setCategory(const MediaItem &mediaItem);
         
     private:
         MainWindow *m_parent; 
@@ -72,10 +72,12 @@ class InfoManager : public QObject
         MediaItemModel *m_recentlyPlayedModel;
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
+        MediaItem m_mediaListCategory;
         
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
+        void showOrHideInfoButton();
 };
 #endif //INFOMANAGER_H

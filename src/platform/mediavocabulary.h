@@ -215,7 +215,7 @@ class MediaVocabulary {
         static QString genreBinding();
         static QString releaseDateBinding();
         static QString ratingBinding();
-	static QString tagBinding();
+	    static QString tagBinding();
         
         static QString musicArtistBinding();
         static QString musicArtistNameBinding();

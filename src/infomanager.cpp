@@ -98,6 +98,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
+    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(showOrHideInfoButton()));
 }
 
 InfoManager::~InfoManager()
@@ -136,30 +137,46 @@ void InfoManager::hideInfoView()
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
 {
+    showOrHideInfoButton();
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+}
+
+void InfoManager::showOrHideInfoButton()
+{
     //Conditionally show the showInfo button
     //NOTE: This will eventually be whittled down to nothing as we add more info views
     //to the semantics stack.
-    if (selected.indexes().count() > 0) {
-        int row = selected.indexes().at(0).row();
-        MediaItem firstItem = m_parent->m_mediaItemModel->mediaItemAt(row);
-        QString listItemType = firstItem.type;
-        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            if (!firstItem.url.startsWith("DVDTRACK") && !firstItem.url.startsWith("CDTRACK")) {
-                ui->showInfo->setVisible(true);
-            } else {
-                ui->showInfo->setVisible(false);
-            }
-        } else if (listItemType == "Category") {
-            if (firstItem.fields["categoryType"].toString() == "Artist" ||
-                firstItem.fields["categoryType"].toString() == "Album" ||
-                firstItem.fields["categoryType"].toString() == "MusicGenre" ||
-                firstItem.fields["categoryType"].toString() == "AudioTag" ||
-                firstItem.fields["categoryType"].toString() == "TVShow" ||
-                firstItem.fields["categoryType"].toString() == "VideoGenre") {
-                ui->showInfo->setVisible(true);
-            } else {
-                ui->showInfo->setVisible(false);
-            }
+    
+    MediaItem firstItem;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    if (selectedRows.count() > 0) {
+        //Look at first item in selection
+        firstItem = m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(0).row());
+    } else if (m_parent->m_mediaItemModel->rowCount() > 0) {
+        //Look at first item in media list
+        firstItem = m_parent->m_mediaItemModel->mediaItemAt(0);
+    } else {
+        //If nothing is selected and there's nothing in the media list then nothing to do
+        ui->showInfo->setVisible(false);
+        return;
+    }
+    
+    QString listItemType = firstItem.type;
+    if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
+        if (!firstItem.url.startsWith("DVDTRACK") && !firstItem.url.startsWith("CDTRACK")) {
+            ui->showInfo->setVisible(true);
+        } else {
+            ui->showInfo->setVisible(false);
+        }
+    } else if (listItemType == "Category") {
+        if (firstItem.fields["categoryType"].toString() == "Artist" ||
+            firstItem.fields["categoryType"].toString() == "Album" ||
+            firstItem.fields["categoryType"].toString() == "MusicGenre" ||
+            firstItem.fields["categoryType"].toString() == "AudioTag" ||
+            firstItem.fields["categoryType"].toString() == "TV Series" ||
+            firstItem.fields["categoryType"].toString() == "VideoGenre") {
+            ui->showInfo->setVisible(true);
         } else {
             ui->showInfo->setVisible(false);
         }
@@ -171,8 +188,6 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
     if (ui->semanticsHolder->isVisible()) {
         loadSelectedInfo();
     }
-    Q_UNUSED(selected);
-    Q_UNUSED(deselected);
 }
 
 void InfoManager::saveItemInfo()
@@ -231,6 +246,10 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
     updateViewsLayout();
 }
 
+void InfoManager::setCategory(const MediaItem &mediaItem)
+{
+    m_mediaListCategory = mediaItem;
+}
 
 
 //----------------------
@@ -242,123 +261,173 @@ void InfoManager::loadSelectedInfo()
     //NOTE:For each selection type a page will be added to the semantics stack
     //ui->semanticsStack->setCurrentIndex(1);
     
+    //Determine type of items in media list view
+    bool firstItemInListIsMedia = false;
+    if (m_parent->m_mediaItemModel->rowCount()>0) {
+        if (m_parent->m_mediaItemModel->mediaItemAt(0).type == "Audio" || m_parent->m_mediaItemModel->mediaItemAt(0).type == "Video") {
+            firstItemInListIsMedia = true;
+        } else {
+            firstItemInListIsMedia = false;
+        }
+    }
+    
     //Get selected items
+    bool selected = true;
     QList<MediaItem> mediaList;
     QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
-    }
-    if (mediaList.count() == 0) {
+    if (selectedRows.count() > 0) {
+        for (int i = 0 ; i < selectedRows.count() ; ++i) {
+            mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+        }
+    } else if (m_parent->m_mediaItemModel->rowCount()>0) {
+        //Since nothing is selected the the information context is either
+        //the category selected to produce the playable mediaview items or 
+        //or the list of categories in the mediaview
+        selected = false;
+        if (firstItemInListIsMedia) {
+            mediaList.append(m_mediaListCategory);
+        } else {
+            mediaList = m_parent->m_mediaItemModel->mediaList();
+        }
+    } else {
         return;
     }
     
     //Load selected items into info model
-    if (mediaList.at(0).type == "Audio" || mediaList.at(0).type == "Video") {
+    if (selected && (mediaList.at(0).type == "Audio" || mediaList.at(0).type == "Video")) {
         m_infoItemModel->loadInfo(mediaList);
         ui->semanticsStack->setCurrentIndex(1);
         updateViewsLayout();
     } else if (mediaList.at(0).type == "Category") {
         m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
-        
+        if (selected || firstItemInListIsMedia) {
+            m_infoCategoryModel->loadInfo(mediaList);
+        } else {
+            m_infoCategoryModel->clear();
+        }
         if (mediaList.at(0).fields["categoryType"].toString() == "Artist") {
             m_infoCategoryModel->setMode(InfoCategoryModel::ArtistMode);
             m_currentCategory = "Artist";
-            m_infoCategoryModel->loadInfo(mediaList);
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("system-users").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("system-users").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("system-users").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
             //NOTE:This following is present here for development and debugging purposes only.
             // The expected workflow is to display info contained in the nepomuk and
             // allow use of downloadInfo to populate nepomuk. We could provide
             // automatic display of downloaded info as an option...
-            m_infoCategoryModel->downloadInfo();
+            //m_infoCategoryModel->downloadInfo();
             
-            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=artist");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + groupBy +  lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + groupBy +  lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
 
-            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "artist", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "Album") {
             m_infoCategoryModel->setMode(InfoCategoryModel::AlbumMode);
             m_currentCategory = "Album";
-            m_infoCategoryModel->loadInfo(mediaList);
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("media-optical").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("media-optical").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("media-optical").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
-            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=album");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + groupBy +  lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + groupBy +  lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
 
-            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "album", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "MusicGenre") {
             m_infoCategoryModel->setMode(InfoCategoryModel::MusicGenreMode);
             m_currentCategory = "MusicGenre";
-            m_infoCategoryModel->loadInfo(mediaList);
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("flag-blue").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("flag-blue").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("flag-blue").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
-            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=genre");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + groupBy +  lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + groupBy +  lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
             
-            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "AudioTag") {
             m_infoCategoryModel->setMode(InfoCategoryModel::AudioTagMode);
             m_currentCategory = "AudioTag";
-            m_infoCategoryModel->loadInfo(mediaList);
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("nepomuk").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("nepomuk").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("nepomuk").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
-            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=tag");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?audio||limit=5") + groupBy +  lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            QString highestRatedLRI = QString("semantics://highest?audio||limit=5") + groupBy +  lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
             
-            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "tag", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
-        } else if (mediaList.at(0).fields["categoryType"].toString() == "TVShow") {
+        } else if (mediaList.at(0).fields["categoryType"].toString() == "TV Series") {
             m_infoCategoryModel->setMode(InfoCategoryModel::TVShowMode);
-            m_currentCategory = "TVShow";
-            m_infoCategoryModel->loadInfo(mediaList);
+            m_currentCategory = "TVSeries";
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("video-television").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("video-television").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("video-television").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
-            QString recentlyPlayedLRI = QString("semantics://recent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=seriesName");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?video||limit=5") + groupBy +  lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
+            QString highestRatedLRI = QString("semantics://highest?video||limit=5") + groupBy + lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
             
-            QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "seriesName", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + groupBy + lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
         } else if (mediaList.at(0).fields["categoryType"].toString() == "VideoGenre") {
             m_infoCategoryModel->setMode(InfoCategoryModel::VideoGenreMode);
             m_currentCategory = "VideoGenre";
-            m_infoCategoryModel->loadInfo(mediaList);
+            ui->recentlyPlayedInfoIcon->setPixmap(KIcon("flag-green").pixmap(16,16));
+            ui->highestRatedInfoIcon->setPixmap(KIcon("flag-green").pixmap(16,16));
+            ui->frequentlyPlayedInfoIcon->setPixmap(KIcon("flag-green").pixmap(16,16));
             ui->semanticsStack->setCurrentIndex(0);
             
-            QString recentlyPlayedLRI = QString("semantics://recent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString groupBy = (selected || firstItemInListIsMedia) ? QString() : QString("||groupBy=genre");
+            QString lriFilter = (selected || firstItemInListIsMedia) ? Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=") : QString();
+            QString recentlyPlayedLRI = QString("semantics://recent?video||limit=5") + groupBy + lriFilter;
             m_recentlyPlayedModel->loadLRI(recentlyPlayedLRI);
             
-            QString highestRatedLRI = QString("semantics://highest?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString highestRatedLRI = QString("semantics://highest?video||limit=5") + groupBy + lriFilter;
             m_highestRatedModel->loadLRI(highestRatedLRI);
             
-            QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + Utilities::lriFilterFromMediaListField(mediaList, "title", "genre", "=");
+            QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + groupBy + lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
             
             updateViewsLayout();
@@ -379,11 +448,15 @@ void InfoManager::updateViewsLayout()
     ui->infoItemView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     
     //Update infoCategoryView
-    ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->infoCategoryView->setMinimumHeight(m_infoCategoryDelegate->heightForAllRows());
-    ui->infoCategoryView->setMaximumHeight(m_infoCategoryDelegate->heightForAllRows());
-    
+    if (m_infoCategoryModel->rowCount()> 0) {
+        ui->infoCategoryView->setVisible(true);
+        ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+        ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+        ui->infoCategoryView->setMinimumHeight(m_infoCategoryDelegate->heightForAllRows());
+        ui->infoCategoryView->setMaximumHeight(m_infoCategoryDelegate->heightForAllRows());
+    } else {
+        ui->infoCategoryView->setVisible(false);
+    }
 }
 
 void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)

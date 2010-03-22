@@ -26,6 +26,7 @@
 #include <KMimeType>
 #include <KIcon>
 #include <KIconEffect>
+#include <KLocale>
 #include <KDebug>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
@@ -735,6 +736,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res)
 MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type)
 {
     MediaItem mediaItem;
+    
     KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
@@ -848,7 +850,85 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             }
         }
     }
+        
+    return mediaItem;
+}
+
+MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri)
+{
+    MediaItem mediaItem;
     
+    if (type == "Artist" ||
+         type == "Album" ||
+         type == "AudioGenre" ||
+         type == "AudioTag" ||
+         type == "TV Series" ||
+         type == "VideoGenre") {
+        mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = type;
+        mediaItem.nowPlaying = false;
+        
+        if (type =="Artist") {
+            QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
+            QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            mediaItem.url = QString("music://songs?%1||%2||%3")
+                            .arg(artist)
+                            .arg(album)
+                            .arg(genre);
+            mediaItem.title = artist;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("system-users");
+        } else if (type == "Album") {
+            QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
+            QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            mediaItem.url = QString("music://songs?%1||%2||%3")
+                            .arg(artist)
+                            .arg(album)
+                            .arg(genre);
+            mediaItem.title = album;
+            mediaItem.subTitle = artist;
+            mediaItem.artwork = KIcon("media-optical-audio");
+        } else if (type == "AudioGenre") {
+            QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
+            QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            mediaItem.url = QString("music://songs?%1||%2||%3")
+                            .arg(artist)
+                            .arg(album)
+                            .arg(genre);
+            mediaItem.title = genre;
+            mediaItem.artwork = KIcon("flag-blue");
+        } else if (type == "TV Series") {
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
+            QString season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toString();
+            mediaItem.url = QString("video://seasons?||%1||%2||%3")
+                            .arg(genre)
+                            .arg(seriesName)
+                            .arg(season);
+            mediaItem.title = seriesName;
+            mediaItem.artwork = KIcon("video-television");
+        } else if (type == "TV Season") {
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
+            QString season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toString();
+            mediaItem.url = QString("video://episodes?||%1||%2||%3")
+                                .arg(genre).arg(seriesName).arg(season);
+            mediaItem.title = seriesName;
+            mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
+            mediaItem.artwork = KIcon("video-television");
+        } else if (type == "VideoGenre") {
+            QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            mediaItem.url = QString("video://sources?||%1").arg(genre);
+            mediaItem.title = genre;
+            mediaItem.artwork = KIcon("flag-green");
+        }
+        if (!lri.isEmpty()) {
+            mediaItem.url = lri;
+        }
+    }
     return mediaItem;
 }
 

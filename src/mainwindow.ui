@@ -1754,13 +1754,7 @@
                                    <number>5</number>
                                   </property>
                                   <item>
-                                   <widget class="QLabel" name="infoCategoryRecentlyPlayedTitle">
-                                    <property name="minimumSize">
-                                     <size>
-                                      <width>0</width>
-                                      <height>20</height>
-                                     </size>
-                                    </property>
+                                   <widget class="QWidget" name="recentlyPlayedInfoHolder" native="true">
                                     <property name="palette">
                                      <palette>
                                       <active>
@@ -1828,12 +1822,56 @@
                                     <property name="autoFillBackground">
                                      <bool>true</bool>
                                     </property>
-                                    <property name="text">
-                                     <string>Recently Played</string>
-                                    </property>
-                                    <property name="alignment">
-                                     <set>Qt::AlignCenter</set>
-                                    </property>
+                                    <layout class="QHBoxLayout" name="horizontalLayout_2">
+                                     <property name="margin">
+                                      <number>0</number>
+                                     </property>
+                                     <item>
+                                      <widget class="QLabel" name="recentlyPlayedInfoIcon">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="infoCategoryRecentlyPlayedTitle">
+                                       <property name="minimumSize">
+                                        <size>
+                                         <width>0</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string>Recently Played</string>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="label_12">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                    </layout>
                                    </widget>
                                   </item>
                                   <item>
@@ -1889,13 +1927,7 @@
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QLabel" name="infoCategoryHighestRatedTitle">
-                                    <property name="minimumSize">
-                                     <size>
-                                      <width>0</width>
-                                      <height>20</height>
-                                     </size>
-                                    </property>
+                                   <widget class="QWidget" name="highestRatedInfoHolder" native="true">
                                     <property name="palette">
                                      <palette>
                                       <active>
@@ -1963,12 +1995,59 @@
                                     <property name="autoFillBackground">
                                      <bool>true</bool>
                                     </property>
-                                    <property name="text">
-                                     <string>Highest Rated</string>
-                                    </property>
-                                    <property name="alignment">
-                                     <set>Qt::AlignCenter</set>
-                                    </property>
+                                    <layout class="QHBoxLayout" name="horizontalLayout_15">
+                                     <property name="margin">
+                                      <number>0</number>
+                                     </property>
+                                     <item>
+                                      <widget class="QLabel" name="highestRatedInfoIcon">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="infoCategoryHighestRatedTitle">
+                                       <property name="minimumSize">
+                                        <size>
+                                         <width>0</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="autoFillBackground">
+                                        <bool>false</bool>
+                                       </property>
+                                       <property name="text">
+                                        <string>Highest Rated</string>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="label_13">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                    </layout>
                                    </widget>
                                   </item>
                                   <item>
@@ -2024,13 +2103,7 @@
                                    </widget>
                                   </item>
                                   <item>
-                                   <widget class="QLabel" name="infoCategoryFrequentlyPlayedTitle">
-                                    <property name="minimumSize">
-                                     <size>
-                                      <width>0</width>
-                                      <height>20</height>
-                                     </size>
-                                    </property>
+                                   <widget class="QWidget" name="frequentlyPlayedInfoHolder" native="true">
                                     <property name="palette">
                                      <palette>
                                       <active>
@@ -2098,12 +2171,59 @@
                                     <property name="autoFillBackground">
                                      <bool>true</bool>
                                     </property>
-                                    <property name="text">
-                                     <string>Frequently Played</string>
-                                    </property>
-                                    <property name="alignment">
-                                     <set>Qt::AlignCenter</set>
-                                    </property>
+                                    <layout class="QHBoxLayout" name="horizontalLayout_16">
+                                     <property name="margin">
+                                      <number>0</number>
+                                     </property>
+                                     <item>
+                                      <widget class="QLabel" name="frequentlyPlayedInfoIcon">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="infoCategoryFrequentlyPlayedTitle">
+                                       <property name="minimumSize">
+                                        <size>
+                                         <width>0</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="autoFillBackground">
+                                        <bool>false</bool>
+                                       </property>
+                                       <property name="text">
+                                        <string>Frequently Played</string>
+                                       </property>
+                                       <property name="alignment">
+                                        <set>Qt::AlignCenter</set>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                     <item>
+                                      <widget class="QLabel" name="label_14">
+                                       <property name="maximumSize">
+                                        <size>
+                                         <width>20</width>
+                                         <height>20</height>
+                                        </size>
+                                       </property>
+                                       <property name="text">
+                                        <string/>
+                                       </property>
+                                      </widget>
+                                     </item>
+                                    </layout>
                                    </widget>
                                   </item>
                                   <item>

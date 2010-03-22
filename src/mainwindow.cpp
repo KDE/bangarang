@@ -888,6 +888,7 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
+        m_infoManager->setCategory(m_audioListsModel->mediaItemAt(selectedRow));
     }
     Q_UNUSED(deselected);
 }    
@@ -916,6 +917,7 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
+        m_infoManager->setCategory(m_videoListsModel->mediaItemAt(selectedRow));
     }
     Q_UNUSED(deselected);
 }    
@@ -1290,6 +1292,12 @@ void MainWindow::updateCustomColors()
     viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::Base));
     ui->mediaListHolder->setPalette(viewPalette);
     ui->semanticsHolder->setPalette(viewPalette);
+    
+    //Update custom colors in Info view
+    QPalette infoBoxHeaderPalette = QApplication::palette();
+    ui->recentlyPlayedInfoHolder->setPalette(infoBoxHeaderPalette);
+    ui->highestRatedInfoHolder->setPalette(infoBoxHeaderPalette);
+    ui->frequentlyPlayedInfoHolder->setPalette(infoBoxHeaderPalette);
     
 }
 

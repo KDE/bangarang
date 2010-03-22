@@ -45,7 +45,11 @@ class MediaQuery {
         enum Match {Required = 0, Optional = 1};
         
         enum Order{Ascending = 0, Descending = 1};
-        
+        enum Aggregate{Sum = 0, Count = 1, Average = 2, Min = 3, Max = 4,
+                        CountAverage = 5};
+                        
+        QHash<QString, QString> fieldBindingDictionary;
+       
         void select(const QStringList &bindings, SelectType selectType = NonDistinct);
         void startWhere();
         void addCondition(const QString &condition);
@@ -69,12 +73,33 @@ class MediaQuery {
                      QList<Order> order = QList<Order>());
         void addLimit(int limit);
         void addOffset(int offset);
+        void addSubQuery(MediaQuery subQuery);
         void addExtra(const QString &extra);
-        QString query();
+        QString query(bool excludePrefix = false);
         
         Soprano::QueryResultIterator executeSelect(Soprano::Model* model);
         bool executeAsk(Soprano::Model* model);
+        void addLRIFilterCondition(const QString &lriFilter, MediaVocabulary mediaVocabulary);
         void addLRIFilterConditions(const QStringList &lriFilterList, MediaVocabulary mediaVocabulary);
+        
+        static QString aggregateBinding(QString binding, Aggregate agg) {
+            if (agg == Sum) {
+                return QString("SUM(?%1) as ?%1_sum ").arg(binding);
+            } else if (agg == Count) {
+                return QString("COUNT(?%1) as ?%1_count ").arg(binding);
+            } else if (agg == Average) {
+                return QString("AVG(?%1) as ?%1_avg ").arg(binding);
+            } else if (agg == Min) {
+                return QString("MIN(?%1) as ?%1_min ").arg(binding);
+            } else if (agg == Max) {
+                return QString("MAX(?%1) as ?%1_max ").arg(binding);
+            } else if (agg == CountAverage) {
+                return QString("(AVG(?%1)*COUNT(?r)) as ?%1_countavg ").arg(binding);
+            } else {
+                return QString();
+            }
+        }
+        
         
         static QString addOptional(const QString &str) {
             return QString("OPTIONAL { ") + str + "} . ";
@@ -236,10 +261,12 @@ class MediaQuery {
 
     private:
         QString m_queryPrefix;
-        QString m_queryForm;
+        QString m_querySelect;
+        QString m_queryWhere;
         QString m_queryCondition;
         QString m_querySuffix;
         QStringList m_filterOperators;
         QHash<QString, Constraint> m_filterOperatorConstraint;
+        QHash<QString, QString> m_fieldBindingDictionary;
 };
 #endif // MEDIAQUERY_H
