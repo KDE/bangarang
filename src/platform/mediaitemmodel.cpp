@@ -598,15 +598,26 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
+    QString tooltip;
     if (!mediaItem.fields["description"].toString().isEmpty()) {
-        QString tooltip = QString("<b>%1</b><br>%2")
-                        .arg(mediaItem.title)
-                        .arg(mediaItem.fields["description"].toString());
-        titleItem->setData(tooltip, Qt::ToolTipRole);
+        tooltip.append(mediaItem.fields["description"].toString());
     }
-    titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
-    titleItem->setData(mediaItem.fields["playCount"].toInt(), MediaItem::PlayCountRole);
-    titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), MediaItem::LastPlayedRole);
+    if (!mediaItem.semanticComment.isEmpty()) {
+        tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));
+    }
+    if (!tooltip.isEmpty()) {
+        tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
+        titleItem->setData(tooltip, Qt::ToolTipRole);
+    } 
+    if (!mediaItem.fields["rating"].isNull()) {
+        titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
+    }
+    if (!mediaItem.fields["playCount"].isNull()) {
+        titleItem->setData(mediaItem.fields["playCount"].toInt(), MediaItem::PlayCountRole);
+    }
+    if (!mediaItem.fields["lastPlayed"].isNull()) {
+        titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), MediaItem::LastPlayedRole);
+    }
     rowData << titleItem;
     
     if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {

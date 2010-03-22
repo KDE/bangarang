@@ -142,6 +142,7 @@ public:
     MediaListProperties(QString startingLri = QString()) 
     {
         lri = startingLri;
+        filterOperators << "!=" << ">=" << "<=" << "=" << ">" << "<" << ".contains.";
     }
     
     ~MediaListProperties(){}
@@ -203,6 +204,55 @@ public:
         }
         return lriFilterList;
     }
+    
+    /**
+     * Returns field name of specified filter
+     **/
+    QString filterField(QString filter)
+    {
+        QString field;
+        for (int j = 0; j < filterOperators.count(); j ++) {
+            QString oper = filterOperators.at(j);
+            if (filter.indexOf(oper) != -1) {
+                field = filter.left(filter.indexOf(oper)).trimmed();
+                break;
+            }
+        }
+        return field;
+    }
+    
+    /**
+     * Returns operator of specified filter
+     **/
+    QString filterOperator(QString filter)
+    {
+        QString oper;
+        for (int j = 0; j < filterOperators.count(); j ++) {
+            oper = filterOperators.at(j);
+            if (filter.indexOf(oper) != -1) {
+                break;
+            }
+        }
+        return oper;
+    }
+    
+    /**
+    * Returns value of specified filter
+    **/
+    QString filterValue(QString filter)
+    {
+        QString value;
+        for (int j = 0; j < filterOperators.count(); j ++) {
+            QString oper = filterOperators.at(j);
+            if (filter.indexOf(oper) != -1) {
+                value = filter.mid(filter.indexOf(oper) + oper.length()).trimmed();
+                break;
+            }
+        }
+        return value;
+    }
+    
+    QStringList filterOperators;
     
     QString type; /** The type of media list.
                    * "Categories" - a list of MediaItems that are categories.

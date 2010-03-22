@@ -62,47 +62,110 @@ void SemanticsListEngine::run()
     
     //Parse filter
     QString mediaType;
+    QString groupByCategoryType;
+    QString groupByField;
+    QString limitFilter;
     if (engineFilterList.count() != 0) {
         mediaType = engineFilterList.at(0);
+        if (engineFilterList.filter("groupBy=").count() != 0) {
+            QString groupByFilter = engineFilterList.filter("groupBy=").at(0);
+            groupByField = groupByFilter.remove("groupBy=").trimmed();
+            if (groupByField == "artist") {
+                groupByCategoryType = "Artist";
+            } else if (groupByField == "album") {
+                groupByCategoryType = "Album";
+            } else if (groupByField == "genre") {
+                if (mediaType == "audio") {
+                    groupByCategoryType = "AudioGenre";
+                } else if (mediaType == "video") {
+                    groupByCategoryType = "VideoGenre";
+                }
+            } else if (groupByField == "seriesName") {
+                groupByCategoryType = "TV Series";
+            }
+        }
+        if (engineFilterList.filter("limit=").count() !=0) {
+            limitFilter = engineFilterList.filter("limit=").at(0);
+        }
     }
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "frequent") {
             if (mediaType == "audio" || mediaType == "video") {
                 MediaQuery query;
-                QStringList bindings;
-                bindings.append(mediaVocabulary.mediaResourceBinding());
-                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                bindings.append(mediaVocabulary.playCountBinding());
-                query.select(bindings, MediaQuery::Distinct);
-                query.startWhere();
-                if (mediaType == "audio") {
-                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
-                } else if (mediaType == "video") {
-                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-                }
-                query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
-                query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
-                query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
-                query.endWhere();
-                QStringList orderByBindings;
-                QList<MediaQuery::Order> order;
-                orderByBindings.append(mediaVocabulary.playCountBinding());
-                order.append(MediaQuery::Descending);
-                orderByBindings.append(mediaVocabulary.lastPlayedBinding());
-                order.append(MediaQuery::Descending);
-                query.orderBy(orderByBindings, order);
-                //query.addLimit(20);
+                if (groupByCategoryType.isEmpty()) {
+                    QStringList bindings;
+                    bindings.append(mediaVocabulary.mediaResourceBinding());
+                    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                    bindings.append(mediaVocabulary.playCountBinding());
+                    query.select(bindings, MediaQuery::Distinct);
+                    query.startWhere();
+                    if (mediaType == "audio") {
+                        query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+                    } else if (mediaType == "video") {
+                        query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+                    }
+                    query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+                    query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
+                    query.endWhere();
+                    QStringList orderByBindings;
+                    QList<MediaQuery::Order> order;
+                    orderByBindings.append(mediaVocabulary.playCountBinding());
+                    order.append(MediaQuery::Descending);
+                    orderByBindings.append(mediaVocabulary.lastPlayedBinding());
+                    order.append(MediaQuery::Descending);
+                    query.orderBy(orderByBindings, order);
+                } else {
+                    QStringList bindings;
+                    //NOTE:query.addLRIFilterConditions will automatically add 
+                    //the groupBy field name to the binding list.
+                    bindings.append(query.fieldBindingDictionary[groupByField]);
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.playCountBinding(), MediaQuery::Sum));
+                    query.select(bindings, MediaQuery::Distinct);
+                    query.startWhere();
+                    MediaQuery subQuery;
+                    QStringList subBindings;
+                    subBindings.append(mediaVocabulary.playCountBinding());
+                    subBindings.append(mediaVocabulary.mediaResourceBinding());
+                    subQuery.select(subBindings, MediaQuery::Distinct);
+                    subQuery.startWhere();
+                    if (mediaType == "audio") {
+                        subQuery.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+                    } else if (mediaType == "video") {
+                        subQuery.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+                    }
+                    subQuery.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    QStringList subQueryLRIFilterList = engineFilterList;
+                    subQueryLRIFilterList.removeAll(limitFilter);
+                    subQuery.addLRIFilterConditions(subQueryLRIFilterList, mediaVocabulary);
+                    subQuery.endWhere();
+                    query.addSubQuery(subQuery);
+                    query.endWhere();
+                    query.addLRIFilterCondition(limitFilter,  mediaVocabulary);
+                    QStringList orderByBindings;
+                    QList<MediaQuery::Order> order;
+                    orderByBindings.append(QString("%1_sum").arg(mediaVocabulary.playCountBinding()));
+                    order.append(MediaQuery::Descending);
+                    query.orderBy(orderByBindings, order);
+                } 
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
                 //Build media list from results
                 while( it.next() ) {
-                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                    MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
-                    int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
-                    mediaItem.subTitle = mediaItem.subTitle;
-                    mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
+                    MediaItem mediaItem;
+                    if (groupByCategoryType.isEmpty()) {
+                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                        int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
+                        mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
+                    } else {
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        int playCount = it.binding(QString("%1_sum").arg(mediaVocabulary.playCountBinding())).literal().toInt();
+                        mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
+                        mediaItem.fields["playCount"] = playCount;
+                    }
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
@@ -113,9 +176,15 @@ void SemanticsListEngine::run()
             if (!mediaType.isEmpty()) {
                 MediaQuery query;
                 QStringList bindings;
-                bindings.append(mediaVocabulary.mediaResourceBinding());
-                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                bindings.append(mediaVocabulary.lastPlayedBinding());
+                if (groupByCategoryType.isEmpty()) {
+                    bindings.append(mediaVocabulary.mediaResourceBinding());
+                    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                    bindings.append(mediaVocabulary.lastPlayedBinding());
+                } else {
+                    //NOTE:query.addLRIFilterConditions will automatically add 
+                    //the groupBy field name to the binding list.
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.lastPlayedBinding(), MediaQuery::Max));
+                } 
                 query.select(bindings, MediaQuery::Distinct);
                 query.startWhere();
                 if (mediaType == "audio") {
@@ -128,19 +197,30 @@ void SemanticsListEngine::run()
                 query.endWhere();
                 QStringList orderByBindings;
                 QList<MediaQuery::Order> order;
-                orderByBindings.append(mediaVocabulary.lastPlayedBinding());
+                if (groupByCategoryType.isEmpty()) {
+                    orderByBindings.append(mediaVocabulary.lastPlayedBinding());
+                } else {
+                    orderByBindings.append(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding()));
+                }
                 order.append(MediaQuery::Descending);
                 query.orderBy(orderByBindings, order);
-                //query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
                 while( it.next() ) {
-                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                    MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
-                    KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
-                    mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
+                    MediaItem mediaItem;
+                    if (groupByCategoryType.isEmpty()) {
+                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                        KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
+                        mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
+                    } else {
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        KDateTime lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
+                        mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
+                        mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
+                    }
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
@@ -151,9 +231,16 @@ void SemanticsListEngine::run()
             if (!mediaType.isEmpty()) {
                 MediaQuery query;
                 QStringList bindings;
-                bindings.append(mediaVocabulary.mediaResourceBinding());
-                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                bindings.append(mediaVocabulary.ratingBinding());
+                if (groupByCategoryType.isEmpty()) {
+                    bindings.append(mediaVocabulary.mediaResourceBinding());
+                    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                    bindings.append(mediaVocabulary.ratingBinding());
+                } else {
+                    //NOTE:query.addLRIFilterConditions will automatically add 
+                    //the groupBy field name to the binding list.
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::CountAverage));
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::Average));
+                } 
                 query.select(bindings, MediaQuery::Distinct);
                 query.startWhere();
                 if (mediaType == "audio") {
@@ -167,19 +254,31 @@ void SemanticsListEngine::run()
                 query.endWhere();
                 QStringList orderByBindings;
                 QList<MediaQuery::Order> order;
-                orderByBindings.append(mediaVocabulary.ratingBinding());
-                order.append(MediaQuery::Descending);
-                orderByBindings.append(mediaVocabulary.playCountBinding());
-                order.append(MediaQuery::Descending);
+                if (groupByCategoryType.isEmpty()) {
+                    orderByBindings.append(mediaVocabulary.ratingBinding());
+                    order.append(MediaQuery::Descending);
+                    orderByBindings.append(mediaVocabulary.playCountBinding());
+                    order.append(MediaQuery::Descending);
+                } else {
+                    orderByBindings.append(QString("%1_countavg").arg(mediaVocabulary.ratingBinding()));
+                    order.append(MediaQuery::Descending);
+                    order.append(MediaQuery::Descending);
+                }
                 query.orderBy(orderByBindings, order);
-                //query.addLimit(20);
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
                 while( it.next() ) {
-                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                    MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
+                    MediaItem mediaItem;
+                    if (groupByCategoryType.isEmpty()) {
+                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                    } else {
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        int rating = it.binding(QString("%1_avg").arg(mediaVocabulary.ratingBinding())).literal().toInt();
+                        mediaItem.fields["rating"] = rating;
+                    }
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Highest Rated");

@@ -18,6 +18,7 @@
 
 #include "mediaitemdelegate.h"
 #include "mainwindow.h"
+#include "infomanager.h"
 #include "platform/playlist.h"
 #include "platform/mediaindexer.h"
 #include "platform/mediaitemmodel.h"
@@ -124,9 +125,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     p.translate(-option.rect.topLeft());
     
     if (index.column() == 0) {
-        //Paint Icon
+        //Paint backgroung for currently playing item
         KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
-        bool exists = index.data(MediaItem::ExistsRole).toBool();
         if (m_parent->m_nowPlaying->rowCount() > 0) {
             MediaItem nowPlayingItem = m_parent->m_nowPlaying->mediaItemAt(0);
             if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
@@ -139,22 +139,23 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 p.fillRect(left, top, width, height, brush);
             }
         }
+        
+        //Paint Icon
+        bool exists = index.data(MediaItem::ExistsRole).toBool();
         int iconWidth;
         if (m_renderMode == NormalMode) {
             iconWidth = 22;
         } else {
-            iconWidth = 16;
+            iconWidth = 0;
         }
         int topOffset = (height - iconWidth) / 2;
         if (topOffset < padding) {
             topOffset = padding;
         }
-        if (!icon.isNull()) {
+        if (!icon.isNull() && m_renderMode == NormalMode) {
             icon.paint(&p, left + padding, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
-        } else {
-            iconWidth = 0;
         }
-        if (!exists) {
+        if (!exists && m_renderMode == NormalMode) {
             KIcon("emblem-unmounted").paint(&p, left + padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
         }
         
@@ -228,7 +229,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         
         //Paint Rating
         if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode) {
-            if ((m_nepomukInited) && (isMediaItem) && (subType != "CD Track") && (subType != "DVD Title")) {
+            if ((m_nepomukInited) && 
+                (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
+                (subType != "CD Track") 
+                && (subType != "DVD Title")) {
                 int rating = 0;
                 if (index.data(MediaItem::RatingRole).isValid()) {
                     rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
@@ -244,7 +248,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         }
         
         //Paint PlayCount
-        if (m_renderMode == MiniPlayCountMode && isMediaItem) {
+        if (m_renderMode == MiniPlayCountMode && !index.data(MediaItem::PlayCountRole).isNull()) {
             QString playCountText = QString("%1").arg(index.data(MediaItem::PlayCountRole).toInt());
             p.drawText(left + width - durRatingSpacer,
                        top+1, durRatingSpacer - 1, height,
@@ -374,6 +378,8 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
         } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
             if (event->type() == QEvent::MouseButtonDblClick && m_renderMode == NormalMode) {
                 m_parent->addListToHistory();
+                MediaItemModel * model = (MediaItemModel *)index.model();
+                m_parent->infoManager()->setCategory(model->mediaItemAt(index.row()));
                 emit categoryActivated(index);
             }
         }
@@ -393,6 +399,8 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
         if (index.data(MediaItem::TypeRole).toString() == "Category") {
             if (event->type() == QEvent::MouseButtonPress) {
                 m_parent->addListToHistory();
+                MediaItemModel * model = (MediaItemModel *)index.model();
+                m_parent->infoManager()->setCategory(model->mediaItemAt(index.row()));
                 emit categoryActivated(index);
             }
             return true;

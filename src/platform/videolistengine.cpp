@@ -145,7 +145,7 @@ void VideoListEngine::run()
                     mediaItem.url = QString("video://seasons?||%1||%2").arg(genre).arg(seriesName);
                     mediaItem.title = seriesName;
                     mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("TVShow");
+                    mediaItem.fields["categoryType"] = QString("TV Series");
                     mediaItem.fields["title"] = seriesName;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
