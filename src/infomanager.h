@@ -57,7 +57,7 @@ class InfoManager : public QObject
         void loadSelectedInfo();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
         void removeSelectedItemsInfo();
-        void setCategory(const MediaItem &mediaItem);
+        void setContext(const MediaItem &category);
         
     private:
         MainWindow *m_parent; 
@@ -68,11 +68,10 @@ class InfoManager : public QObject
         InfoCategoryModel *m_infoCategoryModel;
         InfoCategoryDelegate *m_infoCategoryDelegate;
         QList<MediaItem> m_infoMediaList;
-        QString m_currentCategory;
         MediaItemModel *m_recentlyPlayedModel;
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
-        MediaItem m_mediaListCategory;
+        MediaItem m_contextCategory;
         
     private slots:
         void updateViewsLayout();
