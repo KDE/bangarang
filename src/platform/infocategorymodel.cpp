@@ -108,6 +108,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
         //fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
     }
 
+    bool addRow = false;
     if (field == "associatedImage") {
         if (m_mediaList.count() == 1) {
             KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["associatedImage"].toString());
@@ -119,6 +120,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
                 QPixmap artwork = QPixmap(artworkUrl.path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 if (!artwork.isNull()) {
                     fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+                    addRow = true;
                 } else {
                     //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
                 }
@@ -130,16 +132,21 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
             //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
         }
         rowData.append(fieldItem);
-        appendRow(rowData);
+        if (addRow) {
+            appendRow(rowData);
+        }
         return;
     }
 
     if (!hasMultiple) {
         //Set field value
         QVariant value = commonValue(field);
-        fieldItem->setData(value, Qt::DisplayRole);
-        fieldItem->setData(value, Qt::EditRole);
-        fieldItem->setData(value, InfoCategoryModel::OriginalValueRole); //stores copy of original data
+        if (!value.isNull()) {
+            fieldItem->setData(value, Qt::DisplayRole);
+            fieldItem->setData(value, Qt::EditRole);
+            fieldItem->setData(value, InfoCategoryModel::OriginalValueRole); //stores copy of original data
+            addRow = true;
+        }
     } else {
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
@@ -151,7 +158,9 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
         }
     }
     rowData.append(fieldItem);
-    appendRow(rowData);
+    if (addRow) {
+        appendRow(rowData);
+    }
     
     Q_UNUSED(fieldTitle);
     Q_UNUSED(forceEditable);

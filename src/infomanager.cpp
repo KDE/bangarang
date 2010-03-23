@@ -346,6 +346,7 @@ void InfoManager::loadSelectedInfo()
 
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
         } else if (contextCategoryType == "Album") {
             m_infoCategoryModel->setMode(InfoCategoryModel::AlbumMode);
             ui->recentlyPlayedInfoIcon->setPixmap(KIcon("media-optical").pixmap(16,16));
@@ -363,6 +364,7 @@ void InfoManager::loadSelectedInfo()
 
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
         } else if (contextCategoryType == "MusicGenre") {
             m_infoCategoryModel->setMode(InfoCategoryModel::MusicGenreMode);
             ui->recentlyPlayedInfoIcon->setPixmap(KIcon("flag-blue").pixmap(16,16));
@@ -380,6 +382,7 @@ void InfoManager::loadSelectedInfo()
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
         } else if (contextCategoryType == "AudioTag") {
             m_infoCategoryModel->setMode(InfoCategoryModel::AudioTagMode);
             ui->recentlyPlayedInfoIcon->setPixmap(KIcon("nepomuk").pixmap(16,16));
@@ -397,6 +400,7 @@ void InfoManager::loadSelectedInfo()
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?audio||limit=5") + groupBy +  lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
         } else if (contextCategoryType == "TV Series") {
             m_infoCategoryModel->setMode(InfoCategoryModel::TVShowMode);
             ui->recentlyPlayedInfoIcon->setPixmap(KIcon("video-television").pixmap(16,16));
@@ -414,6 +418,7 @@ void InfoManager::loadSelectedInfo()
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + groupBy + lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
         } else if (contextCategoryType == "VideoGenre") {
             m_infoCategoryModel->setMode(InfoCategoryModel::VideoGenreMode);
             ui->recentlyPlayedInfoIcon->setPixmap(KIcon("flag-green").pixmap(16,16));
@@ -431,6 +436,9 @@ void InfoManager::loadSelectedInfo()
             
             QString frequentlyPlayedLRI = QString("semantics://frequent?video||limit=5") + groupBy + lriFilter;
             m_frequentlyPlayedModel->loadLRI(frequentlyPlayedLRI);
+            showInfoBoxes();
+        } else {
+            hideInfoBoxes();
         }
         updateViewsLayout();
     }
@@ -465,4 +473,24 @@ void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIn
     updateViewsLayout();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
+}
+
+void InfoManager::showInfoBoxes()
+{
+    ui->recentlyPlayedInfoHolder->show();
+    ui->infoCategoryRecentlyPlayed->show();
+    ui->highestRatedInfoHolder->show();
+    ui->infoCategoryHighestRated->show();
+    ui->frequentlyPlayedInfoHolder->show();
+    ui->infoCategoryFrequentlyPlayed->show();
+}
+
+void InfoManager::hideInfoBoxes()
+{
+    ui->recentlyPlayedInfoHolder->hide();
+    ui->infoCategoryRecentlyPlayed->hide();
+    ui->highestRatedInfoHolder->hide();
+    ui->infoCategoryHighestRated->hide();
+    ui->frequentlyPlayedInfoHolder->hide();
+    ui->infoCategoryFrequentlyPlayed->hide();
 }
