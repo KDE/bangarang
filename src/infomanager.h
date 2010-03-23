@@ -78,5 +78,7 @@ class InfoManager : public QObject
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void showOrHideInfoButton();
+        void showInfoBoxes();
+        void hideInfoBoxes();
 };
 #endif //INFOMANAGER_H
