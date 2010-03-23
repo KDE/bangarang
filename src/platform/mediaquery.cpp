@@ -201,10 +201,10 @@ void MediaQuery::addExtra(const QString &extra)
     m_querySuffix += extra + QString(" ");
 }
 
-QString MediaQuery::query(bool excludeQuery)
+QString MediaQuery::query(bool excludePrefix)
 {
     QString query;
-    if (excludeQuery) {
+    if (excludePrefix) {
         query = m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
     } else {
         query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;

@@ -379,7 +379,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
             if (event->type() == QEvent::MouseButtonDblClick && m_renderMode == NormalMode) {
                 m_parent->addListToHistory();
                 MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setCategory(model->mediaItemAt(index.row()));
+                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));
                 emit categoryActivated(index);
             }
         }
@@ -400,7 +400,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
             if (event->type() == QEvent::MouseButtonPress) {
                 m_parent->addListToHistory();
                 MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setCategory(model->mediaItemAt(index.row()));
+                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));
                 emit categoryActivated(index);
             }
             return true;

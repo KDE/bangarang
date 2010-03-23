@@ -888,7 +888,7 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setCategory(m_audioListsModel->mediaItemAt(selectedRow));
+        m_infoManager->setContext(m_audioListsModel->mediaItemAt(selectedRow));
     }
     Q_UNUSED(deselected);
 }    
@@ -917,7 +917,7 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setCategory(m_videoListsModel->mediaItemAt(selectedRow));
+        m_infoManager->setContext(m_videoListsModel->mediaItemAt(selectedRow));
     }
     Q_UNUSED(deselected);
 }    
