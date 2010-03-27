@@ -31,6 +31,11 @@ MediaView::MediaView(QWidget * parent):QTreeView (parent)
     setModel(m_mediaItemModel);
     m_mode = NormalMode;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    setHeaderHidden(true);
+    setRootIsDecorated(false);
+    setFrameShape(QFrame::NoFrame);
+    setFrameShadow(QFrame::Plain);
+    setAlternatingRowColors(true);
 }
 
 MediaView::~MediaView() 

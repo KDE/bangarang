@@ -879,6 +879,7 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
         int selectedRow = selected.indexes().at(0).row();
         currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
         currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
+        currentProperties.category = m_audioListsModel->mediaItemAt(selectedRow);
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -908,6 +909,7 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
         int selectedRow = selected.indexes().at(0).row();
         currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
         currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
+        currentProperties.category = m_videoListsModel->mediaItemAt(selectedRow);
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -1292,13 +1294,6 @@ void MainWindow::updateCustomColors()
     viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::Base));
     ui->mediaListHolder->setPalette(viewPalette);
     ui->semanticsHolder->setPalette(viewPalette);
-    
-    //Update custom colors in Info view
-    QPalette infoBoxHeaderPalette = QApplication::palette();
-    ui->recentlyPlayedInfoHolder->setPalette(infoBoxHeaderPalette);
-    ui->highestRatedInfoHolder->setPalette(infoBoxHeaderPalette);
-    ui->frequentlyPlayedInfoHolder->setPalette(infoBoxHeaderPalette);
-    
 }
 
 // TODO Please see if we can make it a setup point 

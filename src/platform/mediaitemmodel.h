@@ -153,6 +153,8 @@ public:
     
     QString lri;  /** List Resource Identifier associated with media list.  This string
                     * is the essentially how the media list is retrieved. */
+    MediaItem category;  /** Category mediaItem associated with the media list. This is
+                           * the category mediaItem that was categoryActivated. */
                     
     /** 
      * Returns the engine portion of the lri string.
