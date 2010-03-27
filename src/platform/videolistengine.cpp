@@ -149,6 +149,17 @@ void VideoListEngine::run()
                     mediaItem.fields["title"] = seriesName;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
+                    
+                    //Provide context info for TV series
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
+                    contextLRIs << QString("semantics://highest?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
+                    contextLRIs << QString("semantics://frequent?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
                     mediaList.append(mediaItem);
                 }
             }
@@ -233,6 +244,17 @@ void VideoListEngine::run()
                 mediaItem.type = QString("Category");
                 mediaItem.nowPlaying = false;
                 mediaItem.artwork = KIcon("video-television");
+
+                //Provide context info for genre
+                QStringList contextTitles;
+                contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                QStringList contextLRIs;
+                contextLRIs << QString("semantics://recent?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
+                contextLRIs << QString("semantics://highest?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
+                contextLRIs << QString("semantics://frequent?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
+                mediaItem.fields["contextTitles"] = contextTitles;
+                mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
                 mediaList.append(mediaItem);
             }
 
@@ -463,6 +485,16 @@ void VideoListEngine::run()
                     mediaItem.fields["title"] = genre;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("flag-green");
+
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?video||limit=5||genre=%1").arg(genre);
+                    contextLRIs << QString("semantics://highest?video||limit=5||genre=%1").arg(genre);
+                    contextLRIs << QString("semantics://frequent?video||limit=5||genre=%1").arg(genre);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
                     mediaList.append(mediaItem);
                 }
             }

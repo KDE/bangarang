@@ -40,9 +40,10 @@ class MediaItemDelegate : public QItemDelegate
     Q_OBJECT
     public:
         enum RenderMode {NormalMode = 0,
-                          MiniPlaybackTimeMode = 1,
-                          MiniRatingMode = 2,
-                          MiniPlayCountMode = 3};
+                          MiniMode = 1,
+                          MiniPlaybackTimeMode = 2,
+                          MiniRatingMode = 3,
+                          MiniPlayCountMode = 4};
         MediaItemDelegate(QObject * parent = 0);
         ~MediaItemDelegate();
         void paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -68,8 +69,6 @@ class MediaItemDelegate : public QItemDelegate
         bool m_nepomukInited;
         MediaIndexer * m_mediaIndexer;
         MediaItemDelegate::RenderMode m_renderMode;
-        
-        
         
     Q_SIGNALS:
         void categoryActivated(QModelIndex index);

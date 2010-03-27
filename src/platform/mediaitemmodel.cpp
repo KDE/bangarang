@@ -211,6 +211,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
     MediaListProperties mediaListProperties;
     mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
     mediaListProperties.name =  m_mediaList.at(index.row()).title;
+    mediaListProperties.category = m_mediaList.at(index.row());
     m_mediaListProperties = mediaListProperties;
     
     if (m_mediaListCache->isInCache(m_mediaListProperties.lri)) {

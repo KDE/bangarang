@@ -36,9 +36,10 @@ class MediaView : public QTreeView
     Q_OBJECT
     public:
         enum RenderMode {NormalMode = 0,
-                          MiniPlaybackTimeMode = 1,
-                          MiniRatingMode = 2,
-                          MiniPlayCountMode = 3};
+                          MiniMode = 1,
+                          MiniPlaybackTimeMode = 2,
+                          MiniRatingMode = 3,
+                          MiniPlayCountMode = 4};
         MediaView(QWidget * parent = 0);
         ~MediaView();
         void setMainWindow(MainWindow * mainWindow);
