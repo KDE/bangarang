@@ -241,8 +241,6 @@ void InfoManager::loadSelectedInfo()
         ui->semanticsStack->setCurrentIndex(1);
         updateViewsLayout();
     } else if (contextIsCategory) {
-        QString categoryType = context.at(0).fields["categoryType"].toString();
-        m_infoCategoryModel->setMode(categoryModeFromCategoryType(categoryType));
         m_infoCategoryModel->loadInfo(context);
         ui->semanticsStack->setCurrentIndex(0);
         m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
@@ -310,31 +308,4 @@ void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIn
     updateViewsLayout();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
-}
-
-InfoCategoryModel::InfoCategoryMode InfoManager::categoryModeFromCategoryType(const QString &categoryType)
-{
-    if (categoryType == "Artist") {
-        return InfoCategoryModel::ArtistMode;
-    } else if (categoryType == "Album") {
-        return InfoCategoryModel::AlbumMode;
-    } else if (categoryType == "MusicGenre") {
-        return InfoCategoryModel::MusicGenreMode;
-    } else if (categoryType == "AudioTag") {
-        return InfoCategoryModel::AudioTagMode;
-    } else if (categoryType == "TVSeries") {
-        return InfoCategoryModel::TVSeriesMode;
-    } else if (categoryType == "TVSeason") {
-        return InfoCategoryModel::TVSeasonMode;
-    } else if (categoryType == "Actor") {
-        return InfoCategoryModel::ActorMode;
-    } else if (categoryType == "Director") {
-        return InfoCategoryModel::DirectorMode;
-    } else if (categoryType == "VideoGenre") {
-        return InfoCategoryModel::VideoGenreMode;
-    } else if (categoryType == "VideoTag") {
-        return InfoCategoryModel::VideoTagMode;
-    } else {
-        return InfoCategoryModel::DefaultMode;
-    }
 }

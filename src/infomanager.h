@@ -73,8 +73,6 @@ class InfoManager : public QObject
         MediaItemModel *m_frequentlyPlayedModel;
         MediaItem m_contextCategory;
         
-        InfoCategoryModel::InfoCategoryMode categoryModeFromCategoryType(const QString &categoryType);
-        
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
