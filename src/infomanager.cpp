@@ -287,6 +287,8 @@ void InfoManager::loadSelectedInfo()
         ui->semanticsStack->setCurrentIndex(0);
         m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
         
+        m_infoCategoryModel->downloadInfo();
+        
         //Load any context infoboxes
         MediaItem contextCategory = context.at(0);
         QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();

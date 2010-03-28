@@ -29,6 +29,7 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
+#include <Solid/Networking>
 
 InfoCategoryModel::InfoCategoryModel(QObject *parent) : QStandardItemModel(parent)
 {
@@ -61,7 +62,9 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
 void InfoCategoryModel::downloadInfo()
 {
     if (!hasMultipleValues("title")) {
-        getDBPediaInfo(commonValue("title").toString());
+        if(Solid::Networking::status() == Solid::Networking::Connected){
+            getDBPediaInfo(commonValue("title").toString());
+        }
     }
 }
 

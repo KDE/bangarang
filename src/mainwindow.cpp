@@ -549,6 +549,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
             currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
             currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
+            currentProperties.category = m_audioListsModel->mediaItemAt(selectedRow);
         }
         ui->audioLists->setFocus();
         ui->Filter->setClickMessage(i18n("Search for audio"));
@@ -557,6 +558,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
             currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
             currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
+            currentProperties.category = m_videoListsModel->mediaItemAt(selectedRow);
         }
         ui->videoLists->setFocus();
         ui->Filter->setClickMessage(i18n("Search for video"));
