@@ -283,17 +283,9 @@ void InfoManager::loadSelectedInfo()
         ui->semanticsStack->setCurrentIndex(1);
         updateViewsLayout();
     } else if (contextIsCategory) {
-        m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
+        m_infoCategoryModel->loadInfo(context);
         ui->semanticsStack->setCurrentIndex(0);
-        
-        //If a category is selected or if the mediaView contains media - which 
-        //means a category was selected that produced the list of media - load
-        //context into the info model.  Otherwise clear the info model.
-        if (selected || mediaViewHasMedia) {
-            m_infoCategoryModel->loadInfo(context);
-        } else {
-            m_infoCategoryModel->clear();
-        }
+        m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
         
         //Load any context infoboxes
         MediaItem contextCategory = context.at(0);
@@ -315,8 +307,6 @@ void InfoManager::loadSelectedInfo()
         //Remove any unused infoboxes
         int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
         if (contextLRIs.count() < totalInfoBoxes) {
-            kDebug() << contextLRIs.count();
-            kDebug() << ui->infoBoxHolder->layout()->count();
             for (int i = contextLRIs.count(); i < totalInfoBoxes; i++) {
                 int lastItemIndex = ui->infoBoxHolder->layout()->count() - 1;
                 QWidget * unusedInfoBox = ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
