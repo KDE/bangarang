@@ -81,7 +81,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
-    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(showOrHideInfoButton()));
+    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
 }
 
 InfoManager::~InfoManager()
@@ -120,52 +120,9 @@ void InfoManager::hideInfoView()
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
 {
-    showOrHideInfoButton();
+    loadSelectedInfo();
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
-}
-
-void InfoManager::showOrHideInfoButton()
-{
-    //Conditionally show the showInfo button
-    //NOTE: This will eventually be whittled down to nothing as we add more info views
-    //to the semantics stack.
-    
-    MediaItem firstItem;
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    if (selectedRows.count() > 0) {
-        //Look at first item in selection
-        firstItem = m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(0).row());
-    } else if (m_parent->m_mediaItemModel->rowCount() > 0) {
-        //Look at current context category
-        firstItem = m_parent->m_mediaItemModel->mediaListProperties().category;
-    } else {
-        //If nothing is selected and there's nothing in the media list then nothing to do
-        ui->showInfo->setVisible(false);
-        return;
-    }
-    
-    QString listItemType = firstItem.type;
-    if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-        if (!firstItem.url.startsWith("DVDTRACK") && !firstItem.url.startsWith("CDTRACK")) {
-            ui->showInfo->setVisible(true);
-        } else {
-            ui->showInfo->setVisible(false);
-        }
-    } else if (listItemType == "Category") {
-        if (firstItem.fields["contextLRIs"].toStringList().count() > 0) {
-            ui->showInfo->setVisible(true);
-        } else {
-            ui->showInfo->setVisible(false);
-        }
-    } else {
-        ui->showInfo->setVisible(false);
-    }
-    
-    //Load info
-    if (ui->semanticsHolder->isVisible()) {
-        loadSelectedInfo();
-    }
 }
 
 void InfoManager::saveItemInfo()
@@ -235,9 +192,10 @@ void InfoManager::setContext(const MediaItem &category)
 //----------------------
 void InfoManager::loadSelectedInfo()
 {
-    //Show the Info Item page
-    //NOTE:For each selection type a page will be added to the semantics stack
-    //ui->semanticsStack->setCurrentIndex(1);
+    //Make sure info view is visble before doing anything
+    if (!ui->semanticsHolder->isVisible()) {
+        return;
+    }
     
     //Determine type of items in mediaview
     bool mediaViewHasMedia = false;

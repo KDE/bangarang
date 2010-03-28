@@ -92,7 +92,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->previous->setVisible(false);
     ui->contextStack->setVisible(false);
     ui->playSelected->setVisible(false);
-    ui->showInfo->setVisible(false);
     ui->configureAudioList->setVisible(false);
     ui->configureVideoList->setVisible(false);
     ui->semanticsHolder->setVisible(false);
