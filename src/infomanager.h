@@ -20,6 +20,7 @@
 #define INFOMANAGER_H
 
 #include "platform/mediaitemmodel.h"
+#include "platform/infocategorymodel.h"
 #include <QtCore>
 #include <QStandardItemModel>
 #include <QItemDelegate>
@@ -33,7 +34,6 @@ namespace Ui
 class MainWindow;
 class InfoItemModel;
 class InfoItemDelegate;
-class InfoCategoryModel;
 class InfoCategoryDelegate;
 class MediaItemDelegate;
 
@@ -72,6 +72,8 @@ class InfoManager : public QObject
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
         MediaItem m_contextCategory;
+        
+        InfoCategoryModel::InfoCategoryMode categoryModeFromCategoryType(const QString &categoryType);
         
     private slots:
         void updateViewsLayout();
