@@ -72,10 +72,12 @@ class InfoManager : public QObject
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
         MediaItem m_contextCategory;
+        MediaItem m_infoBoxSelection;
         
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
+        void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
 };
 #endif //INFOMANAGER_H
