@@ -40,15 +40,17 @@ class InfoCategoryModel : public QStandardItemModel
                             MultipleValuesRole = Qt::UserRole + 1,
                             OriginalValueRole = Qt::UserRole +2,
                             ValueListRole = Qt::UserRole +3};
-        enum InfoCategoryMode {ArtistMode = 0,
-                                AlbumMode = 1,
-                                MusicGenreMode = 2,
-                                AudioTagMode = 3,
-                                TVShowMode = 4,
-                                VideoGenreMode = 5,
-                                VideoTagMode = 6,
-                                VideoActorMode = 7,
-                                VideoDirectorMode = 8};
+        enum InfoCategoryMode {DefaultMode = 0,
+                                ArtistMode = 1,
+                                AlbumMode = 2,
+                                MusicGenreMode = 3,
+                                AudioTagMode = 4,
+                                TVSeriesMode = 5,
+                                TVSeasonMode = 6,
+                                VideoGenreMode = 7,
+                                VideoTagMode = 8,
+                                ActorMode = 9,
+                                DirectorMode = 10};
         InfoCategoryModel(QObject * parent = 0);
         ~InfoCategoryModel();
         void loadInfo(const QList<MediaItem> & mediaList);

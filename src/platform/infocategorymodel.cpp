@@ -34,6 +34,7 @@
 InfoCategoryModel::InfoCategoryModel(QObject *parent) : QStandardItemModel(parent)
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+    m_mode = DefaultMode;
 }
 
 InfoCategoryModel::~InfoCategoryModel()
