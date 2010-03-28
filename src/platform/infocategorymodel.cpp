@@ -52,6 +52,7 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
         
         if (type == "Category") {
             QString subType = m_mediaList.at(0).fields["categoryType"].toString();
+            setMode(categoryModeFromCategoryType(subType));
             addFieldToValuesModel(i18n("Image"), "associatedImage");
             addFieldToValuesModel(i18n("Name"), "title");
             addFieldToValuesModel(i18n("Description"), "description");
@@ -321,5 +322,32 @@ void InfoCategoryModel::gotArtistInfo(bool successful, const QList<Soprano::Bind
             emit modelDataChanged();
             
         }
+    }
+}
+
+InfoCategoryModel::InfoCategoryMode InfoCategoryModel::categoryModeFromCategoryType(const QString &categoryType)
+{
+    if (categoryType == "Artist") {
+        return InfoCategoryModel::ArtistMode;
+    } else if (categoryType == "Album") {
+        return InfoCategoryModel::AlbumMode;
+    } else if (categoryType == "MusicGenre") {
+        return InfoCategoryModel::MusicGenreMode;
+    } else if (categoryType == "AudioTag") {
+        return InfoCategoryModel::AudioTagMode;
+    } else if (categoryType == "TVSeries") {
+        return InfoCategoryModel::TVSeriesMode;
+    } else if (categoryType == "TVSeason") {
+        return InfoCategoryModel::TVSeasonMode;
+    } else if (categoryType == "Actor") {
+        return InfoCategoryModel::ActorMode;
+    } else if (categoryType == "Director") {
+        return InfoCategoryModel::DirectorMode;
+    } else if (categoryType == "VideoGenre") {
+        return InfoCategoryModel::VideoGenreMode;
+    } else if (categoryType == "VideoTag") {
+        return InfoCategoryModel::VideoTagMode;
+    } else {
+        return InfoCategoryModel::DefaultMode;
     }
 }

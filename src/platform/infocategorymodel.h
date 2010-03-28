@@ -74,6 +74,7 @@ class InfoCategoryModel : public QStandardItemModel
         QStringList valueList(const QString &field);
         void saveFileMetaData(QList<MediaItem> mediaList);
         void getDBPediaInfo(const QString &artistName);
+        InfoCategoryModel::InfoCategoryMode categoryModeFromCategoryType(const QString &categoryType);
         
     Q_SIGNALS:
         void infoChanged(bool modified);
