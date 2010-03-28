@@ -262,6 +262,7 @@ void InfoManager::loadSelectedInfo()
                 infoBox->setMainWindow(m_parent);
                 infoBox->setInfo(title, lri);
                 ui->infoBoxHolder->layout()->addWidget(infoBox);
+                connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
             }
         }
         //Remove any unused infoboxes
@@ -269,7 +270,8 @@ void InfoManager::loadSelectedInfo()
         if (contextLRIs.count() < totalInfoBoxes) {
             for (int i = contextLRIs.count(); i < totalInfoBoxes; i++) {
                 int lastItemIndex = ui->infoBoxHolder->layout()->count() - 1;
-                QWidget * unusedInfoBox = ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
+                InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
+                disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
                 ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
                 delete unusedInfoBox;
             }
@@ -308,4 +310,21 @@ void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIn
     updateViewsLayout();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
+}
+
+void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected)
+{
+    //Only allow one item in one infobox to be selected at a time.
+    if (selected.indexes().count() > 0) {
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+        for (int i = 0; i < totalInfoBoxes; i++) {
+            InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
+            if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
+                if (infoBox->mediaView()->selectionModel()->selection().indexes().at(0) != selected.indexes().at(0)) {
+                    infoBox->mediaView()->selectionModel()->clearSelection();
+                }
+            }
+        }
+    }
+    Q_UNUSED(deselected);
 }
