@@ -240,6 +240,7 @@ void VideoListEngine::run()
                 mediaItem.url = QString("video://episodes?||%1||%2||%3")
                                     .arg(genre).arg(seriesName).arg(season);
                 mediaItem.title = seriesName;
+                mediaItem.fields["title"] = mediaItem.title;
                 mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
                 mediaItem.type = QString("Category");
                 mediaItem.nowPlaying = false;

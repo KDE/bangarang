@@ -50,6 +50,7 @@ void MediaListsEngine::run()
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
         mediaItem.title = i18n("Files and Folders");
+        mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://audio";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaList << mediaItem;
@@ -58,6 +59,7 @@ void MediaListsEngine::run()
             contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
             QStringList contextLRIs;
             mediaItem.title = i18n("Artists");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://artists";
             mediaItem.artwork = KIcon("system-users");
             mediaItem.fields["categoryType"] = QString("Artists");
@@ -69,6 +71,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Albums");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://albums";
             mediaItem.artwork = KIcon("media-optical");
             mediaItem.fields["categoryType"] = QString("Albums");
@@ -80,6 +83,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Songs");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://songs";
             mediaItem.fields["categoryType"] = QString("Songs");
             mediaItem.artwork = KIcon("audio-mpeg");
@@ -91,6 +95,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Genres");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://genres";
             mediaItem.fields["categoryType"] = QString("Audio Genres");
             mediaItem.artwork = KIcon("flag-blue");
@@ -102,6 +107,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Clips");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "audioclips://";
             mediaItem.fields["categoryType"] = QString("Audio Clips");
             mediaItem.artwork = KIcon("audio-x-wav");
@@ -113,6 +119,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Audio Streams");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "audiostreams://";
             mediaItem.artwork = KIcon("x-media-podcast");
             mediaItem.fields["categoryType"] = QString("Audio Streams");
@@ -124,6 +131,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "tag://?audio";
             mediaItem.fields["categoryType"] = QString("Audio Tags");
             mediaItem.artwork = KIcon("nepomuk");
@@ -143,6 +151,7 @@ void MediaListsEngine::run()
         }
         if (audioCDFound) {
             mediaItem.title = i18n("Audio CD");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "cdaudio://";
             mediaItem.artwork = KIcon("media-optical-audio");
             mediaList << mediaItem;
@@ -150,14 +159,17 @@ void MediaListsEngine::run()
         
         if (m_nepomukInited) {
             mediaItem.title = i18n("Frequently Played");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://frequent?audio||limit=20";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://recent?audio||limit=20";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://highest?audio||limit=20";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
@@ -174,6 +186,7 @@ void MediaListsEngine::run()
                     if (nameUrl.count() >= 3) {
                         if (nameUrl.at(0) == "Audio") {
                             mediaItem.title = nameUrl.at(1).trimmed();
+                            mediaItem.fields["title"] = mediaItem.title;
                             mediaItem.url = nameUrl.at(2).trimmed();
                             if (mediaItem.url.startsWith("savedlists://")) {
                                 mediaItem.artwork = KIcon("view-list-text");
@@ -200,6 +213,7 @@ void MediaListsEngine::run()
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
         mediaItem.title = i18n("Files and Folders");
+        mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://video";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaList << mediaItem;
@@ -208,6 +222,7 @@ void MediaListsEngine::run()
             contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
             QStringList contextLRIs;
             mediaItem.title = i18n("Movies");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://movies";
             mediaItem.artwork = KIcon("tool-animator");
             mediaItem.fields["categoryType"] = QString("Movies");
@@ -219,6 +234,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("TV Shows");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://tvshows";
             mediaItem.artwork = KIcon("video-television");
             mediaItem.fields["categoryType"] = QString("TV Series");
@@ -230,6 +246,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Genres");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://genres";
             mediaItem.fields["categoryType"] = QString("Video Genres");
             mediaItem.artwork = KIcon("flag-green");
@@ -241,6 +258,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Video Clips");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://clips";
             mediaItem.fields["categoryType"] = QString("Video Clips");
             mediaItem.artwork = KIcon("video-x-generic");
@@ -252,6 +270,7 @@ void MediaListsEngine::run()
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "tag://?video";
             mediaItem.fields["categoryType"] = QString("Video Tags");
             mediaItem.artwork = KIcon("nepomuk");
@@ -272,6 +291,7 @@ void MediaListsEngine::run()
         }
         if (DVDFound) {
             mediaItem.title = i18n("DVD Video");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "dvdvideo://";
             mediaItem.artwork = KIcon("media-optical-dvd");
             mediaList << mediaItem;        
@@ -279,14 +299,17 @@ void MediaListsEngine::run()
         
         if (m_nepomukInited) {
             mediaItem.title = i18n("Frequently Played");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://frequent?video||limit=20";
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://recent?video||limit=20";
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "semantics://highest?video||limit=20";
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
@@ -303,6 +326,7 @@ void MediaListsEngine::run()
                     if (nameUrl.count() >= 3) {
                         if (nameUrl.at(0) == "Video") {
                             mediaItem.title = nameUrl.at(1).trimmed();
+                            mediaItem.fields["title"] = mediaItem.title;
                             mediaItem.url = nameUrl.at(2).trimmed();
                             if (mediaItem.url.startsWith("savedlists://")) {
                                 mediaItem.artwork = KIcon("view-list-text");
