@@ -146,22 +146,6 @@ void InfoManager::cancelItemEdit()
     updateViewsLayout();
 }
 
-void InfoManager::removeSelectedItemsInfo()
-{
-    QList<MediaItem> mediaList;
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        MediaItem mediaItem = m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row());
-        if (mediaItem.type == "Audio" || mediaItem.type == "Video" || mediaItem.type == "Image") {
-            mediaList.append(mediaItem);
-        }
-    }
-    if (mediaList.count() > 0) {
-        m_parent->m_mediaItemModel->removeSourceInfo(mediaList);
-    }
-            
-}
-
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 {
     ui->stackedWidget->setCurrentIndex(0);
@@ -197,6 +181,9 @@ void InfoManager::loadSelectedInfo()
         return;
     }
     
+    m_selectedInfoBoxMediaItems.clear();
+    emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
+
     //Determine type of items in mediaview
     bool mediaViewHasMedia = false;
     if (m_parent->m_mediaItemModel->rowCount()>0) {
@@ -314,8 +301,8 @@ void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIn
 
 void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected)
 {
-    //Only allow one item in one infobox to be selected at a time.
     if (selected.indexes().count() > 0) {
+        //Only allow one item in one infobox to be selected at a time.
         int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
         for (int i = 0; i < totalInfoBoxes; i++) {
             InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
@@ -325,6 +312,52 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
                 }
             }
         }
+        
+        //Store selected Media Item
+        m_selectedInfoBoxMediaItems.clear();
+        MediaItemModel * model = (MediaItemModel *)selected.indexes().at(0).model();
+        int selectedRow = selected.indexes().at(0).row();
+        m_selectedInfoBoxMediaItems.append(model->mediaItemAt(selectedRow));
+        emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
+        
+        //Show "Play Selected" button
+        ui->playAll->setVisible(false);
+        ui->playSelected->setVisible(true);
+    } else {
+        //Check to see if other infoboxes has something selected;
+        //this handles deselection of infobox mediaItems
+        bool selected = false;
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+        for (int i = 0; i < totalInfoBoxes; i++) {
+            InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
+            if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
+                selected = true;
+                break;
+            }
+        }
+        if (!selected) {
+            m_selectedInfoBoxMediaItems.clear();
+            emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
+        }
     }
+                
     Q_UNUSED(deselected);
+}
+
+const QList<MediaItem> InfoManager::selectedInfoBoxMediaItems()
+{
+    return m_selectedInfoBoxMediaItems;
+}
+
+void InfoManager::clearInfoBoxSelection()
+{
+    int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+    for (int i = 0; i < totalInfoBoxes; i++) {
+        InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
+        if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
+            infoBox->mediaView()->selectionModel()->clearSelection();
+        }
+    }
+    m_selectedInfoBoxMediaItems.clear();
+    emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
 }

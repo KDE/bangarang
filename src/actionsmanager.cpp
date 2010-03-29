@@ -39,6 +39,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     ui = m_parent->ui;
     
     m_actionCollection = new KActionCollection(this);
+    m_contextMenuSource = MainWindow::Default;
     
     //Add standard quit shortcut
     m_quit = new QAction(this);
@@ -81,22 +82,22 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     
     //Play All Action
     m_playAllAction = new QAction(KIcon("media-playback-start"), i18n("Play all"), this);
-    connect(m_playAllAction, SIGNAL(triggered()), m_parent, SLOT(playAll()));
+    connect(m_playAllAction, SIGNAL(triggered()), this, SLOT(playAllSlot()));
     m_actionCollection->addAction(i18n("Play All"), m_playAllAction);
     
     //Play Selected Action
     m_playSelectedAction = new QAction(KIcon("media-playback-start"), i18n("Play selected"), this);
-    connect(m_playSelectedAction, SIGNAL(triggered()), m_parent, SLOT(playSelected()));
+    connect(m_playSelectedAction, SIGNAL(triggered()), this, SLOT(playSelectedSlot()));
     m_actionCollection->addAction(i18n("Play Selected"), m_playSelectedAction);
     
     //Add Selected To Playlist Action
     m_addSelectedToPlayListAction = new QAction(KIcon("mail-mark-notjunk"), i18n("Add to playlist"), this);
-    connect(m_addSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(addSelectedToPlaylist()));  
+    connect(m_addSelectedToPlayListAction, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));  
     m_actionCollection->addAction(i18n("Add to playlist"), m_addSelectedToPlayListAction);
     
     //Remove Selected From Playlist Action
     m_removeSelectedToPlayListAction = new QAction(KIcon(), i18n("Remove from playlist"), this);
-    connect(m_removeSelectedToPlayListAction, SIGNAL(triggered()), m_parent, SLOT(removeSelectedFromPlaylist()));
+    connect(m_removeSelectedToPlayListAction, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
     m_actionCollection->addAction(i18n("Remove from playlist"), m_removeSelectedToPlayListAction);
     
     //Show/Hide Controls Shortcut
@@ -293,23 +294,22 @@ QAction * ActionsManager::showScriptingConsole()
   return m_showScriptingConsole;
 }
 
-QMenu * ActionsManager::mediaViewMenu(bool showAbout)
+QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSource menuSource)
 {
     KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);
     helpMenu->menu();
     
     updateSavedListsMenus();
     
+    m_contextMenuSource = menuSource;
+    
     QMenu *menu = new QMenu(m_parent);
     QString type;
     bool selection = false;
-    int selectedCount = ui->mediaView->selectionModel()->selectedIndexes().count();
-    if (selectedCount != 0) {
-        QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(0);
-        type = index.data(MediaItem::TypeRole).toString();
+    QList<MediaItem> selectedItems = selectedMediaItems();
+    if (selectedItems.count() > 0) {
+        type = selectedItems.at(0).type;
         selection = true;
-    } else if (m_parent->m_mediaItemModel->rowCount() > 0) {
-        type = m_parent->m_mediaItemModel->mediaItemAt(0).type;
     }
     bool isMedia = false;
     if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
@@ -420,7 +420,6 @@ QMenu *ActionsManager::addToSavedVideoListMenu()
 //------------------
 //-- Action SLOTS --
 //------------------
-
 void ActionsManager::fullScreenToggle()
 {
     if (m_parent->isFullScreen()) {
@@ -511,6 +510,34 @@ void ActionsManager::muteAudio()
     m_parent->audioOutput()->setMuted(!muted);
 }
 
+void ActionsManager::addSelectedToPlaylistSlot()
+{
+    QList<MediaItem> mediaList = selectedMediaItems();
+    for (int i = 0; i < mediaList.count(); i++) {
+        if (mediaList.at(i).type == "Audio" ||
+            mediaList.at(i).type == "Video") {
+            int playlistRow = m_parent->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
+            if (playlistRow == -1) {
+                m_parent->playlist()->addMediaItem(mediaList.at(i));
+            }
+        }
+    }
+}
+
+void ActionsManager::removeSelectedFromPlaylistSlot()
+{
+    QList<MediaItem> mediaList = selectedMediaItems();
+    for (int i = 0; i < mediaList.count(); i++) {
+        if (mediaList.at(i).type == "Audio" ||
+            mediaList.at(i).type == "Video") {
+            int playlistRow = m_parent->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
+            if (playlistRow != -1) {
+                m_parent->playlist()->removeMediaItemAt(playlistRow);
+            }
+        }
+    }
+}
+
 void ActionsManager::updateSavedListsMenus()
 {
     m_addToAudioSavedList->clear();
@@ -538,23 +565,35 @@ void ActionsManager::updateSavedListsMenus()
     }
 }
 
+void ActionsManager::removeSelectedItemsInfoSlot()
+{
+    QList<MediaItem> mediaList = selectedMediaItems();
+    m_parent->m_mediaItemModel->removeSourceInfo(mediaList);
+}
+
+void ActionsManager::playSelectedSlot()
+{
+    //Get selected mediaitems and play
+    QList<MediaItem> mediaList = selectedMediaItems();
+    m_parent->playlist()->playMediaList(mediaList);
+    
+    // Show Now Playing page
+    ui->stackedWidget->setCurrentIndex(1);   
+}
+
+void ActionsManager::playAllSlot()
+{
+    //Play all media items in the media list view
+    m_parent->playlist()->playMediaList(m_parent->m_mediaItemModel->mediaList());
+
+    // Show Now Playing page
+    ui->stackedWidget->setCurrentIndex(1);   
+}
+
 void ActionsManager::addToSavedAudioList(QAction *addAction)
 {
     //Get list of selected items to add
-    QTreeView * view;
-    MediaItemModel * model;
-    if (ui->stackedWidget->currentIndex() == 0 ) {
-        view = ui->mediaView;
-        model = m_parent->m_mediaItemModel;
-    } else {
-        view = ui->playlistView;
-        model = m_parent->playlist()->playlistModel();
-    }
-    QList<MediaItem> mediaList;
-    QModelIndexList selectedRows = view->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        mediaList.append(model->mediaItemAt(selectedRows.at(i).row()));
-    }
+    QList<MediaItem> mediaList = selectedMediaItems();
     
     //Add to saved list
     if (mediaList.count() > 0) {
@@ -566,20 +605,7 @@ void ActionsManager::addToSavedAudioList(QAction *addAction)
 void ActionsManager::addToSavedVideoList(QAction *addAction)
 {
     //Get list of selected items to add
-    QTreeView * view;
-    MediaItemModel * model;
-    if (ui->stackedWidget->currentIndex() == 0 ) {
-        view = ui->mediaView;
-        model = m_parent->m_mediaItemModel;
-    } else {
-        view = ui->playlistView;
-        model = m_parent->playlist()->playlistModel();
-    }
-    QList<MediaItem> mediaList;
-    QModelIndexList selectedRows = view->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        mediaList.append(model->mediaItemAt(selectedRows.at(i).row()));
-    }
+    QList<MediaItem> mediaList = selectedMediaItems();
     
     //Add to saved list
     if (mediaList.count() > 0) {
@@ -592,9 +618,13 @@ void ActionsManager::loadSelectedSources()
 {
     m_parent->addListToHistory();
     QList<MediaItem> mediaList;
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+    if (m_contextMenuSource == MainWindow::InfoBox) {
+        mediaList = m_parent->infoManager()->selectedInfoBoxMediaItems();
+    } else {
+        QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+        for (int i = 0 ; i < selectedRows.count() ; ++i) {
+            mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+        }
     }
     m_parent->m_mediaItemModel->clearMediaListData();
     m_parent->m_mediaItemModel->loadSources(mediaList);
@@ -612,4 +642,28 @@ void ActionsManager::showInfoForNowPlaying()
 void ActionsManager::showScriptConsoleSlot()
 {
     m_parent->scriptConsole()->show();
+}
+
+const QList<MediaItem> ActionsManager::selectedMediaItems()
+{
+    QList<MediaItem> mediaList;
+    if (m_contextMenuSource == MainWindow::InfoBox ||
+        m_contextMenuSource == MainWindow::Default) {
+        mediaList = m_parent->infoManager()->selectedInfoBoxMediaItems();
+    }
+    if (m_contextMenuSource == MainWindow::MediaList ||
+        (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)) {
+        for (int i = 0; i < ui->mediaView->selectionModel()->selectedIndexes().count(); ++i) {
+            QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(i);
+            if (index.column() == 0) {
+                mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(index.row()));
+            }
+        }
+    }
+    return mediaList;
+}
+
+void ActionsManager::setContextMenuSource(MainWindow::ContextMenuSource menuSource)
+{
+    m_contextMenuSource = menuSource;
 }

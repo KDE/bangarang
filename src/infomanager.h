@@ -47,6 +47,7 @@ class InfoManager : public QObject
     public:
         InfoManager(MainWindow * parent);
         ~InfoManager();
+        const QList<MediaItem> selectedInfoBoxMediaItems();
         
     public slots:
         void toggleInfoView();
@@ -56,8 +57,8 @@ class InfoManager : public QObject
         void saveItemInfo();
         void loadSelectedInfo();
         void showInfoViewForMediaItem(const MediaItem &mediaItem);
-        void removeSelectedItemsInfo();
         void setContext(const MediaItem &category);
+        void clearInfoBoxSelection();
         
     private:
         MainWindow *m_parent; 
@@ -72,12 +73,15 @@ class InfoManager : public QObject
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
         MediaItem m_contextCategory;
-        MediaItem m_infoBoxSelection;
+        QList<MediaItem> m_selectedInfoBoxMediaItems;
         
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+        
+    Q_SIGNALS:
+        void infoBoxSelectionChanged(QList<MediaItem> selectedItems);
 };
 #endif //INFOMANAGER_H

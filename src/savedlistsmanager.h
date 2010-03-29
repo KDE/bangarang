@@ -77,6 +77,7 @@ class SavedListsManager : public QObject
         void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
         void videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
         void mediaListChanged();
+        void infoBoxSelectionChanged(QList<MediaItem> selectedItems);
         void removeAudioList();
         void removeVideoList();
         void loadSavedListsIndex();

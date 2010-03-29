@@ -512,31 +512,13 @@ void MainWindow::on_previous_clicked()
 
 void MainWindow::on_playAll_clicked()
 {
-    //Get all media items
-    QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
-    m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
-    
-    m_playlist->playMediaList(mediaList);
-
-    // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
+    m_actionsManager->playAll()->trigger();
 }
 
 void MainWindow::on_playSelected_clicked()
 {
-    //Get selected media items
-    QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
-    m_mediaList.clear();
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        m_mediaList.append(mediaList.at(selectedRows.at(i).row()));
-    }
-    m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
-    
-    m_playlist->playMediaList(m_mediaList);
-
-    // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
+    m_actionsManager->setContextMenuSource(MainWindow::Default);
+    m_actionsManager->playSelected()->trigger();
 }
 
 void MainWindow::on_mediaLists_currentChanged(int i)
@@ -1040,69 +1022,6 @@ void MainWindow::updateListHeader()
 {
     ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
     ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
-}
-
-
-/*------------------------
-  --- Action functions ---
-  ------------------------*/
-
-void MainWindow::playAll()
-{
-    //Get all media items
-    QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
-    m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
-    
-    m_playlist->playMediaList(mediaList);
-    
-    // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
-}
-
-void MainWindow::playSelected()
-{
-    //Get selected media items
-    QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
-    m_mediaList.clear();
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    for (int i = 0 ; i < selectedRows.count() ; ++i) {
-        m_mediaList.append(mediaList.at(selectedRows.at(i).row()));
-    }
-    m_currentPlaylist->setMediaListProperties(m_mediaItemModel->mediaListProperties());
-    
-    m_playlist->playMediaList(m_mediaList);
-    
-    // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
-}
-
-void MainWindow::addSelectedToPlaylist()
-{
-    for (int i = 0; i < ui->mediaView->selectionModel()->selectedIndexes().count(); ++i) {
-        QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(i);
-        
-        if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
-            int playlistRow = m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
-            if (playlistRow == -1) {
-                MediaItemModel * model = (MediaItemModel *)index.model();
-                m_playlist->addMediaItem(model->mediaItemAt(index.row()));
-            }
-        }
-    }
-}
-
-void MainWindow::removeSelectedFromPlaylist()
-{
-    for (int i = 0; i < ui->mediaView->selectionModel()->selectedIndexes().count(); ++i) {
-        QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(i);
-        
-        if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
-            int playlistRow = m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
-            if (playlistRow != -1) {
-                m_playlist->removeMediaItemAt(playlistRow);
-            }
-        }
-    }
 }
 
 
