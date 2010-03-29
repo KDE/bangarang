@@ -92,6 +92,7 @@ public:
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     Playlist * m_playlist;
     
+    enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2};
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     
@@ -107,11 +108,7 @@ public:
     ScriptConsole *scriptConsole();
     
 public slots:
-    void addSelectedToPlaylist();
     void on_fullScreen_toggled(bool fullScreen);
-    void playAll();
-    void playSelected();
-    void removeSelectedFromPlaylist();
 
 private:
     Phonon::VideoPlayer *m_player;

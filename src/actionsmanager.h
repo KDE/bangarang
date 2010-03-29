@@ -20,6 +20,7 @@
 #define ACTIONSMANAGER_H
 
 #include "videosettings.h"
+#include "mainwindow.h"
 #include <KMenu>
 #include <KActionCollection>
 #include <QObject>
@@ -70,9 +71,11 @@ class ActionsManager : public QObject
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
-        QMenu * mediaViewMenu(bool showAbout = false);
+        QMenu * mediaViewMenu(bool showAbout = false, MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * nowPlayingContextMenu();
         KMenu * notifierMenu();
+        void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
+        const QList<MediaItem> selectedMediaItems();
         
     public slots:
         void updateSavedListsMenus();
@@ -116,6 +119,7 @@ class ActionsManager : public QObject
         int m_previousContextStackIndex;
 
         KActionCollection *m_actionCollection;
+        MainWindow::ContextMenuSource m_contextMenuSource;
         
     private slots:
         void fullScreenToggle();
@@ -127,6 +131,11 @@ class ActionsManager : public QObject
         void simplePlayPause();
         void smartPlay();
         void muteAudio();
+        void addSelectedToPlaylistSlot();
+        void removeSelectedFromPlaylistSlot();
+        void removeSelectedItemsInfoSlot();
+        void playSelectedSlot();
+        void playAllSlot();
         void addToSavedAudioList(QAction *addAction);
         void addToSavedVideoList(QAction *addAction);
         void loadSelectedSources();

@@ -74,7 +74,15 @@ MediaView::RenderMode MediaView::mode()
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
 {
     if (selectionModel()->selectedIndexes().count() != 0) {
-        QMenu * menu = m_mainWindow->actionsManager()->mediaViewMenu();
+        //NOTE:The context menu source determination here depends on mini modes only being used for infoboxes.
+        MainWindow::ContextMenuSource contextMenuSource;
+        if (m_mode == NormalMode) {
+            contextMenuSource = MainWindow::MediaList;
+        } else {
+            contextMenuSource = MainWindow::InfoBox;
+        }
+        bool showAbout = false;
+        QMenu * menu = m_mainWindow->actionsManager()->mediaViewMenu(showAbout, contextMenuSource);
         menu->exec(event->globalPos());
     }
     
