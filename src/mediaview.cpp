@@ -114,5 +114,18 @@ void MediaView::mediaListChanged()
         }
         setMinimumHeight(m_mediaItemDelegate->heightForAllRows());
         setMaximumHeight(m_mediaItemDelegate->heightForAllRows());
+        
+        //Add more info to each tooltip in mini modes
+        QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
+        for (int i = 0; i < mediaList.count(); i++) {
+            QString tooltip = QString("<b>%1</b>").arg(mediaList.at(i).title);
+            if (!mediaList.at(i).subTitle.isEmpty()) {
+                tooltip += QString("<br>%1").arg(mediaList.at(i).subTitle);
+            }
+            if (!mediaList.at(i).semanticComment.isEmpty()) {
+                tooltip += QString("<br><i>%3</i>").arg(mediaList.at(i).semanticComment);
+            }
+            m_mediaItemModel->item(i)->setData(tooltip, Qt::ToolTipRole);
+        }
     }
 }
