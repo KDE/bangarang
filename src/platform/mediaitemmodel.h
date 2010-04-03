@@ -210,7 +210,7 @@ public:
     /**
      * Returns field name of specified filter
      **/
-    QString filterField(QString filter)
+    QString filterField(const QString &filter)
     {
         QString field;
         for (int j = 0; j < filterOperators.count(); j ++) {
@@ -226,7 +226,7 @@ public:
     /**
      * Returns operator of specified filter
      **/
-    QString filterOperator(QString filter)
+    QString filterOperator(const QString &filter)
     {
         QString oper;
         for (int j = 0; j < filterOperators.count(); j ++) {
@@ -241,7 +241,7 @@ public:
     /**
     * Returns value of specified filter
     **/
-    QString filterValue(QString filter)
+    QString filterValue(const QString &filter)
     {
         QString value;
         for (int j = 0; j < filterOperators.count(); j ++) {
@@ -252,6 +252,38 @@ public:
             }
         }
         return value;
+    }
+    
+    /**
+     * Returns first value of specified field in filter
+     */
+    QString filterFieldValue(const QString &field)
+    {
+        QString value;
+        QStringList filterList = engineFilterList();
+        for (int i = 0; i < filterList.count(); i++) {
+            if (filterField(filterList.at(i)) == field) {
+                value = filterValue(filterList.at(i));
+                break;
+            }
+        }
+        return value;
+    }
+    
+    /**
+     * Returns first filter corresponding to specified field
+     */
+    QString filterForField(const QString &field)
+    {
+        QString filter;
+        QStringList filterList = engineFilterList();
+        for (int i = 0; i < filterList.count(); i++) {
+            if (filterField(filterList.at(i)) == field) {
+                filter = filterList.at(i);
+                break;
+            }
+        }
+        return filter;
     }
     
     QStringList filterOperators;

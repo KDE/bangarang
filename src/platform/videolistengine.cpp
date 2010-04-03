@@ -59,28 +59,17 @@ void VideoListEngine::run()
     //Engine filter format:
     // searchTerm||genre||seriesName||season||episode
     QString engineFilter = m_mediaListProperties.engineFilter();
+    QStringList engineFilterList = m_mediaListProperties.engineFilterList();
     QString searchTerm;
-    QString genre;
-    QString seriesName;
-    int season = 0;
-    int episode = 0;
-    
-    if (!engineFilter.isEmpty()) {
-        QStringList argList = engineFilter.split("||");
-        searchTerm = argList.at(0);
-        if (argList.count() >= 2) {
-            genre = argList.at(1);
-        }
-        if (argList.count() >= 3) {
-            seriesName = argList.at(2);
-        }
-        if (argList.count() >= 4) {
-            season = argList.at(3).toInt();
-        }
-        if (argList.count() >= 5) {
-            episode = argList.at(4).toInt();
-        }
+    if (engineFilterList.count() > 0) {
+        searchTerm = engineFilterList.at(0);
     }
+    QString genre = m_mediaListProperties.filterFieldValue("genre");
+    QString genreFilter = m_mediaListProperties.filterForField("genre");
+    QString seriesName = m_mediaListProperties.filterFieldValue("seriesName");
+    QString seriesNameFilter = m_mediaListProperties.filterForField("seriesName");
+    int season = m_mediaListProperties.filterFieldValue("season").trimmed().toInt();
+    QString seasonFilter = m_mediaListProperties.filterForField("season");
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "clips") {
@@ -92,7 +81,6 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            //bindings.append(mediaVocabulary.genreBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideo(MediaQuery::Required));
@@ -124,13 +112,7 @@ void VideoListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            }
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = bindings;
             query.orderBy(orderByBindings);
@@ -142,7 +124,7 @@ void VideoListEngine::run()
                 QString seriesName = it.binding(mediaVocabulary.videoSeriesTitleBinding()).literal().toString();
                 if (!seriesName.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("video://seasons?||%1||%2").arg(genre).arg(seriesName);
+                    mediaItem.url = QString("video://seasons?||seriesName=%1||%2").arg(seriesName).arg(genreFilter);
                     mediaItem.title = seriesName;
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("TV Series");
@@ -182,7 +164,7 @@ void VideoListEngine::run()
                 
                 if(query.executeAsk(m_mainModel)) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("video://episodes?||||~");
+                    mediaItem.url = QString("video://episodes?||seriesName=~");
                     mediaItem.title = i18n("Uncategorized TV Shows");
                     mediaItem.type = QString("Category");
                     mediaItem.nowPlaying = false;
@@ -203,42 +185,28 @@ void VideoListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            }
-            if (!seriesName.isEmpty()) {
-                if (seriesName != "~") {
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
-                                                            seriesName,
-                                                            MediaQuery::Equal));;
-                } else {
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-                    query.startFilter();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
-                    query.addFilterOr();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), "^$", MediaQuery::Contains);
-                    query.endFilter();
-                }
-            } else {
+            query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            if (seriesName == "~") {
                 query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+                query.startFilter();
+                query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
+                query.addFilterOr();
+                query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), "^$", MediaQuery::Contains);
+                query.endFilter();
             }
             query.endWhere();
             QStringList orderByBindings = bindings;
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
 
             //Build media list from results
             while( it.next() ) {
                 int season = it.binding("season").literal().toInt();
                 MediaItem mediaItem;
-                mediaItem.url = QString("video://episodes?||%1||%2||%3")
-                                    .arg(genre).arg(seriesName).arg(season);
+                mediaItem.url = QString("video://episodes?||season=%1||%2||%3")
+                                    .arg(season).arg(seriesNameFilter).arg(genreFilter);
                 mediaItem.title = seriesName;
                 mediaItem.fields["title"] = mediaItem.title;
                 mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
@@ -274,7 +242,7 @@ void VideoListEngine::run()
             
             if(noSeasonsQuery.executeAsk(m_mainModel)) {
                 MediaItem mediaItem;
-                mediaItem.url = QString("video://episodes?||%1||%2||-1").arg(genre).arg(seriesName);
+                mediaItem.url = QString("video://episodes?||season=-1||%1||%2").arg(genreFilter).arg(seriesName);
                 mediaItem.title = seriesName;
                 mediaItem.subTitle = i18n("Uncategorized seasons");
                 mediaItem.type = QString("Category");
@@ -315,7 +283,10 @@ void VideoListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
@@ -328,41 +299,20 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            }
-            if (!seriesName.isEmpty()) {
-                if (seriesName != "~") {
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
-                                                                           seriesName,
-                                                                           MediaQuery::Equal));
-                } else {
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-                    query.startFilter();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
-                    query.addFilterOr();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), "^$", MediaQuery::Contains);
-                    query.endFilter();
-                }
-            } else {
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            if (seriesName == "~") {
                 query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+                query.startFilter();
+                query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
+                query.addFilterOr();
+                query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), "^$", MediaQuery::Contains);
+                query.endFilter();
             }
-            if (season > 0) {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
-                                                                       season,
-                                                                       MediaQuery::Equal));
-                hasSeason = true;
-            } else if (season == -1) {
+            if (season == -1) {
                 query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
                 query.startFilter();
                 query.addFilterConstraint(mediaVocabulary.videoSeasonBinding(), QString(), MediaQuery::NotBound);
                 query.endFilter();
-            } else {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
             }
             query.endWhere();
             QStringList orderByBindings;
@@ -417,6 +367,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
@@ -426,13 +377,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            }
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.titleBinding());
@@ -461,13 +406,8 @@ void VideoListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required));
-            }
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required));
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = bindings;
             query.orderBy(orderByBindings);
@@ -479,7 +419,7 @@ void VideoListEngine::run()
                 QString genre = it.binding("genre").literal().toString().trimmed();
                 if (!genre.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("video://sources?||%1").arg(genre);
+                    mediaItem.url = QString("video://sources?||genre=%1").arg(genre);
                     mediaItem.title = genre;
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("VideoGenre");
@@ -630,6 +570,10 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
@@ -643,42 +587,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
-            if (!genre.isEmpty()) {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                            genre,
-                                                            MediaQuery::Equal));;
-            } else {
-                query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            }
-            if (!seriesName.isEmpty()) {
-                if (seriesName != "~") {
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
-                                                                           seriesName,
-                                                                           MediaQuery::Equal));
-                } else {
-                    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
-                    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-                    query.startFilter();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
-                    query.addFilterOr();
-                    query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), "^$", MediaQuery::Contains);
-                    query.endFilter();
-                }
-            } else {
-                query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-            }
-            if (season > 0) {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
-                                                                  season,
-                                                                  MediaQuery::Equal));
-            } else if (season == -1) {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
-                query.startFilter();
-                query.addFilterConstraint(mediaVocabulary.videoSeasonBinding(), QString(), MediaQuery::NotBound);
-                query.endFilter();
-            } else {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
-            }
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.videoSeriesTitleBinding());
@@ -688,7 +597,6 @@ void VideoListEngine::run()
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
             
             //Build media list from results
             while( it.next() ) {
