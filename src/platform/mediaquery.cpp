@@ -341,17 +341,21 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                               value.toInt(),
                                               constraint));
     } else if (field == "seriesName") {
-        addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
+        if (value != "~") {
+            addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required,
                                             value,
                                             constraint));
+        }
     } else if (field == "synopsis") {
         addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Required,
                                             value,
                                             constraint));
     } else if (field == "season") {
-        addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
+        if (value.toInt() != -1) {
+            addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required,
                                                       value.toInt(),
                                                       constraint));
+        }
     } else if (field == "episodeNumber") {
         addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Required,
                                                       value.toInt(),
