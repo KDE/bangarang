@@ -350,29 +350,31 @@ void MusicListEngine::run()
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
     //Get local album artwork
-    if (m_nepomukInited && engineArg.toLower() == "albums") {
-        for (int i = 0; i < mediaList.count(); i++) {
-            MediaQuery query;
-            QStringList bindings;
-            bindings.append(mediaVocabulary.mediaResourceBinding());
-            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-            bindings.append(mediaVocabulary.artworkBinding());
-            query.select(bindings, MediaQuery::Distinct);
-            query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, mediaList.at(i).title, MediaQuery::Equal));
-            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.endWhere();
-            query.addLimit(5);
-            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
-            while( it.next() ) {
-                MediaItem resourceMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                QImage artwork = Utilities::getArtworkImageFromMediaItem(resourceMediaItem);
-                if (!artwork.isNull()) {
-                    MediaItem mediaItem = mediaList.at(i);
-                    emit updateArtwork(artwork, mediaItem);
-                    break;
+    if (m_nepomukInited) {
+        if (engineArg.toLower() == "albums") {
+            for (int i = 0; i < mediaList.count(); i++) {
+                MediaQuery query;
+                QStringList bindings;
+                bindings.append(mediaVocabulary.mediaResourceBinding());
+                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+                bindings.append(mediaVocabulary.artworkBinding());
+                query.select(bindings, MediaQuery::Distinct);
+                query.startWhere();
+                query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+                query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, mediaList.at(i).title, MediaQuery::Equal));
+                query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+                query.endWhere();
+                query.addLimit(5);
+                Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+                
+                while( it.next() ) {
+                    MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+                    QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+                    if (!artwork.isNull()) {
+                        MediaItem mediaItem = mediaList.at(i);
+                        emit updateArtwork(artwork, mediaItem);
+                        break;
+                    }
                 }
             }
         }
