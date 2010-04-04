@@ -37,6 +37,10 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
             SIGNAL(updateMediaItems(QList<MediaItem>)),
             m_mediaItemModel,
             SLOT(updateMediaItems(QList<MediaItem>)));
+    connect(this, 
+            SIGNAL(updateArtwork(QImage, MediaItem)),
+            m_mediaItemModel,
+            SLOT(updateArtwork(QImage, MediaItem)));
 
 }
 

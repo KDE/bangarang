@@ -29,6 +29,7 @@
 #include <QStandardItemModel>
 #include <QObject>
 #include <QPixmap>
+#include <QImage>
 #include <QList>
 
 class MusicListEngine;
@@ -675,6 +676,20 @@ class MediaItemModel : public QStandardItemModel
          *       to do that.
          */
         void removeMediaItem(QString url);
+        
+        /**
+        * Update artwork for mediaItem corresponding to the specified MediaItem.
+        * Only MediaItems in the model whose url matches the url of the
+        * specifed MediaItem will be updated.
+        * 
+        * @param artworkImage Image of updated artwork.
+        * @param mediaItem MediaItem to update the artwork for.
+        *
+        * Note: This method only updates the information in the model. It
+        *       does not update the source from which the MediaItems were
+        *       retrieved. Use updateSourceInfo() method to do that.
+        */
+        void updateArtwork(QImage artworkImage, MediaItem mediaItem);
         
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
         

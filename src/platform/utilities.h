@@ -22,6 +22,7 @@
 #include <KUrl>
 #include <KIcon>
 #include <QPixmap>
+#include <QImage>
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
 #include <Soprano/QueryResultIterator>
@@ -36,7 +37,9 @@ class MediaItem;
  */
 namespace Utilities {
     QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(128,128));
+    QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(128,128));
     QPixmap getArtworkFromMediaItem(const MediaItem &mediaItem);
+    QImage getArtworkImageFromMediaItem(const MediaItem &mediaItem);
     QString getArtistFromTag(const QString &url);
     QString getAlbumFromTag(const QString &url);
     QString getTitleFromTag(const QString &url);

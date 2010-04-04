@@ -54,7 +54,7 @@
 
 QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    /*TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
     
     if (!id3tag) {
@@ -72,9 +72,34 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
     
     if(size != attachedImage.size()) {
         attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }*/
+    QImage attachedImage = getArtworkImageFromTag(url, size);    
+    return QPixmap::fromImage(attachedImage);
+}
+
+QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
+{
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
+    
+    if (!id3tag) {
+        return QImage();
+    }
+
+    TagLib::ID3v2::AttachedPictureFrame *selectedFrame = Utilities::attachedPictureFrame(id3tag);
+    
+    if (!selectedFrame) { // Could occur for encrypted picture frames.
+        return QImage();
     }
     
-    return QPixmap::fromImage(attachedImage);
+    QByteArray pictureData = QByteArray(selectedFrame->picture().data(), selectedFrame->picture().size());
+    QImage attachedImage = QImage::fromData(pictureData);
+    
+    if(size != attachedImage.size()) {
+        attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+    
+    return attachedImage;
 }
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
@@ -90,6 +115,21 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
         }
     }
     return pixmap;
+}
+
+QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
+{
+    QImage image = QImage();
+    if (Utilities::isMusic(mediaItem.url)) {
+        image = Utilities::getArtworkImageFromTag(mediaItem.url);
+    }
+    if (image.isNull()) {
+        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            image = QImage(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+    }
+    return image;
 }
 
 QString Utilities::getArtistFromTag(const QString &url)
