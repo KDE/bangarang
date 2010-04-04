@@ -60,7 +60,7 @@ class InfoCategoryDelegate : public QItemDelegate
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
         bool m_extraInfoVisible;
-        
+        int heightForWordWrap(QFont font, int width, QString text) const;
         
     Q_SIGNALS:
 };

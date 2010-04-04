@@ -190,10 +190,7 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
         if (availableWidth <= 0) {
             availableWidth = 100;
         }
-        QFontMetrics fm(textFont);
-        int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
-        int heightMultiplier = 1 + (fmWidth / availableWidth);
-        height = heightMultiplier * fm.height();
+        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString());
     }
        
     return QSize(width, height);
@@ -320,4 +317,28 @@ void InfoItemDelegate::setView(QAbstractItemView * view)
 {
     m_view = view;
     m_defaultViewSelectionMode = view->selectionMode();
+}
+
+int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) const
+{
+    QFontMetrics fm(font);
+    int fmWidth = fm.boundingRect(text).width();
+    int fmHeight = fm.lineSpacing();
+    int heightMultiplier = 1;
+    QString fitText = text;
+    while (fmWidth > width) {
+        QStringList wordList = fitText.split(QRegExp("\\s+"));
+        QString wordWrapText = fitText;
+        while (fmWidth > width) {
+            wordWrapText.truncate(wordWrapText.lastIndexOf(wordList.takeLast()));
+            fmWidth = fm.boundingRect(wordWrapText).width();
+        }
+        heightMultiplier++;
+        if (wordWrapText.isEmpty()) {
+            wordWrapText = wordList.at(0);
+        }
+        fitText = fitText.mid(wordWrapText.length());
+        fmWidth = fm.boundingRect(fitText).width();
+    }
+    return heightMultiplier*fmHeight;
 }
