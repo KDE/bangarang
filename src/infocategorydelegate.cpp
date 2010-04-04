@@ -153,21 +153,15 @@ int InfoCategoryDelegate::rowHeight(int row) const
         height = artwork.actualSize(QSize(164,164)).height() + 2*padding;
     } else if (field == "title") {
         QFont textFont;
-        int availableWidth = m_view->width() - 2*padding;
+        textFont.setBold(true);
         textFont.setPointSize(1.5*textFont.pointSize());
-        QFontMetrics fm(textFont);
-        int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
-        int heightMultiplier = 1 + (fmWidth / availableWidth);
-        height = heightMultiplier * fm.height() + 2 * padding;
+        int availableWidth = m_view->width() - 2*padding;
+        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * padding;;
     } else {
         QFont textFont = KGlobalSettings::smallestReadableFont();
         int availableWidth = m_view->width() - 2*padding;
-        QFontMetrics fm(textFont);
-        int fmWidth = fm.boundingRect(index.data(Qt::DisplayRole).toString()).width();
-        int heightMultiplier = 1 + (fmWidth / availableWidth);
-        height = heightMultiplier * fm.height() + 2 * padding;
+        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * padding;;
     }
-
     return height;
 }
 
@@ -281,4 +275,28 @@ int InfoCategoryDelegate::heightForAllRows()
         height = height + rowHeight(i);
     }
     return height + 6;
+}
+
+int InfoCategoryDelegate::heightForWordWrap(QFont font, int width, QString text) const
+{
+    QFontMetrics fm(font);
+    int fmWidth = fm.boundingRect(text).width();
+    int fmHeight = fm.lineSpacing();
+    int heightMultiplier = 1;
+    QString fitText = text;
+    while (fmWidth > width) {
+        QStringList wordList = fitText.split(QRegExp("\\s+"));
+        QString wordWrapText = fitText;
+        while (fmWidth > width) {
+            wordWrapText.truncate(wordWrapText.lastIndexOf(wordList.takeLast()));
+            fmWidth = fm.boundingRect(wordWrapText).width();
+        }
+        heightMultiplier++;
+        if (wordWrapText.isEmpty()) {
+            wordWrapText = wordList.at(0);
+        }
+        fitText = fitText.mid(wordWrapText.length() -1);
+        fmWidth = fm.boundingRect(fitText).width();
+    }
+    return heightMultiplier*fmHeight;
 }
