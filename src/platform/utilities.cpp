@@ -969,3 +969,43 @@ QString Utilities::lriFilterFromMediaListField(const QList<MediaItem> &mediaList
     }
     return lriFilter;
 }
+
+QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
+{
+    QString mergedLRI;
+    MediaListProperties targetProperties(lri);
+    MediaListProperties sourceProperties(lriToMerge);
+    if (targetProperties.engine() == sourceProperties.engine() && targetProperties.engineArg() == sourceProperties.engineArg()) {
+        mergedLRI = targetProperties.engine() + targetProperties.engineArg() + QString("?");
+        QStringList targetFilterList = targetProperties.engineFilterList();
+        QStringList sourceFilterList = sourceProperties.engineFilterList();
+        QString mergedFilter;
+        for (int i = 0; i < targetFilterList.count(); i++) {
+            QString targetFilter = targetFilterList.at(i);
+            QString field = targetProperties.filterField(targetFilter);
+            QString sourceFilter = sourceProperties.filterForField(field);
+            if (sourceFilter.isEmpty() || sourceFilter == targetFilter) {
+                mergedFilter = targetFilter;
+            } else if (!sourceFilter.isEmpty()) {
+                mergedFilter = field + targetProperties.filterOperator(targetFilter) + targetProperties.filterValue(targetFilter) + QString("|OR|") + sourceProperties.filterValue(sourceFilter);
+            }
+            if (!mergedFilter.isEmpty()) {
+                mergedLRI += QString("%1||").arg(mergedFilter);
+            }
+        }
+        MediaListProperties mergedProperties(mergedLRI);
+        mergedFilter = QString();
+        for (int i = 0; i < sourceFilterList.count(); i++) {
+            QString sourceFilter = sourceFilterList.at(i);
+            QString field = sourceProperties.filterField(sourceFilter);
+            if (mergedProperties.filterForField(field).isEmpty() && mergedProperties.engineFilterList().indexOf(sourceFilter) == -1) {
+                mergedFilter = sourceFilter;
+            }
+            if (!mergedFilter.isEmpty()) {
+                mergedLRI += QString("%1||").arg(mergedFilter);
+            }
+        }
+    }
+    return mergedLRI;
+}
+        

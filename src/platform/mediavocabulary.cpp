@@ -785,7 +785,13 @@ QString MediaVocabulary::hasTitle(MediaQuery::Match match,
     QString propertyBinding = titleBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::title(), propertyBinding);
     if (!title.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, title, constraint);
+        QStringList titles = title.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < titles.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, titles.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -801,9 +807,16 @@ QString MediaVocabulary::hasTag(MediaQuery::Match match,
     QString propertyBinding = tagBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::tag(), propertyBinding);
     
-    if(!tag_url.isEmpty()) {
-      statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, tag_url, constraint);
+    if (!tag_url.isEmpty()) {
+        QStringList tag_urls = tag_url.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < tag_urls.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, tag_urls.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
+
     if (match == MediaQuery::Optional) {
       statement = MediaQuery::addOptional(statement);
     }
@@ -819,7 +832,13 @@ QString MediaVocabulary::hasDescription(MediaQuery::Match match,
     QString propertyBinding = descriptionBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::description(), propertyBinding);
     if (!description.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, description, constraint);
+        QStringList descriptions = description.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < descriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, descriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -913,7 +932,13 @@ QString MediaVocabulary::hasGenre(MediaQuery::Match match,
     QString propertyBinding = genreBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::genre(), propertyBinding);
     if (!genre.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, genre, constraint);
+        QStringList genres = genre.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < genres.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, genres.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -969,7 +994,13 @@ QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
     }
         
     if (!artistName.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, artistName, constraint);
+        QStringList artistNames = artistName.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < artistNames.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, artistNames.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -993,7 +1024,13 @@ QString MediaVocabulary::hasMusicAlbumTitle(MediaQuery::Match match,
     }
     
     if (!albumTitle.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, albumTitle, constraint);
+        QStringList albumTitles = albumTitle.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < albumTitles.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, albumTitles.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1043,9 +1080,16 @@ QString MediaVocabulary::hasVideoSeriesTitle(MediaQuery::Match match,
     QString seriesResourceBinding = "seriesResource";
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSeries(), seriesResourceBinding);
     statement += MediaQuery::hasProperty(seriesResourceBinding, MediaVocabulary::videoSeriesTitle(), propertyBinding);
-    if (!seriesTitle.isNull()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, seriesTitle, constraint);
+    if (!seriesTitle.isEmpty()) {
+        QStringList seriesTitles = seriesTitle.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < seriesTitles.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, seriesTitles.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
+
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
@@ -1060,8 +1104,15 @@ QString MediaVocabulary::hasVideoSynopsis(MediaQuery::Match match,
     QString propertyBinding = videoSynopsisBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSynopsis(), propertyBinding);
     if (!synopsis.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, synopsis, constraint);
+        QStringList synopses = synopsis.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < synopses.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, synopses.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
+
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
@@ -1108,7 +1159,13 @@ QString MediaVocabulary::hasVideoAudienceRating(MediaQuery::Match match,
     QString propertyBinding = videoAudienceRatingBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAudienceRating(), propertyBinding);
     if (!audienceRating.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, audienceRating, constraint);
+        QStringList audienceRatings = audienceRating.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < audienceRatings.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, audienceRatings.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1126,7 +1183,13 @@ QString MediaVocabulary::hasVideoWriter(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!writer.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, writer, constraint);
+        QStringList writers = writer.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < writers.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, writers.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1144,7 +1207,13 @@ QString MediaVocabulary::hasVideoDirector(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!director.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, director, constraint);
+        QStringList directors = director.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < directors.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, directors.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1163,7 +1232,13 @@ QString MediaVocabulary::hasVideoAssistantDirector(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!assistantDirector.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, assistantDirector, constraint);
+        QStringList assistantDirectors = assistantDirector.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < assistantDirectors.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, assistantDirectors.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1180,7 +1255,13 @@ QString MediaVocabulary::hasVideoProducer(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!producer.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, producer, constraint);
+        QStringList producers = producer.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < producers.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, producers.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1198,7 +1279,13 @@ QString MediaVocabulary::hasVideoActor(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!actor.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, actor, constraint);
+        QStringList actors = actor.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < actors.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, actors.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1216,7 +1303,13 @@ QString MediaVocabulary::hasVideoCinematographer(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoCinematographer(), contactResourceBinding);
     statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
     if (!cinematographer.isEmpty()) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, cinematographer, constraint);
+        QStringList cinematographers = cinematographer.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < cinematographers.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, cinematographers.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);

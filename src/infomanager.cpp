@@ -234,26 +234,50 @@ void InfoManager::loadSelectedInfo()
         
         m_infoCategoryModel->downloadInfo();
         
+        //Get context data for info boxes
+        QStringList contextLRIs;
+        QStringList contextTitles;
+        for (int i = 0; i < context.count(); i++) {
+            MediaItem contextCategory = context.at(i);
+            if (i == 0) {
+                contextTitles = contextCategory.fields["contextTitles"].toStringList();
+                contextLRIs = contextCategory.fields["contextLRIs"].toStringList();
+                continue;
+            }
+            QStringList currentContextTitles = contextCategory.fields["contextTitles"].toStringList();
+            QStringList currentContextLRIs = contextCategory.fields["contextLRIs"].toStringList();
+            QStringList mergedContextLRIs;
+            QStringList mergedContextTitles;
+            for (int j = 0; j < currentContextLRIs.count(); j++) {
+                if (j < contextLRIs.count() ) {
+                    QString mergedContextLRI = Utilities::mergeLRIs(contextLRIs.at(j), currentContextLRIs.at(j));
+                    if (!mergedContextLRI.isEmpty()) {
+                        mergedContextLRIs.append(mergedContextLRI);
+                        mergedContextTitles.append(currentContextTitles.at(j));
+                    }
+                }
+            }
+            contextTitles = mergedContextTitles;
+            contextLRIs = mergedContextLRIs;
+        }
+
         //Load any context infoboxes
         //NOTE:Currently infoboxes are only loaded for one category at a time.
-        QStringList contextLRIs;
-        if (context.count() == 1) {
-            MediaItem contextCategory = context.at(0);
-            QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();
-            contextLRIs = contextCategory.fields["contextLRIs"].toStringList();
-            for (int i = 0; i < contextLRIs.count(); i++) {
-                QString title = contextTitles.at(i);
-                QString lri = contextLRIs.at(i);
-                if (i < ui->infoBoxHolder->layout()->count()) {
-                    InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget();
-                    infoBox->setInfo(title, lri);
-                } else {
-                    InfoBox *infoBox = new InfoBox;
-                    infoBox->setMainWindow(m_parent);
-                    infoBox->setInfo(title, lri);
-                    ui->infoBoxHolder->layout()->addWidget(infoBox);
-                    connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
-                }
+        /*MediaItem contextCategory = context.at(0);
+        QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();
+        contextLRIs = contextCategory.fields["contextLRIs"].toStringList();*/
+        for (int i = 0; i < contextLRIs.count(); i++) {
+            QString title = contextTitles.at(i);
+            QString lri = contextLRIs.at(i);
+            if (i < ui->infoBoxHolder->layout()->count()) {
+                InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget();
+                infoBox->setInfo(title, lri);
+            } else {
+                InfoBox *infoBox = new InfoBox;
+                infoBox->setMainWindow(m_parent);
+                infoBox->setInfo(title, lri);
+                ui->infoBoxHolder->layout()->addWidget(infoBox);
+                connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
             }
         }
         //Remove any unused infoboxes

@@ -136,9 +136,9 @@ void VideoListEngine::run()
                     QStringList contextTitles;
                     contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
                     QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
-                    contextLRIs << QString("semantics://highest?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
-                    contextLRIs << QString("semantics://frequent?video||limit=5||genre=%1||seriesName=%2").arg(genre).arg(seriesName);
+                    contextLRIs << QString("semantics://recent?video||limit=5||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
+                    contextLRIs << QString("semantics://highest?video||limit=5||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
+                    contextLRIs << QString("semantics://frequent?video||limit=5||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
                     mediaItem.fields["contextTitles"] = contextTitles;
                     mediaItem.fields["contextLRIs"] = contextLRIs;
                     
@@ -218,9 +218,9 @@ void VideoListEngine::run()
                 QStringList contextTitles;
                 contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
                 QStringList contextLRIs;
-                contextLRIs << QString("semantics://recent?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
-                contextLRIs << QString("semantics://highest?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
-                contextLRIs << QString("semantics://frequent?video||limit=5||genre=%1||seriesName=%2||season=%3").arg(genre).arg(seriesName).arg(season);
+                contextLRIs << QString("semantics://recent?video||limit=5||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
+                contextLRIs << QString("semantics://highest?video||limit=5||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
+                contextLRIs << QString("semantics://frequent?video||limit=5||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
                 mediaItem.fields["contextTitles"] = contextTitles;
                 mediaItem.fields["contextLRIs"] = contextLRIs;
                     

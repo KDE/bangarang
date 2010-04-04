@@ -73,5 +73,6 @@ namespace Utilities {
     MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString());
     Nepomuk::Resource mediaResourceFromUrl(KUrl Url);
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
+    QString mergeLRIs(const QString &lri, const QString &lriToMerge);
 }
 #endif //UTILITIES_H    
