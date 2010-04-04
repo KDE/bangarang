@@ -142,8 +142,8 @@ void MusicListEngine::run()
             //Build media list from results
             int i = 0;
             while( it.next() ) {
-                artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
-                album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
+                QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
+                QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?album=%1||%2||%3").arg(album, artistFilter, genreFilter);
