@@ -116,29 +116,12 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     bool addRow = false;
     if (field == "associatedImage") {
         if (m_mediaList.count() == 1) {
-            /*KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["associatedImage"].toString());
-            fieldItem->setData(artworkUrl, Qt::DisplayRole);
-            fieldItem->setData(artworkUrl, Qt::EditRole);
-            fieldItem->setData(artworkUrl, InfoCategoryModel::OriginalValueRole); //stores copy of original data
-            if (artworkUrl.isValid()) {
-                kDebug() << "artworkUrl:" << artworkUrl.path();
-                QPixmap artwork = QPixmap(artworkUrl.path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                if (!artwork.isNull()) {
-                    fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
-                    addRow = true;
-                } else {
-                    //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
-                }
-            } else {
-                //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
-            }*/
             if (m_mode == AlbumMode) {
                 addRow = true;
                 fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
             }
         } else {
             //We should eventually check for common artwork and set it here.
-            //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
         }
         rowData.append(fieldItem);
         if (addRow) {
