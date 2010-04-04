@@ -1316,6 +1316,9 @@
                     <property name="text">
                      <string>List Title</string>
                     </property>
+                    <property name="indent">
+                     <number>2</number>
+                    </property>
                    </widget>
                   </item>
                   <item>
