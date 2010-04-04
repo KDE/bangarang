@@ -629,6 +629,9 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     if (!mediaItem.fields["lastPlayed"].isNull()) {
         titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), MediaItem::LastPlayedRole);
     }
+    if (mediaItem.type == "Category") {
+        titleItem->setData(mediaItem.fields["categoryType"].toString(), MediaItem::SubTypeRole);
+    }           
     rowData << titleItem;
     
     if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
