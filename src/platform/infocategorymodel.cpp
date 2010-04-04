@@ -116,7 +116,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     bool addRow = false;
     if (field == "associatedImage") {
         if (m_mediaList.count() == 1) {
-            KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["associatedImage"].toString());
+            /*KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["associatedImage"].toString());
             fieldItem->setData(artworkUrl, Qt::DisplayRole);
             fieldItem->setData(artworkUrl, Qt::EditRole);
             fieldItem->setData(artworkUrl, InfoCategoryModel::OriginalValueRole); //stores copy of original data
@@ -131,6 +131,10 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
                 }
             } else {
                 //fieldItem->setData(KIcon("system-users"), Qt::DecorationRole);
+            }*/
+            if (m_mode == AlbumMode) {
+                addRow = true;
+                fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
             }
         } else {
             //We should eventually check for common artwork and set it here.

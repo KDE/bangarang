@@ -454,6 +454,16 @@ void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
     }
 }
 
+void MediaItemModel::updateArtwork(QImage artworkImage, MediaItem mediaItem)
+{
+    int row = rowOfUrl(mediaItem.url);
+    if (row != -1) {
+        MediaItem updatedMediaItem = mediaItemAt(row);
+        updatedMediaItem.artwork = QIcon(QPixmap::fromImage(artworkImage));
+        replaceMediaItemAt(row, updatedMediaItem);
+    }
+}
+
 void MediaItemModel::updateMediaItem(MediaItem mediaItem)
 {
     int row = rowOfUrl(mediaItem.url);

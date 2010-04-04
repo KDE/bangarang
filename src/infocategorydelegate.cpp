@@ -150,7 +150,7 @@ int InfoCategoryDelegate::rowHeight(int row) const
     int padding = 2;
     if (field == "associatedImage") {
         QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-        height = artwork.actualSize(QSize(200,200)).height() + 2*padding;
+        height = artwork.actualSize(QSize(164,164)).height() + 2*padding;
     } else if (field == "title") {
         QFont textFont;
         int availableWidth = m_view->width() - 2*padding;
@@ -185,14 +185,15 @@ bool InfoCategoryDelegate::editorEvent( QEvent *event, QAbstractItemModel *model
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
     if (field == "associatedImage") {
         if (event->type() == QEvent::MouseButtonDblClick) {
-            KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
+            //TODO:Implement saving associatedImage to applicable mediaItems.
+            /*KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
             if (newUrl.isValid()) {
                 QPixmap pixmap = QPixmap(newUrl.path()).scaled(QSize(200,200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 if (!pixmap.isNull()) {
                     model->setData(index, QIcon(pixmap), Qt::DecorationRole);
                     model->setData(index, newUrl, Qt::EditRole);
                 }
-            }
+            }*/
         }
         return true;
     } else if (field == "title") {

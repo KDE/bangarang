@@ -22,6 +22,7 @@
 #include "mediaitemmodel.h"
 #include "listenginefactory.h"
 #include <QtCore>
+#include <QImage>
 
 /**
 * This is the base ListEngine class.
@@ -138,6 +139,7 @@ class ListEngine : public QThread
     Q_SIGNALS:
         void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
         void updateMediaItems(QList<MediaItem> mediaList);
+        void updateArtwork(QImage artworkImage, MediaItem mediaItem);
         
     protected:
         MediaListProperties m_mediaListProperties;
