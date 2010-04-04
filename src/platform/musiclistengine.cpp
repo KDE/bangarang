@@ -363,7 +363,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, mediaList.at(i).title, MediaQuery::Equal));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.endWhere();
-            query.addLimit(1);
+            query.addLimit(5);
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             while( it.next() ) {
@@ -372,6 +372,7 @@ void MusicListEngine::run()
                 if (!artwork.isNull()) {
                     MediaItem mediaItem = mediaList.at(i);
                     emit updateArtwork(artwork, mediaItem);
+                    break;
                 }
             }
         }
