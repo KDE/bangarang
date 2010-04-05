@@ -335,6 +335,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
         }
         heightMultiplier++;
         if (wordWrapText.isEmpty()) {
+            QStringList wordList = fitText.split(QRegExp("\\s+"));
             wordWrapText = wordList.at(0);
         }
         fitText = fitText.mid(wordWrapText.length());
