@@ -86,6 +86,7 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
              SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
              this,
              SLOT(resultsReturned(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+    copyJob->setUiDelegate(0);
 }
 
 void DBPediaQuery::getAlbumInfo(const QString & albumName)
