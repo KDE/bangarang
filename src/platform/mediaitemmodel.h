@@ -613,6 +613,12 @@ class MediaItemModel : public QStandardItemModel
         */
         void sourceInfoUpdateRemovalStarted();
         
+        /**
+         * Emitted when MediaListProperties for this model has changed.
+         * Emitted only when changed independent of media list load.
+         */
+        void mediaListPropertiesChanged();
+        
     public Q_SLOTS:
         /**
         * Activate the action associated with "Action" mediaItem
@@ -692,6 +698,8 @@ class MediaItemModel : public QStandardItemModel
         *       retrieved. Use updateSourceInfo() method to do that.
         */
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
+        
+        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
         

@@ -93,7 +93,7 @@ void MusicListEngine::run()
                 QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
                 if (!artist.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("music://songs?artist=%1||%2||%3").arg(artist, albumFilter, genreFilter);
+                    mediaItem.url = QString("music://albums?artist=%1||%2||%3").arg(artist, albumFilter, genreFilter);
                     mediaItem.title = artist;
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Artist");
@@ -115,14 +115,22 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = i18n("Artists");
-            if (!genre.isEmpty()) {
-                m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", genre);
+            if (mediaList.count() != 1)  {
+                m_mediaListProperties.name = i18n("Artists");
+                if (!genre.isEmpty()) {
+                    m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", genre);
+                }
+                m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
+                m_mediaListProperties.type = QString("Categories");
+            } else {
+                engineArg = "songs";
+                artist = mediaList.at(0).title;
+                artistFilter = QString("artist=%1").arg(artist);
+                m_mediaListProperties.category = mediaList.at(0);
+                mediaList.clear();
             }
-            m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
-            m_mediaListProperties.type = QString("Categories");
-            
-        } else if (engineArg.toLower() == "albums") {
+        }
+        if (engineArg.toLower() == "albums") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
@@ -170,21 +178,30 @@ void MusicListEngine::run()
                 ++i;
             }
             
-            m_mediaListProperties.name = i18n("Albums");
-            if (!artist.isEmpty()) {
-                m_mediaListProperties.name = i18n("Albums - %1", artist);
-            }
-            if (!genre.isEmpty()) {
-                m_mediaListProperties.name = i18n("Albums - %1", genre);
-            }
-            if (!artist.isEmpty() && !genre.isEmpty()) {
-                m_mediaListProperties.name = i18n("Albums - %1 - %2", album, genre);
+            if (mediaList.count() != 1) {
+                m_mediaListProperties.name = i18n("Albums");
+                if (!artist.isEmpty()) {
+                    m_mediaListProperties.name = i18n("Albums - %1", artist);
+                }
+                if (!genre.isEmpty()) {
+                    m_mediaListProperties.name = i18n("Albums - %1", genre);
+                }
+                if (!artist.isEmpty() && !genre.isEmpty()) {
+                    m_mediaListProperties.name = i18n("Albums - %1 - %2", album, genre);
+                }
+                
+                m_mediaListProperties.summary = i18np("1 album", "%1 albums", mediaList.count());
+                m_mediaListProperties.type = QString("Categories");
+            } else {
+                engineArg = "songs";
+                album = mediaList.at(0).title;
+                albumFilter = QString("album=%1").arg(artist);
+                mediaList.clear();
             }
             
-            m_mediaListProperties.summary = i18np("1 album", "%1 albums", mediaList.count());
-            m_mediaListProperties.type = QString("Categories");
             
-        } else if (engineArg.toLower() == "genres") {
+        } 
+        if (engineArg.toLower() == "genres") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.genreBinding());
@@ -227,11 +244,19 @@ void MusicListEngine::run()
                 }
                 ++i;
             }
-            m_mediaListProperties.name = i18n("Genres");
-            m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
-            m_mediaListProperties.type = QString("Categories");
+            if (mediaList.count() != 1) {
+                m_mediaListProperties.name = i18n("Genres");
+                m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
+                m_mediaListProperties.type = QString("Categories");
+            } else {
+                engineArg = "songs";
+                genre = mediaList.at(0).title;
+                genreFilter = QString("genre=%1").arg(artist);
+                mediaList.clear();
+            }
             
-        } else if (engineArg.toLower() == "songs") {
+        } 
+        if (engineArg.toLower() == "songs") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -290,7 +315,8 @@ void MusicListEngine::run()
             m_mediaListProperties.summary = i18np("1 song", "%1 songs", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
-        } else if (engineArg.toLower() == "search") {
+        } 
+        if (engineArg.toLower() == "search") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());

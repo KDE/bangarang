@@ -82,6 +82,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
     connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
+    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+    
 }
 
 InfoManager::~InfoManager()
@@ -388,4 +390,12 @@ void InfoManager::clearInfoBoxSelection()
     }
     m_selectedInfoBoxMediaItems.clear();
     emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
+}
+
+void InfoManager::mediaListPropertiesChanged()
+{
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    if (selectedRows.count() == 0) {
+        loadSelectedInfo();
+    }
 }

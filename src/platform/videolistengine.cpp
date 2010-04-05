@@ -104,7 +104,8 @@ void VideoListEngine::run()
             m_mediaListProperties.name = i18n("Video Clips");
             m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
-        } else if (engineArg.toLower() == "tvshows") {
+        } 
+        if (engineArg.toLower() == "tvshows") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.videoSeriesTitleBinding());
@@ -172,11 +173,23 @@ void VideoListEngine::run()
                     mediaList.append(mediaItem);
                 }
             }
-
-            m_mediaListProperties.name = i18n("TV Shows");
-            m_mediaListProperties.summary = i18np("1 show", "%1 shows", mediaList.count());
-            m_mediaListProperties.type = QString("Categories");
-        } else if (engineArg.toLower() == "seasons") {
+            
+            if(mediaList.count() != 1) {
+                m_mediaListProperties.name = i18n("TV Shows");
+                m_mediaListProperties.summary = i18np("1 show", "%1 shows", mediaList.count());
+                m_mediaListProperties.type = QString("Categories");
+            } else {
+                engineArg = "episodes";
+                if (mediaList.at(0).url == "video://episodes?||seriesName=~") {
+                    seriesName = "~";
+                } else {
+                    seriesName = mediaList.at(0).title;
+                }
+                seriesNameFilter = QString("seriesName=%1").arg(seriesName);
+                mediaList.clear();
+            }
+        } 
+        if (engineArg.toLower() == "seasons") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.videoSeasonBinding());
@@ -202,6 +215,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            int lastSeason = -1;
             while( it.next() ) {
                 int season = it.binding("season").literal().toInt();
                 MediaItem mediaItem;
@@ -225,6 +239,7 @@ void VideoListEngine::run()
                 mediaItem.fields["contextLRIs"] = contextLRIs;
                     
                 mediaList.append(mediaItem);
+                lastSeason = season;
             }
 
             /* Check, whether there are TV shows, which have no series entered.
@@ -242,7 +257,7 @@ void VideoListEngine::run()
             
             if(noSeasonsQuery.executeAsk(m_mainModel)) {
                 MediaItem mediaItem;
-                mediaItem.url = QString("video://episodes?||season=-1||%1||%2").arg(genreFilter).arg(seriesName);
+                mediaItem.url = QString("video://episodes?||season=-1||%1||%2").arg(genreFilter).arg(seriesNameFilter);
                 mediaItem.title = seriesName;
                 mediaItem.subTitle = i18n("Uncategorized seasons");
                 mediaItem.type = QString("Category");
@@ -251,11 +266,22 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            m_mediaListProperties.name = i18nc("%1=Name of the Series", "Seasons - %1", seriesName);
-            m_mediaListProperties.summary = i18np("1 season", "%1 seasons", mediaList.count());
-            
-            m_mediaListProperties.type = QString("Categories");
-        } else if (engineArg.toLower() == "episodes") {
+            if (mediaList.count() != 1) {
+                m_mediaListProperties.name = i18nc("%1=Name of the Series", "Seasons - %1", seriesName);
+                m_mediaListProperties.summary = i18np("1 season", "%1 seasons", mediaList.count());
+                m_mediaListProperties.type = QString("Categories");
+            } else {
+                engineArg = "episodes";
+                if (mediaList.at(0).url == QString("video://episodes?||season=-1||%1||%2").arg(genreFilter).arg(seriesNameFilter)) {
+                    season = -1;
+                } else {
+                    season = lastSeason;
+                }
+                seasonFilter = QString("season=%1").arg(season);
+                mediaList.clear();
+            }
+        }
+        if (engineArg.toLower() == "episodes") {
             bool hasSeason = false;
             
             MediaQuery query;
@@ -284,7 +310,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
@@ -339,7 +365,8 @@ void VideoListEngine::run()
             m_mediaListProperties.summary = i18np("1 episode", "%1 episodes", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
-        } else if (engineArg.toLower() == "movies") {
+        } 
+        if (engineArg.toLower() == "movies") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -399,7 +426,8 @@ void VideoListEngine::run()
             m_mediaListProperties.summary = i18np("1 movie", "%1 movies", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
-        } else if (engineArg.toLower() == "genres") {
+        } 
+        if (engineArg.toLower() == "genres") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.genreBinding());
@@ -443,8 +471,8 @@ void VideoListEngine::run()
             m_mediaListProperties.name = i18n("Genres");
             m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
-            
-        } else if (engineArg.toLower() == "search") {
+        }
+        if (engineArg.toLower() == "search") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -542,7 +570,8 @@ void VideoListEngine::run()
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
             
-        } else if (engineArg.toLower() == "sources") {
+        } 
+        if (engineArg.toLower() == "sources") {
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
