@@ -86,7 +86,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //Setup interface icons
     setupIcons();
-    setupActions();
 
     // Hide certain widgets
     ui->previous->setVisible(false);
@@ -1098,15 +1097,6 @@ void MainWindow::setupIcons()
     ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
-}
-
-void MainWindow::setupActions()
-{
-    playAllAction = new QAction(KIcon("media-playback-start"), i18n("Play all"), this);
-    connect(playAllAction, SIGNAL(triggered()), this, SLOT(playAll()));
-    playSelectedAction = new QAction(KIcon("media-playback-start"), i18n("Play selected"), this);
-    connect(playSelectedAction, SIGNAL(triggered()), this, SLOT(playSelected()));
-    
 }
 
 void MainWindow::showApplicationBanner()

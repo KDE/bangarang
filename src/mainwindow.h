@@ -146,15 +146,12 @@ private:
     MediaListCache * m_sharedMediaListCache;
     bool playWhenPlaylistChanges;
     bool showRemainingTime;
-    QAction * playAllAction;
-    QAction * playSelectedAction;
     qreal m_volume;
     ScriptConsole *m_scriptConsole;
     KAction *playPause;    
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
-    void setupActions();
     void showApplicationBanner();
     void updateCachedDevicesList();
 
