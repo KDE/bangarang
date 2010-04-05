@@ -187,7 +187,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             textFont = KGlobalSettings::smallestReadableFont();
         }
         int durRatingSpacer;
-        if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
+        if ((m_renderMode == NormalMode && isMediaItem) || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
             durRatingSpacer = 50;
         } else if (m_renderMode == MiniPlayCountMode) {
             durRatingSpacer = 20;
