@@ -144,7 +144,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         bool exists = index.data(MediaItem::ExistsRole).toBool();
         int iconWidth;
         if (m_renderMode == NormalMode) {
-            if (isCategory && index.data(MediaItem::SubTypeRole).toString() == "Album") {
+            if ((isCategory && index.data(MediaItem::SubTypeRole).toString() == "Album") ||
+            (subType == "Movie")) {
                 iconWidth = height - 2;
             } else {
                 iconWidth = 22;
@@ -153,11 +154,13 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             iconWidth = 0;
         }
         int topOffset = (height - iconWidth) / 2;
-        if (topOffset < padding && index.data(MediaItem::SubTypeRole).toString() != "Album") {
+        if (topOffset < padding && index.data(MediaItem::SubTypeRole).toString() != "Album" && subType != "Movie") {
             topOffset = padding;
         }
-        if (!icon.isNull() && m_renderMode == NormalMode) {
-            icon.paint(&p, left + topOffset, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
+        if (m_renderMode == NormalMode) {
+            if (!icon.isNull()) {
+                icon.paint(&p, left + topOffset, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
+            }
         }
         if (!exists && m_renderMode == NormalMode) {
             KIcon("emblem-unmounted").paint(&p, left + padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);

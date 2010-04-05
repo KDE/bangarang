@@ -146,8 +146,7 @@ class ListEngine : public QThread
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
-
-    private:
         MediaItemModel * m_mediaItemModel;
+
 };
 #endif // LISTENGINE_H

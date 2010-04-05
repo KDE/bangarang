@@ -41,7 +41,6 @@ VideoListEngine::~VideoListEngine()
 
 void VideoListEngine::run()
 {
-    
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -659,12 +658,23 @@ void VideoListEngine::run()
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
+    } else {
+        //Get local artwork
+        if (m_nepomukInited) {
+            for (int i = 0; i < mediaList.count(); i++) {
+                MediaItem mediaItem = mediaList.at(i);
+                if (mediaItem.fields["videoType"].toString() == "Movie") {
+                    QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+                    if (!artwork.isNull()) {
+                        emit updateArtwork(artwork, mediaItem);
+                    }
+                }
+            }
+        }
     }
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();
-    //exec();
-    
 }
 
 void VideoListEngine::setFilterForSources(const QString& engineFilter)
@@ -672,4 +682,3 @@ void VideoListEngine::setFilterForSources(const QString& engineFilter)
     //Always return songs
     m_mediaListProperties.lri = QString("video://sources?%1").arg(engineFilter);
 }
-
