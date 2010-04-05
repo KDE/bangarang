@@ -45,7 +45,6 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
             SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)),
             m_mediaItemModel,
             SLOT(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)));
-
 }
 
 MediaItemModel * ListEngine::model()
