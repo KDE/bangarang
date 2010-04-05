@@ -140,6 +140,7 @@ class ListEngine : public QThread
         void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
         void updateMediaItems(QList<MediaItem> mediaList);
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
+        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         
     protected:
         MediaListProperties m_mediaListProperties;

@@ -472,6 +472,14 @@ void MediaItemModel::updateMediaItem(MediaItem mediaItem)
     }
 }
 
+void MediaItemModel::updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem)
+{
+    if (m_mediaListProperties.category.url == mediaItem.url) {
+        m_mediaListProperties.category.artwork = QIcon(QPixmap::fromImage(artworkImage));
+        emit mediaListPropertiesChanged();
+    }
+}
+
 void MediaItemModel::removeMediaItem(QString url)
 {
     int row = rowOfUrl(url);
