@@ -54,9 +54,8 @@ void VideoListEngine::run()
     mediaVocabulary.setVideoVocabulary(MediaVocabulary::nmm);
     
     QString engineArg = m_mediaListProperties.engineArg();
+
     //Parse filter
-    //Engine filter format:
-    // searchTerm||genre||seriesName||season||episode
     QString engineFilter = m_mediaListProperties.engineFilter();
     QStringList engineFilterList = m_mediaListProperties.engineFilterList();
     QString searchTerm;
@@ -71,6 +70,71 @@ void VideoListEngine::run()
     QString seasonFilter = m_mediaListProperties.filterForField("season");
     
     if (m_nepomukInited) {
+        
+        // Retrieve Movies
+        if (engineArg.toLower() == "movies") {
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+            bindings.append(mediaVocabulary.titleBinding());
+            bindings.append(mediaVocabulary.durationBinding());
+            bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.videoSynopsisBinding());
+            bindings.append(mediaVocabulary.ratingBinding());
+            bindings.append(mediaVocabulary.releaseDateBinding());
+            bindings.append(mediaVocabulary.videoAudienceRatingBinding());
+            bindings.append(mediaVocabulary.genreBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.videoWriterBinding());
+            bindings.append(mediaVocabulary.videoDirectorBinding());
+            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
+            bindings.append(mediaVocabulary.videoProducerBinding());
+            bindings.append(mediaVocabulary.videoActorBinding());
+            bindings.append(mediaVocabulary.videoCinematographerBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            query.endWhere();
+            QStringList orderByBindings;
+            orderByBindings.append(mediaVocabulary.titleBinding());
+            orderByBindings.append(mediaVocabulary.releaseDateBinding());
+            query.orderBy(orderByBindings);
+
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+
+            //Build media list from results
+            while( it.next() ) {
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"));
+                mediaList.append(mediaItem);
+            }
+            
+            m_mediaListProperties.name = i18n("Movies");
+            if (!genre.isEmpty()) {
+                m_mediaListProperties.name = i18nc("%1=Genre of the movie", "Movies - %1", genre);
+            }
+            m_mediaListProperties.summary = i18np("1 movie", "%1 movies", mediaList.count());
+            m_mediaListProperties.type = QString("Sources");
+            
+        } 
+        
+        //Retrieve Video Clips
         if (engineArg.toLower() == "clips") {
             MediaQuery query;
             QStringList bindings;
@@ -104,6 +168,8 @@ void VideoListEngine::run()
             m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         } 
+        
+        //Retrieve TV Series
         if (engineArg.toLower() == "tvshows") {
             MediaQuery query;
             QStringList bindings;
@@ -188,6 +254,8 @@ void VideoListEngine::run()
                 mediaList.clear();
             }
         } 
+        
+        //Retrieve TV Seasons
         if (engineArg.toLower() == "seasons") {
             MediaQuery query;
             QStringList bindings;
@@ -280,6 +348,8 @@ void VideoListEngine::run()
                 mediaList.clear();
             }
         }
+        
+        //Retrieve TV Show Episodes
         if (engineArg.toLower() == "episodes") {
             bool hasSeason = false;
             
@@ -365,67 +435,8 @@ void VideoListEngine::run()
             m_mediaListProperties.type = QString("Sources");
             
         } 
-        if (engineArg.toLower() == "movies") {
-            MediaQuery query;
-            QStringList bindings;
-            bindings.append(mediaVocabulary.mediaResourceBinding());
-            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-            bindings.append(mediaVocabulary.titleBinding());
-            bindings.append(mediaVocabulary.durationBinding());
-            bindings.append(mediaVocabulary.descriptionBinding());
-            bindings.append(mediaVocabulary.videoSynopsisBinding());
-            bindings.append(mediaVocabulary.ratingBinding());
-            bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.videoAudienceRatingBinding());
-            bindings.append(mediaVocabulary.genreBinding());
-            bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.videoWriterBinding());
-            bindings.append(mediaVocabulary.videoDirectorBinding());
-            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-            bindings.append(mediaVocabulary.videoProducerBinding());
-            bindings.append(mediaVocabulary.videoActorBinding());
-            bindings.append(mediaVocabulary.videoCinematographerBinding());
-            query.select(bindings, MediaQuery::Distinct);
-            query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
-            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
-            query.endWhere();
-            QStringList orderByBindings;
-            orderByBindings.append(mediaVocabulary.titleBinding());
-            orderByBindings.append(mediaVocabulary.releaseDateBinding());
-            query.orderBy(orderByBindings);
-
-            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-
-            //Build media list from results
-            while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"));
-                mediaList.append(mediaItem);
-            }
-            
-            m_mediaListProperties.name = i18n("Movies");
-            if (!genre.isEmpty()) {
-                m_mediaListProperties.name = i18nc("%1=Genre of the movie", "Movies - %1", genre);
-            }
-            m_mediaListProperties.summary = i18np("1 movie", "%1 movies", mediaList.count());
-            m_mediaListProperties.type = QString("Sources");
-            
-        } 
+        
+        //Retrieve Genres
         if (engineArg.toLower() == "genres") {
             MediaQuery query;
             QStringList bindings;
@@ -471,6 +482,102 @@ void VideoListEngine::run()
             m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
         }
+        
+        //Retrieve Actors
+        if (engineArg.toLower() == "actors") {
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.videoActorBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required));
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            query.endWhere();
+            QStringList orderByBindings = bindings;
+            query.orderBy(orderByBindings);
+            
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                QString actor = it.binding(mediaVocabulary.videoActorBinding()).literal().toString().trimmed();
+                if (!actor.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("video://sources?||actor=%1").arg(actor);
+                    mediaItem.title = actor;
+                    mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Actor");
+                    mediaItem.fields["title"] = actor;
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("view-media-artist");
+
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?video||limit=5||actor=%1").arg(actor);
+                    contextLRIs << QString("semantics://highest?video||limit=5||actor=%1").arg(actor);
+                    contextLRIs << QString("semantics://frequent?video||limit=5||actor=%1").arg(actor);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
+                    mediaList.append(mediaItem);
+                }
+            }
+            
+            m_mediaListProperties.name = i18n("Actors");
+            m_mediaListProperties.summary = i18np("1 actor", "%1 actors", mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+        }
+        
+        //Retrieve Directors
+        if (engineArg.toLower() == "directors") {
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.videoDirectorBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required));
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            query.endWhere();
+            QStringList orderByBindings = bindings;
+            query.orderBy(orderByBindings);
+            
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
+            //Build media list from results
+            while( it.next() ) {
+                QString director = it.binding(mediaVocabulary.videoDirectorBinding()).literal().toString().trimmed();
+                if (!director.isEmpty()) {
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("video://sources?||director=%1").arg(director);
+                    mediaItem.title = director;
+                    mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Director");
+                    mediaItem.fields["title"] = director;
+                    mediaItem.nowPlaying = false;
+                    mediaItem.artwork = KIcon("view-media-artist");
+
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?video||limit=5||director=%1").arg(director);
+                    contextLRIs << QString("semantics://highest?video||limit=5||director=%1").arg(director);
+                    contextLRIs << QString("semantics://frequent?video||limit=5||director=%1").arg(director);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
+                    mediaList.append(mediaItem);
+                }
+            }
+            
+            m_mediaListProperties.name = i18n("Directors");
+            m_mediaListProperties.summary = i18np("1 director", "%1 directors", mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+        }
+        
+        //Retrieve Search Results
         if (engineArg.toLower() == "search") {
             MediaQuery query;
             QStringList bindings;
@@ -570,6 +677,8 @@ void VideoListEngine::run()
             m_mediaListProperties.type = QString("Sources");
             
         } 
+        
+        //Retrieve Video sources of any type
         if (engineArg.toLower() == "sources") {
             MediaQuery query;
             QStringList bindings;
@@ -652,6 +761,7 @@ void VideoListEngine::run()
         }
     }
     
+    //Return results
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
     //Check if MediaItems in mediaList exist

@@ -55,6 +55,8 @@ MediaQuery::MediaQuery()
     fieldBindingDictionary["tag"] = MediaVocabulary::tagBinding();
     fieldBindingDictionary["seriesName"] = MediaVocabulary::videoSeriesTitleBinding();
     fieldBindingDictionary["season"] = MediaVocabulary::videoSeasonBinding();
+    fieldBindingDictionary["actor"] = MediaVocabulary::videoActorBinding();
+    fieldBindingDictionary["director"] = MediaVocabulary::videoDirectorBinding();
     
     
 }

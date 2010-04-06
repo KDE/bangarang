@@ -72,6 +72,7 @@ void MusicListEngine::run()
     QString genreFilter = m_mediaListProperties.filterForField("genre");
     
     if (m_nepomukInited) {
+        //Retrieve Artists
         if (engineArg.toLower() == "artists") {
             MediaQuery query;
             QStringList bindings;
@@ -130,6 +131,8 @@ void MusicListEngine::run()
                 mediaList.clear();
             }
         }
+        
+        //Retrieve Albums
         if (engineArg.toLower() == "albums") {
             MediaQuery query;
             QStringList bindings;
@@ -201,6 +204,8 @@ void MusicListEngine::run()
             
             
         } 
+        
+        //Retrieve Genres
         if (engineArg.toLower() == "genres") {
             MediaQuery query;
             QStringList bindings;
@@ -256,6 +261,8 @@ void MusicListEngine::run()
             }
             
         } 
+        
+        //Retrieve Songs
         if (engineArg.toLower() == "songs") {
             MediaQuery query;
             QStringList bindings;
@@ -316,6 +323,8 @@ void MusicListEngine::run()
             m_mediaListProperties.type = QString("Sources");
             
         } 
+        
+        //Retrieve Search Results
         if (engineArg.toLower() == "search") {
             MediaQuery query;
             QStringList bindings;
@@ -373,6 +382,7 @@ void MusicListEngine::run()
         }
     }
     
+    //Return results
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
     //Check if MediaItems in mediaList exist
