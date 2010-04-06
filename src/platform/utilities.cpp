@@ -903,7 +903,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
          type == "AudioGenre" ||
          type == "AudioTag" ||
          type == "TV Series" ||
-         type == "VideoGenre") {
+         type == "VideoGenre" ||
+         type == "Actor" ||
+         type == "Director") {
         mediaItem.type = "Category";
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
@@ -964,6 +966,16 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.url = QString("video://sources?||%1").arg(genre);
             mediaItem.title = genre;
             mediaItem.artwork = KIcon("flag-green");
+        } else if (type == "Actor") {
+            QString actor = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
+            mediaItem.url = QString("video://sources?||actor=").arg(actor);
+            mediaItem.title = actor;
+            mediaItem.artwork = KIcon("view-media-artist");
+        } else if (type == "Director") {
+            QString director = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
+            mediaItem.url = QString("video://sources?||director=").arg(director);
+            mediaItem.title = director;
+            mediaItem.artwork = KIcon("view-media-artist");
         }
         if (!lri.isEmpty()) {
             mediaItem.url = lri;

@@ -82,6 +82,10 @@ void SemanticsListEngine::run()
                 }
             } else if (groupByField == "seriesName") {
                 groupByCategoryType = "TV Series";
+            } else if (groupByField == "actor") {
+                groupByCategoryType = "Actor";
+            } else if (groupByField == "director") {
+                groupByCategoryType = "Director";
             }
         }
         if (engineFilterList.filter("limit=").count() !=0) {
