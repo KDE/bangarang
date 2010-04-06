@@ -106,9 +106,9 @@ void MusicListEngine::run()
                     QStringList contextTitles;
                     contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
                     QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
                     mediaItem.fields["contextTitles"] = contextTitles;
                     mediaItem.fields["contextLRIs"] = contextLRIs;
                     
@@ -170,9 +170,9 @@ void MusicListEngine::run()
                     QStringList contextTitles;
                     contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
                     QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
                     mediaItem.fields["contextTitles"] = contextTitles;
                     mediaItem.fields["contextLRIs"] = contextLRIs;
 
@@ -239,9 +239,9 @@ void MusicListEngine::run()
                     QStringList contextTitles;
                     contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
                     QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=5||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
                     mediaItem.fields["contextTitles"] = contextTitles;
                     mediaItem.fields["contextLRIs"] = contextLRIs;
                     
