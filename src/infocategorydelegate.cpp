@@ -160,7 +160,7 @@ int InfoCategoryDelegate::rowHeight(int row) const
     } else {
         QFont textFont = KGlobalSettings::smallestReadableFont();
         int availableWidth = m_view->width() - 2*padding;
-        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * padding;;
+        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * (padding + 1);
     }
     return height;
 }
@@ -281,7 +281,7 @@ int InfoCategoryDelegate::heightForWordWrap(QFont font, int width, QString text)
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing();
+    int fmHeight = fm.lineSpacing() + 1;
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {
