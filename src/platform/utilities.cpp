@@ -914,10 +914,13 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
+            QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
+            QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
             mediaItem.url = QString("music://songs?%1||%2||%3")
-                            .arg(artist)
-                            .arg(album)
-                            .arg(genre);
+                            .arg(artistFilter)
+                            .arg(albumFilter)
+                            .arg(genreFilter);
             mediaItem.title = artist;
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("system-users");
@@ -925,10 +928,13 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
+            QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
+            QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
             mediaItem.url = QString("music://songs?%1||%2||%3")
-                            .arg(artist)
-                            .arg(album)
-                            .arg(genre);
+                            .arg(artistFilter)
+                            .arg(albumFilter)
+                            .arg(genreFilter);
             mediaItem.title = album;
             mediaItem.subTitle = artist;
             mediaItem.artwork = KIcon("media-optical-audio");
@@ -936,44 +942,55 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
+            QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
+            QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
             mediaItem.url = QString("music://songs?%1||%2||%3")
-                            .arg(artist)
-                            .arg(album)
-                            .arg(genre);
+                            .arg(artistFilter)
+                            .arg(albumFilter)
+                            .arg(genreFilter);
             mediaItem.title = genre;
             mediaItem.artwork = KIcon("flag-blue");
         } else if (type == "TV Series") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
             QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
             QString season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toString();
+            QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
+            QString seriesNameFilter = seriesName.isEmpty() ? QString(): QString("seriesName=%1").arg(seriesName);
+            QString seasonFilter = season.isEmpty() ? QString(): QString("season=%1").arg(season);
             mediaItem.url = QString("video://seasons?||%1||%2||%3")
-                            .arg(genre)
-                            .arg(seriesName)
-                            .arg(season);
+                            .arg(genreFilter)
+                            .arg(seriesNameFilter)
+                            .arg(seasonFilter);
             mediaItem.title = seriesName;
             mediaItem.artwork = KIcon("video-television");
         } else if (type == "TV Season") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
             QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
             QString season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toString();
-            mediaItem.url = QString("video://episodes?||%1||%2||%3")
-                                .arg(genre).arg(seriesName).arg(season);
+            QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
+            QString seriesNameFilter = seriesName.isEmpty() ? QString(): QString("seriesName=%1").arg(seriesName);
+            QString seasonFilter = season.isEmpty() ? QString(): QString("season=%1").arg(season);
+            mediaItem.url = QString("video://seasons?||%1||%2||%3")
+                            .arg(genreFilter)
+                            .arg(seriesNameFilter)
+                            .arg(seasonFilter);
             mediaItem.title = seriesName;
             mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
             mediaItem.artwork = KIcon("video-television");
         } else if (type == "VideoGenre") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
-            mediaItem.url = QString("video://sources?||%1").arg(genre);
+            mediaItem.url = QString("video://sources?||genre=%1").arg(genre);
             mediaItem.title = genre;
             mediaItem.artwork = KIcon("flag-green");
         } else if (type == "Actor") {
             QString actor = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
-            mediaItem.url = QString("video://sources?||actor=").arg(actor);
+            mediaItem.url = QString("video://sources?||actor=%1").arg(actor);
             mediaItem.title = actor;
             mediaItem.artwork = KIcon("view-media-artist");
         } else if (type == "Director") {
             QString director = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
-            mediaItem.url = QString("video://sources?||director=").arg(director);
+            mediaItem.url = QString("video://sources?||director=%1").arg(director);
             mediaItem.title = director;
             mediaItem.artwork = KIcon("view-media-artist");
         }
