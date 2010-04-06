@@ -78,6 +78,13 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    QStandardItemModel * model = (QStandardItemModel *)index.model();
+    bool isEditable = model->itemFromIndex(index)->isEditable();
+    if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+        KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
+    }
+    
     bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
@@ -88,7 +95,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             Qt::AlignmentFlag hAlign;
             QFont textFont = option.font;
             QString text = index.data(Qt::DisplayRole).toString();
-            if (index.data(Qt::UserRole).toString() == "title") {
+            if (index.data(InfoItemModel::FieldRole).toString() == "title") {
                 textFont.setPointSize(1.5*textFont.pointSize());
                 hAlign = Qt::AlignHCenter;
                 if (multipleValues) {
@@ -170,19 +177,17 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
     int padding = 1;
-    int width;
-    if (field == "artwork" || field == "title" || index.column() == 1) {
-        width = 0;
-    } else {
-        width = 100;
+    int width = 0;
+    if (index.column() == 0) {
+        width = 0.35*m_view->width();
     }
-    
+        
     int height;
     if (field == "artwork") {
         height = 128 + 2*padding;
     } else {
         QFont textFont = option.font;
-        int availableWidth = m_view->width() - 100 - 2*padding;
+        int availableWidth = 0.65*m_view->width() - 2*padding;
         if (field == "title") { 
             textFont.setPointSize(1.5*textFont.pointSize());
             availableWidth = m_view->width();
@@ -194,14 +199,6 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     }
        
     return QSize(width, height);
-}
-
-int InfoItemDelegate::columnWidth (int column) const {
-    if (column == 0) {
-        return 70;
-    } else {
-        return m_view->width() - columnWidth(0);
-    }
 }
 
 bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -259,30 +256,22 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             return spinBox;
         }
     } else if (value.type() == QVariant::String) {
-        if (field == "description") {
-            QTextEdit *textEdit = new QTextEdit(parent);
-            textEdit->setFont(KGlobalSettings::smallestReadableFont());
-            if (!multipleValues) textEdit->setText(value.toString());
-            textEdit->setAutoFillBackground(true);
-            return textEdit;
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        if (valueList.count() == 0) {
+            KLineEdit *lineEdit = new KLineEdit(parent);
+            lineEdit->setFont(KGlobalSettings::smallestReadableFont());
+            if (!multipleValues) lineEdit->setText(value.toString());
+            lineEdit->setAutoFillBackground(true);
+            return lineEdit;
         } else {
-            QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
-            if (valueList.count() == 0) {
-                KLineEdit *lineEdit = new KLineEdit(parent);
-                lineEdit->setFont(KGlobalSettings::smallestReadableFont());
-                if (!multipleValues) lineEdit->setText(value.toString());
-                lineEdit->setAutoFillBackground(true);
-                return lineEdit;
-            } else {
-                SComboBox *comboBox = new SComboBox(parent);
-                for (int i = 0; i < valueList.count(); i++) {
-                    comboBox->addItem(valueList.at(i), valueList.at(i));
-                }
-                comboBox->setEditable(true);
-                comboBox->setFont(KGlobalSettings::smallestReadableFont());
-                comboBox->setAutoFillBackground(true);
-                return comboBox;
+            SComboBox *comboBox = new SComboBox(parent);
+            for (int i = 0; i < valueList.count(); i++) {
+                comboBox->addItem(valueList.at(i), valueList.at(i));
             }
+            comboBox->setEditable(true);
+            comboBox->setFont(KGlobalSettings::smallestReadableFont());
+            comboBox->setAutoFillBackground(true);
+            return comboBox;
         }
     } else if (field != "artwork") {
             KLineEdit *lineEdit = new KLineEdit(parent);
@@ -323,7 +312,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing();
+    int fmHeight = fm.lineSpacing() + 1;
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {
