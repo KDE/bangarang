@@ -22,6 +22,7 @@
 #include <QtCore>
 #include <QWidget>
 #include <QLabel>
+#include <QModelIndex>
 
 class MainWindow;
 class MediaView;
@@ -42,6 +43,7 @@ class InfoBox : public QWidget
         
     private:
         MediaView * m_mediaView;
+        MainWindow * m_mainWindow;
         QLabel * m_icon;
         QLabel * m_title;
         QWidget * m_titleBar;
@@ -49,6 +51,7 @@ class InfoBox : public QWidget
     private slots:
         void updateTitleColors();
         void mediaListChanged();
+        void categoryActivated(QModelIndex index);
 
 };
 #endif // INFOBOX_H

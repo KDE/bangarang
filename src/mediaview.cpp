@@ -24,6 +24,7 @@
 #include <KIcon>
 #include <QMenu>
 #include <QHeaderView>
+#include <KDebug>
 
 MediaView::MediaView(QWidget * parent):QTreeView (parent) 
 {
@@ -48,8 +49,6 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
     m_mediaItemDelegate = new MediaItemDelegate(mainWindow);
     setItemDelegate(m_mediaItemDelegate);
     m_mediaItemDelegate->setView(this);
-    connect(m_mediaItemDelegate, SIGNAL(categoryActivated(QModelIndex)), m_mediaItemModel, SLOT(categoryActivated(QModelIndex)));
-    connect(m_mediaItemDelegate, SIGNAL(actionActivated(QModelIndex)), m_mediaItemModel, SLOT(actionActivated(QModelIndex)));
 }
 
 void MediaView::setMode(RenderMode mode)
@@ -63,6 +62,10 @@ void MediaView::setMode(RenderMode mode)
         m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniRatingMode);
     } else if (m_mode == MiniPlayCountMode) {
         m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniPlayCountMode);
+    } else if (m_mode == MiniMode) {
+        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniMode);
+    } else if (m_mode == MiniAlbumMode) {
+        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniAlbumMode);
     }
 }
 
@@ -90,7 +93,7 @@ void MediaView::contextMenuEvent(QContextMenuEvent * event)
 
 void MediaView::mediaListChanged()
 {
-    if (m_mediaItemModel->rowCount() > 0 && m_mode == NormalMode) {
+    if (m_mediaItemModel->rowCount() > 0 && (m_mode == NormalMode || m_mode == MiniAlbumMode)) {
         header()->setStretchLastSection(false);
         header()->setResizeMode(0, QHeaderView::Stretch);
         header()->setResizeMode(1, QHeaderView::ResizeToContents);
@@ -108,9 +111,10 @@ void MediaView::mediaListChanged()
     }
     
     if (m_mode != NormalMode) {
-        header()->setResizeMode(QHeaderView::ResizeToContents);
-        if (m_mediaItemModel->rowCount() > 0) {
+        if (m_mediaItemModel->rowCount() > 0 &&  m_mode != MiniAlbumMode) {
             header()->hideSection(1);
+            header()->setStretchLastSection(true);
+            header()->setResizeMode(QHeaderView::ResizeToContents);
         }
         setMinimumHeight(m_mediaItemDelegate->heightForAllRows());
         setMaximumHeight(m_mediaItemDelegate->heightForAllRows());

@@ -172,6 +172,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_mediaItemModel, SIGNAL(loading()), this, SLOT(hidePlayButtons()));
     connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
+    connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
+    connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     
     //Set up MediaItemModel notifications
@@ -803,6 +805,19 @@ void MainWindow::mediaListChanged()
         }
     }
 }
+
+void MainWindow::mediaListCategoryActivated(QModelIndex index)
+{
+    addListToHistory();
+    m_mediaItemModel->categoryActivated(index);
+}
+
+void MainWindow::mediaListActionActivated(QModelIndex index)
+{
+    addListToHistory();
+    m_mediaItemModel->actionActivated(index);
+}
+
 
 void MainWindow::showNotification()
 {

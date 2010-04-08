@@ -39,7 +39,8 @@ class MediaView : public QTreeView
                           MiniMode = 1,
                           MiniPlaybackTimeMode = 2,
                           MiniRatingMode = 3,
-                          MiniPlayCountMode = 4};
+                          MiniPlayCountMode = 4,
+                          MiniAlbumMode = 5};
         MediaView(QWidget * parent = 0);
         ~MediaView();
         void setMainWindow(MainWindow * mainWindow);
