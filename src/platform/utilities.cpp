@@ -917,7 +917,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
             QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
             QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
-            mediaItem.url = QString("music://songs?%1||%2||%3")
+            mediaItem.url = QString("music://albums?%1||%2||%3")
                             .arg(artistFilter)
                             .arg(albumFilter)
                             .arg(genreFilter);
