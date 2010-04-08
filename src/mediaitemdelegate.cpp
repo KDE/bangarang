@@ -85,7 +85,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     const int height = option.rect.height();   
     
     int padding;
-    if (m_renderMode == NormalMode) {
+    if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
         padding = 3;
     } else {
         padding = 2;
@@ -143,7 +143,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         //Paint Icon
         bool exists = index.data(MediaItem::ExistsRole).toBool();
         int iconWidth;
-        if (m_renderMode == NormalMode) {
+        if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
             if ((isCategory && index.data(MediaItem::SubTypeRole).toString() == "Album") ||
             (subType == "Movie")) {
                 iconWidth = height - 2;
@@ -157,7 +157,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (topOffset < padding && index.data(MediaItem::SubTypeRole).toString() != "Album" && subType != "Movie") {
             topOffset = padding;
         }
-        if (m_renderMode == NormalMode) {
+        if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
             if (!icon.isNull()) {
                 icon.paint(&p, left + topOffset, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
             }
@@ -316,7 +316,7 @@ int MediaItemDelegate::calcItemHeight() const
     int textHeight;
     int minHeight;
     int padding;
-    if (m_renderMode == NormalMode) {
+    if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
         textHeight = 2 * QFontInfo(titleFont).pixelSize(); // Height for title and subtitle
         minHeight = 22;
         padding = 3;
@@ -383,10 +383,10 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                 }
             }
         } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
-            if (event->type() == QEvent::MouseButtonDblClick && m_renderMode == NormalMode) {
-                m_parent->addListToHistory();
+            if (event->type() == QEvent::MouseButtonDblClick && (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode)) {
+                /*m_parent->addListToHistory();
                 MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));
+                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));*/
                 emit categoryActivated(index);
             }
         }
@@ -405,9 +405,9 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
         }
         if (index.data(MediaItem::TypeRole).toString() == "Category") {
             if (event->type() == QEvent::MouseButtonPress) {
-                m_parent->addListToHistory();
+                /*m_parent->addListToHistory();
                 MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));
+                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));*/
                 emit categoryActivated(index);
             }
             return true;
@@ -415,7 +415,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
     }
     if (index.data(MediaItem::TypeRole).toString() == "Action") {
         if (event->type() == QEvent::MouseButtonPress) {
-            m_parent->addListToHistory();
+            //m_parent->addListToHistory();
             emit actionActivated(index);
         }
         return true;

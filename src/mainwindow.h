@@ -206,6 +206,10 @@ private slots:
     void volumeChanged(qreal newVolume);
     void skipForward(int i);
     void skipBackward(int i);
+    
+    void mediaListCategoryActivated(QModelIndex index);
+    void mediaListActionActivated(QModelIndex index);
+    
  protected:
     bool eventFilter(QObject *obj, QEvent *event);
     

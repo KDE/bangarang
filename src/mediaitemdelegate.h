@@ -43,7 +43,8 @@ class MediaItemDelegate : public QItemDelegate
                           MiniMode = 1,
                           MiniPlaybackTimeMode = 2,
                           MiniRatingMode = 3,
-                          MiniPlayCountMode = 4};
+                          MiniPlayCountMode = 4,
+                          MiniAlbumMode = 5};
         MediaItemDelegate(QObject * parent = 0);
         ~MediaItemDelegate();
         void paint(QPainter *painter, const QStyleOptionViewItem &option,

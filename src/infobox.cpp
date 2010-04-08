@@ -20,9 +20,11 @@
 #include "mainwindow.h"
 #include "mediaview.h"
 #include "mediaitemdelegate.h"
+#include "infomanager.h"
 #include "platform/mediaitemmodel.h"
 #include <KIcon>
 #include <KGlobalSettings>
+#include <KDebug>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPixmap>
@@ -83,23 +85,28 @@ MediaView * InfoBox::mediaView()
 
 void InfoBox::setMainWindow(MainWindow * mainWindow)
 {
+    m_mainWindow = mainWindow;
     m_mediaView->setMainWindow(mainWindow);
+    MediaItemDelegate * mediaItemDelegate = (MediaItemDelegate *)m_mediaView->itemDelegate();
+    connect(mediaItemDelegate, SIGNAL(categoryActivated(QModelIndex)), this, SLOT(categoryActivated(QModelIndex)));
 }
 
 void InfoBox::setInfo(const QString &title, const QString & lri)
 {
     m_title->setText(title);
-    MediaItemModel * model = (MediaItemModel *)m_mediaView->model();
-    model->loadLRI(lri);
     if (lri.startsWith("semantics://frequent")) {
         m_mediaView->setMode(MediaView::MiniPlayCountMode);
     } else if (lri.startsWith("semantics://recent")) {
         m_mediaView->setMode(MediaView::MiniPlaybackTimeMode);
     } else if (lri.startsWith("semantics://highest")) {
         m_mediaView->setMode(MediaView::MiniRatingMode);
+    }else if (lri.startsWith("music://albums")) {
+        m_mediaView->setMode(MediaView::MiniAlbumMode);
     } else {
         m_mediaView->setMode(MediaView::MiniMode);
     }
+    MediaItemModel * model = (MediaItemModel *)m_mediaView->model();
+    model->loadLRI(lri);
 }
 
 void InfoBox::updateTitleColors()
@@ -112,6 +119,13 @@ void InfoBox::mediaListChanged()
     //Set title bar icon based on content of mediaview
     MediaItemModel * model = (MediaItemModel *)m_mediaView->model();
     if (model->rowCount() > 0) {
+        if (model->rowCount() == 1) {
+            if (model->mediaItemAt(0).type == "Message" && m_mediaView->mode() != MediaView::NormalMode) {
+                hide();
+                return;
+            }
+        }
+        show();
         QPixmap pixmap = model->mediaItemAt(0).artwork.pixmap(16,16);
         m_icon->setPixmap(pixmap);
     }
@@ -123,4 +137,15 @@ void InfoBox::mediaListChanged()
     
 }
 
-
+void InfoBox::categoryActivated(QModelIndex index)
+{
+    MediaItemModel *model = (MediaItemModel *)m_mediaView->model();
+    MediaItem categoryMediaItem = model->mediaItemAt(index.row());
+    MediaListProperties mediaListProperties = MediaListProperties(categoryMediaItem.url);
+    mediaListProperties.name = categoryMediaItem.title;
+    mediaListProperties.category = categoryMediaItem;
+    m_mainWindow->addListToHistory();
+    m_mainWindow->m_mediaItemModel->clearMediaListData();
+    m_mainWindow->m_mediaItemModel->setMediaListProperties(mediaListProperties);
+    m_mainWindow->m_mediaItemModel->load();
+}
