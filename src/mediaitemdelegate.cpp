@@ -383,10 +383,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                 }
             }
         } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
-            if (event->type() == QEvent::MouseButtonDblClick && (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode)) {
-                /*m_parent->addListToHistory();
-                MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));*/
+            if (event->type() == QEvent::MouseButtonDblClick) {
                 emit categoryActivated(index);
             }
         }
@@ -405,9 +402,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
         }
         if (index.data(MediaItem::TypeRole).toString() == "Category") {
             if (event->type() == QEvent::MouseButtonPress) {
-                /*m_parent->addListToHistory();
-                MediaItemModel * model = (MediaItemModel *)index.model();
-                m_parent->infoManager()->setContext(model->mediaItemAt(index.row()));*/
                 emit categoryActivated(index);
             }
             return true;
