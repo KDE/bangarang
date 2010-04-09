@@ -185,6 +185,26 @@ void MusicListEngine::run()
                 m_mediaListProperties.name = i18n("Albums");
                 if (!artist.isEmpty()) {
                     m_mediaListProperties.name = i18n("Albums - %1", artist);
+                    
+                    //Add an additional item to show all songs for artist
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("music://songs?%1||%2||%3").arg(albumFilter, artistFilter, genreFilter);
+                    mediaItem.title = i18n("  All songs...");
+                    mediaItem.fields["title"] = artist;
+                    mediaItem.subTitle = QString("  %1").arg(artist);
+                    mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("Artist");
+                    mediaItem.artwork = KIcon("audio-x-monkey");
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    
+                    mediaList.append(mediaItem);
                 }
                 if (!genre.isEmpty()) {
                     m_mediaListProperties.name = i18n("Albums - %1", genre);
