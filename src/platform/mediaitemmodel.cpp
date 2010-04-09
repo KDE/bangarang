@@ -198,11 +198,13 @@ void MediaItemModel::loadMediaList(const QList<MediaItem> &mediaList, bool emitM
 
 void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaListChanged)
 {
-    m_mediaList << mediaItem;
-    m_urlList << mediaItem.url;
-    appendRow(rowDataFromMediaItem(mediaItem));
-    if (emitMediaListChanged) {
-        emit mediaListChanged();
+    if (rowOfUrl(mediaItem.url) == -1 || mediaItem.url.isEmpty()) {
+        m_mediaList << mediaItem;
+        m_urlList << mediaItem.url;
+        appendRow(rowDataFromMediaItem(mediaItem));
+        if (emitMediaListChanged) {
+            emit mediaListChanged();
+        }
     }
 }   
 
