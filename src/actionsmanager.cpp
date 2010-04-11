@@ -24,6 +24,7 @@
 #include "platform/playlist.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
+#include "bookmarksmanager.h"
 #include "videosettings.h"
 
 #include <KStandardDirs>
@@ -106,6 +107,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_parent->addAction(m_showHideControls);
     m_actionCollection->addAction(i18n("Hide controls"), m_showHideControls);
+    
+    //Toggle Show Remaining Time Shortcut
+    m_toggleShowRemainingTime = new QAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
+    connect(m_toggleShowRemainingTime, SIGNAL(triggered()), this, SLOT(toggleShowRemainingTimeSlot()));
+    m_actionCollection->addAction(i18n("Toggle Show Remaining Time"), m_toggleShowRemainingTime);
    
     //Show VideoSettings
     m_showVideoSettings = new QAction(KIcon("video-display"),tr("Show Video Settings"),this);
@@ -170,6 +176,16 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_showInfo = new QAction(KIcon("help-about"), i18n("Show Information"), m_parent);
     connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
   
+    //Add bookmark
+    m_addBookmark = new QAction(KIcon("bookmark-new"), i18n("Add bookmark"), m_parent);
+    connect(m_addBookmark, SIGNAL(triggered()), this, SLOT(addBookmarkSlot()));
+    
+    //Bookmarks Menus
+    m_bookmarksMenu = new QMenu(m_parent);
+    connect(m_bookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(activateBookmark(QAction *)));
+    m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
+    connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
+    
     //Edit Shortcuts
     //FIXME: Need to figure out how to use KShortcutsEditor
     m_editShortcuts = new QAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -264,6 +280,11 @@ QAction * ActionsManager::editShortcuts()
     return m_editShortcuts;
 }
 
+QAction * ActionsManager::toggleShowRemainingTime()
+{
+    return m_toggleShowRemainingTime;
+}
+
 QAction * ActionsManager::removeSelectedItemsInfo()
 {
     return m_removeSelectedItemsInfo;
@@ -287,6 +308,11 @@ QAction * ActionsManager::showNowPlayingInfo()
 QAction * ActionsManager::showInfo()
 {
     return m_showInfo;
+}
+
+QAction * ActionsManager::addBookmark()
+{
+    return m_addBookmark;
 }
 
 QAction * ActionsManager::showScriptingConsole()
@@ -415,6 +441,42 @@ QMenu *ActionsManager::addToSavedAudioListMenu()
 QMenu *ActionsManager::addToSavedVideoListMenu()
 {
     return m_addToVideoSavedList;
+}
+
+QMenu *ActionsManager::bookmarksMenu()
+{
+    m_removeBookmarksMenu->clear();
+    m_bookmarksMenu->clear();
+    m_bookmarksMenu->addAction(m_toggleShowRemainingTime);
+    m_bookmarksMenu->addSeparator();
+    Phonon::State state = m_parent->playlist()->mediaObject()->state();
+    if (!(state == Phonon::PlayingState || state == Phonon::PausedState)) {
+        m_addBookmark->setEnabled(false);
+    } else {
+        m_addBookmark->setEnabled(true);
+    }
+    m_bookmarksMenu->addAction(m_addBookmark);
+    if (m_parent->playlist()->nowPlayingModel()->rowCount() > 0) {
+        QString url = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        QStringList bookmarks = m_parent->bookmarksManager()->bookmarks(url);
+        for (int i = 0; i < bookmarks.count(); i++) {
+            QString bookmarkName = m_parent->bookmarksManager()->bookmarkName(bookmarks.at(i));
+            qint64 bookmarkTime = m_parent->bookmarksManager()->bookmarkTime(bookmarks.at(i));
+            QTime bmTime(0, (bookmarkTime / 60000) % 60, (bookmarkTime / 1000) % 60);
+            QString bookmarkTimeStr = bmTime.toString(QString("m:ss"));
+            QString bookmarkTitle = QString("%1 (%2)").arg(bookmarkName).arg(bookmarkTimeStr);
+            QAction * bookmarkAction = new QAction(KIcon("bookmarks-organize"), bookmarkTitle, m_bookmarksMenu);
+            bookmarkAction->setData(QString("Activate:%1").arg(bookmarks.at(i)));
+            m_bookmarksMenu->addAction(bookmarkAction);
+            QAction * removeBookmarkAction = new QAction(KIcon("list-remove"), bookmarkTitle, m_removeBookmarksMenu);
+            removeBookmarkAction->setData(QString("Remove:%1").arg(bookmarks.at(i)));
+            m_removeBookmarksMenu->addAction(removeBookmarkAction);
+        }
+        if (bookmarks.count() > 0) {
+            m_bookmarksMenu->addMenu(m_removeBookmarksMenu);
+        }
+    }
+    return m_bookmarksMenu;
 }
 
 //------------------
@@ -666,4 +728,53 @@ const QList<MediaItem> ActionsManager::selectedMediaItems()
 void ActionsManager::setContextMenuSource(MainWindow::ContextMenuSource menuSource)
 {
     m_contextMenuSource = menuSource;
+}
+
+void ActionsManager::toggleShowRemainingTimeSlot()
+{
+    m_parent->toggleShowRemainingTime();
+    if (m_parent->showingRemainingTime()) {
+        m_toggleShowRemainingTime->setText(i18n("Show Elapsed Time"));
+        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
+    } else {
+        m_toggleShowRemainingTime->setText(i18n("Show Remaining Time"));
+        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
+    }
+}
+
+void ActionsManager::addBookmarkSlot()
+{
+    if (m_parent->playlist()->nowPlayingModel()->rowCount() > 0) {
+        QString nowPlayingUrl = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        qint64 time = m_parent->playlist()->mediaObject()->currentTime();
+        QString name = QString("Bookmark-%1").arg(m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() + 1);
+        m_parent->bookmarksManager()->addBookmark(nowPlayingUrl, name, time);
+        if (m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() > 0) {
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        }
+    }
+}
+
+void ActionsManager::activateBookmark(QAction *bookmarkAction)
+{
+    QString bookmark = bookmarkAction->data().toString();
+    if (!bookmark.isEmpty() && bookmark.startsWith("Activate:")) {
+        bookmark.remove(0,9);
+        qint64 time = m_parent->bookmarksManager()->bookmarkTime(bookmark);
+        m_parent->playlist()->mediaObject()->seek(time);
+    }
+        
+}
+
+void ActionsManager::removeBookmark(QAction *bookmarkAction)
+{
+    QString bookmark = bookmarkAction->data().toString();
+    if (!bookmark.isEmpty() && bookmark.startsWith("Remove:")) {
+        bookmark.remove(0,7);
+        QString nowPlayingUrl = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        m_parent->bookmarksManager()->removeBookmark(nowPlayingUrl, bookmark);
+        if (m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() == 0) {
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        }
+    }
 }
