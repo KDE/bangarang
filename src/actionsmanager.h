@@ -52,6 +52,7 @@ class ActionsManager : public QObject
         QAction *showHideControls();
         QAction *cancelFullScreenHideControls();
         QAction *editShortcuts();
+        QAction *toggleShowRemainingTime();
         QAction *playPause();
         QAction *play();
         QAction *pause();
@@ -67,6 +68,7 @@ class ActionsManager : public QObject
         QAction *showItems();
         QAction *showNowPlayingInfo();
         QAction *showInfo();
+        QAction *addBookmark();
         QAction *showScriptingConsole();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
@@ -76,6 +78,7 @@ class ActionsManager : public QObject
         KMenu * notifierMenu();
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
+        QMenu * bookmarksMenu();
         
     public slots:
         void updateSavedListsMenus();
@@ -95,6 +98,7 @@ class ActionsManager : public QObject
         QAction *m_fullScreen;
         QAction *m_cancelFullScreenHideControls;
         QAction *m_editShortcuts;
+        QAction *m_toggleShowRemainingTime;
         QAction *m_playPause;
         QAction *m_play;
         QAction *m_pause;
@@ -110,6 +114,7 @@ class ActionsManager : public QObject
         QAction *m_showItems;
         QAction *m_showInfo;
         QAction *m_showNowPlayingInfo;
+        QAction *m_addBookmark;
         QAction *m_showScriptingConsole;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
@@ -117,6 +122,8 @@ class ActionsManager : public QObject
         KMenu *m_notifierMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
+        QMenu *m_bookmarksMenu;
+        QMenu *m_removeBookmarksMenu;
 
         KActionCollection *m_actionCollection;
         MainWindow::ContextMenuSource m_contextMenuSource;
@@ -141,5 +148,9 @@ class ActionsManager : public QObject
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void showScriptConsoleSlot();
+        void toggleShowRemainingTimeSlot();
+        void addBookmarkSlot();
+        void activateBookmark(QAction *bookmarkAction);
+        void removeBookmark(QAction *bookmarkAction);
 };
 #endif //ACTIONSMANAGER_H

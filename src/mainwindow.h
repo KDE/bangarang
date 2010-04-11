@@ -54,6 +54,7 @@ class NowPlayingDelegate;
 class InfoManager;
 class SavedListsManager;
 class ActionsManager;
+class BookmarksManager;
 #ifdef HAVE_KSTATUSNOTIFIERITEM
 class KStatusNotifierItem;
 #else
@@ -99,6 +100,7 @@ public:
     KAboutData * aboutData();
     ActionsManager * actionsManager();
     SavedListsManager * savedListsManager();
+    BookmarksManager * bookmarksManager();
     Phonon::AudioOutput * audioOutput();
     void addListToHistory();
     InfoManager *infoManager();
@@ -106,10 +108,12 @@ public:
     void setAboutData(KAboutData *aboutData);
     Phonon::VideoWidget * videoWidget();
     ScriptConsole *scriptConsole();
+    bool showingRemainingTime();
     
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
-
+    void toggleShowRemainingTime();
+    
 private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -135,6 +139,7 @@ private:
     InfoManager * m_infoManager;
     SavedListsManager * m_savedListsManager;
     ActionsManager * m_actionsManager;
+    BookmarksManager * m_bookmarksManager;
     bool m_pausePressed;
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
@@ -145,7 +150,7 @@ private:
     bool m_nepomukInited;
     MediaListCache * m_sharedMediaListCache;
     bool playWhenPlaylistChanges;
-    bool showRemainingTime;
+    bool m_showRemainingTime;
     qreal m_volume;
     ScriptConsole *m_scriptConsole;
     KAction *playPause;    

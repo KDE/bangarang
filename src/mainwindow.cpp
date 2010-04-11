@@ -25,6 +25,7 @@
 #include "platform/bangarangvideowidget.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
+#include "bookmarksmanager.h"
 #include "actionsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
@@ -133,7 +134,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->volumeSlider->setMuteVisible( false );
     ui->seekSlider->setMediaObject(m_media);
     ui->seekSlider->setIconVisible(false);
-    showRemainingTime = false;
+    m_showRemainingTime = false;
+    ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     
     //Connect to media object signals and slots
     connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
@@ -216,6 +218,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //Setup Saved Lists Manager
     m_savedListsManager = new SavedListsManager(this);
+    
+    //Setup Bookmarks Manager
+    m_bookmarksManager = new BookmarksManager(this);
     
     //Setup Actions Manager
     m_actionsManager = new ActionsManager(this);
@@ -341,6 +346,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
+    //Bookmark last position if program is closed while watching video.
+    if (m_media->state() == Phonon::PlayingState || m_media->state() == Phonon::PausedState) {
+        if (m_playlist->nowPlayingModel()->rowCount() > 0 && m_media->currentTime() > 10000) {
+            MediaItem nowPlayingItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
+            if (nowPlayingItem.type == "Video") {
+                QString nowPlayingUrl = nowPlayingItem.url;
+                qint64 time = m_media->currentTime();
+                QString existingBookmark = m_bookmarksManager->bookmarkLookup(nowPlayingUrl, i18n("Resume"));
+                m_bookmarksManager->removeBookmark(nowPlayingUrl, existingBookmark);
+                m_bookmarksManager->addBookmark(nowPlayingUrl, i18n("Resume"), time);
+            }
+        }
+    }
     delete ui;
     delete m_mediaItemModel;
 }
@@ -415,12 +433,8 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
 
 void MainWindow::on_seekTime_clicked()
 {
-    showRemainingTime = !showRemainingTime;
-    if (showRemainingTime) {
-        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time"));
-    } else {
-        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time"));
-    }
+    QPoint menuLocation = ui->seekTime->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    m_actionsManager->bookmarksMenu()->popup(menuLocation);
 }
 
 void MainWindow::on_mediaPlayPause_pressed()
@@ -667,19 +681,12 @@ void MainWindow::updateSeekTime(qint64 time)
     QTime remainingTime;
     remainingTime = remainingTime.addSecs(currentTime.secsTo(totalTime));
     QString displayTime;
-    if (!showRemainingTime) {
+    if (!m_showRemainingTime) {
         displayTime = currentTime.toString(QString("m:ss"));
     } else {
         displayTime = remainingTime.toString(QString("m:ss"));
     }
-    ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     ui->seekTime->setText(displayTime);
-    if (showRemainingTime) {
-        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time"));
-    } else {
-        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time"));
-    }
-    
     
     //Update Now Playing Button text
     if (m_nowPlaying->rowCount() > 0) {
@@ -702,6 +709,11 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             ui->viewerStack->setCurrentIndex(0);
         }
         ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
+        if (m_bookmarksManager->bookmarks(m_nowPlaying->mediaItemAt(0).url).count() > 0) {
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        } else {
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        }
     } else {
         if ((!m_pausePressed) && (!m_stopPressed)) {
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
@@ -768,7 +780,7 @@ void MainWindow::showLoading()
         }
         QTimer::singleShot(100, this, SLOT(showLoading()));
     } else {
-        ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        ui->seekTime->setIcon(KIcon("bookmarks-organize"));
     }
 }
 
@@ -997,6 +1009,13 @@ void MainWindow::nowPlayingChanged()
         } else if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
             ui->viewerStack->setCurrentIndex(0);
         }
+        
+        if (m_showRemainingTime) {
+            ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
+        } else {
+            ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
+        }
+
 
         m_sysTray->setToolTip(m_nowPlaying->mediaItemAt(0).artwork, 
                               m_nowPlaying->mediaItemAt(0).title, 
@@ -1093,6 +1112,7 @@ void MainWindow::setupIcons()
     ui->vslsSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
+    ui->seekTime->setIcon(KIcon("bookmarks-organize"));
     ui->playSelected->setIcon(KIcon("media-playback-start"));
     ui->playAll->setIcon(KIcon("media-playback-start"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
@@ -1274,6 +1294,11 @@ InfoManager * MainWindow::infoManager()
     return m_infoManager;
 }
 
+BookmarksManager * MainWindow::bookmarksManager()
+{
+    return m_bookmarksManager;
+}
+
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
@@ -1282,4 +1307,14 @@ Phonon::VideoWidget * MainWindow::videoWidget()
 ScriptConsole *MainWindow::scriptConsole()
 {
   return m_scriptConsole;
+}
+
+bool MainWindow::showingRemainingTime()
+{
+    return m_showRemainingTime;
+}
+
+void MainWindow::toggleShowRemainingTime()
+{
+    m_showRemainingTime = !m_showRemainingTime;
 }

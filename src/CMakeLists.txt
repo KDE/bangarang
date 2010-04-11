@@ -41,6 +41,7 @@ SET(BangarangSources
     infocategorydelegate.cpp
     savedlistsmanager.cpp 
     actionsmanager.cpp
+    bookmarksmanager.cpp
     videosettings.cpp
     pluginexport.cpp
     scriptconsole.cpp
