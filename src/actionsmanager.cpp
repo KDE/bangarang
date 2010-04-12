@@ -194,7 +194,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     ui->shortcutsEditor->addCollection(m_actionCollection);
     
     //Show the Scripting Console
-    m_showScriptingConsole = new QAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
+    m_showScriptingConsole = new QAction(KIcon("applications-development"),i18n("Show Scripting Console"),m_parent);
     connect(m_showScriptingConsole,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
         
     m_nowPlayingContextMenu = new QMenu(m_parent);
