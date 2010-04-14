@@ -1077,4 +1077,28 @@ QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
     }
     return mergedLRI;
 }
-        
+
+QUrl Utilities::artistResource(const QString &artistName)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append("r");
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(QString("?r rdf:type %1 . ").arg(mediaVocabulary.typeMusicArtist().toString()));
+    query.addCondition(QString("?r nco:fullname ?name ."));
+    query.startFilter();
+    query.addFilterConstraint("r", artistName, MediaQuery::Equal);
+    query.endFilter();
+    query.endWhere();
+    
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+    
+    QUrl resource;
+    while (it.next()) {
+        resource = it.binding("r").uri();
+    }
+    return resource;
+}
