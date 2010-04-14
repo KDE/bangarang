@@ -35,6 +35,7 @@ InfoCategoryModel::InfoCategoryModel(QObject *parent) : QStandardItemModel(paren
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
     m_mode = DefaultMode;
+    m_dbPediaQuery = new DBPediaQuery(this);
 }
 
 InfoCategoryModel::~InfoCategoryModel()
@@ -236,23 +237,35 @@ void InfoCategoryModel::saveFileMetaData(QList<MediaItem> mediaList)
     Q_UNUSED(mediaList);
 }
 
-void InfoCategoryModel::getDBPediaInfo(const QString &artistName)
+void InfoCategoryModel::getDBPediaInfo(const QString &title)
 {
-    //TODO:Fix memory leak
-    DBPediaQuery *query = new DBPediaQuery(this);
     if (m_mode == ArtistMode) {
-        connect (query, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)));
-        query->getArtistInfo(artistName);
-    }    
+        kDebug() << "getting artist info";
+        connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+        m_dbPediaQuery->getArtistInfo(title);
+    }  else if (m_mode == ActorMode) {
+        kDebug() << "getting actor info";
+        connect (m_dbPediaQuery, SIGNAL(gotActorInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+        m_dbPediaQuery->getActorInfo(title);
+    } else if (m_mode == DirectorMode) {
+        kDebug() << "getting director info";
+        connect (m_dbPediaQuery, SIGNAL(gotDirectorInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+        m_dbPediaQuery->getDirectorInfo(title);
+    } 
 }
 
-void InfoCategoryModel::gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
+void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
     //Determine request key for current mode
     QString keyPrefix;
     if (m_mode == ArtistMode) {
         keyPrefix = "Artist:";
+    } else if (m_mode == ActorMode) {
+        keyPrefix = "Actor:";
+    } else if (m_mode == DirectorMode) {
+        keyPrefix = "Director:";
     } 
+    
     QString keyForCurrentData = keyPrefix + commonValue("title").toString();
     
     
@@ -264,21 +277,26 @@ void InfoCategoryModel::gotArtistInfo(bool successful, const QList<Soprano::Bind
             //Get Thumbnail
             KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
             if (thumbnailUrl.isValid()) {
-                QString thumbnailFile;
-                QPixmap dbPediaThumbnail = QPixmap();
-                //TODO:This should probably be asynchronous
-                if (KIO::NetAccess::download(thumbnailUrl, thumbnailFile, 0)) {
-                    kDebug() << thumbnailFile;
-                    dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                }
-                if (!dbPediaThumbnail.isNull())  {
-                    QList<QStandardItem *> rowData;
-                    QStandardItem *fieldItem = new QStandardItem();
-                    fieldItem->setData("associatedImage", InfoCategoryModel::FieldRole);
-                    fieldItem->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
-                    rowData.append(fieldItem);
-                    appendRow(rowData);
-                }
+                //Create placeholder in model for thumbnail
+                QList<QStandardItem *> rowData;
+                QStandardItem *fieldItem = new QStandardItem();
+                fieldItem->setData("associatedImage", InfoCategoryModel::FieldRole);
+                fieldItem->setData(QIcon(), Qt::DecorationRole);
+                rowData.append(fieldItem);
+                appendRow(rowData);
+                
+                //Prepare job to retrieve thumbnail
+                QString thumbnailTargetFile = QString("bangarang/temp/%1").arg(thumbnailUrl.fileName());
+                KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+                QFile downloadTarget(thumbnailTargetUrl.path());
+                downloadTarget.remove();
+                KIO::CopyJob *copyJob = KIO::copy(thumbnailUrl, thumbnailTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
+                copyJob->setAutoDelete(true);
+                connect (copyJob, 
+                         SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+                         this,
+                         SLOT(loadThumbnail(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+                copyJob->setUiDelegate(0);
             }
 
             {
@@ -337,4 +355,21 @@ InfoCategoryModel::InfoCategoryMode InfoCategoryModel::categoryModeFromCategoryT
     } else {
         return InfoCategoryModel::DefaultMode;
     }
+}
+
+void InfoCategoryModel::loadThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
+{
+    Q_UNUSED(job);
+    Q_UNUSED(from);
+    Q_UNUSED(mtime);
+    Q_UNUSED(directory);
+    Q_UNUSED(renamed);
+    
+    QString thumbnailFile = to.path();
+    QPixmap dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    if (!dbPediaThumbnail.isNull())  {
+        QStandardItem *fieldItem = item(0);
+        fieldItem->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
+    }
+    QFile(to.path()).remove();
 }

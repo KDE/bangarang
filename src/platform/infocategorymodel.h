@@ -27,6 +27,7 @@
 
 class MediaItem;
 class MediaItemModel;
+class DBPediaQuery;
 
 /*
 * This model is responsible for 
@@ -67,6 +68,7 @@ class InfoCategoryModel : public QStandardItemModel
         MediaItemModel * m_sourceModel;
         KUrl m_dbPediaDownloadUrl;
         InfoCategoryMode m_mode;
+        DBPediaQuery * m_dbPediaQuery;
         
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
@@ -82,7 +84,8 @@ class InfoCategoryModel : public QStandardItemModel
         
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);
-        void gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+        void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+        void loadThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
 };
 
 #endif // INFOARTISTMODEL_H

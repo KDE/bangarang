@@ -60,21 +60,81 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
                     "UNION "
                     "{?person rdf:type dbo:MusicalArtist . } "
                     "?person foaf:name ?artistName . "
+                    "?artistName bif:contains \"'%1'\" . "
                     "?person rdfs:comment ?description . "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
-                    "FILTER (?artistName ='%1') . "
                     "} ")
                     .arg(artistName);
+    
+    //Create Request Key
+    QString requestKey = QString("Artist:%1").arg(artistName);
+    m_requests.clear();
+    
+    //Launch Query
+    launchQuery(query, requestKey);
+}
+
+void DBPediaQuery::getAlbumInfo(const QString & albumName)
+{
+    Q_UNUSED(albumName)
+}
+
+void DBPediaQuery::getActorInfo(const QString & actorName)
+{
+    //Create query url
+    QString query = m_queryPrefix + 
+                    QString("SELECT DISTINCT ?actorName ?description ?thumbnail "
+                    "WHERE { "
+                    "{ ?person rdf:type dbo:Actor . } "
+                    "?person foaf:name ?actorName . "
+                    "?actorName bif:contains \"'%1'\" . "
+                    "?person rdfs:comment ?description . "
+                    "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
+                    "} ")
+                    .arg(actorName);
+    
+    //Create Request Key
+    QString requestKey = QString("Actor:%1").arg(actorName);
+    m_requests.clear();
+    
+    //Launch Query
+    launchQuery(query, requestKey);
+}
+
+void DBPediaQuery::getDirectorInfo(const QString & directorName)
+{
+    //Create query url
+    QString query = m_queryPrefix + 
+                    QString("SELECT DISTINCT ?directorName ?description ?thumbnail "
+                    "WHERE { "
+                    "{ ?work dbo:director ?person . } "
+                    "?person foaf:name ?directorName . "
+                    "?directorName bif:contains \"'%1'\" . "
+                    "?person rdfs:comment ?description . "
+                    "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
+                    "} ")
+                    .arg(directorName);
+    
+    //Create Request Key
+    QString requestKey = QString("Director:%1").arg(directorName);
+    m_requests.clear();
+    
+    //Launch Query
+    launchQuery(query, requestKey);
+}
+
+void DBPediaQuery::launchQuery(const QString &query, const QString &requestKey)
+{
+    //Construct dbpedia url
     QString dbPediaSPARQL = QString(QUrl::toPercentEncoding(query));
     QString dbPediaUrlString= QString("http://dbpedia.org/sparql/?format=application/xml&query=%1").arg(dbPediaSPARQL);
     KUrl dbPediaUrl = KUrl(dbPediaUrlString);
     
     //Add query url to request collection
-    m_requests.insert(QString("Artist:%1").arg(artistName), dbPediaUrl);
-    
+    m_requests.insert(requestKey, dbPediaUrl);
+        
     //Prepare download target location
-    QString targetFileName = QString("bangarang/%1%2.tmp")
-                                .arg(artistName.trimmed())
+    QString targetFileName = QString("bangarang/%1.tmp")
                                 .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
     KUrl dbPediaDownloadUrl = KUrl(KStandardDirs::locateLocal("data", targetFileName, true));
     QFile downloadTarget(dbPediaDownloadUrl.path());
@@ -82,16 +142,12 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
     
     //Launch query
     KIO::CopyJob *copyJob = KIO::copy(dbPediaUrl, dbPediaDownloadUrl, KIO::Overwrite | KIO::HideProgressInfo);
+    copyJob->setAutoDelete(true);
     connect (copyJob, 
              SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
              this,
              SLOT(resultsReturned(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
     copyJob->setUiDelegate(0);
-}
-
-void DBPediaQuery::getAlbumInfo(const QString & albumName)
-{
-    Q_UNUSED(albumName)
 }
 
 void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
@@ -112,6 +168,10 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
             emit gotArtistInfo(false, resultsBindingSets, requestKey);
         } else if (requestKey.startsWith("Album")) {
             emit gotAlbumInfo(false, resultsBindingSets, requestKey);
+        } else if (requestKey.startsWith("Actor")) {
+            emit gotActorInfo(false, resultsBindingSets, requestKey);
+        } else if (requestKey.startsWith("Director")) {
+            emit gotDirectorInfo(false, resultsBindingSets, requestKey);
         }        
         return;
     }
@@ -119,6 +179,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     //Results file is an XML document
     QDomDocument resultsDoc("queryResult");
     resultsDoc.setContent(&file);
+    kDebug() << "Got results for " << requestKey;
     
     //Iterate through result nodes of the XML document
     QDomNodeList results = resultsDoc.elementsByTagName("result");
@@ -174,6 +235,10 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
         emit gotArtistInfo(true, resultsBindingSets, requestKey);
     } else if (requestKey.startsWith("Album")) {
         emit gotAlbumInfo(true, resultsBindingSets, requestKey);
+    } else if (requestKey.startsWith("Actor")) {
+        emit gotActorInfo(true, resultsBindingSets, requestKey);
+    } else if (requestKey.startsWith("Director")) {
+        emit gotDirectorInfo(true, resultsBindingSets, requestKey);
     }
 
     //Remove results file
