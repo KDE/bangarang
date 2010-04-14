@@ -85,7 +85,7 @@ SavedListsManager::~SavedListsManager()
 void SavedListsManager::showAudioListSave()
 {
     ui->audioListsStack->setCurrentIndex(1);
-    ui->aNewListName->setText("Untitled");
+    ui->aNewListName->setText(i18n("Untitled"));
     if (ui->aListSourceSelection->isEnabled()) {
         ui->aListSourceSelection->setChecked(true);
     } else if (ui->aListSourceView->isEnabled()) {
@@ -101,7 +101,7 @@ void SavedListsManager::showAudioListSave()
 void SavedListsManager::showVideoListSave()
 {
     ui->videoListsStack->setCurrentIndex(1);
-    ui->vNewListName->setText("Untitled");
+    ui->vNewListName->setText(i18n("Untitled"));
     if (ui->vListSourceSelection->isEnabled()) {
         ui->vListSourceSelection->setChecked(true);
     } else if (ui->vListSourceView->isEnabled()) {
@@ -179,9 +179,9 @@ void SavedListsManager::removeAudioList()
         QString name = m_parent->m_audioListsModel->mediaItemAt(selectedRow).title;
         
         KGuiItem removeSavedList;
-        removeSavedList.setText(QString("Remove"));
+        removeSavedList.setText(i18n("Remove"));
         removeSavedList.setIcon(KIcon("list-remove"));
-        QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
+        QString message = i18n("Are you sure you want to remove \"%1\"?", name);
         
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
             //Remove M3U file
@@ -217,9 +217,9 @@ void SavedListsManager::removeVideoList()
         QString name = m_parent->m_videoListsModel->mediaItemAt(selectedRow).title;
         
         KGuiItem removeSavedList;
-        removeSavedList.setText(QString("Remove"));
+        removeSavedList.setText(i18n("Remove"));
         removeSavedList.setIcon(KIcon("list-remove"));
-        QString message = QString("Are you sure you want to remove \"%1\"?").arg(name);
+        QString message = i18n("Are you sure you want to remove \"%1\"?", name);
         
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
             //Remove M3U file
