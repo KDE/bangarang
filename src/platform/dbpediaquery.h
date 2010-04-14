@@ -34,16 +34,21 @@ class DBPediaQuery : public QObject
         
         void getArtistInfo(const QString & artistName);
         void getAlbumInfo(const QString & albumName);
-    
+        void getActorInfo(const QString & actorName);
+        void getDirectorInfo(const QString & actorName);
+        
     private:
         QString m_queryPrefix;
         QHash<QString, KUrl> m_requests;
         int m_artistInfoBindingsCount;
         int m_albumInfoBindingsCount;
+        void launchQuery(const QString &query, const QString &requestKey);
         
     Q_SIGNALS:
         void gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
         void gotAlbumInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+        void gotActorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+        void gotDirectorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
         
     private Q_SLOTS:
         void resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
