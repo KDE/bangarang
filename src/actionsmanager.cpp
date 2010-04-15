@@ -199,6 +199,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
         
     m_nowPlayingContextMenu = new QMenu(m_parent);
     m_notifierMenu = new KMenu(m_parent);
+
+    //controls always visible at startup
+    m_controlsVisible = true;
 }
 
 ActionsManager::~ActionsManager()
@@ -494,7 +497,7 @@ void ActionsManager::fullScreenToggle()
 void ActionsManager::toggleControls()
 {
     if ((!m_parent->isFullScreen()) && (ui->stackedWidget->currentIndex() == 1)) {
-        if (ui->widgetSet->isVisible()) {
+        if (m_controlsVisible) {
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
             m_showHideControls->setIcon(KIcon("layer-visible-on"));
@@ -505,6 +508,7 @@ void ActionsManager::toggleControls()
             m_showHideControls->setIcon(KIcon("layer-visible-off"));
 	    m_showHideControls->setText(i18n("Hide Controls"));
         }
+        m_controlsVisible = !m_controlsVisible;
     }
 }
 
@@ -528,10 +532,8 @@ void ActionsManager::cancelFSHC()
     if (m_parent->isFullScreen()) {
         m_parent->on_fullScreen_toggled(false);
     } else {
-        if (ui->stackedWidget->currentIndex() == 1) {
-            ui->widgetSet->setVisible(true);
-            ui->nowPlayingToolbar->setVisible(true);
-            m_showHideControls->setIcon(KIcon("layer-visible-off"));
+        if (ui->stackedWidget->currentIndex() == 1 && !m_controlsVisible) {
+            toggleControls();
         }
     }
 }
