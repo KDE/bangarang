@@ -102,11 +102,8 @@ void SavedListsEngine::run()
                     }
                     QString url = in.readLine().trimmed();
                     MediaItem mediaItem;
-                    KUrl itemUrl(url);
+                    KUrl itemUrl(workingDir, url);
                     if (!url.isEmpty()) {
-                        if (itemUrl.pathOrUrl() == itemUrl.fileName()) {
-                            itemUrl = KUrl(workingDir + itemUrl.fileName());
-                        }
                         mediaItem = Utilities::mediaItemFromUrl(itemUrl);
                     } else {
                         continue;
@@ -137,11 +134,8 @@ void SavedListsEngine::run()
                     }
                     
                     MediaItem mediaItem;
-                    KUrl itemUrl(url);
+                    KUrl itemUrl(workingDir, url);
                     if (!url.isEmpty()) {
-                        if (itemUrl.pathOrUrl() == itemUrl.fileName()) {
-                            itemUrl = KUrl(workingDir + itemUrl.fileName());
-                        }
                         mediaItem = Utilities::mediaItemFromUrl(itemUrl);
                     } else {
                         continue;
