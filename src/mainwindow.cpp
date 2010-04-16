@@ -428,8 +428,11 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
         ui->fullScreen->setToolTip(i18n("Show fullscreen"));
         ui->fullScreen->setChecked(false);
-        ui->widgetSet->setVisible(true);
-        ui->nowPlayingToolbar->setVisible(true);
+        if (m_actionsManager->m_controlsVisible)
+        {
+          ui->widgetSet->setVisible(true);
+          ui->nowPlayingToolbar->setVisible(true);
+        }
     }
 }
 
