@@ -79,6 +79,8 @@ class ActionsManager : public QObject
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
+
+        bool m_controlsVisible;
         
     public slots:
         void updateSavedListsMenus();
