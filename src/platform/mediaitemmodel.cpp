@@ -38,7 +38,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_loadingState = false;
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     m_mediaListCache = new MediaListCache(parent);
-    m_cacheThreshold = 3000; //default to 3 second loading threshold for adding to cache
+    m_cacheThreshold = 5000; //default to 5 second loading threshold for adding to cache
     m_forceRefreshFromSource = false;
     m_loadSources = false;
     m_reload = false;
@@ -385,13 +385,13 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     }
     
     //Check request signature of results and ignore results with a different signature
-//    if (requestSignature == m_requestSignature) {
-   kDebug() << "results returned for " << mediaListProperties.lri;
+   if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
             setLoadingState(false);
             loadMediaList(mediaList, false, true);
             m_mediaListProperties = mediaListProperties;
+            emit mediaListPropertiesChanged();
             if (done) {
                 if (rowCount() == 0) {
                     showNoResultsMessage();
@@ -439,10 +439,10 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     }
     
     //Cache results if they took long enough to return
-    if (m_lriStartTimes.contains(mediaListProperties.lri)) {
+    if (done && m_lriStartTimes.contains(mediaListProperties.lri)) {
         int elapsedMSecs = m_lriStartTimes.value(mediaListProperties.lri).msecsTo(QTime::currentTime());
         if (elapsedMSecs > m_cacheThreshold) {
-            m_mediaListCache->addMediaList(mediaListProperties, mediaList);
+            m_mediaListCache->addMediaList(mediaListProperties, m_mediaList);
             m_lriStartTimes.remove(mediaListProperties.lri);
         }
     }

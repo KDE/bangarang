@@ -175,20 +175,20 @@ void MediaQuery::orderBy(const QStringList &bindings, QList<MediaQuery::Order> o
                          .arg(orderPrefix)
                          .arg(bindings.at(i));
     }
-    m_querySuffix = m_querySuffix.prepend(queryOrder); // ORDER BY must precede other suffix modifiers
+    m_queryOrder = queryOrder;
 }
 
 void MediaQuery::addLimit(int limit)
 {
     if (limit > 0) {
-        m_querySuffix += QString("LIMIT %1 ").arg(limit);
+        m_queryLimit = QString("LIMIT %1 ").arg(limit);
     }
 }
 
 void MediaQuery::addOffset(int offset)
 {
     if (offset > 0) {
-        m_querySuffix += QString("OFFSET %1 ").arg(offset);
+        m_queryOffset = QString("OFFSET %1 ").arg(offset);
     }
 }
 
@@ -207,17 +207,16 @@ QString MediaQuery::query(bool excludePrefix)
 {
     QString query;
     if (excludePrefix) {
-        query = m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
+        query = m_querySelect + m_queryWhere + m_queryCondition + m_queryOffset + m_queryOrder + m_queryLimit + m_querySuffix;
     } else {
-        query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
+        query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_queryOrder + m_queryOffset + m_queryLimit + m_querySuffix;
     }
     return query;
 }
 
 Soprano::QueryResultIterator MediaQuery::executeSelect(Soprano::Model* model)
 {
-    QString query = m_queryPrefix + m_querySelect + m_queryWhere + m_queryCondition + m_querySuffix;
-    return model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+    return model->executeQuery(query(), Soprano::Query::QueryLanguageSparql);
 }
 
 bool MediaQuery::executeAsk(Soprano::Model* model)

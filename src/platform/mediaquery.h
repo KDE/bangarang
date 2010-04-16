@@ -264,6 +264,9 @@ class MediaQuery {
         QString m_querySelect;
         QString m_queryWhere;
         QString m_queryCondition;
+        QString m_queryLimit;
+        QString m_queryOffset;
+        QString m_queryOrder;
         QString m_querySuffix;
         QStringList m_filterOperators;
         QHash<QString, Constraint> m_filterOperatorConstraint;
