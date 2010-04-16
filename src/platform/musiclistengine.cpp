@@ -284,6 +284,20 @@ void MusicListEngine::run()
         
         //Retrieve Songs
         if (engineArg.toLower() == "songs") {
+            // Name the newly created media list
+            m_mediaListProperties.name = album + QString(" - ") + artist;
+            if (!album.isEmpty() && !artist.isEmpty()) {
+                m_mediaListProperties.name = QString("%1 - %2").arg(album).arg(artist);
+            } else if (!album.isEmpty()) {
+                m_mediaListProperties.name = QString("%1").arg(album);
+            } else if (!artist.isEmpty()) {
+                m_mediaListProperties.name = QString("%1").arg(artist);
+            } else {
+                m_mediaListProperties.name = i18n("Songs");
+            }
+            m_mediaListProperties.type = QString("Sources");
+
+            //Create and execute query
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -320,28 +334,38 @@ void MusicListEngine::run()
             orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
             query.orderBy(orderByBindings);
             
-            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
-            //Build media list from results
-            while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                mediaList.append(mediaItem);
+            QList<QString> urls;
+            int limit = 100;
+            int resultSetCount = limit;
+            int resultCount = 0;
+            int offset = 0;
+            query.addLimit(limit);
+            while (resultSetCount >= limit) {
+                
+                //Execute Query
+                Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+                
+                //Build media list from results
+                resultSetCount = 0;
+                while( it.next() ) {
+                    MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+                    if (urls.indexOf(mediaItem.url) == -1) {
+                        mediaList.append(mediaItem);
+                        urls.append(mediaItem.url);
+                    }
+                    resultSetCount++;
+                }
+                
+                //Emit current result set and increment offset
+                resultCount += mediaList.count();
+                m_mediaListProperties.summary = i18np("1 song", "%1 songs", resultCount);
+                if (resultSetCount >= limit) {
+                    emit results(m_requestSignature, mediaList, m_mediaListProperties, false, m_subRequestSignature);
+                    mediaList.clear();
+                    offset += limit;
+                    query.addOffset(offset);
+                }
             }
-            
-            // Name the newly created media list
-            m_mediaListProperties.name = album + QString(" - ") + artist;
-            if (!album.isEmpty() && !artist.isEmpty()) {
-                m_mediaListProperties.name = QString("%1 - %2").arg(album).arg(artist);
-            } else if (!album.isEmpty()) {
-                m_mediaListProperties.name = QString("%1").arg(album);
-            } else if (!artist.isEmpty()) {
-                m_mediaListProperties.name = QString("%1").arg(artist);
-            } else {
-                m_mediaListProperties.name = i18n("Songs");
-            }
-            m_mediaListProperties.summary = i18np("1 song", "%1 songs", mediaList.count());
-            m_mediaListProperties.type = QString("Sources");
-            
         } 
         
         //Retrieve Search Results

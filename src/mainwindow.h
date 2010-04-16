@@ -191,6 +191,7 @@ private slots:
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
     void mediaListChanged();
+    void mediaListPropertiesChanged();
     void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
     void audioListsChanged();
     void videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);

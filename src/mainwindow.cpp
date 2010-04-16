@@ -172,6 +172,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_mediaItemModel = (MediaItemModel *)ui->mediaView->model();
     m_sharedMediaListCache = m_mediaItemModel->mediaListCache();
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    connect(m_mediaItemModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     connect(m_mediaItemModel, SIGNAL(loading()), this, SLOT(hidePlayButtons()));
     connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
@@ -201,6 +202,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
+    connect(m_currentPlaylist, SIGNAL(mediaListPropertiesChanged()), this, SLOT(playlistChanged()));
 
     //Setup Now Playing view
     m_nowPlaying = m_playlist->nowPlayingModel();
@@ -816,6 +818,12 @@ void MainWindow::mediaListChanged()
             ui->playAll->setVisible(false);
         }
     }
+}
+
+void MainWindow::mediaListPropertiesChanged()
+{
+    ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
+    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
 }
 
 void MainWindow::mediaListCategoryActivated(QModelIndex index)
