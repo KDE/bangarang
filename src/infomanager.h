@@ -60,6 +60,7 @@ class InfoManager : public QObject
         void setContext(const MediaItem &category);
         void clearInfoBoxSelection();
         void mediaListPropertiesChanged();
+        void removeSelectedItemsInfo();
         
     private:
         MainWindow *m_parent; 
