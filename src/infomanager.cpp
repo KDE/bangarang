@@ -172,6 +172,20 @@ void InfoManager::setContext(const MediaItem &category)
     m_contextCategory = category;
 }
 
+void InfoManager::removeSelectedItemsInfo()
+{
+    QList<MediaItem> selectedItems;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    if (selectedRows.count() > 0) {
+        //If items are selected then the context is the selected items
+        for (int i = 0 ; i < selectedRows.count() ; ++i) {
+            selectedItems.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+        }
+    }
+    if (selectedItems.count() > 0) {
+        m_parent->m_mediaItemModel->removeSourceInfo(selectedItems);
+    }
+}
 
 //----------------------
 //-- Helper functions --
