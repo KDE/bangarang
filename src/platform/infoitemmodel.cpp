@@ -22,6 +22,7 @@
 #include <KLocale>
 #include <KDebug>
 #include <KUrl>
+#include <QPainter>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
@@ -194,21 +195,27 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     }
 
     if (field == "artwork") {
-        if (m_mediaList.count() == 1) {
-            KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["artworkUrl"].toString());
-            fieldItem->setData(artworkUrl, Qt::DisplayRole);
-            fieldItem->setData(artworkUrl, Qt::EditRole);
-            fieldItem->setData(artworkUrl, InfoItemModel::OriginalValueRole); //stores copy of original data
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(0));
-            if (!artwork.isNull()) {
-                fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
-            } else {
-                fieldItem->setData(KIcon("image-x-generic"), Qt::DecorationRole);
+        KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["artworkUrl"].toString());
+        fieldItem->setData(artworkUrl, Qt::DisplayRole);
+        fieldItem->setData(artworkUrl, Qt::EditRole);
+        fieldItem->setData(artworkUrl, InfoItemModel::OriginalValueRole); //stores copy of original data
+        
+        //Compose artwork slice for each selected item.
+        QPixmap artwork(128,128);
+        artwork.fill(Qt::transparent);
+        QPainter p(&artwork);
+        for (int i = 0; i < m_mediaList.count(); i++) {
+            QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(i));
+            if (itemArtwork.isNull()) {
+                itemArtwork = KIcon("media-optical-audio").pixmap(128,128);
             }
-        } else {
-            //We should eventually check for common artwork and set it here.
-            fieldItem->setData(KIcon("image-x-generic"), Qt::DecorationRole);
+            qreal clipWidth = 128.0/m_mediaList.count();
+            qreal clipLeft = clipWidth * i;
+            p.drawPixmap(QRectF(clipLeft, 0, clipWidth, 128), itemArtwork, QRectF(clipLeft, 0, clipWidth, 128));
         }
+        p.end();
+        fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+            
         rowData.append(fieldItem);
         appendRow(rowData);
         return;
