@@ -80,6 +80,8 @@ KDE4_ADD_EXECUTABLE(bangarang ${BangarangSources})
 kde4_add_app_icon(BangarangSources "${CMAKE_CURRENT_SOURCE_DIR}/../icons/hi*.png")
 # Executable
 TARGET_LINK_LIBRARIES(bangarang 
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
     ${KDE4_KDEUI_LIBS} 
     ${KDE4_KPARTS_LIBS} 
     ${KDE4_PHONON_LIBS} 
@@ -91,6 +93,7 @@ TARGET_LINK_LIBRARIES(bangarang
     ${TAGLIB_LIBRARIES} 
     ${KDE4_KROSSUI_LIBS}
     ${KDE4_KROSSCORE_LIBS}
+    ${KDE4_SOLID_LIBS}
     tag 
 )
 

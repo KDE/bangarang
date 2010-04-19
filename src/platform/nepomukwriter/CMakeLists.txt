@@ -24,6 +24,9 @@ SET(BangarangNepomukWriterSources
 KDE4_ADD_EXECUTABLE(bangarangnepomukwriter ${BangarangNepomukWriterSources})
 
 TARGET_LINK_LIBRARIES(bangarangnepomukwriter 
+    ${QT_QTCORE_LIBRARY}
+    ${KDE4_KDECORE_LIBS}
+    ${KDE4_KDEUI_LIBS}
     ${NEPOMUK_LIBRARIES} 
     ${KDEMULTIMEDIA_LIBRARIES} 
     ${SOPRANO_LIBRARIES} 
