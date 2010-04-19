@@ -212,6 +212,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,   
                 if (!pixmap.isNull()) {
                     model->setData(index, QIcon(pixmap), Qt::DecorationRole);
                     model->setData(index, newUrl, Qt::EditRole);
+                    model->setData(index, false, InfoItemModel::MultipleValuesRole);
                 }
             }
         }
@@ -297,8 +298,8 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     }
     
     //If the data has changed then make sure the multipleValues flag is set to false
-    if (index.data(Qt::EditRole) != index.data(Qt::UserRole+2)) {
-        model->setData(index, false, Qt::UserRole+1); 
+    if (index.data(Qt::EditRole) != index.data(InfoItemModel::OriginalValueRole)) {
+        model->setData(index, false, InfoItemModel::MultipleValuesRole); 
     }
 }   
 

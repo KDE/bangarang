@@ -101,6 +101,9 @@ void InfoItemModel::saveChanges()
             if (field != "title" && field != "artwork") {
                 currentItem = item(row, 1); //These fields don't span both columns
             }
+            //Save any field that does not have multiple values.
+            //If multiple items are selected and a field is edited
+            //then the edited field won't have multiple values
             bool multipleValues = currentItem->data(InfoItemModel::MultipleValuesRole).toBool();
             if (!multipleValues) { 
                 if (field == "audioType") {
