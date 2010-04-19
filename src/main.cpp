@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 {
     aboutData.setProgramIconName("bangarang");
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
-    aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@yahoo.com");
+    aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@gmail.com");
     aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Buschmann"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
