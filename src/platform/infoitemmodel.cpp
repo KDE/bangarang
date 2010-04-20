@@ -207,9 +207,28 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         int totalSlices = qMin(10, m_mediaList.count());
         for (int i = 0; i < totalSlices; i++) {
             int sliceSourceRow = i * (m_mediaList.count()/totalSlices) + 0.5; 
-            QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(sliceSourceRow));
-            if (itemArtwork.isNull()) {
-                itemArtwork = KIcon("media-optical-audio").pixmap(128,128);
+            MediaItem sliceSourceItem = m_mediaList.at(sliceSourceRow);
+            QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(sliceSourceItem);
+            if (!itemArtwork.isNull()) {
+                QPixmap centeredArtwork(128,128);
+                centeredArtwork.fill(Qt::transparent);
+                QPainter p1(&centeredArtwork);
+                QIcon(itemArtwork).paint(&p1, 0, 0, 128, 128, Qt::AlignCenter);
+                itemArtwork = centeredArtwork;
+            } else if (itemArtwork.isNull()) {
+                if (sliceSourceItem.fields["audioType"].toString() == "Music") {
+                    itemArtwork = KIcon("audio-mpeg").pixmap(128,128);
+                } else if (sliceSourceItem.fields["audioType"].toString() == "Audio Stream") {
+                    itemArtwork = KIcon("x-media-podcast").pixmap(128,128);
+                } else if (sliceSourceItem.fields["audioType"].toString() == "Audio Clip") {
+                    itemArtwork = KIcon("audio-x-wav").pixmap(128,128);
+                } else if (sliceSourceItem.fields["videoType"].toString() == "Movie") {
+                    itemArtwork = KIcon("tool-animator").pixmap(128,128);
+                } else if (sliceSourceItem.fields["videoType"].toString() == "TV Show") {
+                    itemArtwork = KIcon("video-television").pixmap(128,128);
+                } else if (sliceSourceItem.fields["videoType"].toString() == "Video Clip") {
+                    itemArtwork = KIcon("video-x-generic").pixmap(128,128);
+                }
             }
             qreal sliceWidth = 128.0/totalSlices;
             qreal sliceLeft = sliceWidth * i;
