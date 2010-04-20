@@ -44,6 +44,13 @@ InfoCategoryModel::~InfoCategoryModel()
 
 void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
+    //If the mediaItem is the same as the one currently loaded do nothing.
+    if (mediaList.count() == m_mediaList.count() && mediaList.count() == 1) {
+        if (mediaList.at(0).url == m_mediaList.at(0).url) {
+            return;
+        }
+    }
+        
     m_mediaList = mediaList;
     clear();
     
@@ -66,6 +73,7 @@ void InfoCategoryModel::downloadInfo()
 {
     if (!hasMultipleValues("title")) {
         if(Solid::Networking::status() == Solid::Networking::Connected){
+            m_gotDownloadedData = false;
             getDBPediaInfo(commonValue("title").toString());
         }
     }
@@ -269,7 +277,8 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
     QString keyForCurrentData = keyPrefix + commonValue("title").toString();
     
     
-    if (successful && requestKey == keyForCurrentData) {
+    if (successful && requestKey == keyForCurrentData && !m_gotDownloadedData) {
+        m_gotDownloadedData = true;
         if (results.count() > 0) {
             Soprano::BindingSet binding = results.at(0);
             
@@ -290,13 +299,13 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
                 KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
                 QFile downloadTarget(thumbnailTargetUrl.path());
                 downloadTarget.remove();
-                KIO::CopyJob *copyJob = KIO::copy(thumbnailUrl, thumbnailTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
+                KIO::CopyJob *copyJob = KIO::copyAs(thumbnailUrl, thumbnailTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
+                copyJob->setUiDelegate(0);
                 copyJob->setAutoDelete(true);
                 connect (copyJob, 
                          SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
                          this,
                          SLOT(loadThumbnail(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
-                copyJob->setUiDelegate(0);
             }
 
             {

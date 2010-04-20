@@ -69,6 +69,7 @@ class InfoCategoryModel : public QStandardItemModel
         KUrl m_dbPediaDownloadUrl;
         InfoCategoryMode m_mode;
         DBPediaQuery * m_dbPediaQuery;
+        bool m_gotDownloadedData;
         
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
