@@ -76,6 +76,7 @@ class InfoManager : public QObject
         MediaItemModel *m_frequentlyPlayedModel;
         MediaItem m_contextCategory;
         QList<MediaItem> m_selectedInfoBoxMediaItems;
+        QTimer *m_selectionTimer;
         
     private slots:
         void updateViewsLayout();

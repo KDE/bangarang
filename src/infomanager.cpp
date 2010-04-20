@@ -66,6 +66,11 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoItemView->setItemDelegate(infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     
+    //Set up selection timer
+    m_selectionTimer = new QTimer(this);
+    m_selectionTimer->setSingleShot(true);
+    connect(m_selectionTimer, SIGNAL(timeout()), this, SLOT(loadSelectedInfo()));
+    
     //Set up Category View
     m_infoCategoryModel = new InfoCategoryModel(this);
     m_infoCategoryDelegate = new InfoCategoryDelegate(m_parent);
@@ -122,7 +127,8 @@ void InfoManager::hideInfoView()
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
 {
-    loadSelectedInfo();
+    //Delay updating info for 500 milliseconds to prevent rapid-fire nepomuk queries.
+    m_selectionTimer->start(500);
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
 }
