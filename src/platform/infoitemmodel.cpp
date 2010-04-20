@@ -204,14 +204,16 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         QPixmap artwork(128,128);
         artwork.fill(Qt::transparent);
         QPainter p(&artwork);
-        for (int i = 0; i < m_mediaList.count(); i++) {
-            QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(i));
+        int totalSlices = qMin(10, m_mediaList.count());
+        for (int i = 0; i < totalSlices; i++) {
+            int sliceSourceRow = i * (m_mediaList.count()/totalSlices) + 0.5; 
+            QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(m_mediaList.at(sliceSourceRow));
             if (itemArtwork.isNull()) {
                 itemArtwork = KIcon("media-optical-audio").pixmap(128,128);
             }
-            qreal clipWidth = 128.0/m_mediaList.count();
-            qreal clipLeft = clipWidth * i;
-            p.drawPixmap(QRectF(clipLeft, 0, clipWidth, 128), itemArtwork, QRectF(clipLeft, 0, clipWidth, 128));
+            qreal sliceWidth = 128.0/totalSlices;
+            qreal sliceLeft = sliceWidth * i;
+            p.drawPixmap(QRectF(sliceLeft, 0, sliceWidth, 128), itemArtwork, QRectF(sliceLeft, 0, sliceWidth, 128));
         }
         p.end();
         fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
