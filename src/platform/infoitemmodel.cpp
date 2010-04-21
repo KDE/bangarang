@@ -63,27 +63,28 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
             } else {
                 addFieldToValuesModel(i18n("Location"), "url");
             }
+            addFieldToValuesModel(i18n("Description"), "description");
         } else {
             addFieldToValuesModel(i18n("Type"), "videoType");
             addFieldToValuesModel(i18n("Artwork"), "artwork");
             addFieldToValuesModel(i18n("Title"), "title");
+            addFieldToValuesModel(i18n("Description"), "description");
             QString subType = m_mediaList.at(0).fields["videoType"].toString();
             if (subType == "Movie" || subType == "TV Show") {
-                addFieldToValuesModel(i18n("Year"), "year");
-                addFieldToValuesModel(i18n("Genre"), "genre");
                 if (subType == "TV Show") {
                     addFieldToValuesModel(i18n("Series"), "seriesName");
                     addFieldToValuesModel(i18n("Season"), "season");
                     addFieldToValuesModel(i18n("Episode"), "episodeNumber");
                 }
+                addFieldToValuesModel(i18n("Genre"), "genre");
+                addFieldToValuesModel(i18n("Year"), "year");
+                addFieldToValuesModel(i18n("Actor"), "actor");
+                addFieldToValuesModel(i18n("Director"), "director");
                 addFieldToValuesModel(i18n("Writer"), "writer");
                 addFieldToValuesModel(i18n("Producer"), "producer");
-                addFieldToValuesModel(i18n("Director"), "director");
-                addFieldToValuesModel(i18n("Actor"), "actor");
             }
             addFieldToValuesModel(i18n("Location"), "url");
         }
-        addFieldToValuesModel(i18n("Description"), "description");
         if (m_mediaList.count() == 1) {
             addFieldToValuesModel(i18n("Play Count"), "playCount");
             addFieldToValuesModel(i18n("Last Played"), "lastPlayed");
