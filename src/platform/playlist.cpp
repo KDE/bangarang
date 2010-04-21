@@ -49,6 +49,10 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_state = Playlist::Finished;
     m_hadVideo = false;
     m_notificationRestrictions = 0;
+    m_filterProxyModel = new QSortFilterProxyModel();
+
+    //setup the filter proxy
+    m_filterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -400,6 +404,11 @@ void Playlist::setMode(Playlist::Mode mode)
 Playlist::Mode Playlist::mode()
 {
     return m_mode;
+}
+
+QSortFilterProxyModel * Playlist::filterProxyModel()
+{
+    return m_filterProxyModel;
 }
 
 void Playlist::setRepeat(bool repeat)

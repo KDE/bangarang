@@ -40,6 +40,7 @@
 #include <QFont>
 #include <QStandardItem>
 #include <QApplication>
+#include <QSortFilterProxyModel>
 
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -108,10 +109,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     QString subType;
     if (index.data(MediaItem::TypeRole).toString() == "Audio") {
-        MediaItemModel * model = (MediaItemModel *)index.model();
+        MediaItemModel * model = (MediaItemModel *)((QSortFilterProxyModel *)index.model())->sourceModel();
         subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
     } else if (index.data(MediaItem::TypeRole).toString() == "Video") {
-        MediaItemModel * model = (MediaItemModel *)index.model();
+        MediaItemModel * model = (MediaItemModel *)((QSortFilterProxyModel *)index.model())->sourceModel();
         subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
     }
     bool isCategory = index.data(MediaItem::TypeRole).toString() == "Category" ? true : false;
