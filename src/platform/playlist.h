@@ -21,6 +21,7 @@
 
 #include <KNotificationRestrictions>
 #include <QObject>
+#include <QSortFilterProxyModel>
 #include <phonon/mediaobject.h>
 #include <phonon/mediacontroller.h>
 
@@ -102,6 +103,11 @@ class Playlist : public QObject
          * playing MediaItem.
          */
         MediaItemModel * nowPlayingModel();
+
+        /**
+         * Returns the filter proxy model used
+         */
+        QSortFilterProxyModel * filterProxyModel();
         
         /**
          * Plays item at the specified row of the specified model
@@ -207,6 +213,7 @@ class Playlist : public QObject
         MediaItemModel * m_currentPlaylist;
         MediaItemModel * m_nowPlaying;
         MediaItemModel * m_queue;
+        QSortFilterProxyModel *m_filterProxyModel;
         Playlist::Mode m_mode;
         int m_repeat;
         int m_queueDepth;

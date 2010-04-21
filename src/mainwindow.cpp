@@ -191,12 +191,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlist = new Playlist(this, m_media);
     connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
     connect(m_playlist, SIGNAL(loading()), this, SLOT(showLoading()));
-    
+
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
     m_currentPlaylist->setMediaListCache(m_sharedMediaListCache);
     m_playlistItemDelegate = new MediaItemDelegate(this);
-    ui->playlistView->setModel(m_currentPlaylist);
+    m_playlist->filterProxyModel()->setSourceModel(m_currentPlaylist);
+    ui->playlistView->setModel(m_playlist->filterProxyModel());
+    //ui->playlistFilterProxyLine->setText(i18n("Search in playlist..."));
+    ui->playlistFilterProxyLine->setProxy(m_playlist->filterProxyModel());
     ui->playlistView->setItemDelegate(m_playlistItemDelegate);
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
