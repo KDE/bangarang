@@ -85,7 +85,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
     }
     
-    bool multipleValues = index.data(Qt::UserRole + 1).toBool();
+    bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
         if (index.data(InfoItemModel::FieldRole).toString() == "artwork") {
@@ -102,7 +102,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     foregroundColor.setAlphaF(0.7);
                     text = i18n("Multiple Values");
                     textFont.setItalic(true);
-                } else if (index.data(Qt::DisplayRole) != index.data(Qt::UserRole + 2)) {
+                } else if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
                     textFont.setBold(true);
                 }
             } else {
@@ -132,7 +132,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                        Qt::AlignLeft | Qt::AlignVCenter, i18n("Multiple Values"));
         } else {
             QString text = index.data(Qt::DisplayRole).toString();
-            if (index.data(Qt::UserRole).toString() == "audioType") {
+            if (index.data(InfoItemModel::FieldRole).toString() == "audioType") {
                 int typeIndex = index.data(Qt::DisplayRole).toInt();
                 if (typeIndex == 0) {
                     text = i18n("Music");
@@ -141,8 +141,8 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 } else if (typeIndex == 2) {
                     text = i18n("Audio Clip");
                 }
-            } else if (index.data(Qt::UserRole).toString() == "videoType") {
-                int typeIndex = index.data(Qt::UserRole).toInt();
+            } else if (index.data(InfoItemModel::FieldRole).toString() == "videoType") {
+                int typeIndex = index.data(Qt::DisplayRole).toInt();
                 if (typeIndex == 0) {
                     text = i18n("Movie");
                 } else if (typeIndex == 1) {
@@ -152,7 +152,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 }
             }
             QFont textFont = KGlobalSettings::smallestReadableFont();
-            if (index.data(Qt::DisplayRole) != index.data(Qt::UserRole + 2)) {
+            if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
                 textFont.setBold(true);
             }
             int textWidth = width - 2 * padding;
@@ -289,7 +289,7 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
 
 void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
 {
-    QString field = index.data(Qt::UserRole).toString();
+    QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentIndex());
