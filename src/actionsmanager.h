@@ -22,6 +22,8 @@
 #include "videosettings.h"
 #include "mainwindow.h"
 #include <KMenu>
+#include <KConfigGroup>
+#include <KGlobalAccel>
 #include <KActionCollection>
 #include <QObject>
 #include <QAction>
@@ -43,33 +45,33 @@ class ActionsManager : public QObject
         ActionsManager(MainWindow * parent);
         ~ActionsManager();
         
-        QAction *quit();
-        QAction *playAll();
-        QAction *playSelected();
-        QAction *addSelectedToPlaylist();
-        QAction *removeSelectedFromPlaylist();
-        QAction *fullScreen();
-        QAction *showHideControls();
-        QAction *cancelFullScreenHideControls();
-        QAction *editShortcuts();
-        QAction *toggleShowRemainingTime();
-        QAction *playPause();
-        QAction *play();
-        QAction *pause();
-        QAction *playNext();
-        QAction *playPrevious();
-        QAction *mute();
-        QAction *removeSelectedItemsInfo();
-        QAction *refreshMediaView();
-        QAction *showVideoSettings();
-        QAction *removeFromSavedList();
-        QAction *newAudioList();
-        QAction *newVideoList();
-        QAction *showItems();
-        QAction *showNowPlayingInfo();
-        QAction *showInfo();
-        QAction *addBookmark();
-        QAction *showScriptingConsole();
+        KAction *quit();
+        KAction *playAll();
+        KAction *playSelected();
+        KAction *addSelectedToPlaylist();
+        KAction *removeSelectedFromPlaylist();
+        KAction *fullScreen();
+        KAction *showHideControls();
+        KAction *cancelFullScreenHideControls();
+        KAction *editShortcuts();
+        KAction *toggleShowRemainingTime();
+        KAction *playPause();
+        KAction *play();
+        KAction *pause();
+        KAction *playNext();
+        KAction *playPrevious();
+        KAction *mute();
+        KAction *removeSelectedItemsInfo();
+        KAction *refreshMediaView();
+        KAction *showVideoSettings();
+        KAction *removeFromSavedList();
+        KAction *newAudioList();
+        KAction *newVideoList();
+        KAction *showItems();
+        KAction *showNowPlayingInfo();
+        KAction *showInfo();
+        KAction *addBookmark();
+        KAction *showScriptingConsole();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -87,37 +89,39 @@ class ActionsManager : public QObject
         
     private:
 
+        void hideShortcutsEditor();
+
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         VideoSettings *m_videoSettings;
 	
-        QAction *m_quit;
-        QAction *m_playAllAction;
-        QAction *m_playSelectedAction;
-        QAction *m_addSelectedToPlayListAction;
-        QAction *m_removeSelectedToPlayListAction;
-        QAction *m_showHideControls;
-        QAction *m_fullScreen;
-        QAction *m_cancelFullScreenHideControls;
-        QAction *m_editShortcuts;
-        QAction *m_toggleShowRemainingTime;
-        QAction *m_playPause;
-        QAction *m_play;
-        QAction *m_pause;
-        QAction *m_playNext;
-        QAction *m_playPrevious;
-        QAction *m_mute;
-        QAction *m_removeSelectedItemsInfo;
-        QAction *m_refreshMediaView;
-        QAction *m_showVideoSettings;
-        QAction *m_removeFromSavedList;
-        QAction *m_newAudioList;
-        QAction *m_newVideoList;
-        QAction *m_showItems;
-        QAction *m_showInfo;
-        QAction *m_showNowPlayingInfo;
-        QAction *m_addBookmark;
-        QAction *m_showScriptingConsole;
+        KAction *m_quit;
+        KAction *m_playAllAction;
+        KAction *m_playSelectedAction;
+        KAction *m_addSelectedToPlayListAction;
+        KAction *m_removeSelectedToPlayListAction;
+        KAction *m_showHideControls;
+        KAction *m_fullScreen;
+        KAction *m_cancelFullScreenHideControls;
+        KAction *m_editShortcuts;
+        KAction *m_toggleShowRemainingTime;
+        KAction *m_playPause;
+        KAction *m_play;
+        KAction *m_pause;
+        KAction *m_playNext;
+        KAction *m_playPrevious;
+        KAction *m_mute;
+        KAction *m_removeSelectedItemsInfo;
+        KAction *m_refreshMediaView;
+        KAction *m_showVideoSettings;
+        KAction *m_removeFromSavedList;
+        KAction *m_newAudioList;
+        KAction *m_newVideoList;
+        KAction *m_showItems;
+        KAction *m_showInfo;
+        KAction *m_showNowPlayingInfo;
+        KAction *m_addBookmark;
+        KAction *m_showScriptingConsole;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
@@ -129,6 +133,7 @@ class ActionsManager : public QObject
 
         KActionCollection *m_actionCollection;
         MainWindow::ContextMenuSource m_contextMenuSource;
+        KConfigGroup m_shortcutsConfig;
         
     private slots:
         void fullScreenToggle();
@@ -136,7 +141,8 @@ class ActionsManager : public QObject
         void toggleVideoSettings();
         void cancelFSHC();
         void showShortcutsEditor();
-        void hideShortcutsEditor();
+        void saveShortcuts();
+        void cancelShortcuts();
         void simplePlayPause();
         void smartPlay();
         void muteAudio();
@@ -145,14 +151,14 @@ class ActionsManager : public QObject
         void removeSelectedItemsInfoSlot();
         void playSelectedSlot();
         void playAllSlot();
-        void addToSavedAudioList(QAction *addAction);
-        void addToSavedVideoList(QAction *addAction);
+        void addToSavedAudioList(KAction *addAction);
+        void addToSavedVideoList(KAction *addAction);
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
         void addBookmarkSlot();
-        void activateBookmark(QAction *bookmarkAction);
-        void removeBookmark(QAction *bookmarkAction);
+        void activateBookmark(KAction *bookmarkAction);
+        void removeBookmark(KAction *bookmarkAction);
 };
 #endif //ACTIONSMANAGER_H
