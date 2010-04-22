@@ -653,6 +653,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addSeparator();
     }
     m_menu->addAction(m_actionsManager->showScriptingConsole());
+    m_menu->addAction(m_actionsManager->editShortcuts());
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
