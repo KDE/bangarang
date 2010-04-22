@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2010-04-13 22:32-0700\n"
-"PO-Revision-Date: 2010-04-22 17:21+0200\n"
+"PO-Revision-Date: 2010-04-22 18:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
 "MIME-Version: 1.0\n"
@@ -471,12 +471,12 @@ msgstr "Divertissements… Maintenant"
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Ryan Kavanagh &amp; Humbert Julien"
+msgstr "Humbert Julien &amp; Ryan Kavanagh"
 
 #: rc.cpp:2
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "ryanakca@kubuntu.org &amp; julroy67@gmail.com"
+msgstr "julroy67@gmail.com"
 
 #. i18n: file: mainwindow.ui:156
 #. i18n: ectx: property (text), widget (QLabel, label)
