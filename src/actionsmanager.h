@@ -137,6 +137,7 @@ class ActionsManager : public QObject
         KActionCollection *m_actionCollection;
         MainWindow::ContextMenuSource m_contextMenuSource;
         KConfigGroup m_shortcutsConfig;
+        QString m_restoreFilter;
 
     private slots:
         void fullScreenToggle();
