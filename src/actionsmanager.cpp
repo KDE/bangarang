@@ -828,10 +828,21 @@ void ActionsManager::togglePlaylistFilter()
     if(!m_playlistFilterVisible) {
         ui->playlistFilter->setVisible(true);
         m_showHidePlaylistFilter->setText(i18n("Hide playlist filter"));
-        ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
+        if(!m_restoreFilter.isEmpty()) {
+            ui->playlistFilterProxyLine->setText( m_restoreFilter );
+            m_restoreFilter.clear();
+        }
+        else {
+            ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
+        }
     } else {
         ui->playlistFilter->setVisible(false);
         m_showHidePlaylistFilter->setText(i18n("Show playlist filter"));
+        if(!ui->playlistFilterProxyLine->lineEdit()->text().isEmpty())
+        {
+            m_restoreFilter = ui->playlistFilterProxyLine->lineEdit()->text();
+            ui->playlistFilterProxyLine->setText( "" );
+        }
     }
     m_playlistFilterVisible = !m_playlistFilterVisible;
 }
