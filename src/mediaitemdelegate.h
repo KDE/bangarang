@@ -19,6 +19,8 @@
 #ifndef MEDIAITEMDELEGATE_H
 #define MEDIAITEMDELEGATE_H
 
+#include "platform/mediaitemmodel.h"
+
 #include <KIcon>
 #include <QItemDelegate>
 #include <QPainter>
@@ -51,13 +53,17 @@ class MediaItemDelegate : public QItemDelegate
                     const QModelIndex &index) const;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int columnWidth (int column, int viewWidth) const;
-        bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+        bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& _index);
         void setView(QAbstractItemView * view);
         void setRenderMode(MediaItemDelegate::RenderMode mMode);
         MediaItemDelegate::RenderMode currentRenderMode();
         int heightForAllRows();
+        void setUseProxy(bool b = true);
+        bool useProxy() const { return m_useProxy; }
             
     private:
+        MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;
+
         MainWindow * m_parent;
         QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
@@ -68,6 +74,7 @@ class MediaItemDelegate : public QItemDelegate
         KIcon m_showNotInPlaylist;
         int calcItemHeight() const;
         bool m_nepomukInited;
+        bool m_useProxy;
         MediaIndexer * m_mediaIndexer;
         MediaItemDelegate::RenderMode m_renderMode;
         

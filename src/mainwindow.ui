@@ -5608,7 +5608,7 @@ color: rgb(255, 255, 255);</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="QFrame" name="frame_11">
+                          <widget class="QFrame" name="playlistFilter">
                            <property name="sizePolicy">
                             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                              <horstretch>0</horstretch>
