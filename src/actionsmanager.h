@@ -72,6 +72,7 @@ class ActionsManager : public QObject
         KAction *showInfo();
         KAction *addBookmark();
         KAction *showScriptingConsole();
+        KAction *showHidePlaylistFilter();
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -83,6 +84,7 @@ class ActionsManager : public QObject
         QMenu * bookmarksMenu();
 
         bool m_controlsVisible;
+        bool m_playlistFilterVisible;
         
     public slots:
         void updateSavedListsMenus();
@@ -130,11 +132,13 @@ class ActionsManager : public QObject
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
         QMenu *m_removeBookmarksMenu;
+        KAction* m_showHidePlaylistFilter;
 
         KActionCollection *m_actionCollection;
         MainWindow::ContextMenuSource m_contextMenuSource;
         KConfigGroup m_shortcutsConfig;
-        
+        QString m_restoreFilter;
+
     private slots:
         void fullScreenToggle();
         void toggleControls();
@@ -157,6 +161,7 @@ class ActionsManager : public QObject
         void showInfoForNowPlaying();
         void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
+        void togglePlaylistFilter();
         void addBookmarkSlot();
         void activateBookmark(KAction *bookmarkAction);
         void removeBookmark(KAction *bookmarkAction);
