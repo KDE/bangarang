@@ -192,12 +192,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlist = new Playlist(this, m_media);
     connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
     connect(m_playlist, SIGNAL(loading()), this, SLOT(showLoading()));
-    
+
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
     m_currentPlaylist->setMediaListCache(m_sharedMediaListCache);
     m_playlistItemDelegate = new MediaItemDelegate(this);
-    ui->playlistView->setModel(m_currentPlaylist);
+    m_playlist->filterProxyModel()->setSourceModel(m_currentPlaylist);
+    ui->playlistView->setModel(m_playlist->filterProxyModel());
+    ui->playlistFilterProxyLine->lineEdit()->setClickMessage(i18n("Search in playlist..."));
+    ui->playlistFilterProxyLine->setProxy(m_playlist->filterProxyModel());
+    ui->playlistFilter->setVisible(false);
+    m_playlistItemDelegate->setUseProxy(true);
     ui->playlistView->setItemDelegate(m_playlistItemDelegate);
     m_playlistItemDelegate->setView(ui->playlistView);
     playWhenPlaylistChanges = false;
@@ -410,6 +415,11 @@ void MainWindow::on_collectionButton_clicked()
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
+    if (ui->playlistFilterProxyLine->lineEdit()->text().isEmpty() &&
+        m_actionsManager->m_playlistFilterVisible
+       ) {
+        m_actionsManager->showHidePlaylistFilter()->trigger();
+    }
     ui->contextStack->setCurrentIndex(0);  
     m_actionsManager->showVideoSettings()->setText(i18n("Show Video Settings"));
 }
@@ -485,10 +495,11 @@ void MainWindow::on_mediaPlayPause_released()
 
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
+    int row = m_playlist->filterProxyModel()->mapToSource(index).row();
     if (!m_showQueue) {
-        m_playlist->playItemAt(index.row(), Playlist::PlaylistModel);
+        m_playlist->playItemAt(row, Playlist::PlaylistModel);
     } else {
-        m_playlist->playItemAt(index.row(), Playlist::QueueModel);
+        m_playlist->playItemAt(row, Playlist::QueueModel);
     }
     ui->playlistView->selectionModel()->clear();
 }
@@ -623,13 +634,15 @@ void MainWindow::on_showQueue_clicked()
 {
     m_showQueue = !m_showQueue;
     if (m_showQueue) {
-        ui->playlistView->setModel(m_playlist->queueModel());
+        m_playlist->filterProxyModel()->setSourceModel(m_playlist->queueModel());
+        ui->playlistView->setModel(m_playlist->filterProxyModel());
         ui->playlistView->setDragDropMode(QAbstractItemView::InternalMove);
         ui->showQueue->setToolTip(i18n("<b>Showing Upcoming</b><br>Click to show playlist"));
         ui->playlistName->setText(i18n("<b>Playlist</b>(Upcoming)"));
         ui->showQueue->setIcon(KIcon("bangarang-preview"));
     } else {
-        ui->playlistView->setModel(m_playlist->playlistModel());
+        m_playlist->filterProxyModel()->setSourceModel(m_playlist->playlistModel());
+        ui->playlistView->setModel(m_playlist->filterProxyModel());
         ui->playlistView->setDragDropMode(QAbstractItemView::DragDrop);
         ui->showQueue->setToolTip(i18n("Show Upcoming"));
         playlistChanged();
