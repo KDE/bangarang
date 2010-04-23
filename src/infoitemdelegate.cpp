@@ -68,7 +68,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     const int top = option.rect.top();
     const int width = option.rect.width();
     const int height = option.rect.height();   
-    int padding = 1;
+    int padding = 2;
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
     
@@ -84,18 +84,18 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
         KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
     }
-    
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+    
     if (index.column() == 0) {
-        //Paint first column containing artwork, titel and field labels
-        if (index.data(InfoItemModel::FieldRole).toString() == "artwork") {
+        //Paint first column containing artwork, title, description and field labels
+        if (field == "artwork") {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
         } else {
             Qt::AlignmentFlag hAlign;
             QFont textFont = option.font;
             QString text = index.data(Qt::DisplayRole).toString();
-            if (index.data(InfoItemModel::FieldRole).toString() == "title") {
+            if (field == "title") {
                 textFont.setPointSize(1.5*textFont.pointSize());
                 hAlign = Qt::AlignHCenter;
                 if (multipleValues) {
@@ -103,6 +103,23 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     text = i18n("Multiple Values");
                     textFont.setItalic(true);
                 } else if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
+                    textFont.setBold(true);
+                }
+            } else if (field == "description") {
+                textFont = KGlobalSettings::smallestReadableFont();
+                hAlign = Qt::AlignJustify;
+                padding = 10;
+                if (multipleValues) {
+                    foregroundColor.setAlphaF(0.7);
+                    text = i18n("Multiple Values");
+                    textFont.setItalic(true);
+                } else if (text.isEmpty()) {
+                    foregroundColor.setAlphaF(0.7);
+                    text = i18n("No description");
+                    textFont.setItalic(true);
+                    hAlign = Qt::AlignCenter;
+                }
+                if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
                     textFont.setBold(true);
                 }
             } else {
@@ -156,6 +173,9 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 textFont.setBold(true);
             }
             int textWidth = width - 2 * padding;
+            if (field == "url") {
+                text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textWidth);
+            }
             QTextOption textOption(Qt::AlignLeft | Qt::AlignVCenter);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
             QRect textRect(left + padding, top, textWidth, height);
@@ -176,7 +196,7 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
-    int padding = 1;
+    int padding = 2;
     int width = 0;
     if (index.column() == 0) {
         width = 0.35*m_view->width();
@@ -186,16 +206,24 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     if (field == "artwork") {
         height = 128 + 2*padding;
     } else {
+        QString text = index.data(Qt::DisplayRole).toString();
         QFont textFont = option.font;
         int availableWidth = 0.65*m_view->width() - 2*padding;
         if (field == "title") { 
             textFont.setPointSize(1.5*textFont.pointSize());
-            availableWidth = m_view->width();
+            availableWidth = m_view->width() - 2*padding;
+        } else if (field == "description") {
+            padding = 10;
+            textFont = KGlobalSettings::smallestReadableFont();
+            availableWidth = m_view->width() - 2*padding;
+        } else if (field == "url") {
+            textFont = KGlobalSettings::smallestReadableFont();
+            text = QString(); // url text is elided to a single line anyway
         }
         if (availableWidth <= 0) {
             availableWidth = 100;
         }
-        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString());
+        height = heightForWordWrap(textFont, availableWidth, text);
     }
        
     return QSize(width, height);
@@ -313,7 +341,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing() + 1;
+    int fmHeight = fm.lineSpacing() + 2;
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {

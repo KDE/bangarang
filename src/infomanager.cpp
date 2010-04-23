@@ -323,7 +323,7 @@ void InfoManager::updateViewsLayout()
     //Update infoItemView
     for (int row = 0; row < m_infoItemModel->rowCount(); row++) {
         QString field = m_infoItemModel->item(row)->data(InfoItemModel::FieldRole).toString();
-        if (field == "artwork" || field == "title") {
+        if (field == "artwork" || field == "title" || field == "description") {
             ui->infoItemView->setSpan(row,0,1,2);
         }
     }
