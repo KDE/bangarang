@@ -49,7 +49,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_state = Playlist::Finished;
     m_hadVideo = false;
     m_notificationRestrictions = 0;
-    m_filterProxyModel = new QSortFilterProxyModel();
+    m_filterProxyModel = new MediaSortFilterProxyModel();
 
     //setup the filter proxy
     m_filterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -840,3 +840,24 @@ void Playlist::metaDataChanged()
         }
     }
 }
+
+MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)
+                          : QSortFilterProxyModel(parent)
+{
+
+}
+
+bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    MediaItemModel *model = (MediaItemModel *) sourceModel();
+    QModelIndex index = model->index(sourceRow, 0, sourceParent);
+
+    if (model->data(index, Qt::DisplayRole).toString().contains(filterRegExp()))
+        return true;
+    if ((model->data(index, MediaItem::SubTitleRole).isValid()) &&
+        (model->data(index, MediaItem::SubTitleRole).toString().contains(filterRegExp()))
+       )
+       return true;
+
+    return false;
+};

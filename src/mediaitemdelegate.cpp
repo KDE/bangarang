@@ -66,7 +66,9 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     } else {
         m_nepomukInited = false; //no resource manager
     }
-    
+
+    //no proxy by default
+    m_useProxy = false;
 }
 
 MediaItemDelegate::~MediaItemDelegate()
@@ -108,11 +110,12 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         isMediaItem = true;
     }
     QString subType;
+    MediaItemModel * model = (MediaItemModel *) index.model();
+    if (useProxy())
+        model = (MediaItemModel *)((MediaSortFilterProxyModel *)index.model())->sourceModel();
     if (index.data(MediaItem::TypeRole).toString() == "Audio") {
-        MediaItemModel * model = (MediaItemModel *)((QSortFilterProxyModel *)index.model())->sourceModel();
         subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
     } else if (index.data(MediaItem::TypeRole).toString() == "Video") {
-        MediaItemModel * model = (MediaItemModel *)((QSortFilterProxyModel *)index.model())->sourceModel();
         subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
     }
     bool isCategory = index.data(MediaItem::TypeRole).toString() == "Category" ? true : false;
@@ -338,8 +341,19 @@ int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
     }
 }
 
-bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
+bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model,                                                const QStyleOptionViewItem &option, const QModelIndex &_index)
 {
+    QModelIndex index;
+    MediaItemModel *model;
+    //if we use a proxy the index is from the proxy, not from the MediaItemModel which we need
+    if (useProxy()) {
+        MediaSortFilterProxyModel * proxy = (MediaSortFilterProxyModel *) _model;
+        model = (MediaItemModel *) proxy->sourceModel();
+        index = proxy->mapToSource(_index);
+    } else {
+        model = (MediaItemModel *) _model;
+        index = _index;
+    }
     if (index.column() == 0) {
         if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
             //Check if rating was clicked and update rating
@@ -351,7 +365,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                 int ratingBottom = option.rect.top() + option.rect.height()/2;
                 if ((mouseEvent->x() > ratingLeft) && (mouseEvent->y() < ratingBottom)) {
                      int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/50.0) + 0.5);
-                     MediaItemModel * model = (MediaItemModel *)index.model();
                      MediaItem updatedMediaItem = model->mediaItemAt(index.row());
                      updatedMediaItem.fields["rating"] = newRating;
                      model->replaceMediaItemAt(index.row(), updatedMediaItem);
@@ -396,7 +409,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,  
                 if (playlistRow != -1) {
                     m_parent->m_playlist->removeMediaItemAt(playlistRow);
                 } else {
-                    MediaItemModel * model = (MediaItemModel *)index.model();
                     m_parent->m_playlist->addMediaItem(model->mediaItemAt(index.row()));
                 }
             }
@@ -440,4 +452,9 @@ MediaItemDelegate::RenderMode MediaItemDelegate::currentRenderMode()
 int MediaItemDelegate::heightForAllRows()
 {
     return m_view->model()->rowCount()*(calcItemHeight())+10;
+}
+
+void MediaItemDelegate::setUseProxy(bool b)
+{
+    m_useProxy = b;
 }
