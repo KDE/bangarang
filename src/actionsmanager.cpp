@@ -117,6 +117,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_parent->addAction(m_showHideControls);
     m_actionCollection->addAction(i18n("Hide controls"), m_showHideControls);
+
+    //Show/Hide Playlist Filter
+    m_showHidePlaylistFilter = new KAction(KIcon("layer-visible-off"), i18n("Show playlist filter"), this);
+    m_showHidePlaylistFilter->setShortcut(Qt::CTRL + Qt::Key_F);
+    connect(m_showHidePlaylistFilter, SIGNAL(triggered()), this, SLOT(togglePlaylistFilter()));
+    m_parent->addAction(m_showHidePlaylistFilter);
+    m_actionCollection->addAction("show_hide_playlist_filter", m_showHidePlaylistFilter);
     
     //Toggle Show Remaining Time Shortcut
     m_toggleShowRemainingTime = new KAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
@@ -215,6 +222,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //controls always visible at startup
     m_controlsVisible = true;
+    //filter ain't
+    m_playlistFilterVisible = false;
 }
 
 ActionsManager::~ActionsManager()
@@ -449,6 +458,11 @@ KAction *ActionsManager::newVideoList()
     return m_newVideoList;
 }
 
+KAction *ActionsManager::showHidePlaylistFilter()
+{
+    return m_showHidePlaylistFilter;
+}
+
 QMenu *ActionsManager::addToSavedAudioListMenu()
 {
     return m_addToAudioSavedList;
@@ -544,10 +558,10 @@ void ActionsManager::cancelFSHC()
 {
     if (m_parent->isFullScreen()) {
         m_parent->on_fullScreen_toggled(false);
-    } else {
-        if (ui->stackedWidget->currentIndex() == 1 && !m_controlsVisible) {
-            toggleControls();
-        }
+    } else if (ui->stackedWidget->currentIndex() == 1 && !m_controlsVisible) {
+        toggleControls();
+    } else if (ui->playlistFilterProxyLine->lineEdit()->hasFocus()) {
+        togglePlaylistFilter();
     }
 }
 
@@ -808,3 +822,17 @@ void ActionsManager::removeBookmark(KAction *bookmarkAction)
         }
     }
 }
+
+void ActionsManager::togglePlaylistFilter()
+{
+    if(!m_playlistFilterVisible) {
+        ui->playlistFilter->setVisible(true);
+        m_showHidePlaylistFilter->setText(i18n("Hide playlist filter"));
+        ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
+    } else {
+        ui->playlistFilter->setVisible(false);
+        m_showHidePlaylistFilter->setText(i18n("Show playlist filter"));
+    }
+    m_playlistFilterVisible = !m_playlistFilterVisible;
+}
+
