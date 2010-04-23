@@ -57,13 +57,13 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(i18n("Year"), "year");
                 addFieldToValuesModel(i18n("Genre"), "genre");
             }
+            addFieldToValuesModel(i18n("Description"), "description");
             if (subType == "Audio Stream") {
                 bool forceEditable = true;
                 addFieldToValuesModel(i18n("Location"), "url", forceEditable);
             } else {
                 addFieldToValuesModel(i18n("Location"), "url");
             }
-            addFieldToValuesModel(i18n("Description"), "description");
         } else {
             addFieldToValuesModel(i18n("Type"), "videoType");
             addFieldToValuesModel(i18n("Artwork"), "artwork");
@@ -100,7 +100,7 @@ void InfoItemModel::saveChanges()
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *currentItem = item(row, 0);
             QString field = currentItem->data(InfoItemModel::FieldRole).toString();
-            if (field != "title" && field != "artwork") {
+            if (field != "title" && field != "artwork" && field != "description") {
                 currentItem = item(row, 1); //These fields don't span both columns
             }
             //Save any field that does not have multiple values.
@@ -175,7 +175,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     QList<QStandardItem *> rowData;
     
     // Set field label (artwork and title fields span both columns)
-    if (field != "artwork" && field != "title") {
+    if (field != "artwork" && field != "title" && field != "description") {
         QStandardItem *fieldTitleItem = new QStandardItem(fieldTitle);
         fieldTitleItem->setData(field, InfoItemModel::FieldRole);
         fieldTitleItem->setEditable(false);
@@ -246,6 +246,9 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(value, Qt::DisplayRole);
         fieldItem->setData(value, Qt::EditRole);
         fieldItem->setData(value, InfoItemModel::OriginalValueRole); //stores copy of original data
+        if (field == "url") {
+            fieldItem->setData(value, Qt::ToolTipRole);
+        }
     } else {
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
