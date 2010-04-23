@@ -11,5 +11,6 @@ Icon=bangarang
 Name=Play DVD with Bangarang
 Name[nl]=DVD afspelen met Bangarang
 Name[de]=DVD mit Bangarang wiedergeben
+Name[fr]=Lire le DVD avec Bangarang
 Name[zh_CN]=使用 Bangarang 播放 DVD
 X-Ubuntu-Gettext-Domain=desktop_kdebase-workspace
