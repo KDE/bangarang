@@ -224,6 +224,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_controlsVisible = true;
     //filter ain't
     m_playlistFilterVisible = false;
+    m_restoreFilter = "";
 }
 
 ActionsManager::~ActionsManager()
