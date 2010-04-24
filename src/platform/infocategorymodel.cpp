@@ -64,7 +64,7 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
             addFieldToValuesModel(i18n("Image"), "associatedImage");
             addFieldToValuesModel(i18n("Name"), "title");
             addFieldToValuesModel(i18n("Description"), "description");
-            addFieldToValuesModel(i18n("Rating"), "rating");
+            //addFieldToValuesModel(i18n("Rating"), "rating");
         }
     }
 }
