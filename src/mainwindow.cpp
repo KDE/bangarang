@@ -234,7 +234,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Setup Video Settings
     VideoSettings *videoSettings = new VideoSettings(m_videoWidget, this);
-    videoSettings->setHideAction(m_actionsManager->showVideoSettings());
+    videoSettings->setHideAction(m_actionsManager->action("show_video_settings"));
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
     //Set up defaults
@@ -246,8 +246,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoListsStack->setCurrentIndex(0);
     ui->contextStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1000);
-    ui->mediaPrevious->setDefaultAction(m_actionsManager->playPrevious());
-    ui->mediaNext->setDefaultAction(m_actionsManager->playNext());
+    ui->mediaPrevious->setDefaultAction(m_actionsManager->action("play_previous"));
+    ui->mediaNext->setDefaultAction(m_actionsManager->action("play_next"));
     ui->listSummary->setFont(KGlobalSettings::smallestReadableFont());
     ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
     ui->playbackMessage->clear();
@@ -418,10 +418,10 @@ void MainWindow::on_showPlaylist_clicked(bool checked)
     if (ui->playlistFilterProxyLine->lineEdit()->text().isEmpty() &&
         m_actionsManager->m_playlistFilterVisible
        ) {
-        m_actionsManager->showHidePlaylistFilter()->trigger();
+        m_actionsManager->action("toggle_playlist_filter")->trigger();
     }
     ui->contextStack->setCurrentIndex(0);  
-    m_actionsManager->showVideoSettings()->setText(i18n("Show Video Settings"));
+    m_actionsManager->action("show_video_settings")->setText(i18n("Show Video Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -543,13 +543,13 @@ void MainWindow::on_previous_clicked()
 
 void MainWindow::on_playAll_clicked()
 {
-    m_actionsManager->playAll()->trigger();
+    m_actionsManager->action("play_all")->trigger();
 }
 
 void MainWindow::on_playSelected_clicked()
 {
     m_actionsManager->setContextMenuSource(MainWindow::Default);
-    m_actionsManager->playSelected()->trigger();
+    m_actionsManager->action("play_selected")->trigger();
 }
 
 void MainWindow::on_mediaLists_currentChanged(int i)
@@ -659,16 +659,16 @@ void MainWindow::on_showMenu_clicked()
     if (m_playlist->nowPlayingModel()->rowCount() > 0) {
         MediaItem mediaItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
         if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
-            m_menu->addAction(m_actionsManager->showNowPlayingInfo());
+            m_menu->addAction(m_actionsManager->action("show_now_playing_info"));
         }
     }
-    m_menu->addAction(m_actionsManager->showVideoSettings());
+    m_menu->addAction(m_actionsManager->action("show_video_settings"));
     if (!isFullScreen()) {
-        m_menu->addAction(m_actionsManager->showHideControls());
+        m_menu->addAction(m_actionsManager->action("toggle_controls"));
         m_menu->addSeparator();
     }
-    m_menu->addAction(m_actionsManager->showScriptingConsole());
-    m_menu->addAction(m_actionsManager->editShortcuts());
+    m_menu->addAction(m_actionsManager->action("show_scripting_console"));
+    m_menu->addAction(m_actionsManager->action("show_shortcuts_editor"));
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);

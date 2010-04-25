@@ -44,35 +44,12 @@ class ActionsManager : public QObject
     public:
         ActionsManager(MainWindow * parent);
         ~ActionsManager();
-        
-        KAction *quit();
-        KAction *playAll();
-        KAction *playSelected();
-        KAction *addSelectedToPlaylist();
-        KAction *removeSelectedFromPlaylist();
-        KAction *fullScreen();
-        KAction *showHideControls();
-        KAction *cancelFullScreenHideControls();
-        KAction *editShortcuts();
-        KAction *toggleShowRemainingTime();
-        KAction *playPause();
-        KAction *play();
-        KAction *pause();
-        KAction *playNext();
-        KAction *playPrevious();
-        KAction *mute();
-        KAction *removeSelectedItemsInfo();
-        KAction *refreshMediaView();
-        KAction *showVideoSettings();
-        KAction *removeFromSavedList();
-        KAction *newAudioList();
-        KAction *newVideoList();
-        KAction *showItems();
-        KAction *showNowPlayingInfo();
-        KAction *showInfo();
-        KAction *addBookmark();
-        KAction *showScriptingConsole();
-        KAction *showHidePlaylistFilter();
+
+        KActionCollection *shortcutsCollection() { return m_shortcutsCollection; }
+        KActionCollection *othersCollection() { return m_othersCollection; }
+
+        QAction *action( QString name, bool shortcutsOnly = false );
+
         QMenu *addToSavedAudioListMenu();
         QMenu *addToSavedVideoListMenu();
 
@@ -97,33 +74,6 @@ class ActionsManager : public QObject
         Ui::MainWindowClass *ui;
         VideoSettings *m_videoSettings;
 	
-        KAction *m_quit;
-        KAction *m_playAllAction;
-        KAction *m_playSelectedAction;
-        KAction *m_addSelectedToPlayListAction;
-        KAction *m_removeSelectedToPlayListAction;
-        KAction *m_showHideControls;
-        KAction *m_fullScreen;
-        KAction *m_cancelFullScreenHideControls;
-        KAction *m_editShortcuts;
-        KAction *m_toggleShowRemainingTime;
-        KAction *m_playPause;
-        KAction *m_play;
-        KAction *m_pause;
-        KAction *m_playNext;
-        KAction *m_playPrevious;
-        KAction *m_mute;
-        KAction *m_removeSelectedItemsInfo;
-        KAction *m_refreshMediaView;
-        KAction *m_showVideoSettings;
-        KAction *m_removeFromSavedList;
-        KAction *m_newAudioList;
-        KAction *m_newVideoList;
-        KAction *m_showItems;
-        KAction *m_showInfo;
-        KAction *m_showNowPlayingInfo;
-        KAction *m_addBookmark;
-        KAction *m_showScriptingConsole;
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
@@ -132,9 +82,12 @@ class ActionsManager : public QObject
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
         QMenu *m_removeBookmarksMenu;
-        KAction* m_showHidePlaylistFilter;
 
-        KActionCollection *m_actionCollection;
+        //every actionn which is allowed to have a shortcut
+        KActionCollection *m_shortcutsCollection;
+        //shortcuts that make no sense to have a shortcut
+        KActionCollection *m_othersCollection;
+
         MainWindow::ContextMenuSource m_contextMenuSource;
         KConfigGroup m_shortcutsConfig;
         QString m_restoreFilter;
