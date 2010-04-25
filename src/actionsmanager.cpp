@@ -35,188 +35,198 @@
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 {
+    /*Set up basics */
     m_parent = parent;
     ui = m_parent->ui;
 
     m_shortcutsConfig = KGlobal::config()->group("shortcuts");
 
-    m_actionCollection = new KActionCollection(this);
-    m_actionCollection->setConfigGlobal(true);
+    m_shortcutsCollection = new KActionCollection(this);
+    m_shortcutsCollection->setConfigGlobal(true);
+    m_shortcutsCollection->addAssociatedWidget(m_parent); //won't have to add each action to the parent
+    m_othersCollection = new KActionCollection(this);
     m_contextMenuSource = MainWindow::Default;
 
+    /*Set up actions*/
     //Add standard quit shortcut
-    m_quit = new KAction(this);
-    m_quit->setShortcut(Qt::CTRL + Qt::Key_Q);
-    connect(m_quit, SIGNAL(triggered()), qApp, SLOT(quit()));
-    m_parent->addAction(m_quit);
-    m_actionCollection->addAction(i18n("Quit"), m_quit);
-    
+    KAction *action = new KAction(KIcon("application-exit"), i18n("Quit"), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_Q);
+    connect(action, SIGNAL(triggered()), qApp, SLOT(quit()));
+    m_shortcutsCollection->addAction("quit", action);
+
     //Play/Pause Action
-    m_playPause = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
-    m_playPause->setShortcut(Qt::Key_Space);
-    connect(m_playPause, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
-    m_actionCollection->addAction(i18n("Play/Pause"), m_playPause);
+    action = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
+    action->setShortcut(Qt::Key_Space);
+    connect(action, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
+    m_shortcutsCollection->addAction("play_pause", action);
     //globals only work after adding them to the action manager
-    m_playPause->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_D));
-    m_parent->addAction(m_playPause);
+    action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_D));
+
 
     //Play Action
-    m_play = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
-    connect(m_play, SIGNAL(triggered()), this, SLOT(smartPlay()));
-    
+    action = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(smartPlay()));
+    m_othersCollection->addAction("play", action);
+
     //Pause Action
-    m_pause = new KAction(KIcon("media-playback-pause"), i18n("Pause"), this);
-    connect(m_pause, SIGNAL(triggered()), m_parent->playlist()->mediaObject(), SLOT(pause()));
-    
+    action = new KAction(KIcon("media-playback-pause"), i18n("Pause"), this);
+    connect(action, SIGNAL(triggered()), m_parent->playlist()->mediaObject(), SLOT(pause()));
+    m_othersCollection->addAction("pause", action);
+
+
     //Play Next
-    m_playNext = new KAction(KIcon("media-skip-forward"), i18n("Play next"), this);
-    m_playNext->setShortcut(Qt::Key_Right);
-    connect(m_playNext, SIGNAL(triggered()), m_parent->playlist(), SLOT(playNext()));
-    m_actionCollection->addAction(i18n("Play Next"), m_playNext);
-    m_playNext->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_F));
-    m_parent->addAction(m_playNext);
+    action = new KAction(KIcon("media-skip-forward"), i18n("Play next"), this);
+    action->setShortcut(Qt::Key_Right);
+    connect(action, SIGNAL(triggered()), m_parent->playlist(), SLOT(playNext()));
+    m_shortcutsCollection->addAction("play_next", action);
+    action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_F));
 
     //Play Previous
-    m_playPrevious = new KAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
-    m_playPrevious->setShortcut(Qt::Key_Left);
-    connect(m_playPrevious, SIGNAL(triggered()), m_parent->playlist(), SLOT(playPrevious()));
-    m_actionCollection->addAction(i18n("Play Previous"), m_playPrevious);
-    m_playPrevious->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
-    m_parent->addAction(m_playPrevious);
-    
-    //Mute
-    m_mute = new KAction(this);
-    m_mute->setShortcut(Qt::Key_M);
-    connect(m_mute, SIGNAL(triggered()), this, SLOT(muteAudio()));
-    m_actionCollection->addAction(i18n("Mute"), m_mute);
-    m_parent->addAction(m_mute);
-    
-    //Play All Action
-    m_playAllAction = new KAction(KIcon("media-playback-start"), i18n("Play all"), this);
-    connect(m_playAllAction, SIGNAL(triggered()), this, SLOT(playAllSlot()));
-    m_actionCollection->addAction(i18n("Play All"), m_playAllAction);
-    
-    //Play Selected Action
-    m_playSelectedAction = new KAction(KIcon("media-playback-start"), i18n("Play selected"), this);
-    connect(m_playSelectedAction, SIGNAL(triggered()), this, SLOT(playSelectedSlot()));
-    m_actionCollection->addAction(i18n("Play Selected"), m_playSelectedAction);
-    
-    //Add Selected To Playlist Action
-    m_addSelectedToPlayListAction = new KAction(KIcon("mail-mark-notjunk"), i18n("Add to playlist"), this);
-    connect(m_addSelectedToPlayListAction, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));  
-    m_actionCollection->addAction(i18n("Add to playlist"), m_addSelectedToPlayListAction);
-    
-    //Remove Selected From Playlist Action
-    m_removeSelectedToPlayListAction = new KAction(KIcon(), i18n("Remove from playlist"), this);
-    connect(m_removeSelectedToPlayListAction, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
-    m_actionCollection->addAction(i18n("Remove from playlist"), m_removeSelectedToPlayListAction);
-    
-    //Show/Hide Controls Shortcut
-    m_showHideControls = new KAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
-    m_showHideControls->setShortcut(Qt::CTRL + Qt::Key_H);
-    connect(m_showHideControls, SIGNAL(triggered()), this, SLOT(toggleControls()));
-    m_parent->addAction(m_showHideControls);
-    m_actionCollection->addAction(i18n("Hide controls"), m_showHideControls);
+    action = new KAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
+    action->setShortcut(Qt::Key_Left);
+    connect(action, SIGNAL(triggered()), m_parent->playlist(), SLOT(playPrevious()));
+    m_shortcutsCollection->addAction("play_previous", action);
+    action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
 
-    //Show/Hide Playlist Filter
-    m_showHidePlaylistFilter = new KAction(KIcon("layer-visible-off"), i18n("Show playlist filter"), this);
-    m_showHidePlaylistFilter->setShortcut(Qt::CTRL + Qt::Key_F);
-    connect(m_showHidePlaylistFilter, SIGNAL(triggered()), this, SLOT(togglePlaylistFilter()));
-    m_parent->addAction(m_showHidePlaylistFilter);
-    m_actionCollection->addAction("show_hide_playlist_filter", m_showHidePlaylistFilter);
-    
+    //Mute
+    action = new KAction(KIcon("player-volume-muted"), i18n("Mute"), this);
+    action->setShortcut(Qt::Key_M);
+    connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
+    m_shortcutsCollection->addAction("mute", action);
+
+    //Play All Action
+    action = new KAction(KIcon("media-playback-start"), i18n("Play all"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(playAllSlot()));
+    m_othersCollection->addAction("play_all", action);
+
+    //Play Selected Action
+    action = new KAction(KIcon("media-playback-start"), i18n("Play selected"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(playSelectedSlot()));
+    m_othersCollection->addAction("play_selected", action);
+
+    //Add Selected To Playlist Action
+    action = new KAction(KIcon("mail-mark-notjunk"), i18n("Add to playlist"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));
+    m_othersCollection->addAction("add_to_playlist", action);
+
+    //Remove Selected From Playlist Action
+    action = new KAction(KIcon(), i18n("Remove from playlist"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
+    m_othersCollection->addAction("remove_from_playlist", action);
+
+    //Toggle Controls Shortcut
+    action = new KAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_H);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleControls()));
+    m_shortcutsCollection->addAction("toggle_controls", action);
+
+    //Toggle Playlist Filter
+    action = new KAction(KIcon("layer-visible-off"), i18n("Show playlist filter"), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_F);
+    connect(action, SIGNAL(triggered()), this, SLOT(togglePlaylistFilter()));
+    m_shortcutsCollection->addAction("toggle_playlist_filter", action);
+
     //Toggle Show Remaining Time Shortcut
-    m_toggleShowRemainingTime = new KAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
-    connect(m_toggleShowRemainingTime, SIGNAL(triggered()), this, SLOT(toggleShowRemainingTimeSlot()));
-    m_actionCollection->addAction(i18n("Toggle Show Remaining Time"), m_toggleShowRemainingTime);
-   
+    action = new KAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleShowRemainingTimeSlot()));
+    m_shortcutsCollection->addAction("toggle_show_remaining_time", action);
+
     //Show VideoSettings
-    m_showVideoSettings = new KAction(KIcon("video-display"),tr("Show Video Settings"),this);
-    m_showVideoSettings->setShortcut(Qt::CTRL + Qt::Key_V);
-    connect(m_showVideoSettings, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
-    m_parent->addAction(m_showVideoSettings);
-    m_actionCollection->addAction(i18n("Show Video Settings"),m_showVideoSettings); 
-    
+    action = new KAction(KIcon("video-display"), i18n("Show Video Settings"),this);
+    action->setShortcut(Qt::CTRL + Qt::Key_V);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
+    m_shortcutsCollection->addAction("show_video_settings",action);
+
     //Full Screen
-    m_fullScreen = new KAction(this);
-    m_fullScreen->setShortcut(Qt::Key_F11);
-    connect(m_fullScreen, SIGNAL(triggered()), this, SLOT(fullScreenToggle()));
-    m_parent->addAction(m_fullScreen);
-    m_actionCollection->addAction(i18n("Toggle fullscreen"), m_fullScreen);
-    
+    action = new KAction(KIcon("view-fullscreen"), i18n("Fullscreen"), this);
+    action->setShortcut(Qt::Key_F11);
+    connect(action, SIGNAL(triggered()), this, SLOT(fullScreenToggle()));
+    m_shortcutsCollection->addAction("toggle_fullscreen", action);
+
     //Cancel FullScreen/Cancel Hide Controls
-    m_cancelFullScreenHideControls = new KAction(this);
-    m_cancelFullScreenHideControls->setShortcut(Qt::Key_Escape);
-    connect(m_cancelFullScreenHideControls, SIGNAL(triggered()), this, SLOT(cancelFSHC()));
-    m_parent->addAction(m_cancelFullScreenHideControls);
+    action = new KAction(this);
+    action->setShortcut(Qt::Key_Escape);
+    connect(action, SIGNAL(triggered()), this, SLOT(cancelFSHC()));
+    m_parent->addAction(action);
+    m_othersCollection->addAction("cancel", action); //shouldn't be editable
 
     //Remove Info for Selected MediaItems
-    m_removeSelectedItemsInfo = new KAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
-    connect(m_removeSelectedItemsInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
-    m_parent->addAction(m_removeSelectedItemsInfo);
+    action = new KAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
+    connect(action, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
+    m_othersCollection->addAction("remove_selected_info", action);
 
     //Refresh Media View
-    m_refreshMediaView = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
-    m_refreshMediaView->setShortcut(Qt::Key_F5);
-    connect(m_refreshMediaView, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
-    m_parent->addAction(m_refreshMediaView);
-    
+    action = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
+    action->setShortcut(Qt::Key_F5);
+    connect(action, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
+    m_shortcutsCollection->addAction("reload", action);
+
     //Remove selected from playlist
-    m_removeFromSavedList = new KAction(i18n("Remove from list"), this);
-    connect(m_removeFromSavedList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(removeSelected()));
-    
+    action = new KAction(i18n("Remove from list"), this);
+    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(removeSelected()));
+    m_othersCollection->addAction("remove_from_list", action);
+
     //Add selected to saved audio list
     m_addToAudioSavedList = new QMenu(i18n("Add to list"), m_parent);
     connect(m_addToAudioSavedList, SIGNAL(triggered(KAction *)), this, SLOT(addToSavedAudioList(KAction *)));
-    
+
     //Add selected to saved video list
     m_addToVideoSavedList = new QMenu(i18n("Add to list "), m_parent);
     connect(m_addToVideoSavedList, SIGNAL(triggered(KAction *)), this, SLOT(addToSavedVideoList(KAction *)));
-    
+
     //Add a new audio list
-    m_newAudioList = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
-    connect(m_newAudioList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showAudioListSave()));
-    
+    action = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
+    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showAudioListSave()));
+    m_othersCollection->addAction("new_audio_list", action);
+
     //Add a new video list
-    m_newVideoList = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
-    connect(m_newVideoList, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
-    
+    action = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
+    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
+    m_othersCollection->addAction("new_video_list", action);
+
     //Show Items
-    m_showItems = new KAction(KIcon("bangarang-category-browse"), i18n("Show items"), m_parent);
-    connect(m_showItems, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
+    action = new KAction(KIcon("bangarang-category-browse"), i18n("Show items"), m_parent);
+    connect(action, SIGNAL(triggered()), this, SLOT(loadSelectedSources()));
+    m_othersCollection->addAction("show_items", action);
 
     //Show Now Playing Info
-    m_showNowPlayingInfo = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
-    connect(m_showNowPlayingInfo, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
-    
+    action = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
+    connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
+    m_othersCollection->addAction("show_now_playing", action);
+
     //Show Info View
-    m_showInfo = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
-    connect(m_showInfo, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
-  
+    action = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
+    connect(action, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
+    m_othersCollection->addAction("show_info", action);
+
     //Add bookmark
-    m_addBookmark = new KAction(KIcon("bookmark-new"), i18n("Add bookmark"), m_parent);
-    connect(m_addBookmark, SIGNAL(triggered()), this, SLOT(addBookmarkSlot()));
-    
+    action = new KAction(KIcon("bookmark-new"), i18n("Add bookmark"), m_parent);
+    connect(action, SIGNAL(triggered()), this, SLOT(addBookmarkSlot()));
+    m_othersCollection->addAction("add_bookmark", action);
+
     //Bookmarks Menus
     m_bookmarksMenu = new QMenu(m_parent);
     connect(m_bookmarksMenu, SIGNAL(triggered(KAction *)), this, SLOT(activateBookmark(KAction *)));
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
     connect(m_removeBookmarksMenu, SIGNAL(triggered(KAction *)), this, SLOT(removeBookmark(KAction *)));
 
-    
+    //Show the Scripting Console
+    action = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
+    connect(action,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
+    m_shortcutsCollection->addAction("show_scripting_console", action);
+
     //Edit Shortcuts
-    //FIXME: Need to figure out how to use KShortcutsEditor
-    m_actionCollection->readSettings(&m_shortcutsConfig);
-    m_editShortcuts = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
-    connect(m_editShortcuts, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
+    action = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(cancelShortcuts()));
     connect(ui->saveShortcuts, SIGNAL(clicked()), this, SLOT(saveShortcuts()));
-    ui->shortcutsEditor->addCollection(m_actionCollection);
+    m_shortcutsCollection->addAction("show_shortcuts_editor", action);
 
-    //Show the Scripting Console
-    m_showScriptingConsole = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
-    connect(m_showScriptingConsole,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
-        
+    //set up the shortcuts collection
+    m_shortcutsCollection->readSettings(&m_shortcutsConfig);
+    ui->shortcutsEditor->addCollection(m_shortcutsCollection);
+
+    /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
     m_notifierMenu = new KMenu(m_parent);
 
@@ -231,119 +241,14 @@ ActionsManager::~ActionsManager()
 {
 }
 
-KAction * ActionsManager::quit()
+QAction * ActionsManager::action( QString name, bool shortcutsOnly )
 {
-    return m_quit;
-}
-
-KAction * ActionsManager::playPause()
-{
-    return m_playPause;
-}
-
-KAction * ActionsManager::play()
-{
-    return m_play;
-}
-
-KAction * ActionsManager::pause()
-{
-    return m_pause;
-}
-
-KAction * ActionsManager::playNext()
-{
-    return m_playNext;
-}
-
-KAction * ActionsManager::playPrevious()
-{
-    return m_playPrevious;
-}
-
-KAction * ActionsManager::mute()
-{
-    return m_mute;
-}
-
-KAction * ActionsManager::playAll()
-{
-    return m_playAllAction;
-}
-
-KAction * ActionsManager::playSelected()
-{
-    return m_playSelectedAction;
-}
-
-KAction * ActionsManager::addSelectedToPlaylist()
-{
-    return m_addSelectedToPlayListAction;
-}
-
-KAction * ActionsManager::removeSelectedFromPlaylist()
-{
-    return m_removeSelectedToPlayListAction;
-}
-
-KAction * ActionsManager::showHideControls()
-{
-    return m_showHideControls;
-}
-
-KAction * ActionsManager::fullScreen()
-{
-    return m_fullScreen;
-}
-
-KAction * ActionsManager::cancelFullScreenHideControls()
-{
-    return m_cancelFullScreenHideControls;
-}
-
-KAction * ActionsManager::editShortcuts()
-{
-    return m_editShortcuts;
-}
-
-KAction * ActionsManager::toggleShowRemainingTime()
-{
-    return m_toggleShowRemainingTime;
-}
-
-KAction * ActionsManager::removeSelectedItemsInfo()
-{
-    return m_removeSelectedItemsInfo;
-}
-
-KAction * ActionsManager::refreshMediaView()
-{
-    return m_refreshMediaView;
-}
-
-KAction * ActionsManager::showVideoSettings()
-{
-  return m_showVideoSettings;
-}
-
-KAction * ActionsManager::showNowPlayingInfo()
-{
-    return m_showNowPlayingInfo;
-}
-
-KAction * ActionsManager::showInfo()
-{
-    return m_showInfo;
-}
-
-KAction * ActionsManager::addBookmark()
-{
-    return m_addBookmark;
-}
-
-KAction * ActionsManager::showScriptingConsole()
-{
-  return m_showScriptingConsole;
+  QAction *action = m_shortcutsCollection->action(name);
+  if (!shortcutsOnly && action == NULL)
+  {
+    action = m_othersCollection->action(name);
+  }
+  return action;
 }
 
 QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSource menuSource)
@@ -373,15 +278,15 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     }
     if (isMedia || isCategory) {
         if (selection && isMedia) {
-            menu->addAction(addSelectedToPlaylist());
-            menu->addAction(removeSelectedFromPlaylist());
+            menu->addAction(action("add_to_playlist"));
+            menu->addAction(action("remove_from_playlist"));
             menu->addSeparator();
         }
-        if (selection) menu->addAction(playSelected());
-        menu->addAction(playAll());
+        if (selection) menu->addAction(action("play_selected"));
+        menu->addAction(action("play_all"));
         menu->addSeparator();
         if (selection && isCategory) {
-            menu->addAction(m_showItems);
+            menu->addAction(action("show_items"));
             menu->addSeparator();
         }
         if (selection && isMedia) {
@@ -395,16 +300,16 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
                 }
             }
             if (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")) {
-                menu->addAction(removeFromSavedList());
+                menu->addAction("remove_from_list");
             }
             menu->addSeparator();
         }
         if (selection && isMedia) {
-            menu->addAction(removeSelectedItemsInfo());
+            menu->addAction(action("remove_selected_info"));
             menu->addSeparator();
         }
 	
-        menu->addAction(refreshMediaView());
+        menu->addAction(action("reload"));
         menu->addSeparator();
         
     } 
@@ -417,51 +322,31 @@ QMenu *ActionsManager::nowPlayingContextMenu()
     m_nowPlayingContextMenu->clear();
     if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState ||
         m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
-        m_nowPlayingContextMenu->addAction(m_playPrevious);
+        m_nowPlayingContextMenu->addAction(action("play_previous"));
         if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-            m_nowPlayingContextMenu->addAction(m_pause);
+            m_nowPlayingContextMenu->addAction(action("pause"));
         } else {
-            m_nowPlayingContextMenu->addAction(m_play);
+            m_nowPlayingContextMenu->addAction(action("play"));
         }
     } else {
-        m_nowPlayingContextMenu->addAction(m_play);
+        m_nowPlayingContextMenu->addAction(action("play"));
     }
-    m_nowPlayingContextMenu->addAction(m_playNext);
+    m_nowPlayingContextMenu->addAction(action("play_next"));
     m_nowPlayingContextMenu->addSeparator();
     if (m_parent->playlist()->mediaObject()->hasVideo()) {
-        m_nowPlayingContextMenu->addAction(m_showVideoSettings);
+        m_nowPlayingContextMenu->addAction(action("show_video_settings"));
     }
-    m_nowPlayingContextMenu->addAction(m_showHideControls);
+    m_nowPlayingContextMenu->addAction(action("toggle_controls"));
     return m_nowPlayingContextMenu;
 }
 
 KMenu *ActionsManager::notifierMenu()
 {
     m_notifierMenu->clear();
-    m_notifierMenu->addAction(m_playPrevious);
-    m_notifierMenu->addAction(m_playPause);
-    m_notifierMenu->addAction(m_playNext);
+    m_notifierMenu->addAction(action("play_previous"));
+    m_notifierMenu->addAction(action("play_pause"));
+    m_notifierMenu->addAction(action("play_next"));
     return m_notifierMenu;
-}
-
-KAction *ActionsManager::removeFromSavedList()
-{
-    return m_removeFromSavedList;
-}
-
-KAction *ActionsManager::newAudioList()
-{
-    return m_newAudioList;
-}
-
-KAction *ActionsManager::newVideoList()
-{
-    return m_newVideoList;
-}
-
-KAction *ActionsManager::showHidePlaylistFilter()
-{
-    return m_showHidePlaylistFilter;
 }
 
 QMenu *ActionsManager::addToSavedAudioListMenu()
@@ -478,15 +363,15 @@ QMenu *ActionsManager::bookmarksMenu()
 {
     m_removeBookmarksMenu->clear();
     m_bookmarksMenu->clear();
-    m_bookmarksMenu->addAction(m_toggleShowRemainingTime);
+    m_bookmarksMenu->addAction(action("toggle_show_remaining_time"));
     m_bookmarksMenu->addSeparator();
     Phonon::State state = m_parent->playlist()->mediaObject()->state();
     if (!(state == Phonon::PlayingState || state == Phonon::PausedState)) {
-        m_addBookmark->setEnabled(false);
+        action("add_bookmark")->setEnabled(false);
     } else {
-        m_addBookmark->setEnabled(true);
+        action("add_bookmark")->setEnabled(true);
     }
-    m_bookmarksMenu->addAction(m_addBookmark);
+    m_bookmarksMenu->addAction(action("add_bookmark"));
     if (m_parent->playlist()->nowPlayingModel()->rowCount() > 0) {
         QString url = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
         QStringList bookmarks = m_parent->bookmarksManager()->bookmarks(url);
@@ -524,17 +409,18 @@ void ActionsManager::fullScreenToggle()
 
 void ActionsManager::toggleControls()
 {
+    QAction *toggle = action("toggle_controls");
     if ((!m_parent->isFullScreen()) && (ui->stackedWidget->currentIndex() == 1)) {
         if (m_controlsVisible) {
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
-            m_showHideControls->setIcon(KIcon("layer-visible-on"));
-	    m_showHideControls->setText(i18n("Show Controls"));
+            toggle->setIcon(KIcon("layer-visible-on"));
+	    toggle->setText(i18n("Show Controls"));
         } else {
             ui->widgetSet->setVisible(true);
             ui->nowPlayingToolbar->setVisible(true);
-            m_showHideControls->setIcon(KIcon("layer-visible-off"));
-	    m_showHideControls->setText(i18n("Hide Controls"));
+            toggle->setIcon(KIcon("layer-visible-off"));
+	    toggle->setText(i18n("Hide Controls"));
         }
         m_controlsVisible = !m_controlsVisible;
     }
@@ -547,11 +433,11 @@ void ActionsManager::toggleVideoSettings()
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(1);
         ui->contextStack->setVisible(true);
-        m_showVideoSettings->setText(i18n("Hide Video Settings"));
+        action("show_video_settings")->setText(i18n("Hide Video Settings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-        m_showVideoSettings->setText(i18n("Show Video Settings"));
+        action("show_video_settings")->setText(i18n("Show Video Settings"));
     }
 }
 
@@ -648,7 +534,7 @@ void ActionsManager::removeSelectedFromPlaylistSlot()
 void ActionsManager::updateSavedListsMenus()
 {
     m_addToAudioSavedList->clear();
-    m_addToAudioSavedList->addAction(m_newAudioList);
+    m_addToAudioSavedList->addAction(action("new_audio_list"));
     QStringList audioListNames = m_parent->savedListsManager()->savedListNames("Audio");
     for (int i = 0; i < audioListNames.count(); i++) {
         if (!((audioListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
@@ -660,7 +546,7 @@ void ActionsManager::updateSavedListsMenus()
     }
     
     m_addToVideoSavedList->clear();
-    m_addToVideoSavedList->addAction(m_newVideoList);
+    m_addToVideoSavedList->addAction(action("new_video_list"));
     QStringList videoListNames = m_parent->savedListsManager()->savedListNames("Video");
     for (int i = 0; i < videoListNames.count(); i++) {
         if (!((videoListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
@@ -779,10 +665,10 @@ void ActionsManager::toggleShowRemainingTimeSlot()
 {
     m_parent->toggleShowRemainingTime();
     if (m_parent->showingRemainingTime()) {
-        m_toggleShowRemainingTime->setText(i18n("Show Elapsed Time"));
+        action("toggle_show_remaining_time")->setText(i18n("Show Elapsed Time"));
         ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
     } else {
-        m_toggleShowRemainingTime->setText(i18n("Show Remaining Time"));
+        action("toggle_show_remaining_time")->setText(i18n("Show Remaining Time"));
         ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
     }
 }
@@ -828,17 +714,15 @@ void ActionsManager::togglePlaylistFilter()
 {
     if(!m_playlistFilterVisible) {
         ui->playlistFilter->setVisible(true);
-        m_showHidePlaylistFilter->setText(i18n("Hide playlist filter"));
+        action("toggle_playlist_filter")->setText(i18n("Hide playlist filter"));
         if(!m_restoreFilter.isEmpty()) {
             ui->playlistFilterProxyLine->setText( m_restoreFilter );
             m_restoreFilter.clear();
         }
-        else {
-            ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
-        }
+        ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
     } else {
         ui->playlistFilter->setVisible(false);
-        m_showHidePlaylistFilter->setText(i18n("Show playlist filter"));
+        action("toggle_playlist_filter")->setText(i18n("Show playlist filter"));
         if(!ui->playlistFilterProxyLine->lineEdit()->text().isEmpty())
         {
             m_restoreFilter = ui->playlistFilterProxyLine->lineEdit()->text();
