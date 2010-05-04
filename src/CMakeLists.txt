@@ -45,6 +45,7 @@ SET(BangarangSources
     videosettings.cpp
     pluginexport.cpp
     scriptconsole.cpp
+    starrating.cpp
     platform/mediaitemmodel.cpp
     platform/musiclistengine.cpp
     platform/videolistengine.cpp
