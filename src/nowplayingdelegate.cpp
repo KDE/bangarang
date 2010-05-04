@@ -37,6 +37,7 @@
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>
 #include "mainwindow.h"
+#include "starrating.h"
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -138,17 +139,19 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
     //Draw rating
     if (m_nepomukInited && isMediaItem && (subType != "CD Track") && (subType != "DVD Title")) {
-        int rating = 0;
-        if (index.data(MediaItem::RatingRole).isValid()) {
-            rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
-        }
-        for (int i = 1; i <= 5; i++) {
-            if (i <= rating) {
-                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingCount);
-            } else {
-                p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingNotCount);
-            }
-        }
+        int rating = index.data(MediaItem::RatingRole).isValid() ?
+            index.data(MediaItem::RatingRole).toInt() : 0;
+        StarRating r = StarRating(rating, StarRating::Big);
+        QSize sz = r.sizeHint();
+        r.setPoint(QPoint( left + textInner, top + topOffset + iconWidth - sz.height()));
+        r.paint(&p);
+//         for (int i = 1; i <= 5; i++) {
+//             if (i <= rating) {
+//                 p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingCount);
+//             } else {
+//                 p.drawPixmap(left + textInner + (18 * (i-1)), top + topOffset + iconWidth - 18, m_ratingNotCount);
+//             }
+//         }
     }
     
     p.end();
