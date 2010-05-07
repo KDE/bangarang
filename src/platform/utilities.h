@@ -78,5 +78,6 @@ namespace Utilities {
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
     QString mergeLRIs(const QString &lri, const QString &lriToMerge);
     QUrl artistResource(const QString &artistName);
+    QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
 }
 #endif //UTILITIES_H    

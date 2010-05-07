@@ -28,6 +28,7 @@
 #include <KIconEffect>
 #include <KLocale>
 #include <KDebug>
+#include <kio/netaccess.h>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -380,7 +381,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     //url.cleanPath();
     //url = QUrl::fromPercentEncoding(url.url().toUtf8());
 
-    if (Utilities::isM3u(url.url()) || Utilities::isPls(url.url())) {
+    if (url.isLocalFile() && (Utilities::isM3u(url.url()) || Utilities::isPls(url.url()))) {
         mediaItem.artwork = KIcon("view-list-text");
         mediaItem.url = QString("savedlists://%1").arg(url.url());
         mediaItem.title = url.fileName();
@@ -812,7 +813,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         mediaItem.fields["audioType"] = type;
         mediaItem.artwork = KIcon("audio-x-wav");
         if (type == "Audio Stream") {
-            mediaItem.artwork = KIcon("x-media-podcast");
+            mediaItem.artwork = KIcon("text-html");
         } else if (type == "Music") {
             mediaItem.artwork = KIcon("audio-mpeg");
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
@@ -1177,4 +1178,117 @@ QUrl Utilities::artistResource(const QString &artistName)
         resource = it.binding("r").uri();
     }
     return resource;
+}
+
+QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocation)
+{
+    QList<MediaItem> mediaList;
+    
+    //Download playlist if it is remote
+    KUrl location = KUrl(savedListLocation);
+    if (!location.isLocalFile() && 
+        (Utilities::isPls(savedListLocation) || Utilities::isM3u(savedListLocation))) {
+        QString tmpFile;
+        if( KIO::NetAccess::download(location, tmpFile, 0)) {
+            location = KUrl(tmpFile);
+        } else {
+            return mediaList;
+        }
+    }
+    QFile file(location.path());
+    if (file.exists()) {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            return mediaList;
+        }
+    }
+        
+    //Make sure it's a valid M3U or PLSfileref
+    QTextStream in(&file);
+    bool valid = false;
+    bool isM3U = false;
+    bool isPLS = false;
+    if (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.trimmed() == "#EXTM3U") {
+            valid = true;
+            isM3U = true;
+        } else if (line.trimmed() == "[playlist]") {
+            valid = true;
+            isPLS = true;
+        }
+    }
+    
+    //Create a MediaItem for each entry
+    if (valid) {
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            if ((isM3U) && line.startsWith("#EXTINF:")) {
+                line = line.replace("#EXTINF:","");
+                QStringList durTitle = line.split(",");
+                QString title;
+                int duration;
+                if (durTitle.count() == 1) {
+                    //No title
+                    duration = 0;
+                    title = durTitle.at(0);
+                } else {
+                    duration = durTitle.at(0).toInt();
+                    title = durTitle.at(1);
+                }
+                QString url = in.readLine().trimmed();
+                MediaItem mediaItem;
+                KUrl itemUrl(url);
+                if (!url.isEmpty()) {
+                    mediaItem = Utilities::mediaItemFromUrl(itemUrl);
+                } else {
+                    continue;
+                }
+                if (mediaItem.title == itemUrl.fileName()) {
+                    mediaItem.title = title;
+                }
+                if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.fields["duration"] = duration;
+                } else if (duration == -1) {
+                    mediaItem.duration = QString();
+                    mediaItem.fields["audioType"] = "Audio Stream";
+                }
+                mediaList << mediaItem;
+            }
+            if ((isPLS) && line.startsWith("File")) {
+                QString url = line.mid(line.indexOf("=") + 1).trimmed();
+                QString title;
+                if (!in.atEnd()) {
+                    line = in.readLine();
+                    title = line.mid(line.indexOf("=") + 1).trimmed();
+                }
+                int duration = 0;
+                if (!in.atEnd()) {
+                    line = in.readLine();
+                    duration = line.mid(line.indexOf("=") + 1).trimmed().toInt();
+                }
+                
+                MediaItem mediaItem;
+                KUrl itemUrl(url);
+                if (!url.isEmpty()) {
+                    mediaItem = Utilities::mediaItemFromUrl(itemUrl);
+                } else {
+                    continue;
+                }
+                if (mediaItem.title == itemUrl.fileName()) {
+                    mediaItem.title = title;
+                }
+                if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.fields["duration"] = duration;
+                } else if (duration == -1) {
+                    mediaItem.duration = QString();
+                    mediaItem.fields["audioType"] = "Audio Stream";
+                }
+                mediaList << mediaItem;
+            }
+        }
+    }
+    
+    return mediaList;
 }

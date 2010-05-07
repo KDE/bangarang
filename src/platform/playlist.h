@@ -246,6 +246,7 @@ class Playlist : public QObject
         void addToQueue();
         bool m_hadVideo;
         KNotificationRestrictions * m_notificationRestrictions;
+        QList<QString> m_streamListUrls;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
