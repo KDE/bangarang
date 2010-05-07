@@ -85,10 +85,14 @@ void AudioStreamListEngine::run()
             m_mediaListProperties.summary = i18np("1 stream", "%1 streams", mediaList.count());
             
             MediaItem mediaItem;
-            mediaItem.type = "Action";
-            mediaItem.url = "audiostreams://";
-            mediaItem.title = i18n("Create new audio stream item");
-            mediaItem.artwork = KIcon("document-new");
+            mediaItem.type = "Audio";
+            mediaItem.url = QString();
+            mediaItem.title = i18n("New Audio Stream");
+            mediaItem.subTitle = i18n("Edit info to create new audio stream");
+            mediaItem.artwork = KIcon("text-html");
+            mediaItem.fields["title"] = "Untitled";
+            mediaItem.fields["audioType"] = "Audio Stream";
+            mediaItem.fields["isTemplate"] = true;
             mediaList.append(mediaItem);
             
             m_mediaListProperties.type = QString("Sources");
@@ -134,32 +138,47 @@ void AudioStreamListEngine::run()
     }
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    
+    //Get artwork
+    if (m_nepomukInited) {
+        MediaVocabulary mediaVocabulary;
+        for (int i = 0; i < mediaList.count(); i++) {
+            MediaItem mediaItem = mediaList.at(i);
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            query.addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasUrl(MediaQuery::Required, mediaItem.url));
+            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Required));
+            query.endWhere();
+            query.addLimit(5);
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+            
+            while( it.next() ) {
+                MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+                QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+                if (!artwork.isNull()) {
+                    emit updateArtwork(artwork, mediaItem);
+                    break;
+                }
+            }
+        }
+    }
+
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }
 
 void AudioStreamListEngine::setFilterForSources(const QString& engineFilter)
 {
-    //Always return songs
+    //Always return streams
     m_mediaListProperties.lri = QString("audiostreams://?%1").arg(engineFilter);
 }
 
 void AudioStreamListEngine::activateAction()
 {
-    MediaItem mediaItem;
-    mediaItem.type = "Audio";
-    mediaItem.url = QString();
-    mediaItem.title = i18n("Untitled Audio Stream");
-    mediaItem.subTitle = i18n("Select this item, click Info then Edit to enter audio stream info");
-    mediaItem.artwork = KIcon("x-media-podcast");
-    mediaItem.fields["title"] = "Untitled";
-    mediaItem.fields["audioType"] = "Audio Stream";
-    mediaItem.fields["isTemplate"] = true;
-    
-    QList<MediaItem> mediaList;
-    mediaList << mediaItem;
-    
-    m_mediaListProperties.name = i18n("New Audio Stream");
-    
-    model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
 }
