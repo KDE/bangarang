@@ -162,6 +162,20 @@ void Playlist::playItemAt(int row, Playlist::Model model)
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
             m_mediaObject->play();
+        } else if (nextMediaItem.fields["audioType"].toString() == "Audio Stream") {
+            if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
+                QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
+                for (int i = 0; i < streamList.count(); i++) {
+                    if (i == 0) {
+                        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                    } else {
+                        m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                    }
+                }
+            } else {
+                m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+            }
+            m_mediaObject->play();
         } else {
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
             m_mediaObject->play();
@@ -198,6 +212,22 @@ void Playlist::playItemAt(int row, Playlist::Model model)
             m_mediaObject->setCurrentSource(Phonon::Dvd);
             m_mediaController->setAutoplayTitles(false);
             m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+        } else if (nextMediaItem.fields["audioType"].toString() == "Audio Stream") {
+            m_streamListUrls.clear();
+            if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
+                QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
+                for (int i = 0; i < streamList.count(); i++) {
+                    m_streamListUrls << streamList.at(i).url;
+                    if (i == 0) {
+                        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                    } else {
+                        m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                    }
+                }
+            } else {
+                m_streamListUrls << nextMediaItem.url;    
+                m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+            }
         } else {
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
@@ -714,9 +744,18 @@ void Playlist::updateNowPlaying()
         } else {
             currentUrl = m_mediaObject->currentSource().url().toString();
         }    
-        if ((currentUrl == QUrl::fromPercentEncoding(m_queue->mediaItemAt(i).url.toUtf8()))) {
-            queueRow = i;
-            break;
+        if (m_queue->mediaItemAt(i).fields["audioType"].toString() == "Audio Stream") {
+            for (int j = 0; j < m_streamListUrls.count(); j++) {
+                if (currentUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
+                    queueRow = i;
+                    break;
+                }
+            }
+        } else {
+            if ((currentUrl == QUrl::fromPercentEncoding(m_queue->mediaItemAt(i).url.toUtf8()))) {
+                queueRow = i;
+                break;
+            }
         }
     }
     
