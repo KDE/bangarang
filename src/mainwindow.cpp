@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 #else
     m_sysTray = new KNotificationItem(i18n("Bangarang"), this);
 #endif
-    m_sysTray->setIconByName("bangarang");
+    m_sysTray->setIconByName("bangarang-notifier");
 
     //Setup interface icons
     setupIcons();
