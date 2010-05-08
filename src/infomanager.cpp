@@ -105,10 +105,12 @@ void InfoManager::toggleInfoView()
     ui->semanticsHolder->setVisible(makeVisible);
     
     if (makeVisible) {
+        m_infoViewVisible = true;
         loadSelectedInfo();
         ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
         ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
     } else {
+        m_infoViewVisible = false;
         ui->showInfo->setToolTip(i18n("Show Information"));
         ui->showInfo->setIcon(KIcon("help-about"));
     } 
@@ -118,11 +120,18 @@ void InfoManager::showInfoView()
 {
     ui->semanticsHolder->setVisible(true);
     loadSelectedInfo();
+    m_infoViewVisible = true;
 }
 
 void InfoManager::hideInfoView()
 {
     ui->semanticsHolder->setVisible(false);
+    m_infoViewVisible = false;
+}
+
+bool InfoManager::infoViewVisible()
+{
+    return m_infoViewVisible;
 }
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )

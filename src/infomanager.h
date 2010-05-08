@@ -61,6 +61,7 @@ class InfoManager : public QObject
         void clearInfoBoxSelection();
         void mediaListPropertiesChanged();
         void removeSelectedItemsInfo();
+        bool infoViewVisible();
         
     private:
         MainWindow *m_parent; 
@@ -77,6 +78,7 @@ class InfoManager : public QObject
         MediaItem m_contextCategory;
         QList<MediaItem> m_selectedInfoBoxMediaItems;
         QTimer *m_selectionTimer;
+        bool m_infoViewVisible;
         
     private slots:
         void updateViewsLayout();
