@@ -168,11 +168,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Add selected to saved audio list
     m_addToAudioSavedList = new QMenu(i18n("Add to list"), m_parent);
-    connect(m_addToAudioSavedList, SIGNAL(triggered(KAction *)), this, SLOT(addToSavedAudioList(KAction *)));
+    connect(m_addToAudioSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedAudioList(QAction *)));
 
     //Add selected to saved video list
     m_addToVideoSavedList = new QMenu(i18n("Add to list "), m_parent);
-    connect(m_addToVideoSavedList, SIGNAL(triggered(KAction *)), this, SLOT(addToSavedVideoList(KAction *)));
+    connect(m_addToVideoSavedList, SIGNAL(triggered(QAction *)), this, SLOT(addToSavedVideoList(QAction *)));
 
     //Add a new audio list
     action = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
@@ -206,9 +206,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Bookmarks Menus
     m_bookmarksMenu = new QMenu(m_parent);
-    connect(m_bookmarksMenu, SIGNAL(triggered(KAction *)), this, SLOT(activateBookmark(KAction *)));
+    connect(m_bookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(activateBookmark(QAction *)));
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
-    connect(m_removeBookmarksMenu, SIGNAL(triggered(KAction *)), this, SLOT(removeBookmark(KAction *)));
+    connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
 
     //Show the Scripting Console
     action = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
@@ -300,7 +300,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
                 }
             }
             if (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")) {
-                menu->addAction("remove_from_list");
+                menu->addAction(action("remove_from_list"));
             }
             menu->addSeparator();
         }
@@ -583,7 +583,7 @@ void ActionsManager::playAllSlot()
     ui->stackedWidget->setCurrentIndex(1);   
 }
 
-void ActionsManager::addToSavedAudioList(KAction *addAction)
+void ActionsManager::addToSavedAudioList(QAction *addAction)
 {
     //Get list of selected items to add
     QList<MediaItem> mediaList = selectedMediaItems();
@@ -595,7 +595,7 @@ void ActionsManager::addToSavedAudioList(KAction *addAction)
     }
 }
 
-void ActionsManager::addToSavedVideoList(KAction *addAction)
+void ActionsManager::addToSavedVideoList(QAction *addAction)
 {
     //Get list of selected items to add
     QList<MediaItem> mediaList = selectedMediaItems();
@@ -686,7 +686,7 @@ void ActionsManager::addBookmarkSlot()
     }
 }
 
-void ActionsManager::activateBookmark(KAction *bookmarkAction)
+void ActionsManager::activateBookmark(QAction *bookmarkAction)
 {
     QString bookmark = bookmarkAction->data().toString();
     if (!bookmark.isEmpty() && bookmark.startsWith("Activate:")) {
@@ -697,7 +697,7 @@ void ActionsManager::activateBookmark(KAction *bookmarkAction)
         
 }
 
-void ActionsManager::removeBookmark(KAction *bookmarkAction)
+void ActionsManager::removeBookmark(QAction *bookmarkAction)
 {
     QString bookmark = bookmarkAction->data().toString();
     if (!bookmark.isEmpty() && bookmark.startsWith("Remove:")) {
