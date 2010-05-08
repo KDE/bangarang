@@ -329,6 +329,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->setContextMenu(m_actionsManager->notifierMenu());
+    
+    //Load config
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    if (generalGroup.readEntry("Shuffle", false)) {
+        on_shuffle_clicked();
+    }
+    if (generalGroup.readEntry("Repeat", false)) {
+        on_repeat_clicked();
+    }
 
     m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
@@ -357,8 +367,15 @@ MainWindow::~MainWindow()
             }
         }
     }
+    
+    //Save application config
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    generalGroup.writeEntry("Shuffle", m_shuffle);
+    generalGroup.writeEntry("Repeat", m_repeat);
+    config.sync();
+
     delete ui;
-    delete m_mediaItemModel;
 }
 
 
