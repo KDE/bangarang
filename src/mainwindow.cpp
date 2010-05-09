@@ -335,6 +335,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     KConfigGroup generalGroup( &config, "General" );
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_savedListsManager->loadPlaylist();
 
     m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
@@ -370,6 +371,7 @@ MainWindow::~MainWindow()
     generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
     config.sync();
+    m_savedListsManager->savePlaylist();
 
     delete ui;
 }

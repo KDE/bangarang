@@ -331,16 +331,20 @@ void Playlist::addMediaList(const QList<MediaItem> &mediaList)
 {
     int startingRow = m_currentPlaylist->rowCount();
     for (int i = 0; i < mediaList.count(); ++i) {
-        m_currentPlaylist->loadMediaItem(mediaList.at(i), true);
-        m_playlistIndices.append(startingRow + i);
+        if (mediaList.at(i).type == "Audio" || mediaList.at(i).type == "Video") {
+            m_currentPlaylist->loadMediaItem(mediaList.at(i), true);
+            m_playlistIndices.append(startingRow + i);
+        }
     }
 }
 
 void Playlist::addMediaItem(const MediaItem &mediaItem)
 {
     int startingRow = m_currentPlaylist->rowCount();
-    m_currentPlaylist->loadMediaItem(mediaItem, true);
-    m_playlistIndices.append(startingRow);
+    if (mediaItem.type == "Audio" || mediaItem.type == "Video") {
+        m_currentPlaylist->loadMediaItem(mediaItem, true);
+        m_playlistIndices.append(startingRow);
+    }
 }
 
 void Playlist::removeMediaItemAt(int row)
