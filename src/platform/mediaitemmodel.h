@@ -532,6 +532,12 @@ class MediaItemModel : public QStandardItemModel
         void setListEngineFactory(ListEngineFactory * listEngineFactory);
         
         /**
+         * Sets suppression of no results message
+         * @param suppress true to suppress message, false otherwise
+         */
+        void setSuppressNoResultsMessage(bool suppress);
+        
+        /**
          * Returns the DropActions supported by the model
          */
         Qt::DropActions supportedDropActions() const;
@@ -735,6 +741,7 @@ class MediaItemModel : public QStandardItemModel
         QList<MediaItem> m_mediaListForLoadSources;
         bool m_reload;
         bool m_lriIsLoadable;
+        bool m_suppressNoResultsMessage;
 
 };
 
