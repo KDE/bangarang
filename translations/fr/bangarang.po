@@ -471,12 +471,12 @@ msgstr "Divertissements… Maintenant"
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Humbert Julien &amp; Ryan Kavanagh"
+msgstr "Humbert Julien, Ryan Kavanagh"
 
 #: rc.cpp:2
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "julroy67@gmail.com"
+msgstr "julroy67@gmail.com, ryanakca@kubuntu.org"
 
 #. i18n: file: mainwindow.ui:156
 #. i18n: ectx: property (text), widget (QLabel, label)
