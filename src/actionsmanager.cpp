@@ -663,13 +663,11 @@ void ActionsManager::setContextMenuSource(MainWindow::ContextMenuSource menuSour
 
 void ActionsManager::toggleShowRemainingTimeSlot()
 {
-    m_parent->toggleShowRemainingTime();
+    m_parent->setShowRemainingTime(!m_parent->showingRemainingTime());
     if (m_parent->showingRemainingTime()) {
         action("toggle_show_remaining_time")->setText(i18n("Show Elapsed Time"));
-        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
     } else {
         action("toggle_show_remaining_time")->setText(i18n("Show Remaining Time"));
-        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
     }
 }
 

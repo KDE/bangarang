@@ -112,7 +112,7 @@ public:
     
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
-    void toggleShowRemainingTime();
+    void setShowRemainingTime(bool showRemainingTime);
     
 private:
     Phonon::VideoPlayer *m_player;
