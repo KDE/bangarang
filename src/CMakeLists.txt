@@ -11,8 +11,8 @@ INCLUDE(KDE4Defaults)
 ADD_DEFINITIONS( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
 
 macro_ensure_version( "4.3.80" ${KDE_VERSION} HAVEKDE4_4 )
-macro_bool_to_01(HAVEKDE4_4 HAVE_KSTATUSNOTIFIERITEM)
-configure_file(config-bangarang.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-bangarang.h )
+#macro_bool_to_01(HAVEKDE4_4 HAVE_KSTATUSNOTIFIERITEM)
+#configure_file(config-bangarang.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-bangarang.h )
 
 add_subdirectory( platform/nepomukwriter )
 

@@ -55,12 +55,12 @@ class InfoManager;
 class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
 class KStatusNotifierItem;
-#else
+/*#else
 #include <knotificationitem-1/knotificationitem.h>
 using ::Experimental::KNotificationItem;
-#endif
+#endif*/
 
 namespace Ui
 {

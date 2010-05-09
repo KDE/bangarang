@@ -45,9 +45,9 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
 #include <KStatusNotifierItem>
-#endif
+//#endif
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/job.h>
@@ -78,11 +78,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setGeometry(0,0,760,520);
 
     // Set up system tray icon
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
     m_sysTray = new KStatusNotifierItem(i18n("Bangarang"), this);
-#else
+/*#else
     m_sysTray = new KNotificationItem(i18n("Bangarang"), this);
-#endif
+#endif*/
     m_sysTray->setIconByName("bangarang-notifier");
 
     //Setup interface icons
@@ -1034,18 +1034,18 @@ void MainWindow::nowPlayingChanged()
         m_sysTray->setToolTip(m_nowPlaying->mediaItemAt(0).artwork, 
                               m_nowPlaying->mediaItemAt(0).title, 
                               m_nowPlaying->mediaItemAt(0).subTitle);
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Active);
-#else
+/*#else
         m_sysTray->setStatus(KNotificationItem::Active);
-#endif
+#endif*/
     } else {
         m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Passive);
-#else
+/*#else
         m_sysTray->setStatus(KNotificationItem::Passive);
-#endif
+#endif*/
     }
 }
 
