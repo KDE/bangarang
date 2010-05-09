@@ -44,12 +44,22 @@ class NowPlayingDelegate : public QItemDelegate
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int columnWidth (int column, int viewWidth) const;
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
-                    
+        QAbstractItemView *view() { return m_view; }
+        void setView(QAbstractItemView *view) { m_view = view; }
+
+    protected:
+        bool isMediaItem(const QModelIndex *index) const;
+        QRect ratingRect(const QRect *rect) const;
+
     private:
-        MainWindow * m_parent;  
-        QPixmap m_ratingCount;
-        QPixmap m_ratingNotCount;
+        MainWindow * m_parent;
+        int m_iconSize;
+        int m_padding;
+        int m_textInner;
+        int m_starRatingSize;
         bool m_nepomukInited;
+        QRect m_globalRatingRect;
+        QAbstractItemView *m_view;
         MediaIndexer * m_mediaIndexer;
         
 };

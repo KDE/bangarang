@@ -6276,7 +6276,7 @@ color: rgb(255, 255, 255);</string>
   <tabstop>vslsListName</tabstop>
   <tabstop>vslsSave</tabstop>
   <tabstop>vslsCancel</tabstop>
-  <tabstop>saveShortCuts</tabstop>
+  <tabstop>saveShortcuts</tabstop>
   <tabstop>cancelEditShortcuts</tabstop>
  </tabstops>
  <resources/>
