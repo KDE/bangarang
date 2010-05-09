@@ -43,7 +43,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_nowPlaying = new MediaItemModel(this);
     m_queue = new MediaItemModel(this);   
     playWhenPlaylistChanges = false;
-    m_mode = Playlist::Normal;
+    m_shuffle = false;
     m_repeat = false;
     m_queueDepth = 10;
     m_state = Playlist::Finished;
@@ -118,10 +118,10 @@ void Playlist::playItemAt(int row, Playlist::Model model)
         }
 
         //Update Queue Model
-        if (m_mode == Playlist::Normal) {
+        if (!m_shuffle) {
             //Just build a new queue from the specified row
             buildQueueFrom(row);
-        } else if (m_mode == Playlist::Shuffle) {
+        } else {
             if (m_playlistIndicesHistory.indexOf(row) == -1) {
                 //If item has not yet played move it to the front
                 if (m_queue->rowOfUrl(nextMediaItem.url) != -1) {
@@ -189,10 +189,10 @@ void Playlist::playItemAt(int row, Playlist::Model model)
         nextMediaItem.nowPlaying = true;
         
         //Update Queue Model
-        if (m_mode == Playlist::Normal) {
+        if (!m_shuffle) {
             //Just build a new queue from the row of the item in the playlist
             buildQueueFrom(nextMediaItem.playlistIndex);
-        } else if (m_mode == Playlist::Shuffle) {
+        } else {
             if (row > 0) {
                 //Move item to front of queue
                 QList<MediaItem> queueMediaList = m_queue->mediaList();
@@ -281,9 +281,9 @@ void Playlist::start()
     for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
         m_playlistIndices.append(i);
     }
-    if (m_mode == Playlist::Normal) {
+    if (!m_shuffle) {
         orderByPlaylist();
-    } else if (m_mode == Playlist::Shuffle) {
+    } else {
         shuffle();
     }
     playItemAt(0, Playlist::QueueModel);
@@ -389,61 +389,66 @@ void Playlist::setMediaObject(Phonon::MediaObject *mediaObject)
     
 }
 
-void Playlist::setMode(Playlist::Mode mode)
-{
-    if (mode <= 1) {
-        m_mode = mode;
-        if (m_currentPlaylist->rowCount() > 0) {
-            if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
-                //Rebuild queue after currently playing item
-                if (m_mode == Playlist::Normal) {
-                    if (m_queue->rowCount() > 1) {
-                        buildQueueFrom(m_queue->mediaItemAt(0).playlistIndex);
-                    } else {
-                        orderByPlaylist();
-                    }
-                } else {
-                    MediaItem nowPlayingItem;
-                    if (m_queue->rowCount() > 1) {
-                        m_queue->removeRows(1, m_queue->rowCount() - 1);
-                        nowPlayingItem = m_queue->mediaItemAt(0);
-                    }
-                    m_playlistIndices.clear();
-                    m_playlistIndicesHistory.clear();
-                    m_playlistUrlHistory.clear();
-                    for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
-                        if (nowPlayingItem.url.isEmpty() || m_currentPlaylist->mediaItemAt(i).url != nowPlayingItem.url) {
-                            m_playlistIndices.append(i);
-                        }
-                    }
-                    shuffle();
-                }
-            } else {
-                //Rebuild queue from scratch
-                m_queue->clearMediaListData();
-                if (m_mode == Playlist::Normal) {
-                    orderByPlaylist();
-                } else if (m_mode == Playlist::Shuffle) {
-                    shuffle();
-                }
-            }
-        }
-    }
-}
-
-Playlist::Mode Playlist::mode()
-{
-    return m_mode;
-}
-
 QSortFilterProxyModel * Playlist::filterProxyModel()
 {
     return m_filterProxyModel;
 }
 
-void Playlist::setRepeat(bool repeat)
+void Playlist::setShuffleMode(bool shuffleMode)
+{
+    m_shuffle = shuffleMode;
+    if (m_currentPlaylist->rowCount() > 0) {
+        if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState) {
+            //Rebuild queue after currently playing item
+            if (!m_shuffle) {
+                if (m_queue->rowCount() > 1) {
+                    buildQueueFrom(m_queue->mediaItemAt(0).playlistIndex);
+                } else {
+                    orderByPlaylist();
+                }
+            } else {
+                MediaItem nowPlayingItem;
+                if (m_queue->rowCount() > 1) {
+                    m_queue->removeRows(1, m_queue->rowCount() - 1);
+                    nowPlayingItem = m_queue->mediaItemAt(0);
+                }
+                m_playlistIndices.clear();
+                m_playlistIndicesHistory.clear();
+                m_playlistUrlHistory.clear();
+                for (int i = 0; i < m_currentPlaylist->rowCount(); ++i) {
+                    if (nowPlayingItem.url.isEmpty() || m_currentPlaylist->mediaItemAt(i).url != nowPlayingItem.url) {
+                        m_playlistIndices.append(i);
+                    }
+                }
+                shuffle();
+            }
+        } else {
+            //Rebuild queue from scratch
+            m_queue->clearMediaListData();
+            if (!m_shuffle) {
+                orderByPlaylist();
+            } else {
+                shuffle();
+            }
+        }
+    }
+    emit shuffleModeChanged(m_shuffle);
+}
+
+bool Playlist::shuffleMode()
+{
+    return m_shuffle;
+}
+
+void Playlist::setRepeatMode(bool repeat)
 {
     m_repeat = repeat;
+    emit repeatModeChanged(m_repeat);
+}
+
+bool Playlist::repeatMode()
+{
+    return m_repeat;
 }
 
 Playlist::State Playlist::state()
@@ -635,7 +640,7 @@ void Playlist::playlistChanged()
         // - rebuild history to just before currently playing/paused url
         // - rebuild queue from currently playing item to queue depth
         // - rebuild playlist indices using remaining items
-        if (m_mode == Playlist::Normal) {
+        if (!m_shuffle) {
             int currentRow = 0;
             if ((m_mediaObject->state() == Phonon::PlayingState) || (m_mediaObject->state() == Phonon::PausedState)) {
                 //Starting with the currently playing item, check to see if item
@@ -821,12 +826,12 @@ void Playlist::addToQueue()
         }
     }
     if (m_playlistIndices.count() > 0) {
-        if (m_mode == Playlist::Normal) {
+        if (!m_shuffle) {
             int nextIndex = m_playlistIndices.takeAt(0);
             MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
             nextMediaItem.playlistIndex = nextIndex;
             m_queue->loadMediaItem(nextMediaItem);
-        } else if (m_mode == Playlist::Shuffle) {
+        } else {
             int nextIndex = m_playlistIndices.takeAt(rand()%m_playlistIndices.count());
             MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
             nextMediaItem.playlistIndex = nextIndex;
