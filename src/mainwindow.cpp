@@ -214,6 +214,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_nowPlayingDelegate = new NowPlayingDelegate(this);
     ui->nowPlayingView->setModel(m_nowPlaying);
     ui->nowPlayingView->setItemDelegate(m_nowPlayingDelegate);
+    m_nowPlayingDelegate->setView(ui->nowPlayingView);
     connect(m_nowPlaying, SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     ui->nowPlayingView->header()->setVisible(false);
     ui->nowPlayingView->header()->hideSection(1);
