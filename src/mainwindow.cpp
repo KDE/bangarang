@@ -78,11 +78,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setGeometry(0,0,760,520);
 
     // Set up system tray icon
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
     m_sysTray = new KStatusNotifierItem(i18n("Bangarang"), this);
-/*#else
-    m_sysTray = new KNotificationItem(i18n("Bangarang"), this);
-#endif*/
     m_sysTray->setIconByName("bangarang-notifier");
 
     //Setup interface icons
@@ -1031,23 +1027,17 @@ void MainWindow::nowPlayingChanged()
         } else {
             ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
         }
-
-
-        m_sysTray->setToolTip(m_nowPlaying->mediaItemAt(0).artwork, 
+        
+        //Scale artwork to current desktop icon size otherwise notifier will show unknown icon
+        int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
+        QPixmap artworkPix = m_nowPlaying->mediaItemAt(0).artwork.pixmap(iconSize, iconSize);
+        m_sysTray->setToolTip(QIcon(artworkPix), 
                               m_nowPlaying->mediaItemAt(0).title, 
                               m_nowPlaying->mediaItemAt(0).subTitle);
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Active);
-/*#else
-        m_sysTray->setStatus(KNotificationItem::Active);
-#endif*/
     } else {
         m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Passive);
-/*#else
-        m_sysTray->setStatus(KNotificationItem::Passive);
-#endif*/
     }
 }
 
