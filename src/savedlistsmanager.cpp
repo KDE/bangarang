@@ -35,6 +35,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {
     m_parent = parent;
     ui = m_parent->ui;
+    m_loader = new MediaItemModel(this);
+    m_loadingPlaylist = false;
     
     ui->aListSourceSelection->setEnabled(false);
     ui->vListSourceSelection->setEnabled(false);
@@ -753,6 +755,33 @@ QString SavedListsManager::savedListLriName(const QString &lri)
     
     return name;
 }
+
+void SavedListsManager::savePlaylist()
+{
+    saveMediaList(m_parent->playlist()->playlistModel()->mediaList(), "current", "Playlist");
+}
+
+void SavedListsManager::loadPlaylist()
+{
+    if (!m_loadingPlaylist) {
+        MediaItem mediaItem;
+        mediaItem.type = "Category";
+        mediaItem.title = "Playlist";
+        mediaItem.url = "savedlists://Playlist-current.m3u";
+        m_loader->clearMediaListData();
+        connect(m_loader, SIGNAL(mediaListChanged()), this, SLOT(loadPlaylist()));
+        QList<MediaItem> mediaList;
+        mediaList << mediaItem;
+        m_loader->loadSources(mediaList);
+        m_loadingPlaylist = true;
+    } else {
+        m_parent->playlist()->addMediaList(m_loader->mediaList());
+        m_loadingPlaylist = false;
+        disconnect(m_loader, SIGNAL(mediaListChanged()), this, SLOT(loadPlaylist()));
+        m_loader->clearMediaListData();
+    }
+}
+
         
         
 

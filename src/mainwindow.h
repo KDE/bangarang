@@ -55,12 +55,12 @@ class InfoManager;
 class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
 class KStatusNotifierItem;
-#else
+/*#else
 #include <knotificationitem-1/knotificationitem.h>
 using ::Experimental::KNotificationItem;
-#endif
+#endif*/
 
 namespace Ui
 {
@@ -133,8 +133,6 @@ private:
     QList<MediaItem> m_mediaList;
     QList<int> m_mediaListScrollHistory;
     bool m_showQueue;
-    bool m_repeat;
-    bool m_shuffle;
     QDateTime m_lastMouseMoveTime;
     InfoManager * m_infoManager;
     SavedListsManager * m_savedListsManager;
@@ -199,6 +197,8 @@ private slots:
     void playlistChanged();
     void nowPlayingChanged();
     void playlistFinished();
+    void repeatModeChanged(bool repeat);
+    void shuffleModeChanged(bool shuffle);
     void hidePlayButtons();
     void updateListHeader();
     void deviceAdded(const QString &udi);
@@ -221,7 +221,7 @@ private slots:
     
 };
 
-class MouseMoveDetector : public QObject
+/*class MouseMoveDetector : public QObject
 {
     Q_OBJECT
     MouseMoveDetector(QObject * parent = 0) : QObject(parent){}
@@ -240,6 +240,6 @@ class MouseMoveDetector : public QObject
             return QObject::eventFilter(obj, event);
         }
         
-};
+};*/
 
 #endif // MAINWINDOW_H

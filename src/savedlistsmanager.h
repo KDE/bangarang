@@ -29,6 +29,7 @@ namespace Ui
 }
 class MainWindow;
 class MediaItem;
+class MediaItemModel;
 
 /*
  * This class provides a user interface for saving and removing media lists
@@ -59,6 +60,8 @@ class SavedListsManager : public QObject
         void removeSelected();
         void saveAudioListSettings();
         void saveVideoListSettings();
+        void savePlaylist();
+        void loadPlaylist();
         
     private:
         MainWindow *m_parent; 
@@ -70,6 +73,8 @@ class SavedListsManager : public QObject
         QStringList m_savedVideoLists;
         void updateSavedListsIndex();
         bool m_nepomukInited;
+        MediaItemModel *m_loader;
+        bool m_loadingPlaylist;
         
     private slots:
         void enableValidSave(QString newText = QString());

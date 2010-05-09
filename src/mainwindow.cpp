@@ -45,9 +45,9 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
-#ifdef HAVE_KSTATUSNOTIFIERITEM
+//#ifdef HAVE_KSTATUSNOTIFIERITEM
 #include <KStatusNotifierItem>
-#endif
+//#endif
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/job.h>
@@ -78,12 +78,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setGeometry(0,0,760,520);
 
     // Set up system tray icon
-#ifdef HAVE_KSTATUSNOTIFIERITEM
     m_sysTray = new KStatusNotifierItem(i18n("Bangarang"), this);
-#else
-    m_sysTray = new KNotificationItem(i18n("Bangarang"), this);
-#endif
-    m_sysTray->setIconByName("bangarang");
+    m_sysTray->setIconByName("bangarang-notifier");
 
     //Setup interface icons
     setupIcons();
@@ -192,7 +188,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlist = new Playlist(this, m_media);
     connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
     connect(m_playlist, SIGNAL(loading()), this, SLOT(showLoading()));
-
+    connect(m_playlist, SIGNAL(shuffleModeChanged(bool)), this, SLOT(shuffleModeChanged(bool)));
+    connect(m_playlist, SIGNAL(repeatModeChanged(bool)), this, SLOT(repeatModeChanged(bool)));
+    
     //Set up playlist view
     m_currentPlaylist = m_playlist->playlistModel();
     m_currentPlaylist->setMediaListCache(m_sharedMediaListCache);
@@ -256,8 +254,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     showApplicationBanner();
     updateCachedDevicesList();
     m_showQueue = false;
-    m_repeat = false;
-    m_shuffle = false;
     m_pausePressed = false;
     m_stopPressed = false;
     m_loadingProgress = 0;
@@ -291,15 +287,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             } else {
                 //Play Url
                 KUrl cmdLineKUrl = args->url(i);
-                if (!cmdLineKUrl.isLocalFile()) {
-                    QString tmpFile;
-                    if( KIO::NetAccess::download(cmdLineKUrl, tmpFile, this)) {
-                        //KMessageBox::information(this,tmpFile);
-                        cmdLineKUrl = KUrl(tmpFile);
-                    } else {
-                        cmdLineKUrl = KUrl();
-                    }
-                }
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
                 mediaList << mediaItem;
                 m_playlist->playMediaList(mediaList);
@@ -338,6 +325,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up system tray actions
     m_sysTray->setStandardActionsEnabled(false);
     m_sysTray->setContextMenu(m_actionsManager->notifierMenu());
+    
+    //Load config
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
+    m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_savedListsManager->loadPlaylist();
 
     m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
@@ -366,8 +360,16 @@ MainWindow::~MainWindow()
             }
         }
     }
+    
+    //Save application config
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
+    generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
+    config.sync();
+    m_savedListsManager->savePlaylist();
+
     delete ui;
-    delete m_mediaItemModel;
 }
 
 
@@ -605,29 +607,14 @@ void MainWindow::on_clearPlaylist_clicked()
 
 void MainWindow::on_shuffle_clicked()
 {
-    m_shuffle = !m_shuffle;
-    if (m_shuffle) {
-        m_playlist->setMode(Playlist::Shuffle);
-        ui->shuffle->setToolTip(i18n("<b>Shuffle On</b><br>Click to turn off Shuffle"));
-        ui->shuffle->setIcon(KIcon("bangarang-shuffle"));
-    } else {
-        m_playlist->setMode(Playlist::Normal);
-        ui->shuffle->setToolTip(i18n("Turn on Shuffle"));
-        ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
-    }
+    bool shuffleMode = m_playlist->shuffleMode();
+    m_playlist->setShuffleMode(!shuffleMode);
 }
 
 void MainWindow::on_repeat_clicked()
 {
-    m_repeat = !m_repeat;
-    m_playlist->setRepeat(m_repeat);
-    if (m_repeat) {
-        ui->repeat->setIcon(KIcon("bangarang-repeat"));
-        ui->repeat->setToolTip(i18n("<b>Repeat On</b><br>Click to turn off repeat"));
-    } else {
-        ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
-        ui->repeat->setToolTip(i18n("Turn on Repeat"));
-    }    
+    bool repeatMode = m_playlist->repeatMode();
+    m_playlist->setRepeatMode(!repeatMode);
 }
 
 void MainWindow::on_showQueue_clicked()
@@ -1040,23 +1027,17 @@ void MainWindow::nowPlayingChanged()
         } else {
             ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
         }
-
-
-        m_sysTray->setToolTip(m_nowPlaying->mediaItemAt(0).artwork, 
+        
+        //Scale artwork to current desktop icon size otherwise notifier will show unknown icon
+        int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
+        QPixmap artworkPix = m_nowPlaying->mediaItemAt(0).artwork.pixmap(iconSize, iconSize);
+        m_sysTray->setToolTip(QIcon(artworkPix), 
                               m_nowPlaying->mediaItemAt(0).title, 
                               m_nowPlaying->mediaItemAt(0).subTitle);
-#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Active);
-#else
-        m_sysTray->setStatus(KNotificationItem::Active);
-#endif
     } else {
         m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
-#ifdef HAVE_KSTATUSNOTIFIERITEM
         m_sysTray->setStatus(KStatusNotifierItem::Passive);
-#else
-        m_sysTray->setStatus(KNotificationItem::Passive);
-#endif
     }
 }
 
@@ -1069,6 +1050,29 @@ void MainWindow::playlistFinished()
     ui->nowPlaying->setToolTip(i18n("View Now Playing"));
     ui->seekTime->setText("0:00");
 }
+
+void MainWindow::repeatModeChanged(bool repeat)
+{
+    if (repeat) {
+        ui->repeat->setIcon(KIcon("bangarang-repeat"));
+        ui->repeat->setToolTip(i18n("<b>Repeat On</b><br>Click to turn off repeat"));
+    } else {
+        ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
+        ui->repeat->setToolTip(i18n("Turn on Repeat"));
+    }    
+}
+
+void MainWindow::shuffleModeChanged(bool shuffle)
+{
+    if (shuffle) {
+        ui->shuffle->setToolTip(i18n("<b>Shuffle On</b><br>Click to turn off Shuffle"));
+        ui->shuffle->setIcon(KIcon("bangarang-shuffle"));
+    } else {
+        ui->shuffle->setToolTip(i18n("Turn on Shuffle"));
+        ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
+    }
+}
+
 
 void MainWindow::hidePlayButtons()
 {

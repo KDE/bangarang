@@ -108,15 +108,15 @@ class ActionsManager : public QObject
         void removeSelectedItemsInfoSlot();
         void playSelectedSlot();
         void playAllSlot();
-        void addToSavedAudioList(KAction *addAction);
-        void addToSavedVideoList(KAction *addAction);
+        void addToSavedAudioList(QAction *addAction);
+        void addToSavedVideoList(QAction *addAction);
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
         void togglePlaylistFilter();
         void addBookmarkSlot();
-        void activateBookmark(KAction *bookmarkAction);
-        void removeBookmark(KAction *bookmarkAction);
+        void activateBookmark(QAction *bookmarkAction);
+        void removeBookmark(QAction *bookmarkAction);
 };
 #endif //ACTIONSMANAGER_H

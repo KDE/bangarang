@@ -131,7 +131,7 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Audio Streams");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "audiostreams://";
-            mediaItem.artwork = KIcon("x-media-podcast");
+            mediaItem.artwork = KIcon("text-html");
             mediaItem.fields["categoryType"] = QString("Audio Streams");
             contextTitles.clear();
             contextTitles << i18n("Recently Played Streams") << i18n("Highest Rated Streams") << i18n("Frequently Played Streams");
