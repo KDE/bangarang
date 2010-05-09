@@ -73,8 +73,6 @@ class SavedListsManager : public QObject
         QStringList m_savedVideoLists;
         void updateSavedListsIndex();
         bool m_nepomukInited;
-        MediaItemModel *m_loader;
-        bool m_loadingPlaylist;
         
     private slots:
         void enableValidSave(QString newText = QString());
