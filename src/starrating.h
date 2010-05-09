@@ -35,18 +35,40 @@ class StarRating {
         enum Size { Small = 8, Big = 16 };
         enum MinMax{ InvalidRating = -1, MinRating = 0, MaxRating = 10 };
 
-        StarRating(int rating = 0, Size size = Small, QPoint point = QPoint(0, 0), int hoverX = -1);
+        static const int Margin = 1;
+
+        StarRating(int rating = 0, int size = Small,
+                   QPoint point = QPoint(0, 0), QPoint hoverPos = QPoint(-1, -1));
 
         void setRating(int rating) { m_rating = rating; }
         void setSize(int size);
         void setPoint(QPoint point) { m_point = point; }
-        void setHoverAtPosition(int hoverX) { m_hoverRating = ratingAtPosition(hoverX); }
+        void setHoverAtPosition(QPoint point) { m_hoverRating = ratingAtPosition(point); }
 
         bool valid(int rating) const { return (rating >= MinRating && rating <= MaxRating); }
         int rating() { return m_rating; }
-        QSize sizeHint() const;
-        int ratingAtPosition(int x);
+        QSize sizeHint() const { return StarRating::SizeHint(m_starSize); }
+        int ratingAtPosition(QPoint point) const { return StarRating::RatingAtPosition(point, m_starSize, m_point); }
         void paint(QPainter *painter);
+
+        static QSize SizeHint(int size) {
+            // *__*__*__*__*   +  StarRating::Margin around it
+            int bothMargin = (StarRating::Margin * 2);
+            return QSize( 5 * (size + 2) - 2, size) + QSize(bothMargin, bothMargin);
+        }
+
+        static int RatingAtPosition(QPoint point, int starSize, QPoint offset) {
+            QPoint p = point - offset; //relative to the rating pic now
+            QSize sz = StarRating::SizeHint(starSize);
+            if (p.x() < 0 || p.y() < 0 || p.x() > sz.width() || p.y() > sz.height())
+                return StarRating::InvalidRating;
+            int in_x = p.x() - StarRating::Margin;
+            int real_width = sz.width() - StarRating::Margin * 2;
+            int rating = (int) ((StarRating::MaxRating * in_x) / real_width) + 1;
+            if (rating > StarRating::MaxRating || rating < StarRating::MinRating)
+                rating = StarRating::InvalidRating;
+            return rating;
+        }
 
     protected:
         QPixmap m_starHover;
@@ -56,8 +78,7 @@ class StarRating {
         int m_rating;
         int m_hoverRating;
         QPoint m_point;
-        QSize m_starSize;
-        QSize m_margin;
+        int m_starSize;
 };
 
 Q_DECLARE_METATYPE( StarRating )
