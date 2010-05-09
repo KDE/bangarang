@@ -42,6 +42,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_forceRefreshFromSource = false;
     m_loadSources = false;
     m_reload = false;
+    m_suppressNoResultsMessage = false;
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -271,8 +272,6 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
         return;
     }
     
-    setLoadingState(true);
-    
     //Load data only for media sources
     m_subRequestMediaLists.clear();
     m_subRequestSignatures.clear();
@@ -282,7 +281,6 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
     m_requestSignature = m_listEngineFactory->generateRequestSignature();
     for (int i = 0; i < mediaList.count(); ++i) {
         if ((mediaList.at(i).type == "Audio") || (mediaList.at(i).type == "Video") || (mediaList.at(i).type == "Image")){
-            setLoadingState(false);
             if (!mediaList.at(i).url.isEmpty()) { //url of sources can't be empty
                 loadMediaItem(mediaList.at(i));
             }
@@ -317,17 +315,16 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                     m_subRequestMediaLists.append(emptyList);
                 }
             }
-        } else {
-            setLoadingState(false);
         }
     }
     if (onlySources) {
-        if (rowCount() == 0) {
+        if (rowCount() == 0  && !m_suppressNoResultsMessage) {
             showNoResultsMessage();
         }
         emit mediaListChanged();
     } else {
         //Launch load requests
+        setLoadingState(true);
         for (int i = 0; i < categories.count(); ++i) {
             MediaListProperties mediaListProperties;
             mediaListProperties.lri = categories.at(i).url;
@@ -393,7 +390,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
             m_mediaListProperties = mediaListProperties;
             emit mediaListPropertiesChanged();
             if (done) {
-                if (rowCount() == 0) {
+                if (rowCount() == 0 && !m_suppressNoResultsMessage) {
                     showNoResultsMessage();
                 }
                 m_reload = false;
@@ -417,7 +414,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                             loadMediaList(m_subRequestMediaLists.at(i), false, true);
                             count += m_subRequestMediaLists.at(i).count();
                         }
-                        if (rowCount() == 0) {
+                        if (rowCount() == 0 && !m_suppressNoResultsMessage) {
                             showNoResultsMessage();
                         }
                         //Need a basic lri so updateInfo and removeInfo can be performed by a list engine
@@ -830,4 +827,9 @@ MediaListCache * MediaItemModel::mediaListCache()
 bool MediaItemModel::lriIsLoadable()
 {
     return m_lriIsLoadable;
+}
+
+void MediaItemModel::setSuppressNoResultsMessage(bool suppress)
+{
+    m_suppressNoResultsMessage = suppress;
 }

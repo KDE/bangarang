@@ -89,7 +89,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
 
     //Mute
-    action = new KAction(KIcon("player-volume-muted"), i18n("Mute"), this);
+    action = new KAction(KIcon("dialog-cancel"), i18n("Mute"), this);
     action->setShortcut(Qt::Key_M);
     connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
     m_shortcutsCollection->addAction("mute", action);
@@ -343,6 +343,8 @@ QMenu *ActionsManager::nowPlayingContextMenu()
 KMenu *ActionsManager::notifierMenu()
 {
     m_notifierMenu->clear();
+    m_notifierMenu->addAction(action("mute"));
+    m_notifierMenu->addSeparator();
     m_notifierMenu->addAction(action("play_previous"));
     m_notifierMenu->addAction(action("play_pause"));
     m_notifierMenu->addAction(action("play_next"));
@@ -501,6 +503,13 @@ void ActionsManager::muteAudio()
 {
     bool muted = m_parent->audioOutput()->isMuted();
     m_parent->audioOutput()->setMuted(!muted);
+    if (m_parent->audioOutput()->isMuted()) {
+        action("mute")->setText(i18n("Restore Volume"));
+        action("mute")->setIcon(KIcon("speaker"));
+    } else {
+        action("mute")->setText(i18n("Mute"));
+        action("mute")->setIcon(KIcon("dialog-cancel"));
+    }
 }
 
 void ActionsManager::addSelectedToPlaylistSlot()
@@ -663,13 +672,11 @@ void ActionsManager::setContextMenuSource(MainWindow::ContextMenuSource menuSour
 
 void ActionsManager::toggleShowRemainingTimeSlot()
 {
-    m_parent->toggleShowRemainingTime();
+    m_parent->setShowRemainingTime(!m_parent->showingRemainingTime());
     if (m_parent->showingRemainingTime()) {
         action("toggle_show_remaining_time")->setText(i18n("Show Elapsed Time"));
-        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
     } else {
         action("toggle_show_remaining_time")->setText(i18n("Show Remaining Time"));
-        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
     }
 }
 

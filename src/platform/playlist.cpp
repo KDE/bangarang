@@ -40,8 +40,11 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_mediaObject = mediaObject;
     m_mediaController = new Phonon::MediaController(m_mediaObject);
     m_currentPlaylist = new MediaItemModel(this);
+    m_currentPlaylist->setSuppressNoResultsMessage(true);
     m_nowPlaying = new MediaItemModel(this);
-    m_queue = new MediaItemModel(this);   
+    m_nowPlaying->setSuppressNoResultsMessage(true);
+    m_queue = new MediaItemModel(this);
+    m_queue->setSuppressNoResultsMessage(true);
     playWhenPlaylistChanges = false;
     m_shuffle = false;
     m_repeat = false;
@@ -329,22 +332,14 @@ void Playlist::playMediaList(const QList<MediaItem> &mediaList)
 
 void Playlist::addMediaList(const QList<MediaItem> &mediaList)
 {
-    int startingRow = m_currentPlaylist->rowCount();
-    for (int i = 0; i < mediaList.count(); ++i) {
-        if (mediaList.at(i).type == "Audio" || mediaList.at(i).type == "Video") {
-            m_currentPlaylist->loadMediaItem(mediaList.at(i), true);
-            m_playlistIndices.append(startingRow + i);
-        }
-    }
+    m_currentPlaylist->loadSources(mediaList);
 }
 
 void Playlist::addMediaItem(const MediaItem &mediaItem)
 {
-    int startingRow = m_currentPlaylist->rowCount();
-    if (mediaItem.type == "Audio" || mediaItem.type == "Video") {
-        m_currentPlaylist->loadMediaItem(mediaItem, true);
-        m_playlistIndices.append(startingRow);
-    }
+    QList<MediaItem> mediaList;
+    mediaList.append(mediaItem);
+    m_currentPlaylist->loadSources(mediaList);
 }
 
 void Playlist::removeMediaItemAt(int row)
