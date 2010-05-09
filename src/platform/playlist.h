@@ -55,7 +55,6 @@ class Playlist : public QObject
     Q_OBJECT
     
     public:
-        enum Mode { Normal = 0, Shuffle = 1};
         enum Model { PlaylistModel = 0, QueueModel = 1};
         enum State { Finished = 0, Loading = 1, Playing = 2};
         
@@ -99,13 +98,6 @@ class Playlist : public QObject
          * Returns the Phonon::MediaObject used by Playlist.
          */
         Phonon::MediaObject * mediaObject();
-        
-        /**
-         * Returns the current Playlist mode.
-         *
-         * @returns Playlist::Mode (see enum)
-         */
-        Playlist::Mode mode();
         
         /**
          * Returns the MediaItemModel containing the currently
@@ -161,12 +153,9 @@ class Playlist : public QObject
         void setMediaObject(Phonon::MediaObject *mediaObject);
         
         /**
-         * Sets the Playlist queuing mode
-         *
-         * @param mode mode to add MediaItems to the queue. 
-         *             Either Playlist::Normal or Playlist::Shuffle.
+         * Returns true if repeat is on, false otherwise
          */
-        void setMode(Playlist::Mode mode);
+        bool repeatMode();
         
         /**
          * Sets whether or playback should repeat after playing
@@ -176,7 +165,18 @@ class Playlist : public QObject
          *               when all items in the playlist has 
          *               been played.
          */
-        void setRepeat(bool repeat);
+        void setRepeatMode(bool repeat);
+        
+        /**
+         * Sets whether or not to shuffle playlist items into queue
+         * @param shuffle true to shuffle, false to add sequentially
+         */
+        void setShuffleMode(bool shuffle);
+        
+        /**
+         * Returns true if shuffle is on, false otherwise
+         */
+        bool shuffleMode();
         
         /**
         * Returns the loading state of the Playlist.
@@ -217,14 +217,28 @@ class Playlist : public QObject
          */
         void playlistFinished();
         
+        /**
+         * Emitted when mode changes
+         * @param mode true if shuffle is on, false otherwise
+         */
+        void shuffleModeChanged(bool shuffle);
+        
+        /**
+        * Emitted when repeat is changed
+        * @param repeat true if repeat is on, false otherwise
+        */
+        void repeatModeChanged(bool repeat);
+        
+        
+        
     private:
         QObject * m_parent;
         MediaItemModel * m_currentPlaylist;
         MediaItemModel * m_nowPlaying;
         MediaItemModel * m_queue;
         MediaSortFilterProxyModel *m_filterProxyModel;
-        Playlist::Mode m_mode;
-        int m_repeat;
+        bool m_shuffle;
+        bool m_repeat;
         int m_queueDepth;
         int m_oldPlaylistLength;
         QList<int> m_playlistIndices;
