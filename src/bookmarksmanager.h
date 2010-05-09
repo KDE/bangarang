@@ -43,6 +43,7 @@ class BookmarksManager : public QObject
         QString bookmarkName(const QString &bookmark);
         qint64 bookmarkTime(const QString &bookmark);
         QString bookmarkLookup(const QString & url, const QString &name);
+        bool hasBookmarks(const MediaItem &mediaItem);
         
     public slots:
         void addBookmark(const QString &url, const QString &name, int time);

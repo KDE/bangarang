@@ -35,8 +35,6 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {
     m_parent = parent;
     ui = m_parent->ui;
-    m_loader = new MediaItemModel(this);
-    m_loadingPlaylist = false;
     
     ui->aListSourceSelection->setEnabled(false);
     ui->vListSourceSelection->setEnabled(false);
@@ -417,8 +415,10 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, const QString 
             out << "#EXTM3U" << "\r\n";
         }
         for (int i = 0; i < mediaList.count(); i++) {
-            out << "#EXTINF:" << mediaList.at(i).fields["duration"].toInt() << "," << mediaList.at(i).title << "\r\n";
-            out << mediaList.at(i).url << "\r\n";
+            if (mediaList.at(i).type == "Audio" || mediaList.at(i).type == "Video") {
+                out << "#EXTINF:" << mediaList.at(i).fields["duration"].toInt() << "," << mediaList.at(i).title << "\r\n";
+                out << mediaList.at(i).url << "\r\n";
+            }
         }
         file.close();
         
@@ -763,23 +763,11 @@ void SavedListsManager::savePlaylist()
 
 void SavedListsManager::loadPlaylist()
 {
-    if (!m_loadingPlaylist) {
-        MediaItem mediaItem;
-        mediaItem.type = "Category";
-        mediaItem.title = "Playlist";
-        mediaItem.url = "savedlists://Playlist-current.m3u";
-        m_loader->clearMediaListData();
-        connect(m_loader, SIGNAL(mediaListChanged()), this, SLOT(loadPlaylist()));
-        QList<MediaItem> mediaList;
-        mediaList << mediaItem;
-        m_loader->loadSources(mediaList);
-        m_loadingPlaylist = true;
-    } else {
-        m_parent->playlist()->addMediaList(m_loader->mediaList());
-        m_loadingPlaylist = false;
-        disconnect(m_loader, SIGNAL(mediaListChanged()), this, SLOT(loadPlaylist()));
-        m_loader->clearMediaListData();
-    }
+    MediaItem mediaItem;
+    mediaItem.type = "Category";
+    mediaItem.title = "Playlist";
+    mediaItem.url = "savedlists://Playlist-current.m3u";
+    m_parent->playlist()->addMediaItem(mediaItem);
 }
 
         

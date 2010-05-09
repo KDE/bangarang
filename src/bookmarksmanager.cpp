@@ -93,6 +93,11 @@ QString BookmarksManager::bookmarkLookup(const QString & url, const QString &nam
     return bookmark;
 }
 
+bool BookmarksManager::hasBookmarks(const MediaItem &mediaItem)
+{
+    return (bookmarks(mediaItem.url).count() > 0);
+}
+
 void BookmarksManager::addBookmark(const QString &url, const QString &name, int time)
 {
     QStringList currentBookmarks = bookmarks(url);

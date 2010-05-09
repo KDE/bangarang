@@ -130,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->volumeSlider->setMuteVisible( false );
     ui->seekSlider->setMediaObject(m_media);
     ui->seekSlider->setIconVisible(false);
-    m_showRemainingTime = false;
+    setShowRemainingTime(false);
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     
     //Connect to media object signals and slots
@@ -715,11 +715,6 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             ui->viewerStack->setCurrentIndex(0);
         }
         ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
-        if (m_bookmarksManager->bookmarks(m_nowPlaying->mediaItemAt(0).url).count() > 0) {
-            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        } else {
-            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        }
     } else {
         if ((!m_pausePressed) && (!m_stopPressed)) {
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
@@ -787,6 +782,15 @@ void MainWindow::showLoading()
         QTimer::singleShot(100, this, SLOT(showLoading()));
     } else {
         ui->seekTime->setIcon(KIcon("bookmarks-organize"));
+        if (m_playlist->nowPlayingModel()->rowCount() > 0) {
+            if (m_bookmarksManager->hasBookmarks(m_playlist->nowPlayingModel()->mediaItemAt(0))) {
+                ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            } else {
+                ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+            }
+        } else {
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        }
     }
 }
 
@@ -975,11 +979,24 @@ void MainWindow::playlistChanged()
 void MainWindow::nowPlayingChanged()
 {
     if (m_nowPlaying->rowCount() > 0) {
-        if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") {        
-            ui->nowPlaying->setIcon(m_nowPlaying->mediaItemAt(0).artwork);  
-            QString title = m_nowPlaying->mediaItemAt(0).title;
-            QString subTitle = m_nowPlaying->mediaItemAt(0).subTitle;
-            QString description = m_nowPlaying->mediaItemAt(0).fields["description"].toString();
+        MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
+        //Tidy up view and switch to the correct viewing widget
+        ui->nowPlayingView->header()->setStretchLastSection(false);
+        ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
+        ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+        ui->nowPlayingView->header()->hideSection(1);
+        if (nowPlayingItem.type == "Video") {
+            ui->viewerStack->setCurrentIndex(1);
+        } else if (nowPlayingItem.type == "Audio") {
+            ui->viewerStack->setCurrentIndex(0);
+        }
+                
+        //Update Now Playing button in Media Lists view
+        if (nowPlayingItem.type != "Application Banner") {        
+            ui->nowPlaying->setIcon(nowPlayingItem.artwork);  
+            QString title = nowPlayingItem.title;
+            QString subTitle = nowPlayingItem.subTitle;
+            QString description = nowPlayingItem.fields["description"].toString();
             QString toolTipText = i18n("View Now Playing") + QString("<br><b>%1</b>").arg(title);
             if (!subTitle.isEmpty()) {
                 toolTipText += QString("<br><i>%2</i>").arg(subTitle);
@@ -988,10 +1005,11 @@ void MainWindow::nowPlayingChanged()
                 toolTipText += QString("<br>%3").arg(description);
             }
             ui->nowPlaying->setToolTip(toolTipText);
-            setWindowTitle(QString(m_nowPlaying->mediaItemAt(0).title + " - Bangarang"));
+            setWindowTitle(QString(nowPlayingItem.title + " - Bangarang"));
         }
+        
         //Switch the audio output to the appropriate phonon category
-        if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
+        if (nowPlayingItem.type == "Audio") {
             if (m_audioOutput->category() != Phonon::MusicCategory) {
                 m_audioOutput = m_audioOutputMusicCategory;
                 m_audioPath.reconnect(m_media, m_audioOutput);
@@ -1000,7 +1018,7 @@ void MainWindow::nowPlayingChanged()
                 ui->volumeIcon->setChecked(false);
                 updateMuteStatus(false);
             }
-        } else if (m_nowPlaying->mediaItemAt(0).type == "Video") {
+        } else if (nowPlayingItem.type == "Video") {
             if (m_audioOutput->category() != Phonon::VideoCategory) {
                 m_audioOutput = m_audioOutputVideoCategory;
                 m_audioPath.reconnect(m_media, m_audioOutput);
@@ -1011,29 +1029,19 @@ void MainWindow::nowPlayingChanged()
             }
         }
     
-        ui->nowPlayingView->header()->setStretchLastSection(false);
-        ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
-        ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-        ui->nowPlayingView->header()->hideSection(1);
-        
-        if (m_nowPlaying->mediaItemAt(0).type == "Video") {
-            ui->viewerStack->setCurrentIndex(1);
-        } else if (m_nowPlaying->mediaItemAt(0).type == "Audio") {
-            ui->viewerStack->setCurrentIndex(0);
-        }
-        
-        if (m_showRemainingTime) {
-            ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
+        //Update seekTime button
+        if (m_bookmarksManager->hasBookmarks(nowPlayingItem)) {
+            ui->seekTime->setIcon(KIcon("bookmarks-organize"));
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         } else {
-            ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
+            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
         }
         
-        //Scale artwork to current desktop icon size otherwise notifier will show unknown icon
+        //Update status notifier
+        //- Scale artwork to current desktop icon size otherwise notifier will show unknown icon
         int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
-        QPixmap artworkPix = m_nowPlaying->mediaItemAt(0).artwork.pixmap(iconSize, iconSize);
-        m_sysTray->setToolTip(QIcon(artworkPix), 
-                              m_nowPlaying->mediaItemAt(0).title, 
-                              m_nowPlaying->mediaItemAt(0).subTitle);
+        QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
+        m_sysTray->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
         m_sysTray->setStatus(KStatusNotifierItem::Active);
     } else {
         m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
@@ -1343,7 +1351,12 @@ bool MainWindow::showingRemainingTime()
     return m_showRemainingTime;
 }
 
-void MainWindow::toggleShowRemainingTime()
+void MainWindow::setShowRemainingTime(bool showRemainingTime)
 {
-    m_showRemainingTime = !m_showRemainingTime;
+    m_showRemainingTime = showRemainingTime;
+    if (m_showRemainingTime) {
+        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
+    } else {
+        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
+    }
 }
