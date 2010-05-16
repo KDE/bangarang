@@ -432,6 +432,7 @@ void MainWindow::on_showPlaylist_clicked(bool checked)
     }
     ui->contextStack->setCurrentIndex(0);  
     m_actionsManager->action("show_video_settings")->setText(i18n("Show Video Settings"));
+    m_actionsManager->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
