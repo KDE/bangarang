@@ -69,14 +69,19 @@ AudioSettings::~AudioSettings()
 void AudioSettings::setAudioPath(Phonon::Path *audioPath)
 {
     //Determine if equalizer capability is present
+    bool eqCapable = false;
     QList<Phonon::EffectDescription> effects = Phonon::BackendCapabilities::availableAudioEffects();
     foreach (Phonon::EffectDescription effect, effects) {
         if(effect.name()=="KEqualizer") {
             m_audioEq = new Phonon::Effect(effect, this);
             audioPath->insertEffect(m_audioEq);
+            eqCapable = true;
         }
     }
     
+    if (!eqCapable) {
+        ui->eqHolder->setEnabled(false);
+    }
     //Load presets
     QList<int> preset;
     preset <<0<<0<<0<<0<<0<<0<<0<<0<<0<<0<<0;
@@ -144,7 +149,10 @@ void AudioSettings::restoreAudioSettings(KConfigGroup *configGroup)
         for (int i = 0; i < manualPresetStrL.count(); i++) {
             preset << manualPresetStrL.at(i).toInt();
         }
-        m_eqPresets.replace(m_eqPresetNames.indexOf(i18n("Manual")), preset);
+        int indexOfManual = m_eqPresetNames.indexOf(i18n("Manual"));
+        if (indexOfManual != -1) {
+            m_eqPresets.replace(indexOfManual, preset);
+        }
     }
     ui->eqPresets->setCurrentIndex(configGroup->readEntry("EqualizerPresetSelection", 0));
 }
