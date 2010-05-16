@@ -137,6 +137,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
     m_shortcutsCollection->addAction("show_video_settings",action);
 
+    //Show Audio Settings
+    action = new KAction(KIcon("speaker"), i18n("Show Audio Settings"),this);
+    action->setShortcut(Qt::CTRL + Qt::Key_A);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleAudioSettings()));
+    m_shortcutsCollection->addAction("show_audio_settings",action);
+
     //Full Screen
     action = new KAction(KIcon("view-fullscreen"), i18n("Fullscreen"), this);
     action->setShortcut(Qt::Key_F11);
@@ -430,16 +436,31 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-    if(ui->contextStack->currentIndex() != 1 ) {
+    if(ui->contextStack->currentIndex() != 2 ) {
         m_contextStackWasVisible = ui->contextStack->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
-        ui->contextStack->setCurrentIndex(1);
+        ui->contextStack->setCurrentIndex(2);
         ui->contextStack->setVisible(true);
         action("show_video_settings")->setText(i18n("Hide Video Settings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
         action("show_video_settings")->setText(i18n("Show Video Settings"));
+    }
+}
+
+void ActionsManager::toggleAudioSettings()
+{
+    if(ui->contextStack->currentIndex() != 1 ) {
+        m_contextStackWasVisible = ui->contextStack->isVisible();
+        m_previousContextStackIndex = ui->contextStack->currentIndex();
+        ui->contextStack->setCurrentIndex(1);
+        ui->contextStack->setVisible(true);
+        action("show_audio_settings")->setText(i18n("Hide Audio Settings"));
+    } else {
+        ui->contextStack->setVisible(m_contextStackWasVisible);
+        ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+        action("show_audio_settings")->setText(i18n("Show Audio Settings"));
     }
 }
 
@@ -456,7 +477,7 @@ void ActionsManager::cancelFSHC()
 
 void ActionsManager::showShortcutsEditor()
 {
-    ui->contextStack->setCurrentIndex(2);
+    ui->contextStack->setCurrentIndex(3);
     ui->contextStack->setVisible(true);
 }
 

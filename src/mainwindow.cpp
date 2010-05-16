@@ -30,6 +30,7 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
+#include "audiosettings.h"
 #include "scriptconsole.h"
 
 #include <KAction>
@@ -118,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
     connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
+    
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
@@ -230,6 +232,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Setup Actions Manager
     m_actionsManager = new ActionsManager(this);
     
+    //Setup Audio settings
+    m_audioSettings = new AudioSettings(this);
+    m_audioSettings->setAudioPath(&m_audioPath);
+    
     //Setup Video Settings
     VideoSettings *videoSettings = new VideoSettings(m_videoWidget, this);
     videoSettings->setHideAction(m_actionsManager->action("show_video_settings"));
@@ -331,6 +337,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     KConfigGroup generalGroup( &config, "General" );
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_audioSettings->restoreAudioSettings(&generalGroup);
     m_savedListsManager->loadPlaylist();
 
     m_scriptConsole = new ScriptConsole();
@@ -366,6 +373,7 @@ MainWindow::~MainWindow()
     KConfigGroup generalGroup( &config, "General" );
     generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
+    m_audioSettings->saveAudioSettings(&generalGroup);
     config.sync();
     m_savedListsManager->savePlaylist();
 
@@ -650,6 +658,7 @@ void MainWindow::on_showMenu_clicked()
         }
     }
     m_menu->addAction(m_actionsManager->action("show_video_settings"));
+    m_menu->addAction(m_actionsManager->action("show_audio_settings"));
     if (!isFullScreen()) {
         m_menu->addAction(m_actionsManager->action("toggle_controls"));
         m_menu->addSeparator();
