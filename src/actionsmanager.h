@@ -96,6 +96,7 @@ class ActionsManager : public QObject
         void fullScreenToggle();
         void toggleControls();
         void toggleVideoSettings();
+        void toggleAudioSettings();
         void cancelFSHC();
         void showShortcutsEditor();
         void saveShortcuts();

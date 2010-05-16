@@ -55,6 +55,7 @@ class InfoManager;
 class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
+class AudioSettings;
 //#ifdef HAVE_KSTATUSNOTIFIERITEM
 class KStatusNotifierItem;
 /*#else
@@ -152,6 +153,7 @@ private:
     qreal m_volume;
     ScriptConsole *m_scriptConsole;
     KAction *playPause;    
+    AudioSettings *m_audioSettings;
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
