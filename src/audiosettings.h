@@ -51,6 +51,7 @@ class AudioSettings : public QObject
     public slots:
         void loadPreset(const QString &presetName);
         void setEq(const QList<int> &set);
+        void restoreDefaults();
         
     private:
         MainWindow * m_mainWindow;

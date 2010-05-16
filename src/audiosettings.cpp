@@ -37,6 +37,7 @@ AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent)
     ui = m_mainWindow->ui;
 
     //Setup and connect ui widgets
+    connect(ui->restoreDefaultAudioSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
     connect(ui->hideAudioSettings, SIGNAL(clicked()), m_mainWindow->actionsManager()->action("show_audio_settings"), SLOT(trigger()));
     ui->eq1Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq2Label->setFont(KGlobalSettings::smallestReadableFont());
@@ -237,6 +238,17 @@ void AudioSettings::setEq(const QList<int> &preset)
         connect(ui->eq10, SIGNAL(valueChanged(int)), this, SLOT(eq10Changed(int)));
         connect(ui->eq11, SIGNAL(valueChanged(int)), this, SLOT(eq11Changed(int)));
     }
+}
+
+void AudioSettings::restoreDefaults()
+{
+    int manualIndex = m_eqPresetNames.indexOf(i18n("Manual"));
+    if (manualIndex != -1) {
+        QList<int> preset;
+        preset <<0<<0<<0<<0<<0<<0<<0<<0<<0<<0<<0;
+        m_eqPresets.replace(manualIndex, preset);
+    }
+    ui->eqPresets->setCurrentIndex(0);
 }
 
 void AudioSettings::eq1Changed(int v)
