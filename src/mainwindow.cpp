@@ -1179,6 +1179,9 @@ void MainWindow::setupIcons()
     ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
+    
+    //Audio settings
+    ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
 }
 
 void MainWindow::showApplicationBanner()

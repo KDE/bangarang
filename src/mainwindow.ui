@@ -6183,10 +6183,26 @@ color: rgb(255, 255, 255);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="hideAudioSettings">
-                     <property name="text">
-                      <string>Hide</string>
-                     </property>
+                    <widget class="QWidget" name="widget_25" native="true">
+                     <layout class="QHBoxLayout" name="horizontalLayout_18">
+                      <property name="margin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="restoreDefaultAudioSettings">
+                        <property name="text">
+                         <string>Restore Defaults</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="hideAudioSettings">
+                        <property name="text">
+                         <string>Hide</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
