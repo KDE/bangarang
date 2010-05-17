@@ -28,6 +28,7 @@
 #include <KFileDialog>
 #include <KMimeType>
 #include <KLocale>
+#include <KDebug>
 #include <phonon/mediacontroller.h>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
@@ -65,8 +66,11 @@ void DVDListEngine::run()
             m_loadWhenReady = true;
         }
         if (m_mediaObject->state() == Phonon::StoppedState) {
+            QString discTitle;
             if (!m_mediaObject->currentSource().deviceName().isEmpty()) {
-                m_mediaListProperties.name = m_mediaObject->currentSource().deviceName();
+                discTitle = m_mediaObject->currentSource().deviceName();
+            } else if (!m_mediaObject->metaData("TITLE").isEmpty()) {
+                discTitle = m_mediaObject->metaData("TITLE").join("");
             }
             Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
             MediaItem mediaItem;
@@ -80,7 +84,11 @@ void DVDListEngine::run()
                 mediaItem.url = QString("DVDTRACK%1").arg(i);
                 mediaItem.artwork = KIcon("media-optical-dvd");
                 mediaItem.title = title;
-                mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);
+                if (discTitle.isEmpty()) {
+                    mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);
+                } else {
+                    mediaItem.subTitle = i18nc("%1=Title of DVD", "DVD Video - %1", discTitle);
+                }
                 mediaItem.type = "Video";
                 mediaItem.fields["url"] = mediaItem.url;
                 mediaItem.fields["title"] = mediaItem.title;
