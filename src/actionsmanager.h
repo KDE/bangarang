@@ -113,7 +113,7 @@ class ActionsManager : public QObject
         void addToSavedVideoList(QAction *addAction);
         void loadSelectedSources();
         void showInfoForNowPlaying();
-        void showScriptConsoleSlot();
+        //void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
         void togglePlaylistFilter();
         void addBookmarkSlot();
