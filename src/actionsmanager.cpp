@@ -216,10 +216,10 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
     connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
 
-    //Show the Scripting Console
+    /*//Show the Scripting Console
     action = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
     connect(action,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
-    m_shortcutsCollection->addAction("show_scripting_console", action);
+    m_shortcutsCollection->addAction("show_scripting_console", action);*/
 
     //Edit Shortcuts
     action = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -662,10 +662,10 @@ void ActionsManager::showInfoForNowPlaying()
     }
 }
 
-void ActionsManager::showScriptConsoleSlot()
+/*void ActionsManager::showScriptConsoleSlot()
 {
     m_parent->scriptConsole()->show();
-}
+}*/
 
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {

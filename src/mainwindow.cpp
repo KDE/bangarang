@@ -340,7 +340,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_audioSettings->restoreAudioSettings(&generalGroup);
     m_savedListsManager->loadPlaylist();
 
-    m_scriptConsole = new ScriptConsole();
+    /*m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
     m_scriptConsole->addObject(m_media,"media");
     m_scriptConsole->addObject(m_actionsManager,"actionsManager");
@@ -349,7 +349,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
     m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
     m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
-    m_scriptConsole->addObject(this,"mainwindow");
+    m_scriptConsole->addObject(this,"mainwindow");*/
 }
 
 MainWindow::~MainWindow()
@@ -664,7 +664,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addAction(m_actionsManager->action("toggle_controls"));
         m_menu->addSeparator();
     }
-    m_menu->addAction(m_actionsManager->action("show_scripting_console"));
+    //m_menu->addAction(m_actionsManager->action("show_scripting_console"));
     m_menu->addAction(m_actionsManager->action("show_shortcuts_editor"));
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
