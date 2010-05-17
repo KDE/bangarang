@@ -65,6 +65,9 @@ void DVDListEngine::run()
             m_loadWhenReady = true;
         }
         if (m_mediaObject->state() == Phonon::StoppedState) {
+            if (!m_mediaObject->currentSource().deviceName().isEmpty()) {
+                m_mediaListProperties.name = m_mediaObject->currentSource().deviceName();
+            }
             Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
             MediaItem mediaItem;
             int trackCount = mediaController->availableTitles();
