@@ -19,7 +19,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "config-bangarang.h"
 #include "platform/bangarangvideowidget.h"
 #include "scriptconsole.h"
 #include <KIcon>
@@ -56,12 +55,7 @@ class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
 class AudioSettings;
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
 class KStatusNotifierItem;
-/*#else
-#include <knotificationitem-1/knotificationitem.h>
-using ::Experimental::KNotificationItem;
-#endif*/
 
 namespace Ui
 {
@@ -159,12 +153,7 @@ private:
     void setupIcons();
     void showApplicationBanner();
     void updateCachedDevicesList();
-
-#ifdef HAVE_KSTATUSNOTIFIERITEM
     KStatusNotifierItem *m_sysTray;
-#else
-    KNotificationItem *m_sysTray;
-#endif
 
 private slots:
     void on_nowPlaying_clicked();
