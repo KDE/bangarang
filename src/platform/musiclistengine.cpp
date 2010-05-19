@@ -344,7 +344,6 @@ void MusicListEngine::run()
             while (resultSetCount >= limit) {
                 
                 //Execute Query
-                kDebug() << query.query();
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
