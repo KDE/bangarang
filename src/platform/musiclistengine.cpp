@@ -324,6 +324,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
@@ -343,6 +344,7 @@ void MusicListEngine::run()
             while (resultSetCount >= limit) {
                 
                 //Execute Query
+                kDebug() << query.query();
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
