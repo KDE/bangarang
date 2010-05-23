@@ -116,9 +116,9 @@ QUrl MediaVocabulary::mediaNamespace(int vocabulary)
     } else if (vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#");
     } else if (vocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#");
     } else if (vocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#");
     }
     
     return returnUrl;
@@ -130,10 +130,9 @@ QUrl MediaVocabulary::typeAudio()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Audio();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Audio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Audio");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Audio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Audio");
     }
     
     return returnUrl;
@@ -145,9 +144,9 @@ QUrl MediaVocabulary::typeAudioMusic()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Music();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#ID3Audio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#ID3Audio");
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#MusicPiece");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#MusicPiece");
     }
     
     return returnUrl;
@@ -159,9 +158,9 @@ QUrl MediaVocabulary::typeAudioStream()
     if (m_audioVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Audio();
     } else if (m_audioVocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#MediaStream");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#MediaStream");
     } else if (m_audioVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#DigitalRadio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#DigitalRadio");
     }
     
     return returnUrl;
@@ -173,9 +172,9 @@ QUrl MediaVocabulary::typeVideo()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Video();
     } else if (m_videoVocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Video");
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Video");
     }
     
     return returnUrl;
@@ -185,7 +184,7 @@ QUrl MediaVocabulary::typeVideoMovie()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#Movie");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#Movie");
     }
     
     return returnUrl;
@@ -195,7 +194,7 @@ QUrl MediaVocabulary::typeVideoTVShow()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#TVShow");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#TVShow");
     }
     
     return returnUrl;
@@ -205,7 +204,7 @@ QUrl MediaVocabulary::typeTVSeries()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#TVSeries");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#TVSeries");
     }
     
     return returnUrl;
@@ -217,10 +216,9 @@ QUrl MediaVocabulary::typeImage()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Image();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Image");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Image");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Image");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Image");
     }
     
     return returnUrl;
@@ -240,7 +238,7 @@ QUrl MediaVocabulary::typeMusicAlbum()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#MusicAlbum");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#MusicAlbum");
     }
     
     return returnUrl;
@@ -294,10 +292,10 @@ QUrl MediaVocabulary::duration()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::mediaDuration();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#duration");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#duration");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nfo#duration");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#duration");
     }
     
     return returnUrl;
@@ -327,7 +325,7 @@ QUrl MediaVocabulary::playCount()
 
 QUrl MediaVocabulary::artwork()
 {
-    return QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
+    return QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#hasLogicalPart");
 }
 
 QUrl MediaVocabulary::created()
@@ -352,7 +350,7 @@ QUrl MediaVocabulary::releaseDate()
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#releaseDate");
     }
     
     return returnUrl;
@@ -365,7 +363,7 @@ QUrl MediaVocabulary::genre()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#genre");
     }
     return returnUrl;
 }
@@ -389,7 +387,7 @@ QUrl MediaVocabulary::musicArtist()
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#creator");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#leadArtist");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
     }
     
     return returnUrl;
@@ -415,9 +413,9 @@ QUrl MediaVocabulary::musicAlbum()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::album();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#musicAlbum");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#musicAlbum");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#albumTitle");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#albumTitle");
     }
     
     return returnUrl;
@@ -431,7 +429,7 @@ QUrl MediaVocabulary::musicAlbumName()
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#albumTitle");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#albumTitle");
     }
     
     return returnUrl;
@@ -443,9 +441,9 @@ QUrl MediaVocabulary::musicAlbumYear()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#releaseDate");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#recordingYear");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#recordingYear");
     }
     
     return returnUrl;
@@ -457,9 +455,9 @@ QUrl MediaVocabulary::musicTrackNumber()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::trackNumber();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#trackNumber");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#trackNumber");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#trackNumber");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#trackNumber");
     }
     
     return returnUrl;
@@ -471,9 +469,9 @@ QUrl MediaVocabulary::musicGenre()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#genre");
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nid3#contentType");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#contentType");
     }
     
     return returnUrl;
@@ -485,7 +483,7 @@ QUrl MediaVocabulary::videoGenre()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#genre");
     }
     
     return returnUrl;
@@ -495,7 +493,7 @@ QUrl MediaVocabulary::videoSeries()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#series");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#series");
     }
     
     return returnUrl;
@@ -517,7 +515,7 @@ QUrl MediaVocabulary::videoSynopsis()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#synopsis");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#description");
     }
     
     return returnUrl;
@@ -527,7 +525,7 @@ QUrl MediaVocabulary::videoSeason()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#season");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#season");
     }
     
     return returnUrl;
@@ -537,7 +535,7 @@ QUrl MediaVocabulary::videoEpisodeNumber()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#episodeNumber");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#episodeNumber");
     }
     
     return returnUrl;
@@ -547,7 +545,7 @@ QUrl MediaVocabulary::videoAudienceRating()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#audienceRating");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#audienceRating");
     }
     
     return returnUrl;
@@ -557,7 +555,7 @@ QUrl MediaVocabulary::videoWriter()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#writer");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#writer");
     }
     
     return returnUrl;
@@ -567,7 +565,7 @@ QUrl MediaVocabulary::videoDirector()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#director");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#director");
     }
     
     return returnUrl;
@@ -577,7 +575,7 @@ QUrl MediaVocabulary::videoAssistantDirector()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#assistantDirector");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#assistantDirector");
     }
     
     return returnUrl;
@@ -587,7 +585,7 @@ QUrl MediaVocabulary::videoProducer()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#producer");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#producer");
     }
     
     return returnUrl;
@@ -597,7 +595,7 @@ QUrl MediaVocabulary::videoActor()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#actor");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#actor");
     }
     
     return returnUrl;
@@ -607,7 +605,7 @@ QUrl MediaVocabulary::videoCinematographer()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/nmm#cinematographer");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#cinematographer");
     }
     
     return returnUrl;
@@ -622,6 +620,7 @@ QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
          statement = MediaQuery::addOptional(statement);
     }
     return statement;
+    
 }
 
 QString MediaVocabulary::hasTypeAudioMusic(MediaQuery::Match match)
@@ -743,7 +742,7 @@ QString MediaVocabulary::hasTypeMusicArtist(MediaQuery::Match match)
 QString MediaVocabulary::hasTypeMusicAlbum(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = MediaQuery::hasType(resourceBinding, typeVideoTVShow());
+    QString statement = MediaQuery::hasType(resourceBinding, typeMusicAlbum());
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1123,6 +1122,7 @@ QString MediaVocabulary::hasVideoSeason(MediaQuery::Match match,
                                         int season, 
                                         MediaQuery::Constraint constraint)
 {
+    //TODO:Modify for new 0.3+ sdo nmm ontology with Series class
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoSeasonBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSeason(), propertyBinding);
