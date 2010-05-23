@@ -22,6 +22,7 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
+#include "platform/ontologyupdater.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -30,6 +31,7 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KHelpMenu>
+#include <KMessageBox>
 #include <KDebug>
 #include <QFile>
 
@@ -227,7 +229,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(cancelShortcuts()));
     connect(ui->saveShortcuts, SIGNAL(clicked()), this, SLOT(saveShortcuts()));
     m_shortcutsCollection->addAction("show_shortcuts_editor", action);
-
+    
+    //Update Ontologies
+    action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
+    m_shortcutsCollection->addAction("update_ontologies", action);
+    
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
     ui->shortcutsEditor->addCollection(m_shortcutsCollection);
@@ -316,10 +323,15 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         }
 	
         menu->addAction(action("reload"));
-        menu->addSeparator();
-        
+        menu->addSeparator();        
     } 
-    if (showAbout) menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
+    if (showAbout) {
+        QMenu *advancedMenu = new QMenu(i18n("Advanced"), m_parent);
+        advancedMenu->addAction(action("update_ontologies"));
+        menu->addMenu(advancedMenu);
+        menu->addSeparator();
+        menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
+    }
     return menu;
 }
 
@@ -760,3 +772,38 @@ void ActionsManager::togglePlaylistFilter()
     m_playlistFilterVisible = !m_playlistFilterVisible;
 }
 
+void ActionsManager::updateOntologies()
+{
+    KGuiItem updateOntologies;
+    updateOntologies.setText(i18n("Update Ontologies"));
+    KGuiItem cancel;
+    cancel.setText(i18n("Cancel"));
+    if (KMessageBox::questionYesNo(m_parent, i18n("Updating ontologies ensures that media information is stored in a way that makes it most accessible to other desktop applications.  This is only necessary if you recently upgraded Bangarang or your KDE software compilation. <br><br>This may take several minutes."), QString(), updateOntologies, cancel) == KMessageBox::Yes) {
+        QDialog *dialog = new QDialog(m_parent, Qt::Dialog);
+        dialog->setModal(true);
+        dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        dialog->setWindowTitle(i18n("Update Ontologies"));
+        QHBoxLayout *layout = new QHBoxLayout;
+        QLabel * label = new QLabel;
+        QPushButton * stopButton = new QPushButton;
+        stopButton->setText(i18n("Stop"));
+        stopButton->setIcon(KIcon("process-stop"));
+        QPushButton * closeButton = new QPushButton;
+        closeButton->setText(i18n("Close"));
+        closeButton->setIcon(KIcon("dialog-close"));
+        layout->addWidget(label);
+        layout->addWidget(stopButton);
+        layout->addWidget(closeButton);
+        dialog->setLayout(layout);
+        closeButton->setVisible(false);
+        OntologyUpdater *updater = new OntologyUpdater(this);
+        connect(updater, SIGNAL(infoMessage(QString)), label, SLOT(setText(QString)));
+        connect(stopButton, SIGNAL(clicked()), updater, SLOT(stopUpdate()));
+        connect(updater, SIGNAL(done()), stopButton, SLOT(hide()));
+        connect(updater, SIGNAL(done()), closeButton, SLOT(show()));
+        connect(closeButton, SIGNAL(clicked()), dialog, SLOT(hide()));
+        connect(dialog, SIGNAL(rejected()), updater, SLOT(stopUpdate()));
+        dialog->show();
+        updater->start();
+    }
+}
