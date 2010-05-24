@@ -144,9 +144,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "tag://?audio";
+            mediaItem.url = "tag://audiotags";
             mediaItem.fields["categoryType"] = QString("Audio Tags");
-            mediaItem.artwork = KIcon("nepomuk");
+            mediaItem.artwork = KIcon("view-pim-notes");
             mediaItem.fields["contextTitles"] = QStringList();
             mediaItem.fields["contextLRIs"] = QStringList();
             mediaList << mediaItem;
@@ -319,9 +319,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "tag://?video";
+            mediaItem.url = "tag://videotags";
             mediaItem.fields["categoryType"] = QString("Video Tags");
-            mediaItem.artwork = KIcon("nepomuk");
+            mediaItem.artwork = KIcon("view-pim-notes");
             mediaItem.fields["contextTitles"] = QStringList();
             mediaItem.fields["contextLRIs"] = QStringList();
             mediaList << mediaItem;

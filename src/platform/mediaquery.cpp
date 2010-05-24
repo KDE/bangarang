@@ -25,6 +25,7 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
+#include <Soprano/Vocabulary/RDFS>
 #include <Soprano/Vocabulary/XMLSchema>
 
 
@@ -33,12 +34,14 @@ MediaQuery::MediaQuery()
     m_queryPrefix = QString("PREFIX xesam: <%1> "
                     "PREFIX rdf: <%2> "
                     "PREFIX xls: <%3> "
+                    "PREFIX rdfs: <%4> "
                     "PREFIX nmm: <http://www.semanticdesktop.org/ontologies/nmm#> "
                     "PREFIX nie: <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> "
                     "PREFIX nfo: <http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#> ")
                     .arg(Soprano::Vocabulary::Xesam::xesamNamespace().toString())
                     .arg(Soprano::Vocabulary::RDF::rdfNamespace().toString())
-                    .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString());
+                    .arg(Soprano::Vocabulary::XMLSchema::xsdNamespace().toString())
+                    .arg(Soprano::Vocabulary::RDFS::rdfsNamespace().toString());
                     
     m_filterOperators << "!=" << ">=" << "<=" << "=" << ">" << "<" << ".contains.";
     m_filterOperatorConstraint["!="] = NotEqual;
@@ -288,7 +291,7 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                         constraint));
     } else if (field == "tag") {
         addCondition(mediaVocabulary.hasTag(MediaQuery::Required,
-                                            Nepomuk::Tag(value).resourceUri().toString(),
+                                            value,
                                             constraint));
     } else if (field == "desription") {
         addCondition(mediaVocabulary.hasDescription(MediaQuery::Required,
