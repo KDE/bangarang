@@ -149,7 +149,8 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                        Qt::AlignLeft | Qt::AlignVCenter, i18n("Multiple Values"));
         } else {
             QString text = index.data(Qt::DisplayRole).toString();
-            if (index.data(InfoItemModel::FieldRole).toString() == "audioType") {
+            QString field = index.data(InfoItemModel::FieldRole).toString();
+            if (field == "audioType") {
                 int typeIndex = index.data(Qt::DisplayRole).toInt();
                 if (typeIndex == 0) {
                     text = i18n("Music");
@@ -158,7 +159,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 } else if (typeIndex == 2) {
                     text = i18n("Audio Clip");
                 }
-            } else if (index.data(InfoItemModel::FieldRole).toString() == "videoType") {
+            } else if (field == "videoType") {
                 int typeIndex = index.data(Qt::DisplayRole).toInt();
                 if (typeIndex == 0) {
                     text = i18n("Movie");
@@ -291,6 +292,9 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             lineEdit->setFont(KGlobalSettings::smallestReadableFont());
             if (!multipleValues) lineEdit->setText(value.toString());
             lineEdit->setAutoFillBackground(true);
+            if (field == "tags") {
+                lineEdit->setToolTip(i18n("Tags are separated with \";\""));
+            }
             return lineEdit;
         } else {
             SComboBox *comboBox = new SComboBox(parent);

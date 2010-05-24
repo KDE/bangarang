@@ -25,6 +25,7 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Variant>
+#include <Nepomuk/Tag>
 #include <KApplication>
 #include <QTextStream>
 #include <QFile>
@@ -374,6 +375,17 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
             cout << "Writing description...\n";
             writeProperty(mediaVocabulary, res, mediaVocabulary.description(), Nepomuk::Variant(description));
             //res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        }
+        QStringList tagStrList = fields["tags"].toString().split(";", QString::SkipEmptyParts);
+        if (tagStrList.count() > 0) {
+            cout << "Writing tags...\n";
+            QList<Nepomuk::Tag> tags;
+            for (int i = 0; i < tagStrList.count(); i++) {
+                Nepomuk::Tag tag(tagStrList.at(i).trimmed());
+                tag.setLabel(tagStrList.at(i).trimmed());
+                tags.append(tag);
+            }
+            res.setTags(tags);
         }
         QString artworkUrl = fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
