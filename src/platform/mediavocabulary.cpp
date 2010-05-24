@@ -799,18 +799,19 @@ QString MediaVocabulary::hasTitle(MediaQuery::Match match,
 }
 
 QString MediaVocabulary::hasTag(MediaQuery::Match match,
-                                const QString &tag_url,
+                                const QString &tag,
                                 MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
+    QString tagResourceBinding = "tr";
     QString propertyBinding = tagBinding();
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::tag(), propertyBinding);
-    
-    if (!tag_url.isEmpty()) {
-        QStringList tag_urls = tag_url.split("|OR|");
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::tag(), tagResourceBinding);
+    statement += QString("?%1 nao:prefLabel ?%2 . ").arg(tagResourceBinding).arg(propertyBinding);
+    if (!tag.isEmpty()) {
+        QStringList tags = tag.split("|OR|");
         statement += QString("FILTER (");
-        for (int i = 0; i < tag_urls.count(); i++) {
-            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, tag_urls.at(i), constraint));
+        for (int i = 0; i < tags.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, tags.at(i), constraint));
         }
         statement.chop(4);
         statement += QString(") ");
