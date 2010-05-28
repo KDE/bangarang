@@ -31,6 +31,7 @@
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
 #include "audiosettings.h"
+#include "medialistsettings.h"
 #include "scriptconsole.h"
 
 #include <KAction>
@@ -241,6 +242,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     videoSettings->setHideAction(m_actionsManager->action("show_video_settings"));
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
     
+    //Setup Media List Settings
+    m_mediaListSettings =  new MediaListSettings(this);
+    
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
@@ -267,7 +271,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QList<MediaItem> mediaList;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
         for(int i = 0; i < args->count(); i++) {
             if (args->isSet("play-dvd")) {
@@ -408,6 +411,36 @@ void MainWindow::on_Filter_returnPressed()
         m_mediaListPropertiesHistory.clear();
         ui->previous->setVisible(false);
         ui->mediaViewHolder->setCurrentIndex(0);
+    }
+}
+
+void MainWindow::on_configureAudioList_clicked()
+{
+    if ((ui->mediaLists->currentIndex() == 0) && (ui->audioLists->selectionModel()->selectedIndexes().count() > 0)) {
+        int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
+        if (selectedItem.url.startsWith("savedlists://")) {
+            m_savedListsManager->showAudioSavedListSettings();
+        } else if (selectedItem.url.startsWith("semantics://recent") ||
+            selectedItem.url.startsWith("semantics://frequent") ||
+            selectedItem.url.startsWith("semantics://highest")) {
+            m_mediaListSettings->showMediaListSettings();
+        }
+    }
+}
+
+void MainWindow::on_configureVideoList_clicked()
+{
+    if ((ui->mediaLists->currentIndex() == 1) && (ui->videoLists->selectionModel()->selectedIndexes().count() > 0)) {
+        int selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
+        if (selectedItem.url.startsWith("savedlists://")) {
+            m_savedListsManager->showVideoSavedListSettings();
+        } else if (selectedItem.url.startsWith("semantics://recent") ||
+            selectedItem.url.startsWith("semantics://frequent") ||
+            selectedItem.url.startsWith("semantics://highest")) {
+            m_mediaListSettings->showMediaListSettings();
+        }
     }
 }
 
@@ -910,11 +943,13 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
 void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
     if ((ui->mediaLists->currentIndex() == 0) && (selected.indexes().count() > 0)) {
+        //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
-        currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
-        currentProperties.category = m_audioListsModel->mediaItemAt(selectedRow);
+        MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
+        currentProperties.name = selectedItem.title;
+        currentProperties.lri = selectedItem.url;
+        currentProperties.category = selectedItem;
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -924,7 +959,19 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setContext(m_audioListsModel->mediaItemAt(selectedRow));
+        
+        //Update InfoManager Context
+        m_infoManager->setContext(selectedItem);
+        
+        //Determine if selected list is configurable
+        if (selectedItem.url.startsWith("savedlists://") ||
+            selectedItem.url.startsWith("semantics://recent?audio") ||
+            selectedItem.url.startsWith("semantics://frequent?audio") ||
+            selectedItem.url.startsWith("semantics://highest?audio")) {
+            ui->configureAudioList->setVisible(true);
+        } else {
+            ui->configureAudioList->setVisible(false);
+        }
     }
     Q_UNUSED(deselected);
 }    
@@ -940,11 +987,13 @@ void MainWindow::audioListsChanged()
 void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
     if ((ui->mediaLists->currentIndex() == 1) && (selected.indexes().count() > 0)) {
+        //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
-        currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
-        currentProperties.category = m_videoListsModel->mediaItemAt(selectedRow);
+        MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
+        currentProperties.name = selectedItem.title;
+        currentProperties.lri = selectedItem.url;
+        currentProperties.category = selectedItem;
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -954,7 +1003,20 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setContext(m_videoListsModel->mediaItemAt(selectedRow));
+        
+        //Set InfoManager context
+        m_infoManager->setContext(selectedItem);
+
+        //Determine if selected list is configurable
+        if (selectedItem.url.startsWith("savedlists://") ||
+            selectedItem.url.startsWith("semantics://recent?") ||
+            selectedItem.url.startsWith("semantics://frequent?") ||
+            selectedItem.url.startsWith("semantics://highest?")) {
+            ui->configureVideoList->setVisible(true);
+        } else {
+            ui->configureVideoList->setVisible(false);
+        }
+
     }
     Q_UNUSED(deselected);
 }    
@@ -1149,6 +1211,7 @@ void MainWindow::setupIcons()
     ui->configureAudioList->setIcon(KIcon("configure"));
     ui->saveAudioList->setIcon(KIcon("document-save"));
     ui->aslsSave->setIcon(KIcon("document-save"));
+    ui->semAConfigSave->setIcon(KIcon("document-save"));
     
     
     //Video List Icons
@@ -1157,6 +1220,7 @@ void MainWindow::setupIcons()
     ui->configureVideoList->setIcon(KIcon("configure"));
     ui->saveVideoList->setIcon(KIcon("document-save"));
     ui->vslsSave->setIcon(KIcon("document-save"));
+    ui->semVConfigSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
     ui->seekTime->setIcon(KIcon("bookmarks-organize"));
@@ -1295,8 +1359,6 @@ void MainWindow::updateCustomColors()
 // Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
-  //kDebug() << "Scrolls" << i;
-  
   if (m_media->isSeekable())
     m_media->seek(m_media->currentTime() + qint64(i)*100);
   
@@ -1304,7 +1366,6 @@ void MainWindow::skipForward(int i)
 
 void MainWindow::skipBackward(int i)
 {
-  //kDebug() << "Scrolls" << i;
   if (m_media->isSeekable())
     m_media->seek(m_media->currentTime() + qint64(i)*100);
 }

@@ -55,6 +55,7 @@ class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
 class AudioSettings;
+class MediaListSettings;
 class KStatusNotifierItem;
 
 namespace Ui
@@ -148,6 +149,7 @@ private:
     ScriptConsole *m_scriptConsole;
     KAction *playPause;    
     AudioSettings *m_audioSettings;
+    MediaListSettings *m_mediaListSettings;
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
@@ -157,6 +159,8 @@ private:
 
 private slots:
     void on_nowPlaying_clicked();
+    void on_configureAudioList_clicked();
+    void on_configureVideoList_clicked();
     void on_collectionButton_clicked();
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
