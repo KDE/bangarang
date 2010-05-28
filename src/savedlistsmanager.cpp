@@ -52,8 +52,6 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(ui->vNewListName, SIGNAL(returnPressed()), this, SLOT(saveVideoList()));
     connect(ui->removeAudioList, SIGNAL(clicked()), this, SLOT(removeAudioList()));
     connect(ui->removeVideoList, SIGNAL(clicked()), this, SLOT(removeVideoList()));
-    connect(ui->configureAudioList, SIGNAL(clicked()), this, SLOT(showAudioSavedListSettings()));
-    connect(ui->configureVideoList, SIGNAL(clicked()), this, SLOT(showVideoSavedListSettings()));
     connect(ui->aslsCancel, SIGNAL(clicked()), this, SLOT(returnToAudioList()));
     connect(ui->vslsCancel, SIGNAL(clicked()), this, SLOT(returnToVideoList()));
     connect(ui->aslsSave, SIGNAL(clicked()), this, SLOT(saveAudioListSettings()));
@@ -280,10 +278,8 @@ void SavedListsManager::audioListsSelectionChanged(const QItemSelection & select
         bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
         if (isSavedList) {
             ui->removeAudioList->setEnabled(true);
-            ui->configureAudioList->setVisible(true);
         } else {
             ui->removeAudioList->setEnabled(false);
-            ui->configureAudioList->setVisible(false);
         }
     }
     Q_UNUSED(selected);
@@ -296,10 +292,8 @@ void SavedListsManager::videoListsSelectionChanged(const QItemSelection & select
         bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
         if (isSavedList) {
             ui->removeVideoList->setEnabled(true);
-            ui->configureVideoList->setVisible(true);
         } else {
             ui->removeVideoList->setEnabled(false);
-            ui->configureVideoList->setVisible(false);
         }
     }
     Q_UNUSED(selected);

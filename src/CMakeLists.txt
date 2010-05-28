@@ -44,6 +44,7 @@ SET(BangarangSources
     bookmarksmanager.cpp
     videosettings.cpp
     audiosettings.cpp
+    medialistsettings.cpp
     pluginexport.cpp
     scriptconsole.cpp
     platform/mediaitemmodel.cpp
