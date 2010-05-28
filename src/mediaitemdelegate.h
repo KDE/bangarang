@@ -72,6 +72,7 @@ class MediaItemDelegate : public QItemDelegate
         KIcon m_showPlaying;
         KIcon m_showInPlaylist;
         KIcon m_showNotInPlaylist;
+        KIcon m_removeFromPlaylist;
         int calcItemHeight() const;
         bool m_nepomukInited;
         bool m_useProxy;

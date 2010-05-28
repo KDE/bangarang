@@ -58,6 +58,7 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     pp.drawImage(QPoint(0,0), image);
     pp.end();
     m_showNotInPlaylist = KIcon(pixmap);
+    m_removeFromPlaylist = KIcon("list-remove");
     
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -272,7 +273,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
             QIcon icon;        
             if (playlistRow != -1) {
-                icon = m_showInPlaylist;
+                if (option.state.testFlag(QStyle::State_MouseOver)) { 
+                    icon = m_removeFromPlaylist;
+                } else {
+                    icon = m_showInPlaylist;
+                }
             } else {
                 if (option.state.testFlag(QStyle::State_MouseOver)) {
                     icon = m_showNotInPlaylist;
