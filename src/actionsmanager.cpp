@@ -366,6 +366,8 @@ KMenu *ActionsManager::notifierMenu()
     m_notifierMenu->addAction(action("play_previous"));
     m_notifierMenu->addAction(action("play_pause"));
     m_notifierMenu->addAction(action("play_next"));
+    m_notifierMenu->addSeparator();
+    m_notifierMenu->addAction(action("quit"));
     return m_notifierMenu;
 }
 
