@@ -27,6 +27,7 @@
 #include <taglib/attachedpictureframe.h>
 #include <Soprano/QueryResultIterator>
 #include <Nepomuk/Resource>
+#include <QModelIndex>
 
 
 class MediaItem;
@@ -61,6 +62,7 @@ namespace Utilities {
     bool isVideo(const QString &url);
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
+    bool isMediaItem(const QModelIndex *index);
     QPixmap reflection(QPixmap &pixmap);
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);

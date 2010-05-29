@@ -60,10 +60,12 @@ class MediaItemDelegate : public QItemDelegate
         int heightForAllRows();
         void setUseProxy(bool b = true);
         bool useProxy() const { return m_useProxy; }
-            
-    private:
-        MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;
 
+    protected:
+        QRect ratingRect(const QRect *rect) const;
+        MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;
+    
+    private:
         MainWindow * m_parent;
         QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
@@ -77,6 +79,11 @@ class MediaItemDelegate : public QItemDelegate
         bool m_useProxy;
         MediaIndexer * m_mediaIndexer;
         MediaItemDelegate::RenderMode m_renderMode;
+        int m_starRatingSize;
+        int m_durRatingSpacer;
+        int m_padding;
+        int m_iconSize;
+        int m_textInner;
         
     Q_SIGNALS:
         void categoryActivated(QModelIndex index);
