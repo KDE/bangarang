@@ -58,6 +58,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(i18n("Genre"), "genre");
             }
             addFieldToValuesModel(i18n("Description"), "description");
+            addFieldToValuesModel(i18n("Tags"), "tags");
             if (subType == "Audio Stream") {
                 bool forceEditable = true;
                 addFieldToValuesModel(i18n("Location"), "url", forceEditable);
@@ -136,6 +137,13 @@ void InfoItemModel::saveChanges()
                     }
                 } else if (field == "artwork") {              
                     mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).value<KUrl>().url();
+                } else if (field == "tags") {
+                    QStringList rawTagStrList = currentItem->data(Qt::EditRole).toString().split(";", QString::SkipEmptyParts);
+                    QStringList tags;
+                    for (int i = 0; i < rawTagStrList.count(); i++) {
+                        tags.append(rawTagStrList.at(i).trimmed());
+                    }
+                    mediaItem.fields["tags"] = tags.join(";");
                 } else {
                     mediaItem.fields[field] = currentItem->data(Qt::EditRole);
                 }

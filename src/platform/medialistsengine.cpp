@@ -25,6 +25,8 @@
 
 #include <QApplication>
 #include <KIcon>
+#include <KConfig>
+#include <KConfigGroup>
 #include <KLocale>
 #include <KMimeType>
 #include <KStandardDirs>
@@ -144,9 +146,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "tag://?audio";
+            mediaItem.url = "tag://audiotags";
             mediaItem.fields["categoryType"] = QString("Audio Tags");
-            mediaItem.artwork = KIcon("nepomuk");
+            mediaItem.artwork = KIcon("view-pim-notes");
             mediaItem.fields["contextTitles"] = QStringList();
             mediaItem.fields["contextLRIs"] = QStringList();
             mediaList << mediaItem;
@@ -170,19 +172,24 @@ void MediaListsEngine::run()
         }
         
         if (m_nepomukInited) {
+            KConfig config;
+            KConfigGroup generalGroup( &config, "General" );
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://frequent?audio||limit=20";
+            int limit = generalGroup.readEntry("FrequentAudioLimit", 20);
+            mediaItem.url = QString("semantics://frequent?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://recent?audio||limit=20";
+            limit = generalGroup.readEntry("RecentAudioLimit", 20);
+            mediaItem.url = QString("semantics://recent?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://highest?audio||limit=20";
+            limit = generalGroup.readEntry("HighestAudioLimit", 20);
+            mediaItem.url = QString("semantics://highest?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }
@@ -319,9 +326,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "tag://?video";
+            mediaItem.url = "tag://videotags";
             mediaItem.fields["categoryType"] = QString("Video Tags");
-            mediaItem.artwork = KIcon("nepomuk");
+            mediaItem.artwork = KIcon("view-pim-notes");
             mediaItem.fields["contextTitles"] = QStringList();
             mediaItem.fields["contextLRIs"] = QStringList();
             mediaList << mediaItem;
@@ -346,19 +353,24 @@ void MediaListsEngine::run()
         }
         
         if (m_nepomukInited) {
+            KConfig config;
+            KConfigGroup generalGroup( &config, "General" );
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://frequent?video||limit=20";
+            int limit = generalGroup.readEntry("FrequentVideoLimit", 20);
+            mediaItem.url = QString("semantics://frequent?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://recent?video||limit=20";
+            limit = generalGroup.readEntry("RecentVideoLimit", 20);
+            mediaItem.url = QString("semantics://recent?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("chronometer");
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://highest?video||limit=20";
+            limit = generalGroup.readEntry("HighestVideoLimit", 20);
+            mediaItem.url = QString("semantics://highest?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }

@@ -22,6 +22,7 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
+#include "platform/ontologyupdater.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -30,6 +31,7 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KHelpMenu>
+#include <KMessageBox>
 #include <KDebug>
 #include <QFile>
 
@@ -137,6 +139,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
     m_shortcutsCollection->addAction("show_video_settings",action);
 
+    //Show Audio Settings
+    action = new KAction(KIcon("speaker"), i18n("Show Audio Settings"),this);
+    action->setShortcut(Qt::CTRL + Qt::Key_A);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleAudioSettings()));
+    m_shortcutsCollection->addAction("show_audio_settings",action);
+
     //Full Screen
     action = new KAction(KIcon("view-fullscreen"), i18n("Fullscreen"), this);
     action->setShortcut(Qt::Key_F11);
@@ -210,10 +218,10 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
     connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
 
-    //Show the Scripting Console
+    /*//Show the Scripting Console
     action = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
     connect(action,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
-    m_shortcutsCollection->addAction("show_scripting_console", action);
+    m_shortcutsCollection->addAction("show_scripting_console", action);*/
 
     //Edit Shortcuts
     action = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -221,7 +229,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(cancelShortcuts()));
     connect(ui->saveShortcuts, SIGNAL(clicked()), this, SLOT(saveShortcuts()));
     m_shortcutsCollection->addAction("show_shortcuts_editor", action);
-
+    
+    //Update Ontologies
+    action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
+    m_shortcutsCollection->addAction("update_ontologies", action);
+    
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
     ui->shortcutsEditor->addCollection(m_shortcutsCollection);
@@ -310,10 +323,15 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         }
 	
         menu->addAction(action("reload"));
-        menu->addSeparator();
-        
+        menu->addSeparator();        
     } 
-    if (showAbout) menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
+    if (showAbout) {
+        QMenu *advancedMenu = new QMenu(i18n("Advanced"), m_parent);
+        advancedMenu->addAction(action("update_ontologies"));
+        menu->addMenu(advancedMenu);
+        menu->addSeparator();
+        menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
+    }
     return menu;
 }
 
@@ -348,6 +366,8 @@ KMenu *ActionsManager::notifierMenu()
     m_notifierMenu->addAction(action("play_previous"));
     m_notifierMenu->addAction(action("play_pause"));
     m_notifierMenu->addAction(action("play_next"));
+    m_notifierMenu->addSeparator();
+    m_notifierMenu->addAction(action("quit"));
     return m_notifierMenu;
 }
 
@@ -430,16 +450,31 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-    if(ui->contextStack->currentIndex() != 1 ) {
+    if(ui->contextStack->currentIndex() != 2 ) {
         m_contextStackWasVisible = ui->contextStack->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
-        ui->contextStack->setCurrentIndex(1);
+        ui->contextStack->setCurrentIndex(2);
         ui->contextStack->setVisible(true);
         action("show_video_settings")->setText(i18n("Hide Video Settings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
         action("show_video_settings")->setText(i18n("Show Video Settings"));
+    }
+}
+
+void ActionsManager::toggleAudioSettings()
+{
+    if(ui->contextStack->currentIndex() != 1 ) {
+        m_contextStackWasVisible = ui->contextStack->isVisible();
+        m_previousContextStackIndex = ui->contextStack->currentIndex();
+        ui->contextStack->setCurrentIndex(1);
+        ui->contextStack->setVisible(true);
+        action("show_audio_settings")->setText(i18n("Hide Audio Settings"));
+    } else {
+        ui->contextStack->setVisible(m_contextStackWasVisible);
+        ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+        action("show_audio_settings")->setText(i18n("Show Audio Settings"));
     }
 }
 
@@ -456,7 +491,7 @@ void ActionsManager::cancelFSHC()
 
 void ActionsManager::showShortcutsEditor()
 {
-    ui->contextStack->setCurrentIndex(2);
+    ui->contextStack->setCurrentIndex(3);
     ui->contextStack->setVisible(true);
 }
 
@@ -641,10 +676,10 @@ void ActionsManager::showInfoForNowPlaying()
     }
 }
 
-void ActionsManager::showScriptConsoleSlot()
+/*void ActionsManager::showScriptConsoleSlot()
 {
     m_parent->scriptConsole()->show();
-}
+}*/
 
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {
@@ -739,3 +774,38 @@ void ActionsManager::togglePlaylistFilter()
     m_playlistFilterVisible = !m_playlistFilterVisible;
 }
 
+void ActionsManager::updateOntologies()
+{
+    KGuiItem updateOntologies;
+    updateOntologies.setText(i18n("Update Ontologies"));
+    KGuiItem cancel;
+    cancel.setText(i18n("Cancel"));
+    if (KMessageBox::questionYesNo(m_parent, i18n("Updating ontologies ensures that media information is stored in a way that makes it most accessible to other desktop applications.  This is only necessary if you recently upgraded Bangarang or your KDE software compilation. <br><br>This may take several minutes."), QString(), updateOntologies, cancel) == KMessageBox::Yes) {
+        QDialog *dialog = new QDialog(m_parent, Qt::Dialog);
+        dialog->setModal(true);
+        dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        dialog->setWindowTitle(i18n("Update Ontologies"));
+        QHBoxLayout *layout = new QHBoxLayout;
+        QLabel * label = new QLabel;
+        QPushButton * stopButton = new QPushButton;
+        stopButton->setText(i18n("Stop"));
+        stopButton->setIcon(KIcon("process-stop"));
+        QPushButton * closeButton = new QPushButton;
+        closeButton->setText(i18n("Close"));
+        closeButton->setIcon(KIcon("dialog-close"));
+        layout->addWidget(label);
+        layout->addWidget(stopButton);
+        layout->addWidget(closeButton);
+        dialog->setLayout(layout);
+        closeButton->setVisible(false);
+        OntologyUpdater *updater = new OntologyUpdater(this);
+        connect(updater, SIGNAL(infoMessage(QString)), label, SLOT(setText(QString)));
+        connect(stopButton, SIGNAL(clicked()), updater, SLOT(stopUpdate()));
+        connect(updater, SIGNAL(done()), stopButton, SLOT(hide()));
+        connect(updater, SIGNAL(done()), closeButton, SLOT(show()));
+        connect(closeButton, SIGNAL(clicked()), dialog, SLOT(hide()));
+        connect(dialog, SIGNAL(rejected()), updater, SLOT(stopUpdate()));
+        dialog->show();
+        updater->start();
+    }
+}

@@ -37,6 +37,7 @@
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Tag>
 
 #include <QByteArray>
 #include <QBuffer>
@@ -803,6 +804,12 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     }
     mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
+    Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
+    QStringList tags;
+    foreach (Nepomuk::Tag tag, res.tags()) {
+        tags.append(tag.label());
+    }
+    mediaItem.fields["tags"] = tags.join(";");
     mediaItem.fields["playCount"] = it.binding(MediaVocabulary::playCountBinding()).literal().toInt();
     if (it.binding(MediaVocabulary::lastPlayedBinding()).isValid()) {
         mediaItem.fields["lastPlayed"] = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
