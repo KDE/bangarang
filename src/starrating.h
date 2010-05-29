@@ -62,9 +62,9 @@ class StarRating {
             QSize sz = StarRating::SizeHint(starSize);
             if (p.x() < 0 || p.y() < 0 || p.x() > sz.width() || p.y() > sz.height())
                 return StarRating::InvalidRating;
-            int in_x = p.x() - StarRating::Margin;
+            int in_x = p.x() - StarRating::Margin + starSize / 4;
             int real_width = sz.width() - StarRating::Margin * 2;
-            int rating = (int) ((StarRating::MaxRating * in_x) / real_width) + 1;
+            int rating = (int) ((StarRating::MaxRating * in_x) / real_width);
             if (rating > StarRating::MaxRating || rating < StarRating::MinRating)
                 rating = StarRating::InvalidRating;
             return rating;
