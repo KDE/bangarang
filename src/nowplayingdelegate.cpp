@@ -144,7 +144,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             index.data(MediaItem::RatingRole).toInt() : 0;
         StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
         if (option.state.testFlag(QStyle::State_MouseOver))
-            r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()) - option.rect.topLeft());
+            r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
         r.paint(&p);
     }
 
