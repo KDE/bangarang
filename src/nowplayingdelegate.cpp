@@ -78,7 +78,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         option.palette.color(QPalette::HighlightedText) :
         option.palette.color(QPalette::Text);
 
-    bool isMedia = isMediaItem(&index);
+    bool isMedia = Utilities::isMediaItem(&index);
     QString type = index.data(MediaItem::TypeRole).toString();
     MediaItemModel * model = (MediaItemModel *)index.model();
     QString subType;
@@ -180,17 +180,6 @@ int NowPlayingDelegate::columnWidth (int column, int viewWidth) const {
     return width;
 }
 
-bool NowPlayingDelegate::isMediaItem(const QModelIndex *index) const
-{
-    QString type = index->data(MediaItem::TypeRole).toString();
-    return
-        (
-            (type == "Audio") ||
-            (type == "Video") ||
-            (type == "Video")
-        );
-}
-
 QRect NowPlayingDelegate::ratingRect(const QRect *rect) const
 {
     QSize sz = StarRating::SizeHint(m_starRatingSize);
@@ -207,7 +196,7 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
       return false;
   if (index.column() != 0)
       return false;
-  if (!isMediaItem(&index))
+  if (!Utilities::isMediaItem(&index))
       return false;
 
   QPoint mousePos = ((QMouseEvent *)event)->pos();

@@ -48,7 +48,6 @@ class NowPlayingDelegate : public QItemDelegate
         void setView(QAbstractItemView *view) { m_view = view; }
 
     protected:
-        bool isMediaItem(const QModelIndex *index) const;
         QRect ratingRect(const QRect *rect) const;
 
     private:

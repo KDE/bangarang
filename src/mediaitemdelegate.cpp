@@ -19,9 +19,11 @@
 #include "mediaitemdelegate.h"
 #include "mainwindow.h"
 #include "infomanager.h"
+#include "starrating.h"
 #include "platform/playlist.h"
 #include "platform/mediaindexer.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/utilities.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
@@ -45,9 +47,7 @@
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_parent = (MainWindow *)parent;
-    m_renderMode = NormalMode;
-    m_ratingNotCount = KIcon("rating").pixmap(8, 8, QIcon::Disabled);
-    m_ratingCount = KIcon("rating").pixmap(8, 8);
+    setRenderMode(NormalMode);
     m_showPlaying = KIcon("media-playback-start");
     m_showInPlaylist = KIcon("mail-mark-notjunk");
     QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
@@ -59,7 +59,7 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     pp.end();
     m_showNotInPlaylist = KIcon(pixmap);
     m_removeFromPlaylist = KIcon("list-remove");
-    
+
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
         m_nepomukInited = true; //resource manager inited successfully
@@ -70,6 +70,7 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 
     //no proxy by default
     m_useProxy = false;
+    m_starRatingSize = StarRating::Small;
 }
 
 MediaItemDelegate::~MediaItemDelegate()
@@ -87,13 +88,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     const int width = option.rect.width();
     //const int height = calcItemHeight();   
     const int height = option.rect.height();   
-    
-    int padding;
-    if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
-        padding = 3;
-    } else {
-        padding = 2;
-    }
+
     
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
@@ -104,24 +99,20 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     nowPlayingColor.setAlpha(70);
     
     //Determine item type
-    bool isMediaItem = false;
-    if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||
-        (index.data(MediaItem::TypeRole).toString() == "Video") ||
-        (index.data(MediaItem::TypeRole).toString() == "Image")) {
-        isMediaItem = true;
-    }
+    bool isMediaItem = Utilities::isMediaItem(&index);
     QString subType;
+    QString type = index.data(MediaItem::TypeRole).toString();
     MediaItemModel * model = (MediaItemModel *) index.model();
     if (useProxy())
         model = (MediaItemModel *)((MediaSortFilterProxyModel *)index.model())->sourceModel();
-    if (index.data(MediaItem::TypeRole).toString() == "Audio") {
+    if (type == "Audio") {
         subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
-    } else if (index.data(MediaItem::TypeRole).toString() == "Video") {
+    } else if (type == "Video") {
         subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
     }
-    bool isCategory = index.data(MediaItem::TypeRole).toString() == "Category" ? true : false;
-    bool isAction = index.data(MediaItem::TypeRole).toString() == "Action" ? true : false;
-    bool isMessage = index.data(MediaItem::TypeRole).toString() == "Message" ? true : false;
+    bool isCategory = type == "Category";
+    bool isAction = type == "Action";
+    bool isMessage = type == "Message";
     
     //Create base pixmap
     QPixmap pixmap(width, height);
@@ -147,28 +138,17 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         
         //Paint Icon
         bool exists = index.data(MediaItem::ExistsRole).toBool();
-        int iconWidth;
-        if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
-            if ((isCategory && index.data(MediaItem::SubTypeRole).toString() == "Album") ||
-            (subType == "Movie")) {
-                iconWidth = height - 2;
-            } else {
-                iconWidth = 22;
-            }
-        } else {
-            iconWidth = 0;
-        }
-        int topOffset = (height - iconWidth) / 2;
-        if (topOffset < padding && index.data(MediaItem::SubTypeRole).toString() != "Album" && subType != "Movie") {
-            topOffset = padding;
+        int topOffset = (height - m_iconSize) / 2;
+        if (topOffset < m_padding && index.data(MediaItem::SubTypeRole).toString() != "Album" && subType != "Movie") {
+            topOffset = m_padding;
         }
         if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
             if (!icon.isNull()) {
-                icon.paint(&p, left + topOffset, top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
+                icon.paint(&p, left + topOffset, top + topOffset, m_iconSize, m_iconSize, Qt::AlignCenter, QIcon::Normal);
             }
         }
         if (!exists && m_renderMode == NormalMode) {
-            KIcon("emblem-unmounted").paint(&p, left + padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
+            KIcon("emblem-unmounted").paint(&p, left + m_padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
         }
         
         bool hasSubTitle;
@@ -191,29 +171,21 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         } else {
             textFont = KGlobalSettings::smallestReadableFont();
         }
-        int durRatingSpacer;
-        if ((m_renderMode == NormalMode && isMediaItem) || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
-            durRatingSpacer = 50;
-        } else if (m_renderMode == MiniPlayCountMode) {
-            durRatingSpacer = 20;
-        } else {
-            durRatingSpacer = 0;
-        }
         int vAlign = (hasSubTitle && m_renderMode == NormalMode) ? Qt::AlignTop : Qt::AlignVCenter;
         int hAlign = (isAction || isMessage) ? Qt::AlignCenter : Qt::AlignLeft;
-        int textInner = iconWidth == 0 ? padding : iconWidth + 2 * padding;
-        int textWidth = (isAction || isMessage) ? width - textInner- padding : width - textInner - padding - durRatingSpacer;
+        int textWidth = (isAction || isMessage) ?
+                width - m_textInner - m_padding : width - m_textInner - m_padding - m_durRatingSpacer;
         QString text = index.data(Qt::DisplayRole).toString();
         textFont.setItalic(isAction || isMessage);
         p.setFont(textFont);
         p.setPen(foregroundColor);
-        p.drawText(left + textInner,
+        p.drawText(left + m_textInner,
                     top+1, textWidth, height,
                     vAlign | hAlign, text);
         if (hasSubTitle && m_renderMode == NormalMode) {
             QString subTitle = index.data(MediaItem::SubTitleRole).toString();
             p.setPen(subColor);
-            p.drawText(left + textInner,
+            p.drawText(left + m_textInner,
                         top, textWidth, height,
                         Qt::AlignBottom | hAlign, subTitle);
             QFontMetrics fm(textFont);
@@ -223,7 +195,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
                 QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
                 p.setFont(commentFont);
-                p.drawText(left + textInner + fm.width(subTitle),
+                p.drawText(left + m_textInner + fm.width(subTitle),
                            top, textWidth - fm.width(subTitle), height,
                            Qt::AlignBottom | hAlign, comment);
                 p.setFont(textFont);
@@ -234,8 +206,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (m_renderMode == NormalMode || m_renderMode == MiniMode) {
             QString duration = index.data(MediaItem::DurationRole).toString();
             p.setPen(subColor);
-            p.drawText(left + width - durRatingSpacer,
-                        top+1, durRatingSpacer - 1, height,
+            p.drawText(left + width - m_durRatingSpacer,
+                        top+1, m_durRatingSpacer - 1, height,
                         Qt::AlignBottom | Qt::AlignRight, duration);
         }
         
@@ -245,25 +217,21 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
                 (subType != "CD Track") 
                 && (subType != "DVD Title")) {
-                int rating = 0;
-                if (index.data(MediaItem::RatingRole).isValid()) {
-                    rating = int((index.data(MediaItem::RatingRole).toDouble()/2.0) + 0.5);
-                }
-                for (int i = 1; i <= 5; i++) {
-                    if (i <= rating) {
-                        p.drawPixmap(left + width - durRatingSpacer + (10 * (i-1)), top + 3, m_ratingCount);
-                    } else {
-                        p.drawPixmap(left + width - durRatingSpacer + (10 * (i-1)), top + 3, m_ratingNotCount);
-                    }
-                }
+                    int rating = (index.data(MediaItem::RatingRole).isValid()) ?
+                                    index.data(MediaItem::RatingRole).toInt() : 0;
+                    StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
+                    if (option.state.testFlag(QStyle::State_MouseOver))
+                        r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()) - option.rect.topLeft());
+                    r.paint(&p);
+
             }
         }
         
         //Paint PlayCount
         if (m_renderMode == MiniPlayCountMode && !index.data(MediaItem::PlayCountRole).isNull()) {
             QString playCountText = QString("%1").arg(index.data(MediaItem::PlayCountRole).toInt());
-            p.drawText(left + width - durRatingSpacer,
-                       top+1, durRatingSpacer - 1, height,
+            p.drawText(left + width - m_durRatingSpacer,
+                       top+1, m_durRatingSpacer - 1, height,
                        Qt::AlignVCenter| Qt::AlignRight, playCountText);
         }
         
@@ -286,14 +254,14 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 }
             }
             int iconWidth = 16;
-            int topOffset = (height - iconWidth) / 2;
-            icon.paint(&p, left + padding , top + topOffset, iconWidth, iconWidth, Qt::AlignCenter, QIcon::Normal);
+            int topOffset = (height - m_iconSize) / 2;
+            icon.paint(&p, left + m_padding , top + topOffset, m_iconSize, iconWidth, Qt::AlignCenter, QIcon::Normal);
         } else if (isCategory) {
             //Paint Category Icon
             QIcon catIcon = index.data(Qt::DecorationRole).value<QIcon>();
             int iconWidth = 22;
             int topOffset = (height - iconWidth) / 2;
-            catIcon.paint(&p, left, top + topOffset, iconWidth, iconWidth, Qt::AlignLeft, QIcon::Normal);
+            catIcon.paint(&p, left, top + topOffset, m_iconSize, m_iconSize, Qt::AlignLeft, QIcon::Normal);
         }
     }
         
@@ -348,8 +316,10 @@ int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
 
 bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model,                                                const QStyleOptionViewItem &option, const QModelIndex &_index)
 {
+    static bool s_mouseOverRating = false;
     QModelIndex index;
     MediaItemModel *model;
+
     //if we use a proxy the index is from the proxy, not from the MediaItemModel which we need
     if (useProxy()) {
         MediaSortFilterProxyModel * proxy = (MediaSortFilterProxyModel *) _model;
@@ -360,45 +330,58 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         index = _index;
     }
     if (index.column() == 0) {
-        if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
+        if (Utilities::isMediaItem(&index)) {
             //Check if rating was clicked and update rating
-            if (m_nepomukInited && event->type() == QEvent::MouseButtonPress &&
-                (m_renderMode == NormalMode || m_renderMode == MiniRatingMode)) {
-                QMouseEvent * mouseEvent = (QMouseEvent *)event;
-                int ratingLeft = option.rect.right() - 50;
-                //int ratingRight = option.rect.left();
-                int ratingBottom = option.rect.top() + option.rect.height()/2;
-                if ((mouseEvent->x() > ratingLeft) && (mouseEvent->y() < ratingBottom)) {
-                     int newRating = int ((10.0 * (mouseEvent->x() - ratingLeft)/50.0) + 0.5);
-                     MediaItem updatedMediaItem = model->mediaItemAt(index.row());
-                     updatedMediaItem.fields["rating"] = newRating;
-                     model->replaceMediaItemAt(index.row(), updatedMediaItem);
-                     m_mediaIndexer->updateInfo(updatedMediaItem);
-                     //Keep other views of same mediaItem in sync
-                     int playlistRow = m_parent->m_playlist->playlistModel()->rowOfUrl(updatedMediaItem.url);
-                     if (playlistRow != -1) {
-                         MediaItem playlistItem = m_parent->m_playlist->playlistModel()->mediaItemAt(playlistRow);
-                         playlistItem.fields["rating"] = newRating;
-                         m_parent->m_playlist->playlistModel()->replaceMediaItemAt(playlistRow, playlistItem);
-                     }
-                     int queueRow = m_parent->m_playlist->queueModel()->rowOfUrl(updatedMediaItem.url);
-                     if (queueRow != -1) {
-                         MediaItem queueItem = m_parent->m_playlist->queueModel()->mediaItemAt(queueRow);
-                         queueItem.fields["rating"] = newRating;
-                         m_parent->m_playlist->queueModel()->replaceMediaItemAt(queueRow, queueItem);
-                     }
-                     int nowPlayingRow = m_parent->m_playlist->nowPlayingModel()->rowOfUrl(updatedMediaItem.url);
-                     if (nowPlayingRow != -1) {
-                         MediaItem nowPlayingItem = m_parent->m_playlist->nowPlayingModel()->mediaItemAt(nowPlayingRow);
-                         nowPlayingItem.fields["rating"] = newRating;
-                         m_parent->m_playlist->nowPlayingModel()->replaceMediaItemAt(nowPlayingRow, nowPlayingItem);
-                     }
-                     int mediaListRow = m_parent->m_mediaItemModel->rowOfUrl(updatedMediaItem.url);
-                     if (mediaListRow != -1) {
-                         MediaItem mediaListItem = m_parent->m_mediaItemModel->mediaItemAt(mediaListRow);
-                         mediaListItem.fields["rating"] = newRating;
-                         m_parent->m_mediaItemModel->replaceMediaItemAt(mediaListRow, mediaListItem);
-                     }
+            if (!m_nepomukInited)
+                goto end;
+            if (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseMove)
+                goto end;
+            if (m_renderMode != NormalMode && m_renderMode != MiniRatingMode)
+                goto end;
+
+            QPoint mousePos = ((QMouseEvent *)event)->pos();
+            QRect ratingArea = ratingRect(&option.rect);
+            if  (!ratingArea.contains(mousePos))
+            {
+                if (s_mouseOverRating) { //onLeave effect
+                    s_mouseOverRating = false;
+                    m_view->update(index);
+                }
+                goto end;
+            }
+            if (!s_mouseOverRating) //mouse entered
+                s_mouseOverRating = true;
+            if (event->type() == QEvent::MouseMove) //mouse over
+            {
+                m_view->update(index);
+                return true;
+            }
+            //else the user clicked, so we have to save the new rating
+            int rating = StarRating::RatingAtPosition(mousePos, m_starRatingSize, ratingArea.topLeft());
+            MediaItemModel *cmodel = model;
+            QString url = cmodel->mediaItemAt(index.row()).url;
+            bool indexerUpdated = false;
+            //models have to be update
+            #define MODELS_TO_BE_UPDATED 5
+            MediaItemModel *models[MODELS_TO_BE_UPDATED] = {
+                cmodel,
+                m_parent->m_playlist->playlistModel(),
+                m_parent->m_playlist->queueModel(),
+                m_parent->m_playlist->nowPlayingModel(),
+                m_parent->m_mediaItemModel
+            };
+            for (int i = 0; i < MODELS_TO_BE_UPDATED; i++)
+            {
+                cmodel = models[i];
+                int row = cmodel->rowOfUrl(url);
+                if (row < 0)
+                    continue;
+                MediaItem update = cmodel->mediaItemAt(row);
+                update.fields["rating"] = rating;
+                cmodel->replaceMediaItemAt(row, update);
+                if (!indexerUpdated) {
+                    m_mediaIndexer->updateInfo(update);
+                    indexerUpdated = true;
                 }
             }
         } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
@@ -435,6 +418,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         // Do nothing
         return true;
     }
+end:
     return QItemDelegate::editorEvent(event, model, option, index);
 }
 
@@ -447,6 +431,31 @@ void MediaItemDelegate::setView(QAbstractItemView * view)
 void MediaItemDelegate::setRenderMode(RenderMode mode)
 {
     m_renderMode = mode;
+    if (mode == NormalMode || mode == MiniAlbumMode) {
+        m_padding = 3;
+        m_iconSize = 22;
+    } else {
+        m_padding = 2;
+        m_iconSize = 0;
+    }
+    m_textInner = m_iconSize == 0 ? m_padding : m_iconSize + 2 * m_padding;
+
+    if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
+        m_durRatingSpacer = 50;
+    } else if (m_renderMode == MiniPlayCountMode) {
+        m_durRatingSpacer = 20;
+    } else {
+        m_durRatingSpacer = 0;
+    }
+
+}
+
+QRect MediaItemDelegate::ratingRect(const QRect *rect) const
+{
+    QSize sz = StarRating::SizeHint(m_starRatingSize);
+    QPoint p = QPoint(rect->left() + rect->width() - m_durRatingSpacer,
+                      rect->top() + m_padding);
+    return QRect(p, sz);
 }
 
 MediaItemDelegate::RenderMode MediaItemDelegate::currentRenderMode()

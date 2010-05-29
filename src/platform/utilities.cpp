@@ -345,6 +345,17 @@ bool Utilities::isPls(const QString &url)
     return result->is("audio/x-scpls");
 }
 
+bool Utilities::isMediaItem(const QModelIndex *index)
+{
+    QString type = index->data(MediaItem::TypeRole).toString();
+    return
+        (
+             (type == "Audio") ||
+            (type == "Video") ||
+            (type == "Video")
+        );
+}
+
 QPixmap Utilities::reflection(QPixmap &pixmap)
 {
     QMatrix flipMatrix;
