@@ -43,6 +43,8 @@ SET(BangarangSources
     actionsmanager.cpp
     bookmarksmanager.cpp
     videosettings.cpp
+    audiosettings.cpp
+    medialistsettings.cpp
     pluginexport.cpp
     scriptconsole.cpp
     starrating.cpp
@@ -72,6 +74,7 @@ SET(BangarangSources
     platform/infoitemmodel.cpp
     platform/infocategorymodel.cpp
     platform/dbpediaquery.cpp
+    platform/ontologyupdater.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

@@ -324,6 +324,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();

@@ -58,62 +58,73 @@ void TagListEngine::run()
     
     QString engineArg = m_mediaListProperties.engineArg();
     QString engineFilter = m_mediaListProperties.engineFilter();
+    QStringList engineFilterList = m_mediaListProperties.engineFilterList();
     QString mediaType;
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
-    //Parse filter
-    if (!engineFilter.isNull()) {
-        QStringList argList = engineFilter.split("||");
-        mediaType = argList.at(0);
-    }
-    
     if (m_nepomukInited) { 
-      if (engineArg.isEmpty()) { //without arguments, list tags 
-          //TODO:This should be restricted to audio resources
-	foreach(Nepomuk::Tag tag, Nepomuk::Tag::allTags()) {
-	      MediaItem mediaItem;
-	      mediaItem.title = tag.label();
-	      mediaItem.type = "Category";
-          mediaItem.fields["categoryType"] = QString("AudioTag");
-          mediaItem.fields["title"] = tag.label();
-	      mediaItem.url = QString("tag://%1?%2").arg(mediaItem.title).arg(engineFilter);
-	      mediaList.append(mediaItem);
-	}
-	    m_mediaListProperties.name = i18n("List of Tags");
-	    m_mediaListProperties.type = QString("Sources");
-      }
-      else {
-            if (!mediaType.isEmpty()) {
-                MediaQuery query;
-                QStringList bindings;
-                bindings.append(mediaVocabulary.mediaResourceBinding());
-                bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                query.select(bindings, MediaQuery::Distinct);
-                query.startWhere();
-                if (mediaType == "audio") {
-                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
-                } else if (mediaType == "video") {
-                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-                } 
-                query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required,Nepomuk::Tag(engineArg).resourceUri().toString()));
-		query.endWhere();
-		kDebug() << "taglistengine: " << query.query();
-		qDebug() << query.query();
-		Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+        if (engineArg == "audiotags" || engineArg == "videotags") {
+            QString mediaType;
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.tagBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            if (engineArg == "audiotags") {
+                query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+                mediaType = "audio";
+            } else if (engineArg == "videotags") {
+                query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+                mediaType = "video";
+            }
+            query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required)); 
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            query.endWhere();
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
-                //Build media list from results
-                while( it.next() ) {
-                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                    MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
-                    mediaItem.fields["description"] = i18n("%1", mediaItem.fields["description"].toString());
-                    mediaList.append(mediaItem);
-                }
-                m_mediaListProperties.name = i18n("Files with Tag '%1'",engineArg);
-                m_mediaListProperties.type = QString("Sources");
-	    }
-      }
-          
+            //Build media list from results
+            while( it.next() ) {
+                QString tag = it.binding(mediaVocabulary.tagBinding()).literal().toString().trimmed();
+                MediaItem mediaItem;
+                mediaItem.url = QString("tag://%1?tag=%2").arg(mediaType).arg(tag);
+                mediaItem.type = "Category";
+                mediaItem.title = tag;
+                mediaItem.fields["title"] = tag;
+                mediaItem.artwork = KIcon("view-pim-notes");
+                mediaList.append(mediaItem);
+            }
+            m_mediaListProperties.name = i18n("Tags",engineArg);
+            m_mediaListProperties.summary = i18np("1 tag", "%1 tags", mediaList.count());
+            m_mediaListProperties.type = QString("Categories");
+
+        } else if (engineArg == "audio" || engineArg == "video") {
+            MediaQuery query;
+            QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+            query.select(bindings, MediaQuery::Distinct);
+            query.startWhere();
+            if (engineArg == "audio") {
+                query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+            } else if (engineArg == "video") {
+                query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+            } 
+            query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+            query.endWhere();
+
+            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+
+            //Build media list from results
+            while( it.next() ) {
+                Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
+                mediaList.append(mediaItem);
+            }
+            m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
+            m_mediaListProperties.type = QString("Sources");
+        }
     }
+          
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     

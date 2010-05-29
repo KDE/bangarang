@@ -19,7 +19,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "config-bangarang.h"
 #include "platform/bangarangvideowidget.h"
 #include "scriptconsole.h"
 #include <KIcon>
@@ -55,12 +54,9 @@ class InfoManager;
 class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
+class AudioSettings;
+class MediaListSettings;
 class KStatusNotifierItem;
-/*#else
-#include <knotificationitem-1/knotificationitem.h>
-using ::Experimental::KNotificationItem;
-#endif*/
 
 namespace Ui
 {
@@ -152,20 +148,19 @@ private:
     qreal m_volume;
     ScriptConsole *m_scriptConsole;
     KAction *playPause;    
+    AudioSettings *m_audioSettings;
+    MediaListSettings *m_mediaListSettings;
     void setupModel();
     KIcon addItemsIcon();
     void setupIcons();
     void showApplicationBanner();
     void updateCachedDevicesList();
-
-#ifdef HAVE_KSTATUSNOTIFIERITEM
     KStatusNotifierItem *m_sysTray;
-#else
-    KNotificationItem *m_sysTray;
-#endif
 
 private slots:
     void on_nowPlaying_clicked();
+    void on_configureAudioList_clicked();
+    void on_configureVideoList_clicked();
     void on_collectionButton_clicked();
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();

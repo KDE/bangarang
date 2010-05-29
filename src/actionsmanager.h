@@ -96,6 +96,7 @@ class ActionsManager : public QObject
         void fullScreenToggle();
         void toggleControls();
         void toggleVideoSettings();
+        void toggleAudioSettings();
         void cancelFSHC();
         void showShortcutsEditor();
         void saveShortcuts();
@@ -112,11 +113,12 @@ class ActionsManager : public QObject
         void addToSavedVideoList(QAction *addAction);
         void loadSelectedSources();
         void showInfoForNowPlaying();
-        void showScriptConsoleSlot();
+        //void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
         void togglePlaylistFilter();
         void addBookmarkSlot();
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
+        void updateOntologies();
 };
 #endif //ACTIONSMANAGER_H

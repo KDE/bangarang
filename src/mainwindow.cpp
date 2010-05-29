@@ -30,6 +30,8 @@
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
 #include "videosettings.h"
+#include "audiosettings.h"
+#include "medialistsettings.h"
 #include "scriptconsole.h"
 
 #include <KAction>
@@ -118,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
     connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
+    
     //Add video widget to video frame on viewer stack
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
@@ -231,10 +234,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Setup Actions Manager
     m_actionsManager = new ActionsManager(this);
     
+    //Setup Audio settings
+    m_audioSettings = new AudioSettings(this);
+    m_audioSettings->setAudioPath(&m_audioPath);
+    
     //Setup Video Settings
     VideoSettings *videoSettings = new VideoSettings(m_videoWidget, this);
     videoSettings->setHideAction(m_actionsManager->action("show_video_settings"));
     ui->videoSettingsPage->layout()->addWidget(videoSettings);
+    
+    //Setup Media List Settings
+    m_mediaListSettings =  new MediaListSettings(this);
     
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
@@ -262,7 +272,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QList<MediaItem> mediaList;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    kDebug() << KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
         for(int i = 0; i < args->count(); i++) {
             if (args->isSet("play-dvd")) {
@@ -332,9 +341,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     KConfigGroup generalGroup( &config, "General" );
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_audioSettings->restoreAudioSettings(&generalGroup);
     m_savedListsManager->loadPlaylist();
 
-    m_scriptConsole = new ScriptConsole();
+    /*m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
     m_scriptConsole->addObject(m_media,"media");
     m_scriptConsole->addObject(m_actionsManager,"actionsManager");
@@ -343,7 +353,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
     m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
     m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
-    m_scriptConsole->addObject(this,"mainwindow");
+    m_scriptConsole->addObject(this,"mainwindow");*/
 }
 
 MainWindow::~MainWindow()
@@ -367,6 +377,7 @@ MainWindow::~MainWindow()
     KConfigGroup generalGroup( &config, "General" );
     generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
+    m_audioSettings->saveAudioSettings(&generalGroup);
     config.sync();
     m_savedListsManager->savePlaylist();
 
@@ -404,6 +415,36 @@ void MainWindow::on_Filter_returnPressed()
     }
 }
 
+void MainWindow::on_configureAudioList_clicked()
+{
+    if ((ui->mediaLists->currentIndex() == 0) && (ui->audioLists->selectionModel()->selectedIndexes().count() > 0)) {
+        int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
+        if (selectedItem.url.startsWith("savedlists://")) {
+            m_savedListsManager->showAudioSavedListSettings();
+        } else if (selectedItem.url.startsWith("semantics://recent") ||
+            selectedItem.url.startsWith("semantics://frequent") ||
+            selectedItem.url.startsWith("semantics://highest")) {
+            m_mediaListSettings->showMediaListSettings();
+        }
+    }
+}
+
+void MainWindow::on_configureVideoList_clicked()
+{
+    if ((ui->mediaLists->currentIndex() == 1) && (ui->videoLists->selectionModel()->selectedIndexes().count() > 0)) {
+        int selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
+        if (selectedItem.url.startsWith("savedlists://")) {
+            m_savedListsManager->showVideoSavedListSettings();
+        } else if (selectedItem.url.startsWith("semantics://recent") ||
+            selectedItem.url.startsWith("semantics://frequent") ||
+            selectedItem.url.startsWith("semantics://highest")) {
+            m_mediaListSettings->showMediaListSettings();
+        }
+    }
+}
+
 void MainWindow::on_nowPlaying_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1); // Show Now Playing page
@@ -425,6 +466,7 @@ void MainWindow::on_showPlaylist_clicked(bool checked)
     }
     ui->contextStack->setCurrentIndex(0);  
     m_actionsManager->action("show_video_settings")->setText(i18n("Show Video Settings"));
+    m_actionsManager->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -651,11 +693,12 @@ void MainWindow::on_showMenu_clicked()
         }
     }
     m_menu->addAction(m_actionsManager->action("show_video_settings"));
+    m_menu->addAction(m_actionsManager->action("show_audio_settings"));
     if (!isFullScreen()) {
         m_menu->addAction(m_actionsManager->action("toggle_controls"));
         m_menu->addSeparator();
     }
-    m_menu->addAction(m_actionsManager->action("show_scripting_console"));
+    //m_menu->addAction(m_actionsManager->action("show_scripting_console"));
     m_menu->addAction(m_actionsManager->action("show_shortcuts_editor"));
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
@@ -901,11 +944,13 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
 void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
     if ((ui->mediaLists->currentIndex() == 0) && (selected.indexes().count() > 0)) {
+        //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
-        currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
-        currentProperties.category = m_audioListsModel->mediaItemAt(selectedRow);
+        MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
+        currentProperties.name = selectedItem.title;
+        currentProperties.lri = selectedItem.url;
+        currentProperties.category = selectedItem;
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -915,7 +960,19 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setContext(m_audioListsModel->mediaItemAt(selectedRow));
+        
+        //Update InfoManager Context
+        m_infoManager->setContext(selectedItem);
+        
+        //Determine if selected list is configurable
+        if (selectedItem.url.startsWith("savedlists://") ||
+            selectedItem.url.startsWith("semantics://recent?audio") ||
+            selectedItem.url.startsWith("semantics://frequent?audio") ||
+            selectedItem.url.startsWith("semantics://highest?audio")) {
+            ui->configureAudioList->setVisible(true);
+        } else {
+            ui->configureAudioList->setVisible(false);
+        }
     }
     Q_UNUSED(deselected);
 }    
@@ -931,11 +988,13 @@ void MainWindow::audioListsChanged()
 void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
     if ((ui->mediaLists->currentIndex() == 1) && (selected.indexes().count() > 0)) {
+        //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
-        currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
-        currentProperties.category = m_videoListsModel->mediaItemAt(selectedRow);
+        MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
+        currentProperties.name = selectedItem.title;
+        currentProperties.lri = selectedItem.url;
+        currentProperties.category = selectedItem;
         if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
             m_mediaItemModel->clearMediaListData();
             m_mediaItemModel->setMediaListProperties(currentProperties);
@@ -945,7 +1004,20 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
             ui->previous->setVisible(false);
             ui->mediaViewHolder->setCurrentIndex(0);
         }
-        m_infoManager->setContext(m_videoListsModel->mediaItemAt(selectedRow));
+        
+        //Set InfoManager context
+        m_infoManager->setContext(selectedItem);
+
+        //Determine if selected list is configurable
+        if (selectedItem.url.startsWith("savedlists://") ||
+            selectedItem.url.startsWith("semantics://recent?") ||
+            selectedItem.url.startsWith("semantics://frequent?") ||
+            selectedItem.url.startsWith("semantics://highest?")) {
+            ui->configureVideoList->setVisible(true);
+        } else {
+            ui->configureVideoList->setVisible(false);
+        }
+
     }
     Q_UNUSED(deselected);
 }    
@@ -1140,6 +1212,7 @@ void MainWindow::setupIcons()
     ui->configureAudioList->setIcon(KIcon("configure"));
     ui->saveAudioList->setIcon(KIcon("document-save"));
     ui->aslsSave->setIcon(KIcon("document-save"));
+    ui->semAConfigSave->setIcon(KIcon("document-save"));
     
     
     //Video List Icons
@@ -1148,6 +1221,7 @@ void MainWindow::setupIcons()
     ui->configureVideoList->setIcon(KIcon("configure"));
     ui->saveVideoList->setIcon(KIcon("document-save"));
     ui->vslsSave->setIcon(KIcon("document-save"));
+    ui->semVConfigSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
     ui->seekTime->setIcon(KIcon("bookmarks-organize"));
@@ -1170,6 +1244,9 @@ void MainWindow::setupIcons()
     ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
+    
+    //Audio settings
+    ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
 }
 
 void MainWindow::showApplicationBanner()
@@ -1283,8 +1360,6 @@ void MainWindow::updateCustomColors()
 // Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
-  //kDebug() << "Scrolls" << i;
-  
   if (m_media->isSeekable())
     m_media->seek(m_media->currentTime() + qint64(i)*100);
   
@@ -1292,7 +1367,6 @@ void MainWindow::skipForward(int i)
 
 void MainWindow::skipBackward(int i)
 {
-  //kDebug() << "Scrolls" << i;
   if (m_media->isSeekable())
     m_media->seek(m_media->currentTime() + qint64(i)*100);
 }
