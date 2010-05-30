@@ -270,6 +270,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_loadingProgress = 0;
     
     QList<MediaItem> mediaList;
+    bool itemLoaded = false;
     //Get command line args
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
@@ -284,6 +285,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 QList<MediaItem> mediaList;
                 mediaList << mediaItem;
                 m_playlist->playMediaList(mediaList);
+                itemLoaded = true;
             } else if (args->isSet("play-cd")) {
                 //Play CD
                 kDebug() << "playing CD";
@@ -294,12 +296,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 QList<MediaItem> mediaList;
                 mediaList << mediaItem;
                 m_playlist->playMediaList(mediaList);
+                itemLoaded = true;
             } else {
                 //Play Url
                 KUrl cmdLineKUrl = args->url(i);
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
                 mediaList << mediaItem;
                 m_playlist->playMediaList(mediaList);
+                itemLoaded = true;
             }
         }
     } else {
@@ -342,7 +346,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
     m_audioSettings->restoreAudioSettings(&generalGroup);
-    m_savedListsManager->loadPlaylist();
+    if (!itemLoaded)
+        m_savedListsManager->loadPlaylist();
 
     /*m_scriptConsole = new ScriptConsole();
     m_scriptConsole->addObject(m_videoWidget,"videoWidget");
