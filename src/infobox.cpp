@@ -21,6 +21,7 @@
 #include "mediaview.h"
 #include "mediaitemdelegate.h"
 #include "infomanager.h"
+#include "bangarangapplication.h"
 #include "platform/mediaitemmodel.h"
 #include <KIcon>
 #include <KGlobalSettings>
@@ -145,7 +146,8 @@ void InfoBox::categoryActivated(QModelIndex index)
     mediaListProperties.name = categoryMediaItem.title;
     mediaListProperties.category = categoryMediaItem;
     m_mainWindow->addListToHistory();
-    m_mainWindow->m_mediaItemModel->clearMediaListData();
-    m_mainWindow->m_mediaItemModel->setMediaListProperties(mediaListProperties);
-    m_mainWindow->m_mediaItemModel->load();
+    BangarangApplication * application = (BangarangApplication *)KApplication::kApplication();
+    application->browsingModel()->clearMediaListData();
+    application->browsingModel()->setMediaListProperties(mediaListProperties);
+    application->browsingModel()->load();
 }

@@ -30,6 +30,7 @@
 
 class MainWindow;
 class MediaIndexer;
+class BangarangApplication;
 
 /*
  * This Item Delegate is responsible for painting items in a 
@@ -66,6 +67,7 @@ class MediaItemDelegate : public QItemDelegate
         MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;
     
     private:
+        BangarangApplication * m_application;
         MainWindow * m_parent;
         QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;

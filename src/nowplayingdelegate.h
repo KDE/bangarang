@@ -26,6 +26,7 @@
 
 class MainWindow;
 class MediaIndexer;
+class BangarangApplication;
 
 /*
  * This ItemDelegate is responsible for painting the currently
@@ -51,6 +52,7 @@ class NowPlayingDelegate : public QItemDelegate
         QRect ratingRect(const QRect *rect) const;
 
     private:
+        BangarangApplication * m_application;
         MainWindow * m_parent;
         int m_iconSize;
         int m_padding;

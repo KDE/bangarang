@@ -17,6 +17,7 @@
 */
 
 #include "nowplayingdelegate.h"
+#include "bangarangapplication.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/mediaindexer.h"
@@ -42,6 +43,7 @@
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = (MainWindow *)parent;
     m_globalRatingRect = QRect(0, 0, 0, 0);
     m_view = NULL;
@@ -227,9 +229,9 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
   #define MODELS_TO_BE_UPDATED 4
   MediaItemModel *models[MODELS_TO_BE_UPDATED] = {
       cmodel,
-      m_parent->m_playlist->playlistModel(),
-      m_parent->m_playlist->queueModel(),
-      m_parent->m_mediaItemModel
+      m_application->playlist()->playlistModel(),
+      m_application->playlist()->queueModel(),
+      m_application->browsingModel()
   };
   for (int i = 0; i < MODELS_TO_BE_UPDATED; i++)
   {

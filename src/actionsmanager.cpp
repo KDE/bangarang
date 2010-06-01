@@ -17,6 +17,7 @@
 */
 
 #include "actionsmanager.h"
+#include "bangarangapplication.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -38,6 +39,7 @@
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 {
     /*Set up basics */
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = parent;
     ui = m_parent->ui;
 
@@ -64,7 +66,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //globals only work after adding them to the action manager
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_D));
 
-
     //Play Action
     action = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(smartPlay()));
@@ -72,21 +73,20 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Pause Action
     action = new KAction(KIcon("media-playback-pause"), i18n("Pause"), this);
-    connect(action, SIGNAL(triggered()), m_parent->playlist()->mediaObject(), SLOT(pause()));
+    connect(action, SIGNAL(triggered()), m_application->playlist()->mediaObject(), SLOT(pause()));
     m_othersCollection->addAction("pause", action);
-
 
     //Play Next
     action = new KAction(KIcon("media-skip-forward"), i18n("Play next"), this);
     action->setShortcut(Qt::Key_Right);
-    connect(action, SIGNAL(triggered()), m_parent->playlist(), SLOT(playNext()));
+    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playNext()));
     m_shortcutsCollection->addAction("play_next", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_F));
 
     //Play Previous
     action = new KAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
     action->setShortcut(Qt::Key_Left);
-    connect(action, SIGNAL(triggered()), m_parent->playlist(), SLOT(playPrevious()));
+    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
     m_shortcutsCollection->addAction("play_previous", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
 
@@ -160,18 +160,18 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Remove Info for Selected MediaItems
     action = new KAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
-    connect(action, SIGNAL(triggered()), m_parent->infoManager(), SLOT(removeSelectedItemsInfo()));
+    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
     m_othersCollection->addAction("remove_selected_info", action);
 
     //Refresh Media View
     action = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
     action->setShortcut(Qt::Key_F5);
-    connect(action, SIGNAL(triggered()), m_parent->m_mediaItemModel, SLOT(reload()));
+    connect(action, SIGNAL(triggered()), m_application->browsingModel(), SLOT(reload()));
     m_shortcutsCollection->addAction("reload", action);
 
     //Remove selected from playlist
     action = new KAction(i18n("Remove from list"), this);
-    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(removeSelected()));
+    connect(action, SIGNAL(triggered()), m_application->savedListsManager(), SLOT(removeSelected()));
     m_othersCollection->addAction("remove_from_list", action);
 
     //Add selected to saved audio list
@@ -184,12 +184,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Add a new audio list
     action = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
-    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showAudioListSave()));
+    connect(action, SIGNAL(triggered()), m_application->savedListsManager(), SLOT(showAudioListSave()));
     m_othersCollection->addAction("new_audio_list", action);
 
     //Add a new video list
     action = new KAction(KIcon("list-add"), i18n("New list"), m_parent);
-    connect(action, SIGNAL(triggered()), m_parent->savedListsManager(), SLOT(showVideoListSave()));
+    connect(action, SIGNAL(triggered()), m_application->savedListsManager(), SLOT(showVideoListSave()));
     m_othersCollection->addAction("new_video_list", action);
 
     //Show Items
@@ -204,7 +204,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Show Info View
     action = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
-    connect(action, SIGNAL(triggered()), m_parent->infoManager(), SLOT(showInfoView()));
+    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(showInfoView()));
     m_othersCollection->addAction("show_info", action);
 
     //Add bookmark
@@ -217,11 +217,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_bookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(activateBookmark(QAction *)));
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
     connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
-
-    /*//Show the Scripting Console
-    action = new KAction(KIcon("applications-development"),i18n("Show Scripting-Console"),m_parent);
-    connect(action,SIGNAL(triggered()),this,SLOT(showScriptConsoleSlot()));
-    m_shortcutsCollection->addAction("show_scripting_console", action);*/
 
     //Edit Shortcuts
     action = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
@@ -312,7 +307,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
                     menu->addMenu(m_addToVideoSavedList);
                 }
             }
-            if (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")) {
+            if (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")) {
                 menu->addAction(action("remove_from_list"));
             }
             menu->addSeparator();
@@ -338,10 +333,10 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
 QMenu *ActionsManager::nowPlayingContextMenu()
 {
     m_nowPlayingContextMenu->clear();
-    if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState ||
-        m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
+    if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
+        m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
         m_nowPlayingContextMenu->addAction(action("play_previous"));
-        if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+        if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState) {
             m_nowPlayingContextMenu->addAction(action("pause"));
         } else {
             m_nowPlayingContextMenu->addAction(action("play"));
@@ -351,7 +346,7 @@ QMenu *ActionsManager::nowPlayingContextMenu()
     }
     m_nowPlayingContextMenu->addAction(action("play_next"));
     m_nowPlayingContextMenu->addSeparator();
-    if (m_parent->playlist()->mediaObject()->hasVideo()) {
+    if (m_application->playlist()->mediaObject()->hasVideo()) {
         m_nowPlayingContextMenu->addAction(action("show_video_settings"));
     }
     m_nowPlayingContextMenu->addAction(action("toggle_controls"));
@@ -387,19 +382,19 @@ QMenu *ActionsManager::bookmarksMenu()
     m_bookmarksMenu->clear();
     m_bookmarksMenu->addAction(action("toggle_show_remaining_time"));
     m_bookmarksMenu->addSeparator();
-    Phonon::State state = m_parent->playlist()->mediaObject()->state();
+    Phonon::State state = m_application->playlist()->mediaObject()->state();
     if (!(state == Phonon::PlayingState || state == Phonon::PausedState)) {
         action("add_bookmark")->setEnabled(false);
     } else {
         action("add_bookmark")->setEnabled(true);
     }
     m_bookmarksMenu->addAction(action("add_bookmark"));
-    if (m_parent->playlist()->nowPlayingModel()->rowCount() > 0) {
-        QString url = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
-        QStringList bookmarks = m_parent->bookmarksManager()->bookmarks(url);
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        QString url = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        QStringList bookmarks = m_application->bookmarksManager()->bookmarks(url);
         for (int i = 0; i < bookmarks.count(); i++) {
-            QString bookmarkName = m_parent->bookmarksManager()->bookmarkName(bookmarks.at(i));
-            qint64 bookmarkTime = m_parent->bookmarksManager()->bookmarkTime(bookmarks.at(i));
+            QString bookmarkName = m_application->bookmarksManager()->bookmarkName(bookmarks.at(i));
+            qint64 bookmarkTime = m_application->bookmarksManager()->bookmarkTime(bookmarks.at(i));
             QTime bmTime(0, (bookmarkTime / 60000) % 60, (bookmarkTime / 1000) % 60);
             QString bookmarkTimeStr = bmTime.toString(QString("m:ss"));
             QString bookmarkTitle = QString("%1 (%2)").arg(bookmarkName).arg(bookmarkTimeStr);
@@ -518,8 +513,8 @@ void ActionsManager::hideShortcutsEditor()
 
 void ActionsManager::simplePlayPause()
 {
-    if (m_parent->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-        m_parent->playlist()->mediaObject()->pause();
+    if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+        m_application->playlist()->mediaObject()->pause();
     } else {
         smartPlay();
     }
@@ -527,10 +522,10 @@ void ActionsManager::simplePlayPause()
 
 void ActionsManager::smartPlay()
 {
-    if (m_parent->playlist()->mediaObject()->state() == Phonon::PausedState) {
-        m_parent->playlist()->mediaObject()->play();
-    } else if (m_parent->playlist()->mediaObject()->state() != Phonon::PlayingState) {
-        m_parent->playlist()->start();
+    if (m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        m_application->playlist()->mediaObject()->play();
+    } else if (m_application->playlist()->mediaObject()->state() != Phonon::PlayingState) {
+        m_application->playlist()->start();
     }
 }
 
@@ -553,9 +548,9 @@ void ActionsManager::addSelectedToPlaylistSlot()
     for (int i = 0; i < mediaList.count(); i++) {
         if (mediaList.at(i).type == "Audio" ||
             mediaList.at(i).type == "Video") {
-            int playlistRow = m_parent->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
+            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
             if (playlistRow == -1) {
-                m_parent->playlist()->addMediaItem(mediaList.at(i));
+                m_application->playlist()->addMediaItem(mediaList.at(i));
             }
         }
     }
@@ -567,9 +562,9 @@ void ActionsManager::removeSelectedFromPlaylistSlot()
     for (int i = 0; i < mediaList.count(); i++) {
         if (mediaList.at(i).type == "Audio" ||
             mediaList.at(i).type == "Video") {
-            int playlistRow = m_parent->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
+            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
             if (playlistRow != -1) {
-                m_parent->playlist()->removeMediaItemAt(playlistRow);
+                m_application->playlist()->removeMediaItemAt(playlistRow);
             }
         }
     }
@@ -579,10 +574,10 @@ void ActionsManager::updateSavedListsMenus()
 {
     m_addToAudioSavedList->clear();
     m_addToAudioSavedList->addAction(action("new_audio_list"));
-    QStringList audioListNames = m_parent->savedListsManager()->savedListNames("Audio");
+    QStringList audioListNames = m_application->savedListsManager()->savedListNames("Audio");
     for (int i = 0; i < audioListNames.count(); i++) {
-        if (!((audioListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
-            && (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")))) { 
+        if (!((audioListNames.at(i) == m_application->browsingModel()->mediaListProperties().name)
+            && (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")))) { 
             KAction * addToSavedList = new KAction(KIcon("view-list-text"), audioListNames.at(i), m_addToAudioSavedList);
             addToSavedList->setData(audioListNames.at(i));
             m_addToAudioSavedList->addAction(addToSavedList);
@@ -591,10 +586,10 @@ void ActionsManager::updateSavedListsMenus()
     
     m_addToVideoSavedList->clear();
     m_addToVideoSavedList->addAction(action("new_video_list"));
-    QStringList videoListNames = m_parent->savedListsManager()->savedListNames("Video");
+    QStringList videoListNames = m_application->savedListsManager()->savedListNames("Video");
     for (int i = 0; i < videoListNames.count(); i++) {
-        if (!((videoListNames.at(i) == m_parent->m_mediaItemModel->mediaListProperties().name)
-            && (m_parent->m_mediaItemModel->mediaListProperties().lri.startsWith("savedlists://")))) { 
+        if (!((videoListNames.at(i) == m_application->browsingModel()->mediaListProperties().name)
+            && (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")))) { 
             KAction * addToSavedList = new KAction(KIcon("view-list-text"), videoListNames.at(i), m_addToVideoSavedList);
             addToSavedList->setData(videoListNames.at(i));
             m_addToVideoSavedList->addAction(addToSavedList);
@@ -605,14 +600,14 @@ void ActionsManager::updateSavedListsMenus()
 void ActionsManager::removeSelectedItemsInfoSlot()
 {
     QList<MediaItem> mediaList = selectedMediaItems();
-    m_parent->m_mediaItemModel->removeSourceInfo(mediaList);
+    m_application->browsingModel()->removeSourceInfo(mediaList);
 }
 
 void ActionsManager::playSelectedSlot()
 {
     //Get selected mediaitems and play
     QList<MediaItem> mediaList = selectedMediaItems();
-    m_parent->playlist()->playMediaList(mediaList);
+    m_application->playlist()->playMediaList(mediaList);
     
     // Show Now Playing page
     ui->stackedWidget->setCurrentIndex(1);   
@@ -621,7 +616,7 @@ void ActionsManager::playSelectedSlot()
 void ActionsManager::playAllSlot()
 {
     //Play all media items in the media list view
-    m_parent->playlist()->playMediaList(m_parent->m_mediaItemModel->mediaList());
+    m_application->playlist()->playMediaList(m_application->browsingModel()->mediaList());
 
     // Show Now Playing page
     ui->stackedWidget->setCurrentIndex(1);   
@@ -635,7 +630,7 @@ void ActionsManager::addToSavedAudioList(QAction *addAction)
     //Add to saved list
     if (mediaList.count() > 0) {
         QString audioListName = addAction->data().toString();
-        m_parent->savedListsManager()->saveMediaList(mediaList, audioListName, "Audio", true);
+        m_application->savedListsManager()->saveMediaList(mediaList, audioListName, "Audio", true);
     }
 }
 
@@ -647,7 +642,7 @@ void ActionsManager::addToSavedVideoList(QAction *addAction)
     //Add to saved list
     if (mediaList.count() > 0) {
         QString videoListName = addAction->data().toString();
-        m_parent->savedListsManager()->saveMediaList(mediaList, videoListName, "Video", true);
+        m_application->savedListsManager()->saveMediaList(mediaList, videoListName, "Video", true);
     }
 }
 
@@ -656,44 +651,39 @@ void ActionsManager::loadSelectedSources()
     m_parent->addListToHistory();
     QList<MediaItem> mediaList;
     if (m_contextMenuSource == MainWindow::InfoBox) {
-        mediaList = m_parent->infoManager()->selectedInfoBoxMediaItems();
+        mediaList = m_application->infoManager()->selectedInfoBoxMediaItems();
     } else {
         QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+            mediaList.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
         }
     }
-    m_parent->m_mediaItemModel->clearMediaListData();
-    m_parent->m_mediaItemModel->loadSources(mediaList);
+    m_application->browsingModel()->clearMediaListData();
+    m_application->browsingModel()->loadSources(mediaList);
 }
 
 void ActionsManager::showInfoForNowPlaying()
 {
-    MediaItemModel * nowPlayingModel = m_parent->playlist()->nowPlayingModel();
+    MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
     if(nowPlayingModel->rowCount() > 0) {
         MediaItem mediaItem = nowPlayingModel->mediaItemAt(0);
-        m_parent->infoManager()->showInfoViewForMediaItem(mediaItem);
+        m_application->infoManager()->showInfoViewForMediaItem(mediaItem);
     }
 }
-
-/*void ActionsManager::showScriptConsoleSlot()
-{
-    m_parent->scriptConsole()->show();
-}*/
 
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {
     QList<MediaItem> mediaList;
     if (m_contextMenuSource == MainWindow::InfoBox ||
         m_contextMenuSource == MainWindow::Default) {
-        mediaList = m_parent->infoManager()->selectedInfoBoxMediaItems();
+        mediaList = m_application->infoManager()->selectedInfoBoxMediaItems();
     }
     if (m_contextMenuSource == MainWindow::MediaList ||
         (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)) {
         for (int i = 0; i < ui->mediaView->selectionModel()->selectedIndexes().count(); ++i) {
             QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(i);
             if (index.column() == 0) {
-                mediaList.append(m_parent->m_mediaItemModel->mediaItemAt(index.row()));
+                mediaList.append(m_application->browsingModel()->mediaItemAt(index.row()));
             }
         }
     }
@@ -717,12 +707,12 @@ void ActionsManager::toggleShowRemainingTimeSlot()
 
 void ActionsManager::addBookmarkSlot()
 {
-    if (m_parent->playlist()->nowPlayingModel()->rowCount() > 0) {
-        QString nowPlayingUrl = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
-        qint64 time = m_parent->playlist()->mediaObject()->currentTime();
-        QString name = QString("Bookmark-%1").arg(m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() + 1);
-        m_parent->bookmarksManager()->addBookmark(nowPlayingUrl, name, time);
-        if (m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() > 0) {
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        QString nowPlayingUrl = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        qint64 time = m_application->playlist()->mediaObject()->currentTime();
+        QString name = QString("Bookmark-%1").arg(m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() + 1);
+        m_application->bookmarksManager()->addBookmark(nowPlayingUrl, name, time);
+        if (m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() > 0) {
             ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         }
     }
@@ -733,8 +723,8 @@ void ActionsManager::activateBookmark(QAction *bookmarkAction)
     QString bookmark = bookmarkAction->data().toString();
     if (!bookmark.isEmpty() && bookmark.startsWith("Activate:")) {
         bookmark.remove(0,9);
-        qint64 time = m_parent->bookmarksManager()->bookmarkTime(bookmark);
-        m_parent->playlist()->mediaObject()->seek(time);
+        qint64 time = m_application->bookmarksManager()->bookmarkTime(bookmark);
+        m_application->playlist()->mediaObject()->seek(time);
     }
         
 }
@@ -744,9 +734,9 @@ void ActionsManager::removeBookmark(QAction *bookmarkAction)
     QString bookmark = bookmarkAction->data().toString();
     if (!bookmark.isEmpty() && bookmark.startsWith("Remove:")) {
         bookmark.remove(0,7);
-        QString nowPlayingUrl = m_parent->playlist()->nowPlayingModel()->mediaItemAt(0).url;
-        m_parent->bookmarksManager()->removeBookmark(nowPlayingUrl, bookmark);
-        if (m_parent->bookmarksManager()->bookmarks(nowPlayingUrl).count() == 0) {
+        QString nowPlayingUrl = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        m_application->bookmarksManager()->removeBookmark(nowPlayingUrl, bookmark);
+        if (m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() == 0) {
             ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
         }
     }

@@ -33,6 +33,7 @@ namespace Ui
     class MainWindowClass;
 }
 class MainWindow;
+class BangarangApplication;
 
 /*
  * This class creates and manages all actions for bangarang. 
@@ -44,7 +45,7 @@ class ActionsManager : public QObject
     public:
         ActionsManager(MainWindow * parent);
         ~ActionsManager();
-
+        
         KActionCollection *shortcutsCollection() { return m_shortcutsCollection; }
         KActionCollection *othersCollection() { return m_othersCollection; }
 
@@ -69,7 +70,8 @@ class ActionsManager : public QObject
     private:
 
         void hideShortcutsEditor();
-
+        
+        BangarangApplication * m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         VideoSettings *m_videoSettings;
@@ -113,7 +115,6 @@ class ActionsManager : public QObject
         void addToSavedVideoList(QAction *addAction);
         void loadSelectedSources();
         void showInfoForNowPlaying();
-        //void showScriptConsoleSlot();
         void toggleShowRemainingTimeSlot();
         void togglePlaylistFilter();
         void addBookmarkSlot();

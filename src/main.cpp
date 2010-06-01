@@ -16,10 +16,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "mainwindow.h"
+#include "bangarangapplication.h"
 #include <QtGui/QApplication>
 #include <QtGui/QAction>
-#include "mainwindow.h"
-#include <KApplication>
 #include <KCmdLineArgs>
 #include <KCmdLineOptions>
 #include <KLocalizedString>
@@ -57,10 +57,11 @@ int main(int argc, char *argv[])
     options.add("debug", ki18n( "Show Additional Debug Output" ));
     KCmdLineArgs::addCmdLineOptions( options );
 
-    KApplication application;
+    BangarangApplication application;
+    application.setup();
 
-    MainWindow w;
-    w.setAboutData(&aboutData);
-    w.show();
+    MainWindow * w = application.mainWindow();
+    w->setAboutData(&aboutData);
+    w->show();
     return application.exec();
 }

@@ -17,6 +17,7 @@
 */
 
 #include "audiosettings.h"
+#include "bangarangapplication.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -33,12 +34,13 @@
 AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent)
 {
     /*Set up basics */
+    BangarangApplication * application = (BangarangApplication *)KApplication::kApplication();
     m_mainWindow = parent;
     ui = m_mainWindow->ui;
 
     //Setup and connect ui widgets
     connect(ui->restoreDefaultAudioSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
-    connect(ui->hideAudioSettings, SIGNAL(clicked()), m_mainWindow->actionsManager()->action("show_audio_settings"), SLOT(trigger()));
+    connect(ui->hideAudioSettings, SIGNAL(clicked()), application->actionsManager()->action("show_audio_settings"), SLOT(trigger()));
     ui->eq1Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq2Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq3Label->setFont(KGlobalSettings::smallestReadableFont());
