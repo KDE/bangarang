@@ -61,7 +61,6 @@ int main(int argc, char *argv[])
     application.setup();
 
     MainWindow * w = application.mainWindow();
-    w->setAboutData(&aboutData);
     w->show();
     return application.exec();
 }

@@ -261,7 +261,7 @@ QAction * ActionsManager::action( QString name, bool shortcutsOnly )
 
 QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSource menuSource)
 {
-    KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_parent->aboutData(), false);
+    KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_application->aboutData(), false);
     helpMenu->menu();
     
     updateSavedListsMenus();
