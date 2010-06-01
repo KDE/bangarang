@@ -145,6 +145,32 @@ void BangarangApplication::setup()
     
 }
 
+BangarangApplication::~BangarangApplication()
+{
+    //Bookmark last position if program is closed while watching video.
+    if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState) {
+        if (m_playlist->nowPlayingModel()->rowCount() > 0 && m_mediaObject->currentTime() > 10000) {
+            MediaItem nowPlayingItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
+            if (nowPlayingItem.type == "Video") {
+                QString nowPlayingUrl = nowPlayingItem.url;
+                qint64 time = m_mediaObject->currentTime();
+                QString existingBookmark = m_bookmarksManager->bookmarkLookup(nowPlayingUrl, i18n("Resume"));
+                m_bookmarksManager->removeBookmark(nowPlayingUrl, existingBookmark);
+                m_bookmarksManager->addBookmark(nowPlayingUrl, i18n("Resume"), time);
+            }
+        }
+    }
+    
+    //Save application config
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
+    generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
+    m_audioSettings->saveAudioSettings(&generalGroup);
+    config.sync();
+    m_savedListsManager->savePlaylist();
+}
+
 MainWindow * BangarangApplication::mainWindow()
 {
     return m_mainWindow;

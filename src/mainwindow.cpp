@@ -257,29 +257,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow()
 {
-    //Bookmark last position if program is closed while watching video.
-    if (m_application->mediaObject()->state() == Phonon::PlayingState || m_application->mediaObject()->state() == Phonon::PausedState) {
-        if (m_application->playlist()->nowPlayingModel()->rowCount() > 0 && m_application->mediaObject()->currentTime() > 10000) {
-            MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
-            if (nowPlayingItem.type == "Video") {
-                QString nowPlayingUrl = nowPlayingItem.url;
-                qint64 time = m_application->mediaObject()->currentTime();
-                QString existingBookmark = m_application->bookmarksManager()->bookmarkLookup(nowPlayingUrl, i18n("Resume"));
-                m_application->bookmarksManager()->removeBookmark(nowPlayingUrl, existingBookmark);
-                m_application->bookmarksManager()->addBookmark(nowPlayingUrl, i18n("Resume"), time);
-            }
-        }
-    }
-    
-    //Save application config
-    KConfig config;
-    KConfigGroup generalGroup( &config, "General" );
-    generalGroup.writeEntry("Shuffle", m_application->playlist()->shuffleMode());
-    generalGroup.writeEntry("Repeat", m_application->playlist()->repeatMode());
-    m_application->audioSettings()->saveAudioSettings(&generalGroup);
-    config.sync();
-    m_application->savedListsManager()->savePlaylist();
-
     delete ui;
 }
 
