@@ -17,6 +17,7 @@
 */
 
 #include "mainwindow.h"
+#include "bangarangapplication.h"
 #include "ui_mainwindow.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
@@ -32,7 +33,6 @@
 #include "videosettings.h"
 #include "audiosettings.h"
 #include "medialistsettings.h"
-#include "scriptconsole.h"
 
 #include <KAction>
 #include <KCmdLineArgs>
@@ -72,16 +72,10 @@
 #include <kross/core/action.h> 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
-    qRegisterMetaType<MediaItem>("MediaItem");
-    qRegisterMetaType<MediaListProperties>("MediaListProperties");
-    qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
+    m_application = (BangarangApplication *)KApplication::kApplication();
     
     ui->setupUi(this);
     setGeometry(0,0,760,520);
-
-    // Set up system tray icon
-    m_sysTray = new KStatusNotifierItem(i18n("Bangarang"), this);
-    m_sysTray->setIconByName("bangarang-notifier");
 
     //Setup interface icons
     setupIcons();
@@ -108,14 +102,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString & )), this, SLOT(deviceRemoved(const QString & )));
     
     //Set up media object
-    m_media = new Phonon::MediaObject(this);
     m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
     m_audioOutputMusicCategory = new Phonon::AudioOutput(Phonon::MusicCategory, this);
     m_audioOutputVideoCategory = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     m_audioOutput = m_audioOutputMusicCategory; // default to music category;
-    m_videoPath = Phonon::createPath(m_media, m_videoWidget);
-    m_audioPath = Phonon::createPath(m_media, m_audioOutput);
-    m_media->setTickInterval(500);
+    m_videoPath = Phonon::createPath(m_application->mediaObject(), m_videoWidget);
+    m_audioPath = Phonon::createPath(m_application->mediaObject(), m_audioOutput);
     m_volume = m_audioOutput->volume();
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
@@ -131,20 +123,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up volume and seek slider
     ui->volumeSlider->setAudioOutput(m_audioOutput);
     ui->volumeSlider->setMuteVisible( false );
-    ui->seekSlider->setMediaObject(m_media);
+    ui->seekSlider->setMediaObject(m_application->mediaObject());
     ui->seekSlider->setIconVisible(false);
     setShowRemainingTime(false);
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     
     //Connect to media object signals and slots
-    connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
+    connect(m_application->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutputMusicCategory, SLOT(setMuted(bool)));
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutputVideoCategory, SLOT(setMuted(bool)));
     connect(m_audioOutputMusicCategory, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
     connect(m_audioOutputMusicCategory, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
     connect(m_audioOutputVideoCategory, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
     connect(m_audioOutputVideoCategory, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
-    connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+    connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     
     //Set up Audio lists view 
     MediaListProperties audioListsProperties;
@@ -168,40 +160,39 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up media list view
     ui->mediaView->setMainWindow(this);
-    m_mediaItemModel = (MediaItemModel *)ui->mediaView->model();
-    m_sharedMediaListCache = m_mediaItemModel->mediaListCache();
-    connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
-    connect(m_mediaItemModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(m_mediaItemModel, SIGNAL(loading()), this, SLOT(hidePlayButtons()));
-    connect(m_mediaItemModel, SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
+    ui->mediaView->setModel(m_application->browsingModel());
+    connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+    connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(hidePlayButtons()));
+    connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
+    
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     
-    //Set up MediaItemModel notifications
+    //Set up Browsing Model notifications
     ui->notificationWidget->setVisible(false);
-    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateRemovalStarted()), this, SLOT(showNotification()));
-    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
-    connect(m_mediaItemModel, SIGNAL(sourceInfoRemovalProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
-    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdateRemovalComplete()), this, SLOT(delayedNotificationHide()));
-    connect(m_mediaItemModel, SIGNAL(sourceInfoUpdated(MediaItem)), this, SLOT(sourceInfoUpdated(MediaItem)));
-    connect(m_mediaItemModel, SIGNAL(sourceInfoRemoved(QString)), this, SLOT(sourceInfoRemoved(QString)));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateRemovalStarted()), this, SLOT(showNotification()));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoRemovalProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateRemovalComplete()), this, SLOT(delayedNotificationHide()));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdated(MediaItem)), this, SLOT(sourceInfoUpdated(MediaItem)));
+    connect(m_application->browsingModel(), SIGNAL(sourceInfoRemoved(QString)), this, SLOT(sourceInfoRemoved(QString)));
     
     //Set up playlist
-    m_playlist = new Playlist(this, m_media);
-    connect(m_playlist, SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
-    connect(m_playlist, SIGNAL(loading()), this, SLOT(showLoading()));
-    connect(m_playlist, SIGNAL(shuffleModeChanged(bool)), this, SLOT(shuffleModeChanged(bool)));
-    connect(m_playlist, SIGNAL(repeatModeChanged(bool)), this, SLOT(repeatModeChanged(bool)));
+    connect(m_application->playlist(), SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
+    connect(m_application->playlist(), SIGNAL(loading()), this, SLOT(showLoading()));
+    connect(m_application->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(shuffleModeChanged(bool)));
+    connect(m_application->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(repeatModeChanged(bool)));
+    
     
     //Set up playlist view
-    m_currentPlaylist = m_playlist->playlistModel();
-    m_currentPlaylist->setMediaListCache(m_sharedMediaListCache);
+    m_currentPlaylist = m_application->playlist()->playlistModel();
     m_playlistItemDelegate = new MediaItemDelegate(this);
-    m_playlist->filterProxyModel()->setSourceModel(m_currentPlaylist);
-    ui->playlistView->setModel(m_playlist->filterProxyModel());
+    m_application->playlist()->filterProxyModel()->setSourceModel(m_currentPlaylist);
+    ui->playlistView->setModel(m_application->playlist()->filterProxyModel());
     ui->playlistFilterProxyLine->lineEdit()->setClickMessage(i18n("Search in playlist..."));
-    ui->playlistFilterProxyLine->setProxy(m_playlist->filterProxyModel());
+    ui->playlistFilterProxyLine->setProxy(m_application->playlist()->filterProxyModel());
     ui->playlistFilter->setVisible(false);
     m_playlistItemDelegate->setUseProxy(true);
     ui->playlistView->setItemDelegate(m_playlistItemDelegate);
@@ -211,7 +202,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_currentPlaylist, SIGNAL(mediaListPropertiesChanged()), this, SLOT(playlistChanged()));
 
     //Setup Now Playing view
-    m_nowPlaying = m_playlist->nowPlayingModel();
+    m_nowPlaying = m_application->playlist()->nowPlayingModel();
     m_nowPlayingDelegate = new NowPlayingDelegate(this);
     ui->nowPlayingView->setModel(m_nowPlaying);
     ui->nowPlayingView->setItemDelegate(m_nowPlayingDelegate);
@@ -222,26 +213,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     updateCustomColors();
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateCustomColors())); 
     
-    //Setup Info View
-    m_infoManager = new InfoManager(this);
-
-    //Setup Saved Lists Manager
-    m_savedListsManager = new SavedListsManager(this);
-    
-    //Setup Bookmarks Manager
-    m_bookmarksManager = new BookmarksManager(this);
-    
-    //Setup Actions Manager
-    m_actionsManager = new ActionsManager(this);
-    
-    //Setup Audio settings
-    m_audioSettings = new AudioSettings(this);
-    m_audioSettings->setAudioPath(&m_audioPath);
-    
     //Setup Video Settings
-    VideoSettings *videoSettings = new VideoSettings(m_videoWidget, this);
-    videoSettings->setHideAction(m_actionsManager->action("show_video_settings"));
-    ui->videoSettingsPage->layout()->addWidget(videoSettings);
+    m_videoSettings = new VideoSettings(m_videoWidget, this);
+    ui->videoSettingsPage->layout()->addWidget(m_videoSettings);
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
@@ -255,8 +229,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoListsStack->setCurrentIndex(0);
     ui->contextStack->setCurrentIndex(0);
     ui->mediaPlayPause->setHoldDelay(1000);
-    ui->mediaPrevious->setDefaultAction(m_actionsManager->action("play_previous"));
-    ui->mediaNext->setDefaultAction(m_actionsManager->action("play_next"));
     ui->listSummary->setFont(KGlobalSettings::smallestReadableFont());
     ui->playlistDuration->setFont(KGlobalSettings::smallestReadableFont());
     ui->playbackMessage->clear();
@@ -269,60 +241,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_stopPressed = false;
     m_loadingProgress = 0;
     
-    QList<MediaItem> mediaList;
-    bool itemLoaded = false;
-    //Get command line args
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() > 0) {
-        for(int i = 0; i < args->count(); i++) {
-            if (args->isSet("play-dvd")) {
-                //Play DVD
-                kDebug() << "playing DVD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("DVD Video");
-                mediaItem.url = "dvdvideo://";
-                mediaItem.type = "Category";
-                QList<MediaItem> mediaList;
-                mediaList << mediaItem;
-                m_playlist->playMediaList(mediaList);
-                itemLoaded = true;
-            } else if (args->isSet("play-cd")) {
-                //Play CD
-                kDebug() << "playing CD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("Audio CD");
-                mediaItem.url = "cdaudio://";
-                mediaItem.type = "Category";
-                QList<MediaItem> mediaList;
-                mediaList << mediaItem;
-                m_playlist->playMediaList(mediaList);
-                itemLoaded = true;
-            } else {
-                //Play Url
-                KUrl cmdLineKUrl = args->url(i);
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
-                mediaList << mediaItem;
-                m_playlist->playMediaList(mediaList);
-                itemLoaded = true;
-            }
-        }
-    } else {
-        if (m_nepomukInited) {
-            //Preload queries that are likely to be long so that, if necessary, they can be cached early
-            //TODO:prehaps this could be configurable.
-            /*MediaListProperties mediaListProperties;
-            mediaListProperties.lri = "music://songs";
-            m_mediaItemModel->setMediaListProperties(mediaListProperties);
-            m_mediaItemModel->load();
-            mediaListProperties.lri = "video://movies";
-            m_mediaItemModel->setMediaListProperties(mediaListProperties);
-            m_mediaItemModel->load();*/
-        } else {
-            KMessageBox::information(this, i18n("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), i18n("Bangarang"), i18n("Don't show this message again"));
-        }
-    }
-    
-    //Set default media list
+    //Set default media list selection
     ui->mediaLists->setCurrentIndex(0);
     
     //Install event filter for hiding widgets in Now Playing view
@@ -334,45 +253,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up cursor hiding and context menu for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
-    m_videoWidget->setContextMenu(m_actionsManager->nowPlayingContextMenu());
-
-    // Set up system tray actions
-    m_sysTray->setStandardActionsEnabled(false);
-    m_sysTray->setContextMenu(m_actionsManager->notifierMenu());
-    
-    //Load config
-    KConfig config;
-    KConfigGroup generalGroup( &config, "General" );
-    m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
-    m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
-    m_audioSettings->restoreAudioSettings(&generalGroup);
-    if (!itemLoaded)
-        m_savedListsManager->loadPlaylist();
-
-    /*m_scriptConsole = new ScriptConsole();
-    m_scriptConsole->addObject(m_videoWidget,"videoWidget");
-    m_scriptConsole->addObject(m_media,"media");
-    m_scriptConsole->addObject(m_actionsManager,"actionsManager");
-    m_scriptConsole->addObject(m_playlist,"playlist");
-    m_scriptConsole->addObject(m_sysTray,"sysTray");
-    m_scriptConsole->addObject(m_savedListsManager,"savedListsManager");
-    m_scriptConsole->addObject(m_playlistItemDelegate,"playlistItemDelegate");
-    m_scriptConsole->addObject(m_nowPlayingDelegate,"nowPlayingDelegate");
-    m_scriptConsole->addObject(this,"mainwindow");*/
 }
 
 MainWindow::~MainWindow()
 {
     //Bookmark last position if program is closed while watching video.
-    if (m_media->state() == Phonon::PlayingState || m_media->state() == Phonon::PausedState) {
-        if (m_playlist->nowPlayingModel()->rowCount() > 0 && m_media->currentTime() > 10000) {
-            MediaItem nowPlayingItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
+    if (m_application->mediaObject()->state() == Phonon::PlayingState || m_application->mediaObject()->state() == Phonon::PausedState) {
+        if (m_application->playlist()->nowPlayingModel()->rowCount() > 0 && m_application->mediaObject()->currentTime() > 10000) {
+            MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
             if (nowPlayingItem.type == "Video") {
                 QString nowPlayingUrl = nowPlayingItem.url;
-                qint64 time = m_media->currentTime();
-                QString existingBookmark = m_bookmarksManager->bookmarkLookup(nowPlayingUrl, i18n("Resume"));
-                m_bookmarksManager->removeBookmark(nowPlayingUrl, existingBookmark);
-                m_bookmarksManager->addBookmark(nowPlayingUrl, i18n("Resume"), time);
+                qint64 time = m_application->mediaObject()->currentTime();
+                QString existingBookmark = m_application->bookmarksManager()->bookmarkLookup(nowPlayingUrl, i18n("Resume"));
+                m_application->bookmarksManager()->removeBookmark(nowPlayingUrl, existingBookmark);
+                m_application->bookmarksManager()->addBookmark(nowPlayingUrl, i18n("Resume"), time);
             }
         }
     }
@@ -380,15 +274,20 @@ MainWindow::~MainWindow()
     //Save application config
     KConfig config;
     KConfigGroup generalGroup( &config, "General" );
-    generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
-    generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
-    m_audioSettings->saveAudioSettings(&generalGroup);
+    generalGroup.writeEntry("Shuffle", m_application->playlist()->shuffleMode());
+    generalGroup.writeEntry("Repeat", m_application->playlist()->repeatMode());
+    m_application->audioSettings()->saveAudioSettings(&generalGroup);
     config.sync();
-    m_savedListsManager->savePlaylist();
+    m_application->savedListsManager()->savePlaylist();
 
     delete ui;
 }
 
+void MainWindow::completeSetup()
+{
+    setupActions();
+    m_application->audioSettings()->setAudioPath(&m_audioPath);
+}
 
 /*---------------------
  -- UI widget slots  --
@@ -402,16 +301,16 @@ void MainWindow::on_Filter_returnPressed()
             MediaListProperties searchProperties;
             searchProperties.name = "Audio Search";
             searchProperties.lri = QString("music://search?%1").arg(ui->Filter->text());
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(searchProperties);
-            m_mediaItemModel->load();
+            m_application->browsingModel()->clearMediaListData();
+            m_application->browsingModel()->setMediaListProperties(searchProperties);
+            m_application->browsingModel()->load();
         } else if (ui->mediaLists->currentIndex() == 1) {
             MediaListProperties searchProperties;
             searchProperties.name = "Video Search";
             searchProperties.lri = QString("video://search?%1").arg(ui->Filter->text());
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(searchProperties);
-            m_mediaItemModel->load();
+            m_application->browsingModel()->clearMediaListData();
+            m_application->browsingModel()->setMediaListProperties(searchProperties);
+            m_application->browsingModel()->load();
         }
         m_mediaListHistory.clear();
         m_mediaListPropertiesHistory.clear();
@@ -426,7 +325,7 @@ void MainWindow::on_configureAudioList_clicked()
         int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
         if (selectedItem.url.startsWith("savedlists://")) {
-            m_savedListsManager->showAudioSavedListSettings();
+            m_application->savedListsManager()->showAudioSavedListSettings();
         } else if (selectedItem.url.startsWith("semantics://recent") ||
             selectedItem.url.startsWith("semantics://frequent") ||
             selectedItem.url.startsWith("semantics://highest")) {
@@ -441,7 +340,7 @@ void MainWindow::on_configureVideoList_clicked()
         int selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
         if (selectedItem.url.startsWith("savedlists://")) {
-            m_savedListsManager->showVideoSavedListSettings();
+            m_application->savedListsManager()->showVideoSavedListSettings();
         } else if (selectedItem.url.startsWith("semantics://recent") ||
             selectedItem.url.startsWith("semantics://frequent") ||
             selectedItem.url.startsWith("semantics://highest")) {
@@ -465,13 +364,12 @@ void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
     if (ui->playlistFilterProxyLine->lineEdit()->text().isEmpty() &&
-        m_actionsManager->m_playlistFilterVisible
-       ) {
-        m_actionsManager->action("toggle_playlist_filter")->trigger();
+        m_application->actionsManager()->m_playlistFilterVisible) {
+        m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
     }
     ui->contextStack->setCurrentIndex(0);  
-    m_actionsManager->action("show_video_settings")->setText(i18n("Show Video Settings"));
-    m_actionsManager->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
+    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show Video Settings"));
+    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -488,8 +386,7 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
         ui->fullScreen->setToolTip(i18n("Show fullscreen"));
         ui->fullScreen->setChecked(false);
-        if (m_actionsManager->m_controlsVisible)
-        {
+        if (m_application->actionsManager()->m_controlsVisible) {
           ui->widgetSet->setVisible(true);
           ui->nowPlayingToolbar->setVisible(true);
         }
@@ -499,13 +396,13 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
 void MainWindow::on_seekTime_clicked()
 {
     QPoint menuLocation = ui->seekTime->mapToGlobal(QPoint(0,ui->showMenu->height()));
-    m_actionsManager->bookmarksMenu()->popup(menuLocation);
+    m_application->actionsManager()->bookmarksMenu()->popup(menuLocation);
 }
 
 void MainWindow::on_mediaPlayPause_pressed()
 {
-    if ((m_media->state() == Phonon::PlayingState)) {
-        m_media->pause();
+    if ((m_application->mediaObject()->state() == Phonon::PlayingState)) {
+        m_application->mediaObject()->pause();
         m_pausePressed = true;
         ui->mediaPlayPause->setToolTip(i18n("<b>Paused</b><br>Hold to stop"));
     }
@@ -513,13 +410,13 @@ void MainWindow::on_mediaPlayPause_pressed()
 
 void MainWindow::on_mediaPlayPause_held()
 {
-    if ((m_media->state() != Phonon::LoadingState) && (m_media->state() != Phonon::StoppedState)) {
+    if ((m_application->mediaObject()->state() != Phonon::LoadingState) && (m_application->mediaObject()->state() != Phonon::StoppedState)) {
         if (m_pausePressed) {
             m_pausePressed = false;
         }
         m_stopPressed = true;
         ui->mediaPlayPause->setIcon(KIcon("media-playback-stop"));
-        m_playlist->stop();
+        m_application->playlist()->stop();
     }
 }
 
@@ -528,16 +425,16 @@ void MainWindow::on_mediaPlayPause_released()
     if (m_stopPressed) {
         m_stopPressed = false;
     } else {
-        if ((!m_pausePressed) && (m_media->state() == Phonon::PausedState)) {
-            m_media->play();
-        } else if ((m_media->state() == Phonon::StoppedState) || (m_media->state() == Phonon::LoadingState)) {
+        if ((!m_pausePressed) && (m_application->mediaObject()->state() == Phonon::PausedState)) {
+            m_application->mediaObject()->play();
+        } else if ((m_application->mediaObject()->state() == Phonon::StoppedState) || (m_application->mediaObject()->state() == Phonon::LoadingState)) {
             if (m_currentPlaylist->rowCount() > 0) {
-                m_playlist->start();
+                m_application->playlist()->start();
             }
         }
     }
     m_pausePressed = false;
-    if ((m_media->state() == Phonon::PausedState) || (m_media->state() == Phonon::StoppedState)) {
+    if ((m_application->mediaObject()->state() == Phonon::PausedState) || (m_application->mediaObject()->state() == Phonon::StoppedState)) {
         ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
         ui->mediaPlayPause->setToolTip("");
     }
@@ -545,11 +442,11 @@ void MainWindow::on_mediaPlayPause_released()
 
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
-    int row = m_playlist->filterProxyModel()->mapToSource(index).row();
+    int row = m_application->playlist()->filterProxyModel()->mapToSource(index).row();
     if (!m_showQueue) {
-        m_playlist->playItemAt(row, Playlist::PlaylistModel);
+        m_application->playlist()->playItemAt(row, Playlist::PlaylistModel);
     } else {
-        m_playlist->playItemAt(row, Playlist::QueueModel);
+        m_application->playlist()->playItemAt(row, Playlist::QueueModel);
     }
     ui->playlistView->selectionModel()->clear();
 }
@@ -557,9 +454,9 @@ void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 void MainWindow::on_previous_clicked()
 {
     if (ui->mediaViewHolder->currentIndex() == 0) {//Load media list from history
-        m_mediaItemModel->clearMediaListData();
-        m_mediaItemModel->setMediaListProperties(m_mediaListPropertiesHistory.last());
-        m_mediaItemModel->loadMediaList(m_mediaListHistory.last(), true);
+        m_application->browsingModel()->clearMediaListData();
+        m_application->browsingModel()->setMediaListProperties(m_mediaListPropertiesHistory.last());
+        m_application->browsingModel()->loadMediaList(m_mediaListHistory.last(), true);
         ui->mediaView->verticalScrollBar()->setValue(m_mediaListScrollHistory.last());
         
         //Clean up history and update previous button
@@ -593,13 +490,13 @@ void MainWindow::on_previous_clicked()
 
 void MainWindow::on_playAll_clicked()
 {
-    m_actionsManager->action("play_all")->trigger();
+    m_application->actionsManager()->action("play_all")->trigger();
 }
 
 void MainWindow::on_playSelected_clicked()
 {
-    m_actionsManager->setContextMenuSource(MainWindow::Default);
-    m_actionsManager->action("play_selected")->trigger();
+    m_application->actionsManager()->setContextMenuSource(MainWindow::Default);
+    m_application->actionsManager()->action("play_selected")->trigger();
 }
 
 void MainWindow::on_mediaLists_currentChanged(int i)
@@ -626,10 +523,10 @@ void MainWindow::on_mediaLists_currentChanged(int i)
         ui->Filter->setClickMessage(i18n("Search for video"));
     }
     if (selectedRow != -1) {
-        if ((m_mediaItemModel->mediaListProperties().engine() != currentProperties.engine()) || (m_mediaItemModel->mediaListProperties().engineArg() != currentProperties.engineArg())) {
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(currentProperties);
-            m_mediaItemModel->load();
+        if ((m_application->browsingModel()->mediaListProperties().engine() != currentProperties.engine()) || (m_application->browsingModel()->mediaListProperties().engineArg() != currentProperties.engineArg())) {
+            m_application->browsingModel()->clearMediaListData();
+            m_application->browsingModel()->setMediaListProperties(currentProperties);
+            m_application->browsingModel()->load();
             m_mediaListHistory.clear();
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
@@ -644,7 +541,7 @@ void MainWindow::on_clearPlaylist_clicked()
     KGuiItem clearPlaylist;
     clearPlaylist.setText(i18n("Clear Playlist"));
     if (KMessageBox::warningContinueCancel(this, i18n("Are you sure you want to clear the current playlist?"), QString(), clearPlaylist) == KMessageBox::Continue) {
-        m_playlist->clearPlaylist();
+        m_application->playlist()->clearPlaylist();
         showApplicationBanner();
         setWindowTitle(i18n("Bangarang"));
         ui->nowPlaying->setIcon(KIcon("tool-animator"));
@@ -655,29 +552,29 @@ void MainWindow::on_clearPlaylist_clicked()
 
 void MainWindow::on_shuffle_clicked()
 {
-    bool shuffleMode = m_playlist->shuffleMode();
-    m_playlist->setShuffleMode(!shuffleMode);
+    bool shuffleMode = m_application->playlist()->shuffleMode();
+    m_application->playlist()->setShuffleMode(!shuffleMode);
 }
 
 void MainWindow::on_repeat_clicked()
 {
-    bool repeatMode = m_playlist->repeatMode();
-    m_playlist->setRepeatMode(!repeatMode);
+    bool repeatMode = m_application->playlist()->repeatMode();
+    m_application->playlist()->setRepeatMode(!repeatMode);
 }
 
 void MainWindow::on_showQueue_clicked()
 {
     m_showQueue = !m_showQueue;
     if (m_showQueue) {
-        m_playlist->filterProxyModel()->setSourceModel(m_playlist->queueModel());
-        ui->playlistView->setModel(m_playlist->filterProxyModel());
+        m_application->playlist()->filterProxyModel()->setSourceModel(m_application->playlist()->queueModel());
+        ui->playlistView->setModel(m_application->playlist()->filterProxyModel());
         ui->playlistView->setDragDropMode(QAbstractItemView::InternalMove);
         ui->showQueue->setToolTip(i18n("<b>Showing Upcoming</b><br>Click to show playlist"));
         ui->playlistName->setText(i18n("<b>Playlist</b>(Upcoming)"));
         ui->showQueue->setIcon(KIcon("bangarang-preview"));
     } else {
-        m_playlist->filterProxyModel()->setSourceModel(m_playlist->playlistModel());
-        ui->playlistView->setModel(m_playlist->filterProxyModel());
+        m_application->playlist()->filterProxyModel()->setSourceModel(m_application->playlist()->playlistModel());
+        ui->playlistView->setModel(m_application->playlist()->filterProxyModel());
         ui->playlistView->setDragDropMode(QAbstractItemView::DragDrop);
         ui->showQueue->setToolTip(i18n("Show Upcoming"));
         playlistChanged();
@@ -690,21 +587,19 @@ void MainWindow::on_showMenu_clicked()
     m_helpMenu = new KHelpMenu(this, m_aboutData, false);
     m_helpMenu->menu();
     m_menu = new KMenu(this);
-    //m_menu->addAction(m_actionsManager->editShortcuts());
-    if (m_playlist->nowPlayingModel()->rowCount() > 0) {
-        MediaItem mediaItem = m_playlist->nowPlayingModel()->mediaItemAt(0);
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
         if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
-            m_menu->addAction(m_actionsManager->action("show_now_playing_info"));
+            m_menu->addAction(m_application->actionsManager()->action("show_now_playing_info"));
         }
     }
-    m_menu->addAction(m_actionsManager->action("show_video_settings"));
-    m_menu->addAction(m_actionsManager->action("show_audio_settings"));
+    m_menu->addAction(m_application->actionsManager()->action("show_video_settings"));
+    m_menu->addAction(m_application->actionsManager()->action("show_audio_settings"));
     if (!isFullScreen()) {
-        m_menu->addAction(m_actionsManager->action("toggle_controls"));
+        m_menu->addAction(m_application->actionsManager()->action("toggle_controls"));
         m_menu->addSeparator();
     }
-    //m_menu->addAction(m_actionsManager->action("show_scripting_console"));
-    m_menu->addAction(m_actionsManager->action("show_shortcuts_editor"));
+    m_menu->addAction(m_application->actionsManager()->action("show_shortcuts_editor"));
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -712,7 +607,7 @@ void MainWindow::on_showMenu_clicked()
 
 void MainWindow::on_showMediaViewMenu_clicked()
 {
-    QMenu * menu = m_actionsManager->mediaViewMenu(true);
+    QMenu * menu = m_application->actionsManager()->mediaViewMenu(true);
     QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
     menu->exec(menuLocation);
 }
@@ -730,7 +625,7 @@ void MainWindow::volumeChanged(qreal newVolume)
 void MainWindow::updateSeekTime(qint64 time)
 {
     //Update seek time
-    int totalTimeMSecs = m_media->totalTime();
+    int totalTimeMSecs = m_application->mediaObject()->totalTime();
     QTime currentTime(0, (time / 60000) % 60, (time / 1000) % 60);
     QTime totalTime(0, (totalTimeMSecs / 60000) % 60, (totalTimeMSecs / 1000) % 60);
     QTime remainingTime;
@@ -758,7 +653,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
 {
     if (newstate == Phonon::PlayingState) {
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
-        if (m_media->hasVideo()) {
+        if (m_application->mediaObject()->hasVideo()) {
             ui->viewerStack->setCurrentIndex(1);
         } else {
             ui->viewerStack->setCurrentIndex(0);
@@ -774,46 +669,41 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     }
     
     if (newstate == Phonon::ErrorState) {
-        if (m_media->errorString().isEmpty()) {
+        if (m_application->mediaObject()->errorString().isEmpty()) {
             ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
         } else {
-            ui->playbackMessage->setText(m_media->errorString());
+            ui->playbackMessage->setText(m_application->mediaObject()->errorString());
         }
         QTimer::singleShot(3000, ui->playbackMessage, SLOT(clear()));
         
         //Use a new media object instead and discard
         //the old media object (whose state appears to be broken after errors) 
-        Phonon::MediaObject *oldMediaObject = m_media;
-        m_media = new Phonon::MediaObject(this);
-        m_videoPath.reconnect(m_media, m_videoWidget);
-        m_audioPath.reconnect(m_media, m_audioOutput);
-        m_media->setTickInterval(500);
-        ui->seekSlider->setMediaObject(m_media);
-        connect(m_media, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
-        connect(m_media, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
-        m_playlist->setMediaObject(m_media);
-        delete oldMediaObject;
-        oldMediaObject = 0;
+        Phonon::MediaObject * mediaObject = m_application->newMediaObject();
+        m_videoPath.reconnect(mediaObject, m_videoWidget);
+        m_audioPath.reconnect(mediaObject, m_audioOutput);
+        ui->seekSlider->setMediaObject(mediaObject);
+        connect(mediaObject, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
+        connect(mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
         
-        if (m_playlist->rowOfNowPlaying() < (m_playlist->playlistModel()->rowCount() - 1)) {
-            m_playlist->playNext();
+        if (m_application->playlist()->rowOfNowPlaying() < (m_application->playlist()->playlistModel()->rowCount() - 1)) {
+            m_application->playlist()->playNext();
         } else {
-            m_playlist->stop();
+            m_application->playlist()->stop();
         }
         m_audioOutput->setVolume(m_volume);
         ui->volumeSlider->setAudioOutput(m_audioOutput);
         ui->volumeIcon->setChecked(false);
     }
-    m_videoWidget->setContextMenu(m_actionsManager->nowPlayingContextMenu());
+    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
     Q_UNUSED(oldstate);
 }
 
 void MainWindow::showLoading()
 {
-    if ((m_media->state() == Phonon::LoadingState || 
-         m_media->state() == Phonon::BufferingState || 
-         m_playlist->state() == Playlist::Loading) && 
-         (m_playlist->state() != Playlist::Finished)) {
+    if ((m_application->mediaObject()->state() == Phonon::LoadingState || 
+         m_application->mediaObject()->state() == Phonon::BufferingState || 
+         m_application->playlist()->state() == Playlist::Loading) && 
+         (m_application->playlist()->state() != Playlist::Finished)) {
         m_loadingProgress += 1;
         if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
             m_loadingProgress = 0;
@@ -821,9 +711,9 @@ void MainWindow::showLoading()
         QString iconName= QString("bangarang-loading-%1").arg(m_loadingProgress);
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonIconOnly);
         ui->seekTime->setIcon(KIcon(iconName));
-        if (m_playlist->state() == Playlist::Loading) {
+        if (m_application->playlist()->state() == Playlist::Loading) {
             ui->seekTime->setToolTip(i18n("Loading playlist..."));
-        } else if (m_media->state() == Phonon::BufferingState) {
+        } else if (m_application->mediaObject()->state() == Phonon::BufferingState) {
             ui->seekTime->setToolTip(i18n("Buffering..."));
         } else {
             ui->seekTime->setToolTip(i18n("Loading..."));
@@ -831,8 +721,8 @@ void MainWindow::showLoading()
         QTimer::singleShot(100, this, SLOT(showLoading()));
     } else {
         ui->seekTime->setIcon(KIcon("bookmarks-organize"));
-        if (m_playlist->nowPlayingModel()->rowCount() > 0) {
-            if (m_bookmarksManager->hasBookmarks(m_playlist->nowPlayingModel()->mediaItemAt(0))) {
+        if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+            if (m_application->bookmarksManager()->hasBookmarks(m_application->playlist()->nowPlayingModel()->mediaItemAt(0))) {
                 ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
             } else {
                 ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
@@ -860,13 +750,13 @@ void MainWindow::updateMuteStatus(bool muted)
   ---------------------------*/
 void MainWindow::mediaListChanged()
 {
-    ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
-    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
+    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
+    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
     
-    if ((m_mediaItemModel->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
-        QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
+    if ((m_application->browsingModel()->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
+        QString listItemType = m_application->browsingModel()->mediaItemAt(0).type;
         if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+            if (!m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
                 ui->playAll->setVisible(true);
             }
         } else if (listItemType == "Category") {
@@ -879,20 +769,20 @@ void MainWindow::mediaListChanged()
 
 void MainWindow::mediaListPropertiesChanged()
 {
-    ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
-    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
+    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
+    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
 }
 
 void MainWindow::mediaListCategoryActivated(QModelIndex index)
 {
     addListToHistory();
-    m_mediaItemModel->categoryActivated(index);
+    m_application->browsingModel()->categoryActivated(index);
 }
 
 void MainWindow::mediaListActionActivated(QModelIndex index)
 {
     addListToHistory();
-    m_mediaItemModel->actionActivated(index);
+    m_application->browsingModel()->actionActivated(index);
 }
 
 
@@ -911,7 +801,6 @@ void MainWindow::delayedNotificationHide()
 void MainWindow::sourceInfoUpdated(const MediaItem &mediaItem)
 {
     QFontMetrics fm =  ui->notificationText->fontMetrics();
-	//TODO: I tried fixing this word puzzle, I couldn't test it myself, but it should work. Please check if it really is :-) thanks
     QString notificationText = i18n("Updated info for <i>%1, %2</i>", mediaItem.title, mediaItem.subTitle);
     notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
     
@@ -922,7 +811,6 @@ void MainWindow::sourceInfoUpdated(const MediaItem &mediaItem)
 void MainWindow::sourceInfoRemoved(QString url)
 {
     QFontMetrics fm =  ui->notificationText->fontMetrics();
-	//TODO: I tried fixing this word puzzle, I couldn't test it myself, but it should work. Please check if it really is :-) thanks
     QString notificationText = i18n("Removed info for <i>%1</i>", url);
     notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
     ui->notificationText->setText(notificationText);
@@ -932,12 +820,12 @@ void MainWindow::sourceInfoRemoved(QString url)
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
     if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+        if (!m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(true);
         }
         ui->playAll->setVisible(false);
     } else {
-        if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
+        if (!m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
         }
@@ -956,10 +844,10 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
         currentProperties.name = selectedItem.title;
         currentProperties.lri = selectedItem.url;
         currentProperties.category = selectedItem;
-        if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(currentProperties);
-            m_mediaItemModel->load();
+        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
+            m_application->browsingModel()->clearMediaListData();
+            m_application->browsingModel()->setMediaListProperties(currentProperties);
+            m_application->browsingModel()->load();
             m_mediaListHistory.clear();
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
@@ -967,7 +855,7 @@ void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, con
         }
         
         //Update InfoManager Context
-        m_infoManager->setContext(selectedItem);
+        m_application->infoManager()->setContext(selectedItem);
         
         //Determine if selected list is configurable
         if (selectedItem.url.startsWith("savedlists://") ||
@@ -1000,10 +888,10 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
         currentProperties.name = selectedItem.title;
         currentProperties.lri = selectedItem.url;
         currentProperties.category = selectedItem;
-        if (m_mediaItemModel->mediaListProperties().lri != currentProperties.lri) {
-            m_mediaItemModel->clearMediaListData();
-            m_mediaItemModel->setMediaListProperties(currentProperties);
-            m_mediaItemModel->load();
+        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
+            m_application->browsingModel()->clearMediaListData();
+            m_application->browsingModel()->setMediaListProperties(currentProperties);
+            m_application->browsingModel()->load();
             m_mediaListHistory.clear();
             m_mediaListPropertiesHistory.clear();
             ui->previous->setVisible(false);
@@ -1011,7 +899,7 @@ void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, con
         }
         
         //Set InfoManager context
-        m_infoManager->setContext(selectedItem);
+        m_application->infoManager()->setContext(selectedItem);
 
         //Determine if selected list is configurable
         if (selectedItem.url.startsWith("savedlists://") ||
@@ -1045,9 +933,9 @@ void MainWindow::playlistChanged()
     }
     if (!m_showQueue) {
         ui->playlistName->setText(i18n("<b>Playlist</b>"));
-        if (m_playlist->playlistModel()->rowCount() > 0) {
-            QString duration = Utilities::mediaListDurationText(m_playlist->playlistModel()->mediaList());
-            ui->playlistDuration->setText(i18np("1 item, %2", "%1 items, %2", m_playlist->playlistModel()->rowCount(), duration));
+        if (m_application->playlist()->playlistModel()->rowCount() > 0) {
+            QString duration = Utilities::mediaListDurationText(m_application->playlist()->playlistModel()->mediaList());
+            ui->playlistDuration->setText(i18np("1 item, %2", "%1 items, %2", m_application->playlist()->playlistModel()->rowCount(), duration));
         } else {
             ui->playlistDuration->setText(QString());
         }
@@ -1090,7 +978,7 @@ void MainWindow::nowPlayingChanged()
         if (nowPlayingItem.type == "Audio") {
             if (m_audioOutput->category() != Phonon::MusicCategory) {
                 m_audioOutput = m_audioOutputMusicCategory;
-                m_audioPath.reconnect(m_media, m_audioOutput);
+                m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
                 m_audioOutput->setVolume(m_volume);
                 ui->volumeSlider->setAudioOutput(m_audioOutput);
                 ui->volumeIcon->setChecked(false);
@@ -1099,7 +987,7 @@ void MainWindow::nowPlayingChanged()
         } else if (nowPlayingItem.type == "Video") {
             if (m_audioOutput->category() != Phonon::VideoCategory) {
                 m_audioOutput = m_audioOutputVideoCategory;
-                m_audioPath.reconnect(m_media, m_audioOutput);
+                m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
                 m_audioOutput->setVolume(m_volume);
                 ui->volumeSlider->setAudioOutput(m_audioOutput);
                 ui->volumeIcon->setChecked(false);
@@ -1108,7 +996,7 @@ void MainWindow::nowPlayingChanged()
         }
     
         //Update seekTime button
-        if (m_bookmarksManager->hasBookmarks(nowPlayingItem)) {
+        if (m_application->bookmarksManager()->hasBookmarks(nowPlayingItem)) {
             ui->seekTime->setIcon(KIcon("bookmarks-organize"));
             ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         } else {
@@ -1119,11 +1007,11 @@ void MainWindow::nowPlayingChanged()
         //- Scale artwork to current desktop icon size otherwise notifier will show unknown icon
         int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
         QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
-        m_sysTray->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
-        m_sysTray->setStatus(KStatusNotifierItem::Active);
+        m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
+        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
     } else {
-        m_sysTray->setToolTip("bangarang", i18n("Not Playing"), QString());
-        m_sysTray->setStatus(KStatusNotifierItem::Passive);
+        m_application->statusNotifierItem()->setToolTip("bangarang", i18n("Not Playing"), QString());
+        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Passive);
     }
 }
 
@@ -1168,8 +1056,8 @@ void MainWindow::hidePlayButtons()
 
 void MainWindow::updateListHeader()
 {
-    ui->listTitle->setText(m_mediaItemModel->mediaListProperties().name);
-    ui->listSummary->setText(m_mediaItemModel->mediaListProperties().summary);
+    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
+    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
 }
 
 
@@ -1179,11 +1067,11 @@ void MainWindow::updateListHeader()
 void MainWindow::addListToHistory()
 {
     //Add medialList to history
-    QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
+    QList<MediaItem> mediaList = m_application->browsingModel()->mediaList();
     m_mediaListHistory.append(mediaList);
-    m_mediaListPropertiesHistory << m_mediaItemModel->mediaListProperties();
+    m_mediaListPropertiesHistory << m_application->browsingModel()->mediaListProperties();
     m_mediaListScrollHistory << ui->mediaView->verticalScrollBar()->value();
-    QString previousButtonText(m_mediaItemModel->mediaListProperties().name);
+    QString previousButtonText(m_application->browsingModel()->mediaListProperties().name);
     ui->previous->setText(previousButtonText);
     ui->previous->setVisible(true);
 }
@@ -1219,7 +1107,6 @@ void MainWindow::setupIcons()
     ui->aslsSave->setIcon(KIcon("document-save"));
     ui->semAConfigSave->setIcon(KIcon("document-save"));
     
-    
     //Video List Icons
     ui->addVideoList->setIcon(KIcon("list-add"));
     ui->removeVideoList->setIcon(KIcon("list-remove"));
@@ -1252,6 +1139,14 @@ void MainWindow::setupIcons()
     
     //Audio settings
     ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
+}
+
+void MainWindow::setupActions()
+{
+    m_videoSettings->setHideAction(m_application->actionsManager()->action("show_video_settings"));
+    ui->mediaPrevious->setDefaultAction(m_application->actionsManager()->action("play_previous"));
+    ui->mediaNext->setDefaultAction(m_application->actionsManager()->action("play_next"));
+    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
 }
 
 void MainWindow::showApplicationBanner()
@@ -1361,29 +1256,17 @@ void MainWindow::updateCustomColors()
     ui->semanticsHolder->setPalette(viewPalette);
 }
 
-// TODO Please see if we can make it a setup point 
-// Current accelration is MouseWheel Delta*100 equals the skipped milliseconds
 void MainWindow::skipForward(int i)
 {
-  if (m_media->isSeekable())
-    m_media->seek(m_media->currentTime() + qint64(i)*100);
+  if (m_application->mediaObject()->isSeekable())
+    m_application->mediaObject()->seek(m_application->mediaObject()->currentTime() + qint64(i)*100);
   
 }
 
 void MainWindow::skipBackward(int i)
 {
-  if (m_media->isSeekable())
-    m_media->seek(m_media->currentTime() + qint64(i)*100);
-}
-
-ActionsManager * MainWindow::actionsManager()
-{
-    return m_actionsManager;
-}
-
-SavedListsManager * MainWindow::savedListsManager()
-{
-    return m_savedListsManager;
+  if (m_application->mediaObject()->isSeekable())
+    m_application->mediaObject()->seek(m_application->mediaObject()->currentTime() + qint64(i)*100);
 }
 
 void MainWindow::setAboutData(KAboutData *aboutData)
@@ -1396,34 +1279,14 @@ KAboutData * MainWindow::aboutData()
     return m_aboutData;
 }
 
-Playlist * MainWindow::playlist()
-{
-    return m_playlist;
-}
-
 Phonon::AudioOutput * MainWindow::audioOutput()
 {
     return m_audioOutput;
 }
 
-InfoManager * MainWindow::infoManager()
-{
-    return m_infoManager;
-}
-
-BookmarksManager * MainWindow::bookmarksManager()
-{
-    return m_bookmarksManager;
-}
-
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
-}
-
-ScriptConsole *MainWindow::scriptConsole()
-{
-  return m_scriptConsole;
 }
 
 bool MainWindow::showingRemainingTime()

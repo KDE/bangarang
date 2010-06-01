@@ -20,7 +20,6 @@
 #define MAINWINDOW_H
 
 #include "platform/bangarangvideowidget.h"
-#include "scriptconsole.h"
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -57,6 +56,8 @@ class BookmarksManager;
 class AudioSettings;
 class MediaListSettings;
 class KStatusNotifierItem;
+class VideoSettings;
+class BangarangApplication;
 
 namespace Ui
 {
@@ -76,41 +77,38 @@ class MainWindow : public QMainWindow
     
 public:
     
-    /* FIXME: These should be moved to private and provide
-     * getter functions instead.
-     */
+    enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2};
+    MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+    void completeSetup();
+    KAboutData * aboutData();
+    Phonon::AudioOutput * audioOutput();
+    void addListToHistory();
+    void setAboutData(KAboutData *aboutData);
+    Phonon::VideoWidget * videoWidget();
+    bool showingRemainingTime();
+    
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
     MediaItemModel * m_videoListsModel;
-    MediaItemModel * m_mediaItemModel;
     MediaItemModel * m_currentPlaylist;
     MediaItemModel * m_nowPlaying;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
-    Playlist * m_playlist;
     
-    enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2};
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-    
-    KAboutData * aboutData();
-    ActionsManager * actionsManager();
-    SavedListsManager * savedListsManager();
-    BookmarksManager * bookmarksManager();
-    Phonon::AudioOutput * audioOutput();
-    void addListToHistory();
-    InfoManager *infoManager();
-    Playlist * playlist();
-    void setAboutData(KAboutData *aboutData);
-    Phonon::VideoWidget * videoWidget();
-    ScriptConsole *scriptConsole();
-    bool showingRemainingTime();
     
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
     void setShowRemainingTime(bool showRemainingTime);
     
 private:
+    void setupModel();
+    KIcon addItemsIcon();
+    void setupIcons();
+    void showApplicationBanner();
+    void updateCachedDevicesList();
+    void setupActions();
+    
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
     MediaItemDelegate * m_playlistItemDelegate;
@@ -121,7 +119,6 @@ private:
     Phonon::AudioOutput *m_audioOutputVideoCategory;
     Phonon::Path m_audioPath;
     Phonon::Path m_videoPath;
-    Phonon::MediaObject *m_media;
     Phonon::MediaController *m_mediaController;
     QGraphicsScene *m_Scene;
     QString m_addItemsMessage;
@@ -130,10 +127,6 @@ private:
     QList<int> m_mediaListScrollHistory;
     bool m_showQueue;
     QDateTime m_lastMouseMoveTime;
-    InfoManager * m_infoManager;
-    SavedListsManager * m_savedListsManager;
-    ActionsManager * m_actionsManager;
-    BookmarksManager * m_bookmarksManager;
     bool m_pausePressed;
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
@@ -142,20 +135,13 @@ private:
     KHelpMenu *m_helpMenu;
     KMenu *m_menu;
     bool m_nepomukInited;
-    MediaListCache * m_sharedMediaListCache;
     bool playWhenPlaylistChanges;
     bool m_showRemainingTime;
     qreal m_volume;
-    ScriptConsole *m_scriptConsole;
     KAction *playPause;    
-    AudioSettings *m_audioSettings;
     MediaListSettings *m_mediaListSettings;
-    void setupModel();
-    KIcon addItemsIcon();
-    void setupIcons();
-    void showApplicationBanner();
-    void updateCachedDevicesList();
-    KStatusNotifierItem *m_sysTray;
+    VideoSettings * m_videoSettings;
+    BangarangApplication * m_application;
 
 private slots:
     void on_nowPlaying_clicked();
@@ -215,26 +201,5 @@ private slots:
     bool eventFilter(QObject *obj, QEvent *event);
     
 };
-
-/*class MouseMoveDetector : public QObject
-{
-    Q_OBJECT
-    MouseMoveDetector(QObject * parent = 0) : QObject(parent){}
-    ~MouseMoveDetector(){}
-    
-    Q_SIGNALS:
-    void mouseMoved();
-    
-    protected:
-        bool eventFilter(QObject *obj, QEvent *event)
-        {
-            if (event->type() == QEvent::MouseMove) {
-                emit mouseMoved();
-            }
-            // standard event processing
-            return QObject::eventFilter(obj, event);
-        }
-        
-};*/
 
 #endif // MAINWINDOW_H

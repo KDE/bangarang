@@ -83,8 +83,6 @@ QString BookmarksManager::bookmarkLookup(const QString & url, const QString &nam
     QString bookmark;
     QStringList currentBookmarks = bookmarks(url);
     for (int i = 0; i < currentBookmarks.count(); i++) {
-        kDebug() << bookmarkName(currentBookmarks.at(i));
-        kDebug() << name;
         if (bookmarkName(currentBookmarks.at(i)) == name) {
             bookmark = currentBookmarks.at(i);
             break;

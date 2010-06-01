@@ -36,6 +36,7 @@ class InfoItemModel;
 class InfoItemDelegate;
 class InfoCategoryDelegate;
 class MediaItemDelegate;
+class BangarangApplication;
 
 /*
  * This class provides a user interface for updating information associated with MediaItems
@@ -64,6 +65,7 @@ class InfoManager : public QObject
         bool infoViewVisible();
         
     private:
+        BangarangApplication * m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         bool m_nepomukInited;

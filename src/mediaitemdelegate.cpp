@@ -17,6 +17,7 @@
 */
 
 #include "mediaitemdelegate.h"
+#include "bangarangapplication.h"
 #include "mainwindow.h"
 #include "infomanager.h"
 #include "starrating.h"
@@ -46,6 +47,7 @@
 
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = (MainWindow *)parent;
     setRenderMode(NormalMode);
     m_showPlaying = KIcon("media-playback-start");
@@ -123,8 +125,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     if (index.column() == 0) {
         //Paint backgroung for currently playing item
         KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
-        if (m_parent->m_nowPlaying->rowCount() > 0) {
-            MediaItem nowPlayingItem = m_parent->m_nowPlaying->mediaItemAt(0);
+        if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+            MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
             if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
                 icon = m_showPlaying;
                 QLinearGradient linearGrad(QPointF(left, top), QPointF(left+width, top));
@@ -238,7 +240,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     } else if (index.column() == 1) {
         if (isMediaItem) {
             //Paint add to playlist Icon
-            int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
+            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
             QIcon icon;        
             if (playlistRow != -1) {
                 if (option.state.testFlag(QStyle::State_MouseOver)) { 
@@ -366,10 +368,10 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
             #define MODELS_TO_BE_UPDATED 5
             MediaItemModel *models[MODELS_TO_BE_UPDATED] = {
                 cmodel,
-                m_parent->m_playlist->playlistModel(),
-                m_parent->m_playlist->queueModel(),
-                m_parent->m_playlist->nowPlayingModel(),
-                m_parent->m_mediaItemModel
+                m_application->playlist()->playlistModel(),
+                m_application->playlist()->queueModel(),
+                m_application->playlist()->nowPlayingModel(),
+                m_application->browsingModel()
             };
             for (int i = 0; i < MODELS_TO_BE_UPDATED; i++)
             {
@@ -394,11 +396,11 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
             if (event->type() == QEvent::MouseButtonPress) {
                //Add or remove from playlist
-                int playlistRow = m_parent->m_currentPlaylist->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
+                int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
                 if (playlistRow != -1) {
-                    m_parent->m_playlist->removeMediaItemAt(playlistRow);
+                    m_application->playlist()->removeMediaItemAt(playlistRow);
                 } else {
-                    m_parent->m_playlist->addMediaItem(model->mediaItemAt(index.row()));
+                    m_application->playlist()->addMediaItem(model->mediaItemAt(index.row()));
                 }
             }
         }

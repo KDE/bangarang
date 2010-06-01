@@ -17,6 +17,7 @@
 */
 
 #include "infomanager.h"
+#include "bangarangapplication.h"
 #include "infoitemdelegate.h"
 #include "infocategorydelegate.h"
 #include "infobox.h"
@@ -48,6 +49,7 @@
 
 InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = parent;
     ui = m_parent->ui;
 
@@ -59,7 +61,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     }
     
     m_infoItemModel = new InfoItemModel(this);
-    m_infoItemModel->setSourceModel(m_parent->m_mediaItemModel);
+    m_infoItemModel->setSourceModel(m_application->browsingModel());
     ui->infoItemView->setModel(m_infoItemModel);
     InfoItemDelegate * infoItemDelegate = new InfoItemDelegate(m_parent);
     infoItemDelegate->setView(ui->infoItemView);
@@ -86,8 +88,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
-    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
-    connect(m_parent->m_mediaItemModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+    connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
+    connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     
 }
 
@@ -149,8 +151,8 @@ void InfoManager::saveItemInfo()
     updateViewsLayout();
     
     //Update Now Playing and Playlist views
-    m_parent->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
-    m_parent->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
+    m_application->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
+    m_application->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
     
     //Now that data is saved hide Save/Cancel controls
     ui->infoSaveHolder->setVisible(false);
@@ -194,11 +196,11 @@ void InfoManager::removeSelectedItemsInfo()
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            selectedItems.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+            selectedItems.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
         }
     }
     if (selectedItems.count() > 0) {
-        m_parent->m_mediaItemModel->removeSourceInfo(selectedItems);
+        m_application->browsingModel()->removeSourceInfo(selectedItems);
     }
 }
 
@@ -217,8 +219,8 @@ void InfoManager::loadSelectedInfo()
 
     //Determine type of items in mediaview
     bool mediaViewHasMedia = false;
-    if (m_parent->m_mediaItemModel->rowCount()>0) {
-        if (m_parent->m_mediaItemModel->mediaItemAt(0).type == "Audio" || m_parent->m_mediaItemModel->mediaItemAt(0).type == "Video") {
+    if (m_application->browsingModel()->rowCount()>0) {
+        if (m_application->browsingModel()->mediaItemAt(0).type == "Audio" || m_application->browsingModel()->mediaItemAt(0).type == "Video") {
             mediaViewHasMedia = true;
         } else {
             mediaViewHasMedia = false;
@@ -232,13 +234,13 @@ void InfoManager::loadSelectedInfo()
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            context.append(m_parent->m_mediaItemModel->mediaItemAt(selectedRows.at(i).row()));
+            context.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
         }
-    } else if (m_parent->m_mediaItemModel->rowCount()>0) {
+    } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
         //the category selected to produce the list of media in the mediaview
         selected = false;
-        context.append(m_parent->m_mediaItemModel->mediaListProperties().category);
+        context.append(m_application->browsingModel()->mediaListProperties().category);
     } else {
         return;
     }
@@ -261,7 +263,7 @@ void InfoManager::loadSelectedInfo()
     } else if (contextIsCategory) {
         m_infoCategoryModel->loadInfo(context);
         ui->semanticsStack->setCurrentIndex(0);
-        m_infoCategoryModel->setSourceModel(m_parent->m_mediaItemModel);
+        m_infoCategoryModel->setSourceModel(m_application->browsingModel());
         
         m_infoCategoryModel->downloadInfo();
         

@@ -17,6 +17,7 @@
 */
 
 #include "mediaview.h"
+#include "bangarangapplication.h"
 #include "mainwindow.h"
 #include "actionsmanager.h"
 #include "mediaitemdelegate.h"
@@ -28,6 +29,7 @@
 
 MediaView::MediaView(QWidget * parent):QTreeView (parent) 
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_mediaItemModel = new MediaItemModel(parent);
     setModel(m_mediaItemModel);
     m_mode = NormalMode;
@@ -45,7 +47,6 @@ MediaView::~MediaView()
 
 void MediaView::setMainWindow(MainWindow * mainWindow)
 {
-    m_mainWindow = mainWindow;
     m_mediaItemDelegate = new MediaItemDelegate(mainWindow);
     setItemDelegate(m_mediaItemDelegate);
     m_mediaItemDelegate->setView(this);
@@ -74,6 +75,12 @@ MediaView::RenderMode MediaView::mode()
     return m_mode;
 }
 
+void MediaView::setModel(QAbstractItemModel * mediaItemModel)
+{
+    QTreeView::setModel(mediaItemModel);
+    m_mediaItemModel = (MediaItemModel *)mediaItemModel;
+    connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+}
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
 {
     if (selectionModel()->selectedIndexes().count() != 0) {
@@ -85,7 +92,7 @@ void MediaView::contextMenuEvent(QContextMenuEvent * event)
             contextMenuSource = MainWindow::InfoBox;
         }
         bool showAbout = false;
-        QMenu * menu = m_mainWindow->actionsManager()->mediaViewMenu(showAbout, contextMenuSource);
+        QMenu * menu = m_application->actionsManager()->mediaViewMenu(showAbout, contextMenuSource);
         menu->exec(event->globalPos());
     }
     

@@ -30,6 +30,7 @@ namespace Ui
 class MainWindow;
 class MediaItem;
 class MediaItemModel;
+class BangarangApplication;
 
 /*
  * This class provides a user interface for saving and removing media lists
@@ -66,6 +67,7 @@ class SavedListsManager : public QObject
         void showVideoSavedListSettings();
         
     private:
+        BangarangApplication * m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         int m_startRow;

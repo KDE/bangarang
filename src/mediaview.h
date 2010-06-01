@@ -26,6 +26,7 @@
 class MainWindow;
 class MediaItemModel;
 class MediaItemDelegate;
+class BangarangApplication;
 
 /*
  * This class is mostly to provide custom context menus for the QTreeView
@@ -46,12 +47,14 @@ class MediaView : public QTreeView
         void setMainWindow(MainWindow * mainWindow);
         void setMode(RenderMode Mode);
         RenderMode mode();
+        void setModel(QAbstractItemModel * mediaItemModel);
 
     protected:
         void contextMenuEvent (QContextMenuEvent * event);
         
     private:
-        MainWindow * m_mainWindow;
+        BangarangApplication * m_application;
+        //MainWindow * m_mainWindow;
         MediaItemModel * m_mediaItemModel;
         MediaItemDelegate * m_mediaItemDelegate;
         RenderMode m_mode;
