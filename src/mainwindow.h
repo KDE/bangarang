@@ -81,10 +81,8 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void completeSetup();
-    KAboutData * aboutData();
     Phonon::AudioOutput * audioOutput();
     void addListToHistory();
-    void setAboutData(KAboutData *aboutData);
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
     
@@ -131,7 +129,6 @@ private:
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
     int m_loadingProgress;
-    KAboutData *m_aboutData;
     KHelpMenu *m_helpMenu;
     KMenu *m_menu;
     bool m_nepomukInited;

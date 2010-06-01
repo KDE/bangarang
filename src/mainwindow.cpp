@@ -561,7 +561,7 @@ void MainWindow::on_showQueue_clicked()
 
 void MainWindow::on_showMenu_clicked()
 {
-    m_helpMenu = new KHelpMenu(this, m_aboutData, false);
+    m_helpMenu = new KHelpMenu(this, m_application->aboutData(), false);
     m_helpMenu->menu();
     m_menu = new KMenu(this);
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
@@ -1244,16 +1244,6 @@ void MainWindow::skipBackward(int i)
 {
   if (m_application->mediaObject()->isSeekable())
     m_application->mediaObject()->seek(m_application->mediaObject()->currentTime() + qint64(i)*100);
-}
-
-void MainWindow::setAboutData(KAboutData *aboutData)
-{
-    m_aboutData = aboutData;
-}
-
-KAboutData * MainWindow::aboutData()
-{
-    return m_aboutData;
 }
 
 Phonon::AudioOutput * MainWindow::audioOutput()
