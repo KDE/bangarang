@@ -40,6 +40,7 @@ class BangarangApplication : public KApplication
 
 {
     public:
+        ~BangarangApplication();
         void setup();
         MainWindow * mainWindow();
         Phonon::MediaObject * mediaObject();
