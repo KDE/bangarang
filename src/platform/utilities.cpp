@@ -348,13 +348,19 @@ bool Utilities::isPls(const QString &url)
 bool Utilities::isMediaItem(const QModelIndex *index)
 {
     QString type = index->data(MediaItem::TypeRole).toString();
-    return
-        (
-             (type == "Audio") ||
+    return Utilities::isMedia(type);
+
+}
+
+bool Utilities::isMedia(const QString type)
+{
+   return (
+            (type == "Audio") ||
             (type == "Video") ||
             (type == "Video")
         );
 }
+
 
 QPixmap Utilities::reflection(QPixmap &pixmap)
 {

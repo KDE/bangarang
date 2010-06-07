@@ -77,7 +77,7 @@ class MainWindow : public QMainWindow
     
 public:
     
-    enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2};
+    enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2, Playlist = 3};
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void completeSetup();
@@ -89,7 +89,6 @@ public:
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
     MediaItemModel * m_videoListsModel;
-    MediaItemModel * m_currentPlaylist;
     MediaItemModel * m_nowPlaying;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
@@ -123,7 +122,6 @@ private:
     QTime m_messageTime;
     QList<MediaItem> m_mediaList;
     QList<int> m_mediaListScrollHistory;
-    bool m_showQueue;
     QDateTime m_lastMouseMoveTime;
     bool m_pausePressed;
     bool m_stopPressed;
@@ -172,7 +170,6 @@ private slots:
     void audioListsChanged();
     void videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
     void videoListsChanged();
-    void playlistChanged();
     void nowPlayingChanged();
     void playlistFinished();
     void repeatModeChanged(bool repeat);

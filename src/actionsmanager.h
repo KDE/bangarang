@@ -55,6 +55,7 @@ class ActionsManager : public QObject
         QMenu *addToSavedVideoListMenu();
 
         QMenu * mediaViewMenu(bool showAbout = false, MainWindow::ContextMenuSource menuSource = MainWindow::Default);
+        QMenu * playlistViewMenu(MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * nowPlayingContextMenu();
         KMenu * notifierMenu();
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
