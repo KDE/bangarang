@@ -63,6 +63,7 @@ namespace Utilities {
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
     bool isMediaItem(const QModelIndex *index);
+    bool isMedia(const QString type);
     QPixmap reflection(QPixmap &pixmap);
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);

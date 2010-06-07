@@ -276,10 +276,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         type = selectedItems.at(0).type;
         selection = true;
     }
-    bool isMedia = false;
-    if ((type == "Audio") ||(type == "Video") || (type == "Image")) {
-        isMedia = true;
-    }
+    bool isMedia = Utilities::isMedia(type);
     bool isCategory = false;
     if (type == "Category") {
         isCategory = true;
@@ -327,6 +324,14 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         menu->addSeparator();
         menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     }
+    return menu;
+}
+
+QMenu *ActionsManager::playlistViewMenu(MainWindow::ContextMenuSource menuSource)
+{
+    m_contextMenuSource = menuSource;
+    QMenu *menu = new QMenu(m_parent);
+    menu->addAction(action("remove_from_playlist"));
     return menu;
 }
 
@@ -674,16 +679,35 @@ void ActionsManager::showInfoForNowPlaying()
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {
     QList<MediaItem> mediaList;
+    QTreeView *view = (QTreeView *) ui->mediaView;
+    MediaItemModel *model = m_application->browsingModel();
+    MediaSortFilterProxyModel * proxy = NULL;
+    
+    if (m_contextMenuSource == MainWindow::Playlist)
+    {
+        view = (QTreeView *) ui->playlistView;
+        proxy = (MediaSortFilterProxyModel *) view->model();
+        model = (MediaItemModel *) proxy->sourceModel();
+    }
+    
     if (m_contextMenuSource == MainWindow::InfoBox ||
         m_contextMenuSource == MainWindow::Default) {
         mediaList = m_application->infoManager()->selectedInfoBoxMediaItems();
     }
     if (m_contextMenuSource == MainWindow::MediaList ||
-        (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)) {
-        for (int i = 0; i < ui->mediaView->selectionModel()->selectedIndexes().count(); ++i) {
-            QModelIndex index = ui->mediaView->selectionModel()->selectedIndexes().at(i);
+        m_contextMenuSource == MainWindow::Playlist ||
+        (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)
+        ) {
+        for (int i = 0; i < view->selectionModel()->selectedIndexes().count(); ++i) {
+            QModelIndex _index = view->selectionModel()->selectedIndexes().at(i);
+            QModelIndex index;
+            if (proxy != NULL) {
+                index = proxy->mapToSource(_index);
+            } else {
+                index = _index;
+            }
             if (index.column() == 0) {
-                mediaList.append(m_application->browsingModel()->mediaItemAt(index.row()));
+                mediaList.append(model->mediaItemAt(index.row()));
             }
         }
     }
@@ -744,8 +768,10 @@ void ActionsManager::removeBookmark(QAction *bookmarkAction)
 
 void ActionsManager::togglePlaylistFilter()
 {
+    QFrame *filter = (ui->stackedWidget->currentIndex() == 0) ?
+        ui->mediaListFilter : ui->playlistFilter;
     if(!m_playlistFilterVisible) {
-        ui->playlistFilter->setVisible(true);
+        filter->setVisible(true);
         action("toggle_playlist_filter")->setText(i18n("Hide playlist filter"));
         if(!m_restoreFilter.isEmpty()) {
             ui->playlistFilterProxyLine->setText( m_restoreFilter );
@@ -753,7 +779,7 @@ void ActionsManager::togglePlaylistFilter()
         }
         ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
     } else {
-        ui->playlistFilter->setVisible(false);
+        filter->setVisible(false);
         action("toggle_playlist_filter")->setText(i18n("Show playlist filter"));
         if(!ui->playlistFilterProxyLine->lineEdit()->text().isEmpty())
         {
