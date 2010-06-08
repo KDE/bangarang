@@ -41,6 +41,7 @@ PlaylistView::PlaylistView(QWidget* parent): QTreeView(parent)
     m_playlistItemDelegate = NULL;
     m_playlistName = NULL;
     m_playlistDuration = NULL;
+    m_currentModel = Playlist::PlaylistModel;
 }
 
 void PlaylistView::setMainWindow(MainWindow* mainWindow)
@@ -79,7 +80,7 @@ void PlaylistView::playlistChanged()
         header()->setResizeMode(0, QHeaderView::Stretch);
         header()->setResizeMode(1, QHeaderView::ResizeToContents);
     }
-    if (m_playlist->currentModel() == Playlist::PlaylistModel) {
+    if (m_currentModel == Playlist::PlaylistModel) {
         m_playlistName->setText(i18n("<b>Playlist</b>"));
         if (m_playlist->playlistModel()->rowCount() > 0) {
             QString duration = Utilities::mediaListDurationText(m_playlist->playlistModel()->mediaList());
@@ -94,8 +95,12 @@ void PlaylistView::playlistChanged()
 
 Playlist::Model PlaylistView::toggleModel()
 {
-    Playlist::Model type = m_playlist->toggleModel();
-    if (type == Playlist::QueueModel) {
+    if ( m_currentModel == Playlist::PlaylistModel ) {
+        m_currentModel = Playlist::QueueModel;
+    } else {
+        m_currentModel = Playlist::PlaylistModel;
+    }
+    if (m_currentModel == Playlist::QueueModel) {
         setSourceModel(m_playlist->queueModel());
         setDragDropMode(QAbstractItemView::InternalMove);
     } else {
@@ -103,7 +108,7 @@ Playlist::Model PlaylistView::toggleModel()
         setDragDropMode(QAbstractItemView::DragDrop);
     }
     playlistChanged();
-    return type;
+    return m_currentModel;
 }
 
 
