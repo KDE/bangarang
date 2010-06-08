@@ -116,7 +116,7 @@ class Playlist : public QObject
          * @param row row of the specified model
          * @param model either Playlist::PlaylistModel or Playlist::QueueModel
          */
-        void playItemAt(int row);
+        void playItemAt(int row, Model model);
         
         /**
          * Returns the MediaItemModel containing the list of MediaItems
@@ -184,21 +184,7 @@ class Playlist : public QObject
         * @returns Playlist::State (see enum)
         */
         Playlist::State state();
-        
-        /**
-        * Toggles the model of the playlist between the playlist and the queue
-        *
-        * @returns Playlist::Model (see enum)
-        */
-        Playlist::Model toggleModel();
-        
-        /**
-        * Returns the current model type of the playlist
-        *
-        * @returns Playlist::Model (see enum)
-        */
-        Playlist::Model currentModel() { return m_currentModel; }
-        
+               
     public slots:
         /**
          * Play next MediaItem in queue.
@@ -275,7 +261,6 @@ class Playlist : public QObject
         bool m_hadVideo;
         KNotificationRestrictions * m_notificationRestrictions;
         QList<QString> m_streamListUrls;
-        Model m_currentModel;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);

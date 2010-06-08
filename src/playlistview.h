@@ -34,6 +34,7 @@ class PlaylistView : public QTreeView
         void setSourceModel(MediaItemModel* model);
         MediaItemModel *sourceModel();
         Playlist::Model toggleModel();
+        Playlist::Model currentModelType() { return m_currentModel; }
         
     protected:
         void contextMenuEvent (QContextMenuEvent * event);   
@@ -45,6 +46,7 @@ class PlaylistView : public QTreeView
         MediaItemDelegate * m_playlistItemDelegate;
         QLabel* m_playlistName;
         QLabel* m_playlistDuration;
+        Playlist::Model m_currentModel;
         
     private slots:
         void playlistChanged();

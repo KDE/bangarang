@@ -53,7 +53,6 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_hadVideo = false;
     m_notificationRestrictions = 0;
     m_filterProxyModel = new MediaSortFilterProxyModel();
-    m_currentModel = Playlist::PlaylistModel;
 
     //setup the filter proxy
     m_filterProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -105,10 +104,10 @@ Phonon::MediaObject * Playlist::mediaObject()
 //----------------------------------------
 //--- Primary playback control methods ---
 //----------------------------------------
-void Playlist::playItemAt(int row)
+void Playlist::playItemAt(int row, Model model)
 {
     MediaItem nextMediaItem;
-    if (m_currentModel == Playlist::PlaylistModel) {
+    if (model == Playlist::PlaylistModel) {
         //Get media item from playlist
         nextMediaItem = m_currentPlaylist->mediaItemAt(row);
         nextMediaItem.playlistIndex = row;
@@ -187,7 +186,7 @@ void Playlist::playItemAt(int row)
         m_state = Playlist::Playing;
         
 
-    } else if (m_currentModel == Playlist::QueueModel) {
+    } else if (model == Playlist::QueueModel) {
         //Get media item from queue list
         nextMediaItem = m_queue->mediaItemAt(row);
         nextMediaItem.nowPlaying = true;
@@ -256,7 +255,7 @@ void Playlist::playNext()
         
         if (m_queue->rowCount() > 1) {
             m_queue->removeMediaItemAt(0);
-            playItemAt(0);
+            playItemAt(0, Playlist::QueueModel);
         }
         addToQueue();
     }
@@ -271,7 +270,7 @@ void Playlist::playPrevious()
             m_playlistIndicesHistory.removeLast();
             m_playlistUrlHistory.removeLast();
             
-            playItemAt(previousRow);
+            playItemAt(previousRow, Playlist::PlaylistModel);
         }
     }
 }
@@ -290,7 +289,7 @@ void Playlist::start()
     } else {
         shuffle();
     }
-    playItemAt(0);
+    playItemAt(0, Playlist::QueueModel);
 }
 
 void Playlist::stop()
@@ -717,7 +716,7 @@ void Playlist::playlistChanged()
             }
             if (currentUrl != QUrl::fromPercentEncoding(m_queue->mediaItemAt(0).url.toUtf8())) {
                 m_mediaObject->stop();
-                playItemAt(0);
+                playItemAt(0, Playlist::QueueModel);
             }
         }
     }
@@ -883,16 +882,6 @@ void Playlist::metaDataChanged()
             m_nowPlaying->replaceMediaItemAt(0, mediaItem, true);
         }
     }
-}
-
-Playlist::Model Playlist::toggleModel()
-{
-    if ( m_currentModel == Playlist::PlaylistModel ) {
-        m_currentModel = Playlist::QueueModel;
-    } else {
-        m_currentModel = Playlist::PlaylistModel;
-    }
-    return m_currentModel;
 }
 
 MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)

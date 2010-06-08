@@ -412,7 +412,7 @@ void MainWindow::on_mediaPlayPause_released()
 void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
 {
     int row = m_application->playlist()->filterProxyModel()->mapToSource(index).row();
-    m_application->playlist()->playItemAt(row);
+    m_application->playlist()->playItemAt(row, ui->playlistView->currentModelType());
     ui->playlistView->selectionModel()->clear();
 }
 
