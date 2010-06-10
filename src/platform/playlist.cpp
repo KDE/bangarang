@@ -106,137 +106,65 @@ Phonon::MediaObject * Playlist::mediaObject()
 //----------------------------------------
 void Playlist::playItemAt(int row, Model model)
 {
-    MediaItem nextMediaItem;
-    if (model == Playlist::PlaylistModel) {
-        //Get media item from playlist
-        nextMediaItem = m_currentPlaylist->mediaItemAt(row);
+    bool isQueue = (model == QueueModel);
+    MediaItem nextMediaItem = isQueue ? m_queue->mediaItemAt(row) :
+                                        m_currentPlaylist->mediaItemAt(row);
+    if (!isQueue)
         nextMediaItem.playlistIndex = row;
-        nextMediaItem.nowPlaying = true;
-        
-        bool isNowPlaying = false;
-        if (m_nowPlaying->rowCount() > 0) {
-            if (nextMediaItem.url == m_nowPlaying->mediaItemAt(0).url) {
-                isNowPlaying = true;
-            }
+    nextMediaItem.nowPlaying = true;
+    
+    //Update Queue Model
+    if (!m_shuffle) {
+        //Just build a new queue from the row of the item in the playlist
+        buildQueueFrom(nextMediaItem.playlistIndex);
+    } else {
+        int rowInQueue = isQueue ? row : m_queue->rowOfUrl(nextMediaItem.url);
+        bool inHistory = (m_playlistIndicesHistory.indexOf(row) != -1);
+        QList<MediaItem> queueMediaList = m_queue->mediaList();
+        if ( inHistory ) { //remove from history
+            int idx = m_playlistIndicesHistory.indexOf(row);
+            m_playlistIndicesHistory.removeAt(idx);
+            m_playlistUrlHistory.removeAt(idx);
         }
-
-        //Update Queue Model
-        if (!m_shuffle) {
-            //Just build a new queue from the specified row
-            buildQueueFrom(row);
-        } else {
-            if (m_playlistIndicesHistory.indexOf(row) == -1) {
-                //If item has not yet played move it to the front
-                if (m_queue->rowOfUrl(nextMediaItem.url) != -1) {
-                    QList<MediaItem> queueMediaList = m_queue->mediaList();
-                    queueMediaList.move(m_queue->rowOfUrl(nextMediaItem.url), 0);
-                    m_queue->clearMediaListData();
-                    m_queue->loadMediaList(queueMediaList, true);
-                } else {
-                    QList<MediaItem> queueMediaList = m_queue->mediaList();
-                    queueMediaList.insert(0, nextMediaItem);
-                    if (queueMediaList.count() > m_queueDepth) {
-                        queueMediaList.removeLast();
-                    }
-                    m_queue->clearMediaListData();
-                    m_queue->loadMediaList(queueMediaList, true);
-                }
-            } else {
-                //If item has already played remove from history and place at front of queue
-                m_playlistIndicesHistory.removeAt(m_playlistIndicesHistory.indexOf(row));
-                m_playlistUrlHistory.removeAt(m_playlistIndicesHistory.indexOf(row));
-                QList<MediaItem> queueMediaList = m_queue->mediaList();
-                queueMediaList.insert(0, nextMediaItem);
+        if ( rowInQueue > 0 ) { //in queue, but not at first place, so move it
+            queueMediaList.move(rowInQueue, 0);
+        } else if (rowInQueue < 0) { //not in queue, so add it at first place
+            queueMediaList.insert(0, nextMediaItem);
+            if (queueMediaList.count() > m_queueDepth)
                 queueMediaList.removeLast();
-                m_queue->clearMediaListData();
-                m_queue->loadMediaList(queueMediaList, true);
-            }    
-        }
-
-        //Play media Item
-        m_mediaObject->clearQueue();
-        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            m_mediaObject->setCurrentSource(Phonon::Cd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-            m_mediaObject->play();
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
-            m_mediaObject->setCurrentSource(Phonon::Dvd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-            m_mediaObject->play();
-        } else if (nextMediaItem.fields["audioType"].toString() == "Audio Stream") {
-            if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
-                QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
-                for (int i = 0; i < streamList.count(); i++) {
-                    if (i == 0) {
-                        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
-                    } else {
-                        m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
-                    }
-                }
-            } else {
-                m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-            }
-            m_mediaObject->play();
-        } else {
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-            m_mediaObject->play();
-        }
-        m_state = Playlist::Playing;
-        
-
-    } else if (model == Playlist::QueueModel) {
-        //Get media item from queue list
-        nextMediaItem = m_queue->mediaItemAt(row);
-        nextMediaItem.nowPlaying = true;
-        
-        //Update Queue Model
-        if (!m_shuffle) {
-            //Just build a new queue from the row of the item in the playlist
-            buildQueueFrom(nextMediaItem.playlistIndex);
-        } else {
-            if (row > 0) {
-                //Move item to front of queue
-                QList<MediaItem> queueMediaList = m_queue->mediaList();
-                queueMediaList.move(row, 0);
-                m_queue->clearMediaListData();
-                m_queue->loadMediaList(queueMediaList, true);
-            }
-        }
-        
-        //Play media Item
-        m_mediaObject->clearQueue();
-        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            m_mediaObject->setCurrentSource(Phonon::Cd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
-            m_mediaObject->setCurrentSource(Phonon::Dvd);
-            m_mediaController->setAutoplayTitles(false);
-            m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-        } else if (nextMediaItem.fields["audioType"].toString() == "Audio Stream") {
-            m_streamListUrls.clear();
-            if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
-                QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
-                for (int i = 0; i < streamList.count(); i++) {
-                    m_streamListUrls << streamList.at(i).url;
-                    if (i == 0) {
-                        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
-                    } else {
-                        m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
-                    }
-                }
-            } else {
-                m_streamListUrls << nextMediaItem.url;    
-                m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-            }
-        } else {
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
-        }
-        m_mediaObject->play();
-        m_state = Playlist::Playing;
+        } //else it is already at first place in the queue
+        m_queue->clearMediaListData();
+        m_queue->loadMediaList(queueMediaList, true);
     }
+    
+    //Play media Item
+    m_mediaObject->clearQueue();
+    QString type = nextMediaItem.fields["audioType"].toString();
+    if (type == "CD Track" || type == "DVD Title") {
+        m_mediaObject->setCurrentSource((type == "CD Track") ? Phonon::Cd : Phonon::Dvd);
+        m_mediaController->setAutoplayTitles(false);
+        m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+    } else if (type == "Audio Stream") {
+        m_streamListUrls.clear();
+        if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
+            QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
+            for (int i = 0; i < streamList.count(); i++) {
+                m_streamListUrls << streamList.at(i).url;
+                if (i == 0) {
+                    m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                } else {
+                    m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                }
+            }
+        } else {
+            m_streamListUrls << nextMediaItem.url;    
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+        }
+    } else {
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+    }
+    m_mediaObject->play();
+    m_state = Playlist::Playing;
     
     
 }
