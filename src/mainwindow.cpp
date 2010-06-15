@@ -569,6 +569,10 @@ void MainWindow::on_showMediaViewMenu_clicked()
     menu->exec(menuLocation);
 }
 
+void MainWindow::on_closePlaylistFilter_clicked()
+{
+  m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
+}
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
@@ -1075,6 +1079,7 @@ void MainWindow::setupIcons()
     ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
     ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
+    ui->closePlaylistFilter->setIcon(KIcon("dialog-close"));
     
     //Audio settings
     ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
