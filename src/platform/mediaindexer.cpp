@@ -204,6 +204,8 @@ void MediaIndexer::writeRemoveInfo(MediaItem mediaItem, QTextStream &out)
         out << "audioType = " << mediaItem.fields["audioType"].toString() << "\n";
     } else if (mediaItem.type == "Video") {
         out << "videoType = " << mediaItem.fields["videoType"].toString() << "\n";
+    } else if (mediaItem.type == "Category") {
+        out << "categoryType = " << mediaItem.fields["categoryType"].toString() << "\n";
     }
     out << "url = " << mediaItem.fields["url"].toString() << "\n";
     out << "removeInfo = true" << "\n";

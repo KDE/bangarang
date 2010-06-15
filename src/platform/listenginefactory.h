@@ -36,6 +36,7 @@ class SemanticsListEngine;
 class CacheListEngine;
 class AudioClipsListEngine;
 class TagListEngine;
+class FeedListEngine;
 
 /**
  * This class creates ListEngines as needed for the MediaItemModel.
@@ -96,6 +97,7 @@ class ListEngineFactory : public QObject
         QList<CacheListEngine *> m_cacheListEngines;
         QList<AudioClipsListEngine *> m_audioClipsListEngines;
         QList<TagListEngine *> m_tagListEngines;
+        QList<FeedListEngine *> m_feedListEngines;
 };
 #endif // LISTENGINEFACTORY_H
         

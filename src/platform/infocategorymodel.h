@@ -51,7 +51,9 @@ class InfoCategoryModel : public QStandardItemModel
                                 VideoGenreMode = 7,
                                 VideoTagMode = 8,
                                 ActorMode = 9,
-                                DirectorMode = 10};
+                                DirectorMode = 10,
+                                AudioFeedMode = 11,
+                                VideoFeedMode = 12};
         InfoCategoryModel(QObject * parent = 0);
         ~InfoCategoryModel();
         void loadInfo(const QList<MediaItem> & mediaList);

@@ -29,13 +29,14 @@
 #include "semanticslistengine.h"
 #include "cachelistengine.h"
 #include "audioclipslistengine.h"
-#include "taglistengine.h"	 
+#include "taglistengine.h"	
+#include "feedlistengine.h" 
 #include <KDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://" << "tag://";
+    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://" << "tag://" << "feeds://";
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -104,6 +105,18 @@ ListEngineFactory::~ListEngineFactory()
         if (!m_audioClipsListEngines.at(i)->isFinished()) {
             //This could be dangerous but list engines can't be left running after main program termination
             m_audioClipsListEngines.at(i)->terminate();
+        }
+    }
+    for (int i = 0; i < m_tagListEngines.count(); ++i) {
+        if (!m_tagListEngines.at(i)->isFinished()) {
+            //This could be dangerous but list engines can't be left running after main program termination
+            m_tagListEngines.at(i)->terminate();
+        }
+    }
+    for (int i = 0; i < m_feedListEngines.count(); ++i) {
+        if (!m_feedListEngines.at(i)->isFinished()) {
+            //This could be dangerous but list engines can't be left running after main program termination
+            m_feedListEngines.at(i)->terminate();
         }
     }
 }
@@ -297,8 +310,7 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
             m_audioClipsListEngines << audioClipsListEngine;
         }
         return audioClipsListEngine;        
-    }
-    else if (engine.toLower() == "tag://") {
+    } else if (engine.toLower() == "tag://") {
         //Search for available list engine
         bool foundListEngine = false;
        TagListEngine * tagListEngine;
@@ -315,6 +327,23 @@ ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
             m_tagListEngines << tagListEngine;
         }
         return tagListEngine;        
+    } else if (engine.toLower() == "feeds://") {
+        //Search for available list engine
+        bool foundListEngine = false;
+        FeedListEngine * feedListEngine;
+        for (int i = 0; i < m_feedListEngines.count(); ++i) {
+            if (!m_feedListEngines.at(i)->isRunning()) {
+                foundListEngine = true;
+                feedListEngine = m_feedListEngines.at(i);
+                break;
+            }
+        }
+        if (!foundListEngine) {
+            feedListEngine = new FeedListEngine(this);
+            feedListEngine->setModel(m_parent);
+            m_feedListEngines << feedListEngine;
+        }
+        return feedListEngine;        
     }
     return new ListEngine(this);
 }

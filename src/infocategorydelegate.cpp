@@ -79,10 +79,15 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
+    QString field = index.data(InfoCategoryModel::FieldRole).toString();
+    QStandardItemModel * model = (QStandardItemModel *)index.model();
+    bool isEditable = model->itemFromIndex(index)->isEditable();
+    if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+        KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
+    }
     bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
-        QString field = index.data(InfoCategoryModel::FieldRole).toString();
         if (field == "associatedImage") {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
@@ -107,9 +112,20 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
         } else {            
-            Qt::AlignmentFlag hAlign = Qt::AlignLeft;
+            Qt::AlignmentFlag hAlign = Qt::AlignHCenter;
             QFont textFont = KGlobalSettings::smallestReadableFont();
             QString text = index.data(Qt::DisplayRole).toString();
+            if (text.isEmpty()) {
+                foregroundColor.setAlphaF(0.7);
+                textFont.setItalic(true);
+                if (field == "description") {
+                    text = i18n("No description");
+                } else if (field == "url") {
+                    text = i18n("No url");
+                } else {
+                    text = i18n("Empty");
+                }
+            }
             if (multipleValues) {
                 foregroundColor.setAlphaF(0.7);
                 text = i18n("Multiple Values");
@@ -146,11 +162,17 @@ int InfoCategoryDelegate::rowHeight(int row) const
 {
     QModelIndex index = m_view->model()->index(row,0);
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
+    InfoCategoryModel * catModel = (InfoCategoryModel *)m_view->model();
+    InfoCategoryModel::InfoCategoryMode mode = catModel->mode();
     int height = 1;
     int padding = 2;
     if (field == "associatedImage") {
         QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-        height = artwork.actualSize(QSize(164,164)).height() + 2*padding;
+        int size = 164;
+        if (mode == InfoCategoryModel::AudioFeedMode || mode == InfoCategoryModel::VideoFeedMode) {
+            size = 128;
+        }
+        height = artwork.actualSize(QSize(size, size)).height() + 2*padding;
     } else if (field == "title") {
         QFont textFont;
         textFont.setBold(true);
@@ -190,19 +212,6 @@ bool InfoCategoryDelegate::editorEvent( QEvent *event, QAbstractItemModel *model
             }*/
         }
         return true;
-    } else if (field == "title") {
-        if (event->type() == QEvent::MouseButtonPress) {
-            QMouseEvent * mouseEvent = (QMouseEvent *)event;
-            int downloadLeft = option.rect.left() + option.rect.width() - 16;
-            int downloadBottom = option.rect.top() + 16;
-            if ((mouseEvent->x() >= downloadLeft) && (mouseEvent->y() <= downloadBottom)) {
-                if (m_extraInfoVisible) {
-                    InfoCategoryModel * categoryModel = (InfoCategoryModel *)model;
-                    categoryModel->downloadInfo();
-                }
-            }
-        }
-        return true;
     } else {
         return QItemDelegate::editorEvent(event, model, option, index);
     }
@@ -214,37 +223,23 @@ QWidget *InfoCategoryDelegate::createEditor( QWidget * parent, const QStyleOptio
     QVariant value = index.data(Qt::EditRole);
     bool multipleValues = index.data(InfoCategoryModel::MultipleValuesRole).toBool();
     if (value.type() == QVariant::String) {
-        if (field == "description") {
-            QTextEdit *textEdit = new QTextEdit(parent);
-            textEdit->setFont(KGlobalSettings::smallestReadableFont());
-            if (!multipleValues) textEdit->setText(value.toString());
-            textEdit->setAutoFillBackground(true);
-            return textEdit;
-        } else {
-            QStringList valueList = index.data(InfoCategoryModel::ValueListRole).toStringList();
-            if (valueList.count() == 0) {
-                KLineEdit *lineEdit = new KLineEdit(parent);
-                lineEdit->setFont(KGlobalSettings::smallestReadableFont());
-                if (!multipleValues) lineEdit->setText(value.toString());
-                lineEdit->setAutoFillBackground(true);
-                return lineEdit;
-            } else {
-                SComboBox *comboBox = new SComboBox(parent);
-                for (int i = 0; i < valueList.count(); i++) {
-                    comboBox->addItem(valueList.at(i), valueList.at(i));
-                }
-                comboBox->setEditable(true);
-                comboBox->setFont(KGlobalSettings::smallestReadableFont());
-                comboBox->setAutoFillBackground(true);
-                return comboBox;
-            }
-        }
-    } else if (field != "associatedImage") {
+        QStringList valueList = index.data(InfoCategoryModel::ValueListRole).toStringList();
+        if (valueList.count() == 0) {
             KLineEdit *lineEdit = new KLineEdit(parent);
             lineEdit->setFont(KGlobalSettings::smallestReadableFont());
             if (!multipleValues) lineEdit->setText(value.toString());
             lineEdit->setAutoFillBackground(true);
             return lineEdit;
+        } else {
+            SComboBox *comboBox = new SComboBox(parent);
+            for (int i = 0; i < valueList.count(); i++) {
+                comboBox->addItem(valueList.at(i), valueList.at(i));
+            }
+            comboBox->setEditable(true);
+            comboBox->setFont(KGlobalSettings::smallestReadableFont());
+            comboBox->setAutoFillBackground(true);
+            return comboBox;
+        }
     } else {
         return 0;
     }

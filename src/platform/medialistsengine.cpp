@@ -116,6 +116,12 @@ void MediaListsEngine::run()
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
+            mediaItem.title = i18n("Audio Feeds");
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.url = "feeds://audiofeeds";
+            mediaItem.fields["categoryType"] = QString("Audio Feeds");
+            mediaItem.artwork = KIcon("application-rss+xml");
+            mediaList << mediaItem;
             mediaItem.title = i18n("Clips");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "audioclips://";
@@ -309,6 +315,12 @@ void MediaListsEngine::run()
             contextLRIs << "semantics://frequent?video||limit=4||groupBy=director";
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Video Feeds");
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.url = "feeds://videofeeds";
+            mediaItem.fields["categoryType"] = QString("Video Feeds");
+            mediaItem.artwork = KIcon("application-rss+xml");
             mediaList << mediaItem;
             mediaItem.title = i18n("Video Clips");
             mediaItem.fields["title"] = mediaItem.title;

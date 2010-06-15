@@ -88,6 +88,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
+    connect(m_infoCategoryModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     
@@ -146,21 +147,30 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
 
 void InfoManager::saveItemInfo()
 {
-    //Save changed info in model
-    m_infoItemModel->saveChanges();
-    updateViewsLayout();
-    
-    //Update Now Playing and Playlist views
-    m_application->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
-    m_application->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
+    if (ui->semanticsStack->currentIndex() == 0) {
+        //Save changed category info in model
+        m_infoCategoryModel->saveChanges();
+    } else {
+        //Save changed item info in model
+        m_infoItemModel->saveChanges();
+        
+        //Update Now Playing and Playlist views
+        m_application->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
+        m_application->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
+    }    
     
     //Now that data is saved hide Save/Cancel controls
     ui->infoSaveHolder->setVisible(false);
+    updateViewsLayout();
 }
 
 void InfoManager::cancelItemEdit()
 {
-    m_infoItemModel->cancelChanges();
+    if (ui->semanticsStack->currentIndex() == 0) {
+        m_infoCategoryModel->cancelChanges();
+    } else {
+        m_infoItemModel->cancelChanges();
+    }
     ui->infoSaveHolder->setVisible(false);
     updateViewsLayout();
 }

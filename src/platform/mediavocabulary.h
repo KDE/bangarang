@@ -57,9 +57,11 @@ class MediaVocabulary {
         QUrl typeAudio();
         QUrl typeAudioMusic();
         QUrl typeAudioStream();
+        QUrl typeAudioFeed();
         QUrl typeVideo();
         QUrl typeVideoMovie();
         QUrl typeVideoTVShow();
+        QUrl typeVideoFeed();
         QUrl typeImage();
         
         //Media-related types
@@ -111,10 +113,12 @@ class MediaVocabulary {
         QString hasTypeAudio(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeAudioMusic(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeAudioStream(MediaQuery::Match match = MediaQuery::Required);
+        QString hasTypeAudioFeed(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeAnyAudio(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeVideo(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeVideoMovie(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeVideoTVShow(MediaQuery::Match match = MediaQuery::Required);
+        QString hasTypeVideoFeed(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeAnyVideo(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeImage(MediaQuery::Match match = MediaQuery::Required);
         QString hasTypeTVSeries(MediaQuery::Match match = MediaQuery::Required);

@@ -72,6 +72,7 @@ SET(BangarangSources
     platform/cachelistengine.cpp
     platform/audioclipslistengine.cpp
     platform/taglistengine.cpp
+    platform/feedlistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
     platform/infocategorymodel.cpp

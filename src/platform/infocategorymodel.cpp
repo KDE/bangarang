@@ -30,6 +30,7 @@
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
 #include <Solid/Networking>
+#include <QDomDocument>
 
 InfoCategoryModel::InfoCategoryModel(QObject *parent) : QStandardItemModel(parent)
 {
@@ -58,6 +59,8 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
         // Get fields shared by all media types
         QString type = m_mediaList.at(0).type;
         
+        kDebug() << type;
+        
         if (type == "Category") {
             QString subType = m_mediaList.at(0).fields["categoryType"].toString();
             setMode(categoryModeFromCategoryType(subType));
@@ -65,6 +68,11 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
             addFieldToValuesModel(i18n("Name"), "title");
             addFieldToValuesModel(i18n("Description"), "description");
             //addFieldToValuesModel(i18n("Rating"), "rating");
+            
+            if (subType == "Audio Feed" || subType == "Video Feed") {
+                kDebug() << subType;
+                addFieldToValuesModel(i18n("Location"), "url");
+            }
         }
     }
 }
@@ -81,6 +89,64 @@ void InfoCategoryModel::downloadInfo()
 
 void InfoCategoryModel::saveChanges()
 {
+    QList<MediaItem> updatedList;
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        MediaItem mediaItem = m_mediaList.at(i);
+        for (int row = 0; row < rowCount(); row++) {
+            QStandardItem *currentItem = item(row, 0);
+            QString field = currentItem->data(FieldRole).toString();
+            //Save any field that does not have multiple values.
+            //If multiple items are selected and a field is edited
+            //then the edited field won't have multiple values
+            bool multipleValues = currentItem->data(MultipleValuesRole).toBool();
+            if (!multipleValues) { 
+                if ((m_mode == AudioFeedMode || m_mode == VideoFeedMode) && field == "url") {
+                    mediaItem.fields[field] = currentItem->data(Qt::EditRole);
+                    QString feedUrl = currentItem->data(Qt::EditRole).toString().trimmed();
+                    if (!feedUrl.isEmpty()) {
+                        QString feedFilePath;
+                        kDebug() << feedUrl;
+                        if (KIO::NetAccess::download(KUrl(feedUrl), feedFilePath, 0)) {
+                            QFile file(feedFilePath);
+                            QDomDocument feedDoc("feed");
+                            feedDoc.setContent(&file);
+                            
+                            //Iterate through item nodes of the XML document
+                            QDomNodeList channels = feedDoc.elementsByTagName("channel");
+                            for (int i = 0; i < channels.count(); i++) {
+                                QDomNodeList nodes = channels.at(i).childNodes();
+                                for (int j = 0; j < nodes.count(); j++) {
+                                    if (nodes.at(j).isElement()) {
+                                        QDomElement element = nodes.at(j).toElement();
+                                        if (element.tagName() == "title") {
+                                            mediaItem.title = element.text();
+                                            kDebug() << mediaItem.title;
+                                            mediaItem.fields["title"] = element.text();
+                                        } else if (element.tagName() == "description") {
+                                            mediaItem.fields["description"] = element.text();
+                                            kDebug() << element.text();
+                                        }
+                                    }
+                                }
+                            }
+                            KIO::NetAccess::removeTempFile(feedFilePath);
+                        } else {
+                            kDebug() << "could not access feed";
+                        }
+                    }
+                                            
+                }
+            }
+        }
+        updatedList << mediaItem;
+    }
+    m_mediaList = updatedList;
+    
+    //Update source information
+    m_sourceModel->updateSourceInfo(m_mediaList);
+    
+    //Ensure original values in model are updated to reflect saved(no-edits) state
+    loadInfo(m_mediaList); 
 }
 
 void InfoCategoryModel::cancelChanges()
@@ -116,16 +182,16 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     fieldItem->setData(field, InfoCategoryModel::FieldRole);
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoCategoryModel::MultipleValuesRole);
-    bool isEditable = true;
-    fieldItem->setEditable(isEditable);
-    if (isEditable) {
-        //fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
+    if (m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
+        fieldItem->setEditable(true);
+    } else {
+        fieldItem->setEditable(false);
     }
-
+    
     bool addRow = false;
     if (field == "associatedImage") {
         if (m_mediaList.count() == 1) {
-            if (m_mode == AlbumMode) {
+            if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == AudioFeedMode) {
                 addRow = true;
                 fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
             }
@@ -142,12 +208,12 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     if (!hasMultiple) {
         //Set field value
         QVariant value = commonValue(field);
-        if (!value.isNull()) {
+        //if (!value.isNull()) {
             fieldItem->setData(value, Qt::DisplayRole);
             fieldItem->setData(value, Qt::EditRole);
             fieldItem->setData(value, InfoCategoryModel::OriginalValueRole); //stores copy of original data
             addRow = true;
-        }
+        //}
     } else {
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
@@ -361,6 +427,10 @@ InfoCategoryModel::InfoCategoryMode InfoCategoryModel::categoryModeFromCategoryT
         return InfoCategoryModel::VideoGenreMode;
     } else if (categoryType == "VideoTag") {
         return InfoCategoryModel::VideoTagMode;
+    } else if (categoryType == "Audio Feed") {
+        return InfoCategoryModel::AudioFeedMode;
+    } else if (categoryType == "Video Feed") {
+        return InfoCategoryModel::VideoFeedMode;
     } else {
         return InfoCategoryModel::DefaultMode;
     }
