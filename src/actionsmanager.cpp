@@ -277,6 +277,8 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         selection = true;
     }
     bool isMedia = Utilities::isMedia(type);
+    bool isFeed = (selectedItems.at(0).fields["categoryType"].toString() == "Audio Feed" ||
+                   selectedItems.at(0).fields["categoryType"].toString() == "Video Feed") ? true : false;
     bool isCategory = false;
     if (type == "Category") {
         isCategory = true;
@@ -309,7 +311,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
             }
             menu->addSeparator();
         }
-        if (selection && isMedia) {
+        if (selection && (isMedia || isFeed)) {
             menu->addAction(action("remove_selected_info"));
             menu->addSeparator();
         }

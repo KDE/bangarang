@@ -315,20 +315,35 @@ bool Utilities::isMusic(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
-    return result->is("audio/mpeg") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack") || result->is("audio/x-oma") || result->is("audio/x-m4a") || result->is("audio/mp4") || result->is("audio/x-monkeys-audio") || result->is("audio/x-wv") || result->is("audio/x-ms-wma") || result->is("audio/aac") || result->is("audio/3gpp")  || result->is("audio/3gpp2");
+    return isMusicMimeType(result);
+}
+
+bool Utilities::isMusicMimeType(KMimeType::Ptr type)
+{
+    return type->is("audio/mpeg") || type->is("application/ogg") || type->is("audio/x-flac") || type->is("audio/x-musepack") || type->is("audio/x-oma") || type->is("audio/x-m4a") || type->is("audio/mp4") || type->is("audio/x-monkeys-audio") || type->is("audio/x-wv") || type->is("audio/x-ms-wma") || type->is("audio/aac") || type->is("audio/3gpp")  || type->is("audio/3gpp2");
 }
 
 bool Utilities::isAudio(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-    return result->is("audio/mpeg") || result->is("audio/mp4") || result->is("audio/ogg") || result->is("audio/vorbis") || result->is("audio/aac") || result->is("audio/aiff") || result->is("audio/basic") || result->is("audio/flac") || result->is("audio/mp2") || result->is("audio/mp3") || result->is("audio/vnd.rn-realaudio") || result->is("audio/wav") || result->is("application/ogg") || result->is("audio/x-flac") || result->is("audio/x-musepack") || result->is("audio/x-m4a") || result->is("audio/x-oma") || result->is("audio/x-monkeys-audio") || result->is("audio/x-wv") || result->is("audio/x-ms-wma") || result->is("audio/3gpp")  || result->is("audio/3gpp2");
+    return isAudioMimeType(result);
+}
+
+bool Utilities::isAudioMimeType(KMimeType::Ptr type)
+{
+    return type->is("audio/mpeg") || type->is("audio/mp4") || type->is("audio/ogg") || type->is("audio/vorbis") || type->is("audio/aac") || type->is("audio/aiff") || type->is("audio/basic") || type->is("audio/flac") || type->is("audio/mp2") || type->is("audio/mp3") || type->is("audio/vnd.rn-realaudio") || type->is("audio/wav") || type->is("application/ogg") || type->is("audio/x-flac") || type->is("audio/x-musepack") || type->is("audio/x-m4a") || type->is("audio/x-oma") || type->is("audio/x-monkeys-audio") || type->is("audio/x-wv") || type->is("audio/x-ms-wma") || type->is("audio/3gpp")  || type->is("audio/3gpp2");
 }
 
 bool Utilities::isVideo(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     
-    return result->is("video/mp4") || result->is("video/mpeg") || result->is("video/ogg") || result->is("video/quicktime") || result->is("video/msvideo") || result->is("video/x-theora")|| result->is("video/x-theora+ogg") || result->is("video/x-ogm")|| result->is("video/x-ogm+ogg") || result->is("video/divx") || result->is("video/x-msvideo") || result->is("video/x-wmv") || result->is("video/x-flv") || result->is("video/x-matroska");
+    return isVideoMimeType(result);
+}
+
+bool Utilities::isVideoMimeType(KMimeType::Ptr type)
+{
+    return type->is("video/mp4") || type->is("video/mpeg") || type->is("video/ogg") || type->is("video/quicktime") || type->is("video/msvideo") || type->is("video/x-theora")|| type->is("video/x-theora+ogg") || type->is("video/x-ogm")|| type->is("video/x-ogm+ogg") || type->is("video/divx") || type->is("video/x-msvideo") || type->is("video/x-wmv") || type->is("video/x-flv") || type->is("video/x-matroska");
 }
 
 bool Utilities::isM3u(const QString &url)

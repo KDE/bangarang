@@ -21,6 +21,7 @@
 
 #include <KUrl>
 #include <KIcon>
+#include <KMimeType>
 #include <QPixmap>
 #include <QImage>
 #include <taglib/id3v2tag.h>
@@ -58,8 +59,11 @@ namespace Utilities {
     void setDurationTag(const QString &url, int duration);
     void setTrackNumberTag(const QString &url, int trackNumber);
     bool isMusic(const QString &url);
+    bool isMusicMimeType(KMimeType::Ptr type);
     bool isAudio(const QString &url);
+    bool isAudioMimeType(KMimeType::Ptr type);
     bool isVideo(const QString &url);
+    bool isVideoMimeType(KMimeType::Ptr type);
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
     bool isMediaItem(const QModelIndex *index);

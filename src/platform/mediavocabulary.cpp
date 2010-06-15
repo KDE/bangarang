@@ -166,6 +166,12 @@ QUrl MediaVocabulary::typeAudioStream()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::typeAudioFeed()
+{
+    QUrl returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#AudioFeed");
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::typeVideo()
 {
     QUrl returnUrl = QUrl();
@@ -197,6 +203,12 @@ QUrl MediaVocabulary::typeVideoTVShow()
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#TVShow");
     }
     
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::typeVideoFeed()
+{
+    QUrl returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#VideoFeed");
     return returnUrl;
 }
 
@@ -645,6 +657,17 @@ QString MediaVocabulary::hasTypeAudioStream(MediaQuery::Match match)
     return statement;
 }
 
+QString MediaVocabulary::hasTypeAudioFeed(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = MediaQuery::hasType(resourceBinding, typeAudioFeed());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
 QString MediaVocabulary::hasTypeAnyAudio(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
@@ -685,6 +708,17 @@ QString MediaVocabulary::hasTypeVideoTVShow(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
     QString statement = MediaQuery::hasType(resourceBinding, typeVideoTVShow());
+    statement += fileUrl(resourceBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasTypeVideoFeed(MediaQuery::Match match)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString statement = MediaQuery::hasType(resourceBinding, typeVideoFeed());
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);

@@ -286,7 +286,7 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
             addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
         }          
     } else if (field == "title") {
-        addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+        addCondition(mediaVocabulary.hasTitle(MediaQuery::Required,
                                                         value,
                                                         constraint));
     } else if (field == "tag") {

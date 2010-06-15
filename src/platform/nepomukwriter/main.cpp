@@ -275,6 +275,10 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                     res.removeProperty(mediaVocabulary.videoCinematographer());
                 }
             }
+        } else if (type == "Category") {
+            if (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed") {
+                res.remove();
+            }
         }
         cout << "BangrangSignal:urlInfoRemoved:" << QUrl::toPercentEncoding(url) << "\n";
         cout.flush();
@@ -340,8 +344,25 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
             if (!res.hasType(videoType)) {
                 res.addType(videoType);
             }
-        }
-        
+        } else if (type == "Category") {
+            if (fields["categoryType"] == "Audio Feed") {
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeAudioFeed());
+                } else {
+                    if (!res.hasType(mediaVocabulary.typeAudioFeed())) {
+                        res.addType(mediaVocabulary.typeAudioFeed());
+                    }
+                }
+            } else if (fields["categoryType"] == "Video Feed") {
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeVideoFeed());
+                } else {
+                    if (!res.hasType(mediaVocabulary.typeVideoFeed())) {
+                        res.addType(mediaVocabulary.typeVideoFeed());
+                    }
+                }
+            }
+        }       
         //Set properties common to all media types
         if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
             res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
@@ -395,6 +416,22 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                 artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
             }
             res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+        }
+        QString dataSourceUrl = fields["dataSourceUrl"].toString();
+        if (!dataSourceUrl.isEmpty()) {
+            Nepomuk::Resource dataSourceRes(dataSourceUrl);
+            cout << "Writing datasourceurl...\n";
+            if (dataSourceRes.exists()) {
+                res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource"), Nepomuk::Variant(dataSourceRes));
+            }
+        }
+        QString isLogicalPartOfUrl = fields["isLogicalPartOfUrl"].toString();
+        if (!isLogicalPartOfUrl.isEmpty()) {
+            Nepomuk::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
+            cout << "Writing isLogicalPartOfUrl...\n";
+            if (isLogicalPartOfRes.exists()) {
+                res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf"), Nepomuk::Variant(isLogicalPartOfRes));
+            }
         }
         
         //Set type-specific properties
