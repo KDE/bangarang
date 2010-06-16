@@ -61,6 +61,7 @@ class ActionsManager : public QObject
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
+        QMenu * dvdMenu();
 
         bool m_controlsVisible;
         bool m_playlistFilterVisible;
@@ -69,7 +70,6 @@ class ActionsManager : public QObject
         void updateSavedListsMenus();
         
     private:
-
         void hideShortcutsEditor();
         
         BangarangApplication * m_application;
@@ -80,11 +80,18 @@ class ActionsManager : public QObject
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
+        QMenu *m_dvdMenu;
         KMenu *m_notifierMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
         QMenu *m_removeBookmarksMenu;
+        
+        QActionGroup *m_audioChannelGroup;
+        QActionGroup *m_subtitleGroup;
+        QActionGroup *m_angleGroup;
+        QActionGroup *m_titleGroup;
+        QActionGroup *m_chapterGroup;
 
         //every actionn which is allowed to have a shortcut
         KActionCollection *m_shortcutsCollection;
@@ -122,5 +129,10 @@ class ActionsManager : public QObject
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
         void updateOntologies();
+        void audioChannelChanged();
+        void subtitleChanged();
+        void angleChanged();
+        void titleChanged();
+        void chapterChanged();
 };
 #endif //ACTIONSMANAGER_H
