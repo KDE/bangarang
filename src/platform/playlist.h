@@ -184,6 +184,12 @@ class Playlist : public QObject
         * @returns Playlist::State (see enum)
         */
         Playlist::State state();
+        
+        /**
+        * Returns the media controller object
+        * @returns Phonon::MediaController
+        */
+        Phonon::MediaController *mediaController() { return m_mediaController; }
                
     public slots:
         /**
