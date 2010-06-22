@@ -80,12 +80,13 @@ void NepomukListEngine::updateSourceInfo(QList<MediaItem> mediaList)
 void NepomukListEngine::connectIndexer()
 {
     connect(m_mediaIndexer, SIGNAL(started()), model(), SIGNAL(sourceInfoUpdateRemovalStarted()));
-    connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItem(QString)));
+    connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItemByResource(QString)));
     connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SIGNAL(sourceInfoRemoved(QString)));
     connect(m_mediaIndexer, SIGNAL(percentComplete(int)), model(), SIGNAL(sourceInfoRemovalProgress(int)));
     connect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
     connect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SIGNAL(sourceInfoUpdated(MediaItem)));
     connect(m_mediaIndexer, SIGNAL(percentComplete(int)), model(), SIGNAL(sourceInfoUpdateProgress(int)));
+    connect(m_mediaIndexer, SIGNAL(finished()), model(), SLOT(updateRefresh()));
     connect(m_mediaIndexer, SIGNAL(finished()), model(), SIGNAL(sourceInfoUpdateRemovalComplete()));
     connect(m_mediaIndexer, SIGNAL(allFinished()), this, SLOT(indexerFinished()));
 }
@@ -99,6 +100,7 @@ void NepomukListEngine::disconnectIndexer()
     disconnect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
     disconnect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SIGNAL(sourceInfoUpdated(MediaItem)));
     disconnect(m_mediaIndexer, SIGNAL(percentComplete(int)), model(), SIGNAL(sourceInfoUpdateProgress(int)));
+    disconnect(m_mediaIndexer, SIGNAL(finished()), model(), SLOT(updateRefresh()));
     disconnect(m_mediaIndexer, SIGNAL(finished()), model(), SIGNAL(sourceInfoUpdateRemovalComplete()));
     disconnect(m_mediaIndexer, SIGNAL(allFinished()), this, SLOT(indexerFinished()));
 }

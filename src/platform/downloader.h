@@ -1,5 +1,5 @@
 /* BANGARANG MEDIA PLAYER
-* Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)
+* Copyright (C) 2010 Andrew Lake (jamboarder@yahoo.com)
 * <http://gitorious.org/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -16,38 +16,29 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FEEDLISTENGINE_H
-#define FEEDLISTENGINE_H
+#ifndef DOWNLOADER_H
+#define DOWNLOADER_H
 
-#include "nepomuklistengine.h"
+#include <KIO/CopyJob>
 #include <QtCore>
-#include <QDir>
-#include <KUrl>
-#include <kjob.h>
-#include <kio/copyjob.h>
 
-class MediaItem;
-class MediaListProperties;
-class ListEngineFactory;
-class MediaIndexer;
-
-/**
-* This ListEngine retrieves a media feeds.
-*/
-class FeedListEngine : public NepomukListEngine
+/*
+ * This class provides a simple downloader accessible via signals/slots.
+ */
+class Downloader : public QObject
 {
     Q_OBJECT
-    
     public:
-        FeedListEngine(ListEngineFactory *parent);
-        ~FeedListEngine();
-        void run();
-        
-    private:
-        QString m_feedFilePath;
+        Downloader(QObject * parent = 0);
+        ~Downloader();
+
+    public slots:
+        void download(const KUrl &from, const KUrl &to);
         
     private slots:
+        void copyingDone(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
+
+    signals:
         void downloadComplete(const KUrl &from, const KUrl &to);
-        
 };
-#endif // FEEDLISTENGINE_H
+#endif // DOWNLOADER_H

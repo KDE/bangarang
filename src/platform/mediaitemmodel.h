@@ -495,6 +495,15 @@ class MediaItemModel : public QStandardItemModel
         int rowOfUrl(const QString &url);
         
         /**
+        * Return the row of a MediaItem whose resource uri matches the one provided
+        *
+        * @param resourceUri uri to match
+        *
+        * @return row of model
+        */
+        int rowOfResourceUri(const QString &resourceUri);
+        
+        /**
          * Sets the threshold for the cache.
          * 
          * @param msec cache threshold in milliseconds.
@@ -692,6 +701,18 @@ class MediaItemModel : public QStandardItemModel
         void removeMediaItem(QString url);
         
         /**
+        * Remove MediaItem in model that matches the resource uri specified.
+        *
+        * @param resourceUri uri of MediaItem to remove.
+        *
+        * Note: This method only removes the information in the model. It
+        *       does not remove information in the source from which the 
+        *       MediaItems were retrieved. Use removeSourceInfo() method 
+        *       to do that.
+        */
+        void removeMediaItemByResource(QString resourceUri);
+        
+        /**
         * Update artwork for mediaItem corresponding to the specified MediaItem.
         * Only MediaItems in the model whose url matches the url of the
         * specifed MediaItem will be updated.
@@ -704,6 +725,8 @@ class MediaItemModel : public QStandardItemModel
         *       retrieved. Use updateSourceInfo() method to do that.
         */
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
+        
+        void updateRefresh();
         
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         
@@ -727,6 +750,7 @@ class MediaItemModel : public QStandardItemModel
         QList< QList<MediaItem> > m_subRequestMediaLists;
         int m_subRequestsDone;
         QStringList m_urlList;
+        QStringList m_resourceUriList;
         QList<MediaItem> m_mediaList;
         bool m_emitChangedAfterDrop;
         int m_loadingProgress;
@@ -742,6 +766,7 @@ class MediaItemModel : public QStandardItemModel
         bool m_reload;
         bool m_lriIsLoadable;
         bool m_suppressNoResultsMessage;
+        bool m_pendingUpdateRefresh;
 
 };
 

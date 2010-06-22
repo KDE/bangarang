@@ -78,6 +78,7 @@ SET(BangarangSources
     platform/infocategorymodel.cpp
     platform/dbpediaquery.cpp
     platform/ontologyupdater.cpp
+    platform/downloader.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

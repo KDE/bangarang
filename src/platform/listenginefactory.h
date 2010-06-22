@@ -20,6 +20,7 @@
 #define LISTENGINEFACTORY_H
 
 #include "mediaitemmodel.h"
+#include <KUrl>
 #include <QObject>
 #include <QList>
 
@@ -37,6 +38,7 @@ class CacheListEngine;
 class AudioClipsListEngine;
 class TagListEngine;
 class FeedListEngine;
+class Downloader;
 
 /**
  * This class creates ListEngines as needed for the MediaItemModel.
@@ -81,6 +83,11 @@ class ListEngineFactory : public QObject
          */
         bool engineExists(const QString &engine);
         
+        /**
+         * Returns the downloader.
+         **/
+        Downloader * downloader();
+        
     private:
         MediaItemModel * m_parent;
         int m_requestSignatureSeed;
@@ -98,6 +105,7 @@ class ListEngineFactory : public QObject
         QList<AudioClipsListEngine *> m_audioClipsListEngines;
         QList<TagListEngine *> m_tagListEngines;
         QList<FeedListEngine *> m_feedListEngines;
+        Downloader * m_downloader;
 };
 #endif // LISTENGINEFACTORY_H
         

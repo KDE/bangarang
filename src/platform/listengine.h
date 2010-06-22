@@ -136,17 +136,28 @@ class ListEngine : public QThread
             Q_UNUSED(mediaList);
         }
         
+    public Q_SLOTS:
+        virtual void downloadComplete(const KUrl &from, const KUrl &to)
+        {
+            Q_UNUSED(from);
+            Q_UNUSED(to);
+        }
+        
     Q_SIGNALS:
         void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
         void updateMediaItems(QList<MediaItem> mediaList);
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
+        void download(const KUrl &from, const KUrl &to);
         
     protected:
+        ListEngineFactory * m_parent;
         MediaListProperties m_mediaListProperties;
         QString m_requestSignature;
         QString m_subRequestSignature;
         MediaItemModel * m_mediaItemModel;
+        void connectDownloader();
+        void disconnectDownloader();
 
 };
 #endif // LISTENGINE_H

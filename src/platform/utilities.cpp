@@ -693,7 +693,7 @@ QString Utilities::videoMimeFilter()
     return mimeFilter;*/
 }
 
-MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res)
+MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &sourceLri)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QString type;
@@ -800,14 +800,14 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res)
     
     MediaItem mediaItem;
     while (it.next()) {
-        mediaItem = mediaItemFromIterator(it, type);
+        mediaItem = mediaItemFromIterator(it, type, sourceLri);
         break;
     }
     
     return mediaItem;
 }
 
-MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type)
+MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri)
 {
     MediaItem mediaItem;
     
@@ -817,6 +817,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.url = url.prettyUrl();
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
+    mediaItem.fields["sourceLri"] = sourceLri;
     mediaItem.title = it.binding(MediaVocabulary::titleBinding()).literal().toString();
     mediaItem.fields["title"] = mediaItem.title;
     if (mediaItem.title.isEmpty()) {
@@ -934,7 +935,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     return mediaItem;
 }
 
-MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri)
+MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri, const QString &sourceLri)
 {
     MediaItem mediaItem;
     
@@ -1113,6 +1114,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
         if (!lri.isEmpty()) {
             mediaItem.url = lri;
         }
+        mediaItem.fields["sourceLri"] = sourceLri;
     }
     return mediaItem;
 }

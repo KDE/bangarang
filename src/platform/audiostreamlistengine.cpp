@@ -78,7 +78,7 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
@@ -128,7 +128,7 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             

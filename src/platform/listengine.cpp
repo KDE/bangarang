@@ -17,9 +17,11 @@
 */
 
 #include "listengine.h"
+#include "downloader.h"
 
 ListEngine::ListEngine(ListEngineFactory * parent) : QThread(parent)
 {
+    m_parent = parent;
 }
 
 ListEngine::~ListEngine()
@@ -80,3 +82,14 @@ const QString& ListEngine::subRequestSignature() const {
 	return m_subRequestSignature;
 }
 
+void ListEngine::connectDownloader()
+{
+    connect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
+    connect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
+}
+
+void ListEngine::disconnectDownloader()
+{
+    disconnect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
+    disconnect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
+}

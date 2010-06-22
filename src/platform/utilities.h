@@ -78,9 +78,9 @@ namespace Utilities {
     QList<MediaItem> mediaItemsDontExist(const QList<MediaItem> &mediaList);
     QString audioMimeFilter();
     QString videoMimeFilter();
-    MediaItem mediaItemFromNepomuk(Nepomuk::Resource res);
-    MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type);
-    MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString());
+    MediaItem mediaItemFromNepomuk(Nepomuk::Resource res, const QString &sourceLri = QString());
+    MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri = QString());
+    MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString(), const QString &sourceLri = QString());
     Nepomuk::Resource mediaResourceFromUrl(KUrl Url);
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
     QString mergeLRIs(const QString &lri, const QString &lriToMerge);

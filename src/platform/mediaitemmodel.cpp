@@ -43,6 +43,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_loadSources = false;
     m_reload = false;
     m_suppressNoResultsMessage = false;
+    m_pendingUpdateRefresh = false;
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -114,6 +115,11 @@ MediaItem MediaItemModel::mediaItemAt(int row)
 int MediaItemModel::rowOfUrl(const QString &url)
 {
     return m_urlList.indexOf(url);
+}
+
+int MediaItemModel::rowOfResourceUri(const QString &resourceUri)
+{
+    return m_resourceUriList.indexOf(resourceUri);
 }
 
 void MediaItemModel::load()
@@ -202,6 +208,7 @@ void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaLis
     if (rowOfUrl(mediaItem.url) == -1 || mediaItem.url.isEmpty()) {
         m_mediaList << mediaItem;
         m_urlList << mediaItem.url;
+        m_resourceUriList << mediaItem.fields["resourceUri"].toString();
         appendRow(rowDataFromMediaItem(mediaItem));
         if (emitMediaListChanged) {
             emit mediaListChanged();
@@ -460,7 +467,7 @@ void MediaItemModel::updateArtwork(QImage artworkImage, MediaItem mediaItem)
         MediaItem updatedMediaItem = mediaItemAt(row);
         updatedMediaItem.artwork = QIcon(QPixmap::fromImage(artworkImage));
         replaceMediaItemAt(row, updatedMediaItem);
-    }
+    }     
 }
 
 void MediaItemModel::updateMediaItem(MediaItem mediaItem)
@@ -468,6 +475,10 @@ void MediaItemModel::updateMediaItem(MediaItem mediaItem)
     int row = rowOfUrl(mediaItem.url);
     if (row != -1) {
         replaceMediaItemAt(row, mediaItem);
+    } else {
+        if (mediaItem.fields["sourceLri"].toString() == m_mediaListProperties.lri) {
+            m_pendingUpdateRefresh = true;
+        }
     }
 }
 
@@ -490,12 +501,24 @@ void MediaItemModel::removeMediaItem(QString url)
     }
 }
 
+void MediaItemModel::removeMediaItemByResource(QString resourceUri)
+{
+    int row = rowOfResourceUri(resourceUri);
+    if (row != -1) {
+        removeMediaItemAt(row, true);
+        if (rowCount() == 0) {
+            showNoResultsMessage();
+        }
+    }
+}
+
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
+    m_resourceUriList.clear();
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     m_loadSources = false;
     m_mediaListForLoadSources.clear();
@@ -510,6 +533,7 @@ void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
         disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         removeRows(row, 1);
         m_urlList.removeAt(row);
+        m_resourceUriList.removeAt(row);
         m_mediaList.removeAt(row);
         connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         
@@ -523,6 +547,7 @@ void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, boo
 {
     m_mediaList.replace(row, mediaItem);
     m_urlList.replace(row, mediaItem.url);
+    m_resourceUriList.replace(row, mediaItem.fields["resourceUri"].toString());
     QList<QStandardItem *> rowData = rowDataFromMediaItem(mediaItem);
     for (int i = 0; i < rowData.count(); i++) {
         setItem(row, i, rowData.at(i));
@@ -537,6 +562,7 @@ void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int en
     for (int i = start; i <= end; ++i) {
         m_mediaList.removeAt(start);
         m_urlList.removeAt(start);
+        m_resourceUriList.removeAt(start);
     }
     if (m_emitChangedAfterDrop) {
         emit mediaListChanged();
@@ -774,6 +800,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
         MediaItem mediaItem = mediaItemsInserted.at(i);
         m_mediaList.insert(insertionRow, mediaItem);
         m_urlList.insert(insertionRow, mediaItem.url);
+        m_resourceUriList.insert(insertionRow, mediaItem.fields["resourceUri"].toString());
         insertionRow = insertionRow + 1;
     }
     
@@ -832,4 +859,12 @@ bool MediaItemModel::lriIsLoadable()
 void MediaItemModel::setSuppressNoResultsMessage(bool suppress)
 {
     m_suppressNoResultsMessage = suppress;
+}
+
+void MediaItemModel::updateRefresh()
+{
+    if (m_pendingUpdateRefresh) {
+        m_pendingUpdateRefresh = false;
+        reload();
+    }
 }

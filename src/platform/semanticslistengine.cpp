@@ -161,11 +161,11 @@ void SemanticsListEngine::run()
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                        mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
                         mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
                     } else {
-                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         int playCount = it.binding(QString("%1_sum").arg(mediaVocabulary.playCountBinding())).literal().toInt();
                         mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
                         mediaItem.fields["playCount"] = playCount;
@@ -216,11 +216,11 @@ void SemanticsListEngine::run()
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                        mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
                         mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
                     } else {
-                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
                         mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
@@ -277,9 +277,9 @@ void SemanticsListEngine::run()
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                        mediaItem = Utilities::mediaItemFromNepomuk(res);
+                        mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                     } else {
-                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType);
+                        mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         int rating = it.binding(QString("%1_avg").arg(mediaVocabulary.ratingBinding())).literal().toInt();
                         mediaItem.fields["rating"] = rating;
                     }

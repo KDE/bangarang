@@ -276,11 +276,28 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                 }
             }
         } else if (type == "Category") {
-            if (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed") {
-                res.remove();
+            if (fields["categoryType"] == "Audio Feed") { 
+                removeType(res, mediaVocabulary.typeAudioFeed());
+                //res.remove();
+            } else if (fields["categoryType"] == "Video Feed") {
+                removeType(res, mediaVocabulary.typeVideoFeed());
+                //res.remove();
+            }
+            //Update the properties
+            if (res.hasProperty(mediaVocabulary.title())){
+                cout << "Removing title...\n";
+                res.removeProperty(mediaVocabulary.title());
+            }
+            if (res.hasProperty(mediaVocabulary.description())) {
+                cout << "Removing description...\n";
+                res.removeProperty(mediaVocabulary.description());
+            }
+            if (res.hasProperty(mediaVocabulary.artwork())) {
+                cout << "Removing artwork...\n";
+                res.removeProperty(mediaVocabulary.artwork());
             }
         }
-        cout << "BangrangSignal:urlInfoRemoved:" << QUrl::toPercentEncoding(url) << "\n";
+        cout << "BangrangSignal:urlInfoRemoved:" << QUrl::toPercentEncoding(resourceUri) << "\n";
         cout.flush();
         //debug << QString("BangrangSignal:urlInfoRemoved:%1\n").arg(url);
         
@@ -416,6 +433,15 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
                 artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
             }
             res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+        }
+        QString associatedImage = fields["associatedImage"].toString();
+        if (!associatedImage.isEmpty()) {
+            Nepomuk::Resource associatedImageRes(associatedImage);
+            cout << "Writing artworkurl...\n";
+            if (!associatedImageRes.exists()) {
+                associatedImageRes = Nepomuk::Resource(QUrl(associatedImage), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+            }
+            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(associatedImageRes));
         }
         QString dataSourceUrl = fields["dataSourceUrl"].toString();
         if (!dataSourceUrl.isEmpty()) {
@@ -707,6 +733,7 @@ int main(int argc, char *argv[])
             }
         }
         file.close();
+        file.remove();
         cout << "Done!\n";
         cout.flush();
     } else {

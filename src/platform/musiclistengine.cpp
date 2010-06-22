@@ -101,6 +101,7 @@ void MusicListEngine::run()
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("system-users");
                     mediaItem.fields["title"] = artist;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     
                     //Provide context info for artist
                     QStringList contextTitles;
@@ -163,6 +164,7 @@ void MusicListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Album");
                     mediaItem.fields["title"] = album;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("media-optical-audio");
 
@@ -194,6 +196,7 @@ void MusicListEngine::run()
                     mediaItem.subTitle = QString("  %1").arg(artist);
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Artist");
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.artwork = KIcon("audio-x-monkey");
                     QStringList contextTitles;
                     contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
@@ -252,6 +255,7 @@ void MusicListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("MusicGenre");
                     mediaItem.fields["title"] = genre;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("flag-blue");
                     
@@ -349,7 +353,7 @@ void MusicListEngine::run()
                 //Build media list from results
                 resultSetCount = 0;
                 while( it.next() ) {
-                    MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+                    MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                     if (urls.indexOf(mediaItem.url) == -1) {
                         mediaList.append(mediaItem);
                         urls.append(mediaItem.url);
@@ -418,7 +422,7 @@ void MusicListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             

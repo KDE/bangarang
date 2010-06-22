@@ -88,7 +88,7 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     bool multipleValues = index.data(Qt::UserRole + 1).toBool();
     if (index.column() == 0) {
         //Paint first column containing artwork, titel and field labels
-        if (field == "associatedImage") {
+        if (field == "artworkUrl") {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
             //KIcon("download").paint(&p, 0, 0, 22, 22, Qt::AlignCenter, QIcon::Normal);
@@ -166,7 +166,7 @@ int InfoCategoryDelegate::rowHeight(int row) const
     InfoCategoryModel::InfoCategoryMode mode = catModel->mode();
     int height = 1;
     int padding = 2;
-    if (field == "associatedImage") {
+    if (field == "artworkUrl") {
         QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
         int size = 164;
         if (mode == InfoCategoryModel::AudioFeedMode || mode == InfoCategoryModel::VideoFeedMode) {
@@ -199,9 +199,9 @@ int InfoCategoryDelegate::columnWidth (int column) const
 bool InfoCategoryDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
-    if (field == "associatedImage") {
+    if (field == "artworkUrl") {
         if (event->type() == QEvent::MouseButtonDblClick) {
-            //TODO:Implement saving associatedImage to applicable mediaItems.
+            //TODO:Implement saving artworkUrl to applicable mediaItems.
             /*KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
             if (newUrl.isValid()) {
                 QPixmap pixmap = QPixmap(newUrl.path()).scaled(QSize(200,200), Qt::KeepAspectRatio, Qt::SmoothTransformation);
