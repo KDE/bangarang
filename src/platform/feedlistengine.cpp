@@ -46,10 +46,6 @@ FeedListEngine::~FeedListEngine()
 
 void FeedListEngine::run()
 {
-    qRegisterMetaType<time_t>("time_t");
-    qRegisterMetaType<KIO::UDSEntry>("KIO::UDSEntry");
-    qRegisterMetaType<KIO::MetaData>("KIO::MetaData");
-    qRegisterMetaType<KIO::filesize_t>("KIO::filesize_t");
     QThread::setTerminationEnabled(true);
     
     if (m_updateSourceInfo || m_removeSourceInfo) {
@@ -110,6 +106,7 @@ void FeedListEngine::run()
             }
             MediaItem mediaItem;
             mediaItem.title = i18n("New audio feed");
+            mediaItem.subTitle = i18n("Edit info to create new audio feed");
             mediaItem.fields["title"] = "Untitled";
             mediaItem.fields["url"] = QString();
             mediaItem.type = QString("Category");
@@ -165,6 +162,7 @@ void FeedListEngine::run()
             }
             MediaItem mediaItem;
             mediaItem.title = i18n("New video feed");
+            mediaItem.subTitle = i18n("Edit info to create new video feed");
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Video Feed");
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
