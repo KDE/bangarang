@@ -45,13 +45,6 @@ InfoCategoryModel::~InfoCategoryModel()
 
 void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
-    //If the mediaItem is the same as the one currently loaded do nothing.
-    if (mediaList.count() == m_mediaList.count() && mediaList.count() == 1) {
-        if (mediaList.at(0).url == m_mediaList.at(0).url) {
-            return;
-        }
-    }
-        
     m_mediaList = mediaList;
     clear();
     
@@ -59,18 +52,15 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
         // Get fields shared by all media types
         QString type = m_mediaList.at(0).type;
         
-        kDebug() << type;
-        
         if (type == "Category") {
             QString subType = m_mediaList.at(0).fields["categoryType"].toString();
             setMode(categoryModeFromCategoryType(subType));
-            addFieldToValuesModel(i18n("Image"), "associatedImage");
+            addFieldToValuesModel(i18n("Image"), "artworkUrl");
             addFieldToValuesModel(i18n("Name"), "title");
             addFieldToValuesModel(i18n("Description"), "description");
             //addFieldToValuesModel(i18n("Rating"), "rating");
             
             if (subType == "Audio Feed" || subType == "Video Feed") {
-                kDebug() << subType;
                 addFieldToValuesModel(i18n("Location"), "url");
             }
         }
@@ -100,41 +90,9 @@ void InfoCategoryModel::saveChanges()
             //then the edited field won't have multiple values
             bool multipleValues = currentItem->data(MultipleValuesRole).toBool();
             if (!multipleValues) { 
-                if ((m_mode == AudioFeedMode || m_mode == VideoFeedMode) && field == "url") {
-                    mediaItem.fields[field] = currentItem->data(Qt::EditRole);
-                    QString feedUrl = currentItem->data(Qt::EditRole).toString().trimmed();
-                    if (!feedUrl.isEmpty()) {
-                        QString feedFilePath;
-                        kDebug() << feedUrl;
-                        if (KIO::NetAccess::download(KUrl(feedUrl), feedFilePath, 0)) {
-                            QFile file(feedFilePath);
-                            QDomDocument feedDoc("feed");
-                            feedDoc.setContent(&file);
-                            
-                            //Iterate through item nodes of the XML document
-                            QDomNodeList channels = feedDoc.elementsByTagName("channel");
-                            for (int i = 0; i < channels.count(); i++) {
-                                QDomNodeList nodes = channels.at(i).childNodes();
-                                for (int j = 0; j < nodes.count(); j++) {
-                                    if (nodes.at(j).isElement()) {
-                                        QDomElement element = nodes.at(j).toElement();
-                                        if (element.tagName() == "title") {
-                                            mediaItem.title = element.text();
-                                            kDebug() << mediaItem.title;
-                                            mediaItem.fields["title"] = element.text();
-                                        } else if (element.tagName() == "description") {
-                                            mediaItem.fields["description"] = element.text();
-                                            kDebug() << element.text();
-                                        }
-                                    }
-                                }
-                            }
-                            KIO::NetAccess::removeTempFile(feedFilePath);
-                        } else {
-                            kDebug() << "could not access feed";
-                        }
-                    }
-                                            
+                mediaItem.fields[field] = currentItem->data(Qt::EditRole);
+                if (field == "artworkUrl") {
+                    mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
                 }
             }
         }
@@ -189,7 +147,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     }
     
     bool addRow = false;
-    if (field == "associatedImage") {
+    if (field == "artworkUrl") {
         if (m_mediaList.count() == 1) {
             if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == AudioFeedMode) {
                 addRow = true;
@@ -237,7 +195,7 @@ bool InfoCategoryModel::hasMultipleValues(const QString &field)
 {
     QVariant value;
     
-    if (field == "associatedImage") {
+    if (field == "artworkUrl") {
         if (m_mediaList.count() == 1) {
             return false;
         } else {
@@ -294,7 +252,7 @@ void InfoCategoryModel::checkInfoModified(QStandardItem *changedItem)
         modified = false;
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *otherItem = item(row, 0);
-            if (otherItem->data(Qt::UserRole).toString() != "associatedImage") {
+            if (otherItem->data(InfoCategoryModel::FieldRole).toString() != "artworkUrl") {
                 if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoCategoryModel::OriginalValueRole)) {
                     modified = true;
                     break;
@@ -302,6 +260,13 @@ void InfoCategoryModel::checkInfoModified(QStandardItem *changedItem)
             }
         }
     }
+    
+    //Populate other fields when mediaFeed url is set
+    QString field = changedItem->data(InfoCategoryModel::FieldRole).toString();
+    if ((m_mode == AudioFeedMode || m_mode == VideoFeedMode) && field == "url") {
+        getFeedInfo();
+    }
+
     emit infoChanged(modified);
     
 }
@@ -355,23 +320,12 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
                 //Create placeholder in model for thumbnail
                 QList<QStandardItem *> rowData;
                 QStandardItem *fieldItem = new QStandardItem();
-                fieldItem->setData("associatedImage", InfoCategoryModel::FieldRole);
+                fieldItem->setData("artworkUrl", InfoCategoryModel::FieldRole);
                 fieldItem->setData(QIcon(), Qt::DecorationRole);
                 rowData.append(fieldItem);
                 appendRow(rowData);
                 
-                //Prepare job to retrieve thumbnail
-                QString thumbnailTargetFile = QString("bangarang/temp/%1").arg(thumbnailUrl.fileName());
-                KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
-                QFile downloadTarget(thumbnailTargetUrl.path());
-                downloadTarget.remove();
-                KIO::CopyJob *copyJob = KIO::copyAs(thumbnailUrl, thumbnailTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
-                copyJob->setUiDelegate(0);
-                copyJob->setAutoDelete(true);
-                connect (copyJob, 
-                         SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
-                         this,
-                         SLOT(loadThumbnail(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+                getThumbnail(thumbnailUrl);
             }
 
             {
@@ -401,6 +355,148 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
             
             emit modelDataChanged();
             
+        }
+    }
+}
+
+void InfoCategoryModel::getThumbnail(KUrl thumbnailUrl, bool keepThumbnail)
+{
+    //Prepare job to retrieve thumbnail
+    m_keepThumbnail = keepThumbnail;
+    QString folder = "temp";
+    if (m_keepThumbnail) {
+        folder = "thumbnails";
+    }
+    QString thumbnailTargetFile = QString("bangarang/%1/%2").arg(folder).arg(thumbnailUrl.fileName());
+    KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+    QFile downloadTarget(thumbnailTargetUrl.path());
+    downloadTarget.remove();
+    KIO::CopyJob *copyJob = KIO::copyAs(thumbnailUrl, thumbnailTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
+    copyJob->setUiDelegate(0);
+    copyJob->setAutoDelete(true);
+    connect (copyJob, 
+             SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+             this,
+             SLOT(gotThumbnail(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+}
+
+void InfoCategoryModel::gotThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
+{
+    Q_UNUSED(job);
+    Q_UNUSED(from);
+    Q_UNUSED(mtime);
+    Q_UNUSED(directory);
+    Q_UNUSED(renamed);
+    
+    QString thumbnailFile = to.path();
+    QPixmap thumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    if (!thumbnail.isNull())  {
+        for (int row = 0; row < rowCount(); row++) {
+            QStandardItem *rowItem = item(row, 0);
+            QString field = rowItem->data(InfoCategoryModel::FieldRole).toString();
+            if (field == "artworkUrl") {
+                rowItem->setData(QIcon(thumbnail), Qt::DecorationRole);
+                if (m_keepThumbnail) {
+                    rowItem->setData(to.prettyUrl(), Qt::EditRole);
+                }
+                break;
+            }
+        }
+    }
+    if (!m_keepThumbnail) {
+        QFile(to.path()).remove();
+    }
+    m_keepThumbnail = false;
+}
+
+void InfoCategoryModel::getFeedInfo()
+{
+    if (m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
+        QString feedUrlStr;
+        for (int row = 0; row < rowCount(); row++) {
+            QStandardItem *rowItem = item(row, 0);
+            if (rowItem->data(InfoCategoryModel::FieldRole).toString() == "url") {
+                feedUrlStr = rowItem->data(Qt::EditRole).toString();
+                break;
+            }
+        }
+        KUrl feedUrl(feedUrlStr);
+        if (!feedUrl.isEmpty()) {
+            QString feedFilePath;
+            
+           //Prepare job to retrieve feed info
+            QString feedTargetFile = QString("bangarang/temp/%1").arg(feedUrl.fileName());
+            KUrl feedTargetUrl = KUrl(KStandardDirs::locateLocal("data", feedTargetFile, true));
+            QFile feedTarget(feedTargetUrl.path());
+            feedTarget.remove();
+            KIO::CopyJob *copyJob = KIO::copyAs(feedUrl, feedTargetUrl, KIO::Overwrite | KIO::HideProgressInfo);
+            copyJob->setUiDelegate(0);
+            copyJob->setAutoDelete(true);
+            connect (copyJob, 
+                     SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+                     this,
+                     SLOT(gotFeedInfo(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+                     
+        }
+    }
+}
+
+void InfoCategoryModel::gotFeedInfo(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
+{
+    Q_UNUSED(job);
+    Q_UNUSED(mtime);
+    Q_UNUSED(directory);
+    Q_UNUSED(renamed);
+
+    if (m_mode != AudioFeedMode && m_mode != VideoFeedMode) {
+        return;
+    }
+    
+    QString feedUrl;
+    for (int row = 0; row < rowCount(); row++) {
+        QStandardItem *rowItem = item(row, 0);
+        if (rowItem->data(InfoCategoryModel::FieldRole).toString() == "url") {
+            feedUrl = rowItem->data(Qt::EditRole).toString();
+            break;
+        }
+    }
+    if (from != KUrl(feedUrl)) {
+        return;
+    }
+    
+    QFile file(to.path());
+    QDomDocument feedDoc("feed");
+    feedDoc.setContent(&file);
+    
+    QString title;
+    QString description;
+    
+    //Iterate through item nodes of the XML document
+    QDomNodeList channels = feedDoc.elementsByTagName("channel");
+    for (int i = 0; i < channels.count(); i++) {
+        QDomNodeList nodes = channels.at(i).childNodes();
+        for (int j = 0; j < nodes.count(); j++) {
+            if (nodes.at(j).isElement()) {
+                QDomElement element = nodes.at(j).toElement();
+                if (element.tagName() == "title") {
+                    title = element.text();
+                } else if (element.tagName() == "description") {
+                    description = element.text();
+                } else if (element.tagName() == "itunes:image") {
+                    getThumbnail(KUrl(element.attribute("href")), true);
+                }
+            }
+        }
+    }
+    QFile(to.path()).remove();
+    
+    //Set fields in model
+    for (int row = 0; row < rowCount(); row++) {
+        QStandardItem *rowItem = item(row, 0);
+        if (rowItem->data(InfoCategoryModel::FieldRole).toString() == "title") {
+            rowItem->setData(title, Qt::EditRole);
+        } else if (rowItem->data(InfoCategoryModel::FieldRole).toString() == "description") {
+            rowItem->setData(description, Qt::EditRole);
         }
     }
 }
@@ -436,19 +532,3 @@ InfoCategoryModel::InfoCategoryMode InfoCategoryModel::categoryModeFromCategoryT
     }
 }
 
-void InfoCategoryModel::loadThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
-{
-    Q_UNUSED(job);
-    Q_UNUSED(from);
-    Q_UNUSED(mtime);
-    Q_UNUSED(directory);
-    Q_UNUSED(renamed);
-    
-    QString thumbnailFile = to.path();
-    QPixmap dbPediaThumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    if (!dbPediaThumbnail.isNull())  {
-        QStandardItem *fieldItem = item(0);
-        fieldItem->setData(QIcon(dbPediaThumbnail), Qt::DecorationRole);
-    }
-    QFile(to.path()).remove();
-}

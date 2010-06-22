@@ -121,6 +121,10 @@ void MediaListsEngine::run()
             mediaItem.url = "feeds://audiofeeds";
             mediaItem.fields["categoryType"] = QString("Audio Feeds");
             mediaItem.artwork = KIcon("application-rss+xml");
+            contextTitles.clear();
+            contextLRIs.clear();
+            mediaItem.fields["contextTitles"] = contextTitles;
+            mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
             mediaItem.title = i18n("Clips");
             mediaItem.fields["title"] = mediaItem.title;

@@ -25,7 +25,6 @@
 
 #include <QApplication>
 #include <KIcon>
-#include <KIO/NetAccess>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
@@ -47,6 +46,10 @@ FeedListEngine::~FeedListEngine()
 
 void FeedListEngine::run()
 {
+    qRegisterMetaType<time_t>("time_t");
+    qRegisterMetaType<KIO::UDSEntry>("KIO::UDSEntry");
+    qRegisterMetaType<KIO::MetaData>("KIO::MetaData");
+    qRegisterMetaType<KIO::filesize_t>("KIO::filesize_t");
     QThread::setTerminationEnabled(true);
     
     if (m_updateSourceInfo || m_removeSourceInfo) {
@@ -67,20 +70,21 @@ void FeedListEngine::run()
         if (engineArg == "audiofeeds") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
             bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioFeed(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = bindings;
             query.orderBy(orderByBindings);
-            
-            kDebug() << query.query();
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
@@ -96,9 +100,12 @@ void FeedListEngine::run()
                 mediaItem.artwork = KIcon("application-rss+xml");
                 mediaItem.title = title;
                 mediaItem.fields["title"] = title;
+                mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.subTitle = description;
                 mediaItem.fields["description"] = description;
                 mediaItem.fields["url"] = feedUrl;
+                mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
+                mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
                 mediaList.append(mediaItem);
             }
             MediaItem mediaItem;
@@ -107,15 +114,21 @@ void FeedListEngine::run()
             mediaItem.fields["url"] = QString();
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Audio Feed");
+            mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaList.append(mediaItem);
             
             m_mediaListProperties.summary = i18np("1 feed", "%1 feeds", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
+            //Return results
+            emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+            
         } else if (engineArg == "videofeeds") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(mediaVocabulary.mediaResourceBinding());
+            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             query.select(bindings, MediaQuery::Distinct);
@@ -142,86 +155,125 @@ void FeedListEngine::run()
                 mediaItem.artwork = KIcon("application-rss+xml");
                 mediaItem.title = title;
                 mediaItem.fields["title"] = title;
+                mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.subTitle = description;
                 mediaItem.fields["description"] = description;
                 mediaItem.fields["url"] = feedUrl;
+                mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
+                mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
                 mediaList.append(mediaItem);
             }
             MediaItem mediaItem;
             mediaItem.title = i18n("New video feed");
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Video Feed");
+            mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaList.append(mediaItem);
             
             m_mediaListProperties.summary = i18np("1 feed", "%1 feeds", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
             
+            //Return results
+            emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+            
         } else if (engineArg == "audio" || engineArg == "video") {
             //Get feed url
-            QString feedUrl = m_mediaListProperties.filterFieldValue("feedUrl");
-            kDebug() << feedUrl;
+            QString feedUrlStr = m_mediaListProperties.filterFieldValue("feedUrl");
             
+            KUrl feedUrl(feedUrlStr);
             if (!feedUrl.isEmpty()) {
-                QString feedFilePath;
-                if( KIO::NetAccess::download(KUrl(feedUrl), feedFilePath, 0)) {
-                    QFile file(feedFilePath);
-                    QDomDocument feedDoc("feed");
-                    feedDoc.setContent(&file);
-                    
-                    //Iterate through item nodes of the XML document
-                    QDomNodeList items = feedDoc.elementsByTagName("item");
-                    for (int i = 0; i < items.count(); i++) {
-                        MediaItem mediaItem;
-                        bool isAudio = false;
-                        bool isVideo = false;
-                        QDomNodeList itemNodes = items.at(i).childNodes();
-                        for (int j = 0; j < itemNodes.count(); j++) {
-                            if (itemNodes.at(j).isElement()) {
-                                QDomElement itemElement = itemNodes.at(j).toElement();
-                                if (itemElement.tagName() == "title") {
-                                    mediaItem.title = itemElement.text();
-                                    mediaItem.fields["title"] = itemElement.text();
-                                } else if (itemElement.tagName() == "description") {
-                                    mediaItem.subTitle = QString("%1...").arg(itemElement.text().left(50));
-                                    mediaItem.fields["description"] = itemElement.text();
-                                } else if (itemElement.tagName() == "itunes:duration") {
-                                    mediaItem.duration = itemElement.text();
-                                } else if (itemElement.tagName() == "pubDate") {
-                                    mediaItem.fields["releaseDate"] = itemElement.text();
-                                } else if (itemElement.tagName() == "enclosure") {
-                                    mediaItem.url = itemElement.attribute("url");
-                                    mediaItem.fields["url"] = mediaItem.url;
-                                    KMimeType::Ptr type = KMimeType::mimeType(itemElement.attribute("type"));
-                                    if (Utilities::isAudioMimeType(type)) {
-                                        isAudio = true;
-                                        mediaItem.type = "Audio";
-                                        mediaItem.fields["audioType"] = "Audio Clip";
-                                        mediaItem.artwork = KIcon("audio-x-generic");
-                                    } else if (Utilities::isVideoMimeType(type)) {
-                                        isVideo = true;
-                                        mediaItem.type = "Video";
-                                        mediaItem.fields["videoType"] = "Video Clip";
-                                        mediaItem.artwork = KIcon("video-x-generic");
-                                    }
-                                }
-                            }
-                        }
-                        if (mediaItem.type == "Audio" && engineArg == "audio") {
-                            mediaList.append(mediaItem);
-                        } else if (mediaItem.type == "Video" && engineArg == "video") {
-                            mediaList.append(mediaItem);
-                        }
-                    }
-                    
-                    m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
-                    m_mediaListProperties.type = QString("Sources");
-                    KIO::NetAccess::removeTempFile(feedFilePath);
+                QString feedTargetFile = QString("bangarang/temp/%1").arg(feedUrl.fileName());
+                KUrl feedTargetUrl = KUrl(KStandardDirs::locateLocal("data", feedTargetFile, true));
+                connectDownloader();
+                emit download(feedUrl, feedTargetUrl);
+            }  
+            
+            //Start event loop to wait for feed results
+            exec();
+        }
+        
+        //Get local feed artwork
+        MediaVocabulary mediaVocabulary;
+        for (int i = 0; i < mediaList.count(); i++) {
+            MediaItem mediaItem = mediaList.at(i);
+            if (mediaItem.fields["categoryType"].toString() == "Audio Feed" ||
+                mediaItem.fields["categoryType"].toString() == "Video Feed") {
+                mediaItem.fields["artworkUrl"] = mediaItem.fields["artworkUrl"];
+                QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+                if (!artwork.isNull()) {
+                    emit updateArtwork(artwork, mediaItem);
+                    break;
                 }
             }
         }
-        
-        //Return results
-        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     }
+}
+
+void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
+{
+    Q_UNUSED(from);
+    
+    disconnectDownloader();
+    
+    QList<MediaItem> mediaList;
+    QFile file(to.path());
+    QDomDocument feedDoc("feed");
+    feedDoc.setContent(&file);
+    
+    //Iterate through item nodes of the XML document
+    QDomNodeList items = feedDoc.elementsByTagName("item");
+    for (int i = 0; i < items.count(); i++) {
+        MediaItem mediaItem;
+        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+        bool isAudio = false;
+        bool isVideo = false;
+        QDomNodeList itemNodes = items.at(i).childNodes();
+        for (int j = 0; j < itemNodes.count(); j++) {
+            if (itemNodes.at(j).isElement()) {
+                QDomElement itemElement = itemNodes.at(j).toElement();
+                if (itemElement.tagName() == "title") {
+                    mediaItem.title = itemElement.text();
+                    mediaItem.fields["title"] = itemElement.text();
+                } else if (itemElement.tagName() == "description") {
+                    mediaItem.subTitle = QString("%1...").arg(itemElement.text().left(50));
+                    mediaItem.fields["description"] = itemElement.text();
+                } else if (itemElement.tagName() == "itunes:duration") {
+                    mediaItem.duration = itemElement.text();
+                } else if (itemElement.tagName() == "pubDate") {
+                    mediaItem.fields["releaseDate"] = itemElement.text();
+                } else if (itemElement.tagName() == "enclosure") {
+                    mediaItem.url = itemElement.attribute("url");
+                    mediaItem.fields["url"] = mediaItem.url;
+                    KMimeType::Ptr type = KMimeType::mimeType(itemElement.attribute("type"));
+                    if (Utilities::isAudioMimeType(type)) {
+                        isAudio = true;
+                        mediaItem.type = "Audio";
+                        mediaItem.fields["audioType"] = "Audio Clip";
+                        mediaItem.artwork = KIcon("audio-x-generic");
+                    } else if (Utilities::isVideoMimeType(type)) {
+                        isVideo = true;
+                        mediaItem.type = "Video";
+                        mediaItem.fields["videoType"] = "Video Clip";
+                        mediaItem.artwork = KIcon("video-x-generic");
+                    }
+                }
+            }
+        }
+        if (mediaItem.type == "Audio" && m_mediaListProperties.engineArg() == "audio") {
+            mediaList.append(mediaItem);
+        } else if (mediaItem.type == "Video" && m_mediaListProperties.engineArg() == "video") {
+            mediaList.append(mediaItem);
+        }
+    }
+    file.remove();
+    
+    m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
+    m_mediaListProperties.type = QString("Sources");
+    
+    //Return results
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    
+    //Exit event loop
+    quit();
 }

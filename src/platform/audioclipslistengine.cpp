@@ -79,7 +79,7 @@ void AudioClipsListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
@@ -119,7 +119,7 @@ void AudioClipsListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             

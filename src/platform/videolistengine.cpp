@@ -121,7 +121,7 @@ void VideoListEngine::run()
 
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
@@ -160,7 +160,7 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
@@ -195,6 +195,7 @@ void VideoListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("TV Series");
                     mediaItem.fields["title"] = seriesName;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     
@@ -290,6 +291,7 @@ void VideoListEngine::run()
                                     .arg(season).arg(seriesNameFilter).arg(genreFilter);
                 mediaItem.title = seriesName;
                 mediaItem.fields["title"] = mediaItem.title;
+                mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
                 mediaItem.type = QString("Category");
                 mediaItem.nowPlaying = false;
@@ -420,7 +422,7 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
@@ -462,6 +464,7 @@ void VideoListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("VideoGenre");
                     mediaItem.fields["title"] = genre;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("flag-green");
 
@@ -509,6 +512,7 @@ void VideoListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Actor");
                     mediaItem.fields["title"] = actor;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -556,6 +560,7 @@ void VideoListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Director");
                     mediaItem.fields["title"] = director;
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -668,7 +673,7 @@ void VideoListEngine::run()
                         type = "TV Show";
                     }
                 }
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
                 
                 mediaList.append(mediaItem);
             }
@@ -750,7 +755,7 @@ void VideoListEngine::run()
                         type = "TV Show";
                     }
                 }
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
                 
                 mediaList.append(mediaItem);
             }

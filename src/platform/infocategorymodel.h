@@ -72,6 +72,7 @@ class InfoCategoryModel : public QStandardItemModel
         InfoCategoryMode m_mode;
         DBPediaQuery * m_dbPediaQuery;
         bool m_gotDownloadedData;
+        bool m_keepThumbnail;
         
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
@@ -80,6 +81,8 @@ class InfoCategoryModel : public QStandardItemModel
         void saveFileMetaData(QList<MediaItem> mediaList);
         void getDBPediaInfo(const QString &artistName);
         InfoCategoryModel::InfoCategoryMode categoryModeFromCategoryType(const QString &categoryType);
+        void getThumbnail(KUrl thumbnailUrl, bool keepThumbnail = false);
+        void getFeedInfo();
         
     Q_SIGNALS:
         void infoChanged(bool modified);
@@ -88,7 +91,8 @@ class InfoCategoryModel : public QStandardItemModel
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);
         void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
-        void loadThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
+        void gotThumbnail(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
+        void gotFeedInfo(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
 };
 
 #endif // INFOARTISTMODEL_H

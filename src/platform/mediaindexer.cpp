@@ -251,8 +251,8 @@ void MediaIndexer::processWriterOutput()
                             emit sourceInfoUpdated(mediaItem);
                         }
                     } else if (line.startsWith("BangrangSignal:urlInfoRemoved:")) {
-                        QString url = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
-                        emit urlInfoRemoved(url);
+                        QString resourceUri = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
+                        emit urlInfoRemoved(resourceUri);
                     }
                 }
             }

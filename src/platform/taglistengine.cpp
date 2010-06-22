@@ -90,6 +90,7 @@ void TagListEngine::run()
                 mediaItem.type = "Category";
                 mediaItem.title = tag;
                 mediaItem.fields["title"] = tag;
+                mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.artwork = KIcon("view-pim-notes");
                 mediaList.append(mediaItem);
             }
@@ -117,7 +118,7 @@ void TagListEngine::run()
             //Build media list from results
             while( it.next() ) {
                 Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
-                MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res);
+                MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());

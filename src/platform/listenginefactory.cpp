@@ -17,6 +17,7 @@
 */
 
 #include "listenginefactory.h"
+#include "downloader.h"
 #include "listengine.h"
 #include "musiclistengine.h"
 #include "filelistengine.h"
@@ -37,6 +38,7 @@ ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
     m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://" << "tag://" << "feeds://";
+    m_downloader = new Downloader(this);
 }
 
 ListEngineFactory::~ListEngineFactory()
@@ -361,4 +363,9 @@ bool ListEngineFactory::engineExists(const QString &engine)
     } else {
         return false;
     }
+}
+
+Downloader * ListEngineFactory::downloader()
+{
+    return m_downloader;
 }
