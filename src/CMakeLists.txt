@@ -37,6 +37,7 @@ SET(BangarangSources
     nowplayingdelegate.cpp 
     mediaview.cpp 
     playlistview.cpp
+    nowplayingview.cpp
     infobox.cpp
     infomanager.cpp 
     infoitemdelegate.cpp
