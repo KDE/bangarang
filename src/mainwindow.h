@@ -89,7 +89,6 @@ public:
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
     MediaItemModel * m_videoListsModel;
-    MediaItemModel * m_nowPlaying;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
     
@@ -109,7 +108,6 @@ private:
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
     MediaItemDelegate * m_playlistItemDelegate;
-    NowPlayingDelegate * m_nowPlayingDelegate;
     BangarangVideoWidget *m_videoWidget;
     Phonon::AudioOutput *m_audioOutput;
     Phonon::AudioOutput *m_audioOutputMusicCategory;
