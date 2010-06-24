@@ -195,15 +195,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     playWhenPlaylistChanges = false;
 
     //Setup Now Playing view
-    m_nowPlaying = m_application->playlist()->nowPlayingModel();
-    m_nowPlayingDelegate = new NowPlayingDelegate(this);
-    ui->nowPlayingView->setModel(m_nowPlaying);
-    ui->nowPlayingView->setItemDelegate(m_nowPlayingDelegate);
-    m_nowPlayingDelegate->setView(ui->nowPlayingView);
-    connect(m_nowPlaying, SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
-    ui->nowPlayingView->header()->setVisible(false);
-    ui->nowPlayingView->header()->hideSection(1);
+    ui->nowPlayingView->setMainWindow( this );
     updateCustomColors();
+    connect( (MediaItemModel *) ui->nowPlayingView->model(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateCustomColors())); 
     
     //Setup Video Settings
@@ -600,13 +594,12 @@ void MainWindow::updateSeekTime(qint64 time)
     ui->seekTime->setText(displayTime);
     
     //Update Now Playing Button text
-    if (m_nowPlaying->rowCount() > 0) {
-        if (m_nowPlaying->mediaItemAt(0).type != "Application Banner") { 
-            QString title = m_nowPlaying->mediaItemAt(0).title;
-            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
-        } else {
-            ui->nowPlaying->setText(i18n("Now Playing"));
-        }
+    if (!ui->nowPlayingView->showsTitle())
+    {
+        QString title = ui->nowPlayingView->item().title;
+        ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
+    } else {
+        ui->nowPlaying->setText(i18n("Now Playing"));
     }
 }
 
@@ -884,80 +877,6 @@ void MainWindow::videoListsChanged()
     }
 }
 
-
-void MainWindow::nowPlayingChanged()
-{
-    if (m_nowPlaying->rowCount() > 0) {
-        MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
-        //Tidy up view and switch to the correct viewing widget
-        ui->nowPlayingView->header()->setStretchLastSection(false);
-        ui->nowPlayingView->header()->setResizeMode(0, QHeaderView::Stretch);
-        ui->nowPlayingView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-        ui->nowPlayingView->header()->hideSection(1);
-        if (nowPlayingItem.type == "Video") {
-            ui->viewerStack->setCurrentIndex(1);
-        } else if (nowPlayingItem.type == "Audio") {
-            ui->viewerStack->setCurrentIndex(0);
-        }
-                
-        //Update Now Playing button in Media Lists view
-        if (nowPlayingItem.type != "Application Banner") {        
-            ui->nowPlaying->setIcon(nowPlayingItem.artwork);  
-            QString title = nowPlayingItem.title;
-            QString subTitle = nowPlayingItem.subTitle;
-            QString description = nowPlayingItem.fields["description"].toString();
-            QString toolTipText = i18n("View Now Playing") + QString("<br><b>%1</b>").arg(title);
-            if (!subTitle.isEmpty()) {
-                toolTipText += QString("<br><i>%2</i>").arg(subTitle);
-            }
-            if (!description.isEmpty()) {
-                toolTipText += QString("<br>%3").arg(description);
-            }
-            ui->nowPlaying->setToolTip(toolTipText);
-            setWindowTitle(QString(nowPlayingItem.title + " - Bangarang"));
-        }
-        
-        //Switch the audio output to the appropriate phonon category
-        if (nowPlayingItem.type == "Audio") {
-            if (m_audioOutput->category() != Phonon::MusicCategory) {
-                m_audioOutput = m_audioOutputMusicCategory;
-                m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
-                m_audioOutput->setVolume(m_volume);
-                ui->volumeSlider->setAudioOutput(m_audioOutput);
-                ui->volumeIcon->setChecked(false);
-                updateMuteStatus(false);
-            }
-        } else if (nowPlayingItem.type == "Video") {
-            if (m_audioOutput->category() != Phonon::VideoCategory) {
-                m_audioOutput = m_audioOutputVideoCategory;
-                m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
-                m_audioOutput->setVolume(m_volume);
-                ui->volumeSlider->setAudioOutput(m_audioOutput);
-                ui->volumeIcon->setChecked(false);
-                updateMuteStatus(false);
-            }
-        }
-    
-        //Update seekTime button
-        if (m_application->bookmarksManager()->hasBookmarks(nowPlayingItem)) {
-            ui->seekTime->setIcon(KIcon("bookmarks-organize"));
-            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        } else {
-            ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
-        }
-        
-        //Update status notifier
-        //- Scale artwork to current desktop icon size otherwise notifier will show unknown icon
-        int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
-        QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
-        m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
-        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
-    } else {
-        m_application->statusNotifierItem()->setToolTip("bangarang", i18n("Not Playing"), QString());
-        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Passive);
-    }
-}
-
 void MainWindow::playlistFinished()
 {
     showApplicationBanner();
@@ -1101,7 +1020,7 @@ void MainWindow::showApplicationBanner()
     applicationBanner.subTitle = i18n("Entertainment... Now");
     applicationBanner.type = "Application Banner";
     applicationBanner.url = "-";
-    m_nowPlaying->loadMediaItem(applicationBanner, true);
+    m_application->playlist()->nowPlayingModel()->loadMediaItem(applicationBanner, true);
     ui->viewerStack->setCurrentIndex(0);
 }
 
@@ -1236,4 +1155,71 @@ void MainWindow::setShowRemainingTime(bool showRemainingTime)
     } else {
         ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
     }
+}
+
+void MainWindow::nowPlayingChanged()
+{
+    if (!ui->nowPlayingView->hasRow()) {
+        m_application->statusNotifierItem()->setToolTip("bangarang", i18n("Not Playing"), QString());
+        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Passive);
+        return;
+    }
+    MediaItem nowPlayingItem = ui->nowPlayingView->item();
+    QString type = nowPlayingItem.type;
+    //Tidy up view and switch to the correct viewing widget
+    ui->nowPlayingView->tidyHeader();
+    if (nowPlayingItem.type == "Video") {
+        ui->viewerStack->setCurrentIndex(1);
+    } else if (nowPlayingItem.type == "Audio") {
+        ui->viewerStack->setCurrentIndex(0);
+    }
+            
+    //Update Now Playing button in Media Lists view
+    if (ui->nowPlayingView->showsTitle()) {        
+        ui->nowPlaying->setIcon(nowPlayingItem.artwork);  
+        QString title = nowPlayingItem.title;
+        QString subTitle = nowPlayingItem.subTitle;
+        QString description = nowPlayingItem.fields["description"].toString();
+        QString toolTipText = i18n("View Now Playing") + QString("<br><b>%1</b>").arg(title);
+        if (!subTitle.isEmpty()) {
+            toolTipText += QString("<br><i>%2</i>").arg(subTitle);
+        }
+        if (!description.isEmpty()) {
+            toolTipText += QString("<br>%3").arg(description);
+        }
+        ui->nowPlaying->setToolTip(toolTipText);
+        setWindowTitle(QString(nowPlayingItem.title + " - Bangarang"));
+    }
+    
+    //Switch the audio output to the appropriate phonon category
+    bool changed = false;
+    if (type == "Audio" && m_audioOutput->category() != Phonon::MusicCategory) {
+        m_audioOutput = m_audioOutputMusicCategory;
+        changed = true;
+    } else if (type == "Video" && m_audioOutput->category() != Phonon::VideoCategory) {
+        m_audioOutput = m_audioOutputVideoCategory;
+        changed = true;
+    }
+    if (changed) {
+        m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
+        m_audioOutput->setVolume(m_volume);
+        ui->volumeSlider->setAudioOutput(m_audioOutput);
+        ui->volumeIcon->setChecked(false);
+        updateMuteStatus(false);   
+    }
+ 
+    //Update seekTime button
+    if (m_application->bookmarksManager()->hasBookmarks(nowPlayingItem)) {
+        ui->seekTime->setIcon(KIcon("bookmarks-organize"));
+        ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    } else {
+        ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    }
+    
+    //Update status notifier
+    //- Scale artwork to current desktop icon size otherwise notifier will show unknown icon
+    int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
+    QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
+    m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
+    m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
 }
