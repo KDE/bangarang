@@ -594,12 +594,14 @@ void MainWindow::updateSeekTime(qint64 time)
     ui->seekTime->setText(displayTime);
     
     //Update Now Playing Button text
-    if (!ui->nowPlayingView->showsTitle())
-    {
-        QString title = ui->nowPlayingView->item().title;
-        ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
-    } else {
-        ui->nowPlaying->setText(i18n("Now Playing"));
+    MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
+    if (nowPlayingModel->rowCount() > 0) {
+        if (nowPlayingModel->mediaItemAt(0).type != "Application Banner") {
+            QString title = nowPlayingModel->mediaItemAt(0).title;
+            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
+        } else {
+            ui->nowPlaying->setText(i18n("Now Playing"));
+        }
     }
 }
 
@@ -1159,12 +1161,14 @@ void MainWindow::setShowRemainingTime(bool showRemainingTime)
 
 void MainWindow::nowPlayingChanged()
 {
-    if (!ui->nowPlayingView->hasRow()) {
+    MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
+    if (nowPlayingModel->rowCount() == 0) {
         m_application->statusNotifierItem()->setToolTip("bangarang", i18n("Not Playing"), QString());
         m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Passive);
         return;
     }
-    MediaItem nowPlayingItem = ui->nowPlayingView->item();
+    
+    MediaItem nowPlayingItem = nowPlayingModel->mediaItemAt(0);
     QString type = nowPlayingItem.type;
     //Tidy up view and switch to the correct viewing widget
     ui->nowPlayingView->tidyHeader();
@@ -1175,7 +1179,7 @@ void MainWindow::nowPlayingChanged()
     }
             
     //Update Now Playing button in Media Lists view
-    if (ui->nowPlayingView->showsTitle()) {        
+    if (nowPlayingItem.type != "Application Banner") {
         ui->nowPlaying->setIcon(nowPlayingItem.artwork);  
         QString title = nowPlayingItem.title;
         QString subTitle = nowPlayingItem.subTitle;

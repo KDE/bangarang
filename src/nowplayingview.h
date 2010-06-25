@@ -40,11 +40,10 @@ class NowPlayingView : public QTreeView
         NowPlayingView(QWidget * parent = 0);
         ~NowPlayingView();
         void setMainWindow(MainWindow * mainWindow);
-        bool showsTitle();
-        MediaItem item();
+
+    public Q_SLOTS:
         void tidyHeader();
-        bool hasRow() { return ( m_nowPlayingModel->rowCount() > 0 ); }
-                
+        
     protected:
         void contextMenuEvent (QContextMenuEvent * event);
         

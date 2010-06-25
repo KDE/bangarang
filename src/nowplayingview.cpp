@@ -34,6 +34,7 @@ NowPlayingView::NowPlayingView(QWidget* parent): QTreeView(parent)
     header()->setVisible(false);
     header()->hideSection(1);
     m_nowPlayingDelegate = NULL;
+    connect(m_nowPlayingModel, SIGNAL(mediaListChanged()), this, SLOT(tidyHeader()));
 }
 
 NowPlayingView::~NowPlayingView() {
@@ -50,22 +51,6 @@ void NowPlayingView::contextMenuEvent(QContextMenuEvent * event)
 {
     QMenu * menu = m_application->actionsManager()->nowPlayingContextMenu();
     menu->exec(event->globalPos());
-}
-
-MediaItem NowPlayingView::item()
-{
-    MediaItem tmp;
-    if ( !hasRow() )
-        return tmp;
-    return m_nowPlayingModel->mediaItemAt(0);
-  
-}
-
-bool NowPlayingView::showsTitle()
-{
-    if ( !hasRow() )
-        return false;
-    return (item().type != "Application Banner");
 }
 
 void NowPlayingView::tidyHeader()
