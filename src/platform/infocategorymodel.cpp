@@ -91,6 +91,9 @@ void InfoCategoryModel::saveChanges()
             bool multipleValues = currentItem->data(MultipleValuesRole).toBool();
             if (!multipleValues) { 
                 mediaItem.fields[field] = currentItem->data(Qt::EditRole);
+                if (field == "url") {
+                    mediaItem.url = currentItem->data(Qt::EditRole).toString();
+                }
                 if (field == "artworkUrl") {
                     mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
                 }
