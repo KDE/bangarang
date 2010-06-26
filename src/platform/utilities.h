@@ -38,6 +38,13 @@ class MediaItem;
  * used throughout bangarang.
  */
 namespace Utilities {
+  
+    /**
+    * Getting the album cover from an image stored within the same location as the media item (url).
+    * Returns the path (without url.scheme) to the image or an empty string.
+    */
+    QString getArtworkUrlFromExternalImage(const QString& url);
+  
     QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(128,128));
     QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(128,128));
     QPixmap getArtworkFromMediaItem(const MediaItem &mediaItem);
