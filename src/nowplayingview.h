@@ -1,5 +1,5 @@
 /* BANGARANG MEDIA PLAYER
-* Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)
+* Copyright (C) 2010 Stefan Burnicki (stefan.burnicki@gmx.de)
 * <http://gitorious.org/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
