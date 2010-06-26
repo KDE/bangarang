@@ -149,7 +149,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     bool addRow = false;
     if (field == "artworkUrl") {
         if (m_mediaList.count() == 1) {
-            if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == AudioFeedMode) {
+            if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
                 addRow = true;
                 fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
             }
