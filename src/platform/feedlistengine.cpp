@@ -112,6 +112,7 @@ void FeedListEngine::run()
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Audio Feed");
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+            mediaItem.fields["isTemplate"] = true;
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaList.append(mediaItem);
             
@@ -166,6 +167,7 @@ void FeedListEngine::run()
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Video Feed");
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+            mediaItem.fields["isTemplate"] = true;
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaList.append(mediaItem);
             
