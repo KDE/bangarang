@@ -201,11 +201,9 @@ void FeedListEngine::run()
             MediaItem mediaItem = mediaList.at(i);
             if (mediaItem.fields["categoryType"].toString() == "Audio Feed" ||
                 mediaItem.fields["categoryType"].toString() == "Video Feed") {
-                mediaItem.fields["artworkUrl"] = mediaItem.fields["artworkUrl"];
                 QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                 if (!artwork.isNull()) {
                     emit updateArtwork(artwork, mediaItem);
-                    break;
                 }
             }
         }
