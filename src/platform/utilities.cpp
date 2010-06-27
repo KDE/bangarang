@@ -101,13 +101,6 @@ QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
         attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     
-    if (attachedImage.isNull())
-    {
-      QString artworkUrl = Utilities::getArtworkUrlFromExternalImage(url);
-      if (!artworkUrl.isEmpty())
-	attachedImage = QImage(artworkUrl).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-    
     return attachedImage;
 }
 
@@ -125,7 +118,7 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
         
         if (pixmap.isNull())
 	{
-	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url);
+	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
 	  if (!artworkUrl.isEmpty())
 	    pixmap = QPixmap(artworkUrl).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);;
 	}
@@ -146,7 +139,7 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
         }
         else 
 	{
-	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url);
+	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
 	  if (!artworkUrl.isEmpty())
 	    image = QImage(artworkUrl).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	}
@@ -154,7 +147,7 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
     return image;
 }
 
-QString Utilities::getArtworkUrlFromExternalImage(const QString& url)
+QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QString& album)
 {
   if (url.isNull() || url.isEmpty())
     return QString();
@@ -173,11 +166,14 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url)
   {
     for (int i = files.count() - 1; i >= 0; i--)
     {
-      //TODO: find better match cases / search also for album name
+      //TODO: find better match cases
       //since windows media player stores more then one file,
       //we are forced to choose the right one (e.g folder is better then 
       //albumartsmall)
       if (files[i].contains(i18n("folder")) || files[i].contains("album"))
+	return path + files[i];
+      
+      if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
 	return path + files[i];
     }
     
