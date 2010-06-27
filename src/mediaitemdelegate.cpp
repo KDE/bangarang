@@ -217,15 +217,15 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode) {
             if ((m_nepomukInited) && 
                 (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
-                (subType != "CD Track") 
-                && (subType != "DVD Title")) {
-                    int rating = (index.data(MediaItem::RatingRole).isValid()) ?
-                                    index.data(MediaItem::RatingRole).toInt() : 0;
-                    StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
-                    if (option.state.testFlag(QStyle::State_MouseOver))
-                        r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
-                    r.paint(&p);
-
+                (subType != "CD Track") &&
+                (subType != "DVD Title") &&
+                !index.data(MediaItem::UrlRole).toString().isEmpty()) {
+                int rating = (index.data(MediaItem::RatingRole).isValid()) ?
+                                index.data(MediaItem::RatingRole).toInt() : 0;
+                StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
+                if (option.state.testFlag(QStyle::State_MouseOver))
+                    r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
+                r.paint(&p);
             }
         }
         
@@ -238,7 +238,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         }
         
     } else if (index.column() == 1) {
-        if (isMediaItem) {
+        if (isMediaItem && !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             //Paint add to playlist Icon
             int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
             QIcon icon;        
@@ -258,7 +258,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             int iconWidth = 16;
             int topOffset = (height - m_iconSize) / 2;
             icon.paint(&p, left + m_padding , top + topOffset, m_iconSize, iconWidth, Qt::AlignCenter, QIcon::Normal);
-        } else if (isCategory) {
+        } else if (isCategory && !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             //Paint Category Icon
             QIcon catIcon = index.data(Qt::DecorationRole).value<QIcon>();
             int iconWidth = 22;
@@ -334,12 +334,15 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
     if (index.column() == 0) {
         if (Utilities::isMediaItem(&index)) {
             //Check if rating was clicked and update rating
-            if (!m_nepomukInited)
-                goto end;
+            if (!m_nepomukInited) 
+                return QItemDelegate::editorEvent(event, model, option, index);
             if (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseMove)
-                goto end;
+                return QItemDelegate::editorEvent(event, model, option, index);
             if (m_renderMode != NormalMode && m_renderMode != MiniRatingMode)
-                goto end;
+                return QItemDelegate::editorEvent(event, model, option, index);
+            if (!index.data(MediaItem::UrlRole).toString().isEmpty()) {
+                return QItemDelegate::editorEvent(event, model, option, index);
+            }
 
             QPoint mousePos = ((QMouseEvent *)event)->pos();
             QRect ratingArea = ratingRect(&option.rect);
@@ -348,9 +351,9 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 if (s_mouseOverRating) { //onLeave effect
                     s_mouseOverRating = false;
                     m_view->update(index);
-		    return true;
+                    return true;
                 }
-                goto end;
+                return QItemDelegate::editorEvent(event, model, option, index);
             }
             if (!s_mouseOverRating) //mouse entered
                 s_mouseOverRating = true;
@@ -387,14 +390,16 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                     indexerUpdated = true;
                 }
             }
-        } else if (index.data(MediaItem::TypeRole).toString() == "Category") {
+        } else if (index.data(MediaItem::TypeRole).toString() == "Category" &&
+            !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             if (event->type() == QEvent::MouseButtonDblClick) {
                 emit categoryActivated(index);
             }
         }
     } else if (index.column() == 1) {
         if ((index.data(MediaItem::TypeRole).toString() == "Audio") ||(index.data(MediaItem::TypeRole).toString() == "Video") || (index.data(MediaItem::TypeRole).toString() == "Image")) {
-            if (event->type() == QEvent::MouseButtonPress) {
+            if (event->type() == QEvent::MouseButtonPress &&
+                !index.data(MediaItem::UrlRole).toString().isEmpty()) {
                //Add or remove from playlist
                 int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
                 if (playlistRow != -1) {
@@ -404,7 +409,8 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 }
             }
         }
-        if (index.data(MediaItem::TypeRole).toString() == "Category") {
+        if (index.data(MediaItem::TypeRole).toString() == "Category" &&
+            !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             if (event->type() == QEvent::MouseButtonPress) {
                 emit categoryActivated(index);
             }
@@ -421,7 +427,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         // Do nothing
         return true;
     }
-end:
     return QItemDelegate::editorEvent(event, model, option, index);
 }
 

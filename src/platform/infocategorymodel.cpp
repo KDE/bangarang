@@ -91,6 +91,9 @@ void InfoCategoryModel::saveChanges()
             bool multipleValues = currentItem->data(MultipleValuesRole).toBool();
             if (!multipleValues) { 
                 mediaItem.fields[field] = currentItem->data(Qt::EditRole);
+                if (field == "url") {
+                    mediaItem.url = currentItem->data(Qt::EditRole).toString();
+                }
                 if (field == "artworkUrl") {
                     mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
                 }
@@ -149,7 +152,7 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     bool addRow = false;
     if (field == "artworkUrl") {
         if (m_mediaList.count() == 1) {
-            if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == AudioFeedMode) {
+            if (m_mode == AlbumMode || m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
                 addRow = true;
                 fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
             }
