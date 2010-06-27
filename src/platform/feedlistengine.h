@@ -25,6 +25,8 @@
 #include <KUrl>
 #include <kjob.h>
 #include <kio/copyjob.h>
+#include <QDomDocument>
+#include <QDomNodeList>
 
 class MediaItem;
 class MediaListProperties;
@@ -45,6 +47,8 @@ class FeedListEngine : public NepomukListEngine
         
     private:
         QString m_feedFilePath;
+
+        QDomElement getPreferredTag(const QDomNodeList &itemNodes, const QStringList &tagPref);
         
     private slots:
         void downloadComplete(const KUrl &from, const KUrl &to);
