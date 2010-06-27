@@ -475,6 +475,7 @@ void InfoCategoryModel::gotFeedInfo(KIO::Job *job, const KUrl &from, const KUrl 
     QString description;
     
     //Iterate through item nodes of the XML document
+    bool foundThumbnailTag = false;
     QDomNodeList channels = feedDoc.elementsByTagName("channel");
     for (int i = 0; i < channels.count(); i++) {
         QDomNodeList nodes = channels.at(i).childNodes();
@@ -486,7 +487,19 @@ void InfoCategoryModel::gotFeedInfo(KIO::Job *job, const KUrl &from, const KUrl 
                 } else if (element.tagName() == "description") {
                     description = element.text();
                 } else if (element.tagName() == "itunes:image") {
-                    getThumbnail(KUrl(element.attribute("href")), true);
+                    if (!foundThumbnailTag) {
+                        getThumbnail(KUrl(element.attribute("href")), true);
+                    }
+                } else if (element.tagName() == "image") {
+                    QDomNodeList imageNodes = nodes.at(j).childNodes();
+                    for (int k = 0; k < imageNodes.count(); k++) {
+                        QDomElement imageElement = imageNodes.at(k).toElement();
+                        if (imageElement.tagName() == "url") {
+                            if (!foundThumbnailTag) {
+                                getThumbnail(KUrl(imageElement.text()), true);
+                            }
+                        }
+                    }
                 }
             }
         }
