@@ -115,6 +115,13 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
         if (!artworkUrl.isEmpty()) {
             pixmap = QPixmap(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
+        
+        if (pixmap.isNull())
+	{
+	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
+	  if (!artworkUrl.isEmpty())
+	    pixmap = QPixmap(artworkUrl).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);;
+	}
     }
     return pixmap;
 }
@@ -130,8 +137,50 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
         if (!artworkUrl.isEmpty()) {
             image = QImage(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
+        else 
+	{
+	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
+	  if (!artworkUrl.isEmpty())
+	    image = QImage(artworkUrl).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	}
     }
     return image;
+}
+
+QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QString& album)
+{
+  if (url.isNull() || url.isEmpty())
+    return QString();
+  
+  const QString title = url.split("/").last();
+  QString path = url;
+  path.remove(title); // string containg an 'url'
+  path = KUrl(path).path();
+  QDir dir(path);
+  
+  QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
+	  
+  if (files.count() == 1)
+    return path + files[0];
+  else if (files.count() >= 1)
+  {
+    for (int i = files.count() - 1; i >= 0; i--)
+    {
+      //TODO: find better match cases
+      //since windows media player stores more then one file,
+      //we are forced to choose the right one (e.g folder is better then 
+      //albumartsmall)
+      if (files[i].contains(i18n("folder")) || files[i].contains("album"))
+	return path + files[i];
+      
+      if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
+	return path + files[i];
+    }
+    
+    //still here? take the first one
+    return path + files[0];
+  }
+  return QString();
 }
 
 QString Utilities::getArtistFromTag(const QString &url)
