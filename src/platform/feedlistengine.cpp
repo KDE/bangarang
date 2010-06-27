@@ -128,11 +128,13 @@ void FeedListEngine::run()
             bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoFeed(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = bindings;
