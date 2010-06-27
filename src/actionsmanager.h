@@ -57,7 +57,6 @@ class ActionsManager : public QObject
         QMenu * mediaViewMenu(bool showAbout = false, MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * playlistViewMenu(MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * nowPlayingContextMenu();
-        KMenu * notifierMenu();
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
@@ -81,7 +80,6 @@ class ActionsManager : public QObject
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
         QMenu *m_dvdMenu;
-        KMenu *m_notifierMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
