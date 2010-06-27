@@ -47,6 +47,7 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
+#include <KNotification>
 //#ifdef HAVE_KSTATUSNOTIFIERITEM
 #include <KStatusNotifierItem>
 //#endif
@@ -551,6 +552,7 @@ void MainWindow::on_showMenu_clicked()
         m_menu->addSeparator();
     }
     m_menu->addAction(m_application->actionsManager()->action("show_shortcuts_editor"));
+    m_menu->addAction(m_application->actionsManager()->action(KStandardAction::name(KStandardAction::ConfigureNotifications)));
     m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     m_menu->popup(menuLocation);
@@ -1219,6 +1221,16 @@ void MainWindow::nowPlayingChanged()
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     } else {
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    }
+    
+    if (nowPlayingItem.title != i18n("Bangarang")) // dont show the bangarang media item
+    {
+      KNotification* notification = new KNotification("trackChange", this);
+      notification->setTitle(i18n("Now playing"));
+      notification->setPixmap(nowPlayingItem.artwork.pixmap(80, 80));
+      notification->setText("<strong>" + nowPlayingItem.title + "</strong>\n" +
+	nowPlayingItem.fields["album"].toString() + "\n" + nowPlayingItem.fields["artist"].toString());
+      notification->sendEvent();
     }
     
     //Update status notifier

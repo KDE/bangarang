@@ -81,7 +81,14 @@ void BangarangApplication::setup()
     
     //Complete Setup
     m_mainWindow->completeSetup();
-    m_statusNotifierItem->setContextMenu(m_actionsManager->notifierMenu());
+    m_statusNotifierItem->setAssociatedWidget(m_mainWindow);
+    m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("mute"));
+    m_statusNotifierItem->contextMenu()->addSeparator();
+    m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("play_previous"));
+    m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("play_pause"));
+    m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("play_next"));
+    m_statusNotifierItem->contextMenu()->addSeparator();
+    m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("quit"));
     
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
@@ -169,6 +176,18 @@ BangarangApplication::~BangarangApplication()
     m_audioSettings->saveAudioSettings(&generalGroup);
     config.sync();
     m_savedListsManager->savePlaylist();
+    
+     //destroying inverse to construction
+    delete m_audioSettings;
+    delete m_bookmarksManager;
+    delete m_actionsManager;
+    delete m_savedListsManager;
+    delete m_infoManager;
+    delete m_mainWindow;
+    delete m_browsingModel;
+    delete m_statusNotifierItem;
+    delete m_playlist;
+    delete m_mediaObject;
 }
 
 MainWindow * BangarangApplication::mainWindow()

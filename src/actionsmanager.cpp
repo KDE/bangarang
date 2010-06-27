@@ -34,6 +34,7 @@
 #include <KHelpMenu>
 #include <KMessageBox>
 #include <KDebug>
+#include <KNotifyConfigWidget>
 #include <QFile>
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
@@ -237,13 +238,14 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
     m_shortcutsCollection->addAction("update_ontologies", action);
     
+    KStandardAction::configureNotifications(this, SLOT(showNotifyConfig()), m_shortcutsCollection);
+    
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
     ui->shortcutsEditor->addCollection(m_shortcutsCollection);
 
     /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
-    m_notifierMenu = new KMenu(m_parent);
 
     //controls always visible at startup
     m_controlsVisible = true;
@@ -465,19 +467,6 @@ QMenu *ActionsManager::dvdMenu()
     return doAdd ? m_dvdMenu : NULL;
 }
 
-KMenu *ActionsManager::notifierMenu()
-{
-    m_notifierMenu->clear();
-    m_notifierMenu->addAction(action("mute"));
-    m_notifierMenu->addSeparator();
-    m_notifierMenu->addAction(action("play_previous"));
-    m_notifierMenu->addAction(action("play_pause"));
-    m_notifierMenu->addAction(action("play_next"));
-    m_notifierMenu->addSeparator();
-    m_notifierMenu->addAction(action("quit"));
-    return m_notifierMenu;
-}
-
 QMenu *ActionsManager::addToSavedAudioListMenu()
 {
     return m_addToAudioSavedList;
@@ -600,6 +589,11 @@ void ActionsManager::showShortcutsEditor()
 {
     ui->contextStack->setCurrentIndex(3);
     ui->contextStack->setVisible(true);
+}
+
+void ActionsManager::showNotifyConfig()
+{
+  KNotifyConfigWidget::configure(m_parent, "bangarang");
 }
 
 void ActionsManager::saveShortcuts()
