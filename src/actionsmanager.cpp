@@ -246,7 +246,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
-    m_notifierMenu = new KMenu(m_parent);
 
     //controls always visible at startup
     m_controlsVisible = true;
@@ -466,19 +465,6 @@ QMenu *ActionsManager::dvdMenu()
         }        
     }
     return doAdd ? m_dvdMenu : NULL;
-}
-
-KMenu *ActionsManager::notifierMenu()
-{
-    m_notifierMenu->clear();
-    m_notifierMenu->addAction(action("mute"));
-    m_notifierMenu->addSeparator();
-    m_notifierMenu->addAction(action("play_previous"));
-    m_notifierMenu->addAction(action("play_pause"));
-    m_notifierMenu->addAction(action("play_next"));
-    m_notifierMenu->addSeparator();
-    m_notifierMenu->addAction(action("quit"));
-    return m_notifierMenu;
 }
 
 QMenu *ActionsManager::addToSavedAudioListMenu()
