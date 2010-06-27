@@ -32,8 +32,6 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <QFile>
-#include <QDomDocument>
-#include <QDomNodeList>
 #include <Nepomuk/ResourceManager>
 
 FeedListEngine::FeedListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
@@ -221,6 +219,15 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
     QDomDocument feedDoc("feed");
     feedDoc.setContent(&file);
     
+    //Specify tag preference order
+    QStringList titleTagPref;
+    titleTagPref << "media:title" << "title";
+    QStringList descriptionTagPref;
+    descriptionTagPref << "media:description" << "itunes:summary" << "description";
+    QStringList contentTagPref;
+    contentTagPref << "media:content" << "enclosure";
+    
+    
     //Iterate through item nodes of the XML document
     QDomNodeList items = feedDoc.elementsByTagName("item");
     for (int i = 0; i < items.count(); i++) {
@@ -229,34 +236,48 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
         bool isAudio = false;
         bool isVideo = false;
         QDomNodeList itemNodes = items.at(i).childNodes();
-        for (int j = 0; j < itemNodes.count(); j++) {
-            if (itemNodes.at(j).isElement()) {
-                QDomElement itemElement = itemNodes.at(j).toElement();
-                if (itemElement.tagName() == "title") {
-                    mediaItem.title = itemElement.text();
-                    mediaItem.fields["title"] = itemElement.text();
-                } else if (itemElement.tagName() == "description") {
-                    mediaItem.subTitle = QString("%1...").arg(itemElement.text().left(50));
-                    mediaItem.fields["description"] = itemElement.text();
-                } else if (itemElement.tagName() == "itunes:duration") {
-                    mediaItem.duration = itemElement.text();
-                } else if (itemElement.tagName() == "pubDate") {
-                    mediaItem.fields["releaseDate"] = itemElement.text();
-                } else if (itemElement.tagName() == "enclosure") {
-                    mediaItem.url = itemElement.attribute("url");
-                    mediaItem.fields["url"] = mediaItem.url;
-                    KMimeType::Ptr type = KMimeType::mimeType(itemElement.attribute("type"));
-                    if (Utilities::isAudioMimeType(type)) {
-                        isAudio = true;
-                        mediaItem.type = "Audio";
-                        mediaItem.fields["audioType"] = "Audio Clip";
-                        mediaItem.artwork = KIcon("audio-x-generic");
-                    } else if (Utilities::isVideoMimeType(type)) {
-                        isVideo = true;
-                        mediaItem.type = "Video";
-                        mediaItem.fields["videoType"] = "Video Clip";
-                        mediaItem.artwork = KIcon("video-x-generic");
-                    }
+        QDomElement titleElement = getPreferredTag(itemNodes, titleTagPref);
+        mediaItem.title = titleElement.text();
+        mediaItem.fields["title"] = titleElement.text();
+        QDomElement descriptionElement = getPreferredTag(itemNodes, descriptionTagPref);
+        if (!descriptionElement.text().trimmed().startsWith("<") &&
+            !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
+            mediaItem.subTitle = QString("%1...").arg(descriptionElement.text().left(50));
+            mediaItem.fields["description"] = descriptionElement.text();
+        }
+        QDomElement releaseDateElement = getPreferredTag(itemNodes, QStringList("pubDate"));
+        mediaItem.fields["releaseDate"] = releaseDateElement.text();
+        QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
+        mediaItem.url = contentElement.attribute("url");
+        mediaItem.fields["url"] = mediaItem.url;
+        KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type"));
+        if (Utilities::isAudioMimeType(type)) {
+            isAudio = true;
+            mediaItem.type = "Audio";
+            mediaItem.fields["audioType"] = "Audio Clip";
+            mediaItem.artwork = KIcon("audio-x-generic");
+        } else if (Utilities::isVideoMimeType(type)) {
+            isVideo = true;
+            mediaItem.type = "Video";
+            mediaItem.fields["videoType"] = "Video Clip";
+            mediaItem.artwork = KIcon("video-x-generic");
+        }
+        if (contentElement.tagName() == "media:content") {
+            int duration = contentElement.attribute("duration").toInt();
+            if (duration != 0 ) {
+                mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                mediaItem.fields["duration"] = duration;
+            }
+        }
+        if (mediaItem.duration.isEmpty()) {
+            QDomElement durationElement = getPreferredTag(itemNodes, QStringList("itunes:duration"));
+            if (durationElement.text().contains(":")) {
+                mediaItem.duration = durationElement.text();
+            } else {
+                int duration = durationElement.text().toInt();
+                if (duration != 0 ) {
+                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.fields["duration"] = duration;
                 }
             }
         }
@@ -276,4 +297,21 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
     
     //Exit event loop
     quit();
+}
+
+QDomElement FeedListEngine::getPreferredTag(const QDomNodeList &itemNodes, const QStringList &tagPref)
+{
+    QDomElement preferredElement;
+    for (int i = 0; i < tagPref.count(); i++) {
+        QString tag = tagPref.at(i);
+        for (int j = 0; j < itemNodes.count(); j++) {
+            if (itemNodes.at(j).isElement()) {
+                QDomElement itemElement = itemNodes.at(j).toElement();
+                if (itemElement.tagName() == tag) {
+                    return itemElement;
+                }
+            }
+        }
+    }
+    return preferredElement;
 }
