@@ -139,12 +139,17 @@ void Playlist::playItemAt(int row, Model model)
     
     //Play media Item
     m_mediaObject->clearQueue();
-    QString type = nextMediaItem.fields["audioType"].toString();
-    if (type == "CD Track" || type == "DVD Title") {
-        m_mediaObject->setCurrentSource((type == "CD Track") ? Phonon::Cd : Phonon::Dvd);
+    QString subType;
+    if (nextMediaItem.type == "Audio") {
+        subType = nextMediaItem.fields["audioType"].toString();
+    } else if(nextMediaItem.type == "Video") {
+        subType = nextMediaItem.fields["videoType"].toString();
+    }
+    if (subType == "CD Track" || subType == "DVD Title") {
+        m_mediaObject->setCurrentSource((subType == "CD Track") ? Phonon::Cd : Phonon::Dvd);
         m_mediaController->setAutoplayTitles(false);
         m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
-    } else if (type == "Audio Stream") {
+    } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
             QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
