@@ -1,0 +1,7 @@
+[Global]
+IconName=bangarang
+Comment=Bangarang
+
+[Event/trackChange]
+Name=Track Change
+Action=Popup

@@ -34,6 +34,7 @@
 #include <KHelpMenu>
 #include <KMessageBox>
 #include <KDebug>
+#include <KNotifyConfigWidget>
 #include <QFile>
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
@@ -236,6 +237,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
     connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
     m_shortcutsCollection->addAction("update_ontologies", action);
+    
+    KStandardAction::configureNotifications(this, SLOT(showNotifyConfig()), m_shortcutsCollection);
     
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
@@ -600,6 +603,11 @@ void ActionsManager::showShortcutsEditor()
 {
     ui->contextStack->setCurrentIndex(3);
     ui->contextStack->setVisible(true);
+}
+
+void ActionsManager::showNotifyConfig()
+{
+  KNotifyConfigWidget::configure(m_parent, "bangarang");
 }
 
 void ActionsManager::saveShortcuts()
