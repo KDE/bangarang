@@ -47,6 +47,9 @@ class FeedListEngine : public NepomukListEngine
         
     private:
         QString m_feedFilePath;
+        QList<MediaItem> m_mediaList;
+        QList<KUrl> m_artworkUrlList;
+        bool m_fetchingThumbnails;
 
         QDomElement getPreferredTag(const QDomNodeList &itemNodes, const QStringList &tagPref);
         
