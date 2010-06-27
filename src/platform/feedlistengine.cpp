@@ -36,6 +36,7 @@
 
 FeedListEngine::FeedListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
+    m_fetchingThumbnails = false;
 }
 
 FeedListEngine::~FeedListEngine()
@@ -210,93 +211,129 @@ void FeedListEngine::run()
 
 void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
 {
-    Q_UNUSED(from);
-    
-    disconnectDownloader();
-    
-    QList<MediaItem> mediaList;
-    QFile file(to.path());
-    QDomDocument feedDoc("feed");
-    feedDoc.setContent(&file);
-    
-    //Specify tag preference order
-    QStringList titleTagPref;
-    titleTagPref << "media:title" << "title";
-    QStringList descriptionTagPref;
-    descriptionTagPref << "media:description" << "itunes:summary" << "description";
-    QStringList contentTagPref;
-    contentTagPref << "media:content" << "enclosure";
-    
-    
-    //Iterate through item nodes of the XML document
-    QDomNodeList items = feedDoc.elementsByTagName("item");
-    for (int i = 0; i < items.count(); i++) {
-        MediaItem mediaItem;
-        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-        bool isAudio = false;
-        bool isVideo = false;
-        QDomNodeList itemNodes = items.at(i).childNodes();
-        QDomElement titleElement = getPreferredTag(itemNodes, titleTagPref);
-        mediaItem.title = titleElement.text();
-        mediaItem.fields["title"] = titleElement.text();
-        QDomElement descriptionElement = getPreferredTag(itemNodes, descriptionTagPref);
-        if (!descriptionElement.text().trimmed().startsWith("<") &&
-            !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
-            mediaItem.subTitle = QString("%1...").arg(descriptionElement.text().left(50));
-            mediaItem.fields["description"] = descriptionElement.text();
-        }
-        QDomElement releaseDateElement = getPreferredTag(itemNodes, QStringList("pubDate"));
-        mediaItem.fields["releaseDate"] = releaseDateElement.text();
-        QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
-        mediaItem.url = contentElement.attribute("url");
-        mediaItem.fields["url"] = mediaItem.url;
-        KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type"));
-        if (Utilities::isAudioMimeType(type)) {
-            isAudio = true;
-            mediaItem.type = "Audio";
-            mediaItem.fields["audioType"] = "Audio Clip";
-            mediaItem.artwork = KIcon("audio-x-generic");
-        } else if (Utilities::isVideoMimeType(type)) {
-            isVideo = true;
-            mediaItem.type = "Video";
-            mediaItem.fields["videoType"] = "Video Clip";
-            mediaItem.artwork = KIcon("video-x-generic");
-        }
-        if (contentElement.tagName() == "media:content") {
-            int duration = contentElement.attribute("duration").toInt();
-            if (duration != 0 ) {
-                mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                mediaItem.fields["duration"] = duration;
+    if (!m_fetchingThumbnails) {
+        m_mediaList.clear();
+        m_artworkUrlList.clear();
+        QFile file(to.path());
+        QDomDocument feedDoc("feed");
+        feedDoc.setContent(&file);
+        
+        //Specify tag preference order
+        QStringList titleTagPref;
+        titleTagPref << "media:title" << "title";
+        QStringList descriptionTagPref;
+        descriptionTagPref << "media:description" << "itunes:summary" << "description";
+        QStringList contentTagPref;
+        contentTagPref << "media:content" << "enclosure";
+        
+        
+        //Iterate through item nodes of the XML document
+        QDomNodeList items = feedDoc.elementsByTagName("item");
+        for (int i = 0; i < items.count(); i++) {
+            MediaItem mediaItem;
+            mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+            bool isAudio = false;
+            bool isVideo = false;
+            QDomNodeList itemNodes = items.at(i).childNodes();
+            QDomElement titleElement = getPreferredTag(itemNodes, titleTagPref);
+            mediaItem.title = titleElement.text();
+            mediaItem.fields["title"] = titleElement.text();
+            QDomElement descriptionElement = getPreferredTag(itemNodes, descriptionTagPref);
+            if (!descriptionElement.text().trimmed().startsWith("<") &&
+                !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
+                mediaItem.subTitle = QString("%1...").arg(descriptionElement.text().left(50));
+                mediaItem.fields["description"] = descriptionElement.text();
             }
-        }
-        if (mediaItem.duration.isEmpty()) {
-            QDomElement durationElement = getPreferredTag(itemNodes, QStringList("itunes:duration"));
-            if (durationElement.text().contains(":")) {
-                mediaItem.duration = durationElement.text();
-            } else {
-                int duration = durationElement.text().toInt();
+            QDomElement releaseDateElement = getPreferredTag(itemNodes, QStringList("pubDate"));
+            mediaItem.fields["releaseDate"] = releaseDateElement.text();
+            mediaItem.semanticComment = releaseDateElement.text();
+            QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
+            mediaItem.url = contentElement.attribute("url");
+            mediaItem.fields["url"] = mediaItem.url;
+            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type"));
+            if (Utilities::isAudioMimeType(type)) {
+                isAudio = true;
+                mediaItem.type = "Audio";
+                mediaItem.fields["audioType"] = "Audio Clip";
+                mediaItem.artwork = KIcon("audio-x-generic");
+            } else if (Utilities::isVideoMimeType(type)) {
+                isVideo = true;
+                mediaItem.type = "Video";
+                mediaItem.fields["videoType"] = "Video Clip";
+                mediaItem.artwork = KIcon("video-x-generic");
+            }
+            if (contentElement.tagName() == "media:content") {
+                int duration = contentElement.attribute("duration").toInt();
                 if (duration != 0 ) {
                     mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
                     mediaItem.fields["duration"] = duration;
                 }
             }
+            if (mediaItem.duration.isEmpty()) {
+                QDomElement durationElement = getPreferredTag(itemNodes, QStringList("itunes:duration"));
+                if (durationElement.text().contains(":")) {
+                    mediaItem.duration = durationElement.text();
+                } else {
+                    int duration = durationElement.text().toInt();
+                    if (duration != 0 ) {
+                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        mediaItem.fields["duration"] = duration;
+                    }
+                }
+            }
+            QDomElement thumbnailElement = getPreferredTag(itemNodes, QStringList("media:thumbnail"));
+            
+            if (mediaItem.type == "Audio" && m_mediaListProperties.engineArg() == "audio") {
+                m_mediaList.append(mediaItem);
+                m_artworkUrlList.append(KUrl(thumbnailElement.attribute("url")));
+            } else if (mediaItem.type == "Video" && m_mediaListProperties.engineArg() == "video") {
+                m_mediaList.append(mediaItem);
+                m_artworkUrlList.append(KUrl(thumbnailElement.attribute("url")));
+            }
         }
-        if (mediaItem.type == "Audio" && m_mediaListProperties.engineArg() == "audio") {
-            mediaList.append(mediaItem);
-        } else if (mediaItem.type == "Video" && m_mediaListProperties.engineArg() == "video") {
-            mediaList.append(mediaItem);
+        file.remove();
+        
+        m_mediaListProperties.summary = i18np("1 item", "%1 items", m_mediaList.count());
+        m_mediaListProperties.type = QString("Sources");
+        
+        //Return results
+        emit results(m_requestSignature, m_mediaList, m_mediaListProperties, true, m_subRequestSignature);
+        
+        //Launch thumbnail downloads
+        for (int i = 0; i < m_artworkUrlList.count(); i++) {
+            KUrl artworkUrl = m_artworkUrlList.at(i);
+            if (!artworkUrl.isEmpty()) {
+                m_fetchingThumbnails = true;
+                QString artworkTargetFile = QString("bangarang/thumbnails/%1").arg(artworkUrl.fileName());
+                KUrl artworkTargetUrl = KUrl(KStandardDirs::locateLocal("data", artworkTargetFile, true));
+                emit download(artworkUrl, artworkTargetUrl);
+            }
+        }
+        
+    } else {
+        //Update feed item artwork with thumbnail downloads
+        int index = m_artworkUrlList.indexOf(from);
+        if (index != -1) {
+            MediaItem mediaItem = m_mediaList.at(index);
+            mediaItem.fields["artworkUrl"] = to.prettyUrl();
+            QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+            if (!artwork.isNull()) {
+                emit updateArtwork(artwork, mediaItem);
+            }
+            m_mediaList.removeAt(index);
+            m_artworkUrlList.removeAt(index);
+            if (m_mediaList.count() == 0) {
+                m_fetchingThumbnails = false;
+                disconnectDownloader();
+            }
         }
     }
-    file.remove();
     
-    m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
-    m_mediaListProperties.type = QString("Sources");
-    
-    //Return results
-    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    
-    //Exit event loop
-    quit();
+    if (!m_fetchingThumbnails) {
+        //Exit event loop
+        quit();
+    }
+
 }
 
 QDomElement FeedListEngine::getPreferredTag(const QDomNodeList &itemNodes, const QStringList &tagPref)
