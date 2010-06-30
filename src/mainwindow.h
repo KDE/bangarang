@@ -79,6 +79,7 @@ class MainWindow : public QMainWindow
 public:
     
     enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2, Playlist = 3};
+    enum MainWidget{ MainMediaList = 0, MainNowPlaying = 1 };
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void completeSetup();
@@ -86,6 +87,10 @@ public:
     void addListToHistory();
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
+    void switchMainWidget(MainWidget which);
+    MainWidget currentMainWidget();
+    QFrame *currentFilterFrame();
+    KFilterProxySearchLine* currentFilterProxyLine();
     
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;

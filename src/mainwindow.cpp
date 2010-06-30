@@ -212,7 +212,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up defaults
     ui->nowPlayingSplitter->setCollapsible(0,true);
     ui->nowPlayingSplitter->setCollapsible(1,false);
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentIndex((int) MainNowPlaying);
     ui->mediaViewHolder->setCurrentIndex(0);
     ui->audioListsStack->setCurrentIndex(0);
     ui->videoListsStack->setCurrentIndex(0);
@@ -316,22 +316,22 @@ void MainWindow::on_configureVideoList_clicked()
 
 void MainWindow::on_nowPlaying_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(1); // Show Now Playing page
+    switchMainWidget(MainNowPlaying); // Show Now Playing page
 }
 
 void MainWindow::on_collectionButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(0); // Show Collection page
+    switchMainWidget(MainMediaList); // Show Collection page
     ui->collectionButton->setFocus();
 }
 
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
-    if (ui->playlistFilter->isVisible() &&
-        ui->playlistFilterProxyLine->lineEdit()->text().isEmpty()
-       )
-        m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
+    QFrame *filter = currentFilterFrame();
+    KFilterProxySearchLine *line = currentFilterProxyLine();
+    if (filter->isVisible() && line->lineEdit()->text().isEmpty())
+        m_application->actionsManager()->action("toggle_filter")->trigger();
     ui->contextStack->setCurrentIndex(0);  
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show Video Settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
@@ -567,12 +567,12 @@ void MainWindow::on_showMediaViewMenu_clicked()
 
 void MainWindow::on_closePlaylistFilter_clicked()
 {
-  m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
+  m_application->actionsManager()->action("toggle_filter")->trigger();
 }
 
 void MainWindow::on_closeMediaListFilter_clicked()
 {
-  m_application->actionsManager()->action("toggle_medialist_filter")->trigger();
+  m_application->actionsManager()->action("toggle_filter")->trigger();
 }
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
@@ -1052,7 +1052,7 @@ void MainWindow::updateCachedDevicesList()
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
 	if (isFullScreen()
-			&& ui->stackedWidget->currentIndex() == 1
+			&& currentMainWidget() == MainNowPlaying
 			&& event->type() == QEvent::MouseMove) {
 
 		QMouseEvent * mouseEvent = (QMouseEvent *)event;
@@ -1235,4 +1235,26 @@ void MainWindow::nowPlayingChanged()
     QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
     m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
     m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
+}
+
+QFrame* MainWindow::currentFilterFrame()
+{
+  return (currentMainWidget() == MainMediaList) ? ui->mediaListFilter : ui->playlistFilter;
+}
+
+KFilterProxySearchLine* MainWindow::currentFilterProxyLine()
+{
+  return (currentMainWidget() == MainMediaList) ?
+    ui->mediaListFilterProxyLine : ui->playlistFilterProxyLine;
+}
+
+void MainWindow::switchMainWidget(MainWindow::MainWidget which)
+{
+    ui->stackedWidget->setCurrentIndex((int) which);   
+    m_application->actionsManager()->updateToggleFilterText();
+}
+
+MainWindow::MainWidget MainWindow::currentMainWidget()
+{
+    return (MainWidget) ui->stackedWidget->currentIndex();
 }

@@ -568,11 +568,6 @@ class MediaItemModel : public QStandardItemModel
         */
         void updateSourceInfo(const QList<MediaItem> &mediaList);
         
-        /**
-        * Checks if the model contains playable items
-        */
-        bool containsPlayable();
-        
         QString dataEngine();
         QString filter();
                 
@@ -693,6 +688,11 @@ class MediaItemModel : public QStandardItemModel
          *       retrieved. Use updateSourceInfo() method to do that.
          */
         void updateMediaItems(QList<MediaItem> mediaList);
+        
+        /**
+        * Checks if the model contains playble items (media items or feeds)
+        */
+        bool containsPlayable();
         
         /**
          * Remove MediaItem in model that matches the url specified.
