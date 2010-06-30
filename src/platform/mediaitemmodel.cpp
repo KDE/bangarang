@@ -889,13 +889,19 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
 {
     MediaItemModel *model = (MediaItemModel *) sourceModel();
     QModelIndex index = model->index(sourceRow, 0, sourceParent);
-
-    if (model->data(index, Qt::DisplayRole).toString().contains(filterRegExp()))
-        return true;
-    if ((model->data(index, MediaItem::SubTitleRole).isValid()) &&
-        (model->data(index, MediaItem::SubTitleRole).toString().contains(filterRegExp()))
-       )
-       return true;
-
-    return false;
+    QList<QRegExp> search;
+    QString data = model->data(index, Qt::DisplayRole).toString();
+    QStringList pat = filterRegExp().pattern().split(" ", QString::SkipEmptyParts);
+    Qt::CaseSensitivity case_sen = filterRegExp().caseSensitivity();
+    
+    if (model->data(index, MediaItem::SubTitleRole).isValid())
+        data += " " + model->data(index, MediaItem::SubTitleRole).toString();
+    foreach (QString str, pat) {
+        search << QRegExp(str, case_sen);
+    }
+    foreach(QRegExp reg, search) {
+        if (!data.contains(reg))
+            return false;
+    }
+    return true;
 };
