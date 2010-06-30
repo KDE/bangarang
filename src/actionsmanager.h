@@ -64,7 +64,6 @@ class ActionsManager : public QObject
         QMenu * dvdMenu();
 
         bool m_controlsVisible;
-        bool m_playlistFilterVisible;
         
     public slots:
         void updateSavedListsMenus();
@@ -100,7 +99,8 @@ class ActionsManager : public QObject
 
         MainWindow::ContextMenuSource m_contextMenuSource;
         KConfigGroup m_shortcutsConfig;
-        QString m_restoreFilter;
+        QString m_playlistRestoreFilter;
+        QString m_mediaListRestoreFilter;
 
     private slots:
         void fullScreenToggle();
@@ -124,7 +124,7 @@ class ActionsManager : public QObject
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void toggleShowRemainingTimeSlot();
-        void togglePlaylistFilter();
+        void toggleFilter();
         void addBookmarkSlot();
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
