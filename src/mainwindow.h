@@ -58,6 +58,7 @@ class MediaListSettings;
 class KStatusNotifierItem;
 class VideoSettings;
 class BangarangApplication;
+class KFilterProxySearchLine;
 
 namespace Ui
 {
@@ -85,6 +86,8 @@ public:
     void addListToHistory();
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
+    QFrame *currentFilterFrame();
+    KFilterProxySearchLine* currentFilterProxyLine();
     
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
@@ -159,6 +162,7 @@ private slots:
     void on_showMenu_clicked();
     void on_showMediaViewMenu_clicked();
     void on_closePlaylistFilter_clicked();
+    void on_closeMediaListFilter_clicked();
     void updateSeekTime(qint64 time);
     void updateMuteStatus(bool muted);
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
