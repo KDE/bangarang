@@ -878,8 +878,21 @@ void ActionsManager::toggleFilter()
     QFrame *frame = m_application->mainWindow()->currentFilterFrame();
     KFilterProxySearchLine *filter = m_application->mainWindow()->currentFilterProxyLine();
     bool visible = frame->isVisible();
-    QString *restore = (ui->stackedWidget->currentIndex() == 0) ?
-        &m_mediaListRestoreFilter : &m_playlistRestoreFilter;
+    QString *restore;
+    if (ui->stackedWidget->currentIndex() == 0) {
+        restore = &m_mediaListRestoreFilter;
+    } else {
+        MediaItemModel *mim = ui->mediaView->sourceModel();
+        bool show = false;
+        restore = &m_playlistRestoreFilter;
+        if (mim->rowCount() > 0)
+        {
+            MediaItem item = mim->mediaItemAt(0);
+            show = Utilities::isMedia(item.type) || Utilities::isFeed(item.fields["categoryType"]);
+        }
+        if ( !visible && !show )
+            return;
+    }
     frame->setVisible(!visible);
     if(!visible) {
         action("toggle_filter")->setText(i18n("Hide filter"));
