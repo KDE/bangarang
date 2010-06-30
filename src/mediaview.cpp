@@ -30,8 +30,10 @@
 MediaView::MediaView(QWidget * parent):QTreeView (parent) 
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
+    m_proxyModel = new MediaSortFilterProxyModel();
+    setModel(m_proxyModel);
     m_mediaItemModel = new MediaItemModel(parent);
-    setModel(m_mediaItemModel);
+    setSourceModel(m_mediaItemModel);
     m_mode = NormalMode;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     setHeaderHidden(true);
@@ -48,6 +50,7 @@ MediaView::~MediaView()
 void MediaView::setMainWindow(MainWindow * mainWindow)
 {
     m_mediaItemDelegate = new MediaItemDelegate(mainWindow);
+    m_mediaItemDelegate->setUseProxy(true);
     setItemDelegate(m_mediaItemDelegate);
     m_mediaItemDelegate->setView(this);
 }
@@ -75,11 +78,11 @@ MediaView::RenderMode MediaView::mode()
     return m_mode;
 }
 
-void MediaView::setModel(QAbstractItemModel * mediaItemModel)
+void MediaView::setSourceModel(QAbstractItemModel * mediaItemModel)
 {
-    QTreeView::setModel(mediaItemModel);
     m_mediaItemModel = (MediaItemModel *)mediaItemModel;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    m_proxyModel->setSourceModel((QAbstractItemModel *) model);
 }
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
 {

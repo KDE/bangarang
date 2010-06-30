@@ -868,3 +868,24 @@ void MediaItemModel::updateRefresh()
         reload();
     }
 }
+
+MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)
+                          : QSortFilterProxyModel(parent)
+{
+    setFilterCaseSensitivity(Qt::CaseInsensitive);
+}
+
+bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    MediaItemModel *model = (MediaItemModel *) sourceModel();
+    QModelIndex index = model->index(sourceRow, 0, sourceParent);
+
+    if (model->data(index, Qt::DisplayRole).toString().contains(filterRegExp()))
+        return true;
+    if ((model->data(index, MediaItem::SubTitleRole).isValid()) &&
+        (model->data(index, MediaItem::SubTitleRole).toString().contains(filterRegExp()))
+       )
+       return true;
+
+    return false;
+};
