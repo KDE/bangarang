@@ -28,6 +28,7 @@ class MediaItemModel;
 class MediaItemDelegate;
 class BangarangApplication;
 class MediaSortFilterProxyModel;
+class QSortFilterProxyModel;
 
 /*
  * This class is mostly to provide custom context menus for the QTreeView
@@ -50,6 +51,7 @@ class MediaView : public QTreeView
         RenderMode mode();
         void setSourceModel(QAbstractItemModel * mediaItemModel);
         MediaItemModel *sourceModel() { return m_mediaItemModel; }
+        QSortFilterProxyModel *filterProxyModel() { return (QSortFilterProxyModel *) m_proxyModel; }
 
     protected:
         void contextMenuEvent (QContextMenuEvent * event);

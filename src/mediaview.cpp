@@ -82,7 +82,7 @@ void MediaView::setSourceModel(QAbstractItemModel * mediaItemModel)
 {
     m_mediaItemModel = (MediaItemModel *)mediaItemModel;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
-    m_proxyModel->setSourceModel((QAbstractItemModel *) model);
+    m_proxyModel->setSourceModel((QAbstractItemModel *) m_mediaItemModel);
 }
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
 {

@@ -28,6 +28,7 @@ class MediaItemModel;
 class MediaItem;
 class MediaIndexer;
 class MediaSortFilterProxyModel;
+class QSortFilterProxyModel;
 
 
 
@@ -101,7 +102,7 @@ class Playlist : public QObject
         /**
          * Returns the filter proxy model used
          */
-        MediaSortFilterProxyModel * filterProxyModel();
+        QSortFilterProxyModel * filterProxyModel();
         
         /**
          * Plays item at the specified row of the specified model

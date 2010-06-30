@@ -879,24 +879,25 @@ void ActionsManager::toggleFilter()
     bool visible = frame->isVisible();
     QString *restore;
     if (ui->stackedWidget->currentIndex() == 0) {
-        restore = &m_mediaListRestoreFilter;
-    } else {
         MediaItemModel *mim = ui->mediaView->sourceModel();
+        restore = &m_mediaListRestoreFilter;
         bool show = false;
-        restore = &m_playlistRestoreFilter;
         if (mim->rowCount() > 0)
         {
             MediaItem item = mim->mediaItemAt(0);
-            show = Utilities::isMedia(item.type) || Utilities::isFeed(item.fields["categoryType"]);
+            show = Utilities::isMedia(item.type) ||
+                   Utilities::isFeed(item.fields["categoryType"].toString());
         }
         if ( !visible && !show )
             return;
+    } else {
+        restore = &m_playlistRestoreFilter;
     }
     frame->setVisible(!visible);
     if(!visible) {
         action("toggle_filter")->setText(i18n("Hide filter"));
-        if(restore->isEmpty()) {
-            filter->setText( *restore );
+        if(!restore->isEmpty()) {
+           filter->setText( *restore );
            restore->clear();
         }
         filter->lineEdit()->setFocus(); //the user can start immediately to search
