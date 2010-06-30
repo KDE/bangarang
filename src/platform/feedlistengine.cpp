@@ -253,7 +253,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             mediaItem.url = contentElement.attribute("url");
             mediaItem.fields["url"] = mediaItem.url;
             KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").trimmed());
-            if (type != 0) {
+            if (!type.isNull()) {
                 if (Utilities::isAudioMimeType(type)) {
                     isAudio = true;
                     mediaItem.type = "Audio";

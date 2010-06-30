@@ -425,6 +425,16 @@ bool Utilities::isMedia(const QString type)
         );
 }
 
+bool Utilities::isFeed(const QString categoryType)
+{
+   return (categoryType == "Audio Feed" || categoryType == "Video Feed");
+}
+
+bool Utilities::isCategory(const QString type)
+{
+   return (type == "Category");
+}
+
 
 QPixmap Utilities::reflection(QPixmap &pixmap)
 {
