@@ -328,10 +328,10 @@ void MainWindow::on_collectionButton_clicked()
 void MainWindow::on_showPlaylist_clicked(bool checked)
 {
     ui->contextStack->setVisible(checked);
-    QFrame *filter = currentFilterFrame();
-    KFilterProxySearchLine *line = currentFilterProxyLine();
-    if (filter->isVisible() && line->lineEdit()->text().isEmpty())
-        m_application->actionsManager()->action("toggle_filter")->trigger();
+    if (ui->playlistFilter->isVisible() &&
+        ui->playlistFilterProxyLine->lineEdit()->text().isEmpty()
+       )
+        m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
     ui->contextStack->setCurrentIndex(0);  
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show Video Settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
@@ -567,12 +567,12 @@ void MainWindow::on_showMediaViewMenu_clicked()
 
 void MainWindow::on_closePlaylistFilter_clicked()
 {
-  m_application->actionsManager()->action("toggle_filter")->trigger();
+  m_application->actionsManager()->action("toggle_playlist_filter")->trigger();
 }
 
 void MainWindow::on_closeMediaListFilter_clicked()
 {
-  m_application->actionsManager()->action("toggle_filter")->trigger();
+  m_application->actionsManager()->action("toggle_medialist_filter")->trigger();
 }
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
@@ -1235,14 +1235,4 @@ void MainWindow::nowPlayingChanged()
     QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
     m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
     m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
-}
-
-QFrame* MainWindow::currentFilterFrame()
-{
-  return (ui->stackedWidget->currentIndex() == 0) ? ui->mediaListFilter : ui->playlistFilter;
-}
-
-KFilterProxySearchLine* MainWindow::currentFilterProxyLine()
-{
-  return (ui->stackedWidget->currentIndex() == 0) ? ui->mediaListFilterProxyLine : ui->playlistFilterProxyLine;
 }

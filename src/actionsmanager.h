@@ -70,6 +70,7 @@ class ActionsManager : public QObject
         
     private:
         void hideShortcutsEditor();
+        void toggleFilter( QFrame *frame, KFilterProxySearchLine *filter, QString *restore);
         
         BangarangApplication * m_application;
         MainWindow *m_parent; 
@@ -124,7 +125,8 @@ class ActionsManager : public QObject
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void toggleShowRemainingTimeSlot();
-        void toggleFilter();
+        void toggleMediaListFilter();
+        void togglePlaylistFilter();
         void addBookmarkSlot();
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);

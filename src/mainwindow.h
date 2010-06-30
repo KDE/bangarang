@@ -86,8 +86,6 @@ public:
     void addListToHistory();
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
-    QFrame *currentFilterFrame();
-    KFilterProxySearchLine* currentFilterProxyLine();
     
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
