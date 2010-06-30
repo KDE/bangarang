@@ -278,17 +278,16 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     QMenu *menu = new QMenu(m_parent);
     QString type;
     bool selection = false;
+    bool isMedia = false;
+    bool isFeed = false;
+    bool isCategory = false;
     QList<MediaItem> selectedItems = selectedMediaItems();
     if (selectedItems.count() > 0) {
         type = selectedItems.at(0).type;
         selection = true;
-    }
-    bool isMedia = Utilities::isMedia(type);
-    bool isFeed = (selectedItems.at(0).fields["categoryType"].toString() == "Audio Feed" ||
-                   selectedItems.at(0).fields["categoryType"].toString() == "Video Feed") ? true : false;
-    bool isCategory = false;
-    if (type == "Category") {
-        isCategory = true;
+        isMedia = Utilities::isMedia(type);
+        isCategory = Utilities::isCategory(type);
+        isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
     }
     if (isMedia || isCategory) {
         if (selection && isMedia) {
