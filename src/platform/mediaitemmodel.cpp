@@ -869,6 +869,16 @@ void MediaItemModel::updateRefresh()
     }
 }
 
+bool MediaItemModel::containsPlayable()
+{
+    if (rowCount() < 1)
+        return false;
+    MediaItem item = mediaItemAt(0);
+    return ( Utilities::isMedia(item.type) ||
+             Utilities::isFeed(item.fields["categoryType"].toString()) );
+}
+
+
 MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)
                           : QSortFilterProxyModel(parent)
 {

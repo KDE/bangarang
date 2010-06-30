@@ -568,6 +568,11 @@ class MediaItemModel : public QStandardItemModel
         */
         void updateSourceInfo(const QList<MediaItem> &mediaList);
         
+        /**
+        * Checks if the model contains playable items
+        */
+        bool containsPlayable();
+        
         QString dataEngine();
         QString filter();
                 
