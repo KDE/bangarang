@@ -62,6 +62,7 @@ class ActionsManager : public QObject
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
         QMenu * dvdMenu();
+        void updateToggleFilterText();
 
         bool m_controlsVisible;
         
@@ -70,7 +71,6 @@ class ActionsManager : public QObject
         
     private:
         void hideShortcutsEditor();
-        void toggleFilter( QFrame *frame, KFilterProxySearchLine *filter, QString *restore);
         
         BangarangApplication * m_application;
         MainWindow *m_parent; 
@@ -125,8 +125,7 @@ class ActionsManager : public QObject
         void loadSelectedSources();
         void showInfoForNowPlaying();
         void toggleShowRemainingTimeSlot();
-        void toggleMediaListFilter();
-        void togglePlaylistFilter();
+        void toggleFilter();
         void addBookmarkSlot();
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);

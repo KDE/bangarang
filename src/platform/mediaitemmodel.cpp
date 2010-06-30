@@ -878,7 +878,6 @@ bool MediaItemModel::containsPlayable()
              Utilities::isFeed(item.fields["categoryType"].toString()) );
 }
 
-
 MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)
                           : QSortFilterProxyModel(parent)
 {
