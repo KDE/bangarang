@@ -177,7 +177,7 @@ void InfoManager::cancelItemEdit()
 
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
 {
-    ui->stackedWidget->setCurrentIndex(0);
+    m_parent->switchMainWidget(MainWindow::MainMediaList);
     if (!ui->semanticsHolder->isVisible()) {
         ui->semanticsHolder->setVisible(true);
         ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));

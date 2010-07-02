@@ -43,6 +43,9 @@ QStringList BookmarksManager::bookmarks(const QString &url)
 {
     QStringList bookmarksList;
     
+    if( url == "-" )
+        return bookmarksList;
+    
     //Load bookmarks for specified url
     QFile *file = bookmarkFile(url);
     if (file->open(QIODevice::ReadOnly | QIODevice::Text)) {
