@@ -17,6 +17,7 @@
 */
 
 #include "bangarangapplication.h"
+#include "bangarangnotifieritem.h"
 #include "mainwindow.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
@@ -57,9 +58,7 @@ void BangarangApplication::setup()
     m_playlist->playlistModel()->setMediaListCache(m_sharedMediaListCache);
     
     // Set up system tray icon
-    m_statusNotifierItem = new KStatusNotifierItem(i18n("Bangarang"), this);
-    m_statusNotifierItem->setIconByName("bangarang-notifier");
-    m_statusNotifierItem->setStandardActionsEnabled(false);
+    m_statusNotifierItem = new BangarangNotifierItem(this);
     
     //Set up main window
     m_mainWindow = new MainWindow();
@@ -81,6 +80,7 @@ void BangarangApplication::setup()
     
     //Complete Setup
     m_mainWindow->completeSetup();
+    
     m_statusNotifierItem->setAssociatedWidget(m_mainWindow);
     m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("mute"));
     m_statusNotifierItem->contextMenu()->addSeparator();
@@ -245,7 +245,7 @@ BookmarksManager * BangarangApplication::bookmarksManager()
     return m_bookmarksManager;
 }
 
-KStatusNotifierItem * BangarangApplication::statusNotifierItem()
+BangarangNotifierItem * BangarangApplication::statusNotifierItem()
 {
     return m_statusNotifierItem;
 }
@@ -263,4 +263,11 @@ const KAboutData * BangarangApplication::aboutData()
 bool BangarangApplication::nepomukInited()
 {
     return m_nepomukInited;
+}
+
+void BangarangApplication::handleNotifierStateRequest(Phonon::State state)
+{
+  if (state == Phonon::PausedState)
+    m_mediaObject->pause();
+  else m_mediaObject->play();
 }

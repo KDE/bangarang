@@ -30,6 +30,7 @@ INCLUDE_DIRECTORIES(
 
 SET(BangarangSources 
     bangarangapplication.cpp
+    bangarangnotifieritem.cpp
     mainwindow.cpp 
     main.cpp 
     sensiblewidgets.cpp 

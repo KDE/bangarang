@@ -21,7 +21,6 @@
 
 #include <KApplication>
 #include <KAboutData>
-#include <KStatusNotifierItem>
 #include <phonon/mediaobject.h>
 #include <QtCore>
 
@@ -35,6 +34,7 @@ class ActionsManager;
 class BookmarksManager;
 class AudioSettings;
 class MainWindow;
+class BangarangNotifierItem;
 
 class BangarangApplication : public KApplication
 
@@ -52,7 +52,7 @@ class BangarangApplication : public KApplication
         SavedListsManager * savedListsManager();
         ActionsManager * actionsManager();
         BookmarksManager * bookmarksManager();
-        KStatusNotifierItem * statusNotifierItem();
+        BangarangNotifierItem * statusNotifierItem();
         AudioSettings * audioSettings();
         const KAboutData * aboutData();
         bool nepomukInited();
@@ -67,9 +67,12 @@ class BangarangApplication : public KApplication
         SavedListsManager * m_savedListsManager;
         ActionsManager * m_actionsManager;
         BookmarksManager * m_bookmarksManager;
-        KStatusNotifierItem * m_statusNotifierItem;
+        BangarangNotifierItem * m_statusNotifierItem;
         AudioSettings * m_audioSettings;
         bool m_nepomukInited;
+
+    private slots:
+        void handleNotifierStateRequest(Phonon::State state);
         
 };
 #endif

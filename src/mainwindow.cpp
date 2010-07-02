@@ -18,6 +18,7 @@
 
 #include "mainwindow.h"
 #include "bangarangapplication.h"
+#include "bangarangnotifieritem.h"
 #include "ui_mainwindow.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
@@ -48,9 +49,8 @@
 #include <KHelpMenu>
 #include <KMenu>
 #include <KNotification>
-//#ifdef HAVE_KSTATUSNOTIFIERITEM
 #include <KStatusNotifierItem>
-//#endif
+
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/job.h>
@@ -577,6 +577,10 @@ void MainWindow::volumeChanged(qreal newVolume)
     //Phonon::AudioOutput::volume() only return the volume at app start.
     //Therefore I need to track volume changes independently.
     m_volume = newVolume;
+    
+    //NOTE: This will change the mute state to true in the app if volume reaches 0 level
+    //(never adjusted volume to 0 and surprised about not hearing anything?)  
+    updateMuteStatus(m_volume == 0);
 }
 
 void MainWindow::updateSeekTime(qint64 time)
@@ -595,6 +599,8 @@ void MainWindow::updateSeekTime(qint64 time)
     }
     ui->seekTime->setText(displayTime);
     
+    m_application->statusNotifierItem()->updateAppIcon(time, m_application->mediaObject()->totalTime());
+    
     //Update Now Playing Button text
     MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
     if (nowPlayingModel->rowCount() > 0) {
@@ -610,6 +616,8 @@ void MainWindow::updateSeekTime(qint64 time)
 void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstate)
 {
     if (newstate == Phonon::PlayingState) {
+       m_application->statusNotifierItem()->setState(newstate);
+       
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_application->mediaObject()->hasVideo()) {
             ui->viewerStack->setCurrentIndex(1);
@@ -652,6 +660,11 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         ui->volumeSlider->setAudioOutput(m_audioOutput);
         ui->volumeIcon->setChecked(false);
     }
+    if (newstate == Phonon::PausedState)
+      m_application->statusNotifierItem()->setState(newstate);
+    else if (newstate == Phonon::StoppedState)
+      m_application->statusNotifierItem()->setState(newstate);
+    
     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
     Q_UNUSED(oldstate);
 }
@@ -700,6 +713,7 @@ void MainWindow::updateMuteStatus(bool muted)
         ui->volumeIcon->setIcon(KIcon("speaker"));
         ui->volumeIcon->setToolTip(i18n("Mute volume"));
     }
+    m_application->statusNotifierItem()->setVolumeMuted(muted);
 }
 
 
