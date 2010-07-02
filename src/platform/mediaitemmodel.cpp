@@ -868,3 +868,39 @@ void MediaItemModel::updateRefresh()
         reload();
     }
 }
+
+bool MediaItemModel::containsPlayable()
+{
+    if (rowCount() < 1)
+        return false;
+    MediaItem item = mediaItemAt(0);
+    return ( Utilities::isMedia(item.type) ||
+             Utilities::isFeed(item.fields["categoryType"].toString()) );
+}
+
+MediaSortFilterProxyModel::MediaSortFilterProxyModel(QObject* parent)
+                          : QSortFilterProxyModel(parent)
+{
+    setFilterCaseSensitivity(Qt::CaseInsensitive);
+}
+
+bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    MediaItemModel *model = (MediaItemModel *) sourceModel();
+    QModelIndex index = model->index(sourceRow, 0, sourceParent);
+    QList<QRegExp> search;
+    QString data = model->data(index, Qt::DisplayRole).toString();
+    QStringList pat = filterRegExp().pattern().split(" ", QString::SkipEmptyParts);
+    Qt::CaseSensitivity case_sen = filterRegExp().caseSensitivity();
+    
+    if (model->data(index, MediaItem::SubTitleRole).isValid())
+        data += " " + model->data(index, MediaItem::SubTitleRole).toString();
+    foreach (QString str, pat) {
+        search << QRegExp(str, case_sen);
+    }
+    foreach(QRegExp reg, search) {
+        if (!data.contains(reg))
+            return false;
+    }
+    return true;
+};

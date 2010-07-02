@@ -21,12 +21,13 @@
 
 /** @file
   * This file contains the definition of the MediaItem, MediaListProperties 
-  * and MediaItemModel.
+  * and MediaItemModel and MediaSortFilterProxyModel.
   *
   * @author Andrew Lake
   */
 
 #include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 #include <QObject>
 #include <QPixmap>
 #include <QImage>
@@ -689,6 +690,11 @@ class MediaItemModel : public QStandardItemModel
         void updateMediaItems(QList<MediaItem> mediaList);
         
         /**
+        * Checks if the model contains playble items (media items or feeds)
+        */
+        bool containsPlayable();
+        
+        /**
          * Remove MediaItem in model that matches the url specified.
          *
          * @param url url of MediaItem to remove.
@@ -768,6 +774,14 @@ class MediaItemModel : public QStandardItemModel
         bool m_suppressNoResultsMessage;
         bool m_pendingUpdateRefresh;
 
+};
+
+class MediaSortFilterProxyModel : public QSortFilterProxyModel
+{
+    public:
+        MediaSortFilterProxyModel(QObject* parent = 0);
+
+        bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 };
 
 #endif // MEDIAITEMMODEL_H

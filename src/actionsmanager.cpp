@@ -133,8 +133,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Toggle Playlist Filter
     action = new KAction(KIcon("layer-visible-off"), i18n("Show playlist filter"), this);
     action->setShortcut(Qt::CTRL + Qt::Key_F);
-    connect(action, SIGNAL(triggered()), this, SLOT(togglePlaylistFilter()));
-    m_shortcutsCollection->addAction("toggle_playlist_filter", action);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleFilter()));
+    m_shortcutsCollection->addAction("toggle_filter", action);
 
     //Toggle Show Remaining Time Shortcut
     action = new KAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
@@ -250,8 +250,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //controls always visible at startup
     m_controlsVisible = true;
     //filter ain't
-    m_playlistFilterVisible = false;
-    m_restoreFilter = "";
+    m_playlistRestoreFilter = "";
+    m_mediaListRestoreFilter = "";
 }
 
 ActionsManager::~ActionsManager()
@@ -280,17 +280,16 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     QMenu *menu = new QMenu(m_parent);
     QString type;
     bool selection = false;
+    bool isMedia = false;
+    bool isFeed = false;
+    bool isCategory = false;
     QList<MediaItem> selectedItems = selectedMediaItems();
     if (selectedItems.count() > 0) {
         type = selectedItems.at(0).type;
         selection = true;
-    }
-    bool isMedia = Utilities::isMedia(type);
-    bool isFeed = (selectedItems.at(0).fields["categoryType"].toString() == "Audio Feed" ||
-                   selectedItems.at(0).fields["categoryType"].toString() == "Video Feed") ? true : false;
-    bool isCategory = false;
-    if (type == "Category") {
-        isCategory = true;
+        isMedia = Utilities::isMedia(type);
+        isCategory = Utilities::isCategory(type);
+        isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
     }
     if (isMedia || isCategory) {
         if (selection && isMedia) {
@@ -328,6 +327,12 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         menu->addAction(action("reload"));
         menu->addSeparator();        
     } 
+    if (menuSource == MainWindow::Default || MainWindow::MediaList) {
+        if (ui->mediaView->sourceModel()->containsPlayable()) {
+            menu->addAction(action("play_all"));
+            menu->addAction(action("toggle_filter"));
+        }
+    }
     if (showAbout) {
         QMenu *advancedMenu = new QMenu(i18n("Advanced"), m_parent);
         advancedMenu->addAction(action("update_ontologies"));
@@ -528,7 +533,7 @@ void ActionsManager::fullScreenToggle()
 void ActionsManager::toggleControls()
 {
     QAction *toggle = action("toggle_controls");
-    if ((!m_parent->isFullScreen()) && (ui->stackedWidget->currentIndex() == 1)) {
+    if ((!m_parent->isFullScreen()) && (m_parent->currentMainWidget() == MainWindow::MainNowPlaying)) {
         if (m_controlsVisible) {
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
@@ -578,10 +583,10 @@ void ActionsManager::cancelFSHC()
 {
     if (m_parent->isFullScreen()) {
         m_parent->on_fullScreen_toggled(false);
-    } else if (ui->stackedWidget->currentIndex() == 1 && !m_controlsVisible) {
+    } else if (m_parent->currentMainWidget() == MainWindow::MainNowPlaying && !m_controlsVisible) {
         toggleControls();
-    } else if (ui->playlistFilterProxyLine->lineEdit()->hasFocus()) {
-        togglePlaylistFilter();
+    } else if (m_parent->currentFilterProxyLine()->lineEdit()->hasFocus()) {
+        toggleFilter();
     }
 }
 
@@ -716,7 +721,7 @@ void ActionsManager::playSelectedSlot()
     m_application->playlist()->playMediaList(mediaList);
     
     // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
+    m_parent->switchMainWidget(MainWindow::MainNowPlaying);   
 }
 
 void ActionsManager::playAllSlot()
@@ -725,7 +730,7 @@ void ActionsManager::playAllSlot()
     m_application->playlist()->playMediaList(m_application->browsingModel()->mediaList());
 
     // Show Now Playing page
-    ui->stackedWidget->setCurrentIndex(1);   
+    m_parent->switchMainWidget(MainWindow::MainNowPlaying);
 }
 
 void ActionsManager::addToSavedAudioList(QAction *addAction)
@@ -867,28 +872,34 @@ void ActionsManager::removeBookmark(QAction *bookmarkAction)
     }
 }
 
-void ActionsManager::togglePlaylistFilter()
+void ActionsManager::toggleFilter()
 {
-    QFrame *filter = (ui->stackedWidget->currentIndex() == 0) ?
-        ui->mediaListFilter : ui->playlistFilter;
-    if(!m_playlistFilterVisible) {
-        filter->setVisible(true);
-        action("toggle_playlist_filter")->setText(i18n("Hide playlist filter"));
-        if(!m_restoreFilter.isEmpty()) {
-            ui->playlistFilterProxyLine->setText( m_restoreFilter );
-            m_restoreFilter.clear();
-        }
-        ui->playlistFilterProxyLine->lineEdit()->setFocus(); //the user can star immediately to search
+    QFrame *frame = m_application->mainWindow()->currentFilterFrame();
+    KFilterProxySearchLine *filter = m_application->mainWindow()->currentFilterProxyLine();
+    bool visible = frame->isVisible();
+    QString *restore;
+    if (m_parent->currentMainWidget() == MainWindow::MainMediaList) {
+        restore = &m_mediaListRestoreFilter;
+        if ( !visible && !ui->mediaView->sourceModel()->containsPlayable() )
+            return;
     } else {
-        filter->setVisible(false);
-        action("toggle_playlist_filter")->setText(i18n("Show playlist filter"));
-        if(!ui->playlistFilterProxyLine->lineEdit()->text().isEmpty())
-        {
-            m_restoreFilter = ui->playlistFilterProxyLine->lineEdit()->text();
-            ui->playlistFilterProxyLine->setText( "" );
+        restore = &m_playlistRestoreFilter;
+    }
+    frame->setVisible(!visible);
+    if(!visible) {
+        if(!restore->isEmpty()) {
+           filter->setText( *restore );
+           restore->clear();
+        }
+        filter->lineEdit()->setFocus(); //the user can start immediately to search
+        filter->lineEdit()->selectAll();
+    } else {
+        if(!filter->lineEdit()->text().isEmpty()) {
+            *restore = filter->lineEdit()->text();
+            filter->setText( "" );
         }
     }
-    m_playlistFilterVisible = !m_playlistFilterVisible;
+    updateToggleFilterText();
 }
 
 void ActionsManager::updateOntologies()
@@ -976,3 +987,19 @@ void ActionsManager::titleChanged()
         mctrl->setCurrentTitle( idx );
 }
 
+void ActionsManager::updateToggleFilterText()
+{
+    QString txt;
+    if (m_parent->currentMainWidget() == MainWindow::MainMediaList) {
+        if (ui->mediaListFilter->isVisible())
+            txt = i18n("Hide media list filter");
+        else
+            txt = i18n("Show media list filter");
+    } else {
+        if (ui->playlistFilter->isVisible())
+            txt = i18n("Hide playlist filter");
+        else
+            txt = i18n("Show playlist filter");
+    }
+    action("toggle_filter")->setText(txt);
+}

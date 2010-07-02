@@ -128,11 +128,13 @@ void FeedListEngine::run()
             bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
+            bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoFeed(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = bindings;
@@ -250,17 +252,19 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
             mediaItem.url = contentElement.attribute("url");
             mediaItem.fields["url"] = mediaItem.url;
-            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type"));
-            if (Utilities::isAudioMimeType(type)) {
-                isAudio = true;
-                mediaItem.type = "Audio";
-                mediaItem.fields["audioType"] = "Audio Clip";
-                mediaItem.artwork = KIcon("audio-x-generic");
-            } else if (Utilities::isVideoMimeType(type)) {
-                isVideo = true;
-                mediaItem.type = "Video";
-                mediaItem.fields["videoType"] = "Video Clip";
-                mediaItem.artwork = KIcon("video-x-generic");
+            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").trimmed());
+            if (!type.isNull()) {
+                if (Utilities::isAudioMimeType(type)) {
+                    isAudio = true;
+                    mediaItem.type = "Audio";
+                    mediaItem.fields["audioType"] = "Audio Clip";
+                    mediaItem.artwork = KIcon("audio-x-generic");
+                } else if (Utilities::isVideoMimeType(type)) {
+                    isVideo = true;
+                    mediaItem.type = "Video";
+                    mediaItem.fields["videoType"] = "Video Clip";
+                    mediaItem.artwork = KIcon("video-x-generic");
+                }
             }
             if (contentElement.tagName() == "media:content") {
                 int duration = contentElement.attribute("duration").toInt();
