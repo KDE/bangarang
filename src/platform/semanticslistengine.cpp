@@ -298,6 +298,14 @@ void SemanticsListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     } else {
+        //Get any remaining metadata for mediaItems
+        if (mediaType == "video") {
+            for (int i = 0; i < mediaList.count(); i++) {
+                MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
+                emit updateMediaItem(mediaItem);
+            }
+        }
+        
         //Get local album artwork
         if (m_nepomukInited) {
             MediaVocabulary mediaVocabulary;

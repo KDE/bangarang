@@ -80,36 +80,20 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.durationBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
-            bindings.append(mediaVocabulary.videoSynopsisBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.videoAudienceRatingBinding());
             bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.videoWriterBinding());
-            bindings.append(mediaVocabulary.videoDirectorBinding());
-            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-            bindings.append(mediaVocabulary.videoProducerBinding());
-            bindings.append(mediaVocabulary.videoActorBinding());
-            bindings.append(mediaVocabulary.videoCinematographerBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
@@ -365,17 +349,10 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoEpisodeNumberBinding());
             bindings.append(mediaVocabulary.durationBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
-            bindings.append(mediaVocabulary.videoSynopsisBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.videoWriterBinding());
-            bindings.append(mediaVocabulary.videoDirectorBinding());
-            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-            bindings.append(mediaVocabulary.videoProducerBinding());
-            bindings.append(mediaVocabulary.videoActorBinding());
-            bindings.append(mediaVocabulary.videoCinematographerBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
@@ -386,16 +363,9 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             if (seriesName == "~") {
                 query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
@@ -594,18 +564,10 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoEpisodeNumberBinding());
             bindings.append(mediaVocabulary.durationBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
-            bindings.append(mediaVocabulary.videoSynopsisBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.videoAudienceRatingBinding());
             bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.videoWriterBinding());
-            bindings.append(mediaVocabulary.videoDirectorBinding());
-            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-            bindings.append(mediaVocabulary.videoProducerBinding());
-            bindings.append(mediaVocabulary.videoActorBinding());
-            bindings.append(mediaVocabulary.videoCinematographerBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
@@ -615,18 +577,10 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), searchTerm, MediaQuery::Contains);
             query.addFilterOr();
@@ -634,19 +588,13 @@ void VideoListEngine::run()
             query.addFilterOr();
             query.addFilterConstraint(mediaVocabulary.descriptionBinding(), searchTerm, MediaQuery::Contains);
             query.addFilterOr();
-            query.addFilterConstraint(mediaVocabulary.videoSynopsisBinding(), searchTerm, MediaQuery::Contains);
-            query.addFilterOr();
             query.addFilterConstraint(mediaVocabulary.videoWriterBinding(), searchTerm, MediaQuery::Contains);
             query.addFilterOr();
             query.addFilterConstraint(mediaVocabulary.videoDirectorBinding(), searchTerm,  MediaQuery::Contains);
             query.addFilterOr();
-            query.addFilterConstraint(mediaVocabulary.videoAssistantDirectorBinding(), searchTerm, MediaQuery::Contains);
-            query.addFilterOr();
             query.addFilterConstraint(mediaVocabulary.videoProducerBinding(), searchTerm, MediaQuery::Contains);
             query.addFilterOr();
             query.addFilterConstraint(mediaVocabulary.videoActorBinding(), searchTerm, MediaQuery::Contains);
-            query.addFilterOr();
-            query.addFilterConstraint(mediaVocabulary.videoCinematographerBinding(), searchTerm, MediaQuery::Contains);
             query.endFilter();
             query.endWhere();
             QStringList orderByBindings;
@@ -695,18 +643,11 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoEpisodeNumberBinding());
             bindings.append(mediaVocabulary.durationBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
-            bindings.append(mediaVocabulary.videoSynopsisBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.videoAudienceRatingBinding());
             bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.videoWriterBinding());
-            bindings.append(mediaVocabulary.videoDirectorBinding());
-            bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-            bindings.append(mediaVocabulary.videoProducerBinding());
-            bindings.append(mediaVocabulary.videoActorBinding());
-            bindings.append(mediaVocabulary.videoCinematographerBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
@@ -718,17 +659,10 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
@@ -774,10 +708,11 @@ void VideoListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     } else {
-        //Get local artwork
+        //Get any remaining metadata and local artwork
         if (m_nepomukInited) {
             for (int i = 0; i < mediaList.count(); i++) {
-                MediaItem mediaItem = mediaList.at(i);
+                MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
+                emit updateMediaItem(mediaItem);
                 if (mediaItem.fields["videoType"].toString() == "Movie") {
                     QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                     if (!artwork.isNull()) {
