@@ -42,7 +42,7 @@
 #include <QMainWindow>
 #include <kross/core/action.h>
 
-struct MediaItem;
+class MediaItem;
 class MediaListProperties;
 class MediaItemModel;
 class MediaListCache;

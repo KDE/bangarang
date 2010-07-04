@@ -49,8 +49,8 @@ class MediaListCache;
  * QList< MediaItem >.
  */
 
-struct MediaItem {
-    
+class MediaItem {
+public:
     enum MediaItemRole { UrlRole = Qt::UserRole + 1, /** QStandardItem role containing MediaItem url.*/
     
     SubTitleRole = Qt::UserRole + 2, /** QStandardItem role containing MediaItem sub title.*/
