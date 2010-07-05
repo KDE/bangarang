@@ -340,10 +340,10 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 return QItemDelegate::editorEvent(event, model, option, index);
             if (m_renderMode != NormalMode && m_renderMode != MiniRatingMode)
                 return QItemDelegate::editorEvent(event, model, option, index);
-            if (!index.data(MediaItem::UrlRole).toString().isEmpty()) {
+            if (index.data(MediaItem::UrlRole).toString().isEmpty()) {
                 return QItemDelegate::editorEvent(event, model, option, index);
             }
-
+            
             QPoint mousePos = ((QMouseEvent *)event)->pos();
             QRect ratingArea = ratingRect(&option.rect);
             if  (!ratingArea.contains(mousePos))
@@ -390,6 +390,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                     indexerUpdated = true;
                 }
             }
+            return true;
         } else if (index.data(MediaItem::TypeRole).toString() == "Category" &&
             !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             if (event->type() == QEvent::MouseButtonDblClick) {

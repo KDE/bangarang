@@ -420,7 +420,6 @@ bool Utilities::isMedia(const QString type)
 {
    return (
             (type == "Audio") ||
-            (type == "Video") ||
             (type == "Video")
         );
 }
