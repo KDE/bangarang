@@ -401,7 +401,8 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
         
         //Store selected Media Item
         m_selectedInfoBoxMediaItems.clear();
-        MediaItemModel * model = (MediaItemModel *)selected.indexes().at(0).model();
+        MediaSortFilterProxyModel * proxyModel = (MediaSortFilterProxyModel *)selected.indexes().at(0).model();
+        MediaItemModel * model = (MediaItemModel *)proxyModel->sourceModel();
         int selectedRow = selected.indexes().at(0).row();
         m_selectedInfoBoxMediaItems.append(model->mediaItemAt(selectedRow));
         emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);

@@ -1141,9 +1141,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
         }
-        if (!lri.isEmpty()) {
+        /*if (!lri.isEmpty()) {
             mediaItem.url = lri;
-        }
+        }*/
         mediaItem.fields["sourceLri"] = sourceLri;
     }
     return mediaItem;
