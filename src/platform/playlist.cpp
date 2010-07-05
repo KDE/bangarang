@@ -716,7 +716,7 @@ void Playlist::updateNowPlaying()
         m_currentPlaylist->item(row,0)->setData(false, MediaItem::NowPlayingRole);
         m_currentPlaylist->item(row,0)->setData(true, MediaItem::NowPlayingRole);
     }
-    if (oldItemRow != row && oldItemRow >= 0 and oldItemRow < m_currentPlaylist->rowCount()) {
+    if ((oldItemRow != row && oldItemRow >= 0) && (oldItemRow < m_currentPlaylist->rowCount())) {
         //Cycle through true and false to ensure data change forces update
         m_currentPlaylist->item(oldItemRow,0)->setData(true, MediaItem::NowPlayingRole);
         m_currentPlaylist->item(oldItemRow,0)->setData(false, MediaItem::NowPlayingRole);

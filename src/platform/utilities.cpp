@@ -81,7 +81,7 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
     
     if (!id3tag) {
@@ -187,7 +187,7 @@ QString Utilities::getArtistFromTag(const QString &url)
 {
     QString artist;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         artist  = TStringToQString(file.tag()->artist()).trimmed();
     }
     return artist;
@@ -197,7 +197,7 @@ QString Utilities::getAlbumFromTag(const QString &url)
 {
     QString album;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         album = TStringToQString(file.tag()->album()).trimmed();
     }
     return album;
@@ -207,7 +207,7 @@ QString Utilities::getTitleFromTag(const QString &url)
 {
     QString title;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         title = TStringToQString(file.tag()->title()).trimmed();
     }
     return title;
@@ -217,7 +217,7 @@ QString Utilities::getGenreFromTag(const QString &url)
 {
     QString genre;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         genre   = TStringToQString(file.tag()->genre()).trimmed();
     }
     return genre;
@@ -227,7 +227,7 @@ int Utilities::getYearFromTag(const QString &url)
 {
     int year = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         year = file.tag()->year();
     }
     return year;
@@ -237,7 +237,7 @@ int Utilities::getDurationFromTag(const QString &url)
 {
     int duration = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         duration = file.audioProperties()->length();
     }
     return duration;
@@ -247,7 +247,7 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 {
     int track = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         track   = file.tag()->track();
     }
     return track;
@@ -255,7 +255,7 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 
 bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
     
     TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
@@ -274,7 +274,7 @@ bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     if (result->is("audio/mpeg")) {
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
         if (mpegFile.isValid()) {
             TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
 
@@ -306,7 +306,7 @@ void Utilities::setArtistTag(const QString &url, const QString &artist)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setArtist(tArtist);
         file.save();
     }
@@ -316,7 +316,7 @@ void Utilities::setAlbumTag(const QString &url, const QString &album)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setAlbum(tAlbum);
         file.save();
     }
@@ -326,7 +326,7 @@ void Utilities::setTitleTag(const QString &url, const QString &title)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setTitle(tTitle);
         file.save();
     }
@@ -336,7 +336,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setGenre(tGenre);
         file.save();
     }
@@ -345,7 +345,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 void Utilities::setYearTag(const QString &url, int year)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setYear(year);
         file.save();
     }
@@ -354,7 +354,7 @@ void Utilities::setYearTag(const QString &url, int year)
 void Utilities::setTrackNumberTag(const QString &url, int trackNumber)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setTrack(trackNumber);
         file.save();
     }
@@ -528,7 +528,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         } else if (mediaItem.fields["audioType"] == "Music") {
             mediaItem.artwork = KIcon("audio-mp4");
             //File metadata is always primary for music items.
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
+            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit().constData());
             if (!file.isNull()) {
                 QString title = TStringToQString(file.tag()->title()).trimmed();
                 QString artist  = TStringToQString(file.tag()->artist()).trimmed();
