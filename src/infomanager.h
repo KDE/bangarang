@@ -62,6 +62,7 @@ class InfoManager : public QObject
         void clearInfoBoxSelection();
         void mediaListPropertiesChanged();
         void removeSelectedItemsInfo();
+        void addSelectedItemsInfo();
         bool infoViewVisible();
         
     private:

@@ -43,8 +43,8 @@
 
 FileListEngine::FileListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
-    m_getFilesAction = false;
-    m_getFolderAction = false;
+    m_indexFilesAction = false;
+    m_indexFolderAction = false;
 }
 
 FileListEngine::~FileListEngine()
@@ -57,13 +57,119 @@ void FileListEngine::run()
         NepomukListEngine::run();
         return;
     }
-    
-    MediaItem mediaItem;
+    QStringList filterList = m_mediaListProperties.engineFilter().split("||");
+    if (filterList.count() == 0) {
+        return;
+    }
+            
     QList<MediaItem> mediaList;
     
-    if (m_getFilesAction || m_getFolderAction) {
+    if (!m_indexFilesAction && !m_indexFolderAction) {
+        if (filterList.at(0) == "browseFolder") {
+            QString directoryPath = QDir::homePath();
+            if (filterList.count() > 1) {
+                directoryPath = filterList.at(1);
+            }
+            if (!directoryPath.isEmpty()) {
+                QDir dir(directoryPath);
+                QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+                for (int i = 0; i < dirList.count(); ++i) {
+                    MediaItem mediaItem;
+                    mediaItem.type = "Category";
+                    mediaItem.title = dirList.at(i).baseName();
+                    mediaItem.fields["title"] = mediaItem.title;
+                    mediaItem.url = QString("files://%1?browseFolder||%2")
+                                            .arg(m_mediaListProperties.engineArg())
+                                            .arg(dirList.at(i).absoluteFilePath());
+                    mediaItem.artwork = KIcon("document-open-folder");
+                    mediaList.append(mediaItem);
+                }
+                QFileInfoList fileList = dir.entryInfoList(QDir::Files, QDir::Name);
+                for (int i = 0; i < fileList.count(); ++i) {
+                    KUrl fileUrl = KUrl(fileList.at(i).absoluteFilePath());
+                    if (m_mediaListProperties.engineArg() == "audio") {
+                        if (Utilities::isAudio(fileUrl.url())) {
+                            MediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl);
+                            mediaList.append(mediaItem);
+                        }
+                    } else if (m_mediaListProperties.engineArg() == "video") {
+                        if (Utilities::isVideo(fileUrl.url())) {
+                            MediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl);
+                            mediaList.append(mediaItem);
+                        }
+                    }
+                }
+                if (directoryPath == QDir::homePath() && m_nepomukInited) {
+                    MediaItem mediaItem;
+                    mediaItem.type = "Category";
+                    mediaItem.title = i18n("Indexer");
+                    mediaItem.fields["title"] = mediaItem.title;
+                    mediaItem.url = QString("files://%1?indexer")
+                                    .arg(m_mediaListProperties.engineArg());
+                    mediaItem.artwork = KIcon("system-run");
+                    mediaList.append(mediaItem);
+                }
+            }
+        } else if (filterList.at(0) == "sources") {
+            QString directoryPath;
+            if (filterList.count() > 1) {
+                directoryPath = filterList.at(1);
+            }
+            if (!directoryPath.isEmpty()) {
+                QString mimeFilter;
+                QString type;
+                if (m_mediaListProperties.engineArg() == "audio") {
+                    mimeFilter = Utilities::audioMimeFilter();
+                    type = "audio";
+                } else if (m_mediaListProperties.engineArg() == "video") {
+                    mimeFilter = Utilities::videoMimeFilter();
+                    type = "video";
+                }
+                QFileInfoList fileList = crawlDir(QDir(directoryPath), mimeFilter.split(" "));
+                for (int i = 0; i < fileList.count(); ++i) {
+                    KUrl fileUrl = KUrl(fileList.at(i).absoluteFilePath());
+                    MediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl);
+                    mediaList.append(mediaItem);
+                }
+            }
+        } else if (filterList.at(0) == "indexer") {
+            if (m_mediaListProperties.engineArg() == "audio") {
+                MediaItem mediaItem;
+                mediaItem.artwork = KIcon("document-open");
+                mediaItem.url = "files://audio?indexFiles";
+                mediaItem.title = i18n("Index audio file(s)");
+                mediaItem.type = "Action";
+                mediaList << mediaItem;
+                mediaItem.artwork = KIcon("document-open-folder");
+                mediaItem.url = "files://audio?indexFolder";
+                mediaItem.title = i18n("Index folder containing audio file(s)");
+                mediaItem.type = "Action";
+                mediaList << mediaItem;
+            } else if (m_mediaListProperties.engineArg() == "video") {
+                MediaItem mediaItem;
+                mediaItem.artwork = KIcon("document-open");
+                mediaItem.url = "files://video?indexFiles";
+                mediaItem.title = i18n("Index video file(s)");
+                mediaItem.type = "Action";
+                mediaList << mediaItem;
+                mediaItem.artwork = KIcon("document-open-folder");
+                mediaItem.url = "files://video?indexFolder";
+                mediaItem.title = i18n("Index folder containing video file(s)");
+                mediaItem.type = "Action";
+                mediaList << mediaItem;           
+            }
+                
+        } 
+        m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
+        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+        m_requestSignature = QString();
+        m_subRequestSignature = QString();
+    }
+    
+    
+    if (m_indexFilesAction || m_indexFolderAction) {
         MediaListProperties mediaListProperties;
-        if (m_mediaListProperties.engineFilter() == "getFiles") {
+        if (m_mediaListProperties.engineFilter() == "indexFiles") {
             if (m_mediaListProperties.engineArg() == "audio") {
                 mediaList = readAudioUrlList(m_fileList);
                 mediaListProperties.name = i18n("Audio Files");
@@ -74,8 +180,8 @@ void FileListEngine::run()
                 mediaListProperties.name = i18n("Video Files");
                 mediaListProperties.lri = QString("files://video?getFiles||%1").arg(engineFilterFromUrlList(m_fileList));
             }
-            m_getFilesAction = false;
-        } else if (m_mediaListProperties.engineFilter() == "getFolder") {
+            m_indexFilesAction = false;
+        } else if (m_mediaListProperties.engineFilter() == "indexFolder") {
             if (m_mediaListProperties.engineArg() == "audio") {      
                 if (!m_directoryPath.isEmpty()) {
                     QDir directory(m_directoryPath);
@@ -98,93 +204,19 @@ void FileListEngine::run()
                 mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
                 mediaListProperties.lri = QString("files://video?getFolder||%1").arg(m_directoryPath);
             }
-            m_getFolderAction = false;
+            m_indexFolderAction = false;
         }
         emit results(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
         if (m_nepomukInited && m_mediaListToIndex.count() > 0) {
-            NepomukListEngine::updateSourceInfo(m_mediaListToIndex);
             m_mediaIndexer = new MediaIndexer(this);
             connectIndexer();
             m_mediaIndexer->updateInfo(m_mediaListToIndex);
-            m_updateSourceInfo = false;
             m_mediaListToIndex.clear();
             m_requestSignature = QString();
             m_subRequestSignature = QString();
             exec();
         }
-        return;
     } 
-    
-    if (m_mediaListProperties.engineFilter().isEmpty()) {        
-        if (m_mediaListProperties.engineArg() == "audio") {
-            mediaItem.artwork = KIcon("document-open");
-            mediaItem.url = "files://audio?getFiles";
-            mediaItem.title = i18n("Open audio file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;
-            mediaItem.artwork = KIcon("document-open-folder");
-            mediaItem.url = "files://audio?getFolder";
-            mediaItem.title = i18n("Open folder containing audio file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;
-        } else if (m_mediaListProperties.engineArg() == "video") {
-            mediaItem.artwork = KIcon("document-open");
-            mediaItem.url = "files://video?getFiles";
-            mediaItem.title = i18n("Open video file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;
-            mediaItem.artwork = KIcon("document-open-folder");
-            mediaItem.url = "files://video?getFolder";
-            mediaItem.title = i18n("Open folder containing video file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;           
-        } else if (m_mediaListProperties.engineArg() == "images") {
-            mediaItem.artwork = KIcon("document-open");
-            mediaItem.url = "files://images?getFiles";
-            mediaItem.title = i18n("Open image file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;
-            mediaItem.artwork = KIcon("document-open-folder");
-            mediaItem.url = "files://images?getFolder";
-            mediaItem.title = i18n("Open folder containing image file(s)");
-            mediaItem.type = "Action";
-            mediaList << mediaItem;           
-        }
-    } else {
-        QStringList filterList = m_mediaListProperties.engineFilter().split("||");
-        if (filterList.at(0) == "getFiles") {
-            if (filterList.count() > 1) {
-                for (int i = 1; i < filterList.count(); i++) {
-                    MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(filterList.at(i)));
-                    mediaList << mediaItem;
-                }
-            }
-        } else if (filterList.at(0) == "getFolder") {
-            if (filterList.count() > 1) {
-                QString directoryPath = filterList.at(1);
-                if (!directoryPath.isEmpty()) {
-                    QString mimeFilter;
-                    if (m_mediaListProperties.engineArg() == "audio") {
-                        mimeFilter = Utilities::audioMimeFilter();
-                    } else if (m_mediaListProperties.engineArg() == "video") {
-                        mimeFilter = Utilities::videoMimeFilter();
-                    }
-                    QDir directory(directoryPath);
-                    QFileInfoList fileInfoList = crawlDir(directory, mimeFilter.split(" "));
-                    KUrl::List fileList = QFileInfoListToKUrlList(fileInfoList);
-                    for (int i = 0; i < fileList.count(); i++) {
-                        MediaItem mediaItem = Utilities::mediaItemFromUrl(fileList.at(i));
-                        mediaList << mediaItem;
-                    }
-                }
-            }
-        }
-        m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
-    }
-    
-    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
     //exec();
 }
 
@@ -192,30 +224,44 @@ void FileListEngine::activateAction()
 {
     QList<MediaItem> mediaList;
     MediaListProperties mediaListProperties;
-    if (m_mediaListProperties.engineFilter() == "getFiles") {
+    if (m_mediaListProperties.engineFilter() == "indexFiles") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            m_fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::audioMimeFilter(), 0, i18n("Open audio file(s)"));
-            m_getFilesAction = true;
+            m_fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::audioMimeFilter(), 0, i18n("Index audio file(s)"));
+            m_indexFilesAction = true;
             start();
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            m_fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::videoMimeFilter(), 0, i18n("Open video file(s)"));
-            m_getFilesAction = true;
+            m_fileList = KFileDialog::getOpenUrls(KUrl(), Utilities::videoMimeFilter(), 0, i18n("Index video file(s)"));
+            m_indexFilesAction = true;
             start();
         }
-    } else if (m_mediaListProperties.engineFilter() == "getFolder") {
+    } else if (m_mediaListProperties.engineFilter() == "indexFolder") {
         if (m_mediaListProperties.engineArg() == "audio") {
-            m_directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Open folder containing audio file(s)"));
-            m_getFolderAction = true;
+            m_directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Index folder containing audio file(s)"));
+            m_indexFolderAction = true;
             start();
         }
         if (m_mediaListProperties.engineArg() == "video") {
-            m_directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Open folder containing video file(s)"));           
-            m_getFolderAction = true;
+            m_directoryPath = KFileDialog::getExistingDirectory(KUrl(), 0, i18n("Index folder containing video file(s)"));           
+            m_indexFolderAction = true;
             start();
         }
     }
 }
+
+void FileListEngine::setFilterForSources(const QString& engineFilter)
+{
+    //Always crawl directory and return files
+    QStringList filterList = engineFilter.split("||");
+    QString filter;
+    if (filterList.count() == 2) {
+        filter = filterList.at(1);
+    }
+    m_mediaListProperties.lri = QString("files://%1?sources||%2")
+                                       .arg(m_mediaListProperties.engineArg())
+                                       .arg(filter);
+}
+
 
 QFileInfoList FileListEngine::crawlDir(const QDir &dir, const QStringList &mimeFilter)
 {
@@ -403,4 +449,6 @@ QString FileListEngine::engineFilterFromUrlList(const KUrl::List &fileList)
     }
     return engineFilter;
 }
+
+
 

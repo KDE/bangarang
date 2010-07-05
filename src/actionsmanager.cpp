@@ -165,6 +165,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_parent->addAction(action);
     m_othersCollection->addAction("cancel", action); //shouldn't be editable
 
+    //Add Info for Selected MediaItems
+    action = new KAction(KIcon("document-new"), i18n("Add selected info"), this);
+    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
+    m_othersCollection->addAction("add_selected_info", action);
+
     //Remove Info for Selected MediaItems
     action = new KAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
@@ -281,6 +286,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     bool isMedia = false;
     bool isFeed = false;
     bool isCategory = false;
+    bool isBrowsingFiles = false;
     QList<MediaItem> selectedItems = selectedMediaItems();
     if (selectedItems.count() > 0) {
         type = selectedItems.at(0).type;
@@ -288,6 +294,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         isMedia = Utilities::isMedia(type);
         isCategory = Utilities::isCategory(type);
         isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
+        isBrowsingFiles  = m_application->browsingModel()->mediaListProperties().lri.startsWith("files://");
     }
     if (isMedia || isCategory) {
         if (selection && isMedia) {
@@ -316,6 +323,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
                 menu->addAction(action("remove_from_list"));
             }
             menu->addSeparator();
+        }
+        if (selection && isMedia) {
+            menu->addAction(action("add_selected_info"));
         }
         if (selection && (isMedia || isFeed)) {
             menu->addAction(action("remove_selected_info"));

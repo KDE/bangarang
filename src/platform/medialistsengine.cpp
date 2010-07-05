@@ -51,14 +51,29 @@ void MediaListsEngine::run()
         MediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
-        mediaItem.title = i18n("Files and Folders");
-        mediaItem.fields["title"] = mediaItem.title;
-        mediaItem.url = "files://audio";
-        mediaItem.artwork = KIcon("document-open-folder");
-        mediaList << mediaItem;
         if (m_nepomukInited) {
+            KConfig config;
+            KConfigGroup generalGroup( &config, "General" );
+            mediaItem.title = i18n("Recently Played");
+            mediaItem.fields["title"] = mediaItem.title;
+            int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+            mediaItem.url = QString("semantics://recent?audio||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Highest Rated");
+            mediaItem.fields["title"] = mediaItem.title;
+            limit = generalGroup.readEntry("HighestAudioLimit", 20);
+            mediaItem.url = QString("semantics://highest?audio||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("rating");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Frequently Played");
+            mediaItem.fields["title"] = mediaItem.title;
+            limit = generalGroup.readEntry("FrequentAudioLimit", 20);
+            mediaItem.url = QString("semantics://frequent?audio||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            
             QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
             QStringList contextLRIs;
             mediaItem.title = i18n("Artists");
             mediaItem.fields["title"] = mediaItem.title;
@@ -164,6 +179,12 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
         }
         
+        mediaItem.title = i18n("Files and Folders");
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.url = "files://audio?browseFolder";
+        mediaItem.artwork = KIcon("document-open-folder");
+        mediaList << mediaItem;
+        
         //Show Audio CD if present
         bool audioCDFound = false;
         foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
@@ -178,29 +199,6 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "cdaudio://";
             mediaItem.artwork = KIcon("media-optical-audio");
-            mediaList << mediaItem;
-        }
-        
-        if (m_nepomukInited) {
-            KConfig config;
-            KConfigGroup generalGroup( &config, "General" );
-            mediaItem.title = i18n("Frequently Played");
-            mediaItem.fields["title"] = mediaItem.title;
-            int limit = generalGroup.readEntry("FrequentAudioLimit", 20);
-            mediaItem.url = QString("semantics://frequent?audio||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("office-chart-bar");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Recently Played");
-            mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("RecentAudioLimit", 20);
-            mediaItem.url = QString("semantics://recent?audio||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("chronometer");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Highest Rated");
-            mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("HighestAudioLimit", 20);
-            mediaItem.url = QString("semantics://highest?audio||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("rating");
             mediaList << mediaItem;
         }
         
@@ -241,14 +239,29 @@ void MediaListsEngine::run()
         MediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
-        mediaItem.title = i18n("Files and Folders");
-        mediaItem.fields["title"] = mediaItem.title;
-        mediaItem.url = "files://video";
-        mediaItem.artwork = KIcon("document-open-folder");
-        mediaList << mediaItem;
         if (m_nepomukInited) {
+            KConfig config;
+            KConfigGroup generalGroup( &config, "General" );
+            mediaItem.title = i18n("Recently Played");
+            mediaItem.fields["title"] = mediaItem.title;
+            int limit = generalGroup.readEntry("RecentVideoLimit", 20);
+            mediaItem.url = QString("semantics://recent?video||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("chronometer");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Highest Rated");
+            mediaItem.fields["title"] = mediaItem.title;
+            limit = generalGroup.readEntry("HighestVideoLimit", 20);
+            mediaItem.url = QString("semantics://highest?video||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("rating");
+            mediaList << mediaItem;
+            mediaItem.title = i18n("Frequently Played");
+            mediaItem.fields["title"] = mediaItem.title;
+            limit = generalGroup.readEntry("FrequentVideoLimit", 20);
+            mediaItem.url = QString("semantics://frequent?video||limit=%1").arg(limit);
+            mediaItem.artwork = KIcon("office-chart-bar");
+            mediaList << mediaItem;
+            
             QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
             QStringList contextLRIs;
             mediaItem.title = i18n("Movies");
             mediaItem.fields["title"] = mediaItem.title;
@@ -352,8 +365,13 @@ void MediaListsEngine::run()
             mediaItem.fields["contextTitles"] = QStringList();
             mediaItem.fields["contextLRIs"] = QStringList();
             mediaList << mediaItem;
-
         }
+        
+        mediaItem.title = i18n("Files and Folders");
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.url = "files://video?browseFolder";
+        mediaItem.artwork = KIcon("document-open-folder");
+        mediaList << mediaItem;
         
         //Show DVD if present
         bool DVDFound = false;
@@ -370,29 +388,6 @@ void MediaListsEngine::run()
             mediaItem.url = "dvdvideo://";
             mediaItem.artwork = KIcon("media-optical-dvd");
             mediaList << mediaItem;        
-        }
-        
-        if (m_nepomukInited) {
-            KConfig config;
-            KConfigGroup generalGroup( &config, "General" );
-            mediaItem.title = i18n("Frequently Played");
-            mediaItem.fields["title"] = mediaItem.title;
-            int limit = generalGroup.readEntry("FrequentVideoLimit", 20);
-            mediaItem.url = QString("semantics://frequent?video||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("office-chart-bar");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Recently Played");
-            mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("RecentVideoLimit", 20);
-            mediaItem.url = QString("semantics://recent?video||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("chronometer");
-            mediaList << mediaItem;
-            mediaItem.title = i18n("Highest Rated");
-            mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("HighestVideoLimit", 20);
-            mediaItem.url = QString("semantics://highest?video||limit=%1").arg(limit);
-            mediaItem.artwork = KIcon("rating");
-            mediaList << mediaItem;
         }
         
         //Load saved lists from index

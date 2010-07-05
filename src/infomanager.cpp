@@ -214,6 +214,21 @@ void InfoManager::removeSelectedItemsInfo()
     }
 }
 
+void InfoManager::addSelectedItemsInfo()
+{
+    QList<MediaItem> selectedItems;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    if (selectedRows.count() > 0) {
+        //If items are selected then the context is the selected items
+        for (int i = 0 ; i < selectedRows.count() ; ++i) {
+            selectedItems.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
+        }
+    }
+    if (selectedItems.count() > 0) {
+        m_application->browsingModel()->updateSourceInfo(selectedItems);
+    }
+}
+
 //----------------------
 //-- Helper functions --
 //----------------------
