@@ -315,7 +315,7 @@ QList<MediaItem> FileListEngine::readAudioUrlList(const KUrl::List &fileList)
         mediaItem.fields["url"] = mediaItem.url;
         mediaItem.fields["title"] = fileList.at(i).fileName();
         if (Utilities::isMusic(mediaItem.url) && fileList.at(i).isLocalFile()) {
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
+            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit().constData());
             if (file.isNull()) {
                 continue;
             }
