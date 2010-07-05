@@ -49,6 +49,7 @@ class InfoManager : public QObject
         InfoManager(MainWindow * parent);
         ~InfoManager();
         const QList<MediaItem> selectedInfoBoxMediaItems();
+        bool infoViewVisible();
         
     public slots:
         void toggleInfoView();
@@ -63,7 +64,6 @@ class InfoManager : public QObject
         void mediaListPropertiesChanged();
         void removeSelectedItemsInfo();
         void addSelectedItemsInfo();
-        bool infoViewVisible();
         
     private:
         BangarangApplication * m_application;

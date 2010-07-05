@@ -104,7 +104,7 @@ InfoManager::~InfoManager()
 //---------------------
 void InfoManager::toggleInfoView()
 {
-    bool makeVisible = !ui->semanticsHolder->isVisible();
+    bool makeVisible = !m_infoViewVisible;
     ui->semanticsHolder->setVisible(makeVisible);
     
     if (makeVisible) {
@@ -235,7 +235,7 @@ void InfoManager::addSelectedItemsInfo()
 void InfoManager::loadSelectedInfo()
 {
     //Make sure info view is visble before doing anything
-    if (!ui->semanticsHolder->isVisible()) {
+    if (!m_infoViewVisible) {
         return;
     }
     
