@@ -322,6 +322,7 @@ void InfoManager::loadSelectedInfo()
         /*MediaItem contextCategory = context.at(0);
         QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();
         contextLRIs = contextCategory.fields["contextLRIs"].toStringList();*/
+        
         int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
         for (int i = 0; i < contextLRIs.count(); i++) {
             QString title = contextTitles.at(i);
@@ -394,7 +395,7 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
 {
     if (selected.indexes().count() > 0) {
         //Only allow one item in one infobox to be selected at a time.
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
         for (int i = 0; i < totalInfoBoxes; i++) {
             InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
             if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
@@ -419,7 +420,7 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
         //Check to see if other infoboxes has something selected;
         //this handles deselection of infobox mediaItems
         bool selected = false;
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
         for (int i = 0; i < totalInfoBoxes; i++) {
             InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
             if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
@@ -443,7 +444,7 @@ const QList<MediaItem> InfoManager::selectedInfoBoxMediaItems()
 
 void InfoManager::clearInfoBoxSelection()
 {
-    int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+    int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
     for (int i = 0; i < totalInfoBoxes; i++) {
         InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
         if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
