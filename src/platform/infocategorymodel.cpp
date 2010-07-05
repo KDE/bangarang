@@ -45,14 +45,17 @@ InfoCategoryModel::~InfoCategoryModel()
 
 void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
-    m_mediaList = mediaList;
-    clear();
-    
-    if (m_mediaList.count() > 0) {
-        // Get fields shared by all media types
-        QString type = m_mediaList.at(0).type;
-        
+    if (mediaList.count() > 0) {
+        QString type = mediaList.at(0).type;
         if (type == "Category") {
+            if (mediaList.count() == 1 && m_mediaList.count() == 1) {
+                if (mediaList.at(0).url == m_mediaList.at(0).url) {
+                    return;
+                }
+            }
+            
+            m_mediaList = mediaList;
+            clear();
             QString subType = m_mediaList.at(0).fields["categoryType"].toString();
             setMode(categoryModeFromCategoryType(subType));
             addFieldToValuesModel(i18n("Image"), "artworkUrl");
@@ -63,6 +66,8 @@ void InfoCategoryModel::loadInfo(const QList<MediaItem> & mediaList)
             if (subType == "Audio Feed" || subType == "Video Feed") {
                 addFieldToValuesModel(i18n("Location"), "url");
             }
+            
+            downloadInfo();
         }
     }
 }
@@ -169,12 +174,12 @@ void InfoCategoryModel::addFieldToValuesModel(const QString &fieldTitle, const Q
     if (!hasMultiple) {
         //Set field value
         QVariant value = commonValue(field);
-        //if (!value.isNull()) {
+        if (!value.isNull() || m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
             fieldItem->setData(value, Qt::DisplayRole);
             fieldItem->setData(value, Qt::EditRole);
             fieldItem->setData(value, InfoCategoryModel::OriginalValueRole); //stores copy of original data
             addRow = true;
-        //}
+        }
     } else {
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
@@ -314,20 +319,19 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
     if (successful && requestKey == keyForCurrentData && !m_gotDownloadedData) {
         m_gotDownloadedData = true;
         if (results.count() > 0) {
+            bool editable;
+            if (m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
+                editable = true;
+            } else {
+                editable = false;
+            }
+            
             Soprano::BindingSet binding = results.at(0);
             
             clear();
             //Get Thumbnail
             KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
             if (thumbnailUrl.isValid()) {
-                //Create placeholder in model for thumbnail
-                QList<QStandardItem *> rowData;
-                QStandardItem *fieldItem = new QStandardItem();
-                fieldItem->setData("artworkUrl", InfoCategoryModel::FieldRole);
-                fieldItem->setData(QIcon(), Qt::DecorationRole);
-                rowData.append(fieldItem);
-                appendRow(rowData);
-                
                 getThumbnail(thumbnailUrl);
             }
 
@@ -339,12 +343,13 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
                 fieldItem->setData(title, Qt::DisplayRole);
                 fieldItem->setData(title, Qt::EditRole);
                 fieldItem->setData(title, InfoCategoryModel::OriginalValueRole);
+                fieldItem->setEditable(editable);
                 rowData.append(fieldItem);
                 appendRow(rowData);
             }
             
             //Get Description
-            QString description = binding.value("description").literal().toString();
+            QString description = binding.value("description").literal().toString().trimmed();
             if (!description.isEmpty()) {
                 QList<QStandardItem *> rowData;
                 QStandardItem *fieldItem = new QStandardItem();
@@ -352,6 +357,7 @@ void InfoCategoryModel::gotPersonInfo(bool successful, const QList<Soprano::Bind
                 fieldItem->setData(description, Qt::DisplayRole);
                 fieldItem->setData(description, Qt::EditRole);
                 fieldItem->setData(description, InfoCategoryModel::OriginalValueRole);
+                fieldItem->setEditable(editable);
                 rowData.append(fieldItem);
                 appendRow(rowData);
             }
@@ -394,17 +400,38 @@ void InfoCategoryModel::gotThumbnail(KIO::Job *job, const KUrl &from, const KUrl
     QString thumbnailFile = to.path();
     QPixmap thumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     if (!thumbnail.isNull())  {
+        bool editable;
+        if (m_mode == AudioFeedMode || m_mode == VideoFeedMode) {
+            editable = true;
+        } else {
+            editable = false;
+        }
+        
+        int rowOfArtwork = -1;
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *rowItem = item(row, 0);
             QString field = rowItem->data(InfoCategoryModel::FieldRole).toString();
             if (field == "artworkUrl") {
-                rowItem->setData(QIcon(thumbnail), Qt::DecorationRole);
-                if (m_keepThumbnail) {
-                    rowItem->setData(to.prettyUrl(), Qt::EditRole);
-                }
+                rowOfArtwork = row;
                 break;
             }
         }
+        
+        QStandardItem *rowItem;
+        if (rowOfArtwork == -1) {
+            rowItem = new QStandardItem();
+            rowOfArtwork = 0;
+        } else {
+            rowItem = item(rowOfArtwork, 0);
+        }
+        rowItem->setData("artworkUrl", InfoCategoryModel::FieldRole);
+        rowItem->setData(QIcon(thumbnail), Qt::DecorationRole);
+        if (m_keepThumbnail) {
+            rowItem->setData(to.prettyUrl(), Qt::EditRole);
+        }        
+        rowItem->setEditable(editable);
+        insertRow(rowOfArtwork, rowItem);
+        emit modelDataChanged();
     }
     if (!m_keepThumbnail) {
         QFile(to.path()).remove();

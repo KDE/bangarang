@@ -135,7 +135,7 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
                 textFont.setBold(true);
             }
             int textWidth = width - 2 * padding;
-            QTextOption textOption(hAlign | Qt::AlignVCenter);
+            QTextOption textOption(hAlign | Qt::AlignTop);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
             QRect textRect(left + padding, top, textWidth, height);
             p.setFont(textFont);
@@ -183,7 +183,7 @@ int InfoCategoryDelegate::rowHeight(int row) const
     } else {
         QFont textFont = KGlobalSettings::smallestReadableFont();
         int availableWidth = m_view->width() - 2*padding;
-        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * (padding + 1);
+        height = heightForWordWrap(textFont, availableWidth, index.data(Qt::DisplayRole).toString()) + 2 * padding;
     }
     return height;
 }
@@ -270,7 +270,7 @@ int InfoCategoryDelegate::heightForAllRows()
     for (int i = 0; i < m_view->model()->rowCount(); i++) {
         height = height + rowHeight(i);
     }
-    return height + 6;
+    return height + 2;
 }
 
 int InfoCategoryDelegate::heightForWordWrap(QFont font, int width, QString text) const
@@ -279,11 +279,12 @@ int InfoCategoryDelegate::heightForWordWrap(QFont font, int width, QString text)
     int fmWidth = fm.boundingRect(text).width();
     int fmHeight = fm.lineSpacing() + 1;
     int heightMultiplier = 1;
+    int availableWidth = width - 4;
     QString fitText = text;
-    while (fmWidth > width) {
+    while (fmWidth > availableWidth) {
         QStringList wordList = fitText.split(QRegExp("\\s+"));
         QString wordWrapText = fitText;
-        while (fmWidth > width) {
+        while (fmWidth > availableWidth) {
             wordWrapText.truncate(wordWrapText.lastIndexOf(wordList.takeLast()));
             fmWidth = fm.boundingRect(wordWrapText).width();
         }
