@@ -782,7 +782,7 @@ void MainWindow::sourceInfoRemoved(QString url)
 
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
-    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
+    if (selected.indexes().count() > 0) {
         int firstRow = selected.indexes().at(0).row();
         if (!m_application->browsingModel()->mediaItemAt(firstRow).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(true);
