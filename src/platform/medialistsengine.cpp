@@ -62,7 +62,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://recent?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("chronometer");
             contextTitles.clear();
-            contextTitles << i18n("Recently Played Artists") << i18n("Recently Played Albums") << i18n("Recently Played Genres");
+            contextTitles << i18n("Artists") << i18n("Albums") << i18n("Genres");
             contextLRIs.clear();
             contextLRIs << "semantics://recent?audio||limit=4||groupBy=artist";
             contextLRIs << "semantics://recent?audio||limit=4||groupBy=album";
@@ -76,7 +76,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://highest?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("rating");
             contextTitles.clear();
-            contextTitles << i18n("Highest Rated Artists") << i18n("Highest Rated Albums") << i18n("Highest Rated Genres");
+            contextTitles << i18n("Artists") << i18n("Albums") << i18n("Genres");
             contextLRIs.clear();
             contextLRIs << "semantics://highest?audio||limit=4||groupBy=artist";
             contextLRIs << "semantics://highest?audio||limit=4||groupBy=album";
@@ -90,7 +90,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://frequent?audio||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("office-chart-bar");
             contextTitles.clear();
-            contextTitles << i18n("Frequently Played Artists") << i18n("Frequently Played Albums") << i18n("Fequently Played Genres");
+            contextTitles << i18n("Artists") << i18n("Albums") << i18n("Genres");
             contextLRIs.clear();
             contextLRIs << "semantics://frequent?audio||limit=4||groupBy=artist";
             contextLRIs << "semantics://frequent?audio||limit=4||groupBy=album";
@@ -199,7 +199,7 @@ void MediaListsEngine::run()
             mediaItem.fields["categoryType"] = QString("Audio Tags");
             mediaItem.artwork = KIcon("view-pim-notes");
             contextTitles.clear();
-            contextTitles << i18n("Recently Played Tag") << i18n("Highest Rated Tag") << i18n("Frequently Played Tag");
+            contextTitles << i18n("Recently Played Tags") << i18n("Highest Rated Tags") << i18n("Frequently Played Tag");
             contextLRIs.clear();
             contextLRIs << "semantics://recent?audio||limit=4||groupBy=tag";
             contextLRIs << "semantics://highest?audio||limit=4||groupBy=tag";
@@ -280,7 +280,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://recent?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("chronometer");
             contextTitles.clear();
-            contextTitles << i18n("Recently Played Genres") << i18n("Recently Played Actors") << i18n("Recently Played Directors");
+            contextTitles << i18n("Genres") << i18n("Actors") << i18n("Directors");
             contextLRIs.clear();
             contextLRIs << "semantics://recent?video||limit=4||groupBy=genre";
             contextLRIs << "semantics://recent?video||limit=4||groupBy=actor";
@@ -294,7 +294,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://highest?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("rating");
             contextTitles.clear();
-            contextTitles << i18n("Highest Rated Genres") << i18n("Highest Rated Actors") << i18n("Highest Rated Directors");
+            contextTitles << i18n("Genres") << i18n("Actors") << i18n("Directors");
             contextLRIs.clear();
             contextLRIs << "semantics://highest?video||limit=4||groupBy=genre";
             contextLRIs << "semantics://highest?video||limit=4||groupBy=actor";
@@ -308,7 +308,7 @@ void MediaListsEngine::run()
             mediaItem.url = QString("semantics://frequent?video||limit=%1").arg(limit);
             mediaItem.artwork = KIcon("office-chart-bar");
             contextTitles.clear();
-            contextTitles << i18n("Frequently Played Genres") << i18n("Frequently Played Actors") << i18n("Frequently Played Directors");
+            contextTitles << i18n("Genres") << i18n("Actors") << i18n("Directors");
             contextLRIs.clear();
             contextLRIs << "semantics://frequent?video||limit=4||groupBy=genre";
             contextLRIs << "semantics://frequent?video||limit=4||groupBy=actor";
@@ -416,8 +416,14 @@ void MediaListsEngine::run()
             mediaItem.url = "tag://videotags";
             mediaItem.fields["categoryType"] = QString("Video Tags");
             mediaItem.artwork = KIcon("view-pim-notes");
-            mediaItem.fields["contextTitles"] = QStringList();
-            mediaItem.fields["contextLRIs"] = QStringList();
+            contextTitles.clear();
+            contextTitles << i18n("Recently Played Tags") << i18n("Highest Rated Tags") << i18n("Frequently Played Tag");
+            contextLRIs.clear();
+            contextLRIs << "semantics://recent?video||limit=4||groupBy=tag";
+            contextLRIs << "semantics://highest?video||limit=4||groupBy=tag";
+            contextLRIs << "semantics://frequent?video||limit=4||groupBy=tag";
+            mediaItem.fields["contextTitles"] = contextTitles;
+            mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
         }
         
