@@ -140,8 +140,8 @@ bool InfoManager::infoViewVisible()
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
 {
-    //Delay updating info for 500 milliseconds to prevent rapid-fire nepomuk queries.
-    m_selectionTimer->start(500);
+    //Delay updating info for 400 milliseconds to prevent rapid-fire nepomuk queries.
+    m_selectionTimer->start(400);
     Q_UNUSED(selected);
     Q_UNUSED(deselected);
 }
