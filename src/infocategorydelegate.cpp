@@ -80,7 +80,8 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     p.translate(-option.rect.topLeft());
     
     QString field = index.data(InfoCategoryModel::FieldRole).toString();
-    QStandardItemModel * model = (QStandardItemModel *)index.model();
+    InfoCategoryModel * model = (InfoCategoryModel *)index.model();
+    InfoCategoryModel::InfoCategoryMode mode = model->mode();
     bool isEditable = model->itemFromIndex(index)->isEditable();
     if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
         KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
@@ -118,12 +119,12 @@ void InfoCategoryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
             if (text.isEmpty()) {
                 foregroundColor.setAlphaF(0.7);
                 textFont.setItalic(true);
-                if (field == "description") {
+                if (field == "description" && 
+                    (mode == InfoCategoryModel::AudioFeedMode ||
+                     mode == InfoCategoryModel::VideoFeedMode)) {
                     text = i18n("No description");
                 } else if (field == "url") {
-                    text = i18n("No url");
-                } else {
-                    text = i18n("Empty");
+                    text = i18n("Enter url");
                 }
             }
             if (multipleValues) {
