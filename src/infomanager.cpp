@@ -89,7 +89,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
     connect(m_infoCategoryModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
-    connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
+    //connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     
 }
@@ -323,7 +323,7 @@ void InfoManager::loadSelectedInfo()
         QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();
         contextLRIs = contextCategory.fields["contextLRIs"].toStringList();*/
         
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
         for (int i = 0; i < contextLRIs.count(); i++) {
             QString title = contextTitles.at(i);
             QString lri = contextLRIs.at(i);
@@ -340,18 +340,19 @@ void InfoManager::loadSelectedInfo()
                 QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
                 infoBoxHolderLayout->insertWidget(totalInfoBoxes, infoBox);
                 connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
-                totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
             }
         }
         //Remove any unused infoboxes
         totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
         if (contextLRIs.count() < totalInfoBoxes) {
             for (int i = contextLRIs.count(); i < totalInfoBoxes; i++) {
-                int lastItemIndex = totalInfoBoxes - 1;
-                InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
-                disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
-                ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
-                delete unusedInfoBox;
+                int lastItemIndex = ui->infoBoxHolder->layout()->count() - 2;
+                if (lastItemIndex >= 0) {
+                    InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
+                    disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                    ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
+                    delete unusedInfoBox;
+                }
             }
         }
         
@@ -420,7 +421,7 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
         //Check to see if other infoboxes has something selected;
         //this handles deselection of infobox mediaItems
         bool selected = false;
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
         for (int i = 0; i < totalInfoBoxes; i++) {
             InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
             if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
@@ -444,7 +445,7 @@ const QList<MediaItem> InfoManager::selectedInfoBoxMediaItems()
 
 void InfoManager::clearInfoBoxSelection()
 {
-    int totalInfoBoxes = ui->infoBoxHolder->layout()->count()-1;
+    int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
     for (int i = 0; i < totalInfoBoxes; i++) {
         InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
         if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {
