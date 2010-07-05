@@ -86,6 +86,12 @@ void SemanticsListEngine::run()
                 groupByCategoryType = "Actor";
             } else if (groupByField == "director") {
                 groupByCategoryType = "Director";
+            } else if (groupByField == "tag") {
+                if (mediaType == "audio") {
+                    groupByCategoryType = "AudioTag";
+                } else if (mediaType == "video") {
+                    groupByCategoryType = "VideoTag";
+                }
             }
         }
         if (engineFilterList.filter("limit=").count() !=0) {
@@ -155,7 +161,7 @@ void SemanticsListEngine::run()
                 } 
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-
+                
                 //Build media list from results
                 while( it.next() ) {
                     MediaItem mediaItem;
