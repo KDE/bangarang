@@ -484,7 +484,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
         ui->Filter->setClickMessage(i18n("Search for video"));
     }
     if (selectedRow != -1) {
-        if ((m_application->browsingModel()->mediaListProperties().engine() != currentProperties.engine()) || (m_application->browsingModel()->mediaListProperties().engineArg() != currentProperties.engineArg())) {
+        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
             m_application->browsingModel()->clearMediaListData();
             m_application->browsingModel()->setMediaListProperties(currentProperties);
             m_application->browsingModel()->load();

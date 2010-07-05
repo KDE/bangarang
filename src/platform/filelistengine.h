@@ -52,6 +52,7 @@ class FileListEngine : public NepomukListEngine
         ~FileListEngine();
         void run();
         void activateAction();
+        void setFilterForSources(const QString& engineFilter);
         
     private:
         QFileInfoList crawlDir(const QDir &dir, const QStringList &mimeFilter);
@@ -61,8 +62,8 @@ class FileListEngine : public NepomukListEngine
         QString engineFilterFromUrlList(const KUrl::List &fileList);
         KUrl::List m_fileList;
         QString m_directoryPath;
-        bool m_getFilesAction;
-        bool m_getFolderAction;
+        bool m_indexFilesAction;
+        bool m_indexFolderAction;
         QList<MediaItem> m_mediaListToIndex;
 };
 #endif // FILELISTENGINE_H
