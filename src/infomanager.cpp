@@ -91,6 +91,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoCategoryModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     //connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+    connect(ui->collectionButton, SIGNAL(clicked()), this, SLOT(updateViewsLayout()));
     
 }
 
@@ -334,12 +335,15 @@ void InfoManager::loadSelectedInfo()
                     infoBox->setInfo(title, lri);
                 }
             } else {
-                InfoBox *infoBox = new InfoBox;
-                infoBox->setMainWindow(m_parent);
-                infoBox->setInfo(title, lri);
-                QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
-                infoBoxHolderLayout->insertWidget(totalInfoBoxes, infoBox);
-                connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                int insertIndex = ui->infoBoxHolder->layout()->count() - 1;
+                if (insertIndex >= 0) {
+                    InfoBox *infoBox = new InfoBox;
+                    infoBox->setMainWindow(m_parent);
+                    infoBox->setInfo(title, lri);
+                    QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
+                    infoBoxHolderLayout->insertWidget(insertIndex, infoBox);
+                    connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                }
             }
         }
         //Remove any unused infoboxes
