@@ -198,8 +198,14 @@ void MediaListsEngine::run()
             mediaItem.url = "tag://audiotags";
             mediaItem.fields["categoryType"] = QString("Audio Tags");
             mediaItem.artwork = KIcon("view-pim-notes");
-            mediaItem.fields["contextTitles"] = QStringList();
-            mediaItem.fields["contextLRIs"] = QStringList();
+            contextTitles.clear();
+            contextTitles << i18n("Recently Played Tag") << i18n("Highest Rated Tag") << i18n("Frequently Played Tag");
+            contextLRIs.clear();
+            contextLRIs << "semantics://recent?audio||limit=4||groupBy=tag";
+            contextLRIs << "semantics://highest?audio||limit=4||groupBy=tag";
+            contextLRIs << "semantics://frequent?audio||limit=4||groupBy=tag";
+            mediaItem.fields["contextTitles"] = contextTitles;
+            mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaList << mediaItem;
         }
         

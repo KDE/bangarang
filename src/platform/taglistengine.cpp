@@ -92,6 +92,14 @@ void TagListEngine::run()
                 mediaItem.fields["title"] = tag;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.artwork = KIcon("view-pim-notes");
+                QStringList contextTitles;
+                contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+                QStringList contextLRIs;
+                contextLRIs << QString("semantics://recent?%1||limit=4||tag=%2").arg(mediaType).arg(tag);
+                contextLRIs << QString("semantics://highest?%1||limit=4||tag=%2").arg(mediaType).arg(tag);
+                contextLRIs << QString("semantics://frequent?%1||limit=4||tag=%2").arg(mediaType).arg(tag);
+                mediaItem.fields["contextTitles"] = contextTitles;
+                mediaItem.fields["contextLRIs"] = contextLRIs;
                 mediaList.append(mediaItem);
             }
             m_mediaListProperties.name = i18n("Tags",engineArg);

@@ -97,6 +97,7 @@ void MediaItemModel::setMediaListProperties(const MediaListProperties &mediaList
     }
     m_mediaListProperties = mediaListProperties;
     emit propertiesChanged();
+    emit mediaListPropertiesChanged();
 }
 
 QList<MediaItem> MediaItemModel::mediaList()
