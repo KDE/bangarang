@@ -33,6 +33,7 @@ NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(pa
     }
     m_removeSourceInfo = false;
     m_updateSourceInfo = false;
+    m_mediaIndexer = 0;
 
 }
 
@@ -42,7 +43,10 @@ NepomukListEngine::~NepomukListEngine()
 
 void NepomukListEngine::run()
 {
-    m_mediaIndexer = new MediaIndexer(this);
+    if (m_mediaIndexer) {
+        delete m_mediaIndexer;
+    }
+    m_mediaIndexer = new MediaIndexer();
     if (m_removeSourceInfo) {
         connectIndexer();
         m_mediaIndexer->removeInfo(m_mediaItemsInfoToRemove);

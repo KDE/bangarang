@@ -167,7 +167,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Add Info for Selected MediaItems
     action = new KAction(KIcon("document-new"), i18n("Add selected info"), this);
-    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
+    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(addSelectedItemsInfo()));
     m_othersCollection->addAction("add_selected_info", action);
 
     //Remove Info for Selected MediaItems

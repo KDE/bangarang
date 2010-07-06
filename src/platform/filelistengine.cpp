@@ -208,7 +208,10 @@ void FileListEngine::run()
         }
         emit results(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
         if (m_nepomukInited && m_mediaListToIndex.count() > 0) {
-            m_mediaIndexer = new MediaIndexer(this);
+            if (m_mediaIndexer) {
+                delete m_mediaIndexer;
+            }
+            m_mediaIndexer = new MediaIndexer();
             connectIndexer();
             m_mediaIndexer->updateInfo(m_mediaListToIndex);
             m_mediaListToIndex.clear();
