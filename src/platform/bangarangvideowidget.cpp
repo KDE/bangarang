@@ -81,6 +81,13 @@ BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
 void
 BangarangVideoWidget::contextMenuEvent ( QContextMenuEvent * event ) 
 {
+  /*
+  * NOTE: at least at a bangarang 2.x release we should set a fixed menu. the nowPlayingContextMenu
+  * is currently rebuild at any call, because the available subtitles/audiotracks and so on could have changed.
+  * But as I spotted the MediaController provides signals that these have changed. So we need to implement
+  * slots for these in a class (don't know which, maybe just a separate one existing only for the DVD menu).
+  * Then the menu should be _changed_ not recreated as this function can keep the pointer to the contextMenu
+  */
   Q_UNUSED(event);
   if ( m_contextMenu != NULL )
     m_contextMenu->exec(QCursor::pos());

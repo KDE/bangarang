@@ -375,6 +375,11 @@ QMenu *ActionsManager::nowPlayingContextMenu()
 
 QMenu *ActionsManager::dvdMenu()
 {
+    /*
+    * NOTE: The following functionality should be put in a separate class that automatically updates
+    * the dvd menu via signal/slot system with a pointer to the media controller
+    */
+    #define PRE_DISABLE_SUBS 1
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     bool doAdd = false;
     //clear the menu, delete the old groups
@@ -398,8 +403,10 @@ QMenu *ActionsManager::dvdMenu()
     //getting information about the current source
     QList<AudioChannelDescription> audio = mctrl->availableAudioChannels();
     AudioChannelDescription curAudio = mctrl->currentAudioChannel();
+#if !defined( PRE_DISABLE_SUBS )
     QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
     SubtitleDescription curSubtitle = mctrl->currentSubtitle();
+#endif
     //create the menu
     if (audio.count() > 1) {
         QMenu *audioMenu = m_dvdMenu->addMenu(i18n("Audio Channels"));
@@ -413,6 +420,7 @@ QMenu *ActionsManager::dvdMenu()
         connect(m_audioChannelGroup, SIGNAL(selected(QAction *)), this, SLOT(audioChannelChanged(QAction *)));
         doAdd = true;
     }
+#if !defined( PRE_DISABLE_SUBS )
     if (subtitles.count() > 1) {
         QMenu *subtitleMenu = m_dvdMenu->addMenu(i18n("Subtitles"));
         foreach (SubtitleDescription cur, subtitles) {
@@ -422,9 +430,12 @@ QMenu *ActionsManager::dvdMenu()
                 ac->setChecked(true);
             subtitleMenu->addAction(ac);
         }
+        SubtitleDescription no;
+        subtitles.insert(0, no);
         connect(m_subtitleGroup, SIGNAL(selected(QAction *)), this, SLOT(subtitleChanged(QAction *)));
         doAdd = true;
     }
+#endif
     for (int n = 0; n < 3; n++) {
         int count, curIdx;
         QActionGroup *group;
@@ -979,6 +990,13 @@ void ActionsManager::titleChanged(QAction *action)
     QList<QAction *> actions = m_titleGroup->actions();
     int idx = actions.indexOf(action);
     if ( idx != mctrl->currentTitle() )
+    {
+        //as the user selected that title to be played we have to enable autoplayTitles and then reset
+        //it or phonon wouldn't start the playback
+        bool oldAutoplay = mctrl->autoplayTitles();
+        mctrl->setAutoplayTitles(true);
         mctrl->setCurrentTitle( idx );
+        mctrl->setAutoplayTitles(oldAutoplay);
+    }
 }
 
