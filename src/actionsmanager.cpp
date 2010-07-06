@@ -427,6 +427,7 @@ QMenu *ActionsManager::dvdMenu()
         QMenu *audioMenu = m_dvdMenu->addMenu(i18n("Audio Channels"));
         foreach (AudioChannelDescription cur, audio) {
             QAction *ac = m_audioChannelGroup->addAction(cur.name());
+            ac->setCheckable(true);
             ac->setToolTip(cur.description());
             if (curAudio == cur)
                 ac->setChecked(true);
@@ -440,6 +441,7 @@ QMenu *ActionsManager::dvdMenu()
         QMenu *subtitleMenu = m_dvdMenu->addMenu(i18n("Subtitles"));
         foreach (SubtitleDescription cur, subtitles) {
             QAction *ac = m_subtitleGroup->addAction(cur.name());
+            ac->setCheckable(true);
             ac->setToolTip(cur.description());
             if (curSubtitle == cur)
                 ac->setChecked(true);
@@ -480,6 +482,7 @@ QMenu *ActionsManager::dvdMenu()
             for (int i = 0; i < count; i++ ) {
                 QString str = QString("%1").arg( i + 1 );
                 QAction *ac = group->addAction( str );
+                ac->setCheckable(true);
                 if (curIdx == i)
                     ac->setChecked(true);
                 menu->addAction(ac);
@@ -1010,15 +1013,35 @@ void ActionsManager::titleChanged(QAction *action)
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_titleGroup->actions();
     int idx = actions.indexOf(action);
-    if ( idx != mctrl->currentTitle() )
-    {
-        //as the user selected that title to be played we have to enable autoplayTitles and then reset
-        //it or phonon wouldn't start the playback
-        bool oldAutoplay = mctrl->autoplayTitles();
-        mctrl->setAutoplayTitles(true);
-        mctrl->setCurrentTitle( idx );
-        mctrl->setAutoplayTitles(oldAutoplay);
+    if ( idx == mctrl->currentTitle() )
+        return;
+    //as the user selected that title to be played we have to enable autoplayTitles and then reset
+    //it or phonon wouldn't start the playback
+    //we also try to restore the selected subtitles and audio track. As the title can have different
+    //tracks and the SubtitleDescription and AudioDescription will differ from the old we will check
+    //if a subtitle/audiochannel with the same name and description exists and we will set them if so
+    bool oldAutoplay = mctrl->autoplayTitles();
+    AudioChannelDescription oldAudio = mctrl->currentAudioChannel();
+#if !defined( PRE_DISABLE_SUBS )
+    SubtitleDescription oldSub = mctrl->currentSubtitle();
+#endif
+    mctrl->setAutoplayTitles(true);
+
+    mctrl->setCurrentTitle( idx );
+    
+    mctrl->setAutoplayTitles(oldAutoplay);
+    QList<AudioChannelDescription> chans = mctrl->availableAudioChannels();
+    foreach(AudioChannelDescription cur, chans) {
+         if ( cur.name() == oldAudio.name() && cur.description() == oldAudio.description())
+             mctrl->setCurrentAudioChannel(cur);
     }
+#if !defined( PRE_DISABLE_SUBS )
+    QList<SubtitleDescription> subs = mctrl->availableSubtitles()
+    foreach(SubtitleDescription cur, subs) {
+         if ( cur.name() == oldSub.name() && cur.description() == oldSub.description())
+             mctrl->setCurrentSubtitle(cur);
+    }
+#endif
 }
 
 void ActionsManager::updateToggleFilterText()
@@ -1037,3 +1060,4 @@ void ActionsManager::updateToggleFilterText()
     }
     action("toggle_filter")->setText(txt);
 }
+#undef PRE_DISABLE_SUBS
