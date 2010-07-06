@@ -36,7 +36,7 @@ class MediaIndexer : public QObject
         /**
          * Constructor
          */
-        MediaIndexer(QObject *parent);
+        MediaIndexer(QObject *parent = 0);
         
         /**
          *Destructor
