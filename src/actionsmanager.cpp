@@ -390,31 +390,38 @@ QMenu *ActionsManager::nowPlayingContextMenu()
 
 QMenu *ActionsManager::dvdMenu()
 {
+    /*
+    * NOTE: The following functionality should be put in a separate class that automatically updates
+    * the dvd menu via signal/slot system with a pointer to the media controller
+    */
+    #define PRE_DISABLE_SUBS 1
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     bool doAdd = false;
     //clear the menu, delete the old groups
     m_dvdMenu->clear();
-    if ( m_audioChannelGroup == NULL )
+    if ( m_audioChannelGroup != NULL )
         delete m_audioChannelGroup;
     m_audioChannelGroup = new QActionGroup(this);
-    if ( m_subtitleGroup == NULL )
+    if ( m_subtitleGroup != NULL )
         delete m_subtitleGroup;
     m_subtitleGroup = new QActionGroup(this);
-    if ( m_angleGroup == NULL )
+    if ( m_angleGroup != NULL )
         delete m_angleGroup;
     m_angleGroup = new QActionGroup(this);
-    if ( m_titleGroup == NULL )
+    if ( m_titleGroup != NULL )
         delete m_titleGroup;
     m_titleGroup = new QActionGroup(this);
-    if ( m_chapterGroup == NULL )
+    if ( m_chapterGroup != NULL )
         delete m_chapterGroup;
     m_chapterGroup = new QActionGroup(this);
     
     //getting information about the current source
     QList<AudioChannelDescription> audio = mctrl->availableAudioChannels();
     AudioChannelDescription curAudio = mctrl->currentAudioChannel();
+#if !defined( PRE_DISABLE_SUBS )
     QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
     SubtitleDescription curSubtitle = mctrl->currentSubtitle();
+#endif
     //create the menu
     if (audio.count() > 1) {
         QMenu *audioMenu = m_dvdMenu->addMenu(i18n("Audio Channels"));
@@ -425,9 +432,10 @@ QMenu *ActionsManager::dvdMenu()
                 ac->setChecked(true);
             audioMenu->addAction(ac);
         }
-        connect(m_audioChannelGroup, SIGNAL(triggered()), this, SLOT(audioChannelChanged()));
+        connect(m_audioChannelGroup, SIGNAL(selected(QAction *)), this, SLOT(audioChannelChanged(QAction *)));
         doAdd = true;
     }
+#if !defined( PRE_DISABLE_SUBS )
     if (subtitles.count() > 1) {
         QMenu *subtitleMenu = m_dvdMenu->addMenu(i18n("Subtitles"));
         foreach (SubtitleDescription cur, subtitles) {
@@ -437,9 +445,12 @@ QMenu *ActionsManager::dvdMenu()
                 ac->setChecked(true);
             subtitleMenu->addAction(ac);
         }
-        connect(m_subtitleGroup, SIGNAL(triggered()), this, SLOT(subtitleChanged()));
+        SubtitleDescription no;
+        subtitles.insert(0, no);
+        connect(m_subtitleGroup, SIGNAL(selected(QAction *)), this, SLOT(subtitleChanged(QAction *)));
         doAdd = true;
     }
+#endif
     for (int n = 0; n < 3; n++) {
         int count, curIdx;
         QActionGroup *group;
@@ -450,19 +461,19 @@ QMenu *ActionsManager::dvdMenu()
             curIdx = mctrl->currentAngle();
             group = m_angleGroup;
             title = i18n("Angles");
-            slot = SLOT(angleChanged());
+            slot = SLOT(angleChanged(QAction *));
         } else if (n == 1 ) {
             count = mctrl->availableChapters();
             curIdx = mctrl->currentChapter();
             group = m_chapterGroup;
             title = i18n("Chapters");
-            slot = SLOT(chapterChanged());
+            slot = SLOT(chapterChanged(QAction *));
         } else {
             count = mctrl->availableTitles();
             curIdx = mctrl->currentTitle();
             group = m_titleGroup;
             title = i18n("Titles");
-            slot = SLOT(titleChanged());
+            slot = SLOT(titleChanged(QAction *));
         }
         if (count > 1) {
             QMenu *menu = m_dvdMenu->addMenu(title);
@@ -473,7 +484,7 @@ QMenu *ActionsManager::dvdMenu()
                     ac->setChecked(true);
                 menu->addAction(ac);
             }
-            connect(group, SIGNAL(triggered()), this, slot);
+            connect(group, SIGNAL(selected(QAction *)), this, slot);
             doAdd = true;
         }        
     }
@@ -954,53 +965,60 @@ void ActionsManager::updateOntologies()
     }
 }
 
-void ActionsManager::audioChannelChanged()
+void ActionsManager::audioChannelChanged(QAction* action)
 {
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_audioChannelGroup->actions();
     QList<AudioChannelDescription> channels = mctrl->availableAudioChannels();
-    int idx = actions.indexOf(m_audioChannelGroup->checkedAction());
+    int idx = actions.indexOf(action);
     AudioChannelDescription selected = channels.at(idx);
     if ( selected != mctrl->currentAudioChannel() )
         mctrl->setCurrentAudioChannel( selected );
 }
 
-void ActionsManager::subtitleChanged()
+void ActionsManager::subtitleChanged(QAction *action)
 {
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_subtitleGroup->actions();
     QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
-    int idx = actions.indexOf(m_subtitleGroup->checkedAction());
+    int idx = actions.indexOf(action);
     SubtitleDescription selected = subtitles.at(idx);
     if ( selected != mctrl->currentSubtitle() )
         mctrl->setCurrentSubtitle( selected );
 }
 
-void ActionsManager::angleChanged()
+void ActionsManager::angleChanged(QAction *action)
 {
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_angleGroup->actions();
-    int idx = actions.indexOf(m_angleGroup->checkedAction());
+    int idx = actions.indexOf(action);
     if ( idx != mctrl->currentAngle() )
         mctrl->setCurrentAngle( idx );
 }
 
-void ActionsManager::chapterChanged()
+void ActionsManager::chapterChanged(QAction *action)
 {
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_chapterGroup->actions();
-    int idx = actions.indexOf(m_chapterGroup->checkedAction());
+    int idx = actions.indexOf(action);
     if ( idx != mctrl->currentChapter() )
         mctrl->setCurrentChapter( idx );
 }
 
-void ActionsManager::titleChanged()
+void ActionsManager::titleChanged(QAction *action)
 {
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     QList<QAction *> actions = m_titleGroup->actions();
-    int idx = actions.indexOf(m_titleGroup->checkedAction());
+    int idx = actions.indexOf(action);
     if ( idx != mctrl->currentTitle() )
+    {
+        //as the user selected that title to be played we have to enable autoplayTitles and then reset
+        //it or phonon wouldn't start the playback
+        bool oldAutoplay = mctrl->autoplayTitles();
+        mctrl->setAutoplayTitles(true);
         mctrl->setCurrentTitle( idx );
+        mctrl->setAutoplayTitles(oldAutoplay);
+    }
 }
 
 void ActionsManager::updateToggleFilterText()
