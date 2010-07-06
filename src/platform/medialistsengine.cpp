@@ -213,6 +213,8 @@ void MediaListsEngine::run()
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://audio?browseFolder";
         mediaItem.artwork = KIcon("document-open-folder");
+        mediaItem.fields["contextTitles"] = QStringList();
+        mediaItem.fields["contextLRIs"] = QStringList();
         mediaList << mediaItem;
         
         //Show Audio CD if present
@@ -431,6 +433,8 @@ void MediaListsEngine::run()
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://video?browseFolder";
         mediaItem.artwork = KIcon("document-open-folder");
+        mediaItem.fields["contextTitles"] = QStringList();
+        mediaItem.fields["contextLRIs"] = QStringList();
         mediaList << mediaItem;
         
         //Show DVD if present
