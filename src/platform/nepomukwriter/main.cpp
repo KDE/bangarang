@@ -466,31 +466,33 @@ void writeToNepomuk(QTextStream &cout, QHash <QString, QVariant> fields)
         }
         if (fields.contains("dataSourceUrl")) {
             QString dataSourceUrl = fields["dataSourceUrl"].toString();
+            QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource");
             if (!dataSourceUrl.isEmpty()) {
                 Nepomuk::Resource dataSourceRes(dataSourceUrl);
                 cout << "Writing datasourceurl...\n";
                 cout.flush();
                 if (dataSourceRes.exists()) {
-                    res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource"), Nepomuk::Variant(dataSourceRes));
+                    res.setProperty(property, Nepomuk::Variant(dataSourceRes));
                 }
             } else {
-                if (res.hasProperty(mediaVocabulary.artwork())) {
-                    res.removeProperty(mediaVocabulary.artwork());
+                if (res.hasProperty(property)) {
+                    res.removeProperty(property);
                 }
             }
         }
         if (fields.contains("isLogicalPartOfUrl")) {
             QString isLogicalPartOfUrl = fields["isLogicalPartOfUrl"].toString();
+            QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf");
             if (!isLogicalPartOfUrl.isEmpty()) {
                 Nepomuk::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
                 cout << "Writing isLogicalPartOfUrl...\n";
                 cout.flush();
                 if (isLogicalPartOfRes.exists()) {
-                    res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf"), Nepomuk::Variant(isLogicalPartOfRes));
+                    res.setProperty(property, Nepomuk::Variant(isLogicalPartOfRes));
                 }
             } else {
-                if (res.hasProperty(mediaVocabulary.artwork())) {
-                    res.removeProperty(mediaVocabulary.artwork());
+                if (res.hasProperty(property)) {
+                    res.removeProperty(property);
                 }
             }
         }
