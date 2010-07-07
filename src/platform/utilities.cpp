@@ -877,7 +877,10 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.fields["tags"] = tags.join(";");
     mediaItem.fields["playCount"] = it.binding(MediaVocabulary::playCountBinding()).literal().toInt();
     if (it.binding(MediaVocabulary::lastPlayedBinding()).isValid()) {
-        mediaItem.fields["lastPlayed"] = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+        QDateTime lastPlayed = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+        if (lastPlayed.isValid()) {
+            mediaItem.fields["lastPlayed"] = lastPlayed;
+        }
     }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
