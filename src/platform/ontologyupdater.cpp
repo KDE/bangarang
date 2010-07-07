@@ -173,7 +173,7 @@ void OntologyUpdater::start()
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.lastPlayed(), value);
         }
-        emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>%1 audio items done...</i>", i));
+        emit infoMessage(i18n("<b>Updating audio types and properties</b><br>%1 audio items done...", i));
         QApplication::processEvents();
     }
 
@@ -199,7 +199,7 @@ void OntologyUpdater::start()
 
     
     it = m_mainModel->executeQuery(queryStr, Soprano::Query::QueryLanguageSparql);
-    emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>0 items updated...</i>"));
+    emit infoMessage(i18n("<b>Updating audio types and properties</b><br>0 items updated..."));
     QApplication::processEvents();
     i = 0;
     while( it.next() && !m_stopUpdate) {
