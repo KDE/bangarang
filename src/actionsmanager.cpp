@@ -388,6 +388,35 @@ QMenu *ActionsManager::nowPlayingContextMenu()
     return m_nowPlayingContextMenu;
 }
 
+KMenu *ActionsManager::nowPlayingMenu()
+{
+    KHelpMenu * helpMenu = new KHelpMenu(m_parent, m_application->aboutData(), false);
+    helpMenu->menu();
+    
+    m_nowPlayingMenu = new KMenu(m_parent);
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
+            m_nowPlayingMenu->addAction(action("show_now_playing_info"));
+        }
+    }
+    m_nowPlayingMenu->addAction(action("show_video_settings"));
+    m_nowPlayingMenu->addAction(action("show_audio_settings"));
+    if (!m_parent->isFullScreen()) {
+        m_nowPlayingMenu->addAction(action("toggle_controls"));
+    }
+    m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
+    if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
+    {
+        QMenu *DVDmenu = dvdMenu();
+        if ( DVDmenu != NULL )
+            m_nowPlayingMenu->addMenu(DVDmenu);
+    }
+    m_nowPlayingMenu->addSeparator();
+    m_nowPlayingMenu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
+    return m_nowPlayingMenu;
+}
+
 QMenu *ActionsManager::dvdMenu()
 {
     /*
