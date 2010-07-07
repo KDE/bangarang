@@ -318,7 +318,7 @@ QUrl MediaVocabulary::lastPlayed()
     QUrl returnUrl = QUrl();
     //TODO:Waiting for Nepmouk ontology for useCount and lastUsed
     //if (m_vocabulary == MediaVocabulary::xesam) {
-        returnUrl = Soprano::Vocabulary::Xesam::lastUsed();
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2010/01/25/nuao#lastUsage");
     //}
     
     return returnUrl;
@@ -329,7 +329,7 @@ QUrl MediaVocabulary::playCount()
     QUrl returnUrl = QUrl();
     //TODO:Waiting for Nepmouk ontology for useCount and lastUsed
     //if (m_vocabulary == MediaVocabulary::xesam) {
-        returnUrl = Soprano::Vocabulary::Xesam::useCount();
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2010/01/25/nuao#usageCount");
     //}
     
     return returnUrl;

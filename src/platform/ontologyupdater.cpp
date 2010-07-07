@@ -74,7 +74,16 @@ void OntologyUpdater::start()
                        "UNION "
                        "{?r rdf:type <http://www.semanticdesktop.org/ontologies/nmm#DigitalRadio>} "
                        "UNION "
-                       "{?r rdf:type <http://www.semanticdesktop.org/ontologies/nmm#MusicAlbum>} }");
+                       "{?r rdf:type <http://www.semanticdesktop.org/ontologies/nmm#MusicAlbum>} "
+                       "UNION "
+                       "{?r rdf:type <%1>} "
+                       "UNION "
+                       "{?r rdf:type <%2>} "
+                       "UNION "
+                       "{?r rdf:type <%3>} }")
+                       .arg(mediaVocabulary.typeAudio().toString())
+                       .arg(mediaVocabulary.typeAudioMusic().toString())
+                       .arg(mediaVocabulary.typeAudioStream().toString());
     
     Soprano::QueryResultIterator it = m_mainModel->executeQuery(queryStr, Soprano::Query::QueryLanguageSparql);
     emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>0 items updated...</i>"));
@@ -152,6 +161,18 @@ void OntologyUpdater::start()
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.releaseDate(), value);
         }
+        property = Soprano::Vocabulary::Xesam::useCount();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            resource.removeProperty(property);
+            resource.setProperty(mediaVocabulary.playCount(), value);
+        }
+        property = Soprano::Vocabulary::Xesam::lastUsed();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            resource.removeProperty(property);
+            resource.setProperty(mediaVocabulary.lastPlayed(), value);
+        }
         emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>%1 audio items done...</i>", i));
         QApplication::processEvents();
     }
@@ -165,7 +186,17 @@ void OntologyUpdater::start()
                        "UNION "
                        "{?r rdf:type <http://www.semanticdesktop.org/ontologies/nmm#TVShow>} "
                        "UNION "
-                       "{?r rdf:type <http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#TVSeries>} } ");
+                       "{?r rdf:type <http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#TVSeries>} "
+                       "UNION "
+                       "{?r rdf:type <%1>} "
+                       "UNION "
+                       "{?r rdf:type <%2>} "
+                       "UNION "
+                       "{?r rdf:type <%3>} }")
+                       .arg(mediaVocabulary.typeVideo().toString())
+                       .arg(mediaVocabulary.typeVideoMovie().toString())
+                       .arg(mediaVocabulary.typeVideoTVShow().toString());
+
     
     it = m_mainModel->executeQuery(queryStr, Soprano::Query::QueryLanguageSparql);
     emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>0 items updated...</i>"));
@@ -309,6 +340,18 @@ void OntologyUpdater::start()
             Nepomuk::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.releaseDate(), value);
+        }
+        property = Soprano::Vocabulary::Xesam::useCount();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            resource.removeProperty(property);
+            resource.setProperty(mediaVocabulary.playCount(), value);
+        }
+        property = Soprano::Vocabulary::Xesam::lastUsed();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            resource.removeProperty(property);
+            resource.setProperty(mediaVocabulary.lastPlayed(), value);
         }
         
         emit infoMessage(i18n("<b>Updating video types and properties</b><br>%1 video items done...", i));
