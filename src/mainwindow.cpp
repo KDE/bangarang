@@ -657,7 +657,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         ui->volumeSlider->setAudioOutput(m_audioOutput);
         ui->volumeIcon->setChecked(false);
     }
-    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
+//     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
     Q_UNUSED(oldstate);
 }
 
@@ -1020,7 +1020,7 @@ void MainWindow::setupActions()
     m_videoSettings->setHideAction(m_application->actionsManager()->action("show_video_settings"));
     ui->mediaPrevious->setDefaultAction(m_application->actionsManager()->action("play_previous"));
     ui->mediaNext->setDefaultAction(m_application->actionsManager()->action("play_next"));
-    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
+//     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
 }
 
 void MainWindow::showApplicationBanner()
