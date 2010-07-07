@@ -537,25 +537,9 @@ void MainWindow::on_showQueue_clicked()
 
 void MainWindow::on_showMenu_clicked()
 {
-    m_helpMenu = new KHelpMenu(this, m_application->aboutData(), false);
-    m_helpMenu->menu();
-    m_menu = new KMenu(this);
-    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
-        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
-            m_menu->addAction(m_application->actionsManager()->action("show_now_playing_info"));
-        }
-    }
-    m_menu->addAction(m_application->actionsManager()->action("show_video_settings"));
-    m_menu->addAction(m_application->actionsManager()->action("show_audio_settings"));
-    if (!isFullScreen()) {
-        m_menu->addAction(m_application->actionsManager()->action("toggle_controls"));
-        m_menu->addSeparator();
-    }
-    m_menu->addAction(m_application->actionsManager()->action("show_shortcuts_editor"));
-    m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
+    KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
-    m_menu->popup(menuLocation);
+    menu->popup(menuLocation);
 }
 
 void MainWindow::on_showMediaViewMenu_clicked()

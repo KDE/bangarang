@@ -131,8 +131,6 @@ private:
     bool m_stopPressed;
     QList<QString> m_devicesAdded;
     int m_loadingProgress;
-    KHelpMenu *m_helpMenu;
-    KMenu *m_menu;
     bool m_nepomukInited;
     bool playWhenPlaylistChanges;
     bool m_showRemainingTime;
