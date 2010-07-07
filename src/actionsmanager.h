@@ -130,10 +130,10 @@ class ActionsManager : public QObject
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
         void updateOntologies();
-        void audioChannelChanged();
-        void subtitleChanged();
-        void angleChanged();
-        void titleChanged();
-        void chapterChanged();
+        void audioChannelChanged(QAction *action);
+        void subtitleChanged(QAction *action);
+        void angleChanged(QAction *action);
+        void titleChanged(QAction *action);
+        void chapterChanged(QAction *action);
 };
 #endif //ACTIONSMANAGER_H
