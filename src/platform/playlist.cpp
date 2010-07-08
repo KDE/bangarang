@@ -163,7 +163,8 @@ void Playlist::playItemAt(int row, Model model)
             m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
     } else {
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
+//         m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding((nextMediaItem.url.toUtf8()))));
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromEncoded((nextMediaItem.url.toUtf8()))));
     }
     m_mediaObject->play();
     m_state = Playlist::Playing;
