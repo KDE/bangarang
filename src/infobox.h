@@ -40,6 +40,7 @@ class InfoBox : public QWidget
         QLabel * title();
         MediaView * mediaView();
         void setInfo(const QString &title, const QString & lri);
+        void setTitle(const QString &title);
         
     private:
         MediaView * m_mediaView;
