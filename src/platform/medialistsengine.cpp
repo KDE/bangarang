@@ -222,6 +222,8 @@ void MediaListsEngine::run()
         foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
         {
             const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+            if (disc == NULL)
+                continue;
             if (disc->availableContent() & Solid::OpticalDisc::Audio) {
                 audioCDFound = true;
             }
@@ -442,6 +444,8 @@ void MediaListsEngine::run()
         foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
         {
             const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+            if (disc == NULL)
+                continue;
             if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
                 DVDFound = true;
             }
