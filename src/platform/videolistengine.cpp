@@ -716,6 +716,7 @@ void VideoListEngine::run()
                 if (mediaItem.fields["videoType"].toString() == "Movie") {
                     QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                     if (!artwork.isNull()) {
+                        mediaItem.hasCustomArtwork = true;
                         emit updateArtwork(artwork, mediaItem);
                     }
                 }
