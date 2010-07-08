@@ -80,8 +80,11 @@ public:
                                          *or not the media list represented by the 
                                          *MediaItem is a saved list.*/
     
-    ExistsRole = Qt::UserRole + 14 }; /** QStandardItem role containing whether or
+    ExistsRole = Qt::UserRole + 14,  /** QStandardItem role containing whether or
                                         *the file the MediaItem.url refers to exists.*/
+    
+    HasCustomArtworkRole = Qt::UserRole + 15}; /** QStandardItem role containing whether
+                                                 * not artwork is custom(true) or default(false).*/
                                         
     QString url; /** Url of MediaItem. The may be a standard url representing a 
                    * location of a media resource or a List Resource Identifier (lri).*/
@@ -123,13 +126,17 @@ public:
     bool exists; /** If the MediaItem.url point to a playable media resource, this
                    * bool is true if the playable media resource exists, otherwise is false.
                    * Note that this is only useful for file resources.*/
+    
+    bool hasCustomArtwork; /** If the artwork property is a default icon this bool is false,
+                            * otherwise if artwork property has custom artwork this bool is
+                            * true. */
                    
     QHash <QString, QVariant> fields;  /** Collection of all key, value pairs containing
                                          * the metadata fields associated with this MediaItem.
                                          *  key - A string containing the field name.
                                          *  value - A variant conatining the value of the field.*/
     
-    MediaItem() : nowPlaying(false), isSavedList(false), exists(true) {}
+    MediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
 };
 
 Q_DECLARE_METATYPE(MediaItem);

@@ -467,6 +467,7 @@ void MediaItemModel::updateArtwork(QImage artworkImage, MediaItem mediaItem)
     if (row != -1) {
         MediaItem updatedMediaItem = mediaItemAt(row);
         updatedMediaItem.artwork = QIcon(QPixmap::fromImage(artworkImage));
+        updatedMediaItem.hasCustomArtwork = mediaItem.hasCustomArtwork;
         replaceMediaItemAt(row, updatedMediaItem);
     }     
 }
@@ -643,6 +644,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
+    titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
     QString tooltip;
     if (!mediaItem.fields["description"].toString().isEmpty()) {
         tooltip.append(mediaItem.fields["description"].toString());
