@@ -110,6 +110,11 @@ void InfoBox::setInfo(const QString &title, const QString & lri)
     model->loadLRI(lri);
 }
 
+void InfoBox::setTitle(const QString &title)
+{
+    m_title->setText(title);
+}
+
 void InfoBox::updateTitleColors()
 {
     m_titleBar->setPalette(QApplication::palette());

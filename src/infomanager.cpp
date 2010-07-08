@@ -333,6 +333,8 @@ void InfoManager::loadSelectedInfo()
                 MediaItemModel * infoBoxModel = (MediaItemModel *)infoBox->mediaView()->sourceModel();
                 if (infoBoxModel->mediaListProperties().lri != lri) {
                     infoBox->setInfo(title, lri);
+                } else {
+                    infoBox->setTitle(title);
                 }
             } else {
                 int insertIndex = ui->infoBoxHolder->layout()->count() - 1;
