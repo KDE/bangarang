@@ -504,6 +504,29 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     }
     if (newstate == Phonon::PlayingState || newstate == Phonon::PausedState) {
         m_hadVideo = m_mediaObject->hasVideo();
+        
+        /*  The commented code below will be used to test phonon external subtitle support
+         *  when phonon is updated to provide this function.
+        QString directoryPath = KUrl(m_nowPlaying->mediaItemAt(0).url).directory();
+        kDebug() << directoryPath;
+        QDir dir(directoryPath);
+        dir.setNameFilters(QStringList("*.srt"));
+        QStringList dirList = dir.entryList(QDir::Files, QDir::Name);;
+        if (dirList.count() > 0) {
+            kDebug() << dirList.at(0);
+            QHash<QByteArray, QVariant> properties;
+            properties.insert("type", "file");
+            properties.insert("name", directoryPath + QString("/") +dirList.at(0));
+            int newSubtitleId = m_mediaController->availableSubtitles().count();
+            Phonon::SubtitleDescription newSubtitle(newSubtitleId, properties);
+            m_mediaController->setCurrentSubtitle(newSubtitle);
+        }    
+        
+        QList<Phonon::SubtitleDescription> subtitles = m_mediaController->availableSubtitles();
+        foreach (Phonon::SubtitleDescription cur, subtitles) {
+            kDebug() << cur.name();
+        }*/
+        
     }
     
     
