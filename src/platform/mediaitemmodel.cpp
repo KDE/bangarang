@@ -878,6 +878,7 @@ bool MediaItemModel::containsPlayable()
         return false;
     MediaItem item = mediaItemAt(0);
     return ( Utilities::isMedia(item.type) ||
+             Utilities::isCategory(item.type) ||
              Utilities::isFeed(item.fields["categoryType"].toString()) );
 }
 

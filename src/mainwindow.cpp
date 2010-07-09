@@ -1046,6 +1046,8 @@ void MainWindow::updateCachedDevicesList()
     m_devicesAdded.clear();
     foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString())) {
         const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+        if (disc == NULL)
+            continue;
         if (disc->availableContent() & Solid::OpticalDisc::Audio) {
             m_devicesAdded << QString("CD:%1").arg(device.udi());
         }
@@ -1091,14 +1093,16 @@ void MainWindow::deviceAdded(const QString &udi)
     Solid::Device deviceAdded(udi);
     if (deviceAdded.isDeviceInterface(Solid::DeviceInterface::OpticalDisc)) {
         const Solid::OpticalDisc *disc = deviceAdded.as<const Solid::OpticalDisc> ();
-        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-            m_audioListsModel->clearMediaListData();
-            m_audioListsModel->load();
-            updateCachedDevicesList();
-        } else if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-            m_videoListsModel->clearMediaListData();
-            m_videoListsModel->load();
-            updateCachedDevicesList();
+        if ( disc != NULL ) {
+            if (disc->availableContent() & Solid::OpticalDisc::Audio) {
+                m_audioListsModel->clearMediaListData();
+                m_audioListsModel->load();
+                updateCachedDevicesList();
+            } else if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
+                m_videoListsModel->clearMediaListData();
+                m_videoListsModel->load();
+                updateCachedDevicesList();
+            }
         }
     }
 }
