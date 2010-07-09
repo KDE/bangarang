@@ -423,7 +423,6 @@ QMenu *ActionsManager::dvdMenu()
     * NOTE: The following functionality should be put in a separate class that automatically updates
     * the dvd menu via signal/slot system with a pointer to the media controller
     */
-    #define PRE_DISABLE_SUBS 1
     Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
     bool doAdd = false;
     //clear the menu, delete the old groups
@@ -447,10 +446,8 @@ QMenu *ActionsManager::dvdMenu()
     //getting information about the current source
     QList<AudioChannelDescription> audio = mctrl->availableAudioChannels();
     AudioChannelDescription curAudio = mctrl->currentAudioChannel();
-#if !defined( PRE_DISABLE_SUBS )
     QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
     SubtitleDescription curSubtitle = mctrl->currentSubtitle();
-#endif
     //create the menu
     if (audio.count() > 1) {
         QMenu *audioMenu = m_dvdMenu->addMenu(i18n("Audio Channels"));
@@ -465,7 +462,6 @@ QMenu *ActionsManager::dvdMenu()
         connect(m_audioChannelGroup, SIGNAL(selected(QAction *)), this, SLOT(audioChannelChanged(QAction *)));
         doAdd = true;
     }
-#if !defined( PRE_DISABLE_SUBS )
     if (subtitles.count() > 1) {
         QMenu *subtitleMenu = m_dvdMenu->addMenu(i18n("Subtitles"));
         foreach (SubtitleDescription cur, subtitles) {
@@ -481,7 +477,6 @@ QMenu *ActionsManager::dvdMenu()
         connect(m_subtitleGroup, SIGNAL(selected(QAction *)), this, SLOT(subtitleChanged(QAction *)));
         doAdd = true;
     }
-#endif
     for (int n = 0; n < 3; n++) {
         int count, curIdx;
         QActionGroup *group;
@@ -1038,9 +1033,7 @@ void ActionsManager::titleChanged(QAction *action)
     //if a subtitle/audiochannel with the same name and description exists and we will set them if so
     bool oldAutoplay = mctrl->autoplayTitles();
     AudioChannelDescription oldAudio = mctrl->currentAudioChannel();
-#if !defined( PRE_DISABLE_SUBS )
     SubtitleDescription oldSub = mctrl->currentSubtitle();
-#endif
     mctrl->setAutoplayTitles(true);
 
     mctrl->setCurrentTitle( idx );
@@ -1051,13 +1044,11 @@ void ActionsManager::titleChanged(QAction *action)
          if ( cur.name() == oldAudio.name() && cur.description() == oldAudio.description())
              mctrl->setCurrentAudioChannel(cur);
     }
-#if !defined( PRE_DISABLE_SUBS )
-    QList<SubtitleDescription> subs = mctrl->availableSubtitles()
+    QList<SubtitleDescription> subs = mctrl->availableSubtitles();
     foreach(SubtitleDescription cur, subs) {
          if ( cur.name() == oldSub.name() && cur.description() == oldSub.description())
              mctrl->setCurrentSubtitle(cur);
     }
-#endif
 }
 
 void ActionsManager::updateToggleFilterText()
@@ -1076,4 +1067,3 @@ void ActionsManager::updateToggleFilterText()
     }
     action("toggle_filter")->setText(txt);
 }
-#undef PRE_DISABLE_SUBS

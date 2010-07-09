@@ -235,9 +235,23 @@ void InfoManager::addSelectedItemsInfo()
 //----------------------
 void InfoManager::loadSelectedInfo()
 {
+
+    bool templateIsSelected = false;
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    if (selectedRows.count() == 1) {
+        MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(selectedRows.at(0).row());
+        templateIsSelected = mediaItem.fields["isTemplate"].toBool();
+    }
+    
     //Make sure info view is visble before doing anything
-    if (!m_infoViewVisible) {
+    if (!m_infoViewVisible && !templateIsSelected) {
         return;
+    }
+    
+    //Automatically show info view if template is selected
+    if (templateIsSelected) {
+        ui->semanticsHolder->setVisible(true);
+        m_infoViewVisible = true;
     }
     
     m_selectedInfoBoxMediaItems.clear();
@@ -256,7 +270,6 @@ void InfoManager::loadSelectedInfo()
     //Determine Information context
     bool selected = true;
     QList<MediaItem> context;
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
