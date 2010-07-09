@@ -146,6 +146,7 @@ class ListEngine : public QThread
     Q_SIGNALS:
         void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
         void updateMediaItems(QList<MediaItem> mediaList);
+        void updateMediaItem(MediaItem mediaItem);
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         void download(const KUrl &from, const KUrl &to);

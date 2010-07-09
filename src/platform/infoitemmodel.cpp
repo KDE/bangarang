@@ -358,7 +358,7 @@ void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
                 if (!artworkUrl.isEmpty()) {
                     Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
                 }
-                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit());
+                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
                 if (!file.isNull()) {
                     QString title = mediaItem.title;
                     if (!title.isEmpty()) {

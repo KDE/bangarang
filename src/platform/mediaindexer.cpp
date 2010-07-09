@@ -239,6 +239,7 @@ void MediaIndexer::processWriterOutput()
                 qint64 lineLength = m_writers.at(i)->readLine(buffer, sizeof(buffer));
                 if (lineLength != -1) {
                     QString line = QUrl::fromPercentEncoding(buffer);
+                    //kDebug() << line;
                     if (line.startsWith("BangarangProgress:")) {
                         int percent = line.remove("BangarangProgress:").trimmed().toInt();
                         emit percentComplete(percent);

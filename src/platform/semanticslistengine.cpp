@@ -86,6 +86,12 @@ void SemanticsListEngine::run()
                 groupByCategoryType = "Actor";
             } else if (groupByField == "director") {
                 groupByCategoryType = "Director";
+            } else if (groupByField == "tag") {
+                if (mediaType == "audio") {
+                    groupByCategoryType = "AudioTag";
+                } else if (mediaType == "video") {
+                    groupByCategoryType = "VideoTag";
+                }
             }
         }
         if (engineFilterList.filter("limit=").count() !=0) {
@@ -155,7 +161,7 @@ void SemanticsListEngine::run()
                 } 
                 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-
+                
                 //Build media list from results
                 while( it.next() ) {
                     MediaItem mediaItem;
@@ -298,6 +304,14 @@ void SemanticsListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     } else {
+        //Get any remaining metadata for mediaItems
+        if (mediaType == "video") {
+            for (int i = 0; i < mediaList.count(); i++) {
+                MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
+                emit updateMediaItem(mediaItem);
+            }
+        }
+        
         //Get local album artwork
         if (m_nepomukInited) {
             MediaVocabulary mediaVocabulary;
@@ -322,6 +336,7 @@ void SemanticsListEngine::run()
                         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
                         QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
                         if (!artwork.isNull()) {
+                            mediaItem.hasCustomArtwork = true;
                             emit updateArtwork(artwork, mediaItem);
                             break;
                         }

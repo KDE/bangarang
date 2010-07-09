@@ -296,7 +296,7 @@
                     <x>0</x>
                     <y>0</y>
                     <width>154</width>
-                    <height>372</height>
+                    <height>367</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -874,8 +874,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>123</width>
-                    <height>216</height>
+                    <width>154</width>
+                    <height>367</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1993,7 +1993,7 @@
                           <bool>true</bool>
                          </property>
                          <property name="currentIndex">
-                          <number>1</number>
+                          <number>0</number>
                          </property>
                          <widget class="QWidget" name="categorySemantics">
                           <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -2019,8 +2019,8 @@
                                <rect>
                                 <x>0</x>
                                 <y>0</y>
-                                <width>82</width>
-                                <height>210</height>
+                                <width>240</width>
+                                <height>400</height>
                                </rect>
                               </property>
                               <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -2029,7 +2029,7 @@
                                  <property name="sizePolicy">
                                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                                    <horstretch>0</horstretch>
-                                   <verstretch>0</verstretch>
+                                   <verstretch>20</verstretch>
                                   </sizepolicy>
                                  </property>
                                  <property name="frameShape">
@@ -2102,6 +2102,12 @@
                                </item>
                                <item>
                                 <widget class="QFrame" name="frame_4">
+                                 <property name="sizePolicy">
+                                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                                   <horstretch>0</horstretch>
+                                   <verstretch>80</verstretch>
+                                  </sizepolicy>
+                                 </property>
                                  <property name="frameShape">
                                   <enum>QFrame::NoFrame</enum>
                                  </property>
@@ -2139,21 +2145,21 @@
                                      <property name="margin">
                                       <number>0</number>
                                      </property>
+                                     <item>
+                                      <spacer name="verticalSpacer_9">
+                                       <property name="orientation">
+                                        <enum>Qt::Vertical</enum>
+                                       </property>
+                                       <property name="sizeHint" stdset="0">
+                                        <size>
+                                         <width>20</width>
+                                         <height>40</height>
+                                        </size>
+                                       </property>
+                                      </spacer>
+                                     </item>
                                     </layout>
                                    </widget>
-                                  </item>
-                                  <item>
-                                   <spacer name="verticalSpacer_9">
-                                    <property name="orientation">
-                                     <enum>Qt::Vertical</enum>
-                                    </property>
-                                    <property name="sizeHint" stdset="0">
-                                     <size>
-                                      <width>20</width>
-                                      <height>40</height>
-                                     </size>
-                                    </property>
-                                   </spacer>
                                   </item>
                                  </layout>
                                 </widget>
@@ -6938,7 +6944,7 @@ color: rgb(255, 255, 255);</string>
                </widget>
               </item>
               <item>
-               <widget class="Phonon::SeekSlider" name="seekSlider" native="true">
+               <widget class="Phonon::SeekSlider" name="seekSlider">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -7026,7 +7032,7 @@ color: rgb(255, 255, 255);</string>
                </widget>
               </item>
               <item>
-               <widget class="Phonon::VolumeSlider" name="volumeSlider" native="true">
+               <widget class="Phonon::VolumeSlider" name="volumeSlider">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -7162,12 +7168,12 @@ color: rgb(255, 255, 255);</string>
   <customwidget>
    <class>Phonon::SeekSlider</class>
    <extends>QWidget</extends>
-   <header>phonon/seekslider.h</header>
+   <header location="global">phonon/seekslider.h</header>
   </customwidget>
   <customwidget>
    <class>Phonon::VolumeSlider</class>
    <extends>QWidget</extends>
-   <header>phonon/volumeslider.h</header>
+   <header location="global">phonon/volumeslider.h</header>
   </customwidget>
   <customwidget>
    <class>SToolButton</class>

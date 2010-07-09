@@ -95,5 +95,6 @@ namespace Utilities {
     QString mergeLRIs(const QString &lri, const QString &lriToMerge);
     QUrl artistResource(const QString &artistName);
     QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
+    MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
 }
 #endif //UTILITIES_H    

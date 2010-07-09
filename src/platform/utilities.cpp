@@ -81,7 +81,7 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
     
     if (!id3tag) {
@@ -187,7 +187,7 @@ QString Utilities::getArtistFromTag(const QString &url)
 {
     QString artist;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         artist  = TStringToQString(file.tag()->artist()).trimmed();
     }
     return artist;
@@ -197,7 +197,7 @@ QString Utilities::getAlbumFromTag(const QString &url)
 {
     QString album;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         album = TStringToQString(file.tag()->album()).trimmed();
     }
     return album;
@@ -207,7 +207,7 @@ QString Utilities::getTitleFromTag(const QString &url)
 {
     QString title;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         title = TStringToQString(file.tag()->title()).trimmed();
     }
     return title;
@@ -217,7 +217,7 @@ QString Utilities::getGenreFromTag(const QString &url)
 {
     QString genre;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         genre   = TStringToQString(file.tag()->genre()).trimmed();
     }
     return genre;
@@ -227,7 +227,7 @@ int Utilities::getYearFromTag(const QString &url)
 {
     int year = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         year = file.tag()->year();
     }
     return year;
@@ -237,7 +237,7 @@ int Utilities::getDurationFromTag(const QString &url)
 {
     int duration = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         duration = file.audioProperties()->length();
     }
     return duration;
@@ -247,7 +247,7 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 {
     int track = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         track   = file.tag()->track();
     }
     return track;
@@ -255,7 +255,7 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 
 bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit());
+    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
     
     TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
@@ -274,7 +274,7 @@ bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     if (result->is("audio/mpeg")) {
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8());
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
         if (mpegFile.isValid()) {
             TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
 
@@ -306,7 +306,7 @@ void Utilities::setArtistTag(const QString &url, const QString &artist)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setArtist(tArtist);
         file.save();
     }
@@ -316,7 +316,7 @@ void Utilities::setAlbumTag(const QString &url, const QString &album)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setAlbum(tAlbum);
         file.save();
     }
@@ -326,7 +326,7 @@ void Utilities::setTitleTag(const QString &url, const QString &title)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setTitle(tTitle);
         file.save();
     }
@@ -336,7 +336,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setGenre(tGenre);
         file.save();
     }
@@ -345,7 +345,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 void Utilities::setYearTag(const QString &url, int year)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setYear(year);
         file.save();
     }
@@ -354,7 +354,7 @@ void Utilities::setYearTag(const QString &url, int year)
 void Utilities::setTrackNumberTag(const QString &url, int trackNumber)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit());
+        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setTrack(trackNumber);
         file.save();
     }
@@ -420,7 +420,6 @@ bool Utilities::isMedia(const QString type)
 {
    return (
             (type == "Audio") ||
-            (type == "Video") ||
             (type == "Video")
         );
 }
@@ -528,7 +527,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
         } else if (mediaItem.fields["audioType"] == "Music") {
             mediaItem.artwork = KIcon("audio-mp4");
             //File metadata is always primary for music items.
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit());
+            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit().constData());
             if (!file.isNull()) {
                 QString title = TStringToQString(file.tag()->title()).trimmed();
                 QString artist  = TStringToQString(file.tag()->artist()).trimmed();
@@ -783,7 +782,6 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     }
     
     Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
-    //QString resourceUri = QString(QUrl::toPercentEncoding(res.resourceUri().toString(), "://"));
     QString resourceUri = QString(res.resourceUri().toEncoded());
     
     MediaQuery query;
@@ -800,22 +798,13 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     bindings.append(mediaVocabulary.playCountBinding());
     bindings.append(mediaVocabulary.lastPlayedBinding());
     
-    bindings.append(mediaVocabulary.musicArtistNameBinding());
-    bindings.append(mediaVocabulary.musicAlbumTitleBinding());
-    bindings.append(mediaVocabulary.musicTrackNumberBinding());
-    bindings.append(mediaVocabulary.musicAlbumYearBinding());
-    
-    bindings.append(mediaVocabulary.videoSynopsisBinding());
-    bindings.append(mediaVocabulary.videoAudienceRatingBinding());
-    bindings.append(mediaVocabulary.videoSeriesTitleBinding());
-    bindings.append(mediaVocabulary.videoSeasonBinding());
-    bindings.append(mediaVocabulary.videoEpisodeNumberBinding());
-    bindings.append(mediaVocabulary.videoWriterBinding());
-    bindings.append(mediaVocabulary.videoDirectorBinding());
-    bindings.append(mediaVocabulary.videoAssistantDirectorBinding());
-    bindings.append(mediaVocabulary.videoProducerBinding());
-    bindings.append(mediaVocabulary.videoActorBinding());
-    bindings.append(mediaVocabulary.videoCinematographerBinding());
+    if (type == "Music") {
+        bindings.append(mediaVocabulary.musicArtistNameBinding());
+        bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+        bindings.append(mediaVocabulary.musicTrackNumberBinding());
+        bindings.append(mediaVocabulary.musicAlbumYearBinding());
+    }
+
     query.select(bindings, MediaQuery::Distinct);
     
     query.startWhere();
@@ -834,22 +823,6 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
         query.addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Optional));
         query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
-    }
-    if (type == "Movie" || type == "TV Show") {
-        query.addCondition(mediaVocabulary.hasVideoSynopsis(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoAssistantDirector(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasVideoCinematographer(MediaQuery::Optional));
-        
-        if (type == "TV Show") {
-            query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
-        }
     }
     query.endWhere();
     
@@ -904,7 +877,10 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.fields["tags"] = tags.join(";");
     mediaItem.fields["playCount"] = it.binding(MediaVocabulary::playCountBinding()).literal().toInt();
     if (it.binding(MediaVocabulary::lastPlayedBinding()).isValid()) {
-        mediaItem.fields["lastPlayed"] = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+        QDateTime lastPlayed = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();
+        if (lastPlayed.isValid()) {
+            mediaItem.fields["lastPlayed"] = lastPlayed;
+        }
     }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
@@ -948,7 +924,6 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         mediaItem.artwork = KIcon("video-x-generic");
         if (type == "Movie" || type == "TV Show") {
             mediaItem.artwork = KIcon("tool-animator");
-            mediaItem.fields["synopsis"] = it.binding(MediaVocabulary::videoSynopsisBinding()).literal().toString();
             if (it.binding(MediaVocabulary::releaseDateBinding()).isValid()) {
                 QDate releaseDate = it.binding(MediaVocabulary::releaseDateBinding()).literal().toDate();
                 if (releaseDate.isValid()) {
@@ -958,10 +933,8 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             }
             mediaItem.fields["writer"] = it.binding(MediaVocabulary::videoWriterBinding()).literal().toString();
             mediaItem.fields["director"] = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
-            mediaItem.fields["assistantDirector"] = it.binding(MediaVocabulary::videoAssistantDirectorBinding()).literal().toString();
             mediaItem.fields["producer"] = it.binding(MediaVocabulary::videoProducerBinding()).literal().toString();
             mediaItem.fields["actor"] = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
-            mediaItem.fields["cinematographer"] = it.binding(MediaVocabulary::videoCinematographerBinding()).literal().toString();
             if (type == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
                 QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
@@ -1005,7 +978,8 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
          type == "TV Series" ||
          type == "VideoGenre" ||
          type == "Actor" ||
-         type == "Director") {
+         type == "Director"||
+         type == "VideoTag") {
         mediaItem.type = "Category";
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
@@ -1064,7 +1038,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
             QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
             QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
-            mediaItem.url = QString("music://songs?%1||%2||%3")
+            mediaItem.url = QString("music://artists?%1||%2||%3")
                             .arg(artistFilter)
                             .arg(albumFilter)
                             .arg(genreFilter);
@@ -1078,6 +1052,23 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
             contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
             contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+            mediaItem.fields["contextTitles"] = contextTitles;
+            mediaItem.fields["contextLRIs"] = contextLRIs;
+        } else if (type == "AudioTag") {
+            QString tag = it.binding(MediaVocabulary::tagBinding()).literal().toString();
+            QString tagFilter = tag.isEmpty() ? QString(): QString("tag=%1").arg(tag);
+            mediaItem.url = QString("tag://audio?%1")
+                            .arg(tagFilter);
+            mediaItem.title = tag;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("view-pim-notes");;
+            //Provide context info for tag
+            QStringList contextTitles;
+            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+            QStringList contextLRIs;
+            contextLRIs << QString("semantics://recent?audio||limit=4||tag=%1").arg(tag);
+            contextLRIs << QString("semantics://highest?audio||limit=4||tag=%1").arg(tag);
+            contextLRIs << QString("semantics://frequent?audio||limit=4||tag=%1").arg(tag);
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
         } else if (type == "TV Series") {
@@ -1169,10 +1160,28 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             contextLRIs << QString("semantics://frequent?video||limit=4||director=%1").arg(director);
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
+        } else if (type == "VideoTag") {
+            QString tag = it.binding(MediaVocabulary::tagBinding()).literal().toString();
+            QString tagFilter = tag.isEmpty() ? QString(): QString("tag=%1").arg(tag);
+            mediaItem.url = QString("tag://video?%1")
+                            .arg(tagFilter);
+            mediaItem.title = tag;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("view-pim-notes");;
+            //Provide context info for tag
+            QStringList contextTitles;
+            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
+            QStringList contextLRIs;
+            contextLRIs << QString("semantics://recent?video||limit=4||tag=%1").arg(tag);
+            contextLRIs << QString("semantics://highest?video||limit=4||tag=%1").arg(tag);
+            contextLRIs << QString("semantics://frequent?video||limit=4||tag=%1").arg(tag);
+            mediaItem.fields["contextTitles"] = contextTitles;
+            mediaItem.fields["contextLRIs"] = contextLRIs;
         }
-        if (!lri.isEmpty()) {
+        /*if (!lri.isEmpty()) {
             mediaItem.url = lri;
-        }
+        }*/
+        Q_UNUSED(lri);
         mediaItem.fields["sourceLri"] = sourceLri;
     }
     return mediaItem;
@@ -1391,4 +1400,84 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocat
     }
     
     return mediaList;
+}
+
+MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
+{
+    MediaItem mediaItem = sourceMediaItem;
+    QString resourceUri = sourceMediaItem.fields["resourceUri"].toString();
+    QString subType = mediaItem.fields["videoType"].toString();
+    
+    if (subType == "Movie" || subType == "TV Show") {
+        MediaVocabulary mediaVocabulary;
+        MediaQuery query;
+        QStringList bindings;
+        bindings.append(mediaVocabulary.mediaResourceBinding());
+        bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+        bindings.append(mediaVocabulary.videoAudienceRatingBinding());
+        bindings.append(mediaVocabulary.videoWriterBinding());
+        bindings.append(mediaVocabulary.videoDirectorBinding());
+        bindings.append(mediaVocabulary.videoProducerBinding());
+        bindings.append(mediaVocabulary.videoActorBinding());
+        if (subType == "TV Show") {
+            bindings.append(mediaVocabulary.videoSeriesTitleBinding());
+            bindings.append(mediaVocabulary.videoSeasonBinding());
+            bindings.append(mediaVocabulary.videoEpisodeNumberBinding());
+        }
+        query.select(bindings, MediaQuery::Distinct);
+        
+        query.startWhere();
+        query.addCondition(mediaVocabulary.hasResource(resourceUri));
+        query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
+        query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
+        query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
+        query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
+        query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
+        if (subType == "TV Show") {
+            query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
+        }
+        query.endWhere();
+        
+        //kDebug() << query.query();
+        
+        Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+        Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+        
+        while (it.next()) {
+            mediaItem.fields["writer"] = it.binding(MediaVocabulary::videoWriterBinding()).literal().toString();
+            mediaItem.fields["director"] = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
+            mediaItem.fields["producer"] = it.binding(MediaVocabulary::videoProducerBinding()).literal().toString();
+            mediaItem.fields["actor"] = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
+            if (subType == "TV Show") {
+                mediaItem.artwork = KIcon("video-television");
+                QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
+                if (!seriesName.isEmpty()) {
+                    mediaItem.fields["seriesName"] = seriesName;
+                    mediaItem.subTitle = seriesName;
+                }
+                
+                int season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toInt();
+                if (season !=0 ) {
+                    mediaItem.fields["season"] = season;
+                    if (!mediaItem.subTitle.isEmpty()) {
+                        mediaItem.subTitle += " - ";
+                    }
+                    mediaItem.subTitle += QString("Season %1").arg(season);
+                }
+                
+                int episodeNumber = it.binding(MediaVocabulary::videoEpisodeNumberBinding()).literal().toInt();
+                if (episodeNumber != 0) {
+                    mediaItem.fields["episodeNumber"] = episodeNumber;
+                    if (!mediaItem.subTitle.isEmpty()) {
+                        mediaItem.subTitle += " - ";
+                    }
+                    mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
+                }
+            }
+            break;
+        }
+    }
+    return mediaItem;
 }

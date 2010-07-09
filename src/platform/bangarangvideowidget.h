@@ -19,6 +19,7 @@
 #ifndef BANGARANGVIDEOWIDGET_H
 #define BANGARANGVIDEOWIDGET_H
 
+#include "bangarangapplication.h"
 #include <phonon/videowidget.h>
 #include <QWheelEvent>
 #include <QMenu>
@@ -81,10 +82,11 @@ class BangarangVideoWidget : public Phonon::VideoWidget
  private:
     friend class BangarangVideoWidgetPrivate;
     BangarangVideoWidgetPrivate* const d;
-    bool fullscreen;
+    BangarangApplication *m_application;
+    bool m_fullscreen;
     QMenu *m_contextMenu;
  private slots:
-    void makeCustomContext(QPoint);
+    void contextMenuEvent(QContextMenuEvent * event);
 };
 
 #endif //BANGARANGVIDEOWIDGET_H

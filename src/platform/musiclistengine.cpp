@@ -121,6 +121,26 @@ void MusicListEngine::run()
                 m_mediaListProperties.name = i18n("Artists");
                 if (!genre.isEmpty()) {
                     m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", genre);
+
+                    //Add an additional item to show all songs for all artists in this genre
+                    MediaItem mediaItem;
+                    mediaItem.url = QString("music://songs?%1||%2||%3").arg(albumFilter, artistFilter, genreFilter);
+                    mediaItem.title = i18n("All songs");
+                    mediaItem.fields["title"] = genre;
+                    mediaItem.subTitle = QString("%1").arg(genre);
+                    mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("AudioGenre");
+                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    mediaItem.artwork = KIcon("audio-x-monkey");
+                    QStringList contextTitles;
+                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
+                    QStringList contextLRIs;
+                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
+                    mediaItem.fields["contextTitles"] = contextTitles;
+                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
                 m_mediaListProperties.type = QString("Categories");
@@ -463,6 +483,7 @@ void MusicListEngine::run()
                         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
                         QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
                         if (!artwork.isNull()) {
+                            mediaItem.hasCustomArtwork = true;
                             emit updateArtwork(artwork, mediaItem);
                             break;
                         }
