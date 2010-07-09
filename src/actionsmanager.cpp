@@ -243,8 +243,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
     m_shortcutsCollection->addAction("update_ontologies", action);
     
-    KStandardAction::configureNotifications(this, SLOT(showNotifyConfig()), m_shortcutsCollection);
-    
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
     ui->shortcutsEditor->addCollection(m_shortcutsCollection);
@@ -647,11 +645,6 @@ void ActionsManager::showShortcutsEditor()
 {
     ui->contextStack->setCurrentIndex(3);
     ui->contextStack->setVisible(true);
-}
-
-void ActionsManager::showNotifyConfig()
-{
-  KNotifyConfigWidget::configure(m_parent, "bangarang");
 }
 
 void ActionsManager::saveShortcuts()

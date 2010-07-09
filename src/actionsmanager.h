@@ -111,7 +111,6 @@ class ActionsManager : public QObject
         void toggleVideoSettings();
         void toggleAudioSettings();
         void cancelFSHC();
-	void showNotifyConfig();
         void showShortcutsEditor();
         void saveShortcuts();
         void cancelShortcuts();

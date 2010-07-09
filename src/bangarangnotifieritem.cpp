@@ -32,6 +32,13 @@ void BangarangNotifierItem::setState(Phonon::State state)
     return;
   
   m_currentState = state;
+  
+  if (m_currentState == Phonon::StoppedState)
+  {
+    setToolTip("bangarang", i18n("Not Playing"), QString());
+    setStatus(KStatusNotifierItem::Passive);
+  }
+  else setStatus(KStatusNotifierItem::Active);
  
   updateOverlayIcon();
 }
@@ -48,8 +55,8 @@ void BangarangNotifierItem::handleMiddleClick()
 void BangarangNotifierItem::handleScrollRequested(int delta, Qt::Orientation orientation)
 {
   if (orientation == Qt::Vertical)
-    emit changeVolumeRequested(delta);
- // else emit changeTrackRequested(delta);
+    emit changeVolumeRequested(delta/120);
+ // else emit changeTrackRequested(delta/120);
 }
 
 void BangarangNotifierItem::updateOverlayIcon()

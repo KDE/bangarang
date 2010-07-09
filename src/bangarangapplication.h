@@ -37,8 +37,9 @@ class MainWindow;
 class BangarangNotifierItem;
 
 class BangarangApplication : public KApplication
-
 {
+  Q_OBJECT
+  
     public:
         ~BangarangApplication();
         void setup();

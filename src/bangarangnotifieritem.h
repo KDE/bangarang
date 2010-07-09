@@ -48,9 +48,6 @@ class BangarangNotifierItem : public KStatusNotifierItem
     Phonon::State state() const;
     void setState(Phonon::State state);
     
-    bool isVolumeMuted() const;
-    void setVolumeMuted(bool muted);
-    
   signals:
     /**
     * Inform the associated window that the state should changed either from playing to paused or 

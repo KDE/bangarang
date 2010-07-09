@@ -189,6 +189,7 @@ private slots:
     void sourceInfoRemoved(QString url);
     void updateCustomColors();
     void volumeChanged(qreal newVolume);
+    void volumeChanged(int delta);
     void skipForward(int i);
     void skipBackward(int i);
     

@@ -48,7 +48,6 @@
 #include <KDebug>
 #include <KHelpMenu>
 #include <KMenu>
-#include <KNotification>
 #include <KStatusNotifierItem>
 
 #include <kio/netaccess.h>
@@ -242,6 +241,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up cursor hiding and context menu for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
+    
+    connect(m_application->statusNotifierItem(), SIGNAL(changeVolumeRequested(int)), this,
+	    SLOT(volumeChanged(int)));
 }
 
 MainWindow::~MainWindow()
@@ -568,10 +570,13 @@ void MainWindow::volumeChanged(qreal newVolume)
     //Phonon::AudioOutput::volume() only return the volume at app start.
     //Therefore I need to track volume changes independently.
     m_volume = newVolume;
-    
-    //NOTE: This will change the mute state to true in the app if volume reaches 0 level
-    //(never adjusted volume to 0 and surprised about not hearing anything?)  
-    updateMuteStatus(m_volume == 0);
+}
+
+void MainWindow::volumeChanged(int delta)
+{
+  m_volume += (qreal)delta/25;
+  
+  m_audioOutput->setVolume(m_volume);
 }
 
 void MainWindow::updateSeekTime(qint64 time)
@@ -1173,8 +1178,7 @@ void MainWindow::nowPlayingChanged()
 {
     MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
     if (nowPlayingModel->rowCount() == 0) {
-        m_application->statusNotifierItem()->setToolTip("bangarang", i18n("Not Playing"), QString());
-        m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Passive);
+        m_application->statusNotifierItem()->setState(Phonon::StoppedState);
         return;
     }
     
@@ -1230,22 +1234,11 @@ void MainWindow::nowPlayingChanged()
         ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     }
     
-    if (nowPlayingItem.title != i18n("Bangarang")) // dont show the bangarang media item
-    {
-      KNotification* notification = new KNotification("trackChange", this);
-      notification->setTitle(i18n("Now playing"));
-      notification->setPixmap(nowPlayingItem.artwork.pixmap(80, 80));
-      notification->setText("<strong>" + nowPlayingItem.title + "</strong>\n" +
-	nowPlayingItem.fields["album"].toString() + "\n" + nowPlayingItem.fields["artist"].toString());
-      notification->sendEvent();
-    }
-    
     //Update status notifier
     //- Scale artwork to current desktop icon size otherwise notifier will show unknown icon
     int iconSize = KIconLoader::global()->currentSize(KIconLoader::Desktop);
     QPixmap artworkPix = nowPlayingItem.artwork.pixmap(iconSize, iconSize);
     m_application->statusNotifierItem()->setToolTip(QIcon(artworkPix), nowPlayingItem.title, nowPlayingItem.subTitle);
-    m_application->statusNotifierItem()->setStatus(KStatusNotifierItem::Active);
 }
 
 QFrame* MainWindow::currentFilterFrame()
