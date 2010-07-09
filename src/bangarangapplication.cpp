@@ -154,6 +154,9 @@ void BangarangApplication::setup()
         m_savedListsManager->loadPlaylist();
     }
     
+    //connect signal from notfier, so that pause/resume will work
+    connect(m_statusNotifierItem, SIGNAL(changeStateRequested(Phonon::State)), this,
+      SLOT(handleNotifierStateRequest(Phonon::State)));
 }
 
 BangarangApplication::~BangarangApplication()
