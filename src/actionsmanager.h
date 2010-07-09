@@ -57,6 +57,9 @@ class ActionsManager : public QObject
         QMenu * mediaViewMenu(bool showAbout = false, MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * playlistViewMenu(MainWindow::ContextMenuSource menuSource = MainWindow::Default);
         QMenu * nowPlayingContextMenu();
+
+        KMenu * nowPlayingMenu();
+        KMenu * notifierMenu();
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
@@ -79,6 +82,7 @@ class ActionsManager : public QObject
         QMenu *m_addToAudioSavedList;
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
+        KMenu *m_nowPlayingMenu;
         QMenu *m_dvdMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
@@ -129,10 +133,10 @@ class ActionsManager : public QObject
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
         void updateOntologies();
-        void audioChannelChanged();
-        void subtitleChanged();
-        void angleChanged();
-        void titleChanged();
-        void chapterChanged();
+        void audioChannelChanged(QAction *action);
+        void subtitleChanged(QAction *action);
+        void angleChanged(QAction *action);
+        void titleChanged(QAction *action);
+        void chapterChanged(QAction *action);
 };
 #endif //ACTIONSMANAGER_H

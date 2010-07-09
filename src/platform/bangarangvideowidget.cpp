@@ -17,6 +17,7 @@
 */
 
 #include "bangarangvideowidget.h"
+#include "actionsmanager.h"
 
 #include <QWheelEvent>
 #include <QMouseEvent>
@@ -37,9 +38,8 @@ class BangarangVideoWidgetPrivate
 BangarangVideoWidget::BangarangVideoWidget(QWidget * parent) : Phonon::VideoWidget(parent) ,
 							       d(new BangarangVideoWidgetPrivate)
 {
-  setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(makeCustomContext(QPoint)));
-  m_contextMenu = new QMenu();
+    m_application = (BangarangApplication *)KApplication::kApplication();
+    m_contextMenu = NULL;
 }
 
 BangarangVideoWidget::~BangarangVideoWidget()
@@ -62,7 +62,7 @@ void
 BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
 {
   if(event->button() == Qt::LeftButton){
-    if (fullscreen) {
+    if (m_fullscreen) {
       emit fullscreenChanged(false);
       setIsFullscreen(false);
     }
@@ -75,14 +75,24 @@ BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
 void
 BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
 { 
-  fullscreen = isFullscreen;
+  m_fullscreen = isFullscreen;
 }
 
 void
-BangarangVideoWidget::makeCustomContext(QPoint pos) 
+BangarangVideoWidget::contextMenuEvent ( QContextMenuEvent * event ) 
 {
-  Q_UNUSED(pos);
-  m_contextMenu->exec(QCursor::pos());
+  /*
+  * NOTE: at least at a bangarang 2.x release we should set a fixed menu. the nowPlayingContextMenu
+  * is currently rebuild at any call, because the available subtitles/audiotracks and so on could have changed.
+  * But as I spotted the MediaController provides signals that these have changed. So we need to implement
+  * slots for these in a class (don't know which, maybe just a separate one existing only for the DVD menu).
+  * Then the menu should be _changed_ not recreated as this function can keep the pointer to the contextMenu
+  */
+  Q_UNUSED(event);
+  if ( m_contextMenu != NULL )
+    m_contextMenu->exec(QCursor::pos());
+  else
+    m_application->actionsManager()->nowPlayingContextMenu()->exec(QCursor::pos());
 }
 
 QMenu* BangarangVideoWidget::contextMenu()

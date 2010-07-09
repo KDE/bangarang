@@ -62,7 +62,7 @@ InfoBox::InfoBox(QWidget * parent):QWidget (parent)
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(0);
     m_mediaView = new MediaView();
-    connect((MediaItemModel *)m_mediaView->model(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    connect((MediaItemModel *)m_mediaView->sourceModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     layout->addWidget(m_titleBar);
     layout->addWidget(m_mediaView);
     
@@ -106,8 +106,13 @@ void InfoBox::setInfo(const QString &title, const QString & lri)
     } else {
         m_mediaView->setMode(MediaView::MiniMode);
     }
-    MediaItemModel * model = (MediaItemModel *)m_mediaView->model();
+    MediaItemModel * model = (MediaItemModel *)m_mediaView->sourceModel();
     model->loadLRI(lri);
+}
+
+void InfoBox::setTitle(const QString &title)
+{
+    m_title->setText(title);
 }
 
 void InfoBox::updateTitleColors()
@@ -118,7 +123,7 @@ void InfoBox::updateTitleColors()
 void InfoBox::mediaListChanged()
 {
     //Set title bar icon based on content of mediaview
-    MediaItemModel * model = (MediaItemModel *)m_mediaView->model();
+    MediaItemModel * model = (MediaItemModel *)m_mediaView->sourceModel();
     if (model->rowCount() > 0) {
         if (model->rowCount() == 1) {
             if (model->mediaItemAt(0).type == "Message" && m_mediaView->mode() != MediaView::NormalMode) {
@@ -140,7 +145,7 @@ void InfoBox::mediaListChanged()
 
 void InfoBox::categoryActivated(QModelIndex index)
 {
-    MediaItemModel *model = (MediaItemModel *)m_mediaView->model();
+    MediaItemModel *model = (MediaItemModel *)m_mediaView->sourceModel();
     MediaItem categoryMediaItem = model->mediaItemAt(index.row());
     MediaListProperties mediaListProperties = MediaListProperties(categoryMediaItem.url);
     mediaListProperties.name = categoryMediaItem.title;

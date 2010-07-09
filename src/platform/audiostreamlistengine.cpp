@@ -162,6 +162,7 @@ void AudioStreamListEngine::run()
                 MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
                 QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
                 if (!artwork.isNull()) {
+                    mediaItem.hasCustomArtwork = true;
                     emit updateArtwork(artwork, mediaItem);
                     break;
                 }

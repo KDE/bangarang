@@ -140,13 +140,12 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         
         //Paint Icon
         bool exists = index.data(MediaItem::ExistsRole).toBool();
-        int topOffset = (height - m_iconSize) / 2;
-        if (topOffset < m_padding && index.data(MediaItem::SubTypeRole).toString() != "Album" && subType != "Movie") {
-            topOffset = m_padding;
-        }
-        if (m_renderMode == NormalMode || m_renderMode == MiniAlbumMode) {
+        bool hasCustomArtwork = index.data(MediaItem::HasCustomArtworkRole).toBool();
+        int iconSize = hasCustomArtwork ? height - 2: m_iconSize;
+        int topOffset = (height - iconSize) / 2;
+        if (m_renderMode == NormalMode) {
             if (!icon.isNull()) {
-                icon.paint(&p, left + topOffset, top + topOffset, m_iconSize, m_iconSize, Qt::AlignCenter, QIcon::Normal);
+                icon.paint(&p, left + topOffset, top + topOffset, iconSize, iconSize, Qt::AlignCenter, QIcon::Normal);
             }
         }
         if (!exists && m_renderMode == NormalMode) {
@@ -167,6 +166,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         }
         
         //Paint text
+        int textInner = m_textInner;
+        if (hasCustomArtwork && m_renderMode == NormalMode) {
+            textInner = topOffset + iconSize + m_padding;
+        }
         QFont textFont;
         if (m_renderMode == NormalMode) {
             QFont textFont = option.font;
@@ -176,18 +179,18 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         int vAlign = (hasSubTitle && m_renderMode == NormalMode) ? Qt::AlignTop : Qt::AlignVCenter;
         int hAlign = (isAction || isMessage) ? Qt::AlignCenter : Qt::AlignLeft;
         int textWidth = (isAction || isMessage) ?
-                width - m_textInner - m_padding : width - m_textInner - m_padding - m_durRatingSpacer;
+                width - textInner - m_padding : width - textInner - m_padding - m_durRatingSpacer;
         QString text = index.data(Qt::DisplayRole).toString();
         textFont.setItalic(isAction || isMessage);
         p.setFont(textFont);
         p.setPen(foregroundColor);
-        p.drawText(left + m_textInner,
+        p.drawText(left + textInner,
                     top+1, textWidth, height,
                     vAlign | hAlign, text);
         if (hasSubTitle && m_renderMode == NormalMode) {
             QString subTitle = index.data(MediaItem::SubTitleRole).toString();
             p.setPen(subColor);
-            p.drawText(left + m_textInner,
+            p.drawText(left + textInner,
                         top, textWidth, height,
                         Qt::AlignBottom | hAlign, subTitle);
             QFontMetrics fm(textFont);
@@ -197,7 +200,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
                 QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
                 p.setFont(commentFont);
-                p.drawText(left + m_textInner + fm.width(subTitle),
+                p.drawText(left + textInner + fm.width(subTitle),
                            top, textWidth - fm.width(subTitle), height,
                            Qt::AlignBottom | hAlign, comment);
                 p.setFont(textFont);
@@ -263,7 +266,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             QIcon catIcon = index.data(Qt::DecorationRole).value<QIcon>();
             int iconWidth = 22;
             int topOffset = (height - iconWidth) / 2;
-            catIcon.paint(&p, left, top + topOffset, m_iconSize, m_iconSize, Qt::AlignLeft, QIcon::Normal);
+            catIcon.paint(&p, left, top + topOffset, iconWidth, iconWidth, Qt::AlignLeft, QIcon::Normal);
         }
     }
         
@@ -340,10 +343,10 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 return QItemDelegate::editorEvent(event, model, option, index);
             if (m_renderMode != NormalMode && m_renderMode != MiniRatingMode)
                 return QItemDelegate::editorEvent(event, model, option, index);
-            if (!index.data(MediaItem::UrlRole).toString().isEmpty()) {
+            if (index.data(MediaItem::UrlRole).toString().isEmpty()) {
                 return QItemDelegate::editorEvent(event, model, option, index);
             }
-
+            
             QPoint mousePos = ((QMouseEvent *)event)->pos();
             QRect ratingArea = ratingRect(&option.rect);
             if  (!ratingArea.contains(mousePos))
@@ -390,6 +393,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                     indexerUpdated = true;
                 }
             }
+            return true;
         } else if (index.data(MediaItem::TypeRole).toString() == "Category" &&
             !index.data(MediaItem::UrlRole).toString().isEmpty()) {
             if (event->type() == QEvent::MouseButtonDblClick) {

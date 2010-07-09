@@ -29,9 +29,7 @@
 *
 * Represents the app in the systray.
 *
-* The icon will 'expire' with increased playing time of an track.
 * If Phonon::State is playing or paused a respective overlay icon is shown.
-* If the player is muted this will be shown by a overlayicon, too.
 *
 * If the user performs an mouse scroll action on the icon, either a changeTrackRequest or
 * changeVolumeRequest is emitted.
@@ -62,39 +60,15 @@ class BangarangNotifierItem : public KStatusNotifierItem
     void changeStateRequested(Phonon::State newState);
     
     /**
-    * Inform the associated window that the current track should be changed.
-    * @param steps steps back/forward in playlist
-    */
-    void changeTrackRequested(int steps);
-    
-    /**
     * Inform the associated window that the volume should be increased or decreased.
     * @param delta increase/decrease value
     */
     void changeVolumeRequested(int delta);
-  
-  public slots:
-    /**
-    * Perform an icon update.
-    * The icon will 'expire' (fade to grey) by increased playing time.
-    *
-    * @param position current playing position
-    * @param length current track length
-    */
-    void updateAppIcon(qint64 position, qint64 length);
     
   private:
     void updateOverlayIcon();
-    void updateIcon();
     
     Phonon::State m_currentState;
-    bool m_muted;
-    
-    QPixmap m_icon;
-    QPixmap m_grayIcon;
-    
-    int m_iconSize;
-    int m_pos;
     
   private slots:
     void handleMiddleClick();

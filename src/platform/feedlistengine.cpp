@@ -204,6 +204,7 @@ void FeedListEngine::run()
                 mediaItem.fields["categoryType"].toString() == "Video Feed") {
                 QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                 if (!artwork.isNull()) {
+                    mediaItem.hasCustomArtwork = true;
                     emit updateArtwork(artwork, mediaItem);
                 }
             }
@@ -322,6 +323,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             mediaItem.fields["artworkUrl"] = to.prettyUrl();
             QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
             if (!artwork.isNull()) {
+                mediaItem.hasCustomArtwork = true;
                 emit updateArtwork(artwork, mediaItem);
             }
             m_mediaList.removeAt(index);

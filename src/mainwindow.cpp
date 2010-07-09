@@ -485,7 +485,7 @@ void MainWindow::on_mediaLists_currentChanged(int i)
         ui->Filter->setClickMessage(i18n("Search for video"));
     }
     if (selectedRow != -1) {
-        if ((m_application->browsingModel()->mediaListProperties().engine() != currentProperties.engine()) || (m_application->browsingModel()->mediaListProperties().engineArg() != currentProperties.engineArg())) {
+        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
             m_application->browsingModel()->clearMediaListData();
             m_application->browsingModel()->setMediaListProperties(currentProperties);
             m_application->browsingModel()->load();
@@ -538,26 +538,10 @@ void MainWindow::on_showQueue_clicked()
 
 void MainWindow::on_showMenu_clicked()
 {
-    m_helpMenu = new KHelpMenu(this, m_application->aboutData(), false);
-    m_helpMenu->menu();
-    m_menu = new KMenu(this);
-    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
-        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
-            m_menu->addAction(m_application->actionsManager()->action("show_now_playing_info"));
-        }
-    }
-    m_menu->addAction(m_application->actionsManager()->action("show_video_settings"));
-    m_menu->addAction(m_application->actionsManager()->action("show_audio_settings"));
-    if (!isFullScreen()) {
-        m_menu->addAction(m_application->actionsManager()->action("toggle_controls"));
-        m_menu->addSeparator();
-    }
-    m_menu->addAction(m_application->actionsManager()->action("show_shortcuts_editor"));
-    m_menu->addAction(m_application->actionsManager()->action(KStandardAction::name(KStandardAction::ConfigureNotifications)));
-    m_menu->addAction(m_helpMenu->action(KHelpMenu::menuAboutApp));
+    KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
+
     QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
-    m_menu->popup(menuLocation);
+    menu->popup(menuLocation);
 }
 
 void MainWindow::on_showMediaViewMenu_clicked()
@@ -605,8 +589,6 @@ void MainWindow::updateSeekTime(qint64 time)
         displayTime = remainingTime.toString(QString("m:ss"));
     }
     ui->seekTime->setText(displayTime);
-    
-    m_application->statusNotifierItem()->updateAppIcon(time, m_application->mediaObject()->totalTime());
     
     //Update Now Playing Button text
     MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
@@ -667,12 +649,16 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         ui->volumeSlider->setAudioOutput(m_audioOutput);
         ui->volumeIcon->setChecked(false);
     }
+
     if (newstate == Phonon::PausedState)
       m_application->statusNotifierItem()->setState(newstate);
     else if (newstate == Phonon::StoppedState)
       m_application->statusNotifierItem()->setState(newstate);
     
     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
+
+//     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
+
     Q_UNUSED(oldstate);
 }
 
@@ -720,7 +706,6 @@ void MainWindow::updateMuteStatus(bool muted)
         ui->volumeIcon->setIcon(KIcon("speaker"));
         ui->volumeIcon->setToolTip(i18n("Mute volume"));
     }
-    m_application->statusNotifierItem()->setVolumeMuted(muted);
 }
 
 
@@ -798,7 +783,7 @@ void MainWindow::sourceInfoRemoved(QString url)
 
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
-    if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
+    if (selected.indexes().count() > 0) {
         int firstRow = selected.indexes().at(0).row();
         if (!m_application->browsingModel()->mediaItemAt(firstRow).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(true);
@@ -1036,7 +1021,7 @@ void MainWindow::setupActions()
     m_videoSettings->setHideAction(m_application->actionsManager()->action("show_video_settings"));
     ui->mediaPrevious->setDefaultAction(m_application->actionsManager()->action("play_previous"));
     ui->mediaNext->setDefaultAction(m_application->actionsManager()->action("play_next"));
-    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
+//     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
 }
 
 void MainWindow::showApplicationBanner()
