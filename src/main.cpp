@@ -26,7 +26,7 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "1.0",
+        ki18n("Bangarang"), "1.89 (2.0 Alpha)",
         ki18n("A Media Player"), KAboutData::License_GPL_V2,
         ki18n("Copyright 2010, Andrew Lake"), KLocalizedString(),
         "" );
@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     aboutData.setProgramIconName("bangarang");
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
     aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@gmail.com");
+    aboutData.addCredit(ki18n("Stefan Burnicki"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Buschmann"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
