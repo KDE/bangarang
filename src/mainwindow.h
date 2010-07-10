@@ -110,6 +110,7 @@ private:
     void showApplicationBanner();
     void updateCachedDevicesList();
     void setupActions();
+    void hidePlayButtons();
     
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
@@ -178,11 +179,12 @@ private slots:
     void playlistFinished();
     void repeatModeChanged(bool repeat);
     void shuffleModeChanged(bool shuffle);
-    void hidePlayButtons();
     void updateListHeader();
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
     void showLoading();
+    void playlistLoading();
+    void mediaListLoading();
     void showNotification();
     void delayedNotificationHide();
     void sourceInfoUpdated(const MediaItem &mediaItem);

@@ -839,16 +839,10 @@ void ActionsManager::showInfoForNowPlaying()
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {
     QList<MediaItem> mediaList;
-    QTreeView *view = (QTreeView *) ui->mediaView;
-    MediaItemModel *model = m_application->browsingModel();
-    MediaSortFilterProxyModel * proxy = NULL;
-    
-    if (m_contextMenuSource == MainWindow::Playlist)
-    {
-        view = (QTreeView *) ui->playlistView;
-        proxy = (MediaSortFilterProxyModel *) view->model();
-        model = (MediaItemModel *) proxy->sourceModel();
-    }
+    QTreeView *view = (m_contextMenuSource == MainWindow::Playlist) ?
+        (QTreeView *) ui->playlistView : (QTreeView *) ui->mediaView;
+    MediaSortFilterProxyModel * proxy = (MediaSortFilterProxyModel *) view->model();
+    MediaItemModel *model = (MediaItemModel *) proxy->sourceModel();
     
     if (m_contextMenuSource == MainWindow::InfoBox ||
         m_contextMenuSource == MainWindow::Default) {
@@ -858,14 +852,11 @@ const QList<MediaItem> ActionsManager::selectedMediaItems()
         m_contextMenuSource == MainWindow::Playlist ||
         (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)
         ) {
-        for (int i = 0; i < view->selectionModel()->selectedIndexes().count(); ++i) {
-            QModelIndex _index = view->selectionModel()->selectedIndexes().at(i);
+        QModelIndexList selection = view->selectionModel()->selectedIndexes();
+        for (int i = 0; i < selection.count(); ++i) {
+            QModelIndex _index = selection.at(i);
             QModelIndex index;
-            if (proxy != NULL) {
-                index = proxy->mapToSource(_index);
-            } else {
-                index = _index;
-            }
+            index = proxy->mapToSource(_index);
             if (index.column() == 0) {
                 mediaList.append(model->mediaItemAt(index.row()));
             }
