@@ -238,8 +238,10 @@ void InfoManager::loadSelectedInfo()
 
     bool templateIsSelected = false;
     QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    MediaSortFilterProxyModel *proxy = (MediaSortFilterProxyModel *) ui->mediaView->model();
     if (selectedRows.count() == 1) {
-        MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(selectedRows.at(0).row());
+        int row = proxy->mapToSource(selectedRows.at(0)).row();
+        MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(row);
         templateIsSelected = mediaItem.fields["isTemplate"].toBool();
     }
     
@@ -273,7 +275,8 @@ void InfoManager::loadSelectedInfo()
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            context.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
+            int row = proxy->mapToSource(selectedRows.at(i)).row();
+            context.append(m_application->browsingModel()->mediaItemAt(row));
         }
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 

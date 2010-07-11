@@ -120,9 +120,15 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("add_to_playlist", action);
 
     //Remove Selected From Playlist Action
-    action = new KAction(KIcon(), i18n("Remove from playlist"), this);
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
     m_othersCollection->addAction("remove_from_playlist", action);
+    
+    //Remove the selection of the playlist from the playlist
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
+    action->setShortcut(Qt::Key_Delete);
+    connect(action, SIGNAL(triggered()), this, SLOT(removePlaylistSelectionFromPlaylistSlot()));
+    m_othersCollection->addAction("remove_playlistselection_from_playlist", action);
 
     //Toggle Controls Shortcut
     action = new KAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
@@ -130,26 +136,26 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(toggleControls()));
     m_shortcutsCollection->addAction("toggle_controls", action);
 
-    //Toggle Playlist Filter
-    action = new KAction(KIcon("layer-visible-off"), i18n("Show playlist filter"), this);
+    //Toggle Playlist/Media Lists Filter
+    action = new KAction(KIcon("view-filter"), i18n("Show filter"), this);
     action->setShortcut(Qt::CTRL + Qt::Key_F);
     connect(action, SIGNAL(triggered()), this, SLOT(toggleFilter()));
     m_shortcutsCollection->addAction("toggle_filter", action);
 
     //Toggle Show Remaining Time Shortcut
-    action = new KAction(KIcon("chronometer"), i18n("Show Remaining Time"), this);
+    action = new KAction(KIcon("chronometer"), i18n("Show remaining time"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(toggleShowRemainingTimeSlot()));
     m_shortcutsCollection->addAction("toggle_show_remaining_time", action);
 
     //Show VideoSettings
-    action = new KAction(KIcon("video-display"), i18n("Show Video Settings"),this);
+    action = new KAction(KIcon("video-display"), i18n("Show video settings"),this);
     action->setShortcut(Qt::CTRL + Qt::Key_V);
     connect(action, SIGNAL(triggered()), this, SLOT(toggleVideoSettings()));
     m_shortcutsCollection->addAction("show_video_settings",action);
 
     //Show Audio Settings
-    action = new KAction(KIcon("speaker"), i18n("Show Audio Settings"),this);
-    action->setShortcut(Qt::CTRL + Qt::Key_A);
+    action = new KAction(KIcon("speaker"), i18n("Show audio settings"),this);
+    action->setShortcut(Qt::CTRL + Qt::Key_U);
     connect(action, SIGNAL(triggered()), this, SLOT(toggleAudioSettings()));
     m_shortcutsCollection->addAction("show_audio_settings",action);
 
@@ -211,12 +217,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("show_items", action);
 
     //Show Now Playing Info
-    action = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
+    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
     connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
     m_othersCollection->addAction("show_now_playing", action);
 
     //Show Info View
-    action = new KAction(KIcon("help-about"), i18n("Show Information"), m_parent);
+    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(showInfoView()));
     m_othersCollection->addAction("show_info", action);
 
@@ -351,9 +357,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     return menu;
 }
 
-QMenu *ActionsManager::playlistViewMenu(MainWindow::ContextMenuSource menuSource)
+QMenu *ActionsManager::playlistViewMenu()
 {
-    m_contextMenuSource = menuSource;
+    m_contextMenuSource = MainWindow::Playlist;
     QMenu *menu = new QMenu(m_parent);
     menu->addAction(action("remove_from_playlist"));
     return menu;
@@ -394,6 +400,9 @@ KMenu *ActionsManager::nowPlayingMenu()
     helpMenu->menu();
     
     m_nowPlayingMenu = new KMenu(m_parent);
+    if (ui->contextStack->isVisible() && ui->contextStack->currentIndex() == 0) {
+        m_nowPlayingMenu->addAction(action("toggle_filter"));
+    }
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
         if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
@@ -602,11 +611,11 @@ void ActionsManager::toggleVideoSettings()
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(2);
         ui->contextStack->setVisible(true);
-        action("show_video_settings")->setText(i18n("Hide Video Settings"));
+        action("show_video_settings")->setText(i18n("Hide video vettings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-        action("show_video_settings")->setText(i18n("Show Video Settings"));
+        action("show_video_settings")->setText(i18n("Show video vettings"));
     }
 }
 
@@ -617,22 +626,42 @@ void ActionsManager::toggleAudioSettings()
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(1);
         ui->contextStack->setVisible(true);
-        action("show_audio_settings")->setText(i18n("Hide Audio Settings"));
+        action("show_audio_settings")->setText(i18n("Hide audio settings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-        action("show_audio_settings")->setText(i18n("Show Audio Settings"));
+        action("show_audio_settings")->setText(i18n("Show audio settings"));
     }
 }
 
 void ActionsManager::cancelFSHC()
 {
-    if (m_parent->isFullScreen()) {
-        m_parent->on_fullScreen_toggled(false);
-    } else if (m_parent->currentMainWidget() == MainWindow::MainNowPlaying && !m_controlsVisible) {
-        toggleControls();
-    } else if (m_parent->currentFilterProxyLine()->lineEdit()->hasFocus()) {
+    if (m_parent->currentFilterProxyLine()->lineEdit()->hasFocus()) {
         toggleFilter();
+        return;
+    }
+
+    MainWindow::MainWidget cmw = m_parent->currentMainWidget();
+    if (cmw == MainWindow::MainNowPlaying) {
+        if (ui->playlistView->hasFocus() && ui->playlistView->selectionModel()->hasSelection()) {
+            ui->playlistView->clearSelection();
+            return;
+        } else if (!m_controlsVisible) {
+            toggleControls();
+            return;
+        }
+
+
+    } else if (cmw == MainWindow::MainMediaList) {
+        if (ui->mediaView->hasFocus() && ui->mediaView->selectionModel()->hasSelection()) {
+            ui->mediaView->clearSelection();
+            return;
+        }
+    }
+    
+    
+    if (m_parent->isFullScreen()) {
+        fullScreenToggle();
     }
 }
 
@@ -720,6 +749,12 @@ void ActionsManager::removeSelectedFromPlaylistSlot()
             }
         }
     }
+}
+
+void ActionsManager::removePlaylistSelectionFromPlaylistSlot()
+{
+  m_contextMenuSource = MainWindow::Playlist;
+  removeSelectedFromPlaylistSlot();
 }
 
 void ActionsManager::updateSavedListsMenus()
@@ -826,16 +861,10 @@ void ActionsManager::showInfoForNowPlaying()
 const QList<MediaItem> ActionsManager::selectedMediaItems()
 {
     QList<MediaItem> mediaList;
-    QTreeView *view = (QTreeView *) ui->mediaView;
-    MediaItemModel *model = m_application->browsingModel();
-    MediaSortFilterProxyModel * proxy = NULL;
-    
-    if (m_contextMenuSource == MainWindow::Playlist)
-    {
-        view = (QTreeView *) ui->playlistView;
-        proxy = (MediaSortFilterProxyModel *) view->model();
-        model = (MediaItemModel *) proxy->sourceModel();
-    }
+    QTreeView *view = (m_contextMenuSource == MainWindow::Playlist) ?
+        (QTreeView *) ui->playlistView : (QTreeView *) ui->mediaView;
+    MediaSortFilterProxyModel * proxy = (MediaSortFilterProxyModel *) view->model();
+    MediaItemModel *model = (MediaItemModel *) proxy->sourceModel();
     
     if (m_contextMenuSource == MainWindow::InfoBox ||
         m_contextMenuSource == MainWindow::Default) {
@@ -845,14 +874,11 @@ const QList<MediaItem> ActionsManager::selectedMediaItems()
         m_contextMenuSource == MainWindow::Playlist ||
         (m_contextMenuSource == MainWindow::Default && mediaList.count() == 0)
         ) {
-        for (int i = 0; i < view->selectionModel()->selectedIndexes().count(); ++i) {
-            QModelIndex _index = view->selectionModel()->selectedIndexes().at(i);
+        QModelIndexList selection = view->selectionModel()->selectedIndexes();
+        for (int i = 0; i < selection.count(); ++i) {
+            QModelIndex _index = selection.at(i);
             QModelIndex index;
-            if (proxy != NULL) {
-                index = proxy->mapToSource(_index);
-            } else {
-                index = _index;
-            }
+            index = proxy->mapToSource(_index);
             if (index.column() == 0) {
                 mediaList.append(model->mediaItemAt(index.row()));
             }
@@ -1056,14 +1082,14 @@ void ActionsManager::updateToggleFilterText()
     QString txt;
     if (m_parent->currentMainWidget() == MainWindow::MainMediaList) {
         if (ui->mediaListFilter->isVisible())
-            txt = i18n("Hide media list filter");
+            txt = i18n("Hide filter");
         else
-            txt = i18n("Show media list filter");
+            txt = i18n("Show filter");
     } else {
         if (ui->playlistFilter->isVisible())
-            txt = i18n("Hide playlist filter");
+            txt = i18n("Hide filter");
         else
-            txt = i18n("Show playlist filter");
+            txt = i18n("Show filter");
     }
     action("toggle_filter")->setText(txt);
 }
