@@ -251,6 +251,7 @@ MainWindow::~MainWindow()
 void MainWindow::completeSetup()
 {
     setupActions();
+    ui->playlistView->setupActions();
     m_application->audioSettings()->setAudioPath(&m_audioPath);
 }
 
