@@ -54,11 +54,16 @@ void PlaylistView::setMainWindow(MainWindow* mainWindow)
     m_playlistDuration = mainWindow->ui->playlistDuration;
 }
 
+void PlaylistView::setupActions()
+{
+    addAction(m_application->actionsManager()->action("remove_playlistselection_from_playlist"));
+}
+
+
 void PlaylistView::contextMenuEvent(QContextMenuEvent* event)
 {
     if (selectionModel()->selectedIndexes().count() != 0) {
-        MainWindow::ContextMenuSource contextMenuSource = MainWindow::Playlist;
-        QMenu * menu = m_application->actionsManager()->playlistViewMenu(contextMenuSource);
+        QMenu * menu = m_application->actionsManager()->playlistViewMenu();
         menu->exec(event->globalPos());
     }
 }

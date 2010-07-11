@@ -160,13 +160,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up media list view
     ui->mediaView->setMainWindow(this);
-    ui->mediaListFilterProxyLine->lineEdit()->setClickMessage(i18n("Search in media list..."));
+    ui->mediaListFilterProxyLine->lineEdit()->setClickMessage(QString());
     ui->mediaListFilterProxyLine->setProxy(ui->mediaView->filterProxyModel());
     ui->mediaListFilter->setVisible(false);
     ui->mediaView->setSourceModel(m_application->browsingModel());
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(hidePlayButtons()));
+    connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(mediaListLoading()));
     connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
@@ -184,14 +184,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up playlist
     connect(m_application->playlist(), SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
-    connect(m_application->playlist(), SIGNAL(loading()), this, SLOT(showLoading()));
+    connect(m_application->playlist(), SIGNAL(loading()), this, SLOT(playlistLoading()));
     connect(m_application->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(shuffleModeChanged(bool)));
     connect(m_application->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(repeatModeChanged(bool)));
     
     
     //Set up playlist view
     ui->playlistView->setMainWindow(this);
-    ui->playlistFilterProxyLine->lineEdit()->setClickMessage(i18n("Search in playlist..."));
+    ui->playlistFilterProxyLine->lineEdit()->setClickMessage(QString());
     ui->playlistFilterProxyLine->setProxy(m_application->playlist()->filterProxyModel());
     ui->playlistFilter->setVisible(false);
     playWhenPlaylistChanges = false;
@@ -254,6 +254,7 @@ MainWindow::~MainWindow()
 void MainWindow::completeSetup()
 {
     setupActions();
+    ui->playlistView->setupActions();
     m_application->audioSettings()->setAudioPath(&m_audioPath);
 }
 
@@ -1138,6 +1139,9 @@ void MainWindow::updateCustomColors()
     viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::Base));
     ui->mediaListHolder->setPalette(viewPalette);
     ui->semanticsHolder->setPalette(viewPalette);
+    //the palette of the media filter inherited the palette and seems to be invisible now
+    viewPalette.setColor(QPalette::Window, palette().color(QPalette::Window));
+    ui->mediaListFilter->setPalette(viewPalette);
 }
 
 void MainWindow::skipForward(int i)
@@ -1265,4 +1269,18 @@ void MainWindow::switchMainWidget(MainWindow::MainWidget which)
 MainWindow::MainWidget MainWindow::currentMainWidget()
 {
     return (MainWidget) ui->stackedWidget->currentIndex();
+}
+
+void MainWindow::mediaListLoading()
+{
+    if (ui->mediaListFilter->isVisible())
+        ui->mediaListFilterProxyLine->lineEdit()->clear();
+    hidePlayButtons();
+}
+
+void MainWindow::playlistLoading()
+{
+    if (ui->playlistFilter->isVisible())
+        ui->playlistFilterProxyLine->lineEdit()->clear();
+    showLoading();
 }
