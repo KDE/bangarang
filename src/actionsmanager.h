@@ -55,7 +55,7 @@ class ActionsManager : public QObject
         QMenu *addToSavedVideoListMenu();
 
         QMenu * mediaViewMenu(bool showAbout = false, MainWindow::ContextMenuSource menuSource = MainWindow::Default);
-        QMenu * playlistViewMenu(MainWindow::ContextMenuSource menuSource = MainWindow::Default);
+        QMenu * playlistViewMenu();
         QMenu * nowPlayingContextMenu();
         KMenu * nowPlayingMenu();
         KMenu * notifierMenu();
@@ -119,6 +119,7 @@ class ActionsManager : public QObject
         void muteAudio();
         void addSelectedToPlaylistSlot();
         void removeSelectedFromPlaylistSlot();
+        void removePlaylistSelectionFromPlaylistSlot();
         void removeSelectedItemsInfoSlot();
         void playSelectedSlot();
         void playAllSlot();

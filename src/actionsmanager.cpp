@@ -119,9 +119,15 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("add_to_playlist", action);
 
     //Remove Selected From Playlist Action
-    action = new KAction(KIcon(), i18n("Remove from playlist"), this);
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
     m_othersCollection->addAction("remove_from_playlist", action);
+    
+    //Remove the selection of the playlist from the playlist
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
+    action->setShortcut(Qt::Key_Delete);
+    connect(action, SIGNAL(triggered()), this, SLOT(removePlaylistSelectionFromPlaylistSlot()));
+    m_othersCollection->addAction("remove_playlistselection_from_playlist", action);
 
     //Toggle Controls Shortcut
     action = new KAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
@@ -148,7 +154,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Show Audio Settings
     action = new KAction(KIcon("speaker"), i18n("Show Audio Settings"),this);
-    action->setShortcut(Qt::CTRL + Qt::Key_A);
+    action->setShortcut(Qt::CTRL + Qt::Key_U);
     connect(action, SIGNAL(triggered()), this, SLOT(toggleAudioSettings()));
     m_shortcutsCollection->addAction("show_audio_settings",action);
 
@@ -351,9 +357,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     return menu;
 }
 
-QMenu *ActionsManager::playlistViewMenu(MainWindow::ContextMenuSource menuSource)
+QMenu *ActionsManager::playlistViewMenu()
 {
-    m_contextMenuSource = menuSource;
+    m_contextMenuSource = MainWindow::Playlist;
     QMenu *menu = new QMenu(m_parent);
     menu->addAction(action("remove_from_playlist"));
     return menu;
@@ -640,12 +646,32 @@ void ActionsManager::toggleAudioSettings()
 
 void ActionsManager::cancelFSHC()
 {
-    if (m_parent->isFullScreen()) {
-        m_parent->on_fullScreen_toggled(false);
-    } else if (m_parent->currentMainWidget() == MainWindow::MainNowPlaying && !m_controlsVisible) {
-        toggleControls();
-    } else if (m_parent->currentFilterProxyLine()->lineEdit()->hasFocus()) {
+    if (m_parent->currentFilterProxyLine()->lineEdit()->hasFocus()) {
         toggleFilter();
+        return;
+    }
+
+    MainWindow::MainWidget cmw = m_parent->currentMainWidget();
+    if (cmw == MainWindow::MainNowPlaying) {
+        if (ui->playlistView->hasFocus() && ui->playlistView->selectionModel()->hasSelection()) {
+            ui->playlistView->clearSelection();
+            return;
+        } else if (!m_controlsVisible) {
+            toggleControls();
+            return;
+        }
+
+
+    } else if (cmw == MainWindow::MainMediaList) {
+        if (ui->mediaView->hasFocus() && ui->mediaView->selectionModel()->hasSelection()) {
+            ui->mediaView->clearSelection();
+            return;
+        }
+    }
+    
+    
+    if (m_parent->isFullScreen()) {
+        fullScreenToggle();
     }
 }
 
@@ -733,6 +759,12 @@ void ActionsManager::removeSelectedFromPlaylistSlot()
             }
         }
     }
+}
+
+void ActionsManager::removePlaylistSelectionFromPlaylistSlot()
+{
+  m_contextMenuSource = MainWindow::Playlist;
+  removeSelectedFromPlaylistSlot();
 }
 
 void ActionsManager::updateSavedListsMenus()
