@@ -719,6 +719,7 @@ void MainWindow::updateMuteStatus(bool muted)
     } else {
         ui->volumeIcon->setIcon(KIcon("speaker"));
         ui->volumeIcon->setToolTip(i18n("Mute volume"));
+        m_audioOutput->setVolume(m_volume);        
     }
 }
 
