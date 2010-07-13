@@ -575,7 +575,15 @@ void MainWindow::volumeChanged(qreal newVolume)
 
 void MainWindow::volumeChanged(int delta)
 {
+  if ((m_volume == 0 && delta < 0) || (m_volume == 1 &&  delta > 0))
+      return;
+  
   m_volume += (qreal)delta/25;
+  
+  if (m_volume < 0)
+      m_volume = 0;
+  if (m_volume > 1)
+      m_volume = 1;
   
   m_audioOutput->setVolume(m_volume);
 }
