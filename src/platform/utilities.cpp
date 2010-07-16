@@ -434,6 +434,11 @@ bool Utilities::isCategory(const QString type)
    return (type == "Category");
 }
 
+bool Utilities::isDiscTitle(const QString subType)
+{
+    return (subType == "CD Track" || subType == "DVD Title");
+}
+
 
 QPixmap Utilities::reflection(QPixmap &pixmap)
 {

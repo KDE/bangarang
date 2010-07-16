@@ -21,6 +21,7 @@
 #include "utilities.h"
 #include "mediavocabulary.h"
 #include "mediaindexer.h"
+#include "bangarangapplication.h"
 #include <time.h>
 #include <KUrl>
 #include <KIcon>
@@ -32,10 +33,12 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <QDBusInterface>
+#include <actionsmanager.h>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = parent;
     m_mediaObject = mediaObject;
     m_mediaController = new Phonon::MediaController(m_mediaObject);
@@ -142,10 +145,17 @@ void Playlist::playItemAt(int row, Model model)
     } else if(nextMediaItem.type == "Video") {
         subType = nextMediaItem.fields["videoType"].toString();
     }
-    if (subType == "CD Track" || subType == "DVD Title") {
-        m_mediaObject->setCurrentSource((subType == "CD Track") ? Phonon::Cd : Phonon::Dvd);
-        m_mediaController->setAutoplayTitles(false);
-        m_mediaController->setCurrentTitle(nextMediaItem.fields["trackNumber"].toInt());
+    bool isDiscTitle = Utilities::isDiscTitle( subType );
+    if (isDiscTitle) {
+        Phonon::DiscType discType = (subType == "CD Track") ? Phonon::Cd : Phonon::Dvd;
+        int title = nextMediaItem.fields["trackNumber"].toInt();
+        if (discType != m_mediaObject->currentSource().discType())
+            m_mediaObject->setCurrentSource(discType);
+        //TODO: use the same code as if the user selected a title in the DVD Menu
+        m_mediaController->setAutoplayTitles(true); //or we couldn't switch titles
+        m_mediaController->setCurrentTitle(title);
+        titleChanged(title);
+        m_mediaController->setAutoplayTitles(!m_shuffle);
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
@@ -168,8 +178,6 @@ void Playlist::playItemAt(int row, Model model)
     }
     m_mediaObject->play();
     m_state = Playlist::Playing;
-    
-    
 }
 
 void Playlist::playNext()
