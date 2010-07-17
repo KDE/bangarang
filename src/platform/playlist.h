@@ -185,6 +185,12 @@ class Playlist : public QObject
         * @returns Phonon::MediaController
         */
         Phonon::MediaController *mediaController() { return m_mediaController; }
+        
+        /**
+        * Builds an url of the item currently playing
+        * @returns A mediaItem Url
+        */
+        QString currentUrl();
                
     public slots:
         /**

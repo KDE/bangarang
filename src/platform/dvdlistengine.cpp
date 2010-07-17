@@ -68,12 +68,7 @@ void DVDListEngine::run()
             m_loadWhenReady = true;
         }
         if (m_mediaObject->state() == Phonon::StoppedState) {
-            QString discTitle;
-            if (!m_mediaObject->currentSource().deviceName().isEmpty()) {
-                discTitle = m_mediaObject->currentSource().deviceName();
-            } else if (!m_mediaObject->metaData("TITLE").isEmpty()) {
-                discTitle = m_mediaObject->metaData("TITLE").join("");
-            }
+            QString discTitle = Utilities::discName(m_mediaObject);
             Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
             MediaItem mediaItem;
             int trackCount = mediaController->availableTitles();
@@ -83,7 +78,7 @@ void DVDListEngine::run()
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
                 title = i18n("Title %1", i);
-                mediaItem.url = QString("DVDTRACK%1").arg(i);
+                mediaItem.url = Utilities::discUrl(Phonon::Dvd, i, discTitle);
                 mediaItem.artwork = KIcon("media-optical-dvd");
                 mediaItem.title = title;
                 if (discTitle.isEmpty()) {
