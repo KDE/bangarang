@@ -786,7 +786,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
             insertRow(insertionRow, rowItems);
             insertionRow = insertionRow + 1;
         } else {
-            QString url = QUrl::fromPercentEncoding(urls.at(i).toString().toUtf8());
+            QString url = urls.at(i).toEncoded();
             if (Utilities::isAudio(url) || Utilities::isVideo(url)) {
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
                 mediaItemsInserted << mediaItem;
