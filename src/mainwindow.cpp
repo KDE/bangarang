@@ -669,10 +669,6 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
     else if (newstate == Phonon::StoppedState)
       m_application->statusNotifierItem()->setState(newstate);
     
-    m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
-
-//     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());
-
     Q_UNUSED(oldstate);
 }
 

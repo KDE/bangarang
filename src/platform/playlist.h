@@ -29,6 +29,7 @@ class MediaItem;
 class MediaIndexer;
 class MediaSortFilterProxyModel;
 class QSortFilterProxyModel;
+class BangarangApplication;
 
 
 
@@ -184,6 +185,12 @@ class Playlist : public QObject
         * @returns Phonon::MediaController
         */
         Phonon::MediaController *mediaController() { return m_mediaController; }
+        
+        /**
+        * Builds an url of the item currently playing
+        * @returns A mediaItem Url
+        */
+        QString currentUrl();
                
     public slots:
         /**
@@ -232,6 +239,7 @@ class Playlist : public QObject
         
         
     private:
+        BangarangApplication *m_application;
         QObject * m_parent;
         MediaItemModel * m_currentPlaylist;
         MediaItemModel * m_nowPlaying;
