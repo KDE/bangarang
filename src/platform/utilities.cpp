@@ -46,6 +46,7 @@
 #include <QImage>
 #include <QTime>
 #include <phonon/backendcapabilities.h>
+#include <phonon/MediaObject>
 
 #include <taglib/mpegfile.h>
 #include <taglib/fileref.h>
@@ -409,6 +410,21 @@ bool Utilities::isPls(const QString &url)
     return result->is("audio/x-scpls");
 }
 
+bool Utilities::isDvd(const QString& url)
+{
+    return url.startsWith("DVDTRACK");
+}
+
+bool Utilities::isCd(const QString& url)
+{
+    return url.startsWith("CDTRACK");
+}
+
+bool Utilities::isDisc(const QString& url)
+{
+    return (isDvd(url) || isCd(url));
+}
+
 bool Utilities::isMediaItem(const QModelIndex *index)
 {
     QString type = index->data(MediaItem::TypeRole).toString();
@@ -427,6 +443,11 @@ bool Utilities::isMedia(const QString type)
 bool Utilities::isFeed(const QString categoryType)
 {
    return (categoryType == "Audio Feed" || categoryType == "Video Feed");
+}
+
+bool Utilities::isAudioStream(const QString audioType)
+{
+  return (audioType == "Audio Stream");
 }
 
 bool Utilities::isCategory(const QString type)
@@ -1480,4 +1501,50 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
         }
     }
     return mediaItem;
+}
+
+QString Utilities::discUrl(Phonon::DiscType type, int title, const QString& name)
+{
+    QString url;
+    if (type == Phonon::Dvd) {
+        return QString("DVDTRACK#%1#%2").arg(title).arg(name);
+    }
+    else
+        return QString("CDTRACK#%1").arg(title);
+}
+
+QString Utilities::discNameFromUrl(const QString& url)
+{
+    if (isCd(url))
+        return QString();
+    QStringList parts = url.split('#');
+    return parts.at(2);
+}
+
+int Utilities::discTitleFromUrl(const QString& url)
+{
+    bool ok = false;
+    QStringList parts = url.split('#');
+    int title = parts.at(1).toInt(&ok, 0);
+    return ok ? title : Utilities::discTitleFullDisc();
+}
+
+Phonon::DiscType Utilities::discTypeFromUrl(const QString& url)
+{
+    return isDvd(url) ? Phonon::Dvd : Phonon::Cd;
+}
+
+int Utilities::discTitleFullDisc()
+{
+    return -1;
+}
+
+QString Utilities::discName(Phonon::MediaObject* mobj)
+{
+    if (!mobj->currentSource().deviceName().isEmpty())
+        return mobj->currentSource().deviceName();
+    else if (!mobj->metaData("TITLE").isEmpty())
+        return mobj->metaData("TITLE").join("");
+    else
+        return QString();
 }

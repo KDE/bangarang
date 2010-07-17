@@ -37,8 +37,7 @@
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
 {
     m_parent = parent;
-    m_mediaObject = mediaObject;
-    m_mediaController = new Phonon::MediaController(m_mediaObject);
+    m_mediaController = NULL;
     m_currentPlaylist = new MediaItemModel(this);
     m_currentPlaylist->setSuppressNoResultsMessage(true);
     m_nowPlaying = new MediaItemModel(this);
@@ -53,6 +52,8 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_hadVideo = false;
     m_notificationRestrictions = 0;
     m_filterProxyModel = new MediaSortFilterProxyModel();
+    
+    setMediaObject(mediaObject);
 
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -62,15 +63,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
         m_nepomukInited = false; //no resource manager
     }
     
-    connect(m_mediaObject, SIGNAL(tick(qint64)), this, SLOT(updatePlaybackInfo(qint64)));
-    connect(m_mediaObject, SIGNAL(aboutToFinish()), this, SLOT(queueNextPlaylistItem()));
-    connect(m_mediaObject, SIGNAL(finished()), this, SLOT(confirmPlaylistFinished()));
-    connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
-    connect(m_mediaObject, SIGNAL(stateChanged (Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
-    connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
-    connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
-    connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
-    
+    connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));   
 }
 
 Playlist::~Playlist()
@@ -305,7 +298,8 @@ void Playlist::clearPlaylist()
 void Playlist::setMediaObject(Phonon::MediaObject *mediaObject)
 {
     //NOTE:Not disconnecting signals here.  Calling routing is responsible for deletion/disconnection of old media object.  If object is not deleted/disconnected, playlist slot will continue to respond to old media object signals.
-    delete m_mediaController;
+    if (m_mediaController != NULL)
+        delete m_mediaController;
     m_mediaObject = mediaObject;
     m_mediaController = new Phonon::MediaController(m_mediaObject);
 
@@ -316,7 +310,7 @@ void Playlist::setMediaObject(Phonon::MediaObject *mediaObject)
     connect(m_mediaObject, SIGNAL(stateChanged (Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
     connect(m_mediaObject, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     connect(m_mediaController, SIGNAL(titleChanged (int)), this, SLOT(titleChanged(int)));
-    
+  
 }
 
 QSortFilterProxyModel * Playlist::filterProxyModel()
@@ -438,16 +432,8 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
 {
     //Check next mediaItem to decide how to setAutoplayTitles
-    if ((newSource.discType() == Phonon::Cd) || (newSource.discType() == Phonon::Dvd)){
-        if (m_queue->rowCount() > 1) {
-            if ((m_queue->mediaItemAt(1).url.startsWith("CDTRACK")) || (m_queue->mediaItemAt(1).url.startsWith("DVDTRACK"))) {
-                if (m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1) {
-                   m_mediaController->setAutoplayTitles(true);
-                } else {
-                   m_mediaController->setAutoplayTitles(false);
-                }
-            }
-        }
+    if (newSource.type() == Phonon::MediaSource::Disc && m_queue->rowCount() > 1 && Utilities::isDisc(m_queue->mediaItemAt(1).url)) {
+        m_mediaController->setAutoplayTitles((m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1));
     } 
     updateNowPlaying();
 }
@@ -660,15 +646,7 @@ void Playlist::playlistChanged()
         //if currently playing url is not at front of queueMediaList
         // stop playing and play item at front of queue
         if ((m_mediaObject->state() == Phonon::PlayingState) || (m_mediaObject->state() == Phonon::PausedState)) {
-            QString currentUrl;
-            if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
-                currentUrl = QString("CDTRACK%1").arg(m_mediaController->currentTitle());
-            } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
-                currentUrl = QString("DVDTRACK%1").arg(m_mediaController->currentTitle());
-            } else {
-                currentUrl = m_mediaObject->currentSource().url().toString();
-            }
-            if (currentUrl != QUrl::fromPercentEncoding(m_queue->mediaItemAt(0).url.toUtf8())) {
+            if (currentUrl() != QUrl::fromEncoded(m_queue->mediaItemAt(0).url.toUtf8()).toString()) {
                 m_mediaObject->stop();
                 playItemAt(0, Playlist::QueueModel);
             }
@@ -694,23 +672,16 @@ void Playlist::updateNowPlaying()
     //Find matching item in queue
     int queueRow = -1;
     for (int i = 0; i < m_queue->rowCount(); i++) {
-        QString currentUrl;
-        if (m_mediaObject->currentSource().discType() == Phonon::Cd) {
-            currentUrl = QString("CDTRACK%1").arg(m_mediaController->currentTitle());
-        } else if (m_mediaObject->currentSource().discType() == Phonon::Dvd) {
-            currentUrl = QString("DVDTRACK%1").arg(m_mediaController->currentTitle());
-        } else {
-            currentUrl = m_mediaObject->currentSource().url().toString();
-        }    
-        if (m_queue->mediaItemAt(i).fields["audioType"].toString() == "Audio Stream") {
+        QString cUrl = currentUrl();
+        if (Utilities::isAudioStream(m_queue->mediaItemAt(i).fields["audioType"].toString())) {
             for (int j = 0; j < m_streamListUrls.count(); j++) {
-                if (currentUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
+                if (cUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
                     queueRow = i;
                     break;
                 }
             }
         } else {
-            if ((currentUrl == QUrl::fromPercentEncoding(m_queue->mediaItemAt(i).url.toUtf8()))) {
+            if (cUrl == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
                 queueRow = i;
                 break;
             }
@@ -836,4 +807,13 @@ void Playlist::metaDataChanged()
             m_nowPlaying->replaceMediaItemAt(0, mediaItem, true);
         }
     }
+}
+
+QString Playlist::currentUrl()
+{
+    Phonon::MediaSource src =  m_mediaObject->currentSource();
+    if (src.type() == Phonon::MediaSource::Disc)
+        return Utilities::discUrl(src.discType(), m_mediaController->currentTitle(), Utilities::discName(m_mediaObject));
+    else
+        return src.url().toString();
 }
