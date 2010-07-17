@@ -29,6 +29,11 @@
 #include <Soprano/QueryResultIterator>
 #include <Nepomuk/Resource>
 #include <QModelIndex>
+#include <phonon/Global>
+
+namespace Phonon {
+class MediaObject;
+}
 
 
 class MediaItem;
@@ -73,11 +78,14 @@ namespace Utilities {
     bool isVideoMimeType(KMimeType::Ptr type);
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
+    bool isDvd(const QString &url);
+    bool isCd(const QString &url);
+    bool isDisc(const QString &url);
     bool isMediaItem(const QModelIndex *index);
     bool isMedia(const QString type);
     bool isCategory(const QString type);
     bool isFeed(const QString categoryType);
-    bool isDiscTitle(const QString subType);
+    bool isAudioStream(const QString audioType);
     QPixmap reflection(QPixmap &pixmap);
     MediaItem mediaItemFromUrl(KUrl url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
@@ -97,5 +105,11 @@ namespace Utilities {
     QUrl artistResource(const QString &artistName);
     QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
+    QString discUrl(Phonon::DiscType type, int title = -1, const QString& name = QString());
+    int discTitleFromUrl(const QString &url);
+    QString discNameFromUrl(const QString &url);
+    Phonon::DiscType discTypeFromUrl(const QString &url);
+    int discTitleFullDisc();
+    QString discName( Phonon::MediaObject *mobj );
 }
 #endif //UTILITIES_H    

@@ -80,7 +80,7 @@ void CDListEngine::run()
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
                 title = i18n("Track %1", i);
-                mediaItem.url = QString("CDTRACK%1").arg(i);
+                mediaItem.url = Utilities::discUrl(Phonon::Cd, i);
                 mediaItem.artwork = KIcon("media-optical-audio");
                 mediaItem.title = title;
                 mediaItem.subTitle = i18nc("%1=Total number of tracks on the CD", "Audio CD - %1 Tracks", trackCount);
