@@ -63,7 +63,6 @@ class ActionsManager : public QObject
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
-        QMenu * dvdMenu();
         void updateToggleFilterText();
 
         bool m_controlsVisible;
@@ -83,18 +82,11 @@ class ActionsManager : public QObject
         QMenu *m_addToVideoSavedList;
         QMenu *m_nowPlayingContextMenu;
         KMenu *m_nowPlayingMenu;
-        QMenu *m_dvdMenu;
         bool m_contextStackWasVisible;
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
         QMenu *m_removeBookmarksMenu;
         
-        QActionGroup *m_audioChannelGroup;
-        QActionGroup *m_subtitleGroup;
-        QActionGroup *m_angleGroup;
-        QActionGroup *m_titleGroup;
-        QActionGroup *m_chapterGroup;
-
         //every actionn which is allowed to have a shortcut
         KActionCollection *m_shortcutsCollection;
         //shortcuts that make no sense to have a shortcut
@@ -133,10 +125,5 @@ class ActionsManager : public QObject
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
         void updateOntologies();
-        void audioChannelChanged(QAction *action);
-        void subtitleChanged(QAction *action);
-        void angleChanged(QAction *action);
-        void titleChanged(QAction *action);
-        void chapterChanged(QAction *action);
 };
 #endif //ACTIONSMANAGER_H

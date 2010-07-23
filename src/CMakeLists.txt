@@ -28,7 +28,7 @@ INCLUDE_DIRECTORIES(
     
 )
 
-SET(BangarangSources 
+SET(BangarangSources
     bangarangapplication.cpp
     bangarangnotifieritem.cpp
     mainwindow.cpp 
@@ -82,6 +82,7 @@ SET(BangarangSources
     platform/ontologyupdater.cpp
     platform/downloader.cpp
     platform/infofetcher.cpp
+    platform/dvdcontroller.cpp 
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

@@ -32,6 +32,7 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <platform/dvdcontroller.h>
 #include <QDBusInterface>
 #include <actionsmanager.h>
 
@@ -144,11 +145,7 @@ void Playlist::playItemAt(int row, Model model)
         int title = nextMediaItem.fields["trackNumber"].toInt();
         if (discType != m_mediaObject->currentSource().discType())
             m_mediaObject->setCurrentSource(discType);
-        //TODO: use the same code as if the user selected a title in the DVD Menu
-        m_mediaController->setAutoplayTitles(true); //or we couldn't switch titles
-        m_mediaController->setCurrentTitle(title);
-        titleChanged(title);
-        m_mediaController->setAutoplayTitles(!m_shuffle);
+        m_application->dvdController()->setTitle( title );
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {

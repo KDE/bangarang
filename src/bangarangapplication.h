@@ -35,6 +35,7 @@ class BookmarksManager;
 class AudioSettings;
 class MainWindow;
 class BangarangNotifierItem;
+class DvdController;
 
 class BangarangApplication : public KApplication
 {
@@ -55,6 +56,7 @@ class BangarangApplication : public KApplication
         BookmarksManager * bookmarksManager();
         BangarangNotifierItem * statusNotifierItem();
         AudioSettings * audioSettings();
+        DvdController * dvdController() { return m_dvdController; }
         const KAboutData * aboutData();
         bool nepomukInited();
         
@@ -70,6 +72,7 @@ class BangarangApplication : public KApplication
         BookmarksManager * m_bookmarksManager;
         BangarangNotifierItem * m_statusNotifierItem;
         AudioSettings * m_audioSettings;
+        DvdController * m_dvdController;
         bool m_nepomukInited;
 
     private slots:
