@@ -429,12 +429,7 @@ QMenu *ActionsManager::bookmarksMenu()
     m_bookmarksMenu->addAction(action("toggle_show_remaining_time"));
     m_bookmarksMenu->addSeparator();
     Phonon::State state = m_application->playlist()->mediaObject()->state();
-    if (!(state == Phonon::PlayingState || state == Phonon::PausedState)) {
-        action("add_bookmark")->setEnabled(false);
-    } else {
-        action("add_bookmark")->setEnabled(true);
-    }
-    m_bookmarksMenu->addAction(action("add_bookmark"));
+    action("add_bookmark")->setEnabled((state == Phonon::PlayingState || state == Phonon::PausedState));
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         QString url = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
         //chapters, if dvd
@@ -446,12 +441,13 @@ QMenu *ActionsManager::bookmarksMenu()
                     continue;
                 int no = data.toInt();
                 QString title = i18n("Chapter %1").arg(no);
-                QAction * ac = m_bookmarksMenu->addAction(KIcon("bookmarks-organize"), title);
+                QAction * ac = m_bookmarksMenu->addAction(KIcon("media-optical-dvd"), title);
                 ac->setData(QString("Chapter:%1").arg(no));
             }
             m_bookmarksMenu->addSeparator();
         }
         //real bookmarks
+        m_bookmarksMenu->addAction(action("add_bookmark"));
         QStringList bookmarks = m_application->bookmarksManager()->bookmarks(url);
         for (int i = 0; i < bookmarks.count(); i++) {
             QString bookmarkName = m_application->bookmarksManager()->bookmarkName(bookmarks.at(i));
@@ -460,7 +456,7 @@ QMenu *ActionsManager::bookmarksMenu()
             QString bookmarkTitle = QString("%1 (%2)").arg(bookmarkName).arg(bmTime.toString(QString("m:ss")));
             QAction * action = m_bookmarksMenu->addAction(KIcon("bookmarks-organize"), bookmarkTitle);
             action->setData(QString("Activate:%1").arg(bookmarks.at(i)));
-            action = m_bookmarksMenu->addAction(KIcon("list-remove"), bookmarkTitle);
+            action = m_removeBookmarksMenu->addAction(KIcon("list-remove"), bookmarkTitle);
             action->setData(QString("Remove:%1").arg(bookmarks.at(i)));
         }
         if (bookmarks.count() > 0) {

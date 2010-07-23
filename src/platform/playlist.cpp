@@ -145,7 +145,8 @@ void Playlist::playItemAt(int row, Model model)
         int title = nextMediaItem.fields["trackNumber"].toInt();
         if (discType != m_mediaObject->currentSource().discType())
             m_mediaObject->setCurrentSource(discType);
-        m_application->dvdController()->setTitle( title );
+        m_application->dvdController()->setTitle(title);
+        titleChanged(title);
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
