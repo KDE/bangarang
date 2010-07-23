@@ -91,12 +91,14 @@ void DvdController::updateMenu()
 
 void DvdController::setAngle(int angle)
 {
-    m_mediaController->setCurrentAngle( angle );
+    m_mediaController->setCurrentAngle(angle);
+    updateCurrentAngle(angle);
 }
 
 void DvdController::setChapter(int chapter)
 {
-    m_mediaController->setCurrentChapter( chapter );
+    m_mediaController->setCurrentChapter(chapter);
+    updateCurrentChapter(chapter);
 }
 
 void DvdController::setTitle(int title)
@@ -126,6 +128,7 @@ void DvdController::setTitle(int title)
          if ( cur.name() == oldSub.name() && cur.description() == oldSub.description())
              m_mediaController->setCurrentSubtitle(cur);
     }
+    updateCurrentTitle(title);
 }
 
 void DvdController::setAudioChannel(int idx)
@@ -133,6 +136,7 @@ void DvdController::setAudioChannel(int idx)
     Phonon::AudioChannelDescription selected = Phonon::AudioChannelDescription::fromIndex(idx);
     if ( selected != m_mediaController->currentAudioChannel() )
         m_mediaController->setCurrentAudioChannel( selected );
+    updateCurrentAudioChannel();
 }
 
 void DvdController::setSubtitle(int idx)
@@ -140,6 +144,7 @@ void DvdController::setSubtitle(int idx)
     Phonon::SubtitleDescription selected = Phonon::SubtitleDescription::fromIndex(idx);
     if ( selected != m_mediaController->currentSubtitle() )
         m_mediaController->setCurrentSubtitle( selected );
+    updateCurrentSubtitle();
 }
 
 void DvdController::updateAngles(int count)
