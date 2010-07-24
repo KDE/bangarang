@@ -18,11 +18,12 @@
 
 #include "infofetcher.h"
 #include "mediaitemmodel.h"
+#include <KIcon>
 
 InfoFetcher::InfoFetcher(QObject * parent) : QObject(parent)
 {
     m_name = QString();
-    m_icon = QIcon();
+    m_icon = KIcon("run-build");
 }
 
 InfoFetcher::~InfoFetcher()

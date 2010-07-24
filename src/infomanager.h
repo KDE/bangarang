@@ -37,6 +37,7 @@ class InfoItemDelegate;
 class InfoCategoryDelegate;
 class MediaItemDelegate;
 class BangarangApplication;
+class InfoFetcher;
 
 /*
  * This class provides a user interface for updating information associated with MediaItems
@@ -50,6 +51,7 @@ class InfoManager : public QObject
         ~InfoManager();
         const QList<MediaItem> selectedInfoBoxMediaItems();
         bool infoViewVisible();
+        QList<InfoFetcher *> infoFetchers();
         
     public slots:
         void toggleInfoView();
@@ -64,6 +66,7 @@ class InfoManager : public QObject
         void mediaListPropertiesChanged();
         void removeSelectedItemsInfo();
         void addSelectedItemsInfo();
+        void infoFetcherSelected(QAction *action);
         
     private:
         BangarangApplication * m_application;
@@ -74,7 +77,7 @@ class InfoManager : public QObject
         InfoItemDelegate *m_infoItemDelegate;
         InfoCategoryModel *m_infoCategoryModel;
         InfoCategoryDelegate *m_infoCategoryDelegate;
-        QList<MediaItem> m_infoMediaList;
+        QList<MediaItem> m_context;
         MediaItemModel *m_recentlyPlayedModel;
         MediaItemModel *m_highestRatedModel;
         MediaItemModel *m_frequentlyPlayedModel;
@@ -82,12 +85,14 @@ class InfoManager : public QObject
         QList<MediaItem> m_selectedInfoBoxMediaItems;
         QTimer *m_selectionTimer;
         bool m_infoViewVisible;
+        QList<InfoFetcher *> m_infoFetchers;
         
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+        void infoFetched(MediaItem mediaItem);
         
     Q_SIGNALS:
         void infoBoxSelectionChanged(QList<MediaItem> selectedItems);

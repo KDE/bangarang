@@ -29,9 +29,12 @@
 #include "platform/infocategorymodel.h"
 #include "platform/playlist.h"
 #include "mediaitemdelegate.h"
+#include "platform/infofetcher.h"
+#include "platform/dbpediainfofetcher.h"
 #include <KUrlRequester>
 #include <KLineEdit>
 #include <KGlobalSettings>
+#include <KAction>
 #include <KDebug>
 #include <QDateEdit>
 #include <Soprano/QueryResultIterator>
@@ -79,6 +82,10 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoCategoryView->setModel(m_infoCategoryModel);
     m_infoCategoryDelegate->setView(ui->infoCategoryView);
     ui->infoCategoryView->setItemDelegate(m_infoCategoryDelegate);
+    
+    //Set up info fetchers
+    m_infoFetchers.append(new DBPediaInfoFetcher(this));
+    connect(m_infoFetchers.at(0), SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
     
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
@@ -136,6 +143,11 @@ void InfoManager::hideInfoView()
 bool InfoManager::infoViewVisible()
 {
     return m_infoViewVisible;
+}
+
+QList<InfoFetcher *> InfoManager::infoFetchers()
+{
+    return m_infoFetchers;
 }
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
@@ -223,10 +235,22 @@ void InfoManager::addSelectedItemsInfo()
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
             selectedItems.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
-        }
+       }
     }
     if (selectedItems.count() > 0) {
         m_application->browsingModel()->updateSourceInfo(selectedItems);
+    }
+}
+
+void InfoManager::infoFetcherSelected(QAction *action)
+{
+    QString fetcherID = action->data().toString();
+    int fetcherIndex = -1;
+    if (fetcherID.startsWith("fetcher:")) {
+        fetcherIndex = fetcherID.remove("fetcher:").toInt();
+    }
+    if (fetcherIndex != -1) {
+        m_infoFetchers.at(fetcherIndex)->fetchInfo(m_context);
     }
 }
 
@@ -271,47 +295,48 @@ void InfoManager::loadSelectedInfo()
     
     //Determine Information context
     bool selected = true;
-    QList<MediaItem> context;
+    //QList<MediaItem> context;
+    m_context.clear();
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
             int row = proxy->mapToSource(selectedRows.at(i)).row();
-            context.append(m_application->browsingModel()->mediaItemAt(row));
+            m_context.append(m_application->browsingModel()->mediaItemAt(row));
         }
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
         //the category selected to produce the list of media in the mediaview
         selected = false;
-        context.append(m_application->browsingModel()->mediaListProperties().category);
+        m_context.append(m_application->browsingModel()->mediaListProperties().category);
     } else {
         return;
     }
     
     //Determine type of context data
     bool contextIsMedia = false;
-    if (context.at(0).type == "Audio" || context.at(0).type == "Video") {
+    if (m_context.at(0).type == "Audio" || m_context.at(0).type == "Video") {
         contextIsMedia = true;
     }
     bool contextIsCategory = false;
-    if (context.at(0).type == "Category") {
+    if (m_context.at(0).type == "Category") {
         contextIsCategory = true;
     }
 
     //Load contextual data into info model and info boxes
     if (selected && contextIsMedia) {
-        m_infoItemModel->loadInfo(context);
+        m_infoItemModel->loadInfo(m_context);
         ui->semanticsStack->setCurrentIndex(1);
         updateViewsLayout();
     } else if (contextIsCategory) {
-        m_infoCategoryModel->loadInfo(context);
+        m_infoCategoryModel->loadInfo(m_context);
         ui->semanticsStack->setCurrentIndex(0);
         m_infoCategoryModel->setSourceModel(m_application->browsingModel());
         
         //Get context data for info boxes
         QStringList contextLRIs;
         QStringList contextTitles;
-        for (int i = 0; i < context.count(); i++) {
-            MediaItem contextCategory = context.at(i);
+        for (int i = 0; i < m_context.count(); i++) {
+            MediaItem contextCategory = m_context.at(i);
             if (i == 0) {
                 contextTitles = contextCategory.fields["contextTitles"].toStringList();
                 contextLRIs = contextCategory.fields["contextLRIs"].toStringList();
@@ -483,5 +508,17 @@ void InfoManager::mediaListPropertiesChanged()
     QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
     if (selectedRows.count() == 0) {
         loadSelectedInfo();
+    }
+}
+
+void InfoManager::infoFetched(MediaItem mediaItem)
+{
+    kDebug() << "Found:[" << mediaItem.title << "]\n Description:[" << mediaItem.fields["description"].toString();
+    QList<MediaItem> updatedContext = m_context;
+    for (int i = 0; i < updatedContext.count(); i++) {
+        if (updatedContext.at(i).url == mediaItem.url) {
+            updatedContext.replace(i, mediaItem);
+            break;
+        }
     }
 }

@@ -51,7 +51,7 @@ class InfoFetcher : public QObject
             Q_UNUSED(mediaList);
         }
         
-    private:
+    protected:
         QString m_name;
         QIcon m_icon;
         QList<MediaItem> m_mediaList;
