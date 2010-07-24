@@ -123,6 +123,34 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
     launchQuery(query, requestKey);
 }
 
+void DBPediaQuery::getMovieInfo(const QString & movieName)
+{
+    //Create query url
+    QString query = m_queryPrefix + 
+                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?writer ?director ?actor"
+                    "WHERE { "
+                    "{ ?work rdf:type dbo:Film . } "
+                    "?work foaf:name ?title . "
+                    "?title bif:contains \"'%1'\" . "
+                    "?work rdfs:comment ?description . "
+                    "OPTIONAL { ?work dbo:director ?directorres . " 
+                    "?directorres foaf:name ?director . } "
+                    "OPTIONAL { ?work dbo:writer ?writerres . " 
+                    "?writerres foaf:name ?writer . } "
+                    "OPTIONAL { ?work dbo:starring ?actorres . " 
+                    "?actorres foaf:name ?actor . } "
+                    "OPTIONAL {?work dbo:thumbnail ?thumbnail . } "
+                    "} ")
+                    .arg(movieName);
+    
+    //Create Request Key
+    QString requestKey = QString("Movie:%1").arg(movieName);
+    m_requests.clear();
+    
+    //Launch Query
+    launchQuery(query, requestKey);
+}
+
 void DBPediaQuery::launchQuery(const QString &query, const QString &requestKey)
 {
     //Construct dbpedia url
@@ -172,6 +200,8 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
             emit gotActorInfo(false, resultsBindingSets, requestKey);
         } else if (requestKey.startsWith("Director")) {
             emit gotDirectorInfo(false, resultsBindingSets, requestKey);
+        } else if (requestKey.startsWith("Movie")) {
+            emit gotMovieInfo(false, resultsBindingSets, requestKey);
         }        
         return;
     }
@@ -239,6 +269,8 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
         emit gotActorInfo(true, resultsBindingSets, requestKey);
     } else if (requestKey.startsWith("Director")) {
         emit gotDirectorInfo(true, resultsBindingSets, requestKey);
+    } else if (requestKey.startsWith("Movie")) {
+        emit gotMovieInfo(false, resultsBindingSets, requestKey);
     }
 
     //Remove results file

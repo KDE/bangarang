@@ -34,6 +34,16 @@ class InfoFetcher : public QObject
         ~InfoFetcher();
         QString name();
         QIcon icon();
+        virtual QStringList possibleMatches(const MediaItem &mediaItem)
+        {
+            Q_UNUSED(mediaItem);
+            return QStringList();
+        }
+        virtual void selectMatch(const MediaItem &mediaItem, const QString &match)
+        {
+            Q_UNUSED(mediaItem);
+            Q_UNUSED(match);
+        }
 
     public slots:
         virtual void fetchInfo(QList<MediaItem> mediaList)
@@ -52,6 +62,6 @@ class InfoFetcher : public QObject
         QStringList valueList(const QString &field);
         
     signals:
-        void infoFetched(QList<MediaItem> mediaList);
+        void infoFetched(MediaItem mediaItem);
 };
 #endif // INFOFETCHER_H
