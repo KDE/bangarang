@@ -35,6 +35,20 @@ namespace Phonon {
 class MediaObject;
 }
 
+/**
+* @def SAVE_DELETE_OBJ
+* This macro deletes an object only if the pointer isn't NULL and sets it NULL after deletion
+*/
+//note that the do/while loop is only inserted as the macro should look as a function, terminated
+//with ; (semicolon) which wouldn't be possible otherwise. The compiler will optimize it any way
+//so it doesn't influence the speed
+#define SAVE_DELETE_OBJ(obj) \
+  do { \
+    if (obj != NULL) { \
+        delete obj; \
+        obj = NULL; \
+    } \
+  } while( false )
 
 class MediaItem;
 

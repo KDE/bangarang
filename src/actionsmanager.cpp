@@ -24,6 +24,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
 #include "platform/ontologyupdater.h"
+#include "platform/dvdcontroller.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -45,7 +46,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     ui = m_parent->ui;
 
     m_shortcutsConfig = KGlobal::config()->group("shortcuts");
-    m_dvdMenu = new QMenu(i18n("DVD Menu"), m_parent);
 
     m_shortcutsCollection = new KActionCollection(this);
     m_shortcutsCollection->setConfigGlobal(true);
@@ -53,12 +53,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection = new KActionCollection(this);
     m_contextMenuSource = MainWindow::Default;
     
-    m_audioChannelGroup = NULL;
-    m_subtitleGroup = NULL;
-    m_angleGroup = NULL;
-    m_titleGroup = NULL;
-    m_chapterGroup = NULL;
-
     /*Set up actions*/
     //Add standard quit shortcut
     KAction *action = new KAction(KIcon("application-exit"), i18n("Quit"), this);
@@ -386,11 +380,7 @@ QMenu *ActionsManager::nowPlayingContextMenu()
     }
     m_nowPlayingContextMenu->addAction(action("toggle_controls"));
     if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
-    {
-        QMenu *menu = dvdMenu();
-        if ( menu != NULL )
-            m_nowPlayingContextMenu->addMenu(menu);
-    }
+        m_nowPlayingContextMenu->addMenu(m_application->dvdController()->menu());
     return m_nowPlayingContextMenu;
 }
 
@@ -416,115 +406,10 @@ KMenu *ActionsManager::nowPlayingMenu()
     }
     m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
     if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
-    {
-        QMenu *DVDmenu = dvdMenu();
-        if ( DVDmenu != NULL )
-            m_nowPlayingMenu->addMenu(DVDmenu);
-    }
+        m_nowPlayingContextMenu->addMenu(m_application->dvdController()->menu());
     m_nowPlayingMenu->addSeparator();
     m_nowPlayingMenu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     return m_nowPlayingMenu;
-}
-
-QMenu *ActionsManager::dvdMenu()
-{
-    /*
-    * NOTE: The following functionality should be put in a separate class that automatically updates
-    * the dvd menu via signal/slot system with a pointer to the media controller
-    */
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    bool doAdd = false;
-    //clear the menu, delete the old groups
-    m_dvdMenu->clear();
-    if ( m_audioChannelGroup != NULL )
-        delete m_audioChannelGroup;
-    m_audioChannelGroup = new QActionGroup(this);
-    if ( m_subtitleGroup != NULL )
-        delete m_subtitleGroup;
-    m_subtitleGroup = new QActionGroup(this);
-    if ( m_angleGroup != NULL )
-        delete m_angleGroup;
-    m_angleGroup = new QActionGroup(this);
-    if ( m_titleGroup != NULL )
-        delete m_titleGroup;
-    m_titleGroup = new QActionGroup(this);
-    if ( m_chapterGroup != NULL )
-        delete m_chapterGroup;
-    m_chapterGroup = new QActionGroup(this);
-    
-    //getting information about the current source
-    QList<AudioChannelDescription> audio = mctrl->availableAudioChannels();
-    AudioChannelDescription curAudio = mctrl->currentAudioChannel();
-    QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
-    SubtitleDescription curSubtitle = mctrl->currentSubtitle();
-    //create the menu
-    if (audio.count() > 1) {
-        QMenu *audioMenu = m_dvdMenu->addMenu(i18n("Audio Channels"));
-        foreach (AudioChannelDescription cur, audio) {
-            QAction *ac = m_audioChannelGroup->addAction(cur.name());
-            ac->setCheckable(true);
-            ac->setToolTip(cur.description());
-            if (curAudio == cur)
-                ac->setChecked(true);
-            audioMenu->addAction(ac);
-        }
-        connect(m_audioChannelGroup, SIGNAL(selected(QAction *)), this, SLOT(audioChannelChanged(QAction *)));
-        doAdd = true;
-    }
-    if (subtitles.count() > 1) {
-        QMenu *subtitleMenu = m_dvdMenu->addMenu(i18n("Subtitles"));
-        foreach (SubtitleDescription cur, subtitles) {
-            QAction *ac = m_subtitleGroup->addAction(cur.name());
-            ac->setCheckable(true);
-            ac->setToolTip(cur.description());
-            if (curSubtitle == cur)
-                ac->setChecked(true);
-            subtitleMenu->addAction(ac);
-        }
-        SubtitleDescription no;
-        subtitles.insert(0, no);
-        connect(m_subtitleGroup, SIGNAL(selected(QAction *)), this, SLOT(subtitleChanged(QAction *)));
-        doAdd = true;
-    }
-    for (int n = 0; n < 3; n++) {
-        int count, curIdx;
-        QActionGroup *group;
-        const char *slot;
-        QString title; 
-        if (n == 0) {
-            count = mctrl->availableAngles();
-            curIdx = mctrl->currentAngle();
-            group = m_angleGroup;
-            title = i18n("Angles");
-            slot = SLOT(angleChanged(QAction *));
-        } else if (n == 1 ) {
-            count = mctrl->availableChapters();
-            curIdx = mctrl->currentChapter();
-            group = m_chapterGroup;
-            title = i18n("Chapters");
-            slot = SLOT(chapterChanged(QAction *));
-        } else {
-            count = mctrl->availableTitles();
-            curIdx = mctrl->currentTitle();
-            group = m_titleGroup;
-            title = i18n("Titles");
-            slot = SLOT(titleChanged(QAction *));
-        }
-        if (count > 1) {
-            QMenu *menu = m_dvdMenu->addMenu(title);
-            for (int i = 0; i < count; i++ ) {
-                QString str = QString("%1").arg( i + 1 );
-                QAction *ac = group->addAction( str );
-                ac->setCheckable(true);
-                if (curIdx == i)
-                    ac->setChecked(true);
-                menu->addAction(ac);
-            }
-            connect(group, SIGNAL(selected(QAction *)), this, slot);
-            doAdd = true;
-        }        
-    }
-    return doAdd ? m_dvdMenu : NULL;
 }
 
 QMenu *ActionsManager::addToSavedAudioListMenu()
@@ -544,27 +429,35 @@ QMenu *ActionsManager::bookmarksMenu()
     m_bookmarksMenu->addAction(action("toggle_show_remaining_time"));
     m_bookmarksMenu->addSeparator();
     Phonon::State state = m_application->playlist()->mediaObject()->state();
-    if (!(state == Phonon::PlayingState || state == Phonon::PausedState)) {
-        action("add_bookmark")->setEnabled(false);
-    } else {
-        action("add_bookmark")->setEnabled(true);
-    }
-    m_bookmarksMenu->addAction(action("add_bookmark"));
+    action("add_bookmark")->setEnabled((state == Phonon::PlayingState || state == Phonon::PausedState));
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         QString url = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
+        //chapters, if dvd
+        if (Utilities::isDvd(url) && m_application->dvdController()->chapterMenu()) {
+            QList<QAction *> chapters_actions = m_application->dvdController()->chapterMenu()->actions();
+            foreach (QAction *cur, chapters_actions) {
+                QVariant data = cur->data();
+                if (!data.isValid())
+                    continue;
+                int no = data.toInt();
+                QString title = i18n("Chapter %1").arg(no);
+                QAction * ac = m_bookmarksMenu->addAction(KIcon("media-optical-dvd"), title);
+                ac->setData(QString("Chapter:%1").arg(no));
+            }
+            m_bookmarksMenu->addSeparator();
+        }
+        //real bookmarks
+        m_bookmarksMenu->addAction(action("add_bookmark"));
         QStringList bookmarks = m_application->bookmarksManager()->bookmarks(url);
         for (int i = 0; i < bookmarks.count(); i++) {
             QString bookmarkName = m_application->bookmarksManager()->bookmarkName(bookmarks.at(i));
             qint64 bookmarkTime = m_application->bookmarksManager()->bookmarkTime(bookmarks.at(i));
             QTime bmTime(0, (bookmarkTime / 60000) % 60, (bookmarkTime / 1000) % 60);
-            QString bookmarkTimeStr = bmTime.toString(QString("m:ss"));
-            QString bookmarkTitle = QString("%1 (%2)").arg(bookmarkName).arg(bookmarkTimeStr);
-            KAction * bookmarkAction = new KAction(KIcon("bookmarks-organize"), bookmarkTitle, m_bookmarksMenu);
-            bookmarkAction->setData(QString("Activate:%1").arg(bookmarks.at(i)));
-            m_bookmarksMenu->addAction(bookmarkAction);
-            KAction * removeBookmarkAction = new KAction(KIcon("list-remove"), bookmarkTitle, m_removeBookmarksMenu);
-            removeBookmarkAction->setData(QString("Remove:%1").arg(bookmarks.at(i)));
-            m_removeBookmarksMenu->addAction(removeBookmarkAction);
+            QString bookmarkTitle = QString("%1 (%2)").arg(bookmarkName).arg(bmTime.toString(QString("m:ss")));
+            QAction * action = m_bookmarksMenu->addAction(KIcon("bookmarks-organize"), bookmarkTitle);
+            action->setData(QString("Activate:%1").arg(bookmarks.at(i)));
+            action = m_removeBookmarksMenu->addAction(KIcon("list-remove"), bookmarkTitle);
+            action->setData(QString("Remove:%1").arg(bookmarks.at(i)));
         }
         if (bookmarks.count() > 0) {
             m_bookmarksMenu->addMenu(m_removeBookmarksMenu);
@@ -918,12 +811,16 @@ void ActionsManager::addBookmarkSlot()
 void ActionsManager::activateBookmark(QAction *bookmarkAction)
 {
     QString bookmark = bookmarkAction->data().toString();
-    if (!bookmark.isEmpty() && bookmark.startsWith("Activate:")) {
+    if (bookmark.isEmpty())
+        return;
+    if (bookmark.startsWith("Activate:")) {
         bookmark.remove(0,9);
         qint64 time = m_application->bookmarksManager()->bookmarkTime(bookmark);
         m_application->playlist()->mediaObject()->seek(time);
-    }
-        
+    } else if (bookmark.startsWith("Chapter:")) {
+        int no = bookmark.remove(0,8).toInt();
+        m_application->dvdController()->setChapter(no);
+    }        
 }
 
 void ActionsManager::removeBookmark(QAction *bookmarkAction)
@@ -1002,78 +899,6 @@ void ActionsManager::updateOntologies()
         connect(dialog, SIGNAL(rejected()), updater, SLOT(stopUpdate()));
         dialog->show();
         updater->start();
-    }
-}
-
-void ActionsManager::audioChannelChanged(QAction* action)
-{
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    QList<QAction *> actions = m_audioChannelGroup->actions();
-    QList<AudioChannelDescription> channels = mctrl->availableAudioChannels();
-    int idx = actions.indexOf(action);
-    AudioChannelDescription selected = channels.at(idx);
-    if ( selected != mctrl->currentAudioChannel() )
-        mctrl->setCurrentAudioChannel( selected );
-}
-
-void ActionsManager::subtitleChanged(QAction *action)
-{
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    QList<QAction *> actions = m_subtitleGroup->actions();
-    QList<SubtitleDescription> subtitles = mctrl->availableSubtitles();
-    int idx = actions.indexOf(action);
-    SubtitleDescription selected = subtitles.at(idx);
-    if ( selected != mctrl->currentSubtitle() )
-        mctrl->setCurrentSubtitle( selected );
-}
-
-void ActionsManager::angleChanged(QAction *action)
-{
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    QList<QAction *> actions = m_angleGroup->actions();
-    int idx = actions.indexOf(action);
-    if ( idx != mctrl->currentAngle() )
-        mctrl->setCurrentAngle( idx );
-}
-
-void ActionsManager::chapterChanged(QAction *action)
-{
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    QList<QAction *> actions = m_chapterGroup->actions();
-    int idx = actions.indexOf(action);
-    if ( idx != mctrl->currentChapter() )
-        mctrl->setCurrentChapter( idx );
-}
-
-void ActionsManager::titleChanged(QAction *action)
-{
-    Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
-    QList<QAction *> actions = m_titleGroup->actions();
-    int idx = actions.indexOf(action);
-    if ( idx == mctrl->currentTitle() )
-        return;
-    //as the user selected that title to be played we have to enable autoplayTitles and then reset
-    //it or phonon wouldn't start the playback
-    //we also try to restore the selected subtitles and audio track. As the title can have different
-    //tracks and the SubtitleDescription and AudioDescription will differ from the old we will check
-    //if a subtitle/audiochannel with the same name and description exists and we will set them if so
-    bool oldAutoplay = mctrl->autoplayTitles();
-    AudioChannelDescription oldAudio = mctrl->currentAudioChannel();
-    SubtitleDescription oldSub = mctrl->currentSubtitle();
-    mctrl->setAutoplayTitles(true);
-
-    mctrl->setCurrentTitle( idx );
-    
-    mctrl->setAutoplayTitles(oldAutoplay);
-    QList<AudioChannelDescription> chans = mctrl->availableAudioChannels();
-    foreach(AudioChannelDescription cur, chans) {
-         if ( cur.name() == oldAudio.name() && cur.description() == oldAudio.description())
-             mctrl->setCurrentAudioChannel(cur);
-    }
-    QList<SubtitleDescription> subs = mctrl->availableSubtitles();
-    foreach(SubtitleDescription cur, subs) {
-         if ( cur.name() == oldSub.name() && cur.description() == oldSub.description())
-             mctrl->setCurrentSubtitle(cur);
     }
 }
 
