@@ -25,6 +25,7 @@
 #include "platform/playlist.h"
 #include "platform/ontologyupdater.h"
 #include "platform/dvdcontroller.h"
+#include "platform/infofetcher.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -167,12 +168,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("cancel", action); //shouldn't be editable
 
     //Add Info for Selected MediaItems
-    action = new KAction(KIcon("document-new"), i18n("Add selected info"), this);
+    action = new KAction(KIcon("document-save"), i18n("Save selected info"), this);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(addSelectedItemsInfo()));
     m_othersCollection->addAction("add_selected_info", action);
 
     //Remove Info for Selected MediaItems
-    action = new KAction(KIcon("edit-delete-shred"), i18n("Remove selected info"), this);
+    action = new KAction(KIcon("trash-empty"), i18n("Remove selected info"), this);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
     m_othersCollection->addAction("remove_selected_info", action);
 
@@ -249,7 +250,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
-
+    m_infoMenu = new QMenu(i18n("Manage info"), m_parent);
+    connect(m_infoMenu, SIGNAL(triggered(QAction *)), m_application->infoManager(), SLOT(infoFetcherSelected(QAction *)));
+    
     //controls always visible at startup
     m_controlsVisible = true;
     //filter ain't
@@ -296,56 +299,55 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
         isBrowsingFiles  = m_application->browsingModel()->mediaListProperties().lri.startsWith("files://");
     }
+    
+    //Playlist/Playback actions
     if (isMedia || isCategory) {
         if (selection && isMedia) {
             menu->addAction(action("add_to_playlist"));
             menu->addAction(action("remove_from_playlist"));
-            menu->addSeparator();
         }
-        if (selection) menu->addAction(action("play_selected"));
+        if (selection) {
+            menu->addAction(action("play_selected"));
+        }
         menu->addAction(action("play_all"));
         menu->addSeparator();
-        if (selection && isCategory) {
-            menu->addAction(action("show_items"));
-            menu->addSeparator();
-        }
-        if (selection && isMedia) {
-            if (type == "Audio") {
-                if (m_addToAudioSavedList->actions().count() > 0) {
-                    menu->addMenu(m_addToAudioSavedList);
-                }
-            } else if (type == "Video") {
-                if (m_addToVideoSavedList->actions().count() > 0) {
-                    menu->addMenu(m_addToVideoSavedList);
-                }
-            }
-            if (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")) {
-                menu->addAction(action("remove_from_list"));
-            }
-            menu->addSeparator();
-        }
-        if (selection && isMedia) {
-            menu->addAction(action("add_selected_info"));
-        }
-        if (selection && (isMedia || isFeed)) {
-            menu->addAction(action("remove_selected_info"));
-            menu->addSeparator();
-        }
-	
-        menu->addAction(action("reload"));
-        menu->addSeparator();        
     } 
+    
+    //Browsing actions
     if (menuSource == MainWindow::Default || MainWindow::MediaList) {
         if (ui->mediaView->sourceModel()->containsPlayable()) {
-            menu->addAction(action("play_all"));
             menu->addAction(action("toggle_filter"));
         }
     }
-    if (showAbout) {
-        QMenu *advancedMenu = new QMenu(i18n("Advanced"), m_parent);
-        advancedMenu->addAction(action("update_ontologies"));
-        menu->addMenu(advancedMenu);
+    if (selection && isCategory) {
+        menu->addAction(action("show_items"));
+    }
+    menu->addAction(action("reload"));
+    menu->addSeparator();  
+    
+    //Saved List actions
+    if (selection && isMedia) {
+        if (type == "Audio") {
+            if (m_addToAudioSavedList->actions().count() > 0) {
+                menu->addMenu(m_addToAudioSavedList);
+            }
+        } else if (type == "Video") {
+            if (m_addToVideoSavedList->actions().count() > 0) {
+                menu->addMenu(m_addToVideoSavedList);
+            }
+        }
+        if (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")) {
+            menu->addAction(action("remove_from_list"));
+        }
         menu->addSeparator();
+    }
+    if (selection && (isMedia || isFeed)) {
+        menu->addMenu(infoMenu());
+        menu->addSeparator();
+    }
+
+    //About menu
+    if (showAbout) {
         menu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     }
     return menu;
@@ -464,6 +466,23 @@ QMenu *ActionsManager::bookmarksMenu()
         }
     }
     return m_bookmarksMenu;
+}
+
+QMenu * ActionsManager::infoMenu()
+{
+    m_infoMenu->clear();
+    m_infoMenu->addAction(action("add_selected_info"));
+    m_infoMenu->addAction(action("remove_selected_info"));
+    m_infoMenu->addSeparator();
+    QList<InfoFetcher *> infoFetchers = m_application->infoManager()->infoFetchers();
+    for (int i = 0; i< infoFetchers.count(); i++) {
+        QString fetcherTitle = i18n("Lookup info using %1", infoFetchers.at(i)->name());
+        QAction *action = new QAction(infoFetchers.at(i)->icon(), fetcherTitle, this);
+        action->setData(QString("fetcher:%1").arg(i));
+        m_infoMenu->addAction(action);
+    }
+    m_infoMenu->addAction(action("update_ontologies"));
+    return m_infoMenu;   
 }
 
 //------------------

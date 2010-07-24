@@ -63,6 +63,7 @@ class ActionsManager : public QObject
         void setContextMenuSource(MainWindow::ContextMenuSource menuSource);
         const QList<MediaItem> selectedMediaItems();
         QMenu * bookmarksMenu();
+        QMenu * infoMenu();
         void updateToggleFilterText();
 
         bool m_controlsVisible;
@@ -86,6 +87,7 @@ class ActionsManager : public QObject
         int m_previousContextStackIndex;
         QMenu *m_bookmarksMenu;
         QMenu *m_removeBookmarksMenu;
+        QMenu *m_infoMenu;
         
         //every actionn which is allowed to have a shortcut
         KActionCollection *m_shortcutsCollection;

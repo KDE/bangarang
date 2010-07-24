@@ -83,6 +83,7 @@ SET(BangarangSources
     platform/downloader.cpp
     platform/infofetcher.cpp
     platform/dvdcontroller.cpp 
+    platform/dbpediainfofetcher.cpp
 )
 
 KDE4_ADD_UI_FILES(BangarangSources mainwindow.ui)

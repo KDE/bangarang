@@ -270,7 +270,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     } else if (requestKey.startsWith("Director")) {
         emit gotDirectorInfo(true, resultsBindingSets, requestKey);
     } else if (requestKey.startsWith("Movie")) {
-        emit gotMovieInfo(false, resultsBindingSets, requestKey);
+        emit gotMovieInfo(true, resultsBindingSets, requestKey);
     }
 
     //Remove results file
