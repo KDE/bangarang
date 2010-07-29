@@ -1,32 +1,33 @@
-PROJECT(Bangarang)
+project(Bangarang)
 
-set( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules )
-set( WITHTRANSLATIONS:BOOL YES )
-FIND_PACKAGE(KDE4 REQUIRED)
-FIND_PACKAGE(Nepomuk REQUIRED)
-FIND_PACKAGE(KdeMultimedia REQUIRED)
+set(WITHTRANSLATIONS:BOOL YES)
 
-INCLUDE(KDE4Defaults)
+find_package(KDE4 4.4.0 REQUIRED)
+find_package(Nepomuk REQUIRED)
 
-ADD_DEFINITIONS( ${QT_DEFINITIONS} ${KDE4_DEFINITIONS} )
+include(KDE4Defaults)
+
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 find_package(Taglib REQUIRED)
 
-INCLUDE_DIRECTORIES( 
-    ${KDE4_INCLUDES} 
-    ${KDEMULTIMEDIA_INCLUDE_DIR} 
-    ${NEPOMUK_INCLUDE_DIR} 
-    ${TAGLIB_INCLUDES} 
-    ${TAGLIB_INCLUDES}/.. 
-    /usr/include/taglib 
+include_directories(
+    ${KDE4_INCLUDES}
+    ${KROSS_INCLUDES}
+    ${NEPOMUK_INCLUDE_DIR}
+    ${QT_QTSCRIPT_INCLUDES}
+    ${SOPRANO_INCLUDE_DIR}
+    ${TAGLIB_INCLUDES}
 )
 
-add_subdirectory( icons )
-add_subdirectory( src )
+add_subdirectory(icons)
+add_subdirectory(src)
 
-find_package(Msgfmt REQUIRED)
-find_package(Gettext REQUIRED)
-add_subdirectory( po )
+if (WITHTRANSLATIONS)
+    find_package(Msgfmt REQUIRED)
+    find_package(Gettext REQUIRED)
+    add_subdirectory(po)
+endif( WITHTRANSLATIONS)
 
 ########### install files ###############
 
