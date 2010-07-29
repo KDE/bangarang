@@ -26,7 +26,7 @@ add_subdirectory( src )
 
 find_package(Msgfmt REQUIRED)
 find_package(Gettext REQUIRED)
-add_subdirectory( translations )
+add_subdirectory( po )
 
 ########### install files ###############
 
