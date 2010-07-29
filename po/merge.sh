@@ -1,7 +1,7 @@
-#! /bin/bash 
+#!/bin/bash
 #Add your translation here to have it merged.
 
-msgmerge -U cz/bangarang.po bangarang.pot
+msgmerge -U cs/bangarang.po bangarang.pot
 msgmerge -U da/bangarang.po bangarang.pot
 msgmerge -U de/bangarang.po bangarang.pot
 msgmerge -U fr/bangarang.po bangarang.pot
