@@ -18,6 +18,7 @@
 
 #include "dbusobjects.h"
 #include "bangarangapplication.h"
+#include "mainwindow.h"
 
 #include "platform/playlist.h"
 #include "platform/mediaitemmodel.h"
@@ -187,8 +188,11 @@ QVariantMap MprisPlayerObject::GetMetadata()
     map["artist"] = item.fields.value("artist");
     map["album"] = item.fields.value("album");
     map["tracknumber"] = item.fields.value("trackNumber");
+    map["time"] = item.fields.value("duration");
     map["genre"] = item.fields.value("genre");
+//     map["rating"] = item.fields.value("rating");
     map["year"] = item.fields.value("year");
+//     map["arturl"] = item.fields.value("artworkUrl");
     return map;// TODO: more metadata
 }
 
@@ -275,8 +279,11 @@ QVariantMap MprisTrackListObject::GetMetadata(int index)
     map["artist"] = item.fields.value("artist");
     map["album"] = item.fields.value("album");
     map["tracknumber"] = item.fields.value("trackNumber");
+    map["time"] = item.fields.value("duration");
     map["genre"] = item.fields.value("genre");
+//     map["rating"] = item.fields.value("rating");
     map["year"] = item.fields.value("year");
+//     map["arturl"] = item.fields.value("artworkUrl");
     return map;// TODO: more metadata
 }
 
