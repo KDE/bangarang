@@ -24,6 +24,7 @@
 #include "bookmarksmanager.h"
 #include "actionsmanager.h"
 #include "audiosettings.h"
+#include "dbusobjects.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
@@ -36,6 +37,8 @@
 #include <KMessageBox>
 #include <KDebug>
 #include <Nepomuk/ResourceManager>
+
+#include <QDBusConnection>
 
 void BangarangApplication::setup()
 {
@@ -162,6 +165,12 @@ void BangarangApplication::setup()
     //connect signal from notfier, so that pause/resume will work
     connect(m_statusNotifierItem, SIGNAL(changeStateRequested(Phonon::State)), this,
       SLOT(handleNotifierStateRequest(Phonon::State)));
+
+    //Setup D-Bus Objects
+    QDBusConnection::sessionBus().registerObject("/", new MprisRootObject(this), QDBusConnection::ExportAllContents);
+    QDBusConnection::sessionBus().registerObject("/Player", new MprisPlayerObject(this), QDBusConnection::ExportAllContents);
+    QDBusConnection::sessionBus().registerObject("/TrackList", new MprisTrackListObject(this), QDBusConnection::ExportAllContents);
+    QDBusConnection::sessionBus().registerService("org.mpris.bangarang");
 }
 
 BangarangApplication::~BangarangApplication()
