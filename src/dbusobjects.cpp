@@ -18,7 +18,6 @@
 
 #include "dbusobjects.h"
 #include "bangarangapplication.h"
-#include "actionsmanager.h"
 
 #include "platform/playlist.h"
 #include "platform/mediaitemmodel.h"
