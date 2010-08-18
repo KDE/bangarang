@@ -30,6 +30,7 @@
 #include <Nepomuk/Resource>
 #include <QModelIndex>
 #include <phonon/Global>
+#include <solid/opticaldisc.h>
 
 namespace Phonon {
 class MediaObject;
@@ -119,11 +120,13 @@ namespace Utilities {
     QUrl artistResource(const QString &artistName);
     QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
-    QString discUrl(Phonon::DiscType type, int title = -1, const QString& name = QString());
+    QString discUrl(Phonon::DiscType type, QString udi, int title = -1, const QString& name = QString());
     int discTitleFromUrl(const QString &url);
+    QString discUdiFromUrl(const QString &url);
     QString discNameFromUrl(const QString &url);
     Phonon::DiscType discTypeFromUrl(const QString &url);
     int discTitleFullDisc();
-    QString discName( Phonon::MediaObject *mobj );
+    QString discName( QString udi, Phonon::MediaObject *mobj = NULL );
+    QStringList availableDiscUdis(Solid::OpticalDisc::ContentType type);
 }
 #endif //UTILITIES_H    

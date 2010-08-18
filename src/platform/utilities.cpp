@@ -29,6 +29,7 @@
 #include <KLocale>
 #include <KDebug>
 #include <kio/netaccess.h>
+#include <Solid/Device>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -412,12 +413,12 @@ bool Utilities::isPls(const QString &url)
 
 bool Utilities::isDvd(const QString& url)
 {
-    return url.startsWith("DVDTRACK");
+    return url.startsWith("DVDTRACK://");
 }
 
 bool Utilities::isCd(const QString& url)
 {
-    return url.startsWith("CDTRACK");
+    return url.startsWith("CDTRACK://");
 }
 
 bool Utilities::isDisc(const QString& url)
@@ -477,6 +478,31 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
 
 MediaItem Utilities::mediaItemFromUrl(KUrl url)
 {
+    MediaItem mediaItem;
+    QString url_string = url.url();
+    if(isDisc(url_string)) {
+        bool dvd = isDvd(url_string);
+        QString album = dvd ? "DVD Video" : "Audio CD";
+        QString discTitle = discNameFromUrl(url_string);
+        int track = discTitleFromUrl(url_string);
+        QString title;
+        if (track != discTitleFullDisc())
+            title = i18n(dvd ? "Title %1" : "Track %1", track);
+        else
+            title = i18n("Full Disc");
+        mediaItem.url = url_string;
+        mediaItem.artwork = dvd ? KIcon("media-optical-dvd") : KIcon("media-optical-audio");
+        mediaItem.title = title;
+        if (discTitle.isEmpty() || !dvd)
+            mediaItem.subTitle = album;
+        else
+            mediaItem.subTitle = i18nc("%1=Title of DVD", "DVD Video - %1", discTitle);
+        mediaItem.fields["url"] = mediaItem.url;
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.fields["videoType"] = dvd ? "DVD Title" : "CD Track";
+        mediaItem.fields["trackNumber"] = track;
+        return mediaItem;
+    }
     //Initialize Nepomuk
     bool nepomukInited = false;
     Nepomuk::ResourceManager::instance()->init();
@@ -488,7 +514,6 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url)
     
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
-    MediaItem mediaItem;
     //url.cleanPath();
     //url = QUrl::fromPercentEncoding(url.url().toUtf8());
 
@@ -709,21 +734,23 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
     QList<MediaItem> items;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
-        if (mediaItem.type == "Audio" || mediaItem.type == "Video") {
-            KUrl url = KUrl(mediaItem.url);
-            if (url.isValid()) {
-                if (url.isLocalFile()) {
-                    if (!QFile(url.path()).exists()) {
-                        mediaItem.exists = false;
-                        kDebug() << mediaItem.url << " missing";
-                        items << mediaItem;
-                    }
-                } else if (mediaItem.url.startsWith("trash:/")) {
-                    mediaItem.exists = false;
-                    kDebug() << mediaItem.url << " missing";
-                    items << mediaItem;
-                }
-            }
+        bool dvdNotFound = false;
+        QString url_string = mediaItem.url;
+        if (mediaItem.type != "Audio" && mediaItem.type != "Video")
+            continue;
+        if (isDisc(url_string)) {
+            bool dvd = isDvd(url_string);
+            continue;
+            dvdNotFound = true;
+        }
+        KUrl url = KUrl(url_string);
+        if (dvdNotFound ||
+            (url.isValid() && url.isLocalFile() && !QFile(url.path()).exists()) ||
+            url_string.startsWith("trash:/")
+           ) {
+            mediaItem.exists = false;
+            kDebug() << mediaItem.url << " missing";
+            items << mediaItem;
         }
     }
     return items;
@@ -1502,22 +1529,19 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
     return mediaItem;
 }
 
-QString Utilities::discUrl(Phonon::DiscType type, int title, const QString& name)
+QString Utilities::discUrl(Phonon::DiscType type, QString udi, int title, const QString& name)
 {
-    QString url;
-    if (type == Phonon::Dvd) {
-        return QString("DVDTRACK#%1#%2").arg(title).arg(name);
-    }
-    else
-        return QString("CDTRACK#%1").arg(title);
+    QString tstr = (type == Phonon::Dvd) ? "dvd" : "cd";
+    QString url = QString("device://%3%4?name=%2&title=%1").arg(title).arg(name).arg(tstr).arg(udi);
+    return url;
 }
 
 QString Utilities::discNameFromUrl(const QString& url)
 {
     if (isCd(url))
         return QString();
-    QStringList parts = url.split('#');
-    return parts.at(2);
+    QString rest = url.section("?", -1);
+    return url.split('#').at(0);
 }
 
 int Utilities::discTitleFromUrl(const QString& url)
@@ -1526,6 +1550,13 @@ int Utilities::discTitleFromUrl(const QString& url)
     QStringList parts = url.split('#');
     int title = parts.at(1).toInt(&ok, 0);
     return ok ? title : Utilities::discTitleFullDisc();
+}
+
+QString Utilities::discUdiFromUrl(const QString& url)
+{
+    QString rest = url.section("://", -1);   
+    QStringList parts = url.split('?');
+    return QString( QUrl::fromPercentEncoding(parts.at(0).toUtf8()) );
 }
 
 Phonon::DiscType Utilities::discTypeFromUrl(const QString& url)
@@ -1538,12 +1569,28 @@ int Utilities::discTitleFullDisc()
     return -1;
 }
 
-QString Utilities::discName(Phonon::MediaObject* mobj)
+QString Utilities::discName(QString udi, Phonon::MediaObject *mobj)
 {
-    if (!mobj->currentSource().deviceName().isEmpty())
-        return mobj->currentSource().deviceName();
+    QString name;
+    const Solid::OpticalDisc *disc = Solid::Device( udi ).as<const Solid::OpticalDisc>();
+    if ( disc != NULL )
+        name = disc->label();
+    if ( !name.isEmpty() || mobj == NULL)
+        return name;
     else if (!mobj->metaData("TITLE").isEmpty())
         return mobj->metaData("TITLE").join("");
     else
         return QString();
+}
+
+QStringList Utilities::availableDiscUdis(Solid::OpticalDisc::ContentType type)
+{
+    QStringList udis;
+    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
+    {
+        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc>();
+        if (disc != NULL && disc->availableContent() & type)
+            udis << device.udi();
+    }
+    return udis;
 }
