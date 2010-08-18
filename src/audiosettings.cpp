@@ -31,7 +31,7 @@
 #include <QFile>
 #include <phonon/backendcapabilities.h>
 
-AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent)
+AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent), m_eqCount(11)
 {
     /*Set up basics */
     BangarangApplication * application = (BangarangApplication *)KApplication::kApplication();
@@ -52,17 +52,14 @@ AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent)
     ui->eq9Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq10Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq11Label->setFont(KGlobalSettings::smallestReadableFont());
-    connect(ui->eq1, SIGNAL(valueChanged(int)), this, SLOT(eq1Changed(int)));
-    connect(ui->eq2, SIGNAL(valueChanged(int)), this, SLOT(eq2Changed(int)));
-    connect(ui->eq3, SIGNAL(valueChanged(int)), this, SLOT(eq3Changed(int)));
-    connect(ui->eq4, SIGNAL(valueChanged(int)), this, SLOT(eq4Changed(int)));
-    connect(ui->eq5, SIGNAL(valueChanged(int)), this, SLOT(eq5Changed(int)));
-    connect(ui->eq6, SIGNAL(valueChanged(int)), this, SLOT(eq6Changed(int)));
-    connect(ui->eq7, SIGNAL(valueChanged(int)), this, SLOT(eq7Changed(int)));
-    connect(ui->eq8, SIGNAL(valueChanged(int)), this, SLOT(eq8Changed(int)));
-    connect(ui->eq9, SIGNAL(valueChanged(int)), this, SLOT(eq9Changed(int)));
-    connect(ui->eq10, SIGNAL(valueChanged(int)), this, SLOT(eq10Changed(int)));
-    connect(ui->eq11, SIGNAL(valueChanged(int)), this, SLOT(eq11Changed(int)));
+    
+    m_uiEqs << ui->eq1 << ui->eq2 << ui->eq3 << ui->eq4 << ui->eq5 << ui->eq6 << ui->eq7 << ui->eq8 << ui->eq9 << ui->eq10 << ui->eq11;
+    for (int i = 0; i < m_eqCount; i++) {
+        m_uiEqs.at(i)->setProperty("EQ_NO", i);
+    }
+    
+
+    //connect the eq only if the audio path was set and the m_audioEq was initialized!
 }
 
 AudioSettings::~AudioSettings()
@@ -77,8 +74,12 @@ void AudioSettings::setAudioPath(Phonon::Path *audioPath)
     foreach (Phonon::EffectDescription effect, effects) {
         if(effect.name()=="KEqualizer") {
             m_audioEq = new Phonon::Effect(effect, this);
+            if (m_audioEq == NULL)
+                continue;
             audioPath->insertEffect(m_audioEq);
             eqCapable = true;
+            connectEq();
+            break;
         }
     }
     
@@ -174,17 +175,9 @@ void AudioSettings::updateManualEqPresets()
     int manualIndex = m_eqPresetNames.indexOf(i18n("Manual"));
     if (manualIndex != -1) {
         QList<int> preset;
-        preset << ui->eq1->value();
-        preset << ui->eq2->value();
-        preset << ui->eq3->value();
-        preset << ui->eq4->value();
-        preset << ui->eq5->value();
-        preset << ui->eq6->value();
-        preset << ui->eq7->value();
-        preset << ui->eq8->value();
-        preset << ui->eq9->value();
-        preset << ui->eq10->value();
-        preset << ui->eq11->value();
+        foreach (QSlider *eq, m_uiEqs) {
+            preset << eq->value();
+        }
         m_eqPresets.replace(manualIndex, preset);
         disconnect(ui->eqPresets, SIGNAL(currentIndexChanged(const QString)), this, SLOT(loadPreset(const QString)));
         ui->eqPresets->setCurrentIndex(manualIndex);
@@ -194,52 +187,18 @@ void AudioSettings::updateManualEqPresets()
 
 void AudioSettings::setEq(const QList<int> &preset)
 {
-    if (preset.count() == 11) {
-        disconnect(ui->eq1, SIGNAL(valueChanged(int)), this, SLOT(eq1Changed(int)));
-        disconnect(ui->eq2, SIGNAL(valueChanged(int)), this, SLOT(eq2Changed(int)));
-        disconnect(ui->eq3, SIGNAL(valueChanged(int)), this, SLOT(eq3Changed(int)));
-        disconnect(ui->eq4, SIGNAL(valueChanged(int)), this, SLOT(eq4Changed(int)));
-        disconnect(ui->eq5, SIGNAL(valueChanged(int)), this, SLOT(eq5Changed(int)));
-        disconnect(ui->eq6, SIGNAL(valueChanged(int)), this, SLOT(eq6Changed(int)));
-        disconnect(ui->eq7, SIGNAL(valueChanged(int)), this, SLOT(eq7Changed(int)));
-        disconnect(ui->eq8, SIGNAL(valueChanged(int)), this, SLOT(eq8Changed(int)));
-        disconnect(ui->eq9, SIGNAL(valueChanged(int)), this, SLOT(eq9Changed(int)));
-        disconnect(ui->eq10, SIGNAL(valueChanged(int)), this, SLOT(eq10Changed(int)));
-        disconnect(ui->eq11, SIGNAL(valueChanged(int)), this, SLOT(eq11Changed(int)));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[0], preset.at(0));
-        ui->eq1->setValue(preset.at(0));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[1], preset.at(1));
-        ui->eq2->setValue(preset.at(1));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[2], preset.at(2));
-        ui->eq3->setValue(preset.at(2));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[3], preset.at(3));
-        ui->eq4->setValue(preset.at(3));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[4], preset.at(4));
-        ui->eq5->setValue(preset.at(4));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[5], preset.at(5));
-        ui->eq6->setValue(preset.at(5));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[6], preset.at(6));
-        ui->eq7->setValue(preset.at(6));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[7], preset.at(7));
-        ui->eq8->setValue(preset.at(7));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[8], preset.at(8));
-        ui->eq9->setValue(preset.at(8));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[9], preset.at(9));
-        ui->eq10->setValue(preset.at(9));
-        m_audioEq->setParameterValue(m_audioEq->parameters()[10], preset.at(10));
-        ui->eq11->setValue(preset.at(10));
-        connect(ui->eq1, SIGNAL(valueChanged(int)), this, SLOT(eq1Changed(int)));
-        connect(ui->eq2, SIGNAL(valueChanged(int)), this, SLOT(eq2Changed(int)));
-        connect(ui->eq3, SIGNAL(valueChanged(int)), this, SLOT(eq3Changed(int)));
-        connect(ui->eq4, SIGNAL(valueChanged(int)), this, SLOT(eq4Changed(int)));
-        connect(ui->eq5, SIGNAL(valueChanged(int)), this, SLOT(eq5Changed(int)));
-        connect(ui->eq6, SIGNAL(valueChanged(int)), this, SLOT(eq6Changed(int)));
-        connect(ui->eq7, SIGNAL(valueChanged(int)), this, SLOT(eq7Changed(int)));
-        connect(ui->eq8, SIGNAL(valueChanged(int)), this, SLOT(eq8Changed(int)));
-        connect(ui->eq9, SIGNAL(valueChanged(int)), this, SLOT(eq9Changed(int)));
-        connect(ui->eq10, SIGNAL(valueChanged(int)), this, SLOT(eq10Changed(int)));
-        connect(ui->eq11, SIGNAL(valueChanged(int)), this, SLOT(eq11Changed(int)));
+    if (m_audioEq == NULL)
+        return;
+    if (preset.count() != m_eqCount)
+        return;
+    disconnectEq();
+    QList<EffectParameter> params = m_audioEq->parameters();
+    for (int i = 0; i < m_eqCount; i++ ) {
+        m_audioEq->setParameterValue(params[i], preset.at(i));
+        m_uiEqs.at(i)->setValue(preset.at(i));
     }
+
+    connectEq();
 }
 
 void AudioSettings::restoreDefaults()
@@ -253,68 +212,27 @@ void AudioSettings::restoreDefaults()
     ui->eqPresets->setCurrentIndex(0);
 }
 
-void AudioSettings::eq1Changed(int v)
+void AudioSettings::eqChanged(int v)
 {
-    m_audioEq->setParameterValue(m_audioEq->parameters()[0], v); 
+    QVariant var = sender()->property("EQ_NO");
+    if (!var.isValid())
+        return;
+    m_audioEq->setParameterValue(m_audioEq->parameters()[var.toInt()], v); 
     updateManualEqPresets();
 }
 
-void AudioSettings::eq2Changed(int v)
+
+void AudioSettings::connectEq()
 {
-    m_audioEq->setParameterValue(m_audioEq->parameters()[1], v); 
-    updateManualEqPresets();
+    foreach (QSlider *eq, m_uiEqs) {
+        connect(eq, SIGNAL(valueChanged(int)), this, SLOT(eqChanged(int)));
+    }
 }
 
-void AudioSettings::eq3Changed(int v)
+void AudioSettings::disconnectEq()
 {
-    m_audioEq->setParameterValue(m_audioEq->parameters()[2], v); 
-    updateManualEqPresets();
+    foreach (QSlider *eq, m_uiEqs) {
+        disconnect(eq, SIGNAL(valueChanged(int)), this, SLOT(eqChanged(int)));
+    }
 }
 
-void AudioSettings::eq4Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[3], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq5Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[4], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq6Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[5], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq7Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[6], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq8Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[7], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq9Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[8], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq10Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[9], v); 
-    updateManualEqPresets();
-}
-
-void AudioSettings::eq11Changed(int v)
-{
-    m_audioEq->setParameterValue(m_audioEq->parameters()[10], v); 
-    updateManualEqPresets();
-}

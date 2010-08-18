@@ -195,6 +195,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->playlistFilterProxyLine->lineEdit()->setClickMessage(QString());
     ui->playlistFilterProxyLine->setProxy(m_application->playlist()->filterProxyModel());
     ui->playlistFilter->setVisible(false);
+    ui->playlistNotification->setVisible(false);
+    ui->playlistNotificationNo->setText(i18n("No"));
+    ui->playlistNotificationYes->setText(i18n("Yes"));
     playWhenPlaylistChanges = false;
 
     //Setup Now Playing view
@@ -1028,6 +1031,7 @@ void MainWindow::setupIcons()
     ui->showQueue->setIcon(Utilities::turnIconOff(KIcon("bangarang-preview"), QSize(22, 22)));
     ui->clearPlaylist->setIcon(Utilities::turnIconOff(KIcon("bangarang-clearplaylist"), QSize(22, 22)));
     ui->closePlaylistFilter->setIcon(KIcon("dialog-close"));
+    ui->closePlaylistNotification->setIcon(KIcon("dialog-close"));
     
     //Audio settings
     ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
@@ -1294,4 +1298,41 @@ void MainWindow::playlistLoading()
     if (ui->playlistFilter->isVisible())
         ui->playlistFilterProxyLine->lineEdit()->clear();
     showLoading();
+}
+
+
+
+void MainWindow::on_closePlaylistNotification_clicked()
+{
+    on_playlistNotificationNo_clicked();
+}
+
+void MainWindow::on_playlistNotificationNo_clicked()
+{
+    emit playlistNotificationResult(true);
+    ui->playlistNotification->setVisible(false);
+}
+
+void MainWindow::on_playlistNotificationYes_clicked()
+{
+    emit playlistNotificationResult(false);
+    ui->playlistNotification->setVisible(false);
+}
+
+bool MainWindow::newPlaylistNotification(QString text, QObject *receiver, const char* slot)
+{
+    bool question = (receiver != NULL);
+    if (ui->playlistNotification->isVisible() && !ui->closePlaylistNotification->isVisible())
+        return false; //There is a pending notification that needs to be answered!
+    if (question && !slot)
+        return false; //receiver set but no slot. That's wrong!
+    ui->playlistNotificationLabel->setText(text);
+    
+    ui->closePlaylistNotification->setVisible(!question);
+    ui->playlistNotificationNo->setVisible(question);
+    ui->playlistNotificationYes->setVisible(question);
+    
+    if (question)
+        connect(this, SIGNAL(playlistNotificationResult(bool)), receiver, slot);
+    return true;
 }

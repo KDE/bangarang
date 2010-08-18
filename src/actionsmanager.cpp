@@ -297,8 +297,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         isBrowsingFiles  = m_application->browsingModel()->mediaListProperties().lri.startsWith("files://");
     }
     if (isMedia || isCategory) {
+        menu->addAction(action("add_to_playlist"));
         if (selection && isMedia) {
-            menu->addAction(action("add_to_playlist"));
+
             menu->addAction(action("remove_from_playlist"));
             menu->addSeparator();
         }
@@ -337,7 +338,6 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     } 
     if (menuSource == MainWindow::Default || MainWindow::MediaList) {
         if (ui->mediaView->sourceModel()->containsPlayable()) {
-            menu->addAction(action("play_all"));
             menu->addAction(action("toggle_filter"));
         }
     }
@@ -619,14 +619,14 @@ void ActionsManager::muteAudio()
 void ActionsManager::addSelectedToPlaylistSlot()
 {
     QList<MediaItem> mediaList = selectedMediaItems();
-    for (int i = 0; i < mediaList.count(); i++) {
-        if (mediaList.at(i).type == "Audio" ||
-            mediaList.at(i).type == "Video") {
-            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
-            if (playlistRow == -1) {
-                m_application->playlist()->addMediaItem(mediaList.at(i));
-            }
-        }
+    MediaItemModel *plmod = m_application->playlist()->playlistModel();
+    foreach (MediaItem item, mediaList) {
+        if (Utilities::isMedia(item.type)) {
+            if (plmod->rowOfUrl(item.url) >= 0)
+                continue;
+        } else if ( !Utilities::isCategory(item.type) )
+            continue;
+        m_application->playlist()->addMediaItem(item);
     }
 }
 
