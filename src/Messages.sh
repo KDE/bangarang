@@ -10,5 +10,5 @@ echo 'i18nc("NAME OF TRANSLATORS","Your names");' >> rc.cpp
 echo 'i18nc("EMAIL OF TRANSLATORS","Your emails");' >> rc.cpp 
 
 $EXTRACTRC *.ui >> rc.cpp
-$XGETTEXT *.cpp platform/*.cpp -o ../translations/bangarang.pot
+$XGETTEXT *.cpp platform/*.cpp -o ../po/bangarang.pot
 rm -f rc.cpp
