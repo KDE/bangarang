@@ -818,36 +818,13 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
 
 void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-    if ((ui->mediaLists->currentIndex() == 0) && (selected.indexes().count() > 0)) {
+    if ((ui->mediaLists->currentIndex() == 0) && 
+        (currentMainWidget() == MainMediaList) &&
+        (selected.indexes().count() > 0)) {
         //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
-        currentProperties.name = selectedItem.title;
-        currentProperties.lri = selectedItem.url;
-        currentProperties.category = selectedItem;
-        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
-            m_application->browsingModel()->clearMediaListData();
-            m_application->browsingModel()->setMediaListProperties(currentProperties);
-            m_application->browsingModel()->load();
-            m_mediaListHistory.clear();
-            m_mediaListPropertiesHistory.clear();
-            ui->previous->setVisible(false);
-            ui->mediaViewHolder->setCurrentIndex(0);
-        }
-        
-        //Update InfoManager Context
-        m_application->infoManager()->setContext(selectedItem);
-        
-        //Determine if selected list is configurable
-        if (selectedItem.url.startsWith("savedlists://") ||
-            selectedItem.url.startsWith("semantics://recent?audio") ||
-            selectedItem.url.startsWith("semantics://frequent?audio") ||
-            selectedItem.url.startsWith("semantics://highest?audio")) {
-            ui->configureAudioList->setVisible(true);
-        } else {
-            ui->configureAudioList->setVisible(false);
-        }
+        loadMediaList(m_audioListsModel, selectedRow);
     }
     Q_UNUSED(deselected);
 }    
@@ -862,37 +839,13 @@ void MainWindow::audioListsChanged()
 
 void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-    if ((ui->mediaLists->currentIndex() == 1) && (selected.indexes().count() > 0)) {
+    if ((ui->mediaLists->currentIndex() == 1) &&  
+        (currentMainWidget() == MainMediaList) &&
+        (selected.indexes().count() > 0)) {
         //Load selected media list
         MediaListProperties currentProperties;
         int selectedRow = selected.indexes().at(0).row();
-        MediaItem selectedItem = m_videoListsModel->mediaItemAt(selectedRow);
-        currentProperties.name = selectedItem.title;
-        currentProperties.lri = selectedItem.url;
-        currentProperties.category = selectedItem;
-        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
-            m_application->browsingModel()->clearMediaListData();
-            m_application->browsingModel()->setMediaListProperties(currentProperties);
-            m_application->browsingModel()->load();
-            m_mediaListHistory.clear();
-            m_mediaListPropertiesHistory.clear();
-            ui->previous->setVisible(false);
-            ui->mediaViewHolder->setCurrentIndex(0);
-        }
-        
-        //Set InfoManager context
-        m_application->infoManager()->setContext(selectedItem);
-
-        //Determine if selected list is configurable
-        if (selectedItem.url.startsWith("savedlists://") ||
-            selectedItem.url.startsWith("semantics://recent?") ||
-            selectedItem.url.startsWith("semantics://frequent?") ||
-            selectedItem.url.startsWith("semantics://highest?")) {
-            ui->configureVideoList->setVisible(true);
-        } else {
-            ui->configureVideoList->setVisible(false);
-        }
-
+        loadMediaList(m_videoListsModel, selectedRow);
     }
     Q_UNUSED(deselected);
 }    
@@ -1273,8 +1226,23 @@ KFilterProxySearchLine* MainWindow::currentFilterProxyLine()
 
 void MainWindow::switchMainWidget(MainWindow::MainWidget which)
 {
-    ui->stackedWidget->setCurrentIndex((int) which);   
+    ui->stackedWidget->setCurrentIndex((int) which);
     m_application->actionsManager()->updateToggleFilterText();
+    if (which == MainMediaList) {
+        if (ui->mediaLists->currentIndex() == 0) {
+            QModelIndexList selected = ui->audioLists->selectionModel()->selectedIndexes();
+            if (selected.count() > 0) {
+                int selectedRow = selected.at(0).row();
+                loadMediaList(m_audioListsModel, selectedRow);
+            }
+        } else {
+            QModelIndexList selected = ui->videoLists->selectionModel()->selectedIndexes();
+            if (selected.count() > 0) {
+                int selectedRow = selected.at(0).row();
+                loadMediaList(m_videoListsModel, selectedRow);
+            }
+        }
+    }           
 }
 
 MainWindow::MainWidget MainWindow::currentMainWidget()
@@ -1294,4 +1262,41 @@ void MainWindow::playlistLoading()
     if (ui->playlistFilter->isVisible())
         ui->playlistFilterProxyLine->lineEdit()->clear();
     showLoading();
+}
+
+void MainWindow::loadMediaList(MediaItemModel *listsModel, int row)
+{
+    MediaListProperties currentProperties;
+    MediaItem selectedItem = listsModel->mediaItemAt(row);
+    currentProperties.name = selectedItem.title;
+    currentProperties.lri = selectedItem.url;
+    currentProperties.category = selectedItem;
+    if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
+        m_application->browsingModel()->clearMediaListData();
+        m_application->browsingModel()->setMediaListProperties(currentProperties);
+        m_application->browsingModel()->load();
+        m_mediaListHistory.clear();
+        m_mediaListPropertiesHistory.clear();
+        ui->previous->setVisible(false);
+        ui->mediaViewHolder->setCurrentIndex(0);
+    }
+    
+    //Update InfoManager Context
+    m_application->infoManager()->setContext(selectedItem);
+    
+    //Determine if selected list is configurable
+    bool isAudioList = (listsModel->mediaListProperties().lri == "medialists://audio");
+    bool isVideoList = (listsModel->mediaListProperties().lri == "medialists://video");
+    bool selectedIsConfigurable = false;
+    if (selectedItem.url.startsWith("savedlists://") ||
+        selectedItem.url.startsWith("semantics://recent") ||
+        selectedItem.url.startsWith("semantics://frequent") ||
+        selectedItem.url.startsWith("semantics://highest")) {
+        selectedIsConfigurable = true;
+    }
+    if (isAudioList) {
+        ui->configureAudioList->setVisible(selectedIsConfigurable);
+    } else if (isVideoList) {
+        ui->configureVideoList->setVisible(selectedIsConfigurable);
+    }
 }
