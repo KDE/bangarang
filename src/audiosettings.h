@@ -67,17 +67,7 @@ class AudioSettings : public QObject
         
     private slots:
         void eqChanged(int v);
-//         void eq1Changed(int v);
-//         void eq2Changed(int v);
-//         void eq3Changed(int v);
-//         void eq4Changed(int v);
-//         void eq5Changed(int v);
-//         void eq6Changed(int v);
-//         void eq7Changed(int v);
-//         void eq8Changed(int v);
-//         void eq9Changed(int v);
-//         void eq10Changed(int v);
-//         void eq11Changed(int v);
+
 
 };
 #endif // AUDIOSETTINGS_H

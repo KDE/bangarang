@@ -74,7 +74,7 @@ void CDListEngine::run()
             int trackCount = mediaController->availableTitles();
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
-                QString url = Utilities::discUrl(Phonon::Cd, dev_str, i);
+                KUrl url = Utilities::deviceUrl("cd", udi, QString(), "Audio", i);
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                 mediaItem.subTitle = i18nc("%1=Total number of tracks on the CD", "Audio CD - %1 Tracks", trackCount);
                 mediaList << mediaItem;

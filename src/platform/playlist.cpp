@@ -35,6 +35,8 @@
 #include <platform/dvdcontroller.h>
 #include <QDBusInterface>
 #include <actionsmanager.h>
+#include <Solid/Device>
+#include <Solid/Block>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
@@ -142,10 +144,13 @@ void Playlist::playItemAt(int row, Model model)
     m_currentUrl = nextMediaItem.url;
     bool isDiscTitle = Utilities::isDisc( nextMediaItem.url );
     if (isDiscTitle) {
+        Solid::Device device = Solid::Device( Utilities::deviceUdiFromUrl(nextMediaItem.url) );
+        const Solid::Block* block = device.as<const Solid::Block>();
         Phonon::DiscType discType = (subType == "CD Track") ? Phonon::Cd : Phonon::Dvd;
+        Phonon::MediaSource src = Phonon::MediaSource(discType, block->device());
         int title = nextMediaItem.fields["trackNumber"].toInt();
-        if (discType != m_mediaObject->currentSource().discType())
-            m_mediaObject->setCurrentSource(discType);
+        if (m_mediaObject->currentSource().deviceName() != src.deviceName())
+            m_mediaObject->setCurrentSource(src);
         m_application->dvdController()->setTitle(title);
         titleChanged(title);
     } else if (subType == "Audio Stream") {

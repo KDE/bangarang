@@ -93,16 +93,16 @@ namespace Utilities {
     bool isVideoMimeType(KMimeType::Ptr type);
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
-    bool isDvd(const QString &url);
-    bool isCd(const QString &url);
-    bool isDisc(const QString &url);
+    bool isDvd(const KUrl& url);
+    bool isCd(const KUrl& url);
+    bool isDisc(const KUrl& url);
     bool isMediaItem(const QModelIndex *index);
     bool isMedia(const QString type);
     bool isCategory(const QString type);
     bool isFeed(const QString categoryType);
     bool isAudioStream(const QString audioType);
     QPixmap reflection(QPixmap &pixmap);
-    MediaItem mediaItemFromUrl(KUrl url);
+    MediaItem mediaItemFromUrl(const KUrl& url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
     KIcon turnIconOff(KIcon icon, QSize size);
     TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);
@@ -120,13 +120,13 @@ namespace Utilities {
     QUrl artistResource(const QString &artistName);
     QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
-    QString discUrl(Phonon::DiscType type, QString udi, int title = -1, const QString& name = QString());
-    int discTitleFromUrl(const QString &url);
-    QString discUdiFromUrl(const QString &url);
-    QString discNameFromUrl(const QString &url);
-    Phonon::DiscType discTypeFromUrl(const QString &url);
-    int discTitleFullDisc();
-    QString discName( QString udi, Phonon::MediaObject *mobj = NULL );
+    KUrl deviceUrl(const QString &type, const QString &udi, const QString& name = QString(), QString content = QString(), int title = -1 );
+    int deviceTitleFromUrl(const KUrl &url);
+    QString deviceUdiFromUrl(const KUrl &url);
+    QString deviceNameFromUrl(const KUrl &url);
+    QString deviceTypeFromUrl(const KUrl &url);
+    int invalidTitle();
+    QString deviceName( QString udi, Phonon::MediaObject *mobj = NULL );
     QStringList availableDiscUdis(Solid::OpticalDisc::ContentType type);
 }
 #endif //UTILITIES_H    
