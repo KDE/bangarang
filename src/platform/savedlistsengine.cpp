@@ -102,7 +102,7 @@ void SavedListsEngine::run()
                         duration = durTitle.at(0).toInt();
                         title = durTitle.at(1);
                     }
-                    QString url = in.readLine().trimmed();
+                    url = in.readLine().trimmed();
                 } else if ((isPLS) && line.startsWith("File")) {
                     url = line.mid(line.indexOf("=") + 1).trimmed();
                     if (!in.atEnd()) {

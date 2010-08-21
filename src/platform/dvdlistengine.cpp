@@ -49,7 +49,6 @@ DVDListEngine::~DVDListEngine()
 
 void DVDListEngine::run()
 {
-    //check if DVD is present
     QString udi = m_mediaListProperties.engineArg();
     Solid::Device device = Solid::Device( udi );
     const Solid::Block* block = device.as<const Solid::Block>();
@@ -64,17 +63,12 @@ void DVDListEngine::run()
     }
     if (m_mediaObject->state() != Phonon::StoppedState)
         return;
-    QString discTitle = Utilities::discName(udi, m_mediaObject);
+    QString discTitle = Utilities::deviceName(udi, m_mediaObject);
     Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
     int trackCount = mediaController->availableTitles();
     //int duration;
     for (int i = 1; i <= trackCount; i++) {
-        QUrl url = QString("device://%2%4?content=Video&name=%3#%1").arg(i).arg("dvd").arg(discTitle).arg(udi); //Utilities::deviceUrl(Solid::OpticalDisc, Phonon::Dvd, udi, discTitle, i);
-        QString path = url.path();
-        QString auth = url.authority();
-        QString scheme = url.scheme();
-        QList <QPair <QString, QString> > query = url.queryItems();
-        QString fragment = url.fragment();
+        KUrl url = Utilities::deviceUrl("dvd", udi, discTitle, "Video", i);
         MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
         if (discTitle.isEmpty())
             mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);

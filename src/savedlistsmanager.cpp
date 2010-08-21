@@ -766,12 +766,4 @@ void SavedListsManager::loadPlaylist()
     MediaItemModel *model = m_application->playlist()->playlistModel();
     //model->includeNonExisting(false);
     m_application->playlist()->addMediaItem(mediaItem);
-    if (Utilities::mediaItemsDontExist(model->mediaList()).count() > 0) {
-        m_application->mainWindow()->newPlaylistNotification(
-            i18n("The last playlist included items that aren't available any more (e.g. removed CD/DVD)."
-                 "Do you wish to add them anyway?"),
-            model,
-            SLOT(includeNonExisting(bool))
-        );
-    }
 }

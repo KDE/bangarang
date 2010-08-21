@@ -63,8 +63,8 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 bool forceEditable = true;
                 addFieldToValuesModel(i18n("Location"), "url", forceEditable);
             } else {
-                if (Utilities::isCd(type))
-                    addFieldToValuesModel(i18n("Location"), "type"); //or the user would see the ugly udi
+                if (Utilities::isCd(m_mediaList.at(0).url))
+                    addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
                 else
                     addFieldToValuesModel(i18n("Location"), "url");
             }
@@ -87,8 +87,8 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(i18n("Writer"), "writer");
                 addFieldToValuesModel(i18n("Producer"), "producer");
             }
-            if (Utilities::isDvd(type))
-                addFieldToValuesModel(i18n("Location"), "type"); //or the user would see the ugly udi
+            if (Utilities::isDvd(m_mediaList.at(0).url))
+                addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
             else
                 addFieldToValuesModel(i18n("Location"), "url");
         }
