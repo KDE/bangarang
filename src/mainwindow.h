@@ -111,6 +111,7 @@ private:
     void updateCachedDevicesList();
     void setupActions();
     void hidePlayButtons();
+    void loadMediaList(MediaItemModel* listsModel, int row);
     
     Phonon::VideoPlayer *m_player;
     MediaItemDelegate * m_itemDelegate;
