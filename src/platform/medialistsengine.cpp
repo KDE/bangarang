@@ -217,25 +217,19 @@ void MediaListsEngine::run()
         mediaItem.fields["contextLRIs"] = QStringList();
         mediaList << mediaItem;
         
-        //Show Audio CD if present
-        bool audioCDFound = false;
-        foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
-        {
-            const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
-            if (disc == NULL)
+        //Show Audio CDs if present
+        QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::Audio);
+        foreach (QString udi, udis) {
+            Solid::Device device = Solid::Device( udi );
+            if ( !device.isValid() )
                 continue;
-            if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-                audioCDFound = true;
-            }
-        }
-        if (audioCDFound) {
             mediaItem.title = i18n("Audio CD");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "cdaudio://";
+            mediaItem.url = QString( "cdaudio://%1" ).arg(udi);
             mediaItem.artwork = KIcon("media-optical-audio");
             mediaList << mediaItem;
         }
-        
+
         //Load saved lists from index
         QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
         if (indexFile.exists()) {
@@ -439,23 +433,20 @@ void MediaListsEngine::run()
         mediaItem.fields["contextLRIs"] = QStringList();
         mediaList << mediaItem;
         
-        //Show DVD if present
-        bool DVDFound = false;
-        foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
-        {
-            const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
-            if (disc == NULL)
+        QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::VideoDvd);
+        foreach (QString udi, udis) {
+            Solid::Device device = Solid::Device( udi );
+            if ( !device.isValid() )
                 continue;
-            if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-                DVDFound = true;
-            }
-        }
-        if (DVDFound) {
-            mediaItem.title = i18n("DVD Video");
+            const Solid::OpticalDisc* disc = Solid::Device(udi).as<const Solid::OpticalDisc>();
+            if ( disc == NULL )
+                continue;
+            QString label = disc->label();
+            mediaItem.title = label;
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "dvdvideo://";
+            mediaItem.url = QString( "dvdvideo://%1" ).arg(udi);
             mediaItem.artwork = KIcon("media-optical-dvd");
-            mediaList << mediaItem;        
+            mediaList << mediaItem;
         }
         
         //Load saved lists from index

@@ -91,6 +91,7 @@ public:
     MainWidget currentMainWidget();
     QFrame *currentFilterFrame();
     KFilterProxySearchLine* currentFilterProxyLine();
+    bool newPlaylistNotification(QString text, QObject* receiver = NULL, const char* slot = NULL);
     
     Ui::MainWindowClass *ui;
     MediaItemModel * m_audioListsModel;
@@ -102,6 +103,9 @@ public:
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
     void setShowRemainingTime(bool showRemainingTime);
+    
+signals:
+    void playlistNotificationResult(bool confirmed);
     
 private:
     void setupModel();
@@ -165,6 +169,9 @@ private slots:
     void on_showMediaViewMenu_clicked();
     void on_closePlaylistFilter_clicked();
     void on_closeMediaListFilter_clicked();
+    void on_closePlaylistNotification_clicked();
+    void on_playlistNotificationNo_clicked();
+    void on_playlistNotificationYes_clicked();
     void updateSeekTime(qint64 time);
     void updateMuteStatus(bool muted);
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);

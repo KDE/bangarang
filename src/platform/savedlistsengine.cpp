@@ -87,71 +87,52 @@ void SavedListsEngine::run()
         if (valid) {
             while (!in.atEnd()) {
                 QString line = in.readLine();
+                QString title;
+                QString url;
+                int duration = 0;
                 if ((isM3U) && line.startsWith("#EXTINF:")) {
                     line = line.replace("#EXTINF:","");
                     QStringList durTitle = line.split(",");
-                    QString title;
+
                     int duration;
                     if (durTitle.count() == 1) {
                         //No title
-                        duration = 0;
                         title = durTitle.at(0);
                     } else {
                         duration = durTitle.at(0).toInt();
                         title = durTitle.at(1);
                     }
-                    QString url = in.readLine().trimmed();
-                    MediaItem mediaItem;
-                    KUrl itemUrl(workingDir, url);
-                    if (!url.isEmpty()) {
-                        mediaItem = Utilities::mediaItemFromUrl(itemUrl);
-                    } else {
-                        continue;
-                    }
-                    if (mediaItem.title == itemUrl.fileName()) {
-                        mediaItem.title = title;
-                    }
-                    if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                        mediaItem.fields["duration"] = duration;
-                    } else if (duration == -1) {
-                        mediaItem.duration = QString();
-                        mediaItem.fields["audioType"] = "Audio Stream";
-                    }
-                    mediaList << mediaItem;
-                }
-                if ((isPLS) && line.startsWith("File")) {
-                    QString url = line.mid(line.indexOf("=") + 1).trimmed();
-                    QString title;
+                    url = in.readLine().trimmed();
+                } else if ((isPLS) && line.startsWith("File")) {
+                    url = line.mid(line.indexOf("=") + 1).trimmed();
                     if (!in.atEnd()) {
                         line = in.readLine();
                         title = line.mid(line.indexOf("=") + 1).trimmed();
                     }
-                    int duration = 0;
                     if (!in.atEnd()) {
                         line = in.readLine();
                         duration = line.mid(line.indexOf("=") + 1).trimmed().toInt();
                     }
-                    
-                    MediaItem mediaItem;
-                    KUrl itemUrl(workingDir, url);
-                    if (!url.isEmpty()) {
-                        mediaItem = Utilities::mediaItemFromUrl(itemUrl);
-                    } else {
-                        continue;
-                    }
-                    if (mediaItem.title == itemUrl.fileName()) {
-                        mediaItem.title = title;
-                    }
-                    if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                        mediaItem.fields["duration"] = duration;
-                    } else if (duration == -1) {
-                        mediaItem.duration = QString();
-                        mediaItem.fields["audioType"] = "Audio Stream";
-                    }
-                    mediaList << mediaItem;
                 }
+                    
+                MediaItem mediaItem;
+                KUrl itemUrl(workingDir, url);
+                if (!url.isEmpty()) {
+                    mediaItem = Utilities::mediaItemFromUrl(itemUrl);
+                } else {
+                    continue;
+                }
+                if (mediaItem.title == itemUrl.fileName()) {
+                    mediaItem.title = title;
+                }
+                if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.fields["duration"] = duration;
+                } else if (duration == -1) {
+                    mediaItem.duration = QString();
+                    mediaItem.fields["audioType"] = "Audio Stream";
+                }
+                mediaList << mediaItem;
             }
         }
         

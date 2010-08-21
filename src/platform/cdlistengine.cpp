@@ -35,7 +35,7 @@
 #include <phonon/mediacontroller.h>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
-#include <Solid/OpticalDisc>
+#include <Solid/Block>
 
 CDListEngine::CDListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -53,58 +53,42 @@ CDListEngine::~CDListEngine()
 void CDListEngine::run()
 {
     //check if Audio CD is present
-    bool audioCDFound = false;
-    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
-    {
-        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
-        if (disc == NULL)
-            continue;
-        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-            audioCDFound = true;
-        }
-    }
+    QString udi = m_mediaListProperties.engineArg();
+    Solid::Device device = Solid::Device( udi );
+    const Solid::Block* block = device.as<const Solid::Block>();
     
     QList<MediaItem> mediaList;
-    if (audioCDFound) {
+    if (block->isValid()) {
+        QString dev_str = block->device();
         if (!m_loadWhenReady) {
-            m_mediaObject->setCurrentSource(Phonon::Cd);
+            m_mediaObject->setCurrentSource(Phonon::MediaSource(Phonon::Cd, dev_str));
             m_loadWhenReady = true;
         }
-        if (m_mediaObject->state() == Phonon::StoppedState) {
+        forever {
+            if (m_mediaObject->state() != Phonon::LoadingState) {
+                msleep(100);
+                continue;
+            } else if (m_mediaObject->state() != Phonon::StoppedState)
+                break;
             Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
-            MediaItem mediaItem;
             int trackCount = mediaController->availableTitles();
-            QString album = "Audio CD";
-            QString title;
-            QString artist;
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
-                title = i18n("Track %1", i);
-                mediaItem.url = Utilities::discUrl(Phonon::Cd, i);
-                mediaItem.artwork = KIcon("media-optical-audio");
-                mediaItem.title = title;
+                KUrl url = Utilities::deviceUrl("cd", udi, QString(), "Audio", i);
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                 mediaItem.subTitle = i18nc("%1=Total number of tracks on the CD", "Audio CD - %1 Tracks", trackCount);
-                mediaItem.type = "Audio";
-                mediaItem.fields["url"] = mediaItem.url;
-                mediaItem.fields["title"] = mediaItem.title;
-                mediaItem.fields["audioType"] = "CD Track";
-                mediaItem.fields["trackNumber"] = i;
                 mediaList << mediaItem;
             }
 
             m_mediaListProperties.summary = i18np("1 track", "%1 tracks", mediaList.count());
-            emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-            m_requestSignature = QString();
-            m_subRequestSignature = QString();
-            m_loadWhenReady = false;
             delete mediaController;
+            break;
         }
-    } else {
-        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-        m_requestSignature = QString();
-        m_subRequestSignature = QString();
-        m_loadWhenReady = false;
     }
+    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+    m_requestSignature = QString();
+    m_subRequestSignature = QString();
+    m_loadWhenReady = false;
     //exec();    
 }
 
