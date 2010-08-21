@@ -763,5 +763,7 @@ void SavedListsManager::loadPlaylist()
     mediaItem.type = "Category";
     mediaItem.title = "Playlist";
     mediaItem.url = "savedlists://Playlist-current.m3u";
+    MediaItemModel *model = m_application->playlist()->playlistModel();
+    //model->includeNonExisting(false);
     m_application->playlist()->addMediaItem(mediaItem);
 }

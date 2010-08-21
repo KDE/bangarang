@@ -125,7 +125,7 @@ public:
                       
     bool exists; /** If the MediaItem.url point to a playable media resource, this
                    * bool is true if the playable media resource exists, otherwise is false.
-                   * Note that this is only useful for file resources.*/
+                   * On DVDs or CDs this value depends on whether the DVD/CD is inserted or not.*/
     
     bool hasCustomArtwork; /** If the artwork property is a default icon this bool is false,
                             * otherwise if artwork property has custom artwork this bool is

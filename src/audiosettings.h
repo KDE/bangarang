@@ -47,7 +47,9 @@ class AudioSettings : public QObject
         void setAudioPath(Phonon::Path *audioPath);
         void saveAudioSettings(KConfigGroup *configGroup);
         void restoreAudioSettings(KConfigGroup *configGroup);
-
+        void connectEq();
+        void disconnectEq();
+        
     public slots:
         void loadPreset(const QString &presetName);
         void setEq(const QList<int> &set);
@@ -59,20 +61,13 @@ class AudioSettings : public QObject
         Phonon::Effect * m_audioEq;
         QStringList m_eqPresetNames;
         QList<QList<int> > m_eqPresets;
+        QList<QSlider *> m_uiEqs;
         void updateManualEqPresets();
+        const int m_eqCount;
         
     private slots:
-        void eq1Changed(int v);
-        void eq2Changed(int v);
-        void eq3Changed(int v);
-        void eq4Changed(int v);
-        void eq5Changed(int v);
-        void eq6Changed(int v);
-        void eq7Changed(int v);
-        void eq8Changed(int v);
-        void eq9Changed(int v);
-        void eq10Changed(int v);
-        void eq11Changed(int v);
+        void eqChanged(int v);
+
 
 };
 #endif // AUDIOSETTINGS_H

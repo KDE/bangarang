@@ -190,7 +190,7 @@ class Playlist : public QObject
         * Builds an url of the item currently playing
         * @returns A mediaItem Url
         */
-        QString currentUrl();
+        QString currentUrl() { return m_currentUrl; }
                
     public slots:
         /**
@@ -269,6 +269,7 @@ class Playlist : public QObject
         bool m_hadVideo;
         KNotificationRestrictions * m_notificationRestrictions;
         QList<QString> m_streamListUrls;
+        QString m_currentUrl;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
