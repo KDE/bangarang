@@ -302,8 +302,9 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     
     //Playlist/Playback actions
     if (isMedia || isCategory) {
+        menu->addAction(action("add_to_playlist"));
         if (selection && isMedia) {
-            menu->addAction(action("add_to_playlist"));
+
             menu->addAction(action("remove_from_playlist"));
         }
         if (selection) {
@@ -638,14 +639,14 @@ void ActionsManager::muteAudio()
 void ActionsManager::addSelectedToPlaylistSlot()
 {
     QList<MediaItem> mediaList = selectedMediaItems();
-    for (int i = 0; i < mediaList.count(); i++) {
-        if (mediaList.at(i).type == "Audio" ||
-            mediaList.at(i).type == "Video") {
-            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
-            if (playlistRow == -1) {
-                m_application->playlist()->addMediaItem(mediaList.at(i));
-            }
-        }
+    MediaItemModel *plmod = m_application->playlist()->playlistModel();
+    foreach (MediaItem item, mediaList) {
+        if (Utilities::isMedia(item.type)) {
+            if (plmod->rowOfUrl(item.url) >= 0)
+                continue;
+        } else if ( !Utilities::isCategory(item.type) )
+            continue;
+        m_application->playlist()->addMediaItem(item);
     }
 }
 

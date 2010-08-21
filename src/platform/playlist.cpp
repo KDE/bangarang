@@ -35,6 +35,8 @@
 #include <platform/dvdcontroller.h>
 #include <QDBusInterface>
 #include <actionsmanager.h>
+#include <Solid/Device>
+#include <Solid/Block>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
@@ -139,12 +141,16 @@ void Playlist::playItemAt(int row, Model model)
     } else if(nextMediaItem.type == "Video") {
         subType = nextMediaItem.fields["videoType"].toString();
     }
+    m_currentUrl = nextMediaItem.url;
     bool isDiscTitle = Utilities::isDisc( nextMediaItem.url );
     if (isDiscTitle) {
+        Solid::Device device = Solid::Device( Utilities::deviceUdiFromUrl(nextMediaItem.url) );
+        const Solid::Block* block = device.as<const Solid::Block>();
         Phonon::DiscType discType = (subType == "CD Track") ? Phonon::Cd : Phonon::Dvd;
+        Phonon::MediaSource src = Phonon::MediaSource(discType, block->device());
         int title = nextMediaItem.fields["trackNumber"].toInt();
-        if (discType != m_mediaObject->currentSource().discType())
-            m_mediaObject->setCurrentSource(discType);
+        if (m_mediaObject->currentSource().deviceName() != src.deviceName())
+            m_mediaObject->setCurrentSource(src);
         m_application->dvdController()->setTitle(title);
         titleChanged(title);
     } else if (subType == "Audio Stream") {
@@ -154,18 +160,17 @@ void Playlist::playItemAt(int row, Model model)
             for (int i = 0; i < streamList.count(); i++) {
                 m_streamListUrls << streamList.at(i).url;
                 if (i == 0) {
-                    m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+                    m_currentUrl = streamList.at(i).url;
                 } else {
                     m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
                 }
             }
         } else {
             m_streamListUrls << nextMediaItem.url;    
-            m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8())));
         }
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(m_currentUrl.toUtf8())));
     } else {
-//         m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding((nextMediaItem.url.toUtf8()))));
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromEncoded((nextMediaItem.url.toUtf8()))));
+        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromEncoded(m_currentUrl.toUtf8())));
     }
     m_mediaObject->play();
     m_state = Playlist::Playing;
@@ -652,7 +657,7 @@ void Playlist::playlistChanged()
         //if currently playing url is not at front of queueMediaList
         // stop playing and play item at front of queue
         if ((m_mediaObject->state() == Phonon::PlayingState) || (m_mediaObject->state() == Phonon::PausedState)) {
-            if (currentUrl() != QUrl::fromEncoded(m_queue->mediaItemAt(0).url.toUtf8()).toString()) {
+            if (m_currentUrl != QUrl::fromEncoded(m_queue->mediaItemAt(0).url.toUtf8()).toString()) {
                 m_mediaObject->stop();
                 playItemAt(0, Playlist::QueueModel);
             }
@@ -678,16 +683,15 @@ void Playlist::updateNowPlaying()
     //Find matching item in queue
     int queueRow = -1;
     for (int i = 0; i < m_queue->rowCount(); i++) {
-        QString cUrl = currentUrl();
         if (Utilities::isAudioStream(m_queue->mediaItemAt(i).fields["audioType"].toString())) {
             for (int j = 0; j < m_streamListUrls.count(); j++) {
-                if (cUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
+                if (m_currentUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
                     queueRow = i;
                     break;
                 }
             }
         } else {
-            if (cUrl == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
+            if (m_currentUrl == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
                 queueRow = i;
                 break;
             }
@@ -756,17 +760,14 @@ void Playlist::addToQueue()
         }
     }
     if (m_playlistIndices.count() > 0) {
-        if (!m_shuffle) {
-            int nextIndex = m_playlistIndices.takeAt(0);
-            MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
-            nextMediaItem.playlistIndex = nextIndex;
-            m_queue->loadMediaItem(nextMediaItem);
-        } else {
-            int nextIndex = m_playlistIndices.takeAt(rand()%m_playlistIndices.count());
-            MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
-            nextMediaItem.playlistIndex = nextIndex;
-            m_queue->loadMediaItem(nextMediaItem);
-        }
+        int nextIndex;
+        if (!m_shuffle)
+            nextIndex = m_playlistIndices.takeAt(0);
+        else
+            nextIndex = m_playlistIndices.takeAt(rand()%m_playlistIndices.count());
+        MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
+        nextMediaItem.playlistIndex = nextIndex;
+        m_queue->loadMediaItem(nextMediaItem);
     }
 }
 
@@ -813,13 +814,4 @@ void Playlist::metaDataChanged()
             m_nowPlaying->replaceMediaItemAt(0, mediaItem, true);
         }
     }
-}
-
-QString Playlist::currentUrl()
-{
-    Phonon::MediaSource src =  m_mediaObject->currentSource();
-    if (src.type() == Phonon::MediaSource::Disc)
-        return Utilities::discUrl(src.discType(), m_mediaController->currentTitle(), Utilities::discName(m_mediaObject));
-    else
-        return src.url().toString();
 }
