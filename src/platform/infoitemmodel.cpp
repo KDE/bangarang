@@ -63,7 +63,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 bool forceEditable = true;
                 addFieldToValuesModel(i18n("Location"), "url", forceEditable);
             } else {
-                addFieldToValuesModel(i18n("Location"), "url");
+                if (Utilities::isCd(m_mediaList.at(0).url))
+                    addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
+                else
+                    addFieldToValuesModel(i18n("Location"), "url");
             }
         } else {
             addFieldToValuesModel(i18n("Type"), "videoType");
@@ -84,7 +87,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(i18n("Writer"), "writer");
                 addFieldToValuesModel(i18n("Producer"), "producer");
             }
-            addFieldToValuesModel(i18n("Location"), "url");
+            if (Utilities::isDvd(m_mediaList.at(0).url))
+                addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
+            else
+                addFieldToValuesModel(i18n("Location"), "url");
         }
         if (m_mediaList.count() == 1) {
             addFieldToValuesModel(i18n("Play Count"), "playCount");
