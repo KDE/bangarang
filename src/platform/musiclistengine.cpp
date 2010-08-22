@@ -104,14 +104,9 @@ void MusicListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     
                     //Provide context info for artist
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
                     
                     mediaList.append(mediaItem);
                 }
@@ -132,14 +127,11 @@ void MusicListEngine::run()
                     mediaItem.fields["categoryType"] = QString("AudioGenre");
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.artwork = KIcon("audio-x-monkey");
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
+
+                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.summary = i18np("1 artist", "%1 artists", mediaList.count());
@@ -189,14 +181,9 @@ void MusicListEngine::run()
                     mediaItem.artwork = KIcon("media-optical-audio");
 
                     //Provide context info for album
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
+                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
 
                     mediaList.append(mediaItem);
                 }
@@ -218,15 +205,11 @@ void MusicListEngine::run()
                     mediaItem.fields["categoryType"] = QString("Artist");
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.artwork = KIcon("audio-x-monkey");
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
-                    
+
+                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+
                     mediaList.append(mediaItem);
                 }
                 if (!genre.isEmpty()) {
@@ -280,15 +263,10 @@ void MusicListEngine::run()
                     mediaItem.artwork = KIcon("flag-blue");
                     
                     //Provide context info for genre
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
-                    
+                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+
                     mediaList.append(mediaItem);
                 }
                 ++i;
