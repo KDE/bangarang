@@ -405,6 +405,34 @@ QUrl MediaVocabulary::musicArtist()
     return returnUrl;
 }
 
+QUrl MediaVocabulary::musicPerformer()
+{
+    QUrl returnUrl = QUrl();
+    if (m_musicVocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::artist();
+    } else if (m_musicVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#performer");
+    } else if (m_musicVocabulary == MediaVocabulary::nid3) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
+    }
+    
+    return returnUrl;
+}
+
+QUrl MediaVocabulary::musicComposer()
+{
+    QUrl returnUrl = QUrl();
+    if (m_musicVocabulary == MediaVocabulary::xesam) {
+        returnUrl = Soprano::Vocabulary::Xesam::artist();
+    } else if (m_musicVocabulary == MediaVocabulary::nmm) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#composer");
+    } else if (m_musicVocabulary == MediaVocabulary::nid3) {
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
+    }
+    
+    return returnUrl;
+}
+
 QUrl MediaVocabulary::musicArtistName()
 {
     QUrl returnUrl = QUrl();
@@ -1021,7 +1049,11 @@ QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
     QString statement;
     if (m_musicVocabulary == MediaVocabulary::nmm) {
         QString artistResourceBinding = "artistResource";
-        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding);
+        statement = QString("{%1} UNION  {%2} UNION {%3} ")
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding))
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding))
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding));
+        //statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding);
         statement += MediaQuery::hasProperty(artistResourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
     } else {
         statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
