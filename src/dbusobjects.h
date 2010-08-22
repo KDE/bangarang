@@ -20,7 +20,7 @@
 #define DBUSOBJECTS_H
 
 #include <QVariantMap>
-#include <Phonon/MediaObject>
+#include <phonon/mediaobject.h>
 
 class BangarangApplication;
 
