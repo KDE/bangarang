@@ -135,6 +135,22 @@ public:
                                          * the metadata fields associated with this MediaItem.
                                          *  key - A string containing the field name.
                                          *  value - A variant conatining the value of the field.*/
+                                         
+    void addContext(const QString title, const QString lri)
+    {
+        QStringList contextTitles = fields["contextTitles"].toStringList();
+        QStringList contextLRIs = fields["contextLRIs"].toStringList();
+        contextTitles.append(title);
+        contextLRIs.append(lri);
+        fields["contextTitles"] = contextTitles;
+        fields["contextLRIs"] = contextLRIs;
+    }
+
+    void clearContexts()
+    {
+        fields["contextTitles"] = QStringList();
+        fields["contextLRIs"] = QStringList();
+    }
     
     MediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
 };

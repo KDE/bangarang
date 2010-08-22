@@ -1048,14 +1048,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("system-users");
             //Provide context info for artist
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
         } else if (type == "Album") {
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
@@ -1072,14 +1067,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.subTitle = artist;
             mediaItem.artwork = KIcon("media-optical-audio");
             //Provide context info for album
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
         } else if (type == "AudioGenre") {
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
@@ -1095,14 +1085,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("flag-blue");
             //Provide context info for genre
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played Songs") << i18n("Highest Rated Songs") << i18n("Frequently Played Songs");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            contextLRIs << QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
         } else if (type == "AudioTag") {
             QString tag = it.binding(MediaVocabulary::tagBinding()).literal().toString();
             QString tagFilter = tag.isEmpty() ? QString(): QString("tag=%1").arg(tag);
@@ -1112,14 +1097,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("view-pim-notes");;
             //Provide context info for tag
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?audio||limit=4||tag=%1").arg(tag);
-            contextLRIs << QString("semantics://highest?audio||limit=4||tag=%1").arg(tag);
-            contextLRIs << QString("semantics://frequent?audio||limit=4||tag=%1").arg(tag);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?audio||limit=4||tag=%1").arg(tag));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?audio||limit=4||tag=%1").arg(tag));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?audio||limit=4||tag=%1").arg(tag));
         } else if (type == "TV Series") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
             QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
@@ -1135,14 +1115,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("video-television");
             //Provide context info for TV series
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
-            contextLRIs << QString("semantics://highest?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
-            contextLRIs << QString("semantics://frequent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
         } else if (type == "TV Season") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
             QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
@@ -1159,56 +1134,36 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
             mediaItem.artwork = KIcon("video-television");
             //Provide context info for genre
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
-            contextLRIs << QString("semantics://highest?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
-            contextLRIs << QString("semantics://frequent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season));
         } else if (type == "VideoGenre") {
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
             mediaItem.url = QString("video://sources?||genre=%1").arg(genre);
             mediaItem.title = genre;
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("flag-green");
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||genre=%1").arg(genre);
-            contextLRIs << QString("semantics://highest?video||limit=4||genre=%1").arg(genre);
-            contextLRIs << QString("semantics://frequent?video||limit=4||genre=%1").arg(genre);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||genre=%1").arg(genre));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||genre=%1").arg(genre));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||genre=%1").arg(genre));
         } else if (type == "Actor") {
             QString actor = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
             mediaItem.url = QString("video://sources?||actor=%1").arg(actor);
             mediaItem.title = actor;
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("view-media-artist");
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||actor=%1").arg(actor);
-            contextLRIs << QString("semantics://highest?video||limit=4||actor=%1").arg(actor);
-            contextLRIs << QString("semantics://frequent?video||limit=4||actor=%1").arg(actor);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||actor=%1").arg(actor));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||actor=%1").arg(actor));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||actor=%1").arg(actor));
         } else if (type == "Director") {
             QString director = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
             mediaItem.url = QString("video://sources?||director=%1").arg(director);
             mediaItem.title = director;
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("view-media-artist");
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||director=%1").arg(director);
-            contextLRIs << QString("semantics://highest?video||limit=4||director=%1").arg(director);
-            contextLRIs << QString("semantics://frequent?video||limit=4||director=%1").arg(director);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||director=%1").arg(director));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||director=%1").arg(director));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||director=%1").arg(director));
         } else if (type == "VideoTag") {
             QString tag = it.binding(MediaVocabulary::tagBinding()).literal().toString();
             QString tagFilter = tag.isEmpty() ? QString(): QString("tag=%1").arg(tag);
@@ -1226,6 +1181,9 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             contextLRIs << QString("semantics://frequent?video||limit=4||tag=%1").arg(tag);
             mediaItem.fields["contextTitles"] = contextTitles;
             mediaItem.fields["contextLRIs"] = contextLRIs;
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||tag=%1").arg(tag));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||tag=%1").arg(tag));
+            mediaItem.addContext(i18n("Frequently Played"),QString("semantics://frequent?video||limit=4||tag=%1").arg(tag));
         }
         /*if (!lri.isEmpty()) {
             mediaItem.url = lri;
