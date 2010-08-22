@@ -22,7 +22,6 @@ set(BangarangSources
     audiosettings.cpp
     medialistsettings.cpp
     pluginexport.cpp
-    scriptconsole.cpp
     starrating.cpp
     dbusobjects.cpp
     platform/mediaitemmodel.cpp

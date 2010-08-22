@@ -87,6 +87,8 @@ class MediaVocabulary {
         
         //These properties are applicable to Music
         QUrl musicArtist();
+        QUrl musicPerformer();
+        QUrl musicComposer();
         QUrl musicArtistName();
         QUrl musicAlbum();
         QUrl musicAlbumName();
