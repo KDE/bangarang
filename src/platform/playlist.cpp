@@ -105,8 +105,9 @@ void Playlist::playItemAt(int row, Model model)
     bool isQueue = (model == QueueModel);
     MediaItem nextMediaItem = isQueue ? m_queue->mediaItemAt(row) :
                                         m_currentPlaylist->mediaItemAt(row);
-    if (!isQueue)
+    if (!isQueue) {
         nextMediaItem.playlistIndex = row;
+    }
     nextMediaItem.nowPlaying = true;
     
     //Update Queue Model
@@ -309,8 +310,9 @@ void Playlist::clearPlaylist()
 void Playlist::setMediaObject(Phonon::MediaObject *mediaObject)
 {
     //NOTE:Not disconnecting signals here.  Calling routing is responsible for deletion/disconnection of old media object.  If object is not deleted/disconnected, playlist slot will continue to respond to old media object signals.
-    if (m_mediaController != NULL)
+    if (m_mediaController != NULL) {
         delete m_mediaController;
+    }
     m_mediaObject = mediaObject;
     m_mediaController = new Phonon::MediaController(m_mediaObject);
 
@@ -442,10 +444,15 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
 
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
 {
-    //Check next mediaItem to decide how to setAutoplayTitles
-    if (newSource.type() == Phonon::MediaSource::Disc && m_queue->rowCount() > 1 && Utilities::isDisc(m_queue->mediaItemAt(1).url)) {
-        m_mediaController->setAutoplayTitles((m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1));
-    } 
+    //Update currentUrl and check next mediaItem to decide how to setAutoplayTitles
+    if (newSource.type() == Phonon::MediaSource::Disc && m_queue->rowCount() > 1) {
+        if (Utilities::isDisc(m_queue->mediaItemAt(1).url)) {
+            m_currentUrl = m_queue->mediaItemAt(1).url;
+            m_mediaController->setAutoplayTitles((m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1));
+        }
+    } else {
+        m_currentUrl = newSource.url().toString();
+    }
     updateNowPlaying();
 }
 
@@ -453,7 +460,8 @@ void Playlist::titleChanged(int newTitle) //connected to MediaController::titleC
 {
     if ((m_queue->rowCount() > 1)) {
         MediaItem mediaItem = m_queue->mediaItemAt(1);
-        if (mediaItem.fields["trackNumber"].toInt() == newTitle) {
+        if ((mediaItem.fields["trackNumber"].toInt() == newTitle) && (m_mediaObject->currentSource().type() == Phonon::MediaSource::Disc)) {
+            m_currentUrl = mediaItem.url;
             m_queue->removeMediaItemAt(0);
         }
     }
@@ -531,24 +539,24 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     		"org.kde.kded",
     		"/modules/powerdevil",
     		"org.kde.PowerDevil");
-	if ((newstate == Phonon::PlayingState || newstate == Phonon::PausedState)
-			&& oldstate != Phonon::PlayingState
-			&& oldstate != Phonon::PausedState) {
+    if ((newstate == Phonon::PlayingState || newstate == Phonon::PausedState)
+        && oldstate != Phonon::PlayingState
+                && oldstate != Phonon::PausedState) {
 
-	    iface.call("setProfile", "Presentation");
+        iface.call("setProfile", "Presentation");
         //Disable screensaver
         delete m_notificationRestrictions; //just to make sure more than one KNotificationRestrictions isn't created.
         m_notificationRestrictions = new KNotificationRestrictions(KNotificationRestrictions::ScreenSaver);
-    
-	} else if (newstate == Phonon::StoppedState &&
-			(oldstate == Phonon::PlayingState || oldstate == Phonon::PausedState)){
-		/* There is no way to reset the profile to the last used one.
-		 * We therefore set the profile always to performance and let the
-		 * refreshStatus call handle the case when the computer runs on battery.
-		 */
-	    //iface.call("setProfile", "Performance");
-	    iface.call("refreshStatus");
-	}
+
+    } else if (newstate == Phonon::StoppedState &&
+               (oldstate == Phonon::PlayingState || oldstate == Phonon::PausedState)){
+        /* There is no way to reset the profile to the last used one.
+         * We therefore set the profile always to performance and let the
+         * refreshStatus call handle the case when the computer runs on battery.
+         */
+        //iface.call("setProfile", "Performance");
+        iface.call("refreshStatus");
+    }
 }
 
 void Playlist::updatePlaybackInfo(qint64 time)
@@ -761,10 +769,11 @@ void Playlist::addToQueue()
     }
     if (m_playlistIndices.count() > 0) {
         int nextIndex;
-        if (!m_shuffle)
+        if (!m_shuffle) {
             nextIndex = m_playlistIndices.takeAt(0);
-        else
+        } else {
             nextIndex = m_playlistIndices.takeAt(rand()%m_playlistIndices.count());
+        }
         MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(nextIndex);
         nextMediaItem.playlistIndex = nextIndex;
         m_queue->loadMediaItem(nextMediaItem);
