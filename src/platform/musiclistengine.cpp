@@ -224,7 +224,7 @@ void MusicListEngine::run()
             } else {
                 engineArg = "songs";
                 album = mediaList.at(0).title;
-                albumFilter = QString("album=%1").arg(artist);
+                albumFilter = QString("album=%1").arg(album);
                 mediaList.clear();
             }
             
@@ -278,7 +278,7 @@ void MusicListEngine::run()
             } else {
                 engineArg = "songs";
                 genre = mediaList.at(0).title;
-                genreFilter = QString("genre=%1").arg(artist);
+                genreFilter = QString("genre=%1").arg(genre);
                 mediaList.clear();
             }
             
