@@ -128,5 +128,8 @@ namespace Utilities {
     int invalidTitle();
     QString deviceName( QString udi, Phonon::MediaObject *mobj = NULL );
     QStringList availableDiscUdis(Solid::OpticalDisc::ContentType type);
+    QHash<int, QString> tagGenreDictionary();
+    QString genreFromRawTagGenre(QString rawTagGenre);
+    QString rawTagGenreFromGenre(QString genre);
 }
 #endif //UTILITIES_H    

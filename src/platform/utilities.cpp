@@ -1563,3 +1563,162 @@ QStringList Utilities::availableDiscUdis(Solid::OpticalDisc::ContentType type)
     }
     return udis;
 }
+
+QHash<int, QString> Utilities::tagGenreDictionary()
+{
+    QHash<int, QString> genreDictionary;
+    genreDictionary[0] = "Blues";
+    genreDictionary[1] = "Classic Rock";
+    genreDictionary[2] = "Country";
+    genreDictionary[3] = "Dance";
+    genreDictionary[4] = "Disco";
+    genreDictionary[5] = "Funk";
+    genreDictionary[6] = "Grunge";
+    genreDictionary[7] = "Hip-Hop";
+    genreDictionary[8] = "Jazz";
+    genreDictionary[9] = "Metal";
+    genreDictionary[10] = "New Age";
+    genreDictionary[11] = "Oldies";
+    genreDictionary[12] = "Other";
+    genreDictionary[13] = "Pop";
+    genreDictionary[14] = "R&B";
+    genreDictionary[15] = "Rap";
+    genreDictionary[16] = "Reggae";
+    genreDictionary[17] = "Rock";
+    genreDictionary[18] = "Techno";
+    genreDictionary[19] = "Industrial";
+    genreDictionary[20] = "Alternative";
+    genreDictionary[21] = "Ska";
+    genreDictionary[22] = "Death Metal";
+    genreDictionary[23] = "Pranks";
+    genreDictionary[24] = "Soundtrack";
+    genreDictionary[25] = "Euro-Techno";
+    genreDictionary[26] = "Ambient";
+    genreDictionary[27] = "Trip-Hop";
+    genreDictionary[28] = "Vocal";
+    genreDictionary[29] = "Jazz+Funk";
+    genreDictionary[30] = "Fusion";
+    genreDictionary[31] = "Trance";
+    genreDictionary[32] = "Classical";
+    genreDictionary[33] = "Instrumental";
+    genreDictionary[34] = "Acid";
+    genreDictionary[35] = "House";
+    genreDictionary[36] = "Game";
+    genreDictionary[37] = "Sound Clip";
+    genreDictionary[38] = "Gospel";
+    genreDictionary[39] = "Noise";
+    genreDictionary[40] = "AlternRock";
+    genreDictionary[41] = "Bass";
+    genreDictionary[42] = "Soul";
+    genreDictionary[43] = "Punk";
+    genreDictionary[44] = "Space";
+    genreDictionary[45] = "Meditative";
+    genreDictionary[46] = "Instrumental Pop";
+    genreDictionary[47] = "Instrumental Rock";
+    genreDictionary[48] = "Ethnic";
+    genreDictionary[49] = "Gothic";
+    genreDictionary[50] = "Darkwave";
+    genreDictionary[51] = "Techno-Industrial";
+    genreDictionary[52] = "Electronic";
+    genreDictionary[53] = "Pop-Folk";
+    genreDictionary[54] = "Eurodance";
+    genreDictionary[55] = "Dream";
+    genreDictionary[56] = "Southern Rock";
+    genreDictionary[57] = "Comedy";
+    genreDictionary[58] = "Cult";
+    genreDictionary[59] = "Gangsta";
+    genreDictionary[60] = "Top40";
+    genreDictionary[61] = "Christian Rap";
+    genreDictionary[62] = "Pop/Funk";
+    genreDictionary[63] = "Jungle";
+    genreDictionary[64] = "Native American";
+    genreDictionary[65] = "Cabaret";
+    genreDictionary[66] = "New Wave";
+    genreDictionary[67] = "Psychadelic";
+    genreDictionary[68] = "Rave";
+    genreDictionary[69] = "Showtunes";
+    genreDictionary[70] = "Trailer";
+    genreDictionary[71] = "Lo-Fi";
+    genreDictionary[72] = "Tribal";
+    genreDictionary[73] = "Acid Punk";
+    genreDictionary[74] = "Acid Jazz";
+    genreDictionary[75] = "Polka";
+    genreDictionary[76] = "Retro";
+    genreDictionary[77] = "Musical";
+    genreDictionary[78] = "Rock & Roll";
+    genreDictionary[79] = "Hard Rock";
+    genreDictionary[80] = "Folk";
+    genreDictionary[81] = "Folk-Rock";
+    genreDictionary[82] = "National Folk";
+    genreDictionary[83] = "Swing";
+    genreDictionary[84] = "Fast Fusion";
+    genreDictionary[85] = "Bebob";
+    genreDictionary[86] = "Latin";
+    genreDictionary[87] = "Revival";
+    genreDictionary[88] = "Celtic";
+    genreDictionary[89] = "Bluegrass";
+    genreDictionary[90] = "Avantgarde";
+    genreDictionary[91] = "Gothic Rock";
+    genreDictionary[92] = "Progressive Rock";
+    genreDictionary[93] = "Psychedelic Rock";
+    genreDictionary[94] = "Symphonic Rock";
+    genreDictionary[95] = "Slow Rock";
+    genreDictionary[96] = "Big Band";
+    genreDictionary[97] = "Chorus";
+    genreDictionary[98] = "Easy Listening";
+    genreDictionary[99] = "Acoustic";
+    genreDictionary[100] = "Humour";
+    genreDictionary[101] = "Speech";
+    genreDictionary[102] = "Chanson";
+    genreDictionary[103] = "Opera";
+    genreDictionary[104] = "Chamber Music";
+    genreDictionary[105] = "Sonata";
+    genreDictionary[106] = "Symphony";
+    genreDictionary[107] = "Booty Bass";
+    genreDictionary[108] = "Primus";
+    genreDictionary[109] = "Porn Groove";
+    genreDictionary[110] = "Satire";
+    genreDictionary[111] = "Slow Jam";
+    genreDictionary[112] = "Club";
+    genreDictionary[113] = "Tango";
+    genreDictionary[114] = "Samba";
+    genreDictionary[115] = "Folklore";
+    genreDictionary[116] = "Ballad";
+    genreDictionary[117] = "Power Ballad";
+    genreDictionary[118] = "Rhythmic Soul";
+    genreDictionary[119] = "Freestyle";
+    genreDictionary[120] = "Duet";
+    genreDictionary[121] = "Punk Rock";
+    genreDictionary[122] = "Drum Solo";
+    genreDictionary[123] = "A capella";
+    genreDictionary[124] = "Euro-House";
+    genreDictionary[125] = "Dance Hall";
+    return genreDictionary;
+}
+
+QString Utilities::genreFromRawTagGenre(QString rawTagGenre)
+{
+    QHash<int, QString> genreDictionary = tagGenreDictionary();
+
+    QString genre = rawTagGenre;
+    if (rawTagGenre.startsWith("(") && rawTagGenre.endsWith(")")) {
+        QString tagGenreNoParenth = rawTagGenre.remove("(").remove(")").trimmed();
+        int tagGenreNo = tagGenreNoParenth.toInt();
+        if (QString("%1").arg(tagGenreNo) == tagGenreNoParenth) {
+            genre = genreDictionary[tagGenreNo];
+        }
+    }
+    return genre;
+}
+
+QString Utilities::rawTagGenreFromGenre(QString genre)
+{
+    QHash<int, QString> genreDictionary = tagGenreDictionary();
+
+    QString tagGenre = genre;
+    int tagGenreNo = genreDictionary.key(genre, -1);
+    if (tagGenreNo != -1) {
+        tagGenre = QString("(%1)").arg(tagGenreNo);
+    }
+    return tagGenre;
+}
