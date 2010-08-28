@@ -22,6 +22,7 @@
 #include <KApplication>
 #include <KAboutData>
 #include <phonon/mediaobject.h>
+#include <phonon/audiooutput.h>
 #include <QtCore>
 
 class MediaListProperties;
@@ -47,6 +48,8 @@ class BangarangApplication : public KApplication
         MainWindow * mainWindow();
         Phonon::MediaObject * mediaObject();
         Phonon::MediaObject * newMediaObject();
+        Phonon::AudioOutput * audioOutput();
+        qreal volume();
         Playlist * playlist();
         MediaItemModel * browsingModel();
         MediaListCache * sharedMediaListCache();
@@ -63,6 +66,10 @@ class BangarangApplication : public KApplication
     private:
         MainWindow * m_mainWindow;
         Phonon::MediaObject * m_mediaObject;
+        Phonon::AudioOutput * m_audioOutput;
+        Phonon::Path m_audioPath;
+        Phonon::Path m_videoPath;
+        qreal m_volume;
         Playlist * m_playlist;
         MediaItemModel * m_browsingModel;
         MediaListCache * m_sharedMediaListCache;
@@ -77,6 +84,9 @@ class BangarangApplication : public KApplication
 
     private slots:
         void handleNotifierStateRequest(Phonon::State state);
+        void nowPlayingChanged();
+        void volumeChanged(qreal newVolume);
+        void volumeChanged(int delta);
         
 };
 #endif

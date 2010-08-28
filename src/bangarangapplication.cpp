@@ -50,9 +50,14 @@ void BangarangApplication::setup()
     //Set up media object
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setTickInterval(500);
+    m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this); // default to music category;
+    connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
+
+
     
     //Set up playlist
     m_playlist = new Playlist(this, m_mediaObject);
+    connect(m_playlist->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     
     //Set up Media Lists view browsing model
     m_browsingModel = new MediaItemModel(this);
@@ -88,7 +93,13 @@ void BangarangApplication::setup()
     
     //Complete Setup
     m_mainWindow->completeSetup();
-    
+
+    //Create media paths
+    m_audioPath = Phonon::createPath(m_mediaObject, m_audioOutput);
+    m_videoPath = Phonon::createPath(m_mediaObject, m_mainWindow->videoWidget());
+    m_volume = m_audioOutput->volume();
+    m_audioSettings->setAudioPath(&m_audioPath);
+
     m_statusNotifierItem->setAssociatedWidget(m_mainWindow);
     m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("mute"));
     m_statusNotifierItem->contextMenu()->addSeparator();
@@ -97,7 +108,9 @@ void BangarangApplication::setup()
     m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("play_next"));
     m_statusNotifierItem->contextMenu()->addSeparator();
     m_statusNotifierItem->contextMenu()->addAction(m_actionsManager->action("quit"));
-    
+
+    connect(m_statusNotifierItem, SIGNAL(changeVolumeRequested(int)), this, SLOT(volumeChanged(int)));
+
     //Initialize Nepomuk
     Nepomuk::ResourceManager::instance()->init();
     if (Nepomuk::ResourceManager::instance()->initialized()) {
@@ -209,6 +222,7 @@ BangarangApplication::~BangarangApplication()
     delete m_browsingModel;
     delete m_statusNotifierItem;
     delete m_playlist;
+    delete m_audioOutput;
     delete m_mediaObject;
 }
 
@@ -234,8 +248,17 @@ Phonon::MediaObject * BangarangApplication::newMediaObject()
     m_mediaObject->setTickInterval(500);
     m_playlist->setMediaObject(m_mediaObject);
     m_dvdController->setMediaController(m_playlist->mediaController());
+    m_videoPath.reconnect(m_mediaObject, m_mainWindow->videoWidget());
+    m_audioPath.reconnect(m_mediaObject, m_audioOutput);
+    m_audioOutput->setVolume(m_volume);
+
     delete oldMediaObject;
     return m_mediaObject;
+}
+
+Phonon::AudioOutput * BangarangApplication::audioOutput()
+{
+    return m_audioOutput;
 }
 
 MediaItemModel * BangarangApplication::browsingModel()
@@ -293,4 +316,69 @@ void BangarangApplication::handleNotifierStateRequest(Phonon::State state)
   if (state == Phonon::PausedState)
     m_mediaObject->pause();
   else m_mediaObject->play();
+}
+
+qreal BangarangApplication::volume()
+{
+    return m_volume;
+}
+
+void BangarangApplication::volumeChanged(qreal newVolume)
+{
+    //Phonon::AudioOutput::volume() only return the volume at app start.
+    //Therefore I need to track volume changes independently.
+    m_volume = newVolume;
+}
+
+void BangarangApplication::volumeChanged(int delta)
+{
+    if ((m_volume == 0 && delta < 0) || (m_volume == 1 &&  delta > 0)) {
+        return;
+    }
+
+    m_volume += (qreal)delta/25;
+    if (m_volume < 0) {
+        m_volume = 0;
+    }
+    if (m_volume > 1) {
+        m_volume = 1;
+    }
+
+    m_audioOutput->setVolume(m_volume);
+}
+
+void BangarangApplication::nowPlayingChanged()
+{
+    MediaItemModel * nowPlayingModel = m_playlist->nowPlayingModel();
+    if (nowPlayingModel->rowCount() == 0) {
+        m_statusNotifierItem->setState(Phonon::StoppedState);
+        return;
+    }
+
+    MediaItem nowPlayingItem = nowPlayingModel->mediaItemAt(0);
+    QString type = nowPlayingItem.type;
+
+    //Switch the audio output to the appropriate phonon category
+    bool changed = false;
+    m_volume = m_audioOutput->volume();
+    if (type == "Audio" && m_audioOutput->category() != Phonon::MusicCategory) {
+        m_audioPath.disconnect();
+        delete m_audioOutput;
+        m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
+        changed = true;
+    } else if (type == "Video" && m_audioOutput->category() != Phonon::VideoCategory) {
+        m_audioPath.disconnect();
+        delete m_audioOutput;
+        m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
+        changed = true;
+    }
+
+    //Reconnect audio
+    if (changed) {
+        m_audioPath.reconnect(m_mediaObject, m_audioOutput);
+        m_audioOutput->setVolume(m_volume);
+        connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
+        m_mainWindow->connectPhononWidgets();
+    }
+
 }

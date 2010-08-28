@@ -104,11 +104,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Set up media object
     m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
-    m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this); // default to music category;
-    m_videoPath = Phonon::createPath(m_application->mediaObject(), m_videoWidget);
-    m_audioPath = Phonon::createPath(m_application->mediaObject(), m_audioOutput);
-    m_videoPath = m_audioPath;
-    m_volume = m_audioOutput->volume();
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
     connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
@@ -121,19 +116,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoFrame->setFrameShape(QFrame::NoFrame);
 
     //Set up volume and seek slider
-    ui->volumeSlider->setAudioOutput(m_audioOutput);
     ui->volumeSlider->setMuteVisible( false );
-    ui->seekSlider->setMediaObject(m_application->mediaObject());
     ui->seekSlider->setIconVisible(false);
     setShowRemainingTime(false);
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
     
     //Connect to media object signals and slots
     connect(m_application->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
-    connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
-    connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
-    connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
     connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+    connectPhononWidgets();
     
     //Set up Audio lists view 
     MediaListProperties audioListsProperties;
@@ -242,8 +233,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
     
-    connect(m_application->statusNotifierItem(), SIGNAL(changeVolumeRequested(int)), this,
-	    SLOT(volumeChanged(int)));
 }
 
 MainWindow::~MainWindow()
@@ -255,7 +244,6 @@ void MainWindow::completeSetup()
 {
     setupActions();
     ui->playlistView->setupActions();
-    m_application->audioSettings()->setAudioPath(&m_audioPath);
 }
 
 /*---------------------
@@ -563,31 +551,10 @@ void MainWindow::on_closeMediaListFilter_clicked()
 {
   m_application->actionsManager()->action("toggle_filter")->trigger();
 }
+
 /*----------------------------------------
   -- SLOTS for SIGNALS from Media Object --
   ----------------------------------------*/
-void MainWindow::volumeChanged(qreal newVolume)
-{
-    //Phonon::AudioOutput::volume() only return the volume at app start.
-    //Therefore I need to track volume changes independently.
-    m_volume = newVolume;
-}
-
-void MainWindow::volumeChanged(int delta)
-{
-  if ((m_volume == 0 && delta < 0) || (m_volume == 1 &&  delta > 0))
-      return;
-  
-  m_volume += (qreal)delta/25;
-  
-  if (m_volume < 0)
-      m_volume = 0;
-  if (m_volume > 1)
-      m_volume = 1;
-  
-  m_audioOutput->setVolume(m_volume);
-}
-
 void MainWindow::updateSeekTime(qint64 time)
 {
     //Update seek time
@@ -648,8 +615,6 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         //Use a new media object instead and discard
         //the old media object (whose state appears to be broken after errors) 
         Phonon::MediaObject * mediaObject = m_application->newMediaObject();
-        m_videoPath.reconnect(mediaObject, m_videoWidget);
-        m_audioPath.reconnect(mediaObject, m_audioOutput);
         ui->seekSlider->setMediaObject(mediaObject);
         connect(mediaObject, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
         connect(mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
@@ -659,8 +624,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         } else {
             m_application->playlist()->stop();
         }
-        m_audioOutput->setVolume(m_volume);
-        ui->volumeSlider->setAudioOutput(m_audioOutput);
+        ui->volumeSlider->setAudioOutput(m_application->audioOutput());
         ui->volumeIcon->setChecked(false);
     }
 
@@ -722,8 +686,17 @@ void MainWindow::updateMuteStatus(bool muted)
         ui->volumeIcon->setIcon(KIcon("speaker"));
         ui->volumeIcon->setToolTip(i18n("Mute volume"));
         ui->volumeIcon->setChecked(false);
-        m_audioOutput->setVolume(m_volume);        
+        m_application->audioOutput()->setVolume(m_application->volume());
     }
+}
+
+void MainWindow::connectPhononWidgets()
+{
+    ui->volumeSlider->setAudioOutput(m_application->audioOutput());
+    ui->seekSlider->setMediaObject(m_application->mediaObject());
+    connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_application->audioOutput(), SLOT(setMuted(bool)));
+    connect(m_application->audioOutput(), SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
+    updateMuteStatus(false);
 }
 
 
@@ -1123,11 +1096,6 @@ void MainWindow::skipBackward(int i)
     m_application->mediaObject()->seek(m_application->mediaObject()->currentTime() + qint64(i)*100);
 }
 
-Phonon::AudioOutput * MainWindow::audioOutput()
-{
-    return m_audioOutput;
-}
-
 Phonon::VideoWidget * MainWindow::videoWidget()
 {
   return m_videoWidget;
@@ -1183,30 +1151,6 @@ void MainWindow::nowPlayingChanged()
         setWindowTitle(QString(nowPlayingItem.title + " - Bangarang"));
     }
     
-    //Switch the audio output to the appropriate phonon category
-    bool changed = false;
-    m_volume = m_audioOutput->volume();
-    if (type == "Audio" && m_audioOutput->category() != Phonon::MusicCategory) {
-        m_audioPath.disconnect();
-        delete m_audioOutput;
-        m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
-        changed = true;
-    } else if (type == "Video" && m_audioOutput->category() != Phonon::VideoCategory) {
-        m_audioPath.disconnect();
-        delete m_audioOutput;
-        m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
-        changed = true;
-    }
-    if (changed) {
-        m_audioPath.reconnect(m_application->mediaObject(), m_audioOutput);
-        m_audioOutput->setVolume(m_volume);
-        ui->volumeSlider->setAudioOutput(m_audioOutput);
-        connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_audioOutput, SLOT(setMuted(bool)));
-        connect(m_audioOutput, SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
-        connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
-        updateMuteStatus(false);
-    }
- 
     //Update seekTime button
     if (m_application->bookmarksManager()->hasBookmarks(nowPlayingItem)) {
         ui->seekTime->setIcon(KIcon("bookmarks-organize"));

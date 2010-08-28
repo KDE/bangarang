@@ -625,9 +625,9 @@ void ActionsManager::smartPlay()
 
 void ActionsManager::muteAudio()
 {
-    bool muted = m_parent->audioOutput()->isMuted();
-    m_parent->audioOutput()->setMuted(!muted);
-    if (m_parent->audioOutput()->isMuted()) {
+    bool muted = m_application->audioOutput()->isMuted();
+    m_application->audioOutput()->setMuted(!muted);
+    if (m_application->audioOutput()->isMuted()) {
         action("mute")->setText(i18n("Restore Volume"));
         action("mute")->setIcon(KIcon("speaker"));
     } else {
