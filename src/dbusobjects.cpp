@@ -215,12 +215,12 @@ int MprisPlayerObject::GetCaps()
 
 void MprisPlayerObject::VolumeSet(int volume)
 {
-    app->mainWindow()->audioOutput()->setVolume(qreal(volume)/100);
+    app->audioOutput()->setVolume(qreal(volume)/100);
 }
 
 int MprisPlayerObject::VolumeGet()
 {
-    return static_cast<int>(app->mainWindow()->audioOutput()->volume()*100);
+    return static_cast<int>(app->audioOutput()->volume()*100);
 }
 
 void MprisPlayerObject::PositionSet(int position)

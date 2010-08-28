@@ -83,7 +83,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void completeSetup();
-    Phonon::AudioOutput * audioOutput();
+    void connectPhononWidgets();
     void addListToHistory();
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
@@ -121,13 +121,6 @@ private:
     MediaItemDelegate * m_itemDelegate;
     MediaItemDelegate * m_playlistItemDelegate;
     BangarangVideoWidget *m_videoWidget;
-    Phonon::AudioOutput *m_audioOutput;
-    Phonon::AudioOutput *m_audioOutputMusicCategory;
-    Phonon::AudioOutput *m_audioOutputVideoCategory;
-    Phonon::Path m_audioPath;
-    Phonon::Path m_videoPath;
-    Phonon::MediaController *m_mediaController;
-    QGraphicsScene *m_Scene;
     QString m_addItemsMessage;
     QTime m_messageTime;
     QList<MediaItem> m_mediaList;
@@ -140,7 +133,6 @@ private:
     bool m_nepomukInited;
     bool playWhenPlaylistChanges;
     bool m_showRemainingTime;
-    qreal m_volume;
     KAction *playPause;    
     MediaListSettings *m_mediaListSettings;
     VideoSettings * m_videoSettings;
@@ -198,8 +190,6 @@ private slots:
     void sourceInfoUpdated(const MediaItem &mediaItem);
     void sourceInfoRemoved(QString url);
     void updateCustomColors();
-    void volumeChanged(qreal newVolume);
-    void volumeChanged(int delta);
     void skipForward(int i);
     void skipBackward(int i);
     
