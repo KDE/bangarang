@@ -86,7 +86,7 @@ void OntologyUpdater::start()
                        .arg(mediaVocabulary.typeAudioStream().toString());
     
     Soprano::QueryResultIterator it = m_mainModel->executeQuery(queryStr, Soprano::Query::QueryLanguageSparql);
-    emit infoMessage(i18n("<b>Updating audio types and properties</b><br><i>0 items updated...</i>"));
+    emit infoMessage(i18n("<b>Updating audio types and properties</b><br>0 items updated..."));
     QApplication::processEvents();
     int i = 0;
     while( it.next() && !m_stopUpdate) {

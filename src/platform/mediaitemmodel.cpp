@@ -894,6 +894,15 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     QModelIndex index = model->index(sourceRow, 0, sourceParent);
     QList<QRegExp> search;
     QString data = model->data(index, Qt::DisplayRole).toString();
+    QVariant type_variant = model->data(index, MediaItem::TypeRole);
+    if ( type_variant.isValid() ) {
+        QString type = type_variant.toString();
+        bool isCat = Utilities::isCategory( type );
+        if ( !Utilities::isMedia( type ) && !isCat )
+            return true;
+        if ( isCat && data == "Indexer" )
+            return true;
+    }
     QStringList pat = filterRegExp().pattern().split(" ", QString::SkipEmptyParts);
     Qt::CaseSensitivity case_sen = filterRegExp().caseSensitivity();
     
