@@ -217,6 +217,7 @@ BangarangApplication::~BangarangApplication()
     m_savedListsManager->savePlaylist();
     
      //destroying inverse to construction
+    delete m_videoSettings;
     delete m_audioSettings;
     delete m_bookmarksManager;
     delete m_actionsManager;
@@ -228,7 +229,6 @@ BangarangApplication::~BangarangApplication()
     delete m_playlist;
     delete m_audioOutput;
     delete m_mediaObject;
-    delete m_videoSettings;
 }
 
 MainWindow * BangarangApplication::mainWindow()
