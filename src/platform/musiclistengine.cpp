@@ -198,7 +198,7 @@ void MusicListEngine::run()
                     //Add an additional item to show all songs on all albums for artist
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(albumFilter, artistFilter, genreFilter);
-                    mediaItem.title = i18n("  All songs");
+                    mediaItem.title = QString( "  " ) + i18n("All songs");
                     mediaItem.fields["title"] = artist;
                     mediaItem.subTitle = QString("  %1").arg(artist);
                     mediaItem.type = QString("Category");

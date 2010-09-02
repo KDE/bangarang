@@ -528,7 +528,7 @@ void ActionsManager::toggleVideoSettings()
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
         ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-        action("show_video_settings")->setText(i18n("Show video vettings"));
+        action("show_video_settings")->setText(i18n("Show video settings"));
     }
 }
 
@@ -809,9 +809,9 @@ void ActionsManager::toggleShowRemainingTimeSlot()
 {
     m_parent->setShowRemainingTime(!m_parent->showingRemainingTime());
     if (m_parent->showingRemainingTime()) {
-        action("toggle_show_remaining_time")->setText(i18n("Show Elapsed Time"));
+        action("toggle_show_remaining_time")->setText(i18n("Show elapsed time"));
     } else {
-        action("toggle_show_remaining_time")->setText(i18n("Show Remaining Time"));
+        action("toggle_show_remaining_time")->setText(i18n("Show remaining time"));
     }
 }
 
