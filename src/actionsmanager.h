@@ -19,7 +19,6 @@
 #ifndef ACTIONSMANAGER_H
 #define ACTIONSMANAGER_H
 
-#include "videosettings.h"
 #include "mainwindow.h"
 #include <KMenu>
 #include <KConfigGroup>
@@ -34,6 +33,7 @@ namespace Ui
 }
 class MainWindow;
 class BangarangApplication;
+class VideoSettings;
 
 /*
  * This class creates and manages all actions for bangarang. 
