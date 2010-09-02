@@ -35,7 +35,7 @@ void BangarangNotifierItem::setState(Phonon::State state)
   
   if (m_currentState == Phonon::StoppedState)
   {
-    setToolTip("bangarang", i18n("Not Playing"), QString());
+    setToolTip("bangarang-notifier", i18n("Not Playing"), QString());
     setStatus(KStatusNotifierItem::Passive);
   }
   else setStatus(KStatusNotifierItem::Active);
