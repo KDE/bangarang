@@ -18,66 +18,45 @@
 
 #include "videosettings.h"
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "bangarangapplication.h"
+#include "actionsmanager.h"
 
 #include <phonon/videowidget.h>
-#include "ui_mainwindow.h"
 
 using namespace Phonon;
 
-VideoSettings::VideoSettings(VideoWidget *widget, MainWindow *mainWindow): QWidget(mainWindow)
+VideoSettings::VideoSettings(MainWindow *parent, VideoWidget *widget) : QObject( parent )
 {
-  //current settings more than 1 times used
-  VideoWidget::AspectRatio ratio = widget->aspectRatio();
-  VideoWidget::ScaleMode scaleMode = widget->scaleMode();
-  
-  //member variable initialization
+  //member vars
+  m_application = (BangarangApplication *) KApplication::kApplication();
+  ui = parent->ui;
   m_videoWidget = widget;
-  m_brightnessSlider = mainWindow->ui->brightnessSlider;
-  m_contrastSlider = mainWindow->ui->contrastSlider;
-  m_hueSlider = mainWindow->ui->hueSlider;
-  m_saturationSlider = mainWindow->ui->saturationSlider;
   
-  m_aspectRatio16_9 = mainWindow->ui->aspectRatio16_9;
-  m_aspectRatio4_3 = mainWindow->ui->aspectRatio4_3;
-  m_aspectRatioAuto = mainWindow->ui->aspectRatioAuto;
-  m_aspectRatioWidget = mainWindow->ui->aspectRatioWidget;
-  
-  m_scaleModeFitInView = mainWindow->ui->scaleModeFitInView;
-  m_scaleModeScaleAndCrop = mainWindow->ui->scaleModeScaleAndCrop;
-  
-  m_brightnessSlider->setValue(int(widget->brightness() * 100));
-  m_contrastSlider->setValue(int(widget->contrast() * 100));
-  m_hueSlider->setValue(int(widget->hue() * 100));
-  m_saturationSlider->setValue(int(widget->saturation() * 100));
-  
-  m_aspectRatioAuto->setChecked(ratio == VideoWidget::AspectRatioAuto);
-  m_aspectRatioWidget->setChecked(ratio == VideoWidget::AspectRatioWidget);
-  m_aspectRatio4_3->setChecked(ratio == VideoWidget::AspectRatio4_3);
-  m_aspectRatio16_9->setChecked(ratio == VideoWidget::AspectRatio16_9);
-
-  m_scaleModeFitInView->setChecked(scaleMode == VideoWidget::FitInView);
-  m_scaleModeScaleAndCrop->setChecked(scaleMode == VideoWidget::ScaleAndCrop);
-
   setupConnections();
 }
 
 void
 VideoSettings::setupConnections()
 {
-  connect(m_brightnessSlider,SIGNAL(valueChanged(int)),this,SLOT(setBrightness(int)));
-  connect(m_contrastSlider,SIGNAL(valueChanged(int)),this,SLOT(setContrast(int)));
-  connect(m_hueSlider,SIGNAL(valueChanged(int)),this,SLOT(setHue(int)));
-  connect(m_saturationSlider,SIGNAL(valueChanged(int)),this,SLOT(setSaturation(int)));
+  connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)),this,SLOT(setAngle(int)));
+  connect(ui->subtitleSelection, SIGNAL(currentIndexChanged(int)),this,SLOT(setSubtitle(int)));
+    
+  connect(ui->brightnessSlider,SIGNAL(valueChanged(int)),this,SLOT(setBrightness(int)));
+  connect(ui->contrastSlider,SIGNAL(valueChanged(int)),this,SLOT(setContrast(int)));
+  connect(ui->hueSlider,SIGNAL(valueChanged(int)),this,SLOT(setHue(int)));
+  connect(ui->saturationSlider,SIGNAL(valueChanged(int)),this,SLOT(setSaturation(int)));
   
-  connect(m_aspectRatioAuto,SIGNAL(toggled(bool)), this,SLOT(setAspectRatioAuto(bool)));
-  connect(m_aspectRatioWidget,SIGNAL(toggled(bool)), this,SLOT(setAspectRatioWidget(bool)));
-  connect(m_aspectRatio4_3,SIGNAL(toggled(bool)), this,SLOT(setAspectRatio4_3(bool)));
-  connect(m_aspectRatio16_9,SIGNAL(toggled(bool)), this,SLOT(setAspectRatio16_9(bool)));
+  connect(ui->aspectRatioAuto,SIGNAL(toggled(bool)), this,SLOT(setAspectRatioAuto(bool)));
+  connect(ui->aspectRatioWidget,SIGNAL(toggled(bool)), this,SLOT(setAspectRatioWidget(bool)));
+  connect(ui->aspectRatio4_3,SIGNAL(toggled(bool)), this,SLOT(setAspectRatio4_3(bool)));
+  connect(ui->aspectRatio16_9,SIGNAL(toggled(bool)), this,SLOT(setAspectRatio16_9(bool)));
 
-  connect(m_scaleModeFitInView,SIGNAL(toggled(bool)), this,SLOT(setScaleModeFitInView(bool)));
-  connect(m_scaleModeScaleAndCrop,SIGNAL(toggled(bool)), this,SLOT(setScaleModeScaleAndCrop(bool)));
+  connect(ui->scaleModeFitInView,SIGNAL(toggled(bool)), this,SLOT(setScaleModeFitInView(bool)));
+  connect(ui->scaleModeScaleAndCrop,SIGNAL(toggled(bool)), this,SLOT(setScaleModeScaleAndCrop(bool)));
  
-  connect(m_restoreButton,SIGNAL(clicked()),this,SLOT(restoreClicked()));
+  connect(ui->restoreDefaultVideoSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
+  connect(ui->hideVideoSettings, SIGNAL(clicked()), m_application->actionsManager()->action("show_video_settings"), SLOT(trigger()));
 }
 
 VideoSettings::~VideoSettings()
@@ -109,28 +88,28 @@ void VideoSettings::setAspectRatioAuto(bool checked)
 {
   Q_UNUSED(checked);
   m_videoWidget->setAspectRatio(VideoWidget::AspectRatioAuto);
-  setScaleSettingsEnabled(true);
+  ui->scalingModeHolder->setEnabled(true);
 }
 
 void VideoSettings::setAspectRatio4_3(bool checked)
 {
   Q_UNUSED(checked);
   m_videoWidget->setAspectRatio(VideoWidget::AspectRatio4_3);
-  setScaleSettingsEnabled(true);
+  ui->scalingModeHolder->setEnabled(true);
 }
 
 void VideoSettings::setAspectRatio16_9(bool checked)
 {
   Q_UNUSED(checked);
   m_videoWidget->setAspectRatio(VideoWidget::AspectRatio16_9);
-  setScaleSettingsEnabled(true);
+  ui->scalingModeHolder->setEnabled(true);
 }
 
 void VideoSettings::setAspectRatioWidget(bool checked)
 {
     Q_UNUSED(checked);
     m_videoWidget->setAspectRatio(VideoWidget::AspectRatioWidget);
-    setScaleSettingsEnabled(false);
+    ui->scalingModeHolder->setEnabled(false);
 }
 
 void VideoSettings::setScaleModeFitInView(bool checked)
@@ -145,7 +124,7 @@ void VideoSettings::setScaleModeScaleAndCrop(bool checked)
   m_videoWidget->setScaleMode(VideoWidget::ScaleAndCrop);
 }
 
-void VideoSettings::restoreClicked()
+void VideoSettings::restoreDefaults()
 {
   m_videoWidget->setBrightness(0);
   m_videoWidget->setContrast(0);
@@ -155,22 +134,12 @@ void VideoSettings::restoreClicked()
   m_videoWidget->setAspectRatio(VideoWidget::AspectRatioAuto);
   m_videoWidget->setScaleMode(VideoWidget::FitInView);  
   
-  m_brightnessSlider->setValue(0);
-  m_contrastSlider->setValue(0);
-  m_hueSlider->setValue(0);
-  m_saturationSlider->setValue(0);
-  m_aspectRatioAuto->setChecked(true);
-  m_scaleModeFitInView->setChecked(true);
-}
-
-void VideoSettings::setHideAction(QAction * hideAction)
-{
-    connect(m_hideButton, SIGNAL(clicked()), hideAction, SLOT(trigger()));
-}
-
-void VideoSettings::setScaleSettingsEnabled(bool enabled)
-{
-//    m_scaleModeHolder->setEnabled(enabled);
+  ui->brightnessSlider->setValue(0);
+  ui->contrastSlider->setValue(0);
+  ui->hueSlider->setValue(0);
+  ui->saturationSlider->setValue(0);
+  ui->aspectRatioAuto->setChecked(true);
+  ui->scaleModeFitInView->setChecked(true);
 }
 
 void VideoSettings::setAngle(int idx)
@@ -182,5 +151,37 @@ void VideoSettings::setSubtitle(int idx)
 {
 
 }
+
+void VideoSettings::restoreVideoSettings(KConfigGroup* config)
+{
+  ui->brightnessSlider->setValue(config->readEntry("VideoBrightness", 0));
+  ui->contrastSlider->setValue(config->readEntry("VideoContrast", 0));
+  ui->hueSlider->setValue(config->readEntry("VideoHue", 0));
+  ui->saturationSlider->setValue(config->readEntry("VideoSaturation", 0));
+  
+  VideoWidget::AspectRatio ratio = (VideoWidget::AspectRatio) config->readEntry("VideoAspectRatio", (int) VideoWidget::AspectRatioAuto);
+  VideoWidget::ScaleMode scaleMode = (VideoWidget::ScaleMode) config->readEntry<int>("VideoScaleMode", (int) VideoWidget::FitInView);
+  
+  ui->aspectRatioAuto->setChecked(ratio == VideoWidget::AspectRatioAuto);
+  ui->aspectRatioWidget->setChecked(ratio == VideoWidget::AspectRatioWidget);
+  ui->aspectRatio4_3->setChecked(ratio == VideoWidget::AspectRatio4_3);
+  ui->aspectRatio16_9->setChecked(ratio == VideoWidget::AspectRatio16_9);
+
+  ui->scaleModeFitInView->setChecked(scaleMode == VideoWidget::FitInView);
+  ui->scaleModeScaleAndCrop->setChecked(scaleMode == VideoWidget::ScaleAndCrop);
+  
+  ui->scalingModeHolder->setEnabled(ratio != VideoWidget::AspectRatioWidget);
+}
+
+void VideoSettings::saveVideoSettings(KConfigGroup* config)
+{
+  config->writeEntry("VideoBrightness", (int) (m_videoWidget->brightness() * 100 ));
+  config->writeEntry("VideoContrast", (int) (m_videoWidget->contrast() * 100 ));
+  config->writeEntry("VideoHue", (int) (m_videoWidget->hue() * 100 ));
+  config->writeEntry("VideoSaturation", (int) (m_videoWidget->saturation() * 100 ));
+  config->writeEntry("VideoAspectRatio", (int) m_videoWidget->aspectRatio() );
+  config->writeEntry("VideoScaleMode", (int) m_videoWidget->scaleMode() );
+}
+
 
 #include "moc_videosettings.cpp"

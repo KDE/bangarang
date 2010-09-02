@@ -25,6 +25,7 @@
 #include <phonon/audiooutput.h>
 #include <QtCore>
 
+class VideoSettings;
 class MediaListProperties;
 class MediaItemModel;
 class MediaListCache;
@@ -59,6 +60,7 @@ class BangarangApplication : public KApplication
         BookmarksManager * bookmarksManager();
         BangarangNotifierItem * statusNotifierItem();
         AudioSettings * audioSettings();
+        VideoSettings * videoSettings() { return m_videoSettings; }
         DvdController * dvdController() { return m_dvdController; }
         const KAboutData * aboutData();
         bool nepomukInited();
@@ -79,6 +81,7 @@ class BangarangApplication : public KApplication
         BookmarksManager * m_bookmarksManager;
         BangarangNotifierItem * m_statusNotifierItem;
         AudioSettings * m_audioSettings;
+        VideoSettings * m_videoSettings;
         DvdController * m_dvdController;
         bool m_nepomukInited;
 

@@ -295,8 +295,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>135</width>
-                    <height>224</height>
+                    <width>152</width>
+                    <height>393</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1904,8 +1904,8 @@
                                <rect>
                                 <x>0</x>
                                 <y>0</y>
-                                <width>225</width>
-                                <height>250</height>
+                                <width>240</width>
+                                <height>423</height>
                                </rect>
                               </property>
                               <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -6994,18 +6994,14 @@ color: rgb(255, 255, 255);</string>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_28">
                       <item>
-                       <widget class="QPushButton" name="restoreButton">
+                       <widget class="QPushButton" name="restoreDefaultVideoSettings">
                         <property name="text">
                          <string>Restore Defaults</string>
-                        </property>
-                        <property name="icon">
-                         <iconset>
-                          <normaloff>../convenience/view-restore.png</normaloff>../convenience/view-restore.png</iconset>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="hideButton">
+                       <widget class="QPushButton" name="hideVideoSettings">
                         <property name="text">
                          <string>Hide</string>
                         </property>

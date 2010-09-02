@@ -32,8 +32,6 @@
 #include "actionsmanager.h"
 #include "mediaitemdelegate.h"
 #include "nowplayingdelegate.h"
-#include "videosettings.h"
-#include "audiosettings.h"
 #include "medialistsettings.h"
 
 #include <KAction>
@@ -192,9 +190,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     updateCustomColors();
     connect( (MediaItemModel *) ui->nowPlayingView->model(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateCustomColors())); 
-    
-    //Setup Video Settings
-    m_videoSettings = new VideoSettings(m_videoWidget, this);
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
@@ -958,11 +953,11 @@ void MainWindow::setupIcons()
     
     //Audio settings
     ui->restoreDefaultAudioSettings->setIcon(KIcon("edit-undo"));
+    ui->restoreDefaultVideoSettings->setIcon(KIcon("edit-undo"));
 }
 
 void MainWindow::setupActions()
 {
-    m_videoSettings->setHideAction(m_application->actionsManager()->action("show_video_settings"));
     ui->mediaPrevious->setDefaultAction(m_application->actionsManager()->action("play_previous"));
     ui->mediaNext->setDefaultAction(m_application->actionsManager()->action("play_next"));
 //     m_videoWidget->setContextMenu(m_application->actionsManager()->nowPlayingContextMenu());

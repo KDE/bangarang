@@ -24,6 +24,7 @@
 #include "bookmarksmanager.h"
 #include "actionsmanager.h"
 #include "audiosettings.h"
+#include "videosettings.h"
 #include "dbusobjects.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
@@ -90,6 +91,7 @@ void BangarangApplication::setup()
     
     //Setup Audio Settings
     m_audioSettings = new AudioSettings(m_mainWindow);
+    m_videoSettings = new VideoSettings(m_mainWindow, m_mainWindow->videoWidget());
     
     //Complete Setup
     m_mainWindow->completeSetup();
@@ -171,6 +173,7 @@ void BangarangApplication::setup()
         m_infoManager->toggleInfoView();
     }
     m_audioSettings->restoreAudioSettings(&generalGroup);
+    m_videoSettings->restoreVideoSettings(&generalGroup);
     if (!itemLoaded) {
         m_savedListsManager->loadPlaylist();
     }
@@ -209,6 +212,7 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
     generalGroup.writeEntry("InfoViewVisible", m_infoManager->infoViewVisible());
     m_audioSettings->saveAudioSettings(&generalGroup);
+    m_videoSettings->saveVideoSettings(&generalGroup);
     config.sync();
     m_savedListsManager->savePlaylist();
     
@@ -224,6 +228,7 @@ BangarangApplication::~BangarangApplication()
     delete m_playlist;
     delete m_audioOutput;
     delete m_mediaObject;
+    delete m_videoSettings;
 }
 
 MainWindow * BangarangApplication::mainWindow()

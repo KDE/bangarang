@@ -21,12 +21,19 @@
 
 #include <QPushButton>
 #include <QSlider>
+#include <QGroupBox>
 #include <QRadioButton>
+#include <KConfigGroup>
 
 
 #include <phonon/videowidget.h>
 
 class MainWindow;
+class BangarangApplication;
+
+namespace Ui {
+   class MainWindowClass;
+};
 
 /**
  * This class provides Settings for the VideoWidget 
@@ -37,7 +44,7 @@ class MainWindow;
  **/
 using namespace Phonon;
 
-class VideoSettings : public QWidget
+class VideoSettings : public QObject
 {
     Q_OBJECT
 public:
@@ -45,42 +52,23 @@ public:
     /**
      * Default constructor
      **/
-    VideoSettings(VideoWidget* widget, MainWindow* mainwindow);
+    VideoSettings(MainWindow* parent, VideoWidget* widget);
 
     /**
      * Destructor
      */
     virtual ~VideoSettings();
-    void setHideAction(QAction *hideAction);
+    
+    void restoreVideoSettings(KConfigGroup* config);
+    void saveVideoSettings(KConfigGroup* config);
 
 private:
     //to have to uninterferring radio groups 
-    QSlider *m_brightnessSlider;
-    QSlider *m_contrastSlider;
-    QSlider *m_hueSlider;
-    QSlider *m_saturationSlider;
-
-    QRadioButton *m_aspectRatioAuto;
-    QRadioButton *m_aspectRatioWidget;
-    QRadioButton *m_aspectRatio4_3;
-    QRadioButton *m_aspectRatio16_9;
-
-    QRadioButton *m_scaleModeFitInView;
-    QRadioButton *m_scaleModeScaleAndCrop;
-
-    QPushButton *m_restoreButton;
-    QPushButton *m_hideButton;
-    
+    Ui::MainWindowClass *ui;
+    BangarangApplication * m_application;
     VideoWidget *m_videoWidget;
     void setupConnections();
-    void setScaleSettingsEnabled(bool enabled);
         
-signals:
-    void brightnessChanged(qreal num);
-    void contrastChanged(qreal num);
-    void hueChanged(qreal num);
-    void saturationChanged(qreal num);
-    void okClicked();
 private slots:
     void setBrightness(int ch);
     void setContrast(int ch);
@@ -98,7 +86,7 @@ private slots:
     void setScaleModeFitInView(bool checked);
     void setScaleModeScaleAndCrop(bool checked);
 
-    void restoreClicked();
+    void restoreDefaults();
 
 };
 
