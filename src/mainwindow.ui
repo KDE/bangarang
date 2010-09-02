@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>740</width>
-    <height>520</height>
+    <height>541</height>
    </rect>
   </property>
   <property name="mouseTracking">
@@ -295,8 +295,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>154</width>
-                    <height>372</height>
+                    <width>135</width>
+                    <height>224</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -874,8 +874,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>154</width>
-                    <height>367</height>
+                    <width>122</width>
+                    <height>214</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1904,8 +1904,8 @@
                                <rect>
                                 <x>0</x>
                                 <y>0</y>
-                                <width>240</width>
-                                <height>402</height>
+                                <width>225</width>
+                                <height>250</height>
                                </rect>
                               </property>
                               <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -5183,7 +5183,7 @@ color: rgb(255, 255, 255);</string>
                   <bool>true</bool>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <widget class="QWidget" name="playlistHolderPage1">
                   <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -6172,6 +6172,9 @@ color: rgb(255, 255, 255);</string>
                    </property>
                    <item>
                     <widget class="QLabel" name="label_2">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="font">
                       <font>
                        <weight>75</weight>
@@ -6187,19 +6190,47 @@ color: rgb(255, 255, 255);</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QWidget" name="widget_10" native="true">
+                    <widget class="QGroupBox" name="generalAudioHolder">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>80</height>
-                      </size>
+                     <property name="title">
+                      <string>General</string>
                      </property>
+                     <layout class="QFormLayout" name="formLayout_3">
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_20">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Audio Channel:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QComboBox" name="audioChannelSelection">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="duplicatesEnabled">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
@@ -6685,23 +6716,23 @@ color: rgb(255, 255, 255);</string>
                         </layout>
                        </widget>
                       </item>
+                      <item>
+                       <widget class="QWidget" name="widget_10" native="true">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>80</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
                      </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="widget_11" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>80</height>
-                      </size>
-                     </property>
                     </widget>
                    </item>
                    <item>
@@ -6732,7 +6763,7 @@ color: rgb(255, 255, 255);</string>
                  <widget class="QWidget" name="videoSettingsPage">
                   <layout class="QVBoxLayout" name="verticalLayout_7">
                    <property name="spacing">
-                    <number>0</number>
+                    <number>5</number>
                    </property>
                    <property name="leftMargin">
                     <number>0</number>
@@ -6748,6 +6779,12 @@ color: rgb(255, 255, 255);</string>
                    </property>
                    <item>
                     <widget class="QLabel" name="label_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="font">
                       <font>
                        <weight>75</weight>
@@ -6758,11 +6795,223 @@ color: rgb(255, 255, 255);</string>
                       <string>Video Settings</string>
                      </property>
                      <property name="margin">
-                      <number>4</number>
+                      <number>9</number>
                      </property>
                      <property name="indent">
-                      <number>4</number>
+                      <number>-1</number>
                      </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="generalVideoHolder">
+                     <property name="title">
+                      <string>General</string>
+                     </property>
+                     <layout class="QFormLayout" name="formLayout_2">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_26">
+                        <property name="text">
+                         <string>Subtitle:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="subtitleSelection">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_25">
+                        <property name="text">
+                         <string>Angle:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QComboBox" name="angleSelection"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="imageSettingsHolder">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="title">
+                      <string>Image Settings</string>
+                     </property>
+                     <layout class="QFormLayout" name="formLayout">
+                      <property name="fieldGrowthPolicy">
+                       <enum>QFormLayout::ExpandingFieldsGrow</enum>
+                      </property>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_21">
+                        <property name="text">
+                         <string>Brightness:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QSlider" name="brightnessSlider">
+                        <property name="minimum">
+                         <number>-99</number>
+                        </property>
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_22">
+                        <property name="text">
+                         <string>Contrast:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QSlider" name="contrastSlider">
+                        <property name="minimum">
+                         <number>-99</number>
+                        </property>
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QLabel" name="label_23">
+                        <property name="text">
+                         <string>Hue:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1">
+                       <widget class="QSlider" name="hueSlider">
+                        <property name="minimum">
+                         <number>-99</number>
+                        </property>
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0">
+                       <widget class="QLabel" name="label_24">
+                        <property name="text">
+                         <string>Saturation:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="1">
+                       <widget class="QSlider" name="saturationSlider">
+                        <property name="minimum">
+                         <number>-99</number>
+                        </property>
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="aspectRatioHolder">
+                     <property name="title">
+                      <string>Aspect Ratio Settings</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout">
+                      <item row="0" column="0">
+                       <widget class="QRadioButton" name="aspectRatioAuto">
+                        <property name="text">
+                         <string>Automatic</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QRadioButton" name="aspectRatio4_3">
+                        <property name="text">
+                         <string>4:3</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QRadioButton" name="aspectRatioWidget">
+                        <property name="text">
+                         <string>Fit</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QRadioButton" name="aspectRatio16_9">
+                        <property name="text">
+                         <string>16:9</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="scalingModeHolder">
+                     <property name="title">
+                      <string>Scaling Mode</string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_58">
+                      <item>
+                       <widget class="QRadioButton" name="scaleModeFitInView">
+                        <property name="text">
+                         <string>Scale to fit</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="scaleModeScaleAndCrop">
+                        <property name="text">
+                         <string>Scale and crop</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget_11" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_28">
+                      <item>
+                       <widget class="QPushButton" name="restoreButton">
+                        <property name="text">
+                         <string>Restore Defaults</string>
+                        </property>
+                        <property name="icon">
+                         <iconset>
+                          <normaloff>../convenience/view-restore.png</normaloff>../convenience/view-restore.png</iconset>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="hideButton">
+                        <property name="text">
+                         <string>Hide</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>

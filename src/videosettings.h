@@ -19,20 +19,14 @@
 #ifndef VIDEOSETTINGS_H
 #define VIDEOSETTINGS_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
+#include <QPushButton>
 #include <QSlider>
-#include <QLabel>
 #include <QRadioButton>
-#include <QButtonGroup>
-#include <QGroupBox>
 
-#include <KPushButton>
-#include <KButtonGroup>
 
 #include <phonon/videowidget.h>
+
+class MainWindow;
 
 /**
  * This class provides Settings for the VideoWidget 
@@ -51,7 +45,7 @@ public:
     /**
      * Default constructor
      **/
-    VideoSettings(VideoWidget *videoWidget ,QWidget *parent);
+    VideoSettings(VideoWidget* widget, MainWindow* mainwindow);
 
     /**
      * Destructor
@@ -60,42 +54,24 @@ public:
     void setHideAction(QAction *hideAction);
 
 private:
-    //Qt
-    QVBoxLayout *m_layout;
-    QGridLayout *colorSettings_layout;
-    QVBoxLayout *sizeSettings_layout;
-    QHBoxLayout *button_layout;
-
     //to have to uninterferring radio groups 
-    QWidget *videoColorWidget;
-    QSlider *brightnessSlider;
-    QSlider *contrastSlider;
-    QSlider *hueSlider;
-    QSlider *saturationSlider;
+    QSlider *m_brightnessSlider;
+    QSlider *m_contrastSlider;
+    QSlider *m_hueSlider;
+    QSlider *m_saturationSlider;
 
-    QLabel *brightnessLabel;
-    QLabel *contrastLabel;
-    QLabel *hueLabel;
-    QLabel *saturationLabel;
+    QRadioButton *m_aspectRatioAuto;
+    QRadioButton *m_aspectRatioWidget;
+    QRadioButton *m_aspectRatio4_3;
+    QRadioButton *m_aspectRatio16_9;
 
-    QWidget *aspectRatio_Widget;
-    QVBoxLayout *aspectRatio_layout;
-    QLabel *aspectRatioLabel;
-    QRadioButton *aspectRatioAuto;
-    QRadioButton *aspectRatioWidget;
-    QRadioButton *aspectRatio4_3;
-    QRadioButton *aspectRatio16_9;
+    QRadioButton *m_scaleModeFitInView;
+    QRadioButton *m_scaleModeScaleAndCrop;
 
-    QWidget *scaleMode_Widget;
-    QVBoxLayout *scaleMode_layout;
-    QLabel *scaleModeLabel;
-    QRadioButton *scaleModeFitInView;
-    QRadioButton *scaleModeScaleAndCrop;
-
-    KPushButton *restoreButton;
-    KPushButton *hideButton;
+    QPushButton *m_restoreButton;
+    QPushButton *m_hideButton;
     
-    VideoWidget *videoWidget;
+    VideoWidget *m_videoWidget;
     void setupConnections();
     void setScaleSettingsEnabled(bool enabled);
         
@@ -115,6 +91,9 @@ private slots:
     void setAspectRatioWidget(bool checked);
     void setAspectRatio4_3(bool checked);
     void setAspectRatio16_9(bool checked);
+    
+    void setSubtitle(int idx);
+    void setAngle(int idx);
 
     void setScaleModeFitInView(bool checked);
     void setScaleModeScaleAndCrop(bool checked);

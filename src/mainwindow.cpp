@@ -195,7 +195,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     //Setup Video Settings
     m_videoSettings = new VideoSettings(m_videoWidget, this);
-    ui->videoSettingsPage->layout()->addWidget(m_videoSettings);
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);

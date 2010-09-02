@@ -192,7 +192,7 @@ void AudioSettings::setEq(const QList<int> &preset)
     if (preset.count() != m_eqCount)
         return;
     disconnectEq();
-    QList<EffectParameter> params = m_audioEq->parameters();
+    QList<Phonon::EffectParameter> params = m_audioEq->parameters();
     for (int i = 0; i < m_eqCount; i++ ) {
         m_audioEq->setParameterValue(params[i], preset.at(i));
         m_uiEqs.at(i)->setValue(preset.at(i));
