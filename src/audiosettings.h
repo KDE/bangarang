@@ -26,7 +26,9 @@
 #include <phonon/path.h>
 #include <phonon/effect.h>
 #include <phonon/effectparameter.h>
+#include <phonon/mediacontroller.h>
 
+class BangarangApplication;
 namespace Ui
 {
     class MainWindowClass;
@@ -45,6 +47,7 @@ class AudioSettings : public QObject
         AudioSettings(MainWindow * parent = 0);
         ~AudioSettings();
         void setAudioPath(Phonon::Path *audioPath);
+        void setMediaController(Phonon::MediaController *mediaController);
         void saveAudioSettings(KConfigGroup *configGroup);
         void restoreAudioSettings(KConfigGroup *configGroup);
         void connectEq();
@@ -54,11 +57,18 @@ class AudioSettings : public QObject
         void loadPreset(const QString &presetName);
         void setEq(const QList<int> &set);
         void restoreDefaults();
+        void setAudioChannel(int idx);
+        void updateAudioChannelCombo();
         
     private:
+        void connectAudioChannelCombo();
+        void disconnectAudioChannelCombo();
+        
+        BangarangApplication * m_application;
         MainWindow * m_mainWindow;
         Ui::MainWindowClass *ui;
         Phonon::Effect * m_audioEq;
+        Phonon::MediaController * m_mediaController;
         QStringList m_eqPresetNames;
         QList<QList<int> > m_eqPresets;
         QList<QSlider *> m_uiEqs;
@@ -67,6 +77,7 @@ class AudioSettings : public QObject
         
     private slots:
         void eqChanged(int v);
+        void updateAudioChannels();
 
 
 };

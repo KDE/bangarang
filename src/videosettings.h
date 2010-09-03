@@ -27,6 +27,7 @@
 
 
 #include <phonon/videowidget.h>
+#include <phonon/mediacontroller.h>
 
 class MainWindow;
 class BangarangApplication;
@@ -59,17 +60,13 @@ public:
      */
     virtual ~VideoSettings();
     
+    void setMediaController( MediaController *mctrl );
+    MediaController *mediaController() { return m_mediaController; }
+    
     void restoreVideoSettings(KConfigGroup* config);
     void saveVideoSettings(KConfigGroup* config);
-
-private:
-    //to have to uninterferring radio groups 
-    Ui::MainWindowClass *ui;
-    BangarangApplication * m_application;
-    VideoWidget *m_videoWidget;
-    void setupConnections();
-        
-private slots:
+    
+public slots: //it should also be possible to use them as normal functions
     void setBrightness(int ch);
     void setContrast(int ch);
     void setHue(int ch);
@@ -87,6 +84,25 @@ private slots:
     void setScaleModeScaleAndCrop(bool checked);
 
     void restoreDefaults();
+
+    void updateSubtitleCombo();
+    void updateAngleCombo(int selected = -1, bool afterUpdate = false);
+
+private:
+    void connectAngleCombo();
+    void disconnectAngleCombo();
+    void connectSubtitleCombo();
+    void disconnectSubtitleCombo();
+    
+    Ui::MainWindowClass *ui;
+    BangarangApplication * m_application;
+    MediaController * m_mediaController;
+    VideoWidget *m_videoWidget;
+    void setupConnections();
+        
+private slots:  
+    void updateAngles(int no);
+    void updateSubtitles();   
 
 };
 

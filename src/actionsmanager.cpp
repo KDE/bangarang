@@ -38,6 +38,7 @@
 #include <KDebug>
 #include <KNotifyConfigWidget>
 #include <QFile>
+#include "audiosettings.h"
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 {
@@ -524,6 +525,7 @@ void ActionsManager::toggleVideoSettings()
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(2);
         ui->contextStack->setVisible(true);
+        m_application->videoSettings()->updateSubtitleCombo();
         action("show_video_settings")->setText(i18n("Hide video vettings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);
@@ -539,6 +541,7 @@ void ActionsManager::toggleAudioSettings()
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(1);
         ui->contextStack->setVisible(true);
+        m_application->audioSettings()->updateAudioChannelCombo();
         action("show_audio_settings")->setText(i18n("Hide audio settings"));
     } else {
         ui->contextStack->setVisible(m_contextStackWasVisible);

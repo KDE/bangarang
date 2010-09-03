@@ -48,6 +48,9 @@ void BangarangApplication::setup()
     qRegisterMetaType<MediaListProperties>("MediaListProperties");
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     
+    //setup locale
+    m_locale = new KLocale( aboutData()->appName() );
+    
     //Set up media object
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setTickInterval(500);
@@ -91,7 +94,11 @@ void BangarangApplication::setup()
     
     //Setup Audio Settings
     m_audioSettings = new AudioSettings(m_mainWindow);
+    m_audioSettings->setMediaController(m_playlist->mediaController());
+    
+    //Setup Video Settings
     m_videoSettings = new VideoSettings(m_mainWindow, m_mainWindow->videoWidget());
+    m_videoSettings->setMediaController(m_playlist->mediaController());
     
     //Complete Setup
     m_mainWindow->completeSetup();
@@ -229,6 +236,7 @@ BangarangApplication::~BangarangApplication()
     delete m_playlist;
     delete m_audioOutput;
     delete m_mediaObject;
+    delete m_locale;
 }
 
 MainWindow * BangarangApplication::mainWindow()
@@ -253,6 +261,8 @@ Phonon::MediaObject * BangarangApplication::newMediaObject()
     m_mediaObject->setTickInterval(500);
     m_playlist->setMediaObject(m_mediaObject);
     m_dvdController->setMediaController(m_playlist->mediaController());
+    m_audioSettings->setMediaController(m_playlist->mediaController());
+    m_videoSettings->setMediaController(m_playlist->mediaController());
     m_videoPath.reconnect(m_mediaObject, m_mainWindow->videoWidget());
     m_audioPath.reconnect(m_mediaObject, m_audioOutput);
     m_audioOutput->setVolume(m_volume);
