@@ -263,7 +263,7 @@ void AudioSettings::updateAudioChannels()
     QComboBox *cb = ui->audioChannelSelection;
     QList<AudioChannelDescription> auds = m_mediaController->availableAudioChannels();
     int no = auds.count();
-    ui->audioChannelSelectionHolder->setEnabled( no > 0 ); //can have no subtitles at all
+    ui->audioChannelSelectionHolder->setEnabled( no > 1 ); //has at least one audio channel
     cb->clear();
     foreach (AudioChannelDescription aud, auds) {
         QString descr = aud.description().trimmed();

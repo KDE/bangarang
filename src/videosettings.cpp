@@ -73,6 +73,8 @@ void VideoSettings::setMediaController(MediaController* mctrl)
     updateAngles(m_mediaController->availableAngles());
     updateSubtitles();
     connect(m_mediaController, SIGNAL(angleChanged(int)), this, SLOT(updateAngleCombo(int)));
+    connect(m_mediaController, SIGNAL(availableAnglesChanged(int)), this, SLOT(updateAngles(int)));
+    connect(m_mediaController, SIGNAL(availableSubtitlesChanged()), this, SLOT(updateSubtitles()));
     connectAngleCombo();
     connectSubtitleCombo();
 }
@@ -273,22 +275,22 @@ void VideoSettings::saveVideoSettings(KConfigGroup* config)
 
 void VideoSettings::connectAngleCombo()
 {
-    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAngleCombo(int,bool)));
+    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setAngle(int)));
 }
 
 void VideoSettings::disconnectAngleCombo()
 {
-    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAngleCombo(int,bool)));
+    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setAngle(int)));
 }
 
 void VideoSettings::connectSubtitleCombo()
 {
-    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSubtitleCombo()));
+    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
 }
 
 void VideoSettings::disconnectSubtitleCombo()
 {
-    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSubtitleCombo()));
+    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
 }
 
 
