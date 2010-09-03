@@ -30,14 +30,17 @@ VideoSettings::VideoSettings(MainWindow *parent, VideoWidget *widget) : QObject(
 {
   //member vars
   m_application = (BangarangApplication *) KApplication::kApplication();
+  m_mediaController = NULL;
   ui = parent->ui;
   m_videoWidget = widget;
+  
+  ui->angleSelectionHolder->setEnabled(false);
+  ui->subtitleSelectionHolder->setEnabled(false);
   
   setupConnections();
 }
 
-void
-VideoSettings::setupConnections()
+void VideoSettings::setupConnections()
 {
   connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)),this,SLOT(setAngle(int)));
   connect(ui->subtitleSelection, SIGNAL(currentIndexChanged(int)),this,SLOT(setSubtitle(int)));
@@ -63,6 +66,17 @@ VideoSettings::~VideoSettings()
 {
 
 }
+
+void VideoSettings::setMediaController(MediaController* mctrl)
+{
+    m_mediaController = mctrl;
+    updateAngles(m_mediaController->availableAngles());
+    updateSubtitles();
+    connect(m_mediaController, SIGNAL(angleChanged(int)), this, SLOT(updateAngleCombo(int)));
+    connectAngleCombo();
+    connectSubtitleCombo();
+}
+
 
 void VideoSettings::setBrightness(int ch)
 {
@@ -144,12 +158,85 @@ void VideoSettings::restoreDefaults()
 
 void VideoSettings::setAngle(int idx)
 {
-
+    if ( idx < 0 || idx > m_mediaController->availableAngles() )
+        return;
+    m_mediaController->setCurrentAngle(idx);
 }
 
 void VideoSettings::setSubtitle(int idx)
 {
+    if ( idx < 0 )
+        return;
+    int sidx = ui->subtitleSelection->itemData(idx).toInt();
+    SubtitleDescription sub = SubtitleDescription::fromIndex(sidx);
+    m_mediaController->setCurrentSubtitle(sub);
+}
 
+void VideoSettings::updateAngles(int no)
+{
+    disconnectAngleCombo();
+    QComboBox *cb = ui->angleSelection;
+    ui->angleSelectionHolder->setEnabled( no > 1 ); //1 is always set, thats no selection
+    cb->clear();
+    for (int i = 1; i <= no; i++ ) {
+        cb->addItem(QString("%1").arg(i));
+    }
+    updateAngleCombo(m_mediaController->currentAngle(), true); //will reconnect angle combo
+}
+
+void VideoSettings::updateAngleCombo(int selected, bool afterUpdate)
+{
+  disconnectAngleCombo();
+  if ( selected < 0 )
+      selected = m_mediaController->currentAngle();
+  if ( ui->angleSelection->count() < selected ) {
+      if ( !afterUpdate ) { //try to update the angles if not just done
+          updateAngles(m_mediaController->availableAngles());
+      }
+      else
+          connectAngleCombo();
+      return;
+  }
+  ui->angleSelection->setCurrentIndex(selected);
+  connectAngleCombo();
+}
+
+void VideoSettings::updateSubtitles()
+{
+    disconnectSubtitleCombo();
+    QComboBox *cb = ui->subtitleSelection;
+    QList<SubtitleDescription> subs = m_mediaController->availableSubtitles();
+    int no = subs.count();
+    ui->subtitleSelectionHolder->setEnabled( no > 0 ); //can have no subtitles at all
+    cb->clear();
+    for (int i = 0; i <= no; i++ ) { //no subtitles + disable subtitle
+        if ( i == 0 ) {
+            cb->addItem(i18n("Disable"), QVariant( -1 ));
+            continue;
+        }
+        SubtitleDescription sub = subs.at((i - 1)); //-1 because of the first (disable) item
+        QString descr = sub.description().trimmed();
+        QString more = descr.isEmpty() ? QString() : QString(" (%1)").arg(descr);
+        QString name = sub.name().trimmed();
+        QString trans_name =  m_application->locale()->languageCodeToName( name );
+        QString display_name = trans_name.isEmpty() ? name : trans_name;
+        cb->addItem( display_name + more, QVariant( sub.index() ));
+    }
+    updateSubtitleCombo(); //will reconnect subtitle combo
+}
+
+void VideoSettings::updateSubtitleCombo()
+{
+    disconnectSubtitleCombo();
+    int curIdx = m_mediaController->currentSubtitle().index();
+    QComboBox *cb = ui->subtitleSelection;
+    for (int i = 0; i < cb->count(); i++) {
+        if (cb->itemData(i).toInt() == curIdx) {
+            cb->setCurrentIndex(i);
+            break;
+        }
+    }
+    connectSubtitleCombo();
 }
 
 void VideoSettings::restoreVideoSettings(KConfigGroup* config)
@@ -181,7 +268,29 @@ void VideoSettings::saveVideoSettings(KConfigGroup* config)
   config->writeEntry("VideoSaturation", (int) (m_videoWidget->saturation() * 100 ));
   config->writeEntry("VideoAspectRatio", (int) m_videoWidget->aspectRatio() );
   config->writeEntry("VideoScaleMode", (int) m_videoWidget->scaleMode() );
+
 }
+
+void VideoSettings::connectAngleCombo()
+{
+    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAngleCombo(int,bool)));
+}
+
+void VideoSettings::disconnectAngleCombo()
+{
+    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateAngleCombo(int,bool)));
+}
+
+void VideoSettings::connectSubtitleCombo()
+{
+    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSubtitleCombo()));
+}
+
+void VideoSettings::disconnectSubtitleCombo()
+{
+    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSubtitleCombo()));
+}
+
 
 
 #include "moc_videosettings.cpp"

@@ -31,16 +31,19 @@
 #include <QFile>
 #include <phonon/backendcapabilities.h>
 
+using namespace Phonon;
+
 AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent), m_eqCount(11)
 {
     /*Set up basics */
-    BangarangApplication * application = (BangarangApplication *)KApplication::kApplication();
+    m_application = (BangarangApplication *) KApplication::kApplication();
     m_mainWindow = parent;
     ui = m_mainWindow->ui;
+    m_mediaController = NULL;
 
     //Setup and connect ui widgets
     connect(ui->restoreDefaultAudioSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
-    connect(ui->hideAudioSettings, SIGNAL(clicked()), application->actionsManager()->action("show_audio_settings"), SLOT(trigger()));
+    connect(ui->hideAudioSettings, SIGNAL(clicked()), m_application->actionsManager()->action("show_audio_settings"), SLOT(trigger()));
     ui->eq1Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq2Label->setFont(KGlobalSettings::smallestReadableFont());
     ui->eq3Label->setFont(KGlobalSettings::smallestReadableFont());
@@ -57,23 +60,30 @@ AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent), m_eqCount(1
     for (int i = 0; i < m_eqCount; i++) {
         m_uiEqs.at(i)->setProperty("EQ_NO", i);
     }
-    
 
-    //connect the eq only if the audio path was set and the m_audioEq was initialized!
+    ui->audioChannelSelectionHolder->setEnabled(false);
 }
 
 AudioSettings::~AudioSettings()
 {
 }
 
-void AudioSettings::setAudioPath(Phonon::Path *audioPath)
+void AudioSettings::setMediaController(MediaController* mediaController)
+{
+    m_mediaController = mediaController;
+    updateAudioChannels();
+    connect(m_mediaController, SIGNAL(availableAudioChannelsChanged()), this, SLOT(updateAudioChannels()));
+    connectAudioChannelCombo();
+}
+
+void AudioSettings::setAudioPath(Path *audioPath)
 {
     //Determine if equalizer capability is present
     bool eqCapable = false;
-    QList<Phonon::EffectDescription> effects = Phonon::BackendCapabilities::availableAudioEffects();
-    foreach (Phonon::EffectDescription effect, effects) {
+    QList<EffectDescription> effects = BackendCapabilities::availableAudioEffects();
+    foreach (EffectDescription effect, effects) {
         if(effect.name()=="KEqualizer") {
-            m_audioEq = new Phonon::Effect(effect, this);
+            m_audioEq = new Effect(effect, this);
             if (m_audioEq == NULL)
                 continue;
             audioPath->insertEffect(m_audioEq);
@@ -192,7 +202,7 @@ void AudioSettings::setEq(const QList<int> &preset)
     if (preset.count() != m_eqCount)
         return;
     disconnectEq();
-    QList<Phonon::EffectParameter> params = m_audioEq->parameters();
+    QList<EffectParameter> params = m_audioEq->parameters();
     for (int i = 0; i < m_eqCount; i++ ) {
         m_audioEq->setParameterValue(params[i], preset.at(i));
         m_uiEqs.at(i)->setValue(preset.at(i));
@@ -236,3 +246,56 @@ void AudioSettings::disconnectEq()
     }
 }
 
+void AudioSettings::setAudioChannel(int idx)
+{
+    if ( idx < 0 )
+        return;
+    int sidx = ui->audioChannelSelection->itemData(idx).toInt();
+    if ( m_mediaController->currentAudioChannel().index() == sidx )
+        return;
+    AudioChannelDescription aud = AudioChannelDescription::fromIndex(sidx);
+    m_mediaController->setCurrentAudioChannel(aud);
+}
+
+void AudioSettings::updateAudioChannels()
+{
+    disconnectAudioChannelCombo();
+    QComboBox *cb = ui->audioChannelSelection;
+    QList<AudioChannelDescription> auds = m_mediaController->availableAudioChannels();
+    int no = auds.count();
+    ui->audioChannelSelectionHolder->setEnabled( no > 0 ); //can have no subtitles at all
+    cb->clear();
+    foreach (AudioChannelDescription aud, auds) {
+        QString descr = aud.description().trimmed();
+        QString more = descr.isEmpty() ? QString() : QString(" (%1)").arg(descr);
+        QString name = aud.name().trimmed();
+        QString trans_name = m_application->locale()->languageCodeToName( name );
+        QString display_name = trans_name.isEmpty() ? name : trans_name;
+        cb->addItem( display_name + more, QVariant( aud.index() ));
+    }
+    updateAudioChannelCombo(); //will also reconnect
+}
+
+void AudioSettings::updateAudioChannelCombo()
+{
+    disconnectAudioChannelCombo();
+    int curIdx = m_mediaController->currentAudioChannel().index();
+    QComboBox *cb = ui->audioChannelSelection;
+    for (int i = 0; i < cb->count(); i++) {
+        if (cb->itemData(i).toInt() == curIdx) {
+            cb->setCurrentIndex(i);
+            break;
+        }
+    }
+    connectAudioChannelCombo();
+}
+
+void AudioSettings::connectAudioChannelCombo()
+{
+    connect(ui->audioChannelSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setAudioChannel(int)));
+}
+
+void AudioSettings::disconnectAudioChannelCombo()
+{
+    disconnect(ui->audioChannelSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setAudioChannel(int)));
+}

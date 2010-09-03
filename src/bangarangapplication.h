@@ -62,11 +62,13 @@ class BangarangApplication : public KApplication
         AudioSettings * audioSettings();
         VideoSettings * videoSettings() { return m_videoSettings; }
         DvdController * dvdController() { return m_dvdController; }
+        KLocale * locale() { return m_locale; }
         const KAboutData * aboutData();
         bool nepomukInited();
         
     private:
         MainWindow * m_mainWindow;
+        KLocale * m_locale;
         Phonon::MediaObject * m_mediaObject;
         Phonon::AudioOutput * m_audioOutput;
         Phonon::Path m_audioPath;
