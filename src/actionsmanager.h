@@ -72,8 +72,6 @@ class ActionsManager : public QObject
         void updateSavedListsMenus();
         
     private:
-        void hideShortcutsEditor();
-        
         BangarangApplication * m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
@@ -105,7 +103,7 @@ class ActionsManager : public QObject
         void toggleVideoSettings();
         void toggleAudioSettings();
         void cancelFSHC();
-        void showShortcutsEditor();
+        void toggleShortcutsEditor();
         void saveShortcuts();
         void cancelShortcuts();
         void simplePlayPause();

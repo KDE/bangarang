@@ -234,8 +234,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction *)), this, SLOT(removeBookmark(QAction *)));
 
     //Edit Shortcuts
-    action = new KAction(KIcon("configure-shortcuts"), i18n("Configure shortcuts..."), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(showShortcutsEditor()));
+    action = new KAction(KIcon("configure-shortcuts"), i18n("Show shortcuts editor"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(cancelShortcuts()));
     connect(ui->saveShortcuts, SIGNAL(clicked()), this, SLOT(saveShortcuts()));
     m_shortcutsCollection->addAction("show_shortcuts_editor", action);
@@ -403,11 +403,12 @@ KMenu *ActionsManager::nowPlayingMenu()
             m_nowPlayingMenu->addAction(action("show_now_playing_info"));
         }
     }
-    m_nowPlayingMenu->addAction(action("show_video_settings"));
-    m_nowPlayingMenu->addAction(action("show_audio_settings"));
     if (!m_parent->isFullScreen()) {
         m_nowPlayingMenu->addAction(action("toggle_controls"));
     }
+    m_nowPlayingMenu->addSeparator();
+    m_nowPlayingMenu->addAction(action("show_video_settings"));
+    m_nowPlayingMenu->addAction(action("show_audio_settings"));
     m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
     if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
         m_nowPlayingContextMenu->addMenu(m_application->dvdController()->menu());
@@ -507,12 +508,12 @@ void ActionsManager::toggleControls()
             ui->widgetSet->setVisible(false);
             ui->nowPlayingToolbar->setVisible(false);
             toggle->setIcon(KIcon("layer-visible-on"));
-	    toggle->setText(i18n("Show Controls"));
+            toggle->setText(i18n("Show Controls"));
         } else {
             ui->widgetSet->setVisible(true);
             ui->nowPlayingToolbar->setVisible(true);
             toggle->setIcon(KIcon("layer-visible-off"));
-	    toggle->setText(i18n("Hide Controls"));
+            toggle->setText(i18n("Hide Controls"));
         }
         m_controlsVisible = !m_controlsVisible;
     }
@@ -528,10 +529,17 @@ void ActionsManager::toggleVideoSettings()
         m_application->videoSettings()->updateSubtitleCombo();
         action("show_video_settings")->setText(i18n("Hide video vettings"));
     } else {
-        ui->contextStack->setVisible(m_contextStackWasVisible);
-        ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+        if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
+            ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+            ui->contextStack->setVisible(true);
+        } else {
+            ui->contextStack->setVisible(false);
+        }
         action("show_video_settings")->setText(i18n("Show video settings"));
     }
+    //All other actions for the contextStack setting should now say "Show"
+    action("show_audio_settings")->setText(i18n("Show audio settings"));
+    action("show_shortcuts_editor")->setText(i18n("Show shortcuts editor"));
 }
 
 void ActionsManager::toggleAudioSettings()
@@ -544,10 +552,17 @@ void ActionsManager::toggleAudioSettings()
         m_application->audioSettings()->updateAudioChannelCombo();
         action("show_audio_settings")->setText(i18n("Hide audio settings"));
     } else {
-        ui->contextStack->setVisible(m_contextStackWasVisible);
-        ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+        if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
+            ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+            ui->contextStack->setVisible(true);
+        } else {
+            ui->contextStack->setVisible(false);
+        }
         action("show_audio_settings")->setText(i18n("Show audio settings"));
     }
+    //All other actions for the contextStack setting should now say "Show"
+    action("show_video_settings")->setText(i18n("Show video settings"));
+    action("show_shortcuts_editor")->setText(i18n("Show shortcuts editor"));
 }
 
 void ActionsManager::cancelFSHC()
@@ -581,31 +596,40 @@ void ActionsManager::cancelFSHC()
     }
 }
 
-void ActionsManager::showShortcutsEditor()
+void ActionsManager::toggleShortcutsEditor()
 {
-    ui->contextStack->setCurrentIndex(3);
-    ui->contextStack->setVisible(true);
+    if(ui->contextStack->currentIndex() != 3 ) {
+        m_contextStackWasVisible = ui->contextStack->isVisible();
+        m_previousContextStackIndex = ui->contextStack->currentIndex();
+        ui->contextStack->setCurrentIndex(3);
+        ui->contextStack->setVisible(true);
+        action("show_shortcuts_editor")->setText(i18n("Hide shortcuts editor"));
+    } else {
+        if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
+            ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
+            ui->contextStack->setVisible(true);
+        } else {
+            ui->contextStack->setVisible(false);
+        }
+        action("show_shortcuts_editor")->setText(i18n("Show shortcuts editor"));
+    }
+    //All other actions for the contextStack setting should now say "Show"
+    action("show_video_settings")->setText(i18n("Show video settings"));
+    action("show_audio_settings")->setText(i18n("Show audio settings"));
 }
 
 void ActionsManager::saveShortcuts()
 {
     ui->shortcutsEditor->writeConfiguration(&m_shortcutsConfig);
     ui->shortcutsEditor->commit();
-    hideShortcutsEditor();
+    toggleShortcutsEditor();
 }
 
 void ActionsManager::cancelShortcuts()
 {
     //user canceld, it should be undone what had been edited
     ui->shortcutsEditor->undoChanges();
-    hideShortcutsEditor();
-}
-
-void ActionsManager::hideShortcutsEditor()
-{
-
-    ui->contextStack->setCurrentIndex(0);
-    ui->contextStack->setVisible(false);
+    toggleShortcutsEditor();
 }
 
 void ActionsManager::simplePlayPause()
