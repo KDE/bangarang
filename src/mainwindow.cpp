@@ -74,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_application = (BangarangApplication *)KApplication::kApplication();
     
     ui->setupUi(this);
-    setGeometry(0,0,760,520);
 
     //Setup interface icons
     setupIcons();
@@ -226,7 +225,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Set up cursor hiding and context menu for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
-    
 }
 
 MainWindow::~MainWindow()
