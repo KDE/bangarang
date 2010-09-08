@@ -61,9 +61,10 @@ class MediaItemDelegate : public QItemDelegate
         int heightForAllRows();
         void setUseProxy(bool b = true);
         bool useProxy() const { return m_useProxy; }
+        QRect ratingRect(const QRect *rect) const;
+        QRect addRmPlaylistRect(const QRect *rect) const;
 
     protected:
-        QRect ratingRect(const QRect *rect) const;
         MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;
     
     private:
@@ -77,6 +78,7 @@ class MediaItemDelegate : public QItemDelegate
         KIcon m_showInPlaylist;
         KIcon m_showNotInPlaylist;
         KIcon m_removeFromPlaylist;
+        KIcon m_categoryActionIcon;
         int calcItemHeight() const;
         bool m_nepomukInited;
         bool m_useProxy;
