@@ -669,34 +669,6 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
         titleItem->setData(mediaItem.fields["categoryType"].toString(), MediaItem::SubTypeRole);
     }           
     rowData << titleItem;
-    
-    if ((mediaItem.type == "Audio") || (mediaItem.type == "Video") || (mediaItem.type == "Images")) {
-       QStandardItem * markPlaylistItem = new QStandardItem(KIcon(), QString());
-       markPlaylistItem->setData(mediaItem.url, MediaItem::UrlRole);
-       markPlaylistItem->setData(mediaItem.type, MediaItem::TypeRole);   
-       markPlaylistItem->setData(i18n("Add to playlist/Remove from playlist"), Qt::ToolTipRole);
-       rowData << markPlaylistItem;
-    } else if (mediaItem.type == "Category") {
-       KIcon categoryActionIcon;
-       QString tooltip;
-       categoryActionIcon = KIcon("bangarang-category-browse");
-       if (mediaItem.url.startsWith("music://songs")) {
-           tooltip = "Show Songs";
-       } else if (mediaItem.url.startsWith("music://albums")) {
-           tooltip = "Show Albums";
-       } else if (mediaItem.url.startsWith("music://artists")) {
-           tooltip = "Show Artists";
-       }
-       QStandardItem * categoryItem = new QStandardItem(categoryActionIcon, QString());
-       categoryItem->setData(mediaItem.url, MediaItem::UrlRole);
-       categoryItem->setData(mediaItem.type, MediaItem::TypeRole);   
-       categoryItem->setData(tooltip, Qt::ToolTipRole);
-       rowData << categoryItem;
-    } else {
-        //Always return a second column. let the view figure out what to do with it
-        QStandardItem * categoryItem = new QStandardItem(QIcon(), QString());
-        rowData << categoryItem;
-    }   
     return rowData;
 }
 
@@ -901,6 +873,8 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
         if ( !Utilities::isMedia( type ) && !isCat )
             return true;
         if ( isCat && data == "Indexer" )
+            return true;
+        if ( Utilities::isMessage( type ) )
             return true;
     }
     QStringList pat = filterRegExp().pattern().split(" ", QString::SkipEmptyParts);

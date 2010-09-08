@@ -433,7 +433,7 @@ bool Utilities::isMediaItem(const QModelIndex *index)
 
 }
 
-bool Utilities::isMedia(const QString type)
+bool Utilities::isMedia(const QString& type)
 {
    return (
             (type == "Audio") ||
@@ -441,19 +441,29 @@ bool Utilities::isMedia(const QString type)
         );
 }
 
-bool Utilities::isFeed(const QString categoryType)
+bool Utilities::isFeed(const QString& categoryType)
 {
    return (categoryType == "Audio Feed" || categoryType == "Video Feed");
 }
 
-bool Utilities::isAudioStream(const QString audioType)
+bool Utilities::isAudioStream(const QString& audioType)
 {
   return (audioType == "Audio Stream");
 }
 
-bool Utilities::isCategory(const QString type)
+bool Utilities::isCategory(const QString& type)
 {
    return (type == "Category");
+}
+
+bool Utilities::isMessage(const QString& type)
+{
+    return (type == "Message");
+}
+
+bool Utilities::isAction(const QString& type)
+{
+    return (type == "Action");
 }
 
 QPixmap Utilities::reflection(QPixmap &pixmap)
