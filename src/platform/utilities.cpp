@@ -99,7 +99,7 @@ QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
     QByteArray pictureData = QByteArray(selectedFrame->picture().data(), selectedFrame->picture().size());
     QImage attachedImage = QImage::fromData(pictureData);
     
-    if(size != attachedImage.size()) {
+    if (size != attachedImage.size() && !attachedImage.isNull()) {
         attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     
@@ -118,11 +118,14 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
             pixmap = QPixmap(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
         
-        if (pixmap.isNull())
-	{
-	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
-	  if (!artworkUrl.isEmpty())
-	    pixmap = QPixmap(artworkUrl).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);;
+        if (pixmap.isNull()) {
+            artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
+            if (!artworkUrl.isEmpty()) {
+                QPixmap rawPixmap= QPixmap(artworkUrl);
+                if (!pixmap.isNull()) {
+                    pixmap = rawPixmap.scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                }
+            }
 	}
     }
     return pixmap;
@@ -138,12 +141,14 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
             image = QImage(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        }
-        else 
-	{
-	  artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
-	  if (!artworkUrl.isEmpty())
-	    image = QImage(artworkUrl).scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        } else {
+            artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
+            if (!artworkUrl.isEmpty()) {
+                QImage rawImage = QImage(artworkUrl);
+                if (!rawImage.isNull()) {
+                    image = rawImage.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                }
+            }
 	}
     }
     return image;
