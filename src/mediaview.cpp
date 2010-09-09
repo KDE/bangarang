@@ -20,11 +20,12 @@
 #include "bangarangapplication.h"
 #include "mainwindow.h"
 #include "actionsmanager.h"
-#include "mediaitemdelegate.h"
 #include "platform/mediaitemmodel.h"
+#include "platform/utilities.h"
 #include <KIcon>
 #include <QMenu>
 #include <QHeaderView>
+#include <QToolTip>
 #include <KDebug>
 
 MediaView::MediaView(QWidget * parent):QTreeView (parent) 
@@ -34,7 +35,7 @@ MediaView::MediaView(QWidget * parent):QTreeView (parent)
     setModel(m_proxyModel);
     m_mediaItemModel = new MediaItemModel(parent);
     setSourceModel(m_mediaItemModel);
-    m_mode = NormalMode;
+    m_mode = MediaItemDelegate::NormalMode;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     setHeaderHidden(true);
     setRootIsDecorated(false);
@@ -55,25 +56,13 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
     m_mediaItemDelegate->setView(this);
 }
 
-void MediaView::setMode(RenderMode mode)
+void MediaView::setMode(MediaItemDelegate::RenderMode mode)
 {
     m_mode = mode;
-    if (m_mode == NormalMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::NormalMode);
-    } else if (m_mode == MiniPlaybackTimeMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniPlaybackTimeMode);
-    } else if (m_mode == MiniRatingMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniRatingMode);
-    } else if (m_mode == MiniPlayCountMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniPlayCountMode);
-    } else if (m_mode == MiniMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniMode);
-    } else if (m_mode == MiniAlbumMode) {
-        m_mediaItemDelegate->setRenderMode(MediaItemDelegate::MiniAlbumMode);
-    }
+    m_mediaItemDelegate->setRenderMode(mode);
 }
 
-MediaView::RenderMode MediaView::mode()
+MediaItemDelegate::RenderMode MediaView::mode()
 {
     return m_mode;
 }
@@ -89,7 +78,7 @@ void MediaView::contextMenuEvent(QContextMenuEvent * event)
     if (selectionModel()->selectedIndexes().count() != 0) {
         //NOTE:The context menu source determination here depends on mini modes only being used for infoboxes.
         MainWindow::ContextMenuSource contextMenuSource;
-        if (m_mode == NormalMode) {
+        if (m_mode == MediaItemDelegate::NormalMode) {
             contextMenuSource = MainWindow::MediaList;
         } else {
             contextMenuSource = MainWindow::InfoBox;
@@ -103,43 +92,65 @@ void MediaView::contextMenuEvent(QContextMenuEvent * event)
 
 void MediaView::mediaListChanged()
 {
-    if (m_mediaItemModel->rowCount() > 0 && (m_mode == NormalMode || m_mode == MiniAlbumMode)) {
-        header()->setStretchLastSection(false);
-        header()->setResizeMode(0, QHeaderView::Stretch);
-        header()->setResizeMode(1, QHeaderView::ResizeToContents);
-        
-        QString listItemType = m_mediaItemModel->mediaItemAt(0).type;
-        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            if (!m_mediaItemModel->mediaItemAt(0).fields["isTemplate"].toBool()) {
-                header()->showSection(1);
-            }
-        } else if (listItemType == "Category") {
-            header()->showSection(1);
-        } else if ((listItemType == "Action") || (listItemType == "Message")) {
-            header()->hideSection(1);
-        }
+    if (m_mediaItemModel->rowCount() > 0 &&
+        (m_mode == MediaItemDelegate::NormalMode || m_mode == MediaItemDelegate::MiniAlbumMode)) {
+        header()->setStretchLastSection(true);
     }
-    
-    if (m_mode != NormalMode) {
-        if (m_mediaItemModel->rowCount() > 0 &&  m_mode != MiniAlbumMode) {
-            header()->hideSection(1);
+    else if (m_mode != MediaItemDelegate::NormalMode) {
+        if (m_mediaItemModel->rowCount() > 0 &&  m_mode != MediaItemDelegate::MiniAlbumMode) {
             header()->setStretchLastSection(true);
             header()->setResizeMode(QHeaderView::ResizeToContents);
         }
-        setMinimumHeight(m_mediaItemDelegate->heightForAllRows());
-        setMaximumHeight(m_mediaItemDelegate->heightForAllRows());
+        int height = m_mediaItemDelegate->heightForAllRows();
+        setMinimumHeight(height);
+        setMaximumHeight(height);
         
         //Add more info to each tooltip in mini modes
         QList<MediaItem> mediaList = m_mediaItemModel->mediaList();
         for (int i = 0; i < mediaList.count(); i++) {
-            QString tooltip = QString("<b>%1</b>").arg(mediaList.at(i).title);
-            if (!mediaList.at(i).subTitle.isEmpty()) {
-                tooltip += QString("<br>%1").arg(mediaList.at(i).subTitle);
+            const MediaItem& mi = mediaList.at(i);
+            QString tooltip = QString("<b>%1</b>").arg(mi.title);
+            if (!mi.subTitle.isEmpty()) {
+                tooltip += QString("<br>%1").arg(mi.subTitle);
             }
-            if (!mediaList.at(i).semanticComment.isEmpty()) {
-                tooltip += QString("<br><i>%3</i>").arg(mediaList.at(i).semanticComment);
+            if (!mi.semanticComment.isEmpty()) {
+                tooltip += QString("<br><i>%3</i>").arg(mi.semanticComment);
             }
             m_mediaItemModel->item(i)->setData(tooltip, Qt::ToolTipRole);
         }
     }
+}
+
+bool MediaView::viewportEvent(QEvent* event)
+{
+    if (event->type() == QEvent::ToolTip)
+    {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        QPoint mousePos = helpEvent->pos();
+        QModelIndex index = indexAt(mousePos);
+        QRect area = m_mediaItemDelegate->addRmPlaylistRect(&visualRect(index));
+        if (area.contains(mousePos)) {
+            QString url = index.data(MediaItem::UrlRole).toString();
+            QString type = index.data(MediaItem::TypeRole).toString();
+            if (!url.isEmpty()) {
+                QString tipText;
+                if (Utilities::isMedia(type)) {
+                    tipText = i18n("Add to playlist/Remove from playlist");
+                } else if (Utilities::isCategory(type)) {
+                    if (url.startsWith("music://songs")) {
+                        tipText = i18n( "Show Songs" );
+                    } else if (url.startsWith("music://albums")) {
+                        tipText = i18n( "Show Albums" );
+                    } else if (url.startsWith("music://artists")) {
+                        tipText = i18n( "Show Artists" );
+                    }   
+                }
+                if ( !tipText.isEmpty() ) {
+                    QToolTip::showText(helpEvent->globalPos(), tipText, this, area);
+                    return true;
+                }
+            }
+        }
+    }
+    return QTreeView::viewportEvent(event);
 }

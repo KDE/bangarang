@@ -97,10 +97,12 @@ namespace Utilities {
     bool isCd(const KUrl& url);
     bool isDisc(const KUrl& url);
     bool isMediaItem(const QModelIndex *index);
-    bool isMedia(const QString type);
-    bool isCategory(const QString type);
-    bool isFeed(const QString categoryType);
-    bool isAudioStream(const QString audioType);
+    bool isMedia(const QString& type);
+    bool isCategory(const QString& type);
+    bool isMessage(const QString& type);
+    bool isAction(const QString& type);
+    bool isFeed(const QString& categoryType);
+    bool isAudioStream(const QString& audioType);
     QPixmap reflection(QPixmap &pixmap);
     MediaItem mediaItemFromUrl(const KUrl& url);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
