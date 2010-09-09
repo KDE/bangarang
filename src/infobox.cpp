@@ -96,15 +96,15 @@ void InfoBox::setInfo(const QString &title, const QString & lri)
 {
     m_title->setText(title);
     if (lri.startsWith("semantics://frequent")) {
-        m_mediaView->setMode(MediaView::MiniPlayCountMode);
+        m_mediaView->setMode(MediaItemDelegate::MiniPlayCountMode);
     } else if (lri.startsWith("semantics://recent")) {
-        m_mediaView->setMode(MediaView::MiniPlaybackTimeMode);
+        m_mediaView->setMode(MediaItemDelegate::MiniPlaybackTimeMode);
     } else if (lri.startsWith("semantics://highest")) {
-        m_mediaView->setMode(MediaView::MiniRatingMode);
+        m_mediaView->setMode(MediaItemDelegate::MiniRatingMode);
     }else if (lri.startsWith("music://albums")) {
-        m_mediaView->setMode(MediaView::MiniAlbumMode);
+        m_mediaView->setMode(MediaItemDelegate::MiniAlbumMode);
     } else {
-        m_mediaView->setMode(MediaView::MiniMode);
+        m_mediaView->setMode(MediaItemDelegate::MiniMode);
     }
     MediaItemModel * model = (MediaItemModel *)m_mediaView->sourceModel();
     model->loadLRI(lri);
@@ -126,7 +126,7 @@ void InfoBox::mediaListChanged()
     MediaItemModel * model = (MediaItemModel *)m_mediaView->sourceModel();
     if (model->rowCount() > 0) {
         if (model->rowCount() == 1) {
-            if (model->mediaItemAt(0).type == "Message" && m_mediaView->mode() != MediaView::NormalMode) {
+            if (model->mediaItemAt(0).type == "Message" && m_mediaView->mode() != MediaItemDelegate::NormalMode) {
                 hide();
                 return;
             }
