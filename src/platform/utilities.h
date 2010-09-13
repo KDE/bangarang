@@ -133,5 +133,7 @@ namespace Utilities {
     QHash<int, QString> tagGenreDictionary();
     QString genreFromRawTagGenre(QString rawTagGenre);
     QString rawTagGenreFromGenre(QString genre);
+    QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
+    QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
 }
 #endif //UTILITIES_H    
