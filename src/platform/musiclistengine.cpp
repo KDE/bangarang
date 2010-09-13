@@ -115,14 +115,16 @@ void MusicListEngine::run()
             if (mediaList.count() != 1)  {
                 m_mediaListProperties.name = i18n("Artists");
                 if (!genre.isEmpty()) {
-                    m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", genre);
+                    QStringList genreList = genre.split("|OR|");
+                    QString singleGenreName = Utilities::genreFromRawTagGenre(genreList.at(0));
+                    m_mediaListProperties.name = i18nc("%1=Name of Genre", "Artists - %1", singleGenreName);
 
                     //Add an additional item to show all songs for all artists in this genre
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(albumFilter, artistFilter, genreFilter);
                     mediaItem.title = i18n("All songs");
-                    mediaItem.fields["title"] = genre;
-                    mediaItem.subTitle = QString("%1").arg(genre);
+                    mediaItem.fields["title"] = singleGenreName;
+                    mediaItem.subTitle = QString("%1").arg(singleGenreName);
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("AudioGenre");
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
@@ -213,9 +215,13 @@ void MusicListEngine::run()
                     mediaList.append(mediaItem);
                 }
                 if (!genre.isEmpty()) {
-                    m_mediaListProperties.name = i18n("Albums - %1", genre);
+                    QStringList genreList = genre.split("|OR|");
+                    QString singleGenreName = Utilities::genreFromRawTagGenre(genreList.at(0));
+                    m_mediaListProperties.name = i18n("Albums - %1", singleGenreName);
                 }
                 if (!artist.isEmpty() && !genre.isEmpty()) {
+                    QStringList genreList = genre.split("|OR|");
+                    QString singleGenreName = Utilities::genreFromRawTagGenre(genreList.at(0));
                     m_mediaListProperties.name = i18n("Albums - %1 - %2", album, genre);
                 }
                 
@@ -272,6 +278,7 @@ void MusicListEngine::run()
                 ++i;
             }
             if (mediaList.count() != 1) {
+                mediaList = Utilities::sortMediaList(Utilities::mergeGenres(mediaList));
                 m_mediaListProperties.name = i18n("Genres");
                 m_mediaListProperties.summary = i18np("1 genre", "%1 genres", mediaList.count());
                 m_mediaListProperties.type = QString("Categories");

@@ -633,7 +633,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
                 mediaItem.fields["title"] = title;
                 mediaItem.fields["artist"] = artist;
                 mediaItem.fields["album"] = album;
-                mediaItem.fields["genre"] = genre;
+                mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
                 mediaItem.fields["trackNumber"] = track;
                 mediaItem.fields["year"] = year;
             }
@@ -899,7 +899,8 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
     }
-    mediaItem.fields["genre"] = res.property(mediaVocabulary.genre()).toString();
+    QString genre = res.property(mediaVocabulary.genre()).toString();
+    mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
     mediaItem.fields["rating"] = res.rating();
 
     QStringList tags;
@@ -1037,7 +1038,8 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
     }
-    mediaItem.fields["genre"] = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+    QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+    mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
     Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
     QStringList tags;
@@ -1728,7 +1730,7 @@ QHash<int, QString> Utilities::tagGenreDictionary()
     genreDictionary[37] = "Sound Clip";
     genreDictionary[38] = "Gospel";
     genreDictionary[39] = "Noise";
-    genreDictionary[40] = "AlternRock";
+    genreDictionary[40] = "Alternative Rock";
     genreDictionary[41] = "Bass";
     genreDictionary[42] = "Soul";
     genreDictionary[43] = "Punk";
@@ -1820,15 +1822,15 @@ QHash<int, QString> Utilities::tagGenreDictionary()
 QString Utilities::genreFromRawTagGenre(QString rawTagGenre)
 {
     QHash<int, QString> genreDictionary = tagGenreDictionary();
-
     QString genre = rawTagGenre;
-    if (rawTagGenre.startsWith("(") && rawTagGenre.endsWith(")")) {
+    //if (rawTagGenre.startsWith("(") && rawTagGenre.endsWith(")")) {
         QString tagGenreNoParenth = rawTagGenre.remove("(").remove(")").trimmed();
-        int tagGenreNo = tagGenreNoParenth.toInt();
-        if (QString("%1").arg(tagGenreNo) == tagGenreNoParenth) {
+        bool ok;
+        int tagGenreNo = tagGenreNoParenth.toInt(&ok);
+        if (ok) {
             genre = genreDictionary[tagGenreNo];
         }
-    }
+    //}
     return genre;
 }
 
@@ -1842,4 +1844,68 @@ QString Utilities::rawTagGenreFromGenre(QString genre)
         tagGenre = QString("(%1)").arg(tagGenreNo);
     }
     return tagGenre;
+}
+
+QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
+{
+    for (int i = 0; i < genreList.count(); i++) {
+        MediaItem genreItem = genreList.at(i);
+        kDebug() << genreItem.title;
+        if (genreItem.type == "Category" && genreItem.fields["categoryType"] == "MusicGenre") {
+            QString rawGenre = genreItem.title;
+            QString convertedGenre = Utilities::genreFromRawTagGenre(rawGenre);
+            if (convertedGenre != rawGenre) {
+                bool matchFound = false;
+                for (int j = 0; j < genreList.count(); j++) {
+                    if (genreList.at(j).title == convertedGenre) {
+                        matchFound = true;
+                        MediaItem matchedGenre = genreList.at(j);
+                        MediaListProperties matchedGenreProperties;
+                        matchedGenreProperties.lri = matchedGenre.url;
+                        QString newUrl = QString("%1%2?")
+                                         .arg(matchedGenreProperties.engine())
+                                         .arg(matchedGenreProperties.engineArg());
+                        QString mergedFilter;
+                        for (int k = 0; k < matchedGenreProperties.engineFilterList().count(); k++) {
+                            QString filter = matchedGenreProperties.engineFilterList().at(k);
+                            if (matchedGenreProperties.filterField(filter) == "genre") {
+                                mergedFilter.append(QString("%1|OR|%2||")
+                                                    .arg(filter)
+                                                    .arg(rawGenre));
+                            } else {
+                                mergedFilter.append(filter);
+                            }
+                        }
+                        newUrl.append(mergedFilter);
+                        kDebug() << newUrl;
+                        matchedGenre.url = newUrl;
+                        genreList.replace(j, matchedGenre);
+                        genreList.removeAt(i);
+                        i = -1;
+                    }
+                }
+                if (!matchFound) {
+                    genreItem.title = convertedGenre;
+                    kDebug() << convertedGenre;
+                    genreList.replace(i, genreItem);
+                }
+            }
+        }
+    }
+    return genreList;
+}
+
+QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
+{
+    QList<MediaItem> sortedList;
+    QMap<QString, int> sortedIndices;
+    for (int i = 0; i < mediaList.count(); i++) {
+        sortedIndices[mediaList.at(i).title] = i;
+    }
+    QMapIterator<QString, int> it(sortedIndices);
+    while (it.hasNext()) {
+        it.next();
+        sortedList.append(mediaList.at(it.value()));
+    }
+    return sortedList;
 }
