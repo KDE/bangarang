@@ -23,6 +23,9 @@
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
+#include <KFilePlacesModel>
+#include <KDirModel>
+#include <KDirSortFilterProxyModel>
 #include <Nepomuk/Resource>
 #include <Nepomuk/ResourceManager>
 #include <Soprano/Model>
@@ -34,14 +37,9 @@ class MediaIndexer;
 
 /**
 * This ListEngine retrieves media files.
-* It also automatically updates Music file information in the nepomuk data store.
 * List Resource Identifiers handled are:
-*  files://audio
-*  files://video
-*  files://audio?getFiles||[filelist]
-*  files://audio?getFolder||[folder]
-*  files://video?getFiles||[filelist]
-*  files://video?getFolder||[folder]
+*  files://audio?browseFolder||[folder]
+*  files://video?browseFolder||[folder]
 */
 class FileListEngine : public NepomukListEngine
 {
@@ -51,19 +49,20 @@ class FileListEngine : public NepomukListEngine
         FileListEngine(ListEngineFactory *parent);
         ~FileListEngine();
         void run();
-        void activateAction();
         void setFilterForSources(const QString& engineFilter);
+        void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false);
         
     private:
-        QFileInfoList crawlDir(const QDir &dir, const QStringList &mimeFilter);
-        KUrl::List QFileInfoListToKUrlList(const QFileInfoList &fileInfoList);
-        QList<MediaItem> readAudioUrlList(const KUrl::List &fileList);
-        QList<MediaItem> readVideoUrlList(const KUrl::List &fileList);
-        QString engineFilterFromUrlList(const KUrl::List &fileList);
         KUrl::List m_fileList;
         QString m_directoryPath;
-        bool m_indexFilesAction;
-        bool m_indexFolderAction;
-        QList<MediaItem> m_mediaListToIndex;
+        KFilePlacesModel *m_filePlacesModel;
+        KDirModel *m_dirModel;
+        KDirSortFilterProxyModel *m_dirSortProxyModel;
+        bool m_updateNepomukOnly;
+        QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false);
+        QFileInfoList crawlDir(const QDir &dir, QString engineArg);
+
+    private Q_SLOTS:
+        void listingComplete(const KUrl &url);
 };
 #endif // FILELISTENGINE_H

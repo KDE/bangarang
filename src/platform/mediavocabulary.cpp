@@ -130,9 +130,9 @@ QUrl MediaVocabulary::typeAudio()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Audio();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Audio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Audio");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Audio");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Audio");
     }
     
     return returnUrl;
@@ -158,7 +158,7 @@ QUrl MediaVocabulary::typeAudioStream()
     if (m_audioVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Audio();
     } else if (m_audioVocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#MediaStream");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#MediaStream");
     } else if (m_audioVocabulary == MediaVocabulary::nmm) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#DigitalRadio");
     }
@@ -178,9 +178,9 @@ QUrl MediaVocabulary::typeVideo()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Video();
     } else if (m_videoVocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Video");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Video");
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Video");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#Video");
     }
     
     return returnUrl;
@@ -228,9 +228,9 @@ QUrl MediaVocabulary::typeImage()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::Image();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Image");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Image");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#Image");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Image");
     }
     
     return returnUrl;
@@ -304,10 +304,10 @@ QUrl MediaVocabulary::duration()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::mediaDuration();
     } else if (m_vocabulary == MediaVocabulary::nie) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#duration");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#duration");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
         //Draft nmm ontology is extension of nie
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/3/22/nfo#duration");
+        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#duration");
     }
     
     return returnUrl;
@@ -713,7 +713,9 @@ QString MediaVocabulary::hasTypeAnyAudio(MediaQuery::Match match)
 QString MediaVocabulary::hasTypeVideo(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = MediaQuery::hasType(resourceBinding, typeVideo());
+    QString statement = QString("{%1} UNION  {%2} ")
+                        .arg(MediaQuery::hasType(resourceBinding, typeVideo()))
+                        .arg(MediaQuery::hasType(resourceBinding, QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Video")));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);

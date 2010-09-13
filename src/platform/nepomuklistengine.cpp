@@ -72,13 +72,14 @@ void NepomukListEngine::removeSourceInfo(QList<MediaItem> mediaList)
     }
 }
 
-void NepomukListEngine::updateSourceInfo(QList<MediaItem> mediaList)
+void NepomukListEngine::updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly)
 {
     if (m_nepomukInited) {
         m_mediaItemsInfoToUpdate = mediaList;
         m_updateSourceInfo = true;
         start();
     }
+    Q_UNUSED(nepomukOnly);
 }
 
 void NepomukListEngine::connectIndexer()

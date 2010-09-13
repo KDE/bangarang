@@ -569,6 +569,12 @@ class MediaItemModel : public QStandardItemModel
          * @param suppress true to suppress message, false otherwise
          */
         void setSuppressNoResultsMessage(bool suppress);
+
+        /**
+         * Returns model status information.  This contains for underlying model
+         * status info like indexing status.
+         */
+        QHash<QString, QVariant> status();
         
         /**
          * Returns the DropActions supported by the model
@@ -581,6 +587,7 @@ class MediaItemModel : public QStandardItemModel
         *
         * @param mediaList list containing the MediaItems whose information
         *                  should be update in the source.
+        * @param nepomukOnly only update the nepomuk store.
         *
         * Note: mediaList does not have to contain the same MediaItems contained
         *       in the model.  However, the current model MediaListProperties
@@ -589,7 +596,7 @@ class MediaItemModel : public QStandardItemModel
         *       can be used to retrieve the MediaItem, its ListEngine can
         *       update information for the MediaItem.
         */
-        void updateSourceInfo(const QList<MediaItem> &mediaList);
+        void updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly = false);
         
         QString dataEngine();
         QString filter();
@@ -651,6 +658,11 @@ class MediaItemModel : public QStandardItemModel
         * Emitted when the update or removal of the list MediaItems has started.
         */
         void sourceInfoUpdateRemovalStarted();
+
+        /**
+         * Emitted when status is updated
+         */
+        void statusUpdated();
         
         /**
          * Emitted when MediaListProperties for this model has changed.
@@ -760,6 +772,11 @@ class MediaItemModel : public QStandardItemModel
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         
         void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
+
+        /**
+         * Update model status
+         */
+        void updateStatus(QHash<QString, QVariant> updatedStatus);
         
     private Q_SLOTS:
         void synchRemoveRows(const QModelIndex &index, int start, int end);
@@ -796,6 +813,7 @@ class MediaItemModel : public QStandardItemModel
         bool m_lriIsLoadable;
         bool m_suppressNoResultsMessage;
         bool m_pendingUpdateRefresh;
+        QHash<QString, QVariant> m_status;
 
 };
 

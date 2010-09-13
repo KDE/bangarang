@@ -70,6 +70,7 @@ target_link_libraries(bangarang
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KPARTS_LIBS}
     ${KDE4_PHONON_LIBS}
+    ${KDE4_KFILE_LIBS}
     ${KDE4_KROSSCORE_LIBS}
     ${TAGLIB_LIBRARIES}
     ${KDE4_SOLID_LIBS}

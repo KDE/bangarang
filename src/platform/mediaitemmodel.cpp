@@ -631,6 +631,12 @@ void MediaItemModel::showNoResultsMessage()
     loadMediaItem(loadingMessage, false);
 }
 
+void MediaItemModel::updateStatus(QHash<QString, QVariant> updatedStatus)
+{
+    m_status = updatedStatus;
+    emit statusUpdated();
+}
+
 QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
 {
     QList<QStandardItem *> rowData;
@@ -797,12 +803,12 @@ void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
     }
 }
 
-void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList)
+void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly)
 {
     //Assumes that items in mediaList are items currently in model
     if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
-        listEngine->updateSourceInfo(mediaList);
+        listEngine->updateSourceInfo(mediaList, nepomukOnly);
     }
 }
 
@@ -834,6 +840,11 @@ bool MediaItemModel::lriIsLoadable()
 void MediaItemModel::setSuppressNoResultsMessage(bool suppress)
 {
     m_suppressNoResultsMessage = suppress;
+}
+
+QHash<QString, QVariant> MediaItemModel::status()
+{
+    return m_status;
 }
 
 void MediaItemModel::updateRefresh()

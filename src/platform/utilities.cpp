@@ -491,7 +491,7 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
     return alphamask;
 }
 
-MediaItem Utilities::mediaItemFromUrl(const KUrl& url)
+MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
 {
     MediaItem mediaItem;
     if(isDisc(url)) {
@@ -523,13 +523,11 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url)
         return mediaItem;
     }
     //Initialize Nepomuk
-    bool nepomukInited = false;
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        nepomukInited = true; //resource manager inited successfully
-    } else {
-        nepomukInited = false; //no resource manager
-    };
+    bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    if (!nepomukInited) {
+        Nepomuk::ResourceManager::instance()->init();
+        nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    }
     
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
@@ -551,7 +549,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url)
     
     //Determine type of file - nepomuk is primary source
     bool foundInNepomuk = false;
-    if (nepomukInited) {
+    if (nepomukInited && !preferFileMetaData) {
         //Try to find the corresponding resource in Nepomuk
         Nepomuk::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
@@ -646,6 +644,28 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url)
         if (mediaItem.fields["videoType"] == "Video Clip") {
             mediaItem.artwork = KIcon("video-x-generic");
         }
+    }
+
+    //Lookup nepomuk metadata not stored with file
+    if (nepomukInited && preferFileMetaData) {
+        Nepomuk::Resource res(KUrl(mediaItem.url));
+        QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
+        mediaItem.fields["rating"] = res.rating();
+        QStringList tags;
+        foreach (Nepomuk::Tag tag, res.tags()) {
+            tags.append(tag.label());
+        }
+        mediaItem.fields["tags"] = tags.join(";");
+        mediaItem.fields["playCount"] = res.property(mediaVocabulary.playCount()).toInt();
+        if (res.property(mediaVocabulary.lastPlayed()).isValid()) {
+            QDateTime lastPlayed = res.property(mediaVocabulary.lastPlayed()).toDateTime();
+            if (lastPlayed.isValid()) {
+                mediaItem.fields["lastPlayed"] = lastPlayed;
+            }
+        }
+        mediaItem.fields["artworkUrl"] = res.property(mediaVocabulary.artwork()).toResource()
+                                         .property(nieUrl).toString();
+
     }
     return mediaItem;
 }
@@ -831,7 +851,8 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         type = "Audio Stream";
     } 
     //Check types beyond the current vocabulary to detect basic Video type indexed by Strigi
-    if (res.hasType(QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video")) ||
+    if (res.hasType(mediaVocabulary.typeVideo()) ||
+        res.hasType(QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Video")) ||
         res.hasType(Soprano::Vocabulary::Xesam::Video())) { 
         type = "Video Clip";
     } 
@@ -842,9 +863,21 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         type = "TV Show";
     }
 
+    //If nepomuk resource type is not recognized try recognition by mimetype
+    QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
+    QString url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
+    if (isAudio(url)) {
+        type = "Audio Clip";
+    }
+    if (isMusic(url)) {
+        type = "Music";
+    }
+    if (isVideo(url)){
+        type = "Video Clip";
+    }
+
     MediaItem mediaItem;
 
-    QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
     mediaItem.url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = res.resourceUri().toString();
