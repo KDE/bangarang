@@ -402,11 +402,13 @@ void MainWindow::on_previous_clicked()
         m_application->browsingModel()->clearMediaListData();
         m_application->browsingModel()->setMediaListProperties(m_mediaListPropertiesHistory.last());
         m_application->browsingModel()->loadMediaList(m_mediaListHistory.last(), true);
+        QApplication::processEvents(); // Allows view to get updated before scrollbar is set
         ui->mediaView->verticalScrollBar()->setValue(m_mediaListScrollHistory.last());
         
         //Clean up history and update previous button
         m_mediaListHistory.removeLast();
         m_mediaListPropertiesHistory.removeLast();
+        m_mediaListScrollHistory.removeLast();
         if (m_mediaListPropertiesHistory.count() > 0) {
             ui->previous->setVisible(true);
             ui->previous->setText(m_mediaListPropertiesHistory.last().name);
