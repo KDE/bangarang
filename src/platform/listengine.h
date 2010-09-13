@@ -131,9 +131,10 @@ class ListEngine : public QThread
          * @param mediaList list of MediaItems whose information should be
          *                  upated in the source.
          */
-        virtual void updateSourceInfo(QList<MediaItem> mediaList)
+        virtual void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false)
         {
             Q_UNUSED(mediaList);
+            Q_UNUSED(nepomukOnly);
         }
         
     public Q_SLOTS:
@@ -142,7 +143,18 @@ class ListEngine : public QThread
             Q_UNUSED(from);
             Q_UNUSED(to);
         }
+
+        virtual void listingComplete(const KUrl & url, const KFileItemList &items)
+        {
+            Q_UNUSED(url);
+            Q_UNUSED(items);
+        }
         
+        virtual void listingComplete(const KUrl & url)
+        {
+            Q_UNUSED(url);
+        }
+
     Q_SIGNALS:
         void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
         void updateMediaItems(QList<MediaItem> mediaList);
@@ -150,6 +162,7 @@ class ListEngine : public QThread
         void updateArtwork(QImage artworkImage, MediaItem mediaItem);
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         void download(const KUrl &from, const KUrl &to);
+        void listDir(const KUrl &url);
         
     protected:
         ListEngineFactory * m_parent;

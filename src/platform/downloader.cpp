@@ -22,6 +22,7 @@
 
 Downloader::Downloader(QObject * parent):QObject (parent) 
 {
+    m_dirLister = new KDirLister(this);
 }
 
 Downloader::~Downloader() 
@@ -43,12 +44,35 @@ void Downloader::download(const KUrl &from, const KUrl &to)
              SLOT(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
 }
 
+KDirLister * Downloader::dirLister()
+{
+    return m_dirLister;
+}
+
+void Downloader::listDir(const KUrl &url)
+{
+    connect(m_dirLister, SIGNAL(completed(KUrl)), this, SLOT(listDirComplete(KUrl)));
+    m_dirLister->openUrl(url);
+}
+
 void Downloader::copyingDone(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed)
 {
     Q_UNUSED(job);
     Q_UNUSED(mtime);
     Q_UNUSED(directory);
     Q_UNUSED(renamed);
+    disconnect (job,
+             SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+             this,
+             SLOT(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
     
     emit downloadComplete(from, to);
+}
+
+void Downloader::listDirComplete(const KUrl &url)
+{
+    m_dirLister->stop();
+    disconnect(m_dirLister,SIGNAL(completed(KUrl)), this, SLOT(listDirComplete(KUrl)));
+    emit listingComplete(url, m_dirLister->items());
+    emit listingComplete(url);
 }

@@ -20,7 +20,9 @@
 #define LISTENGINEFACTORY_H
 
 #include "mediaitemmodel.h"
+#include "downloader.h"
 #include <KUrl>
+#include <KDirLister>
 #include <QObject>
 #include <QList>
 
@@ -38,7 +40,6 @@ class CacheListEngine;
 class AudioClipsListEngine;
 class TagListEngine;
 class FeedListEngine;
-class Downloader;
 
 /**
  * This class creates ListEngines as needed for the MediaItemModel.
@@ -87,7 +88,7 @@ class ListEngineFactory : public QObject
          * Returns the downloader.
          **/
         Downloader * downloader();
-        
+
     private:
         MediaItemModel * m_parent;
         int m_requestSignatureSeed;

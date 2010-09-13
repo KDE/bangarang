@@ -20,6 +20,7 @@
 #define DOWNLOADER_H
 
 #include <KIO/CopyJob>
+#include <KDirLister>
 #include <QtCore>
 
 /*
@@ -31,14 +32,22 @@ class Downloader : public QObject
     public:
         Downloader(QObject * parent = 0);
         ~Downloader();
+        KDirLister *dirLister();
 
     public slots:
         void download(const KUrl &from, const KUrl &to);
+        void listDir(const KUrl &url);
+
+    private:
+        KDirLister * m_dirLister;
         
     private slots:
         void copyingDone(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
+        void listDirComplete(const KUrl & url);
 
     signals:
         void downloadComplete(const KUrl &from, const KUrl &to);
+        void listingComplete(const KUrl & url, const KFileItemList &items);
+        void listingComplete(const KUrl &url);
 };
 #endif // DOWNLOADER_H

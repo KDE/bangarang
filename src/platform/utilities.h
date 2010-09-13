@@ -104,7 +104,7 @@ namespace Utilities {
     bool isFeed(const QString& categoryType);
     bool isAudioStream(const QString& audioType);
     QPixmap reflection(QPixmap &pixmap);
-    MediaItem mediaItemFromUrl(const KUrl& url);
+    MediaItem mediaItemFromUrl(const KUrl& url, bool preferFileMetaData = false);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
     KIcon turnIconOff(KIcon icon, QSize size);
     TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);

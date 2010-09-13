@@ -45,7 +45,7 @@ class NepomukListEngine : public ListEngine
         virtual void run();
         
         virtual void removeSourceInfo(QList<MediaItem> mediaList);
-        virtual void updateSourceInfo(QList<MediaItem> mediaList);
+        virtual void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false);
         void connectIndexer();
         
     protected:
