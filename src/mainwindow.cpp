@@ -933,7 +933,8 @@ void MainWindow::setupIcons()
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
     ui->showInfo->setIcon(KIcon("help-about"));
     ui->closeMediaListFilter->setIcon(KIcon("dialog-close"));
-    
+    ui->infoIndexSelected->setIcon(KIcon("system-run"));
+
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
     ui->fullScreen->setIcon(KIcon("view-fullscreen"));
