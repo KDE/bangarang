@@ -306,7 +306,8 @@ void InfoManager::loadSelectedInfo()
         }
         //Show indexer for selected filelistengine items
         QString viewLri = m_application->browsingModel()->mediaListProperties().lri;
-        if (m_context.at(0).url.startsWith("files://") || viewLri.startsWith("files://")) {
+        if ((m_context.at(0).url.startsWith("files://") || viewLri.startsWith("files://")) &&
+            m_nepomukInited) {
             ui->infoIndexerHolder->setVisible(true);
         } else {
             ui->infoIndexerHolder->setVisible(false);
