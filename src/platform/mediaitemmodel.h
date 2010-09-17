@@ -85,7 +85,7 @@ public:
     
     HasCustomArtworkRole = Qt::UserRole + 15}; /** QStandardItem role containing whether
                                                  * not artwork is custom(true) or default(false).*/
-                                        
+
     QString url; /** Url of MediaItem. The may be a standard url representing a 
                    * location of a media resource or a List Resource Identifier (lri).*/
                    

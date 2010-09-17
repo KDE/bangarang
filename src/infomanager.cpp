@@ -70,6 +70,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     infoItemDelegate->setView(ui->infoItemView);
     ui->infoItemView->setItemDelegate(infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
+    ui->infoIndexerHolder->setVisible(false);
     
     //Set up selection timer
     m_selectionTimer = new QTimer(this);
@@ -91,6 +92,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
+    connect(ui->infoIndexSelected, SIGNAL(clicked()), this, SLOT(addSelectedItemsInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
@@ -99,7 +101,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     connect(ui->collectionButton, SIGNAL(clicked()), this, SLOT(updateViewsLayout()));
-    
 }
 
 InfoManager::~InfoManager()
@@ -303,12 +304,25 @@ void InfoManager::loadSelectedInfo()
             int row = proxy->mapToSource(selectedRows.at(i)).row();
             m_context.append(m_application->browsingModel()->mediaItemAt(row));
         }
+        //Show indexer for selected filelistengine items
+        QString viewLri = m_application->browsingModel()->mediaListProperties().lri;
+        if (m_context.at(0).url.startsWith("files://") || viewLri.startsWith("files://")) {
+            ui->infoIndexerHolder->setVisible(true);
+        } else {
+            ui->infoIndexerHolder->setVisible(false);
+        }
+
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
         //the category selected to produce the list of media in the mediaview
         selected = false;
         m_context.append(m_application->browsingModel()->mediaListProperties().category);
+
+        //Hide indexer
+        ui->infoIndexerHolder->setVisible(false);
     } else {
+        //Hide indexer
+        ui->infoIndexerHolder->setVisible(false);
         return;
     }
     
