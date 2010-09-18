@@ -425,38 +425,40 @@ void InfoManager::loadSelectedInfo()
 void InfoManager::showIndexer()
 {
     //Show indexer for selected local filelistengine items
-    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-    MediaSortFilterProxyModel *proxy = (MediaSortFilterProxyModel *) ui->mediaView->model();
-    if (m_nepomukInited && selectedRows.count() > 0) {
-        bool indexerVisible = false;
-        for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            int row = proxy->mapToSource(selectedRows.at(i)).row();
-            MediaItem selectedItem = m_application->browsingModel()->mediaItemAt(row);
-            MediaListProperties selectedProperties;
-            selectedProperties.lri = selectedItem.url;
-            if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
-                KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
-                if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
-                    indexerVisible = true;
+    bool indexerVisible = false;
+    if (m_nepomukInited) {
+        QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+        MediaSortFilterProxyModel *proxy = (MediaSortFilterProxyModel *) ui->mediaView->model();
+        if (selectedRows.count() > 0) {
+            for (int i = 0 ; i < selectedRows.count() ; ++i) {
+                int row = proxy->mapToSource(selectedRows.at(i)).row();
+                MediaItem selectedItem = m_application->browsingModel()->mediaItemAt(row);
+                MediaListProperties selectedProperties;
+                selectedProperties.lri = selectedItem.url;
+                if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
+                    KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
+                    if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
+                        indexerVisible = true;
+                    } else {
+                        indexerVisible = false;
+                        break;
+                    }
                 } else {
                     indexerVisible = false;
                     break;
                 }
-            } else {
-                indexerVisible = false;
-                break;
             }
-        }
 
-        MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
-        if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
-            KUrl viewUrl(viewProperties.engineFilterList().at(1));
-            if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
-                indexerVisible = true;
+            MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
+            if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
+                KUrl viewUrl(viewProperties.engineFilterList().at(1));
+                if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
+                    indexerVisible = true;
+                }
             }
         }
-        ui->infoIndexerHolder->setVisible(indexerVisible);
     }
+    ui->infoIndexerHolder->setVisible(indexerVisible);
 }
 
 void InfoManager::updateViewsLayout()
