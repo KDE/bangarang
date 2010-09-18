@@ -296,7 +296,7 @@ void InfoManager::loadSelectedInfo()
     
     //Determine Information context
     bool selected = true;
-    //QList<MediaItem> context;
+    bool showIndexer = false;
     m_context.clear();
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
@@ -304,28 +304,36 @@ void InfoManager::loadSelectedInfo()
             int row = proxy->mapToSource(selectedRows.at(i)).row();
             m_context.append(m_application->browsingModel()->mediaItemAt(row));
         }
-        //Show indexer for selected filelistengine items
-        QString viewLri = m_application->browsingModel()->mediaListProperties().lri;
-        if ((m_context.at(0).url.startsWith("files://") || viewLri.startsWith("files://")) &&
-            m_nepomukInited) {
-            ui->infoIndexerHolder->setVisible(true);
-        } else {
-            ui->infoIndexerHolder->setVisible(false);
-        }
 
+        //Show indexer for selected local filelistengine items
+        if (m_nepomukInited) {
+            MediaListProperties selectedProperties;
+            selectedProperties.lri = m_context.at(0).url;
+            if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
+                KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
+                if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
+                    showIndexer = true;
+                }
+            }
+            MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
+            if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
+                KUrl viewUrl(viewProperties.engineFilterList().at(1));
+                if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
+                    showIndexer = true;
+                }
+            }
+        }
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
         //the category selected to produce the list of media in the mediaview
         selected = false;
         m_context.append(m_application->browsingModel()->mediaListProperties().category);
-
-        //Hide indexer
-        ui->infoIndexerHolder->setVisible(false);
     } else {
-        //Hide indexer
-        ui->infoIndexerHolder->setVisible(false);
         return;
     }
+
+    //Show/Hide indexer
+    ui->infoIndexerHolder->setVisible(showIndexer);
     
     //Determine type of context data
     bool contextIsMedia = false;
