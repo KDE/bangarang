@@ -374,12 +374,7 @@ void InfoManager::loadSelectedInfo()
             contextLRIs = mergedContextLRIs;
         }
 
-        //Load any context infoboxes
-        //NOTE:Currently infoboxes are only loaded for one category at a time.
-        /*MediaItem contextCategory = context.at(0);
-        QStringList contextTitles = contextCategory.fields["contextTitles"].toStringList();
-        contextLRIs = contextCategory.fields["contextLRIs"].toStringList();*/
-        
+        //Load any context infoboxes        
         int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
         for (int i = 0; i < contextLRIs.count(); i++) {
             QString title = contextTitles.at(i);
