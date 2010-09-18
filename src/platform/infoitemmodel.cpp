@@ -30,6 +30,38 @@
 InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+
+    //Store field order
+    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Clip"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Stream"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Feed"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Clip"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Feed"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Movie"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["TV Show"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "seriesName" << "season" << "episodeNumber" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
+
+    //Store field names
+    m_fieldNames["audioType"] = i18n("Type");
+    m_fieldNames["artwork"] = i18n("Artwork");
+    m_fieldNames["title"]= i18n("Title");
+    m_fieldNames["artist"] = i18n("Artist");
+    m_fieldNames["album"] = i18n("Album");
+    m_fieldNames["trackNumber"] = i18n("Track");
+    m_fieldNames["year"] = i18n("Year");
+    m_fieldNames["genre"] = i18n("Genre");
+    m_fieldNames["tags"] = i18n("Tags");
+    m_fieldNames["url"] = i18n("Location");
+    m_fieldNames["videoType"] = i18n("Type");
+    m_fieldNames["actor"] = i18n("Actor");
+    m_fieldNames["director"] = i18n("Director");
+    m_fieldNames["writer"] = i18n("Writer");
+    m_fieldNames["producer"] = i18n("Producer");
+    m_fieldNames["seriesName"] = i18n("Series");
+    m_fieldNames["season"] = i18n("Season");
+    m_fieldNames["episodeNumber"] = i18n("episodeNumber");
+    m_fieldNames["playCount"] = i18n("Play Count");
+    m_fieldNames["lastPlayed"] = i18n("Last Played");
 }
 
 InfoItemModel::~InfoItemModel()
@@ -42,59 +74,31 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     clear();
     
     if (m_mediaList.count() > 0) {
-        // Get fields shared by all media types
         QString type = m_mediaList.at(0).type;
-        
+        QString subType;
         if (type == "Audio") {
-            addFieldToValuesModel(i18n("Type"), "audioType");
-            addFieldToValuesModel(i18n("Artwork"), "artwork");
-            addFieldToValuesModel(i18n("Title"), "title");
-            QString subType = m_mediaList.at(0).fields["audioType"].toString();
-            if (subType == "Music") {
-                addFieldToValuesModel(i18n("Artist"), "artist");
-                addFieldToValuesModel(i18n("Album"), "album");
-                addFieldToValuesModel(i18n("Track"), "trackNumber");
-                addFieldToValuesModel(i18n("Year"), "year");
-                addFieldToValuesModel(i18n("Genre"), "genre");
-            }
-            addFieldToValuesModel(i18n("Description"), "description");
-            addFieldToValuesModel(i18n("Tags"), "tags");
-            if (subType == "Audio Stream") {
-                bool forceEditable = true;
-                addFieldToValuesModel(i18n("Location"), "url", forceEditable);
-            } else {
-                if (Utilities::isCd(m_mediaList.at(0).url))
-                    addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
-                else
-                    addFieldToValuesModel(i18n("Location"), "url");
-            }
+            subType = m_mediaList.at(0).fields["audioType"].toString();
         } else {
-            addFieldToValuesModel(i18n("Type"), "videoType");
-            addFieldToValuesModel(i18n("Artwork"), "artwork");
-            addFieldToValuesModel(i18n("Title"), "title");
-            addFieldToValuesModel(i18n("Description"), "description");
-            QString subType = m_mediaList.at(0).fields["videoType"].toString();
-            if (subType == "Movie" || subType == "TV Show") {
-                if (subType == "TV Show") {
-                    addFieldToValuesModel(i18n("Series"), "seriesName");
-                    addFieldToValuesModel(i18n("Season"), "season");
-                    addFieldToValuesModel(i18n("Episode"), "episodeNumber");
-                }
-                addFieldToValuesModel(i18n("Genre"), "genre");
-                addFieldToValuesModel(i18n("Year"), "year");
-                addFieldToValuesModel(i18n("Actor"), "actor");
-                addFieldToValuesModel(i18n("Director"), "director");
-                addFieldToValuesModel(i18n("Writer"), "writer");
-                addFieldToValuesModel(i18n("Producer"), "producer");
-            }
-            if (Utilities::isDvd(m_mediaList.at(0).url))
-                addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
-            else
-                addFieldToValuesModel(i18n("Location"), "url");
+            subType = m_mediaList.at(0).fields["videoType"].toString();
         }
-        if (m_mediaList.count() == 1) {
-            addFieldToValuesModel(i18n("Play Count"), "playCount");
-            addFieldToValuesModel(i18n("Last Played"), "lastPlayed");
+
+        //Load field info in order specified
+        QStringList fieldsOrder = m_fieldsOrder[subType];
+        for (int i = 0; i < fieldsOrder.count(); i++) {
+            QString field = fieldsOrder.at(i);
+            if (field == "playCount" || field == "lastPlayed") {
+                if (mediaList.count() == 1) { // only add these fields when one item is loaded
+                    addFieldToValuesModel(m_fieldNames[field],field);
+                }
+            } else if (field == "url") {
+                if (Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) {
+                    addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
+                } else {
+                    addFieldToValuesModel(m_fieldNames[field],field);
+                }
+            } else {
+                addFieldToValuesModel(m_fieldNames[field],field);
+            }
         }
     }
 }
