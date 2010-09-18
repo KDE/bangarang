@@ -185,10 +185,8 @@ private slots:
     void showLoading();
     void playlistLoading();
     void mediaListLoading();
-    void showNotification();
     void delayedNotificationHide();
-    void sourceInfoUpdated(const MediaItem &mediaItem);
-    void sourceInfoRemoved(QString url);
+    void browsingModelStatusUpdated();
     void updateCustomColors();
     void skipForward(int i);
     void skipBackward(int i);

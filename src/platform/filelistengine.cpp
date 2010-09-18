@@ -61,12 +61,12 @@ FileListEngine::~FileListEngine()
 void FileListEngine::run()
 {
     if (m_updateSourceInfo || m_removeSourceInfo) {
-        if (m_updateSourceInfo && !m_updateNepomukOnly) {
-            //TODO::Update file metadata here
-        }
-
         //Make sure to crawl dirs if necessary
         if (m_updateSourceInfo) {
+            QHash<QString, QVariant> status;
+            status["description"] = i18n("Gathering files..");
+            status["progress"] = -1;
+            emit updateStatus(status);
             m_mediaItemsInfoToUpdate = getFiles(m_mediaItemsInfoToUpdate);
         }
 

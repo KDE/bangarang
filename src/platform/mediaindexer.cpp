@@ -41,6 +41,7 @@ MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
         m_nepomukInited = false; //no resource manager
     }
     m_state = Idle;
+    m_percent = 0;
 }
 
 MediaIndexer::~MediaIndexer()
@@ -79,7 +80,10 @@ void MediaIndexer::updateInfo(const QList<MediaItem> &mediaList)
         m_writers.append(writer);
         writer->start();
         m_state = Running;
-        emit percentComplete(0);
+        QHash<QString, QVariant> status;
+        status["description"] = i18n("Starting update...");
+        status["progress"] = 0;
+        emit updateStatus(status);
     }
 }
 
@@ -119,7 +123,10 @@ void MediaIndexer::removeInfo(const QList<MediaItem> &mediaList)
         m_writers.append(writer);
         writer->start();
         m_state = Running;
-        emit percentComplete(0);
+        QHash<QString, QVariant> status;
+        status["description"] = i18n("Starting update...");
+        status["progress"] = 0;
+        emit updateStatus(status);
     }
 }
 
@@ -163,7 +170,6 @@ void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCoun
         m_writers.append(writer);
         writer->start();
         m_state = Running;
-        emit percentComplete(0);
     }
 }
 
@@ -192,7 +198,6 @@ void MediaIndexer::updateRating(const QString &url, int rating)
         m_writers.append(writer);
         writer->start();
         m_state = Running;
-        emit percentComplete(0);
     }
 }
 
@@ -239,10 +244,8 @@ void MediaIndexer::processWriterOutput()
                 qint64 lineLength = m_writers.at(i)->readLine(buffer, sizeof(buffer));
                 if (lineLength != -1) {
                     QString line = QUrl::fromPercentEncoding(buffer);
-                    //kDebug() << line;
                     if (line.startsWith("BangarangProgress:")) {
-                        int percent = line.remove("BangarangProgress:").trimmed().toInt();
-                        emit percentComplete(percent);
+                        m_percent = line.remove("BangarangProgress:").trimmed().toInt();
                     } else if (line.startsWith("BangarangSignal:sourceInfoUpdated:")) {
                         QString url = line.remove("BangarangSignal:sourceInfoUpdated:").trimmed();
                         QList<QString> urls = m_urlLists[i];
@@ -250,9 +253,17 @@ void MediaIndexer::processWriterOutput()
                         if (index != -1) {
                             MediaItem mediaItem = m_mediaLists[i].at(index);
                             emit sourceInfoUpdated(mediaItem);
+                            QHash<QString, QVariant> status;
+                            status["description"] = i18n("Updated %1", mediaItem.title);
+                            status["progress"] = m_percent;
+                            emit updateStatus(status);
                         }
                     } else if (line.startsWith("BangrangSignal:urlInfoRemoved:")) {
                         QString resourceUri = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
+                        QHash<QString, QVariant> status;
+                        status["description"] = i18n("Removing info...");
+                        status["progress"] = m_percent;
+                        emit updateStatus(status);
                         emit urlInfoRemoved(resourceUri);
                     }
                 }
@@ -264,6 +275,11 @@ void MediaIndexer::processWriterOutput()
 void MediaIndexer::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     emit finished();
+    QHash<QString, QVariant> status;
+    status["description"] = QString();
+    status["progress"] = -1;
+    emit updateStatus(status);
+
     bool isAllFinished = true;
     for (int i = 0; i < m_writers.count(); i++) {
         if (m_writers.at(i)->state() == QProcess::Running ||
