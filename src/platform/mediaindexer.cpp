@@ -254,7 +254,7 @@ void MediaIndexer::processWriterOutput()
                             MediaItem mediaItem = m_mediaLists[i].at(index);
                             emit sourceInfoUpdated(mediaItem);
                             QHash<QString, QVariant> status;
-                            status["description"] = i18n("Updated %1", mediaItem.title);
+                            status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
                             status["progress"] = m_percent;
                             emit updateStatus(status);
                         }

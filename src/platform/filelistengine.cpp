@@ -64,10 +64,10 @@ void FileListEngine::run()
         //Make sure to crawl dirs if necessary
         if (m_updateSourceInfo) {
             QHash<QString, QVariant> status;
-            status["description"] = i18n("Gathering files..");
+            status["description"] = i18n("Collecting file info...");
             status["progress"] = -1;
             emit updateStatus(status);
-            m_mediaItemsInfoToUpdate = getFiles(m_mediaItemsInfoToUpdate);
+            m_mediaItemsInfoToUpdate = getFiles(m_mediaItemsInfoToUpdate, false, true);
         }
 
         NepomukListEngine::run();
@@ -225,7 +225,7 @@ void FileListEngine::listingComplete(const KUrl &url)
     Q_UNUSED(url);
 }
 
-QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basicInfo)
+QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basicInfo, bool emitStatus)
 {
     //This routine looks for directories in mediaList, crawls and returns a media list with files only
     QList<MediaItem> crawledList;
@@ -278,6 +278,13 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                             MediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl, true);
                             crawledList.append(mediaItem);
                         }
+                        if (emitStatus && (crawledList.count() % 20 == 0)) {
+                            QHash<QString, QVariant> status;
+                            status["description"] = i18n("Collecting file info (%1 files)...", crawledList.count());
+                            status["progress"] = -1;
+                            emit updateStatus(status);
+                        }
+
                     }
                 }
             }
