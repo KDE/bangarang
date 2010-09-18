@@ -59,7 +59,7 @@ class FileListEngine : public NepomukListEngine
         KDirModel *m_dirModel;
         KDirSortFilterProxyModel *m_dirSortProxyModel;
         bool m_updateNepomukOnly;
-        QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false);
+        QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false, bool emitStatus = false);
         QFileInfoList crawlDir(const QDir &dir, QString engineArg);
 
     private Q_SLOTS:

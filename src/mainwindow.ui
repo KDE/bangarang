@@ -874,8 +874,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>133</width>
+                    <height>219</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -2219,29 +2219,10 @@
                       <verstretch>0</verstretch>
                      </sizepolicy>
                     </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>390</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
                     <property name="text">
                      <string>Notification Text</string>
                     </property>
                    </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_9">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                   <item>
                    <widget class="QProgressBar" name="notificationProgress">
