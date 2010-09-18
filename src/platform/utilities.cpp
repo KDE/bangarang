@@ -579,7 +579,6 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         if (!url.isLocalFile()) {
             mediaItem.type = "Audio";
             mediaItem.fields["audioType"] = "Audio Stream";
-            mediaItem.title = url.prettyUrl();
         }
     }
     
@@ -638,7 +637,10 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
                 mediaItem.fields["year"] = year;
             }
         } else if (mediaItem.fields["audioType"] == "Audio Stream") {
-            mediaItem.artwork = KIcon("x-media-podcast");
+            mediaItem.artwork = KIcon("text-html");
+            if (mediaItem.title.isEmpty()) {
+                mediaItem.title = url.prettyUrl();
+            }
         }
     } else if (mediaItem.type == "Video") {
         if (mediaItem.fields["videoType"] == "Video Clip") {
