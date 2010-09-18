@@ -1165,21 +1165,25 @@ void MainWindow::switchMainWidget(MainWindow::MainWidget which)
 {
     ui->stackedWidget->setCurrentIndex((int) which);
     m_application->actionsManager()->updateToggleFilterText();
+
+    //If no media list has been loaded yet, then load the selected one.
     if (which == MainMediaList) {
-        if (ui->mediaLists->currentIndex() == 0) {
-            QModelIndexList selected = ui->audioLists->selectionModel()->selectedIndexes();
-            if (selected.count() > 0) {
-                int selectedRow = selected.at(0).row();
-                loadMediaList(m_audioListsModel, selectedRow);
-            }
-        } else {
-            QModelIndexList selected = ui->videoLists->selectionModel()->selectedIndexes();
-            if (selected.count() > 0) {
-                int selectedRow = selected.at(0).row();
-                loadMediaList(m_videoListsModel, selectedRow);
+        if (m_application->browsingModel()->mediaListProperties().lri.isEmpty()) {
+            if (ui->mediaLists->currentIndex() == 0) {
+                QModelIndexList selected = ui->audioLists->selectionModel()->selectedIndexes();
+                if (selected.count() > 0) {
+                    int selectedRow = selected.at(0).row();
+                    loadMediaList(m_audioListsModel, selectedRow);
+                }
+            } else {
+                QModelIndexList selected = ui->videoLists->selectionModel()->selectedIndexes();
+                if (selected.count() > 0) {
+                    int selectedRow = selected.at(0).row();
+                    loadMediaList(m_videoListsModel, selectedRow);
+                }
             }
         }
-    }           
+    }
 }
 
 MainWindow::MainWidget MainWindow::currentMainWidget()
