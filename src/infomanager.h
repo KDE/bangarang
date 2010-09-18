@@ -69,6 +69,7 @@ class InfoManager : public QObject
         void infoFetcherSelected(QAction *action);
         
     private:
+        void showIndexer();
         BangarangApplication * m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
@@ -93,6 +94,7 @@ class InfoManager : public QObject
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
         void infoFetched(MediaItem mediaItem);
+        void infoChanged(bool modified);
         
     Q_SIGNALS:
         void infoBoxSelectionChanged(QList<MediaItem> selectedItems);

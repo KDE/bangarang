@@ -89,7 +89,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoFetchers.at(0), SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
     
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
-    connect(m_infoItemModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
+    connect(m_infoItemModel, SIGNAL(infoChanged(bool)), this, SLOT(infoChanged(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->infoIndexSelected, SIGNAL(clicked()), this, SLOT(addSelectedItemsInfo()));
@@ -146,6 +146,16 @@ bool InfoManager::infoViewVisible()
     return m_infoViewVisible;
 }
 
+void InfoManager::infoChanged(bool modified)
+{
+    ui->infoSaveHolder->setVisible(modified);
+    if (modified) {
+        ui->infoIndexerHolder->setVisible(false);
+    } else {
+        showIndexer();
+    }
+}
+
 QList<InfoFetcher *> InfoManager::infoFetchers()
 {
     return m_infoFetchers;
@@ -175,6 +185,7 @@ void InfoManager::saveItemInfo()
     
     //Now that data is saved hide Save/Cancel controls
     ui->infoSaveHolder->setVisible(false);
+    showIndexer();
     updateViewsLayout();
 }
 
@@ -186,6 +197,7 @@ void InfoManager::cancelItemEdit()
         m_infoItemModel->cancelChanges();
     }
     ui->infoSaveHolder->setVisible(false);
+    showIndexer();
     updateViewsLayout();
 }
 
@@ -296,32 +308,12 @@ void InfoManager::loadSelectedInfo()
     
     //Determine Information context
     bool selected = true;
-    bool showIndexer = false;
     m_context.clear();
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
             int row = proxy->mapToSource(selectedRows.at(i)).row();
             m_context.append(m_application->browsingModel()->mediaItemAt(row));
-        }
-
-        //Show indexer for selected local filelistengine items
-        if (m_nepomukInited) {
-            MediaListProperties selectedProperties;
-            selectedProperties.lri = m_context.at(0).url;
-            if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
-                KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
-                if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
-                    showIndexer = true;
-                }
-            }
-            MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
-            if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
-                KUrl viewUrl(viewProperties.engineFilterList().at(1));
-                if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
-                    showIndexer = true;
-                }
-            }
         }
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
@@ -333,7 +325,7 @@ void InfoManager::loadSelectedInfo()
     }
 
     //Show/Hide indexer
-    ui->infoIndexerHolder->setVisible(showIndexer);
+    showIndexer();
     
     //Determine type of context data
     bool contextIsMedia = false;
@@ -427,6 +419,43 @@ void InfoManager::loadSelectedInfo()
         }
         
         updateViewsLayout();
+    }
+}
+
+void InfoManager::showIndexer()
+{
+    //Show indexer for selected local filelistengine items
+    QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
+    MediaSortFilterProxyModel *proxy = (MediaSortFilterProxyModel *) ui->mediaView->model();
+    if (m_nepomukInited && selectedRows.count() > 0) {
+        bool indexerVisible = false;
+        for (int i = 0 ; i < selectedRows.count() ; ++i) {
+            int row = proxy->mapToSource(selectedRows.at(i)).row();
+            MediaItem selectedItem = m_application->browsingModel()->mediaItemAt(row);
+            MediaListProperties selectedProperties;
+            selectedProperties.lri = selectedItem.url;
+            if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
+                KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
+                if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
+                    indexerVisible = true;
+                } else {
+                    indexerVisible = false;
+                    break;
+                }
+            } else {
+                indexerVisible = false;
+                break;
+            }
+        }
+
+        MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
+        if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
+            KUrl viewUrl(viewProperties.engineFilterList().at(1));
+            if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
+                indexerVisible = true;
+            }
+        }
+        ui->infoIndexerHolder->setVisible(indexerVisible);
     }
 }
 
