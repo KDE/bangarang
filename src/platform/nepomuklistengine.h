@@ -64,9 +64,6 @@ class NepomukListEngine : public ListEngine
     Q_SIGNALS:
         void updateRemovalStarted();
         void updateRemovalComplete();
-        //void urlInfoRemoved(QString url);
-        //void sourceInfoUpdated(MediaItem mediaItem);
-        //void percentComplete(int percent);
         
 };
 #endif // NEPOMUKLISTENGINE_H
