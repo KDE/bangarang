@@ -126,7 +126,7 @@ class MediaIndexer : public QObject
         /**
          * Emitted when media information has been updated/removed.
          */
-        void percentComplete(int percent);
+        void updateStatus(QHash<QString, QVariant> updatedStatus);
     
     private:
         bool m_nepomukInited;
@@ -134,6 +134,7 @@ class MediaIndexer : public QObject
         QHash<int, QList<MediaItem> > m_mediaLists;
         QHash<int, QList<QString> > m_urlLists;
         State m_state;
+        int m_percent;
         void writeRemoveInfo(MediaItem mediaItem, QTextStream &out);
         void writeUpdateInfo(MediaItem mediaItem, QTextStream &out);
         

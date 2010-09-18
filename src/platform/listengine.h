@@ -163,6 +163,7 @@ class ListEngine : public QThread
         void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
         void download(const KUrl &from, const KUrl &to);
         void listDir(const KUrl &url);
+        void updateStatus(QHash<QString, QVariant> updatedStatus);
         
     protected:
         ListEngineFactory * m_parent;

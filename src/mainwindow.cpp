@@ -158,14 +158,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     
-    //Set up Browsing Model notifications
+    //Set up Browsing Model status notifications
     ui->notificationWidget->setVisible(false);
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateRemovalStarted()), this, SLOT(showNotification()));
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoRemovalProgress(int)), ui->notificationProgress, SLOT(setValue(int)));
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdateRemovalComplete()), this, SLOT(delayedNotificationHide()));
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoUpdated(MediaItem)), this, SLOT(sourceInfoUpdated(MediaItem)));
-    connect(m_application->browsingModel(), SIGNAL(sourceInfoRemoved(QString)), this, SLOT(sourceInfoRemoved(QString)));
+    connect(m_application->browsingModel(), SIGNAL(statusUpdated()), this, SLOT(browsingModelStatusUpdated()));
     
     //Set up playlist
     connect(m_application->playlist(), SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
@@ -735,35 +730,29 @@ void MainWindow::mediaListActionActivated(QModelIndex index)
 }
 
 
-void MainWindow::showNotification()
-{
-    ui->notificationText->setText(i18n("Updating..."));
-    ui->notificationWidget->setVisible(true);
-}
-
 void MainWindow::delayedNotificationHide()
 {
     ui->notificationText->setText(i18n("Complete"));
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
 }
 
-void MainWindow::sourceInfoUpdated(const MediaItem &mediaItem)
+void MainWindow::browsingModelStatusUpdated()
 {
-    QFontMetrics fm =  ui->notificationText->fontMetrics();
-    QString notificationText = i18n("Updated info for <i>%1, %2</i>", mediaItem.title, mediaItem.subTitle);
-    notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
-    
-    ui->notificationText->setText(notificationText);
-    ui->notificationWidget->setVisible(true);
-}
-
-void MainWindow::sourceInfoRemoved(QString url)
-{
-    QFontMetrics fm =  ui->notificationText->fontMetrics();
-    QString notificationText = i18n("Removed info for <i>%1</i>", url);
-    notificationText = fm.elidedText(notificationText, Qt::ElideMiddle, ui->notificationText->width());
-    ui->notificationText->setText(notificationText);
-    ui->notificationWidget->setVisible(true);
+    QHash<QString, QVariant> status = m_application->browsingModel()->status();
+    QString description = status["description"].toString();
+    int progress = status["progress"].toInt();
+    if (!description.isEmpty()) {
+        ui->notificationText->setText(description);
+        ui->notificationWidget->setVisible(true);
+    } else {
+        delayedNotificationHide();
+    }
+    if (progress >= 0 && progress <= 100) {
+        ui->notificationProgress->setValue(progress);
+        ui->notificationProgress->setVisible(true);
+    } else {
+        ui->notificationProgress->setVisible(false);
+    }
 }
 
 void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )

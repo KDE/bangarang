@@ -619,47 +619,6 @@ class MediaItemModel : public QStandardItemModel
         void loading();
         
         /**
-         * Emmited when the source information for a MediaItem is updated.
-         *
-         * @param mediaItem MediaItem whose information was updated in
-         *                  the source.
-         */
-        void sourceInfoUpdated(MediaItem mediaItem); 
-        
-        /**
-         * Emitted when the source information for a MediaItem is updated
-         *
-         * @param percent percentage of MediaItems updated (from the 
-         *                list of MediaItems being updated).
-         */
-        void sourceInfoUpdateProgress(int percent);
-        
-        /**
-         * Emmited when the source information for MediaItem is removed.
-         *
-         * @param url url of MediaItem remove from the source
-         */
-        void sourceInfoRemoved(QString url);
-        
-        /**
-        * Emitted when the source information for a MediaItem is removed
-        *
-        * @param percent percentage of MediaItems removed (of the 
-        *                list of MediaItems being removed).
-        */
-        void sourceInfoRemovalProgress(int percent);
-        
-        /**
-         * Emitted when the update or removal of the list MediaItems is complete.
-         */
-        void sourceInfoUpdateRemovalComplete();
-        
-        /**
-        * Emitted when the update or removal of the list MediaItems has started.
-        */
-        void sourceInfoUpdateRemovalStarted();
-
-        /**
          * Emitted when status is updated
          */
         void statusUpdated();

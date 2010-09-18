@@ -51,6 +51,10 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
             SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)),
             m_mediaItemModel,
             SLOT(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)));
+    connect(this,
+            SIGNAL(updateStatus(QHash<QString,QVariant>)),
+            m_mediaItemModel,
+            SLOT(updateStatus(QHash<QString,QVariant>)));
 }
 
 MediaItemModel * ListEngine::model()
