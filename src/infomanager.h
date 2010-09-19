@@ -76,8 +76,6 @@ class InfoManager : public QObject
         bool m_nepomukInited;
         InfoItemModel *m_infoItemModel;
         InfoItemDelegate *m_infoItemDelegate;
-        InfoCategoryModel *m_infoCategoryModel;
-        InfoCategoryDelegate *m_infoCategoryDelegate;
         QList<MediaItem> m_context;
         MediaItemModel *m_recentlyPlayedModel;
         MediaItemModel *m_highestRatedModel;

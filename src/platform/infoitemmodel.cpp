@@ -31,15 +31,30 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
 
+    m_defaultEditable = false;
+
     //Store field order
     m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Clip"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Stream"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Feed"]= QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Video Clip"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Video Feed"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Movie"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["TV Show"]= QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "seriesName" << "season" << "episodeNumber" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Feed"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Feed"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "seriesName" << "season" << "episodeNumber" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Artist"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["Album"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["AudioTag"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["TV Series"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["VideoGenre"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["Actor"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["Director"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["VideoTag"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["Audio Feed"] = QStringList() << "artwork" << "title" << "description" << "url";
+    m_fieldsOrder["Video Feed"] = QStringList() << "artwork" << "title" << "description" << "url";
+    m_fieldsOrder["Basic"] = QStringList() << "title";
+    m_fieldsOrder["Basic+Artwork"] = QStringList() << "artwork" << "title";
 
     //Store field names
     m_fieldNames["audioType"] = i18n("Type");
@@ -78,12 +93,20 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
         QString subType;
         if (type == "Audio") {
             subType = m_mediaList.at(0).fields["audioType"].toString();
-        } else {
+            m_defaultEditable = true;
+        } else if (type == "Video"){
             subType = m_mediaList.at(0).fields["videoType"].toString();
+            m_defaultEditable = true;
+        } else {
+            subType = m_mediaList.at(0).fields["categoryType"].toString();
+            m_defaultEditable = false;
+            if (subType == "Audio Feed" || subType == "Video Feed") {
+                m_defaultEditable = true;
+            }
         }
 
         //Load field info in order specified
-        QStringList fieldsOrder = m_fieldsOrder[subType];
+        QStringList fieldsOrder = m_fieldsOrder.value(subType, m_fieldsOrder["Basic"]);
         for (int i = 0; i < fieldsOrder.count(); i++) {
             QString field = fieldsOrder.at(i);
             if (field == "playCount" || field == "lastPlayed") {
@@ -200,7 +223,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     fieldItem->setData(fieldTitle, InfoItemModel::FieldNameRole);
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
-    bool isEditable = true;
+    bool isEditable = m_defaultEditable;
     if ((field == "playCount" || field == "lastPlayed" || field == "url") && !forceEditable) {
         isEditable = false;
     }
@@ -217,10 +240,14 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(artworkUrl, InfoItemModel::OriginalValueRole); //stores copy of original data
         
         //Compose artwork slice for each selected item.
+        bool useDefaultArtwork = true;
         QPixmap artwork(128,128);
         artwork.fill(Qt::transparent);
-        QPainter p(&artwork);
         int totalSlices = qMin(12, m_mediaList.count());
+        if (totalSlices > 1) {
+            useDefaultArtwork = false;
+        }
+        QPainter p(&artwork);
         for (int i = 0; i < totalSlices; i++) {
             int sliceSourceRow = i * (m_mediaList.count()/totalSlices) + 0.5; 
             MediaItem sliceSourceItem = m_mediaList.at(sliceSourceRow);
@@ -231,16 +258,18 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
                 QPainter p1(&centeredArtwork);
                 QIcon(itemArtwork).paint(&p1, 0, 0, 128, 128, Qt::AlignCenter);
                 itemArtwork = centeredArtwork;
-            } else {
-                itemArtwork = sliceSourceItem.artwork.pixmap(128,128);
+                useDefaultArtwork = false;
             }
             qreal sliceWidth = 128.0/totalSlices;
             qreal sliceLeft = sliceWidth * i;
             p.drawPixmap(QRectF(sliceLeft, 0, sliceWidth, 128), itemArtwork, QRectF(sliceLeft, 0, sliceWidth, 128));
         }
         p.end();
-        fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
-            
+        if (useDefaultArtwork) {
+            fieldItem->setData(m_mediaList.at(0).artwork, Qt::DecorationRole);
+        } else {
+            fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+        }
         rowData.append(fieldItem);
         appendRow(rowData);
         return;

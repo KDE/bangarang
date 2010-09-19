@@ -52,6 +52,7 @@ class InfoItemModel : public QStandardItemModel
         MediaItemModel * m_sourceModel;
         QHash<QString, QStringList> m_fieldsOrder;
         QHash<QString, QString> m_fieldNames;
+        bool m_defaultEditable;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
