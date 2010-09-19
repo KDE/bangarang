@@ -91,7 +91,6 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://artists";
             mediaItem.artwork = KIcon("system-users");
-            mediaItem.fields["categoryType"] = QString("Artists");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=artist");
@@ -101,7 +100,6 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://albums";
             mediaItem.artwork = KIcon("media-optical");
-            mediaItem.fields["categoryType"] = QString("Albums");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=album");
@@ -110,7 +108,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Genres");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://genres";
-            mediaItem.fields["categoryType"] = QString("Audio Genres");
             mediaItem.artwork = KIcon("flag-blue");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=genre");
@@ -150,7 +147,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Audio Feeds");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "feeds://audiofeeds";
-            mediaItem.fields["categoryType"] = QString("Audio Feeds");
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaItem.clearContexts();
             mediaList << mediaItem;
@@ -263,7 +259,6 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://movies";
             mediaItem.artwork = KIcon("tool-animator");
-            mediaItem.fields["categoryType"] = QString("Movies");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||videoType=movie");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||videoType=movie");
@@ -273,7 +268,6 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://tvshows";
             mediaItem.artwork = KIcon("video-television");
-            mediaItem.fields["categoryType"] = QString("TV Series");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=seriesName");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=seriesName");
@@ -282,7 +276,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Genres");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://genres";
-            mediaItem.fields["categoryType"] = QString("Video Genres");
             mediaItem.artwork = KIcon("flag-green");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=genre");
@@ -292,7 +285,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Actors");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://actors";
-            mediaItem.fields["categoryType"] = QString("Actors");
             mediaItem.artwork = KIcon("view-media-artist");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=actor");
@@ -302,7 +294,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Directors");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://directors";
-            mediaItem.fields["categoryType"] = QString("Directors");
             mediaItem.artwork = KIcon("view-media-artist");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=director");
@@ -312,7 +303,6 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Video Clips");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://clips";
-            mediaItem.fields["categoryType"] = QString("Video Clips");
             mediaItem.artwork = KIcon("video-x-generic");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||videoType=video clip");
@@ -322,14 +312,12 @@ void MediaListsEngine::run()
             mediaItem.title = i18n("Video Feeds");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "feeds://videofeeds";
-            mediaItem.fields["categoryType"] = QString("Video Feeds");
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaItem.clearContexts();
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "tag://videotags";
-            mediaItem.fields["categoryType"] = QString("Video Tags");
             mediaItem.artwork = KIcon("view-pim-notes");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=tag");

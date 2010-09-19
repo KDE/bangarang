@@ -14,7 +14,6 @@ set(BangarangSources
     infobox.cpp
     infomanager.cpp
     infoitemdelegate.cpp
-    infocategorydelegate.cpp
     savedlistsmanager.cpp
     actionsmanager.cpp
     bookmarksmanager.cpp
@@ -49,7 +48,6 @@ set(BangarangSources
     platform/feedlistengine.cpp
     platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
-    platform/infocategorymodel.cpp
     platform/dbpediaquery.cpp
     platform/ontologyupdater.cpp
     platform/downloader.cpp

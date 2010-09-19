@@ -49,6 +49,8 @@ class InfoItemDelegate : public QItemDelegate
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
         void setView(QAbstractItemView * view);
         void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        int rowHeight(int row) const;
+        int heightForAllRows();
             
     private:
         MainWindow * m_parent;
