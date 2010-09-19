@@ -35,9 +35,10 @@ class InfoItemModel : public QStandardItemModel
     Q_OBJECT
     public:
         enum InfoItemRoles {FieldRole = Qt::UserRole,
-                            MultipleValuesRole = Qt::UserRole + 1,
-                            OriginalValueRole = Qt::UserRole +2,
-                            ValueListRole = Qt::UserRole +3};
+                            FieldNameRole = Qt::UserRole + 1,
+                            MultipleValuesRole = Qt::UserRole + 2,
+                            OriginalValueRole = Qt::UserRole + 3,
+                            ValueListRole = Qt::UserRole + 4};
         InfoItemModel(QObject * parent = 0);
         ~InfoItemModel();
         void loadInfo(const QList<MediaItem> & mediaList);

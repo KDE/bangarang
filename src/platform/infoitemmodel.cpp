@@ -93,6 +93,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
             } else if (field == "url") {
                 if (Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) {
                     addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
+                } else if (subType == "Audio Stream" ||
+                           subType == "Audio Feed" ||
+                           subType == "Video Feed") {
+                    addFieldToValuesModel(m_fieldNames[field],field, true); //url must be editable for these subTypes
                 } else {
                     addFieldToValuesModel(m_fieldNames[field],field);
                 }
@@ -191,17 +195,9 @@ void InfoItemModel::setSourceModel(MediaItemModel * sourceModel)
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
 {
     QList<QStandardItem *> rowData;
-    
-    // Set field label (artwork and title fields span both columns)
-    if (field != "artwork" && field != "title" && field != "description") {
-        QStandardItem *fieldTitleItem = new QStandardItem(fieldTitle);
-        fieldTitleItem->setData(field, InfoItemModel::FieldRole);
-        fieldTitleItem->setEditable(false);
-        rowData.append(fieldTitleItem);
-    }
-
     QStandardItem *fieldItem = new QStandardItem();
     fieldItem->setData(field, InfoItemModel::FieldRole);
+    fieldItem->setData(fieldTitle, InfoItemModel::FieldNameRole);
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
     bool isEditable = true;
@@ -213,6 +209,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
     }
 
+    //Set artwork
     if (field == "artwork") {
         KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["artworkUrl"].toString());
         fieldItem->setData(artworkUrl, Qt::DisplayRole);
