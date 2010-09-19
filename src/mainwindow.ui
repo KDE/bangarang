@@ -1872,7 +1872,7 @@
                           <bool>true</bool>
                          </property>
                          <property name="currentIndex">
-                          <number>0</number>
+                          <number>1</number>
                          </property>
                          <widget class="QWidget" name="categorySemantics">
                           <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -2046,7 +2046,7 @@
                             <number>0</number>
                            </property>
                            <item>
-                            <widget class="QTableView" name="infoItemView">
+                            <widget class="QListView" name="infoItemView">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                                <horstretch>0</horstretch>
@@ -2068,33 +2068,6 @@
                              <property name="verticalScrollMode">
                               <enum>QAbstractItemView::ScrollPerPixel</enum>
                              </property>
-                             <property name="showGrid">
-                              <bool>false</bool>
-                             </property>
-                             <property name="cornerButtonEnabled">
-                              <bool>false</bool>
-                             </property>
-                             <attribute name="horizontalHeaderVisible">
-                              <bool>false</bool>
-                             </attribute>
-                             <attribute name="horizontalHeaderDefaultSectionSize">
-                              <number>70</number>
-                             </attribute>
-                             <attribute name="horizontalHeaderMinimumSectionSize">
-                              <number>12</number>
-                             </attribute>
-                             <attribute name="horizontalHeaderStretchLastSection">
-                              <bool>true</bool>
-                             </attribute>
-                             <attribute name="verticalHeaderVisible">
-                              <bool>false</bool>
-                             </attribute>
-                             <attribute name="verticalHeaderDefaultSectionSize">
-                              <number>12</number>
-                             </attribute>
-                             <attribute name="verticalHeaderMinimumSectionSize">
-                              <number>6</number>
-                             </attribute>
                             </widget>
                            </item>
                           </layout>

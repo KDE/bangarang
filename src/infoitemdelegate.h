@@ -48,6 +48,7 @@ class InfoItemDelegate : public QItemDelegate
         QWidget *createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
         void setView(QAbstractItemView * view);
+        void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
             
     private:
         MainWindow * m_parent;

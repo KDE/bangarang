@@ -64,128 +64,120 @@ InfoItemDelegate::~InfoItemDelegate()
 
 void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    QStandardItemModel * model = (QStandardItemModel *)index.model();
+
+    //Get basic information about painting area
     const int left = option.rect.left();
     const int top = option.rect.top();
     const int width = option.rect.width();
     const int height = option.rect.height();   
-    int padding = 2;
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
-    
+
+    //Get basic information about field
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    QString text = index.data(Qt::DisplayRole).toString();
+    bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+    bool isEditable = model->itemFromIndex(index)->isEditable();
+    bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
+    bool isArtwork = (field == "artwork");
+
+    //Set basic formatting info
+    int padding = 3;
+    QFont textFont = KGlobalSettings::smallestReadableFont();
+    Qt::AlignmentFlag hAlign = Qt::AlignLeft;
+    int fieldNameWidth = qMax(70, (width - 3 * padding)/4);
+
+    //Formatting modifications based on field info
+    if (multipleValues) {
+        text = i18n("Multiple Values");
+        textFont.setItalic(true);
+        foregroundColor.setAlphaF(0.7);
+    }
+    if (modified) {
+        textFont.setBold(true);
+    }
+
     //Create base pixmap
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::transparent);
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
-    QString field = index.data(InfoItemModel::FieldRole).toString();
-    QStandardItemModel * model = (QStandardItemModel *)index.model();
-    bool isEditable = model->itemFromIndex(index)->isEditable();
-    if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
-        KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
-    }
-    bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
-    
     if (index.column() == 0) {
-        //Paint first column containing artwork, title, description and field labels
-        if (field == "artwork") {
+        //Special handling for some field types
+        if (field == "audioType") {
+            int typeIndex = index.data(Qt::DisplayRole).toInt();
+            if (typeIndex == 0) {
+                text = i18n("Music");
+            } else if (typeIndex == 1) {
+                text = i18n("Audio Stream");
+            } else if (typeIndex == 2) {
+                text = i18n("Audio Clip");
+            }
+        } else if (field == "videoType") {
+            int typeIndex = index.data(Qt::DisplayRole).toInt();
+            if (typeIndex == 0) {
+                text = i18n("Movie");
+            } else if (typeIndex == 1) {
+                text = i18n("TV Show");
+            } else if (typeIndex == 2) {
+                text = i18n("Video Clip");
+            }
+        } else if (field == "artwork") {
+            fieldNameWidth = 0;
+        } else if (field == "title") {
+            textFont = option.font;
+            textFont.setPointSize(1.5*textFont.pointSize());
+            fieldNameWidth = 0;
+            hAlign = Qt::AlignHCenter;
+        } else if (field == "description") {
+            hAlign = Qt::AlignJustify;
+            padding = 10;
+            fieldNameWidth = 0;
+            if (text.isEmpty()) {
+                foregroundColor.setAlphaF(0.7);
+                text = i18n("No description");
+                hAlign = Qt::AlignCenter;
+                textFont.setItalic(true);
+            }
+        } else if (field == "url") {
+            int textWidth = width - 4 * padding - fieldNameWidth;
+            text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textWidth);
+        }
+
+        //Paint field name
+        if (fieldNameWidth > 0) {
+            QString fieldName = index.data(InfoItemModel::FieldNameRole).toString();
+            QFont fieldNameFont = KGlobalSettings::smallestReadableFont();
+            fieldNameFont.setItalic(true);
+            QTextOption textOption(Qt::AlignRight | Qt::AlignVCenter);
+            textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+            QRect textRect(left + padding, top, fieldNameWidth, height);
+            p.setFont(fieldNameFont);
+            p.setPen(foregroundColor);
+            p.drawText(QRectF(textRect), fieldName, textOption);
+        }
+
+        //Paint field data
+        if (isArtwork) {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
         } else {
-            Qt::AlignmentFlag hAlign;
-            QFont textFont = option.font;
-            QString text = index.data(Qt::DisplayRole).toString();
-            if (field == "title") {
-                textFont.setPointSize(1.5*textFont.pointSize());
-                hAlign = Qt::AlignHCenter;
-                if (multipleValues) {
-                    foregroundColor.setAlphaF(0.7);
-                    text = i18n("Multiple Values");
-                    textFont.setItalic(true);
-                } else if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
-                    textFont.setBold(true);
-                }
-            } else if (field == "description") {
-                textFont = KGlobalSettings::smallestReadableFont();
-                hAlign = Qt::AlignJustify;
-                padding = 10;
-                if (multipleValues) {
-                    foregroundColor.setAlphaF(0.7);
-                    text = i18n("Multiple Values");
-                    textFont.setItalic(true);
-                } else if (text.isEmpty()) {
-                    foregroundColor.setAlphaF(0.7);
-                    text = i18n("No description");
-                    textFont.setItalic(true);
-                    hAlign = Qt::AlignCenter;
-                }
-                if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
-                    textFont.setBold(true);
-                }
-            } else {
-                textFont = KGlobalSettings::smallestReadableFont();
-                textFont.setItalic(true);
-                hAlign = Qt::AlignRight;
-            }
-            int textWidth = width - 2 * padding;
+            int textWidth = width - 4 * padding - fieldNameWidth;
             QTextOption textOption(hAlign | Qt::AlignVCenter);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-            QRect textRect(left + padding, top, textWidth, height);
+            QRect textRect(left + fieldNameWidth + 2 * padding, top, textWidth, height);
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
         }
-                                        
-    } else if (index.column() == 1) {
-        //Paint second column containing field values
-        if (multipleValues) {
-            int textWidth = width - 2 * padding;
-            QFont textFont = KGlobalSettings::smallestReadableFont();
-            textFont.setItalic(true);
-            p.setFont(textFont);
-            foregroundColor.setAlphaF(0.7);
-            p.setPen(foregroundColor);
-            p.drawText(left + padding, top, textWidth, height,
-                       Qt::AlignLeft | Qt::AlignVCenter, i18n("Multiple Values"));
-        } else {
-            QString text = index.data(Qt::DisplayRole).toString();
-            QString field = index.data(InfoItemModel::FieldRole).toString();
-            if (field == "audioType") {
-                int typeIndex = index.data(Qt::DisplayRole).toInt();
-                if (typeIndex == 0) {
-                    text = i18n("Music");
-                } else if (typeIndex == 1) {
-                    text = i18n("Audio Stream");
-                } else if (typeIndex == 2) {
-                    text = i18n("Audio Clip");
-                }
-            } else if (field == "videoType") {
-                int typeIndex = index.data(Qt::DisplayRole).toInt();
-                if (typeIndex == 0) {
-                    text = i18n("Movie");
-                } else if (typeIndex == 1) {
-                    text = i18n("TV Show");
-                } else if (typeIndex == 2) {
-                    text = i18n("Video Clip");
-                }
-            }
-            QFont textFont = KGlobalSettings::smallestReadableFont();
-            if (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole)) {
-                textFont.setBold(true);
-            }
-            int textWidth = width - 2 * padding;
-            if (field == "url") {
-                text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textWidth);
-            }
-            QTextOption textOption(Qt::AlignLeft | Qt::AlignVCenter);
-            textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-            QRect textRect(left + padding, top, textWidth, height);
-            p.setFont(textFont);
-            p.setPen(foregroundColor);
-            p.drawText(QRectF(textRect), text, textOption);
+
+        //Paint little arrow indicating field is editable
+        if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+            KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
         }
     }
-        
     p.end();
 
     //Draw finished pixmap
@@ -197,7 +189,7 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
-    int padding = 2;
+    int padding = 3;
     int width = 0;
     if (index.column() == 0) {
         width = 0.35*m_view->width();
@@ -224,7 +216,7 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
         if (availableWidth <= 0) {
             availableWidth = 100;
         }
-        height = heightForWordWrap(textFont, availableWidth, text);
+        height = heightForWordWrap(textFont, availableWidth, text) + padding;
     }
        
     return QSize(width, height);
@@ -317,6 +309,21 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
     }
     Q_UNUSED(option);
         
+}
+
+void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    int padding = 3;
+    int fieldNameWidth = qMax(70, (option.rect.width() - 3 * padding)/4);
+    if (field == "artwork" || field == "title" || field == "description") {
+        fieldNameWidth = -padding;
+    }
+    QRect editorRect = QRect(option.rect.left() + fieldNameWidth + 2 * padding,
+                             option.rect.top(),
+                             option.rect.width() - (fieldNameWidth + 3 *padding),
+                             option.rect.height());
+    editor->setGeometry(editorRect);
 }
 
 void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
