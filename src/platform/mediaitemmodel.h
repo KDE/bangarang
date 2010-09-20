@@ -151,6 +151,17 @@ public:
         fields["contextTitles"] = QStringList();
         fields["contextLRIs"] = QStringList();
     }
+
+    const QString subType() const
+    {
+        if (type == "Audio") {
+            return fields["audioType"].toString();
+        } else if (type == "Video"){
+            return fields["videoType"].toString();
+        } else {
+            return fields["categoryType"].toString();
+        }
+    }
     
     MediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
 };

@@ -143,6 +143,7 @@ void InfoManager::infoChanged(bool modified)
     } else {
         showIndexer();
     }
+    updateViewsLayout();
 }
 
 QList<InfoFetcher *> InfoManager::infoFetchers()

@@ -19,6 +19,7 @@
 #include "infoitemmodel.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
+#include "dbpediainfofetcher.h"
 #include <KLocale>
 #include <KDebug>
 #include <KUrl>
@@ -32,6 +33,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
 
     m_defaultEditable = false;
+    m_modified = false;
 
     //Store field order
     m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
@@ -77,6 +79,10 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["episodeNumber"] = i18n("episodeNumber");
     m_fieldNames["playCount"] = i18n("Play Count");
     m_fieldNames["lastPlayed"] = i18n("Last Played");
+
+    DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
+    connect(dbPediaInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
+    m_infoFetchers.append(dbPediaInfoFetcher);
 }
 
 InfoItemModel::~InfoItemModel()
@@ -90,20 +96,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     
     if (m_mediaList.count() > 0) {
         QString type = m_mediaList.at(0).type;
-        QString subType;
-        if (type == "Audio") {
-            subType = m_mediaList.at(0).fields["audioType"].toString();
-            m_defaultEditable = true;
-        } else if (type == "Video"){
-            subType = m_mediaList.at(0).fields["videoType"].toString();
-            m_defaultEditable = true;
-        } else {
-            subType = m_mediaList.at(0).fields["categoryType"].toString();
-            m_defaultEditable = false;
-            if (subType == "Audio Feed" || subType == "Video Feed") {
-                m_defaultEditable = true;
-            }
-        }
+        QString subType = m_mediaList.at(0).subType();
 
         //Load field info in order specified
         QStringList fieldsOrder = m_fieldsOrder.value(subType, m_fieldsOrder["Basic"]);
@@ -127,6 +120,29 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(m_fieldNames[field],field);
             }
         }
+
+        //Upon selection of only one media item, launch Autofetch if NO info
+        //is available in the fetchable fields of the media item.
+        if (m_mediaList.count() == 1) {
+            for (int i = 0; i < m_infoFetchers.count(); i++) {
+                if (autoFetchIsAvailable(m_infoFetchers.at(i))) {
+                    QStringList fetchableFields = m_infoFetchers.at(i)->fetchableFields(subType);
+                    QStringList requiredFields = m_infoFetchers.at(i)->requiredFields(subType);
+                    bool fetchableFieldsEmpty = true;
+                    for (int j = 0; j < fetchableFields.count(); j++) {
+                        if (!requiredFields.contains(fetchableFields.at(j)) &&
+                            !isEmpty(fetchableFields.at(j))) {
+                            fetchableFieldsEmpty = false;
+                        }
+                    }
+                    if (fetchableFieldsEmpty) {
+                        autoFetch(m_infoFetchers.at(i));
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -215,6 +231,111 @@ void InfoItemModel::setSourceModel(MediaItemModel * sourceModel)
     m_sourceModel = sourceModel;
 }
 
+QList<InfoFetcher *> InfoItemModel::infoFetchers()
+{
+    return m_infoFetchers;
+}
+
+bool InfoItemModel::autoFetchIsAvailable(InfoFetcher* infoFetcher)
+{
+    //Autofetch is only available when required info is available to make
+    //fetch request AND there are no unsaved modifications.
+    bool available = false;
+    if (!m_modified && infoFetcher->available()) {
+        QString subType = m_mediaList.at(0).subType();
+        QStringList requiredFields = infoFetcher->requiredFields(subType);
+        available = true;
+        for (int i =0; i < requiredFields.count(); i++) {
+            if (isEmpty(requiredFields.at(i))) {
+                available = false;
+                break;
+            }
+        }
+    }
+    return available;
+}
+
+bool InfoItemModel::fetchIsAvailable(InfoFetcher* infoFetcher)
+{
+    //Fetch is only available when enough info is available to make
+    //fetch request AND when only one media item is loaded.
+    bool available = false;
+    if (m_mediaList.count() == 1  && infoFetcher->available()) {
+        QString subType = m_mediaList.at(0).subType();
+        QStringList requiredFields = infoFetcher->requiredFields(subType);
+        available = true;
+        for (int i =0; i < requiredFields.count(); i++) {
+            if (isEmpty(requiredFields.at(i))) {
+                available = false;
+                break;
+            }
+        }
+    }
+    return available;
+}
+
+void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField)
+{
+    m_fetchType = AutoFetch;
+    infoFetcher->fetchInfo(m_mediaList);
+}
+
+void InfoItemModel::fetch(InfoFetcher* infoFetcher)
+{
+    m_fetchType = Fetch;
+    infoFetcher->fetchInfo(m_mediaList);
+}
+
+
+void InfoItemModel::infoFetched(MediaItem mediaItem)
+{
+    //Find corresponding media item
+    int foundIndex = -1;
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        if (m_mediaList.at(i).url == mediaItem.url) {
+            foundIndex = i;
+            break;
+        }
+    }
+    if (foundIndex != -1 && m_fetchType == AutoFetch) {
+        m_mediaList.replace(foundIndex, mediaItem);
+
+        //Update source information
+        //TODO: Update indexer to properly category mediaItem info
+        //m_sourceModel->updateSourceInfo(m_mediaList);
+
+        //Ensure original values in model are updated to reflect saved(no-edits) state
+        loadInfo(m_mediaList);
+        emit infoChanged(false);
+    } else if (foundIndex != -1 && m_fetchType == Fetch) {
+        //Update model data
+        for (int i = 0; i < rowCount(); i++) {
+            QString field = item(i)->data(InfoItemModel::FieldRole).toString();
+            if (field == "audioType" || field == "videoType") {
+                QString subType = mediaItem.subType();
+                QVariant value;
+                if (subType == "Music" || subType == "Movie") {
+                    value = QVariant(0);
+                } else if (subType == "Audio Stream" || subType == "TV Show") {
+                    value = QVariant(1);
+                } else if (subType == "Audio Clip" || subType == "Video Clip") {
+                    value = QVariant(2);
+                }
+                item(i)->setData(value, Qt::DisplayRole);
+                item(i)->setData(value, Qt::EditRole);
+            } else if (field == "artwork") {
+                item(i)->setData(mediaItem.artwork, Qt::DecorationRole);
+                item(i)->setData(mediaItem.fields["artworkUrl"], Qt::DisplayRole);
+                item(i)->setData(mediaItem.fields["artworkUrl"], Qt::EditRole);
+            } else {
+                item(i)->setData(mediaItem.fields[field], Qt::DisplayRole);
+                item(i)->setData(mediaItem.fields[field], Qt::EditRole);
+            }
+            checkInfoModified(item(i));
+        }
+    }
+}
+
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
 {
     QList<QStandardItem *> rowData;
@@ -249,7 +370,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         }
         QPainter p(&artwork);
         for (int i = 0; i < totalSlices; i++) {
-            int sliceSourceRow = i * (m_mediaList.count()/totalSlices) + 0.5; 
+            int sliceSourceRow = i * (m_mediaList.count()/totalSlices) + 0.5;
             MediaItem sliceSourceItem = m_mediaList.at(sliceSourceRow);
             QPixmap itemArtwork = Utilities::getArtworkFromMediaItem(sliceSourceItem);
             if (!itemArtwork.isNull()) {
@@ -359,13 +480,38 @@ QStringList InfoItemModel::valueList(const QString &field)
     return value;   
 }
 
+bool InfoItemModel::isEmpty(const QString &field)
+{
+    bool isEmpty = true;
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        MediaItem mediaItem = m_mediaList.at(i);
+        if (mediaItem.fields.contains(field)) {
+            QVariant::Type fieldType = mediaItem.fields[field].type();
+            if (fieldType == QVariant::String) {
+                isEmpty = mediaItem.fields[field].toString().isEmpty();
+            } else if (fieldType == QVariant::StringList) {
+                isEmpty = mediaItem.fields[field].toStringList().isEmpty();
+            } else if (fieldType == QVariant::Date) {
+                isEmpty = !mediaItem.fields[field].toDate().isValid();
+            } else if (fieldType == QVariant::DateTime) {
+                isEmpty = !mediaItem.fields[field].toDateTime().isValid();
+            } else if (fieldType == QVariant::Int){
+                isEmpty = !mediaItem.fields[field].isValid();
+            }
+            if (isEmpty) {
+                break;
+            }
+        }
+    }
+    return isEmpty;
+}
+
 void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
 {
-    bool modified;
     if (changedItem->data(Qt::DisplayRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
-        modified = true;
+        m_modified = true;
     } else {
-        modified = false;
+        m_modified = false;
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *otherItem = item(row, 0);
             if (otherItem->data(InfoItemModel::FieldRole).toString() != "title" && 
@@ -374,13 +520,13 @@ void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
             }
             if (otherItem->data(Qt::UserRole).toString() != "artwork") {
                 if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoItemModel::OriginalValueRole)) {
-                    modified = true;
+                    m_modified = true;
                     break;
                 }
             }
         }
     }
-    emit infoChanged(modified);
+    emit infoChanged(m_modified);
     
 }
 
