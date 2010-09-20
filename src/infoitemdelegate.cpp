@@ -165,9 +165,14 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
         } else {
             int textWidth = width - 4 * padding - fieldNameWidth;
+            int textLeft = left + fieldNameWidth + 3 * padding;
+            if (fieldNameWidth == 0) {
+                textWidth = width - 2 * padding;
+                textLeft = left + padding;
+            }
             QTextOption textOption(hAlign | Qt::AlignVCenter);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-            QRect textRect(left + fieldNameWidth + 3 * padding, top, textWidth, height);
+            QRect textRect(textLeft, top, textWidth, height);
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
@@ -321,7 +326,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing() + 2;
+    int fmHeight = fm.lineSpacing();
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {
@@ -362,7 +367,7 @@ int InfoItemDelegate::rowHeight(int row) const
             textFont.setPointSize(1.5*textFont.pointSize());
             availableWidth = width - 2*padding;
         } else if (field == "description") {
-            availableWidth = width - 2*padding;
+            availableWidth = width - 2*10;
         } else if (field == "url") {
             textFont = KGlobalSettings::smallestReadableFont();
             text = QString(); // url text is elided to a single line anyway
