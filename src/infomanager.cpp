@@ -19,7 +19,6 @@
 #include "infomanager.h"
 #include "bangarangapplication.h"
 #include "infoitemdelegate.h"
-#include "infocategorydelegate.h"
 #include "infobox.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
