@@ -25,6 +25,7 @@
 
 class MediaItem;
 class MediaItemModel;
+class InfoFetcher;
 
 /*
 * This model is responsible for 
@@ -39,6 +40,8 @@ class InfoItemModel : public QStandardItemModel
                             MultipleValuesRole = Qt::UserRole + 2,
                             OriginalValueRole = Qt::UserRole + 3,
                             ValueListRole = Qt::UserRole + 4};
+        enum FetchType {AutoFetch = 0,
+                        Fetch = 1};
         InfoItemModel(QObject * parent = 0);
         ~InfoItemModel();
         void loadInfo(const QList<MediaItem> & mediaList);
@@ -46,23 +49,35 @@ class InfoItemModel : public QStandardItemModel
         void cancelChanges();
         QList<MediaItem> mediaList();
         void setSourceModel(MediaItemModel *sourceModel);
+        QList<InfoFetcher *> infoFetchers();
+        bool autoFetchIsAvailable(InfoFetcher* infoFetcher);
+        bool fetchIsAvailable(InfoFetcher* infoFetcher);
+        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField = false);
+        void fetch(InfoFetcher* infoFetcher);
                    
     private:
         QList<MediaItem> m_mediaList;
         MediaItemModel * m_sourceModel;
         QHash<QString, QStringList> m_fieldsOrder;
         QHash<QString, QString> m_fieldNames;
+        bool m_defaultEditable;
+        bool m_modified;
+        QList<InfoFetcher *> m_infoFetchers;
+        FetchType m_fetchType;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
+        bool isEmpty(const QString &field);
         void saveFileMetaData(QList<MediaItem> mediaList);
 
     Q_SIGNALS:
         void infoChanged(bool modified);
+        void fetchStatusChanged(bool fetching);
         
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);
+        void infoFetched(MediaItem mediaItem);
 };
 
 #endif // INFOITEMDELEGATE_H

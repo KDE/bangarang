@@ -34,6 +34,21 @@ class InfoFetcher : public QObject
         ~InfoFetcher();
         QString name();
         QIcon icon();
+        virtual QStringList fetchableFields(const QString &subType)
+        {
+            Q_UNUSED(subType);
+            return QStringList();
+        }
+        virtual QStringList requiredFields(const QString &subType)
+        {
+            Q_UNUSED(subType);
+            return QStringList();
+        }
+        virtual bool available()
+        {
+            return false;
+        }
+
         virtual QStringList possibleMatches(const MediaItem &mediaItem)
         {
             Q_UNUSED(mediaItem);
@@ -55,6 +70,8 @@ class InfoFetcher : public QObject
         QString m_name;
         QIcon m_icon;
         QList<MediaItem> m_mediaList;
+        QHash<QString, QStringList> m_fetchableFields;
+        QHash<QString, QStringList> m_requiredFields;
         
         void setValue(const QString &field, const QVariant &value);
         bool hasMultipleValues(const QString &field);

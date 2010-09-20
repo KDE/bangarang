@@ -86,7 +86,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     int padding = 3;
     QFont textFont = KGlobalSettings::smallestReadableFont();
     Qt::AlignmentFlag hAlign = Qt::AlignLeft;
-    int fieldNameWidth = qMax(70, (width - 3 * padding)/4);
+    int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
 
     //Formatting modifications based on field info
     if (multipleValues) {
@@ -165,9 +165,14 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
         } else {
             int textWidth = width - 4 * padding - fieldNameWidth;
+            int textLeft = left + fieldNameWidth + 3 * padding;
+            if (fieldNameWidth == 0) {
+                textWidth = width - 2 * padding;
+                textLeft = left + padding;
+            }
             QTextOption textOption(hAlign | Qt::AlignVCenter);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-            QRect textRect(left + fieldNameWidth + 2 * padding, top, textWidth, height);
+            QRect textRect(textLeft, top, textWidth, height);
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
@@ -181,45 +186,14 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     p.end();
 
     //Draw finished pixmap
-    painter->drawPixmap(option.rect.topLeft(), pixmap);
-    
+    painter->drawPixmap(option.rect.topLeft(), pixmap);    
 }
 
 QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                                const QModelIndex &index) const
 {
-    QString field = index.data(InfoItemModel::FieldRole).toString();
-    int padding = 3;
-    int width = 0;
-    if (index.column() == 0) {
-        width = 0.35*m_view->width();
-    }
-        
-    int height;
-    if (field == "artwork") {
-        height = 128 + 2*padding;
-    } else {
-        QString text = index.data(Qt::DisplayRole).toString();
-        QFont textFont = option.font;
-        int availableWidth = 0.65*m_view->width() - 2*padding;
-        if (field == "title") { 
-            textFont.setPointSize(1.5*textFont.pointSize());
-            availableWidth = m_view->width() - 2*padding;
-        } else if (field == "description") {
-            padding = 10;
-            textFont = KGlobalSettings::smallestReadableFont();
-            availableWidth = m_view->width() - 2*padding;
-        } else if (field == "url") {
-            textFont = KGlobalSettings::smallestReadableFont();
-            text = QString(); // url text is elided to a single line anyway
-        }
-        if (availableWidth <= 0) {
-            availableWidth = 100;
-        }
-        height = heightForWordWrap(textFont, availableWidth, text) + padding;
-    }
-       
-    return QSize(width, height);
+    Q_UNUSED(option);
+    return QSize(0, rowHeight(index.row()));
 }
 
 bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -315,13 +289,13 @@ void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
     int padding = 3;
-    int fieldNameWidth = qMax(70, (option.rect.width() - 3 * padding)/4);
+    int fieldNameWidth = qMax(70, (option.rect.width() - 4 * padding)/4);
     if (field == "artwork" || field == "title" || field == "description") {
         fieldNameWidth = -padding;
     }
     QRect editorRect = QRect(option.rect.left() + fieldNameWidth + 2 * padding,
                              option.rect.top(),
-                             option.rect.width() - (fieldNameWidth + 3 *padding),
+                             option.rect.width() - (fieldNameWidth + 2 * padding),
                              option.rect.height());
     editor->setGeometry(editorRect);
 }
@@ -352,7 +326,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing() + 2;
+    int fmHeight = fm.lineSpacing();
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {
@@ -372,3 +346,47 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
     }
     return heightMultiplier*fmHeight;
 }
+
+int InfoItemDelegate::rowHeight(int row) const
+{
+    QModelIndex index = m_view->model()->index(row,0);
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    int padding = 3;
+    int width = m_view->width();
+
+    int height;
+    if (field == "artwork") {
+        height = 128 + 2*padding;
+    } else {
+        QString text = index.data(Qt::DisplayRole).toString();
+        QFont textFont = KGlobalSettings::smallestReadableFont();
+        int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
+        int availableWidth = width - fieldNameWidth - 2*padding;
+        if (field == "title") {
+            textFont = QFont();
+            textFont.setPointSize(1.5*textFont.pointSize());
+            availableWidth = width - 2*padding;
+        } else if (field == "description") {
+            availableWidth = width - 2*10;
+        } else if (field == "url") {
+            textFont = KGlobalSettings::smallestReadableFont();
+            text = QString(); // url text is elided to a single line anyway
+        }
+        if (availableWidth <= 0) {
+            availableWidth = 100;
+        }
+        height = heightForWordWrap(textFont, availableWidth, text) + padding;
+    }
+
+    return height;
+}
+
+int InfoItemDelegate::heightForAllRows()
+{
+    int height = 0;
+    for (int i = 0; i < m_view->model()->rowCount(); i++) {
+        height = height + rowHeight(i);
+    }
+    return height + 2;
+}
+

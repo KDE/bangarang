@@ -94,6 +94,7 @@ void FileListEngine::run()
                 if (!newBrowseUrl.isEmpty() && newBrowseUrl != "trash:/") {
                     MediaItem mediaItem;
                     mediaItem.type = "Category";
+                    mediaItem.fields["categoryType"] = "Basic+Artwork";
                     mediaItem.title = m_filePlacesModel->text(m_filePlacesModel->index(i,0));
                     mediaItem.fields["title"] = mediaItem.title;
                     mediaItem.url = QString("files://%1?browseFolder||%2")
@@ -170,6 +171,7 @@ void FileListEngine::listingComplete(const KUrl &url)
         KFileItem fileItem = m_dirModel->itemForIndex(m_dirSortProxyModel->mapToSource(m_dirSortProxyModel->index(i,0)));
         if (fileItem.isDir()) {
             mediaItem.type = "Category";
+            mediaItem.fields["categoryType"] = "Basic+Artwork";
             mediaItem.title = fileItem.text();
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = QString("files://%1?browseFolder||%2")

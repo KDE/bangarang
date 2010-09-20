@@ -19,7 +19,6 @@
 #include "infomanager.h"
 #include "bangarangapplication.h"
 #include "infoitemdelegate.h"
-#include "infocategorydelegate.h"
 #include "infobox.h"
 #include "platform/utilities.h"
 #include "mainwindow.h"
@@ -66,9 +65,9 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_infoItemModel = new InfoItemModel(this);
     m_infoItemModel->setSourceModel(m_application->browsingModel());
     ui->infoItemView->setModel(m_infoItemModel);
-    InfoItemDelegate * infoItemDelegate = new InfoItemDelegate(m_parent);
-    infoItemDelegate->setView(ui->infoItemView);
-    ui->infoItemView->setItemDelegate(infoItemDelegate);
+    m_infoItemDelegate = new InfoItemDelegate(m_parent);
+    m_infoItemDelegate->setView(ui->infoItemView);
+    ui->infoItemView->setItemDelegate(m_infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     ui->infoIndexerHolder->setVisible(false);
     
@@ -76,13 +75,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_selectionTimer = new QTimer(this);
     m_selectionTimer->setSingleShot(true);
     connect(m_selectionTimer, SIGNAL(timeout()), this, SLOT(loadSelectedInfo()));
-    
-    //Set up Category View
-    m_infoCategoryModel = new InfoCategoryModel(this);
-    m_infoCategoryDelegate = new InfoCategoryDelegate(m_parent);
-    ui->infoCategoryView->setModel(m_infoCategoryModel);
-    m_infoCategoryDelegate->setView(ui->infoCategoryView);
-    ui->infoCategoryView->setItemDelegate(m_infoCategoryDelegate);
     
     //Set up info fetchers
     m_infoFetchers.append(new DBPediaInfoFetcher(this));
@@ -95,12 +87,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoIndexSelected, SIGNAL(clicked()), this, SLOT(addSelectedItemsInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
-    connect(m_infoCategoryModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
-    connect(m_infoCategoryModel, SIGNAL(modelDataChanged()), this, SLOT(updateViewsLayout()));
-    connect(m_infoCategoryModel, SIGNAL(infoChanged(bool)), ui->infoSaveHolder, SLOT(setVisible(bool)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(ui->collectionButton, SIGNAL(clicked()), this, SLOT(updateViewsLayout()));
 }
 
 InfoManager::~InfoManager()
@@ -154,6 +142,7 @@ void InfoManager::infoChanged(bool modified)
     } else {
         showIndexer();
     }
+    updateViewsLayout();
 }
 
 QList<InfoFetcher *> InfoManager::infoFetchers()
@@ -171,17 +160,12 @@ void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const Q
 
 void InfoManager::saveItemInfo()
 {
-    if (ui->semanticsStack->currentIndex() == 0) {
-        //Save changed category info in model
-        m_infoCategoryModel->saveChanges();
-    } else {
-        //Save changed item info in model
-        m_infoItemModel->saveChanges();
-        
-        //Update Now Playing and Playlist views
-        m_application->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
-        m_application->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
-    }    
+    //Save changed item info in model
+    m_infoItemModel->saveChanges();
+
+    //Update Now Playing and Playlist views
+    m_application->playlist()->nowPlayingModel()->updateMediaItems(m_infoItemModel->mediaList());
+    m_application->playlist()->playlistModel()->updateMediaItems(m_infoItemModel->mediaList());
     
     //Now that data is saved hide Save/Cancel controls
     ui->infoSaveHolder->setVisible(false);
@@ -191,11 +175,7 @@ void InfoManager::saveItemInfo()
 
 void InfoManager::cancelItemEdit()
 {
-    if (ui->semanticsStack->currentIndex() == 0) {
-        m_infoCategoryModel->cancelChanges();
-    } else {
-        m_infoItemModel->cancelChanges();
-    }
+    m_infoItemModel->cancelChanges();
     ui->infoSaveHolder->setVisible(false);
     showIndexer();
     updateViewsLayout();
@@ -209,7 +189,6 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
         ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
         ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
     }
-    ui->semanticsStack->setCurrentIndex(1);
     
     QList<MediaItem> mediaList;
     mediaList << mediaItem;
@@ -338,83 +317,72 @@ void InfoManager::loadSelectedInfo()
     }
 
     //Load contextual data into info model and info boxes
-    if (selected && contextIsMedia) {
-        m_infoItemModel->loadInfo(m_context);
-        ui->semanticsStack->setCurrentIndex(1);
-        updateViewsLayout();
-    } else if (contextIsCategory) {
-        m_infoCategoryModel->loadInfo(m_context);
-        ui->semanticsStack->setCurrentIndex(0);
-        m_infoCategoryModel->setSourceModel(m_application->browsingModel());
-        
-        //Get context data for info boxes
-        QStringList contextLRIs;
-        QStringList contextTitles;
-        for (int i = 0; i < m_context.count(); i++) {
-            MediaItem contextCategory = m_context.at(i);
-            if (i == 0) {
-                contextTitles = contextCategory.fields["contextTitles"].toStringList();
-                contextLRIs = contextCategory.fields["contextLRIs"].toStringList();
-                continue;
-            }
-            QStringList currentContextTitles = contextCategory.fields["contextTitles"].toStringList();
-            QStringList currentContextLRIs = contextCategory.fields["contextLRIs"].toStringList();
-            QStringList mergedContextLRIs;
-            QStringList mergedContextTitles;
-            for (int j = 0; j < currentContextLRIs.count(); j++) {
-                if (j < contextLRIs.count() ) {
-                    QString mergedContextLRI = Utilities::mergeLRIs(contextLRIs.at(j), currentContextLRIs.at(j));
-                    if (!mergedContextLRI.isEmpty()) {
-                        mergedContextLRIs.append(mergedContextLRI);
-                        mergedContextTitles.append(currentContextTitles.at(j));
-                    }
-                }
-            }
-            contextTitles = mergedContextTitles;
-            contextLRIs = mergedContextLRIs;
-        }
+    m_infoItemModel->loadInfo(m_context);
 
-        //Load any context infoboxes        
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
-        for (int i = 0; i < contextLRIs.count(); i++) {
-            QString title = contextTitles.at(i);
-            QString lri = contextLRIs.at(i);
-            if (i < totalInfoBoxes) {
-                InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget();
-                MediaItemModel * infoBoxModel = (MediaItemModel *)infoBox->mediaView()->sourceModel();
-                if (infoBoxModel->mediaListProperties().lri != lri) {
-                    infoBox->setInfo(title, lri);
-                } else {
-                    infoBox->setTitle(title);
-                }
-            } else {
-                int insertIndex = ui->infoBoxHolder->layout()->count() - 1;
-                if (insertIndex >= 0) {
-                    InfoBox *infoBox = new InfoBox;
-                    infoBox->setMainWindow(m_parent);
-                    infoBox->setInfo(title, lri);
-                    QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
-                    infoBoxHolderLayout->insertWidget(insertIndex, infoBox);
-                    connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+    //Get context data for info boxes
+    QStringList contextLRIs;
+    QStringList contextTitles;
+    for (int i = 0; i < m_context.count(); i++) {
+        MediaItem contextCategory = m_context.at(i);
+        if (i == 0) {
+            contextTitles = contextCategory.fields["contextTitles"].toStringList();
+            contextLRIs = contextCategory.fields["contextLRIs"].toStringList();
+            continue;
+        }
+        QStringList currentContextTitles = contextCategory.fields["contextTitles"].toStringList();
+        QStringList currentContextLRIs = contextCategory.fields["contextLRIs"].toStringList();
+        QStringList mergedContextLRIs;
+        QStringList mergedContextTitles;
+        for (int j = 0; j < currentContextLRIs.count(); j++) {
+            if (j < contextLRIs.count() ) {
+                QString mergedContextLRI = Utilities::mergeLRIs(contextLRIs.at(j), currentContextLRIs.at(j));
+                if (!mergedContextLRI.isEmpty()) {
+                    mergedContextLRIs.append(mergedContextLRI);
+                    mergedContextTitles.append(currentContextTitles.at(j));
                 }
             }
         }
-        //Remove any unused infoboxes
-        totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
-        if (contextLRIs.count() < totalInfoBoxes) {
-            for (int i = contextLRIs.count(); i < totalInfoBoxes; i++) {
-                int lastItemIndex = ui->infoBoxHolder->layout()->count() - 2;
-                if (lastItemIndex >= 0) {
-                    InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget(); 
-                    disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
-                    ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
-                    delete unusedInfoBox;
-                }
-            }
-        }
-        
-        updateViewsLayout();
+        contextTitles = mergedContextTitles;
+        contextLRIs = mergedContextLRIs;
     }
+
+    //Load any context infoboxes
+    int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+    for (int i = 0; i < contextLRIs.count(); i++) {
+        QString title = contextTitles.at(i);
+        QString lri = contextLRIs.at(i);
+        if (i < totalInfoBoxes) {
+            InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget();
+            MediaItemModel * infoBoxModel = (MediaItemModel *)infoBox->mediaView()->sourceModel();
+            if (infoBoxModel->mediaListProperties().lri != lri) {
+                infoBox->setInfo(title, lri);
+            } else {
+                infoBox->setTitle(title);
+            }
+        } else {
+            InfoBox *infoBox = new InfoBox;
+            infoBox->setMainWindow(m_parent);
+            infoBox->setInfo(title, lri);
+            QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
+            infoBoxHolderLayout->addWidget(infoBox);
+            connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+        }
+    }
+    //Remove any unused infoboxes
+    totalInfoBoxes = ui->infoBoxHolder->layout()->count();
+    if (contextLRIs.count() < totalInfoBoxes) {
+        for (int i = contextLRIs.count(); i < totalInfoBoxes; i++) {
+            int lastItemIndex = ui->infoBoxHolder->layout()->count() - 1;
+            if (lastItemIndex >= 0) {
+                InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget();
+                disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
+                delete unusedInfoBox;
+            }
+        }
+    }
+
+    updateViewsLayout();
 }
 
 void InfoManager::showIndexer()
@@ -458,17 +426,10 @@ void InfoManager::showIndexer()
 
 void InfoManager::updateViewsLayout()
 {
-    //Update infoCategoryView
-    if (m_infoCategoryModel->rowCount()> 0) {
-        ui->infoCategoryView->setVisible(true);
-        ui->infoCategoryView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-        ui->infoCategoryView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-        int infoCategoryViewHeight = m_infoCategoryDelegate->heightForAllRows();
-        ui->infoCategoryView->setMinimumHeight(infoCategoryViewHeight);
-        ui->infoCategoryView->setMaximumHeight(infoCategoryViewHeight);
-    } else {
-        ui->infoCategoryView->setVisible(false);
-    }
+    //Update infoItemView
+    int infoItemViewHeight = m_infoItemDelegate->heightForAllRows();
+    ui->infoItemView->setMinimumHeight(infoItemViewHeight);
+    ui->infoItemView->setMaximumHeight(infoItemViewHeight);
 }
 
 void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
