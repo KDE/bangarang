@@ -25,7 +25,6 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
-#include "platform/infocategorymodel.h"
 #include "platform/playlist.h"
 #include "mediaitemdelegate.h"
 #include "platform/infofetcher.h"

@@ -24,6 +24,7 @@
 #include <KUrl>
 #include <KDebug>
 #include <KStandardDirs>
+#include <KLocale>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>

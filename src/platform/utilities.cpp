@@ -781,6 +781,7 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
             bool dvd = isDvd(url_string);
             continue;
             dvdNotFound = true;
+            Q_UNUSED(dvd);
         }
         KUrl url = KUrl(url_string);
         if (dvdNotFound ||
