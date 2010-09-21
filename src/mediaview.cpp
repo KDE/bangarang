@@ -128,7 +128,8 @@ bool MediaView::viewportEvent(QEvent* event)
         QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
         QPoint mousePos = helpEvent->pos();
         QModelIndex index = indexAt(mousePos);
-        QRect area = m_mediaItemDelegate->addRmPlaylistRect(&visualRect(index));
+        QRect visRect = visualRect(index);
+        QRect area = m_mediaItemDelegate->addRmPlaylistRect(&visRect);
         if (area.contains(mousePos)) {
             QString url = index.data(MediaItem::UrlRole).toString();
             QString type = index.data(MediaItem::TypeRole).toString();

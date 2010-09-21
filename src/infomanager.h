@@ -20,7 +20,6 @@
 #define INFOMANAGER_H
 
 #include "platform/mediaitemmodel.h"
-#include "platform/infocategorymodel.h"
 #include <QtCore>
 #include <QStandardItemModel>
 #include <QItemDelegate>
@@ -34,7 +33,6 @@ namespace Ui
 class MainWindow;
 class InfoItemModel;
 class InfoItemDelegate;
-class InfoCategoryDelegate;
 class MediaItemDelegate;
 class BangarangApplication;
 class InfoFetcher;

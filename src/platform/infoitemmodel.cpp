@@ -278,6 +278,7 @@ void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField
 {
     m_fetchType = AutoFetch;
     infoFetcher->fetchInfo(m_mediaList);
+    Q_UNUSED(updateRequiredField); //TODO:modify infoFetchers to use this.
 }
 
 void InfoItemModel::fetch(InfoFetcher* infoFetcher)
