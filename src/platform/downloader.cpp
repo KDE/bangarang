@@ -73,6 +73,5 @@ void Downloader::listDirComplete(const KUrl &url)
 {
     m_dirLister->stop();
     disconnect(m_dirLister,SIGNAL(completed(KUrl)), this, SLOT(listDirComplete(KUrl)));
-    emit listingComplete(url, m_dirLister->items());
     emit listingComplete(url);
 }

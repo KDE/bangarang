@@ -7,7 +7,7 @@ find_package(Nepomuk REQUIRED)
 
 include(KDE4Defaults)
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} "-DDISABLE_NEPOMUK_LEGACY=1")
 
 find_package(Taglib REQUIRED)
 

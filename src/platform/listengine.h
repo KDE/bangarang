@@ -144,12 +144,6 @@ class ListEngine : public QThread
             Q_UNUSED(to);
         }
 
-        virtual void listingComplete(const KUrl & url, const KFileItemList &items)
-        {
-            Q_UNUSED(url);
-            Q_UNUSED(items);
-        }
-        
         virtual void listingComplete(const KUrl & url)
         {
             Q_UNUSED(url);
