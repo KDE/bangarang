@@ -175,6 +175,7 @@ void BangarangApplication::setup()
     KConfigGroup generalGroup( &config, "General" );
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_audioOutput->setVolume(static_cast<qreal>(generalGroup.readEntry("Volume", static_cast<int>(m_volume * 100))) / 100);
     bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", false));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
         m_infoManager->toggleInfoView();
@@ -218,6 +219,7 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("Shuffle", m_playlist->shuffleMode());
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
     generalGroup.writeEntry("InfoViewVisible", m_infoManager->infoViewVisible());
+    generalGroup.writeEntry("Volume", static_cast<int>(m_volume*100));
     m_audioSettings->saveAudioSettings(&generalGroup);
     m_videoSettings->saveVideoSettings(&generalGroup);
     config.sync();
