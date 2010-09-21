@@ -95,7 +95,6 @@ void ListEngine::connectDownloader()
     connect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
     connect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
     connect(this, SIGNAL(listDir(KUrl)), m_parent->downloader(), SLOT(listDir(KUrl)));
-    connect(m_parent->downloader(), SIGNAL(listingComplete(KUrl,KFileItemList)), this, SLOT(listingComplete(KUrl,KFileItemList)));
     connect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
 }
 
@@ -104,6 +103,5 @@ void ListEngine::disconnectDownloader()
     disconnect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
     disconnect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
     disconnect(this, SIGNAL(listDir(KUrl)), m_parent->downloader(), SLOT(listDir(KUrl)));
-    disconnect(m_parent->downloader(), SIGNAL(listingComplete(KUrl,KFileItemList)), this, SLOT(listingComplete(KUrl,KFileItemList)));
     disconnect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
 }

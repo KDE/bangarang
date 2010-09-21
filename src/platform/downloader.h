@@ -47,7 +47,6 @@ class Downloader : public QObject
 
     signals:
         void downloadComplete(const KUrl &from, const KUrl &to);
-        void listingComplete(const KUrl & url, const KFileItemList &items);
         void listingComplete(const KUrl &url);
 };
 #endif // DOWNLOADER_H
