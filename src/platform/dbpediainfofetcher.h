@@ -40,12 +40,13 @@ class DBPediaInfoFetcher : public InfoFetcher
         bool available();
 
     public slots:
-        void fetchInfo(QList<MediaItem> mediaList);
+        void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true);
         
     private:
         DBPediaQuery * m_dbPediaQuery;
         Downloader * m_downloader;
         QHash<QString, QString> m_thumbnailKeys;
+        bool m_updateRequiredFields;
         
     private slots:
         void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);

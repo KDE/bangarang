@@ -272,11 +272,10 @@ bool InfoItemModel::fetchIsAvailable(InfoFetcher* infoFetcher)
     return available;
 }
 
-void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField)
+void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields)
 {
     m_fetchType = AutoFetch;
-    infoFetcher->fetchInfo(m_mediaList);
-    Q_UNUSED(updateRequiredField); //TODO:modify infoFetchers to use this.
+    infoFetcher->fetchInfo(m_mediaList, updateRequiredFields);
 }
 
 void InfoItemModel::fetch(InfoFetcher* infoFetcher)

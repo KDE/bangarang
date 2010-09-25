@@ -71,8 +71,9 @@ bool DBPediaInfoFetcher::available()
     return (Solid::Networking::status() == Solid::Networking::Connected);
 }
 
-void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList)
+void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields)
 {
+    m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
@@ -143,7 +144,7 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
 
             //Set Title
             QString title = binding.value("title").literal().toString().trimmed();
-            if (!title.isEmpty()) {
+            if (!title.isEmpty() && m_updateRequiredFields) {
                 mediaItem.title = title;
                 mediaItem.fields["title"] = mediaItem.title;
             }
