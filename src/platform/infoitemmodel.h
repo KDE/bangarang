@@ -52,7 +52,7 @@ class InfoItemModel : public QStandardItemModel
         QList<InfoFetcher *> infoFetchers();
         bool autoFetchIsAvailable(InfoFetcher* infoFetcher);
         bool fetchIsAvailable(InfoFetcher* infoFetcher);
-        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField = false);
+        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = false);
         void fetch(InfoFetcher* infoFetcher);
                    
     private:

@@ -61,9 +61,10 @@ class InfoFetcher : public QObject
         }
 
     public slots:
-        virtual void fetchInfo(QList<MediaItem> mediaList)
+        virtual void fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields = true)
         {
             Q_UNUSED(mediaList);
+            Q_UNUSED(updateRequiredFields);
         }
         
     protected:
