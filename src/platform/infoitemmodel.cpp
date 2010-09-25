@@ -32,7 +32,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
     connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
 
-    m_defaultEditable = false;
+    m_defaultEditable = true;
     m_modified = false;
 
     //Store field order
@@ -154,9 +154,7 @@ void InfoItemModel::saveChanges()
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *currentItem = item(row, 0);
             QString field = currentItem->data(InfoItemModel::FieldRole).toString();
-            if (field != "title" && field != "artwork" && field != "description") {
-                currentItem = item(row, 1); //These fields don't span both columns
-            }
+
             //Save any field that does not have multiple values.
             //If multiple items are selected and a field is edited
             //then the edited field won't have multiple values
