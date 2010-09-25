@@ -112,6 +112,15 @@ class MediaQuery {
             .arg(type.toString());
         }
 
+        static QString excludeType(const QString &resourceBinding, const QUrl &type)
+        {
+            return QString("OPTIONAL { ?%1 rdf:type <%2> . "
+                           "?%1 rdf:type ?excludeType . } "
+                           "FILTER ( !bound(?excludeType) ) ")
+            .arg(resourceBinding)
+            .arg(type.toString());
+        }
+
         static QString hasProperty(const QString &resourceBinding, const QUrl &property, const QString &propertyBinding)
         {
             return QString("?%1 <%2> ?%3 . ")
