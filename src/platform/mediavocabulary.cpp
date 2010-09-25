@@ -659,6 +659,9 @@ QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
     if (match == MediaQuery::Optional) {
          statement = MediaQuery::addOptional(statement);
     }
+    statement += MediaQuery::excludeType(resourceBinding, typeAudioMusic());
+    statement += MediaQuery::excludeType(resourceBinding, typeAudioStream());
+    statement += MediaQuery::excludeType(resourceBinding, typeAudioFeed());
     return statement;
     
 }
@@ -720,6 +723,9 @@ QString MediaVocabulary::hasTypeVideo(MediaQuery::Match match)
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
+    statement += MediaQuery::excludeType(resourceBinding, typeVideoMovie());
+    statement += MediaQuery::excludeType(resourceBinding, typeVideoTVShow());
+    statement += MediaQuery::excludeType(resourceBinding, typeVideoFeed());
     return statement;
 }
 
