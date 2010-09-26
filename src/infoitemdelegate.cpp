@@ -326,7 +326,7 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
 {
     QFontMetrics fm(font);
     int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing();
+    int fmHeight = fm.lineSpacing() + 1;
     int heightMultiplier = 1;
     QString fitText = text;
     while (fmWidth > width) {
@@ -351,6 +351,7 @@ int InfoItemDelegate::rowHeight(int row) const
 {
     QModelIndex index = m_view->model()->index(row,0);
     QString field = index.data(InfoItemModel::FieldRole).toString();
+    bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
     int padding = 3;
     int width = m_view->width();
 
@@ -360,6 +361,9 @@ int InfoItemDelegate::rowHeight(int row) const
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         QFont textFont = KGlobalSettings::smallestReadableFont();
+        if (modified) {
+            textFont.setBold(true);
+        }
         int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
         int availableWidth = width - fieldNameWidth - 2*padding;
         if (field == "title") {
@@ -374,6 +378,9 @@ int InfoItemDelegate::rowHeight(int row) const
         }
         if (availableWidth <= 0) {
             availableWidth = 100;
+        }
+        if (modified) {
+            textFont.setBold(true);
         }
         height = heightForWordWrap(textFont, availableWidth, text) + padding;
     }

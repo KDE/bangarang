@@ -343,8 +343,8 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         }
         menu->addSeparator();
     }
+    menu->addMenu(infoMenu());
     if (selection && (isMedia || isFeed)) {
-        menu->addMenu(infoMenu());
         menu->addSeparator();
     }
 
@@ -474,15 +474,13 @@ QMenu *ActionsManager::bookmarksMenu()
 QMenu * ActionsManager::infoMenu()
 {
     m_infoMenu->clear();
-    m_infoMenu->addAction(action("add_selected_info"));
-    m_infoMenu->addAction(action("remove_selected_info"));
-    m_infoMenu->addSeparator();
-    QList<InfoFetcher *> infoFetchers = m_application->infoManager()->infoFetchers();
-    for (int i = 0; i< infoFetchers.count(); i++) {
-        QString fetcherTitle = i18n("Lookup info using %1", infoFetchers.at(i)->name());
-        QAction *action = new QAction(infoFetchers.at(i)->icon(), fetcherTitle, this);
-        action->setData(QString("fetcher:%1").arg(i));
-        m_infoMenu->addAction(action);
+    QList<MediaItem> selectedItems = selectedMediaItems();
+    if (selectedItems.count() > 0) {
+        //m_infoMenu->addAction(action("add_selected_info"));
+        m_infoMenu->addAction(action("remove_selected_info"));
+    }
+    if (m_application->infoManager()->infoFetchersMenu()->actions().count() > 0 ) {
+        m_infoMenu->addMenu(m_application->infoManager()->infoFetchersMenu());
     }
     m_infoMenu->addAction(action("update_ontologies"));
     return m_infoMenu;   

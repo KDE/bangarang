@@ -925,6 +925,8 @@ void MainWindow::setupIcons()
     ui->showInfo->setIcon(KIcon("help-about"));
     ui->closeMediaListFilter->setIcon(KIcon("dialog-close"));
     ui->infoIndexSelected->setIcon(KIcon("system-run"));
+    ui->infoAutoFetch->setIcon(KIcon("run-build"));
+    ui->infoFetch->setIcon(KIcon("document-edit"));
 
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));

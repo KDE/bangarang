@@ -82,6 +82,8 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
+    connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
     m_infoFetchers.append(dbPediaInfoFetcher);
 }
 
@@ -91,6 +93,7 @@ InfoItemModel::~InfoItemModel()
 
 void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
+    m_modified = false;
     m_mediaList = mediaList;
     clear();
     
@@ -120,6 +123,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 addFieldToValuesModel(m_fieldNames[field],field);
             }
         }
+        emit infoChanged(false);
 
         //Upon selection of only one media item, launch Autofetch if NO info
         //is available in the fetchable fields of the media item.
@@ -136,7 +140,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                         }
                     }
                     if (fetchableFieldsEmpty) {
-                        autoFetch(m_infoFetchers.at(i));
+                        autoFetch(m_infoFetchers.at(i), false);
                         break;
                     }
                 }
@@ -234,13 +238,27 @@ QList<InfoFetcher *> InfoItemModel::infoFetchers()
     return m_infoFetchers;
 }
 
+QList<InfoFetcher *> InfoItemModel::availableInfoFetchers()
+{
+    QList<InfoFetcher *> availableFetchers;
+    for (int i = 0; i < m_infoFetchers.count(); i++) {
+        if (autoFetchIsAvailable(m_infoFetchers.at(i)) || fetchIsAvailable(m_infoFetchers.at(i))) {
+            availableFetchers.append(m_infoFetchers.at(i));
+        }
+    }
+    return availableFetchers;
+}
+
 bool InfoItemModel::autoFetchIsAvailable(InfoFetcher* infoFetcher)
 {
     //Autofetch is only available when required info is available to make
     //fetch request AND there are no unsaved modifications.
     bool available = false;
-    if (!m_modified && infoFetcher->available()) {
-        QString subType = m_mediaList.at(0).subType();
+    if (m_mediaList.count() == 0) {
+        return available;
+    }
+    QString subType = m_mediaList.at(0).subType();
+    if (!m_modified && infoFetcher->available(subType)) {
         QStringList requiredFields = infoFetcher->requiredFields(subType);
         available = true;
         for (int i =0; i < requiredFields.count(); i++) {
@@ -258,8 +276,11 @@ bool InfoItemModel::fetchIsAvailable(InfoFetcher* infoFetcher)
     //Fetch is only available when enough info is available to make
     //fetch request AND when only one media item is loaded.
     bool available = false;
-    if (m_mediaList.count() == 1  && infoFetcher->available()) {
-        QString subType = m_mediaList.at(0).subType();
+    if (m_mediaList.count() == 0) {
+        return available;
+    }
+    QString subType = m_mediaList.at(0).subType();
+    if (m_mediaList.count() == 1  && infoFetcher->available(subType)) {
         QStringList requiredFields = infoFetcher->requiredFields(subType);
         available = true;
         for (int i =0; i < requiredFields.count(); i++) {
@@ -512,11 +533,7 @@ void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
         m_modified = false;
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *otherItem = item(row, 0);
-            if (otherItem->data(InfoItemModel::FieldRole).toString() != "title" && 
-                otherItem->data(InfoItemModel::FieldRole).toString() != "artwork") {
-                otherItem = item(row, 1);
-            }
-            if (otherItem->data(Qt::UserRole).toString() != "artwork") {
+            if (otherItem->data(InfoItemModel::FieldRole).toString() != "artwork") {
                 if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoItemModel::OriginalValueRole)) {
                     m_modified = true;
                     break;

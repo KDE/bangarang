@@ -22,6 +22,7 @@
 #include "infofetcher.h"
 #include <KUrl>
 #include <Soprano/BindingSet>
+#include <QtCore>
 
 class DBPediaQuery;
 class Downloader;
@@ -37,7 +38,7 @@ class DBPediaInfoFetcher : public InfoFetcher
         ~DBPediaInfoFetcher();
         QStringList fetchableFields(const QString &subType);
         QStringList requiredFields(const QString &subType);
-        bool available();
+        bool available(const QString &subType);
 
     public slots:
         void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true);
@@ -47,11 +48,17 @@ class DBPediaInfoFetcher : public InfoFetcher
         Downloader * m_downloader;
         QHash<QString, QString> m_thumbnailKeys;
         bool m_updateRequiredFields;
+        QStringList m_requestKeys;
+        bool m_timeout;
+        QTimer *m_timer;
+
+        void setFetching();
         
     private slots:
         void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
         void gotThumbnail(const KUrl &from, const KUrl &to);
         void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+        void timeout();
 
     signals:
         void download(const KUrl &from, const KUrl &to);

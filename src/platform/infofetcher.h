@@ -44,9 +44,14 @@ class InfoFetcher : public QObject
             Q_UNUSED(subType);
             return QStringList();
         }
-        virtual bool available()
+        virtual bool available(const QString &subType)
         {
+            Q_UNUSED(subType);
             return false;
+        }
+        virtual bool isFetching()
+        {
+            return m_isFetching;
         }
 
         virtual QStringList possibleMatches(const MediaItem &mediaItem)
@@ -73,6 +78,7 @@ class InfoFetcher : public QObject
         QList<MediaItem> m_mediaList;
         QHash<QString, QStringList> m_fetchableFields;
         QHash<QString, QStringList> m_requiredFields;
+        bool m_isFetching;
         
         void setValue(const QString &field, const QVariant &value);
         bool hasMultipleValues(const QString &field);
@@ -81,5 +87,7 @@ class InfoFetcher : public QObject
         
     signals:
         void infoFetched(MediaItem mediaItem);
+        void fetching();
+        void fetchComplete();
 };
 #endif // INFOFETCHER_H
