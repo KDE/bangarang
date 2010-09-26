@@ -49,7 +49,7 @@ class InfoManager : public QObject
         ~InfoManager();
         const QList<MediaItem> selectedInfoBoxMediaItems();
         bool infoViewVisible();
-        QList<InfoFetcher *> infoFetchers();
+        QMenu * infoFetchersMenu();
         
     public slots:
         void toggleInfoView();
@@ -64,7 +64,7 @@ class InfoManager : public QObject
         void mediaListPropertiesChanged();
         void removeSelectedItemsInfo();
         void addSelectedItemsInfo();
-        void infoFetcherSelected(QAction *action);
+        void selectInfoFetcher(QAction * infoFetcherAction);
         
     private:
         void showIndexer();
@@ -82,15 +82,18 @@ class InfoManager : public QObject
         QList<MediaItem> m_selectedInfoBoxMediaItems;
         QTimer *m_selectionTimer;
         bool m_infoViewVisible;
-        QList<InfoFetcher *> m_infoFetchers;
+        InfoFetcher *m_currentInfoFetcher;
+        QMenu *m_infoFetchersMenu;
         
     private slots:
         void updateViewsLayout();
         void cancelItemEdit();
         void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
-        void infoFetched(MediaItem mediaItem);
         void infoChanged(bool modified);
+        void fetchInfo();
+        void autoFetchInfo();
+        void showInfoFetcher();
         
     Q_SIGNALS:
         void infoBoxSelectionChanged(QList<MediaItem> selectedItems);

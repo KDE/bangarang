@@ -25,6 +25,7 @@
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
+#include "platform/infofetcher.h"
 #include "platform/playlist.h"
 #include "mediaitemdelegate.h"
 #include "platform/infofetcher.h"
@@ -69,16 +70,22 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoItemView->setItemDelegate(m_infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     ui->infoIndexerHolder->setVisible(false);
+    ui->infoFetcherHolder->setVisible(false);
+    QFont fetcherMessageFont = KGlobalSettings::smallestReadableFont();
+    ui->infoFetcherMessage->setFont(fetcherMessageFont);
     
     //Set up selection timer
     m_selectionTimer = new QTimer(this);
     m_selectionTimer->setSingleShot(true);
     connect(m_selectionTimer, SIGNAL(timeout()), this, SLOT(loadSelectedInfo()));
     
-    //Set up info fetchers
-    m_infoFetchers.append(new DBPediaInfoFetcher(this));
-    connect(m_infoFetchers.at(0), SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
-    
+    //Set up info fetching
+    m_currentInfoFetcher = 0;
+    connect(ui->infoAutoFetch, SIGNAL(clicked()), this, SLOT(autoFetchInfo()));
+    connect(ui->infoFetch, SIGNAL(clicked()), this, SLOT(fetchInfo()));
+    connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showInfoFetcher()));
+    connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(showInfoFetcher()));
+
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), this, SLOT(infoChanged(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
@@ -133,20 +140,22 @@ bool InfoManager::infoViewVisible()
     return m_infoViewVisible;
 }
 
-void InfoManager::infoChanged(bool modified)
+QMenu *InfoManager::infoFetchersMenu()
 {
-    ui->infoSaveHolder->setVisible(modified);
-    if (modified) {
-        ui->infoIndexerHolder->setVisible(false);
-    } else {
-        showIndexer();
+    m_infoFetchersMenu = new QMenu(i18n("Info Fetchers"), m_application->mainWindow());
+    QList<InfoFetcher *> infoFetchers = m_infoItemModel->availableInfoFetchers();
+    QActionGroup *infoFetcherGroup = new QActionGroup(m_infoFetchersMenu);
+    infoFetcherGroup->setExclusive(true);
+    for (int i = 0; i < infoFetchers.count(); i++) {
+        QAction *infoFetcherAction = new QAction(infoFetchers.at(i)->name(), m_infoFetchersMenu);
+        infoFetcherGroup->addAction(infoFetcherAction);
+        m_infoFetchersMenu->addAction(infoFetcherAction);
+        if (m_currentInfoFetcher == infoFetchers.at(i)) {
+            infoFetcherAction->setChecked(true);
+        }
     }
-    updateViewsLayout();
-}
-
-QList<InfoFetcher *> InfoManager::infoFetchers()
-{
-    return m_infoFetchers;
+    connect(m_infoFetchersMenu, SIGNAL(triggered(QAction*)), this, SLOT(selectInfoFetcher(QAction*)));
+    return m_infoFetchersMenu;
 }
 
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
@@ -178,6 +187,31 @@ void InfoManager::cancelItemEdit()
     ui->infoSaveHolder->setVisible(false);
     showIndexer();
     updateViewsLayout();
+}
+
+void InfoManager::autoFetchInfo()
+{
+    if (m_currentInfoFetcher) {
+        m_infoItemModel->autoFetch(m_currentInfoFetcher);
+    }
+}
+
+void InfoManager::fetchInfo()
+{
+    if (m_currentInfoFetcher) {
+        m_infoItemModel->fetch(m_currentInfoFetcher);
+    }
+}
+
+void InfoManager::selectInfoFetcher(QAction * infoFetcherAction)
+{
+    QList<InfoFetcher *> infoFetchers = m_infoItemModel->availableInfoFetchers();
+    for (int i = 0; i < infoFetchers.count(); i++) {
+        if (infoFetchers.at(i)->name() == infoFetcherAction->text()) {
+            m_currentInfoFetcher = infoFetchers.at(i);
+            break;
+        }
+    }
 }
 
 void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
@@ -233,17 +267,18 @@ void InfoManager::addSelectedItemsInfo()
     }
 }
 
-void InfoManager::infoFetcherSelected(QAction *action)
+void InfoManager::infoChanged(bool modified)
 {
-    QString fetcherID = action->data().toString();
-    int fetcherIndex = -1;
-    if (fetcherID.startsWith("fetcher:")) {
-        fetcherIndex = fetcherID.remove("fetcher:").toInt();
+    ui->infoSaveHolder->setVisible(modified);
+    if (modified) {
+        ui->infoIndexerHolder->setVisible(false);
+    } else {
+        showIndexer();
     }
-    if (fetcherIndex != -1) {
-        m_infoFetchers.at(fetcherIndex)->fetchInfo(m_context);
-    }
+    updateViewsLayout();
+    showInfoFetcher();
 }
+
 
 //----------------------
 //-- Helper functions --
@@ -423,6 +458,40 @@ void InfoManager::showIndexer()
     ui->infoIndexerHolder->setVisible(indexerVisible);
 }
 
+void InfoManager::showInfoFetcher()
+{
+    bool infoFetcherVisible = false;
+    bool autoFetchVisible = false;
+    bool fetchVisible = false;
+    if (m_infoItemModel->availableInfoFetchers().count() > 0) {
+        infoFetcherVisible = true;
+        bool isFetching = false;
+        for (int i = 0; i < m_infoItemModel->availableInfoFetchers().count(); i++) {
+            InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
+            if (infoFetcher->isFetching()) {
+                isFetching = true;
+                m_currentInfoFetcher = infoFetcher;
+                break;
+            }
+        }
+        if (!isFetching) {
+            m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
+            autoFetchVisible = m_infoItemModel->autoFetchIsAvailable(m_currentInfoFetcher);
+            fetchVisible = m_infoItemModel->fetchIsAvailable(m_currentInfoFetcher);
+        }
+    }
+    ui->infoFetcherHolder->setVisible(infoFetcherVisible);
+    if (infoFetcherVisible) {
+        if (m_currentInfoFetcher->isFetching()) {
+            ui->infoFetcherMessage->setVisible(true);
+        } else {
+            ui->infoFetcherMessage->setVisible(false);
+        }
+        ui->infoAutoFetch->setVisible(autoFetchVisible);
+        ui->infoFetch->setVisible(fetchVisible);
+    }
+}
+
 void InfoManager::updateViewsLayout()
 {
     //Update infoItemView
@@ -510,14 +579,3 @@ void InfoManager::mediaListPropertiesChanged()
     }
 }
 
-void InfoManager::infoFetched(MediaItem mediaItem)
-{
-    kDebug() << "Found:[" << mediaItem.title << "]\n Description:[" << mediaItem.fields["description"].toString();
-    QList<MediaItem> updatedContext = m_context;
-    for (int i = 0; i < updatedContext.count(); i++) {
-        if (updatedContext.at(i).url == mediaItem.url) {
-            updatedContext.replace(i, mediaItem);
-            break;
-        }
-    }
-}

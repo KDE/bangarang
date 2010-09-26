@@ -20,6 +20,7 @@
 #include "dbpediaquery.h"
 #include "mediaitemmodel.h"
 #include "downloader.h"
+#include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDebug>
@@ -30,11 +31,15 @@
 DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
 {
     m_name = i18n("DBPedia");
+    //m_icon = KIcon("dbpedia");
+    m_timeout = false;
+    m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
     m_dbPediaQuery = new DBPediaQuery(this);
     connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
     connect (m_dbPediaQuery, SIGNAL(gotActorInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
     connect (m_dbPediaQuery, SIGNAL(gotDirectorInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
-    //connect (m_dbPediaQuery, SIGNAL(gotMovieInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotMovieInfo(bool , const QList<Soprano::BindingSet>, const QString)));
 
     m_downloader = new Downloader(this);
     connect(this, SIGNAL(download(KUrl,KUrl)), m_downloader, SLOT(download(KUrl,KUrl)));
@@ -65,40 +70,49 @@ QStringList DBPediaInfoFetcher::requiredFields(const QString &subType)
     return m_requiredFields[subType];
 }
 
-bool DBPediaInfoFetcher::available()
+bool DBPediaInfoFetcher::available(const QString &subType)
 {
     //Available if connected to network
-    return (Solid::Networking::status() == Solid::Networking::Connected);
+    bool networkConnected = (Solid::Networking::status() == Solid::Networking::Connected);
+    bool handlesType = (m_requiredFields[subType].count() > 0);
+    return (networkConnected && handlesType);
 }
 
 void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields)
 {
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
+    m_requestKeys.clear();
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
         if (mediaItem.subType() == "Artist") {
             m_mediaList.append(mediaItem);
+            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.fields["title"].toString()));
             connect (m_dbPediaQuery,
                      SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)),
                      this,
                      SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+            setFetching();
             m_dbPediaQuery->getArtistInfo(mediaItem.fields["title"].toString());
         }
         if (mediaItem.subType() == "Actor") {
             m_mediaList.append(mediaItem);
+            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.fields["title"].toString()));
             connect (m_dbPediaQuery,
                      SIGNAL(gotActorInfo(bool , const QList<Soprano::BindingSet>, const QString)),
                      this,
                      SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+            setFetching();
             m_dbPediaQuery->getActorInfo(mediaItem.fields["title"].toString());
         }
         if (mediaItem.subType() == "Director") {
             m_mediaList.append(mediaItem);
+            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.fields["title"].toString()));
             connect (m_dbPediaQuery,
                      SIGNAL(gotDirectorInfo(bool , const QList<Soprano::BindingSet>, const QString)),
                      this,
                      SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+            setFetching();
             m_dbPediaQuery->getDirectorInfo(mediaItem.fields["title"].toString());
         }
         /*if (mediaItem.type == "Video") {
@@ -115,7 +129,8 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequir
 void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
     //Find corresponding MediaItem
-    if (successful) {
+    m_requestKeys.removeAll(requestKey);
+    if (successful & !m_timeout) {
         //Find item corresponding to fetched info
         QString subType = requestKey.left(requestKey.indexOf(":"));
         QString title = requestKey.mid(requestKey.indexOf(":") + 1);
@@ -158,6 +173,15 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
             m_mediaList.replace(foundIndex, mediaItem);
             emit infoFetched(mediaItem);
         }
+    }
+    if (m_requestKeys.count() == 0) {
+        m_isFetching = false;
+        if (!m_timeout) {
+            m_timer->stop();
+            emit fetchComplete();
+        }
+    } else if (!m_timeout){
+        m_timer->start(6000);
     }
 }
 
@@ -230,4 +254,15 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
     }
 }
 
+void DBPediaInfoFetcher::setFetching()
+{
+    m_isFetching = true;
+    m_timer->start(6000);
+    emit fetching();
+}
 
+void DBPediaInfoFetcher::timeout()
+{
+    m_timeout = true;
+    emit fetchComplete();
+}

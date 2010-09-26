@@ -50,9 +50,10 @@ class InfoItemModel : public QStandardItemModel
         QList<MediaItem> mediaList();
         void setSourceModel(MediaItemModel *sourceModel);
         QList<InfoFetcher *> infoFetchers();
+        QList<InfoFetcher *> availableInfoFetchers();
         bool autoFetchIsAvailable(InfoFetcher* infoFetcher);
         bool fetchIsAvailable(InfoFetcher* infoFetcher);
-        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = false);
+        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = true);
         void fetch(InfoFetcher* infoFetcher);
                    
     private:
@@ -73,7 +74,8 @@ class InfoItemModel : public QStandardItemModel
 
     Q_SIGNALS:
         void infoChanged(bool modified);
-        void fetchStatusChanged(bool fetching);
+        void fetching();
+        void fetchComplete();
         
     private Q_SLOTS:
         void checkInfoModified(QStandardItem *changedItem);
