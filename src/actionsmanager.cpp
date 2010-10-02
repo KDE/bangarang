@@ -479,9 +479,6 @@ QMenu * ActionsManager::infoMenu()
         //m_infoMenu->addAction(action("add_selected_info"));
         m_infoMenu->addAction(action("remove_selected_info"));
     }
-    if (m_application->infoManager()->infoFetchersMenu()->actions().count() > 0 ) {
-        m_infoMenu->addMenu(m_application->infoManager()->infoFetchersMenu());
-    }
     m_infoMenu->addAction(action("update_ontologies"));
     return m_infoMenu;   
 }

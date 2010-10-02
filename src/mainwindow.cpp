@@ -925,8 +925,8 @@ void MainWindow::setupIcons()
     ui->showInfo->setIcon(KIcon("help-about"));
     ui->closeMediaListFilter->setIcon(KIcon("dialog-close"));
     ui->infoIndexSelected->setIcon(KIcon("system-run"));
-    ui->infoAutoFetch->setIcon(KIcon("run-build"));
-    ui->infoFetch->setIcon(KIcon("document-edit"));
+    ui->showInfoFetcherExpander->setIcon(KIcon("help-about"));
+
 
     //Now Playing View bottom bar
     ui->collectionButton->setIcon(KIcon("view-media-playlist"));
@@ -1066,9 +1066,10 @@ void MainWindow::updateCustomColors()
     viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::Base));
     ui->mediaListHolder->setPalette(viewPalette);
     ui->semanticsHolder->setPalette(viewPalette);
-    //the palette of the media filter inherited the palette and seems to be invisible now
     viewPalette.setColor(QPalette::Window, palette().color(QPalette::Window));
     ui->mediaListFilter->setPalette(viewPalette);
+    viewPalette.setColor(QPalette::Window, viewPalette.color(QPalette::AlternateBase));
+    ui->infoFetcherExpander->setPalette(viewPalette);
 }
 
 void MainWindow::skipForward(int i)
