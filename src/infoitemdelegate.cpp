@@ -21,6 +21,7 @@
 #include "sensiblewidgets.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
+#include "platform/utilities.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
@@ -49,12 +50,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_parent = (MainWindow *)parent;
     
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
+    m_nepomukInited = Utilities::nepomukInited();
+
     
 }
 

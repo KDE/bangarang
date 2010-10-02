@@ -55,12 +55,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_parent = parent;
     ui = m_parent->ui;
 
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true;
-    } else {
-        m_nepomukInited = false;
-    }
+    m_nepomukInited = Utilities::nepomukInited();
     
     m_infoItemModel = new InfoItemModel(this);
     m_infoItemModel->setSourceModel(m_application->browsingModel());

@@ -64,7 +64,6 @@ class BangarangApplication : public KApplication
         DvdController * dvdController() { return m_dvdController; }
         KLocale * locale() { return m_locale; }
         const KAboutData * aboutData();
-        bool nepomukInited();
         
     private:
         MainWindow * m_mainWindow;

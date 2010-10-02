@@ -121,13 +121,7 @@ void BangarangApplication::setup()
     connect(m_statusNotifierItem, SIGNAL(changeVolumeRequested(int)), this, SLOT(volumeChanged(int)));
 
     //Initialize Nepomuk
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
-    if (!m_nepomukInited) {
+    if (!Utilities::nepomukInited()) {
         KMessageBox::information(m_mainWindow, i18n("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), i18n("Bangarang"), i18n("Don't show this message again"));
     }
     
@@ -321,11 +315,6 @@ AudioSettings * BangarangApplication::audioSettings()
 const KAboutData * BangarangApplication::aboutData()
 {
     return KCmdLineArgs::aboutData();
-}
-
-bool BangarangApplication::nepomukInited()
-{
-    return m_nepomukInited;
 }
 
 void BangarangApplication::handleNotifierStateRequest(Phonon::State state)

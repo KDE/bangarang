@@ -654,14 +654,12 @@ int main(int argc, char *argv[])
 
     KApplication application;
     
-    bool nepomukInited;
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        nepomukInited = true; //resource manager inited successfully
-    } else {
-        nepomukInited = false; //no resource manager
+    bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    if (!nepomukInited) {
+        Nepomuk::ResourceManager::instance()->init();
+        nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
     }
-    
+
     if (args->count() > 0 && nepomukInited) {
         
         QFile file(args->arg(0));

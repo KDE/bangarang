@@ -35,12 +35,7 @@
 
 MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
 {
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
-    }
+    m_nepomukInited = Utilities::nepomukInited();
     m_state = Idle;
     m_percent = 0;
 }

@@ -522,12 +522,6 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         mediaItem.fields["trackNumber"] = track;
         return mediaItem;
     }
-    //Initialize Nepomuk
-    bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
-    if (!nepomukInited) {
-        Nepomuk::ResourceManager::instance()->init();
-        nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
-    }
     
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     
@@ -549,7 +543,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
     
     //Determine type of file - nepomuk is primary source
     bool foundInNepomuk = false;
-    if (nepomukInited && !preferFileMetaData) {
+    if (nepomukInited() && !preferFileMetaData) {
         //Try to find the corresponding resource in Nepomuk
         Nepomuk::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
@@ -649,7 +643,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
     }
 
     //Lookup nepomuk metadata not stored with file
-    if (nepomukInited && preferFileMetaData) {
+    if (nepomukInited() && preferFileMetaData) {
         Nepomuk::Resource res(KUrl(mediaItem.url));
         QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
         mediaItem.fields["rating"] = res.rating();
@@ -1912,3 +1906,14 @@ QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
     }
     return sortedList;
 }
+
+bool Utilities::nepomukInited()
+{
+    bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    if (!nepomukInited) {
+        Nepomuk::ResourceManager::instance()->init();
+        nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    }
+    return nepomukInited;
+}
+

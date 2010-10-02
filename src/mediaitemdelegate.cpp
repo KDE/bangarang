@@ -64,12 +64,9 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     m_showNotInPlaylist = KIcon(pixmap);
     m_removeFromPlaylist = KIcon("list-remove");
 
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
+    m_nepomukInited = Utilities::nepomukInited();
+    if (m_nepomukInited) {
         m_mediaIndexer = new MediaIndexer(this);
-    } else {
-        m_nepomukInited = false; //no resource manager
     }
 
     //no proxy by default

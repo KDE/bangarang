@@ -19,6 +19,7 @@
 #include "ontologyupdater.h"
 #include "mediavocabulary.h"
 #include "mediaquery.h"
+#include "utilities.h"
 #include <KDebug>
 #include <KLocale>
 #include <Nepomuk/Variant>
@@ -43,13 +44,10 @@ void OntologyUpdater::start()
 {
     QApplication::processEvents();
     Soprano::Model *m_mainModel;
-    bool m_nepomukInited;
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
+    bool m_nepomukInited = Utilities::nepomukInited();
+    if (m_nepomukInited) {
         m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
     } else {
-        m_nepomukInited = false; //no resource manager
         return;
     }
     
