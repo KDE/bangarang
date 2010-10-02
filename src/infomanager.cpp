@@ -71,8 +71,13 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoSaveHolder->setVisible(false);
     ui->infoIndexerHolder->setVisible(false);
     ui->infoFetcherHolder->setVisible(false);
+    ui->infoFetcherExpander->setVisible(false);
     QFont fetcherMessageFont = KGlobalSettings::smallestReadableFont();
     ui->infoFetcherMessage->setFont(fetcherMessageFont);
+    ui->infoFetcherLabel->setFont(fetcherMessageFont);
+    ui->infoFetcherSelector->setFont(fetcherMessageFont);
+    ui->infoFetch->setFont(fetcherMessageFont);
+    ui->infoAutoFetch->setFont(fetcherMessageFont);
     
     //Set up selection timer
     m_selectionTimer = new QTimer(this);
@@ -83,6 +88,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_currentInfoFetcher = 0;
     connect(ui->infoAutoFetch, SIGNAL(clicked()), this, SLOT(autoFetchInfo()));
     connect(ui->infoFetch, SIGNAL(clicked()), this, SLOT(fetchInfo()));
+    connect(ui->showInfoFetcherExpander, SIGNAL(clicked()), this, SLOT(toggleShowInfoFetcherExpander()));
+    connect(ui->infoFetcherSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectInfoFetcher(int)));
     connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showInfoFetcher()));
     connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(showInfoFetcher()));
 
@@ -140,24 +147,6 @@ bool InfoManager::infoViewVisible()
     return m_infoViewVisible;
 }
 
-QMenu *InfoManager::infoFetchersMenu()
-{
-    m_infoFetchersMenu = new QMenu(i18n("Info Fetchers"), m_application->mainWindow());
-    QList<InfoFetcher *> infoFetchers = m_infoItemModel->availableInfoFetchers();
-    QActionGroup *infoFetcherGroup = new QActionGroup(m_infoFetchersMenu);
-    infoFetcherGroup->setExclusive(true);
-    for (int i = 0; i < infoFetchers.count(); i++) {
-        QAction *infoFetcherAction = new QAction(infoFetchers.at(i)->name(), m_infoFetchersMenu);
-        infoFetcherGroup->addAction(infoFetcherAction);
-        m_infoFetchersMenu->addAction(infoFetcherAction);
-        if (m_currentInfoFetcher == infoFetchers.at(i)) {
-            infoFetcherAction->setChecked(true);
-        }
-    }
-    connect(m_infoFetchersMenu, SIGNAL(triggered(QAction*)), this, SLOT(selectInfoFetcher(QAction*)));
-    return m_infoFetchersMenu;
-}
-
 void InfoManager::mediaSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected )
 {
     //Delay updating info for 400 milliseconds to prevent rapid-fire nepomuk queries.
@@ -194,6 +183,7 @@ void InfoManager::autoFetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->autoFetch(m_currentInfoFetcher);
     }
+    ui->infoFetcherExpander->setVisible(false);
 }
 
 void InfoManager::fetchInfo()
@@ -201,6 +191,12 @@ void InfoManager::fetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->fetch(m_currentInfoFetcher);
     }
+    ui->infoFetcherExpander->setVisible(false);
+}
+
+void InfoManager::selectInfoFetcher(int index)
+{
+    m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(index);
 }
 
 void InfoManager::selectInfoFetcher(QAction * infoFetcherAction)
@@ -279,6 +275,10 @@ void InfoManager::infoChanged(bool modified)
     showInfoFetcher();
 }
 
+void InfoManager::toggleShowInfoFetcherExpander()
+{
+    ui->infoFetcherExpander->setVisible(!ui->infoFetcherExpander->isVisible());
+}
 
 //----------------------
 //-- Helper functions --
@@ -466,15 +466,18 @@ void InfoManager::showInfoFetcher()
     if (m_infoItemModel->availableInfoFetchers().count() > 0) {
         infoFetcherVisible = true;
         bool isFetching = false;
+        ui->infoFetcherSelector->clear();
         for (int i = 0; i < m_infoItemModel->availableInfoFetchers().count(); i++) {
             InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
+            ui->infoFetcherSelector->addItem(infoFetcher->icon(), infoFetcher->name());
             if (infoFetcher->isFetching()) {
                 isFetching = true;
                 m_currentInfoFetcher = infoFetcher;
-                break;
+                ui->infoFetcherSelector->setCurrentIndex(i);
             }
         }
         if (!isFetching) {
+            ui->infoFetcherSelector->setCurrentIndex(0);
             m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
             autoFetchVisible = m_infoItemModel->autoFetchIsAvailable(m_currentInfoFetcher);
             fetchVisible = m_infoItemModel->fetchIsAvailable(m_currentInfoFetcher);
@@ -484,12 +487,15 @@ void InfoManager::showInfoFetcher()
     if (infoFetcherVisible) {
         if (m_currentInfoFetcher->isFetching()) {
             ui->infoFetcherMessage->setVisible(true);
+            ui->showInfoFetcherExpander->setVisible(false);
         } else {
             ui->infoFetcherMessage->setVisible(false);
+            ui->showInfoFetcherExpander->setVisible(true);
         }
         ui->infoAutoFetch->setVisible(autoFetchVisible);
         ui->infoFetch->setVisible(fetchVisible);
     }
+    ui->infoFetcherExpander->setVisible(false);
 }
 
 void InfoManager::updateViewsLayout()
