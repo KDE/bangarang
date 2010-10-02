@@ -52,12 +52,9 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     m_textInner = m_iconSize + 2 * m_padding;
     m_starRatingSize = StarRating::Big;
 
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
+    m_nepomukInited = Utilities::nepomukInited();
+    if (m_nepomukInited) {
         m_mediaIndexer = new MediaIndexer(this);
-    } else {
-        m_nepomukInited = false; //no resource manager
     }
 }
 

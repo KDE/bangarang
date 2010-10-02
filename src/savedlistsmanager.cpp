@@ -69,12 +69,7 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->infoManager(), SIGNAL(infoBoxSelectionChanged(QList<MediaItem>)), this, SLOT(infoBoxSelectionChanged(QList<MediaItem>)));
     
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true;
-    } else {
-        m_nepomukInited = false;
-    }
+    m_nepomukInited = Utilities::nepomukInited();
     
 }
 

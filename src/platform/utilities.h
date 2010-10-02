@@ -135,5 +135,6 @@ namespace Utilities {
     QString rawTagGenreFromGenre(QString genre);
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
+    bool nepomukInited();
 }
 #endif //UTILITIES_H    

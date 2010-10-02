@@ -87,11 +87,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->semanticsHolder->setVisible(false);
     
     //Initialize Nepomuk
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
-    } else {
-        m_nepomukInited = false; //no resource manager
+    m_nepomukInited = Utilities::nepomukInited();
+    if (!m_nepomukInited) {
         ui->Filter->setVisible(false);
     }
     

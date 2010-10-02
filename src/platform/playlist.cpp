@@ -61,12 +61,9 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     
     setMediaObject(mediaObject);
 
-    Nepomuk::ResourceManager::instance()->init();
-    if (Nepomuk::ResourceManager::instance()->initialized()) {
-        m_nepomukInited = true; //resource manager inited successfully
+    m_nepomukInited = Utilities::nepomukInited();
+    if (m_nepomukInited) {
         m_mediaIndexer = new MediaIndexer(this);
-    } else {
-        m_nepomukInited = false; //no resource manager
     }
     
     connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));   
