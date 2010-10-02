@@ -97,6 +97,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+    connect(ui->mediaViewSplitter, SIGNAL(splitterMoved(int,int)), this, SLOT(splitterResized(int,int)));
 }
 
 InfoManager::~InfoManager()
@@ -273,6 +274,12 @@ void InfoManager::infoChanged(bool modified)
 void InfoManager::toggleShowInfoFetcherExpander()
 {
     ui->infoFetcherExpander->setVisible(!ui->infoFetcherExpander->isVisible());
+    updateViewsLayout();
+}
+
+void InfoManager::splitterResized(int, int)
+{
+    updateViewsLayout();
 }
 
 //----------------------
@@ -579,4 +586,5 @@ void InfoManager::mediaListPropertiesChanged()
         loadSelectedInfo();
     }
 }
+
 

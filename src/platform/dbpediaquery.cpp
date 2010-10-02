@@ -188,7 +188,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     QList<Soprano::BindingSet> resultsBindingSets;
     QString requestKey = m_requests.key(from);
     QFile file(to.path());
-    
+
     //Check to see if result file can be opened
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         kDebug() << QString("Couldn't open dbpedia query result file:%1").arg(from.path());
@@ -210,7 +210,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     QDomDocument resultsDoc("queryResult");
     resultsDoc.setContent(&file);
     kDebug() << "Got results for " << requestKey;
-    
+
     //Iterate through result nodes of the XML document
     QDomNodeList results = resultsDoc.elementsByTagName("result");
     for (int i = 0; i < results.count(); i++) {
