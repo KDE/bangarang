@@ -1,5 +1,6 @@
 set(BangarangNepomukWriterSources
     main.cpp
+    nepomukwriter.cpp
 #    ../mediaitemmodel.cpp
     ../mediavocabulary.cpp
 )
