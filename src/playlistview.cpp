@@ -83,7 +83,6 @@ void PlaylistView::playlistChanged()
     if (model()->rowCount() > 0) {
         header()->setStretchLastSection(false);
         header()->setResizeMode(0, QHeaderView::Stretch);
-        header()->setResizeMode(1, QHeaderView::ResizeToContents);
     }
     if (m_currentModel == Playlist::PlaylistModel) {
         m_playlistName->setText(i18n("<b>Playlist</b>"));

@@ -32,7 +32,6 @@ NowPlayingView::NowPlayingView(QWidget* parent): QTreeView(parent)
     m_nowPlayingModel = m_application->playlist()->nowPlayingModel();
     setModel( m_nowPlayingModel );
     header()->setVisible(false);
-    header()->hideSection(1);
     m_nowPlayingDelegate = NULL;
     connect(m_nowPlayingModel, SIGNAL(mediaListChanged()), this, SLOT(tidyHeader()));
 }
@@ -57,6 +56,4 @@ void NowPlayingView::tidyHeader()
 {
     header()->setStretchLastSection(false);
     header()->setResizeMode(0, QHeaderView::Stretch);
-    header()->setResizeMode(1, QHeaderView::ResizeToContents);
-    header()->hideSection(1);
 }
