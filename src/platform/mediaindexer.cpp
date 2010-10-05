@@ -261,6 +261,12 @@ void MediaIndexer::processWriterOutput()
                         status["progress"] = m_percent;
                         emit updateStatus(status);
                         emit urlInfoRemoved(resourceUri);
+                    } else if (line.startsWith("BangrangMessage:")) {
+                        QString message = line.remove("BangarangMessage:").trimmed();
+                        QHash<QString, QVariant> status;
+                        status["description"] = message;
+                        status["progress"] = m_percent;
+                        emit updateStatus(status);
                     }
                 }
             }
