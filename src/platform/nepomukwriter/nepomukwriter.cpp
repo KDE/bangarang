@@ -633,7 +633,7 @@ void NepomukWriter::outputMessage(MessageType messageType, QString urlOrProgress
 Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing)
 {
     //First look in cache to see if this resource was previously found
-    QString cacheKey = QString("%1:%2").arg(property.toString().arg(title));
+    QString cacheKey = QString("%1:%2").arg(property.toString()).arg(title);
     if (m_propertyResourceCache.contains(cacheKey)) {
         return Nepomuk::Resource::fromResourceUri(m_propertyResourceCache.value(cacheKey));
     }
