@@ -17,7 +17,9 @@ public:
     enum MessageType {InfoRemoved = 1,
                       InfoUpdated = 2,
                       Progress = 3,
-                      Error = 4};
+                      Message = 4,
+                      Debug = 5,
+                      Error = 6};
     explicit NepomukWriter(QObject *parent = 0);
     void processJob(QFile *jobFile);
 
@@ -26,13 +28,14 @@ signals:
 public slots:
 
 private:
+    QHash<QString, KUrl> m_propertyResourceCache;
     void writeToNepomuk(QHash <QString, QVariant> fields);
     void removeInfo(QHash <QString, QVariant> fields);
     void updateInfo(QHash <QString, QVariant> fields);
-    void writeProperty(MediaVocabulary mediaVocabulary,
-                       Nepomuk::Resource res, QUrl property, Nepomuk::Variant value);
     void removeType(Nepomuk::Resource res, QUrl mediaType);
     void outputMessage(MessageType messageType, QString urlOrProgressOrMessage = QString());
+    Nepomuk::Resource findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing = false);
+    void removeUnusedPropertyResources();
 
 };
 

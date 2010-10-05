@@ -3,6 +3,7 @@ set(BangarangNepomukWriterSources
     nepomukwriter.cpp
 #    ../mediaitemmodel.cpp
     ../mediavocabulary.cpp
+    ../mediaquery.cpp
 )
 
 kde4_add_executable(bangarangnepomukwriter ${BangarangNepomukWriterSources})
