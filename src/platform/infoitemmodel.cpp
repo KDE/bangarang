@@ -40,20 +40,18 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Feed"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Video Feed"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "seriesName" << "season" << "episodeNumber" << "genre" << "year" << "actor" << "director" << "writer" << "producer" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Artist"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["Album"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["AudioTag"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["Album"] = QStringList() << "artwork" << "title";
+    m_fieldsOrder["AudioGenre"] = QStringList() << "title";
+    m_fieldsOrder["AudioTag"] = QStringList() << "title";
     m_fieldsOrder["TV Series"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["VideoGenre"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["VideoGenre"] = QStringList() << "title";
     m_fieldsOrder["Actor"] = QStringList() << "artwork" << "title" << "description";
     m_fieldsOrder["Director"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["VideoTag"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["VideoTag"] = QStringList() << "title";
     m_fieldsOrder["Audio Feed"] = QStringList() << "artwork" << "title" << "description" << "url";
     m_fieldsOrder["Video Feed"] = QStringList() << "artwork" << "title" << "description" << "url";
     m_fieldsOrder["Basic"] = QStringList() << "title";
@@ -80,6 +78,24 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["episodeNumber"] = i18n("episodeNumber");
     m_fieldNames["playCount"] = i18n("Play Count");
     m_fieldNames["lastPlayed"] = i18n("Last Played");
+
+    //Store restricted fields
+    m_restrictedFields["Music"] = QStringList() << "url" << "playCount" << "lastPlayed";
+    m_restrictedFields["Audio Clip"] = QStringList() << "url" << "playCount" << "lastPlayed";
+    m_restrictedFields["Audio Stream"] = QStringList() << "playCount" << "lastPlayed";
+    m_restrictedFields["Video Clip"] = QStringList() << "url" << "playCount" << "lastPlayed";
+    m_restrictedFields["Movie"] = QStringList() << "url" << "playCount" << "lastPlayed";
+    m_restrictedFields["TV Show"] = QStringList() << "url" << "playCount" << "lastPlayed";
+    m_restrictedFields["Artist"] = QStringList() << "title";
+    m_restrictedFields["Album"] = QStringList() << "artwork" << "title";
+    m_restrictedFields["AudioGenre"] = QStringList() << "title";
+    m_restrictedFields["AudioTag"] = QStringList() << "artwork" << "title";
+    m_restrictedFields["TV Series"] = QStringList() << "title";
+    m_restrictedFields["VideoGenre"] = QStringList() << "title";
+    m_restrictedFields["Actor"] = QStringList() << "title";
+    m_restrictedFields["Director"] = QStringList() << "title";
+    m_restrictedFields["VideoTag"] = QStringList() << "artwork" << "title";
+
 
     //Set up InfoFetchers
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
@@ -110,22 +126,12 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
         QStringList fieldsOrder = m_fieldsOrder.value(subType, m_fieldsOrder["Basic"]);
         for (int i = 0; i < fieldsOrder.count(); i++) {
             QString field = fieldsOrder.at(i);
-            if (field == "playCount" || field == "lastPlayed") {
-                if (mediaList.count() == 1) { // only add these fields when one item is loaded
-                    addFieldToValuesModel(m_fieldNames[field],field);
-                }
-            } else if (field == "url") {
-                if (Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) {
-                    addFieldToValuesModel(i18n("Location"), "album"); //or the user would see the ugly udi
-                } else if (subType == "Audio Stream" ||
-                           subType == "Audio Feed" ||
-                           subType == "Video Feed") {
-                    addFieldToValuesModel(m_fieldNames[field],field, true); //url must be editable for these subTypes
-                } else {
-                    addFieldToValuesModel(m_fieldNames[field],field);
-                }
+            if ((Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) &&
+                (field == "url")) {
+                addFieldToValuesModel(i18n("Location"), "album", false); //or the user would see the ugly udi
             } else {
-                addFieldToValuesModel(m_fieldNames[field],field);
+                bool isEditable = !m_restrictedFields[subType].contains(field);
+                addFieldToValuesModel(m_fieldNames[field],field, isEditable);
             }
         }
         emit infoChanged(false);
@@ -359,7 +365,7 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
     }
 }
 
-void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable)
+void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable)
 {
     QList<QStandardItem *> rowData;
     QStandardItem *fieldItem = new QStandardItem();
@@ -367,10 +373,9 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     fieldItem->setData(fieldTitle, InfoItemModel::FieldNameRole);
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
-    bool isEditable = m_defaultEditable;
-    if ((field == "playCount" || field == "lastPlayed" || field == "url") && !forceEditable) {
+    /*if ((field == "playCount" || field == "lastPlayed" || field == "url") && !forceEditable) {
         isEditable = false;
-    }
+    }*/
     fieldItem->setEditable(isEditable);
     if (isEditable) {
         fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);

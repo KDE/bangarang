@@ -62,12 +62,13 @@ class InfoItemModel : public QStandardItemModel
         MediaItemModel * m_sourceModel;
         QHash<QString, QStringList> m_fieldsOrder;
         QHash<QString, QString> m_fieldNames;
+        QHash<QString, QStringList> m_restrictedFields;
         bool m_defaultEditable;
         bool m_modified;
         QList<InfoFetcher *> m_infoFetchers;
         FetchType m_fetchType;
         MediaIndexer * m_indexer;
-        void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
+        void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);

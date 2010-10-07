@@ -1848,7 +1848,7 @@ QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
     for (int i = 0; i < genreList.count(); i++) {
         MediaItem genreItem = genreList.at(i);
         kDebug() << genreItem.title;
-        if (genreItem.type == "Category" && genreItem.fields["categoryType"] == "MusicGenre") {
+        if (genreItem.type == "Category" && genreItem.fields["categoryType"] == "AudioGenre") {
             QString rawGenre = genreItem.title;
             QString convertedGenre = Utilities::genreFromRawTagGenre(rawGenre);
             if (convertedGenre != rawGenre) {
