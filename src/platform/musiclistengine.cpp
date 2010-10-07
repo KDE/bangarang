@@ -268,7 +268,7 @@ void MusicListEngine::run()
                     mediaItem.url = QString("music://artists?genre=%1||%2||%3").arg(genre, artistFilter, albumFilter);
                     mediaItem.title = genre;
                     mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("MusicGenre");
+                    mediaItem.fields["categoryType"] = QString("AudioGenre");
                     mediaItem.fields["title"] = genre;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;

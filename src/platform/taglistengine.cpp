@@ -88,6 +88,11 @@ void TagListEngine::run()
                 MediaItem mediaItem;
                 mediaItem.url = QString("tag://%1?tag=%2").arg(mediaType).arg(tag);
                 mediaItem.type = "Category";
+                if (mediaType == "audio") {
+                    mediaItem.fields["categoryType"] = "AudioTag";
+                } else if (mediaType == "video") {
+                    mediaItem.fields["categoryType"] = "VideoTag";
+                }
                 mediaItem.title = tag;
                 mediaItem.fields["title"] = tag;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
