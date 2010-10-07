@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "utilities.h"
 #include "dbpediainfofetcher.h"
+#include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>
 #include <KUrl>
@@ -80,11 +81,15 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["playCount"] = i18n("Play Count");
     m_fieldNames["lastPlayed"] = i18n("Last Played");
 
+    //Set up InfoFetchers
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
     m_infoFetchers.append(dbPediaInfoFetcher);
+
+    //Setup indexer
+    m_indexer = new MediaIndexer(this);
 }
 
 InfoItemModel::~InfoItemModel()
@@ -319,9 +324,8 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
     if (foundIndex != -1 && m_fetchType == AutoFetch) {
         m_mediaList.replace(foundIndex, mediaItem);
 
-        //Update source information
-        //TODO: Update indexer to properly category mediaItem info
-        //m_sourceModel->updateSourceInfo(m_mediaList);
+        //Cache autofetched info in nepomuk
+        m_indexer->updateInfo(mediaItem);
 
         //Ensure original values in model are updated to reflect saved(no-edits) state
         loadInfo(m_mediaList);
