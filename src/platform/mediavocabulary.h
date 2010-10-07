@@ -139,7 +139,10 @@ class MediaVocabulary {
         QString hasDescription(MediaQuery::Match match = MediaQuery::Required, 
                                const QString &description = QString(), 
                                MediaQuery::Constraint constraint = MediaQuery::Equal);
-        QString hasDuration(MediaQuery::Match match = MediaQuery::Required, 
+        QString hasResourceDescription(MediaQuery::Match match = MediaQuery::Required,
+                               const QString &description = QString(),
+                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasDuration(MediaQuery::Match match = MediaQuery::Required,
                             int duration = -2, 
                             MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasLastPlayed(MediaQuery::Match match = MediaQuery::Required, 
@@ -149,7 +152,7 @@ class MediaVocabulary {
                              int playCount = -1, 
                              MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasArtwork(MediaQuery::Match match = MediaQuery::Required);
-        QString hasCreated(MediaQuery::Match match = MediaQuery::Required, 
+        QString hasCreated(MediaQuery::Match match = MediaQuery::Required,
                            const QDate &created = QDate(), 
                            MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasGenre(MediaQuery::Match match = MediaQuery::Required, 
@@ -165,6 +168,10 @@ class MediaVocabulary {
         QString hasMusicArtistName(MediaQuery::Match match = MediaQuery::Required, 
                                    const QString &artistName = QString(), 
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicArtistDescription(MediaQuery::Match match = MediaQuery::Required,
+                                   const QString &artistDescription = QString(),
+                                   MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicArtistArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasMusicAlbumTitle(MediaQuery::Match match = MediaQuery::Required,
                                    const QString &albumTitle = QString(),
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -177,6 +184,10 @@ class MediaVocabulary {
         QString hasVideoSeriesTitle(MediaQuery::Match match = MediaQuery::Required,
                                     const QString &seriesTitle = QString(),
                                     MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoSeriesDescription(MediaQuery::Match match = MediaQuery::Required,
+                                    const QString &seriesDescription = QString(),
+                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoSeriesArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasVideoSynopsis(MediaQuery::Match match = MediaQuery::Required,
                                  const QString &synopsis = QString(),
                                  MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -192,18 +203,34 @@ class MediaVocabulary {
         QString hasVideoWriter(MediaQuery::Match match = MediaQuery::Required,
                                const QString &writer = QString(), 
                                MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoWriterDescription(MediaQuery::Match match = MediaQuery::Required,
+                               const QString &writerDescription = QString(),
+                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoWriterArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasVideoDirector(MediaQuery::Match match = MediaQuery::Required,
                                  const QString &director = QString(), 
                                  MediaQuery::Constraint constraint = MediaQuery::Equal);
-        QString hasVideoAssistantDirector(MediaQuery::Match match = MediaQuery::Required,
-                                          const QString &assistantDirector = QString(), 
-                                          MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoDirectorDescription(MediaQuery::Match match = MediaQuery::Required,
+                               const QString &directorDescription = QString(),
+                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoDirectorArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasVideoProducer(MediaQuery::Match match = MediaQuery::Required,
                                  const QString &producer = QString(), 
                                  MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoProducerDescription(MediaQuery::Match match = MediaQuery::Required,
+                               const QString &producerDescription = QString(),
+                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoProducerArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasVideoActor(MediaQuery::Match match = MediaQuery::Required,
                               const QString &actor = QString(), 
                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoActorDescription(MediaQuery::Match match = MediaQuery::Required,
+                               const QString &actorDescription = QString(),
+                               MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasVideoActorArtwork(MediaQuery::Match match = MediaQuery::Required);
+        QString hasVideoAssistantDirector(MediaQuery::Match match = MediaQuery::Required,
+                                          const QString &assistantDirector = QString(),
+                                          MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasVideoCinematographer(MediaQuery::Match match = MediaQuery::Required,
                                         const QString &cinematographer = QString(), 
                                         MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -211,6 +238,13 @@ class MediaVocabulary {
         //SPARQL binding names
         static QString mediaResourceBinding();
         static QString mediaResourceUrlBinding();
+        static QString artistResourceBinding();
+        static QString albumResourceBinding();
+        static QString videoSeriesResourceBinding();
+        static QString writerResourceBinding();
+        static QString directorResourceBinding();
+        static QString producerResourceBinding();
+        static QString actorResourceBinding();
         static QString titleBinding();
         static QString descriptionBinding();
         static QString durationBinding();
@@ -221,10 +255,12 @@ class MediaVocabulary {
         static QString genreBinding();
         static QString releaseDateBinding();
         static QString ratingBinding();
-	    static QString tagBinding();
+        static QString tagBinding();
         
         static QString musicArtistBinding();
         static QString musicArtistNameBinding();
+        static QString musicArtistDescriptionBinding();
+        static QString musicArtistArtworkBinding();
         static QString musicAlbumBinding();
         static QString musicAlbumTitleBinding();
         static QString musicAlbumYearBinding();
@@ -233,15 +269,25 @@ class MediaVocabulary {
         
         static QString videoGenreBinding();
         static QString videoSeriesTitleBinding();
+        static QString videoSeriesDescriptionBinding();
+        static QString videoSeriesArtworkBinding();
         static QString videoSynopsisBinding();
         static QString videoSeasonBinding();
         static QString videoEpisodeNumberBinding();
         static QString videoAudienceRatingBinding();
         static QString videoWriterBinding();
+        static QString videoWriterDescriptionBinding();
+        static QString videoWriterArtworkBinding();
         static QString videoDirectorBinding();
-        static QString videoAssistantDirectorBinding();
+        static QString videoDirectorDescriptionBinding();
+        static QString videoDirectorArtworkBinding();
         static QString videoProducerBinding();
+        static QString videoProducerDescriptionBinding();
+        static QString videoProducerArtworkBinding();
         static QString videoActorBinding();
+        static QString videoActorDescriptionBinding();
+        static QString videoActorArtworkBinding();
+        static QString videoAssistantDirectorBinding();
         static QString videoCinematographerBinding();
         
         //RDF storage procedure lookup

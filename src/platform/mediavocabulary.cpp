@@ -1056,13 +1056,11 @@ QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
     QString propertyBinding = musicArtistNameBinding();
     QString statement;
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        QString artistResourceBinding = "artistResource";
         statement = QString("{%1} UNION  {%2} UNION {%3} ")
-        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding))
-        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding))
-        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding));
-        //statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding);
-        statement += MediaQuery::hasProperty(artistResourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()))
+        .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding()));
+        statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::musicArtistName(), propertyBinding);
     } else {
         statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
     }
@@ -1082,6 +1080,47 @@ QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
     return statement;
 }
 
+QString MediaVocabulary::hasMusicArtistDescription(MediaQuery::Match match,
+                                            const QString &artistDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicArtistDescriptionBinding();
+    QString statement;
+    statement = QString("{%1} UNION  {%2} UNION {%3} ")
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()))
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding()));
+    statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!artistDescription.isEmpty()) {
+        QStringList artistDescriptions = artistDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < artistDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, artistDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicArtistArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = artistResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = musicArtistArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
 QString MediaVocabulary::hasMusicAlbumTitle(MediaQuery::Match match,
                                             const QString &albumTitle,
                                             MediaQuery::Constraint constraint)
@@ -1090,9 +1129,8 @@ QString MediaVocabulary::hasMusicAlbumTitle(MediaQuery::Match match,
     QString propertyBinding = musicAlbumTitleBinding();
     QString statement;
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        QString albumResourceBinding = "albumResource";
-        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicAlbum(), albumResourceBinding);
-        statement += MediaQuery::hasProperty(albumResourceBinding, MediaVocabulary::musicAlbumName(), propertyBinding);
+        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicAlbum(), albumResourceBinding());
+        statement += MediaQuery::hasProperty(albumResourceBinding(), MediaVocabulary::musicAlbumName(), propertyBinding);
     } else {
         statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicAlbumName(), propertyBinding);
     }
@@ -1151,9 +1189,8 @@ QString MediaVocabulary::hasVideoSeriesTitle(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoSeriesTitleBinding();
-    QString seriesResourceBinding = "seriesResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSeries(), seriesResourceBinding);
-    statement += MediaQuery::hasProperty(seriesResourceBinding, MediaVocabulary::videoSeriesTitle(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSeries(), videoSeriesResourceBinding());
+    statement += MediaQuery::hasProperty(videoSeriesResourceBinding(), MediaVocabulary::videoSeriesTitle(), propertyBinding);
     if (!seriesTitle.isEmpty()) {
         QStringList seriesTitles = seriesTitle.split("|OR|");
         statement += QString("FILTER (");
@@ -1167,6 +1204,45 @@ QString MediaVocabulary::hasVideoSeriesTitle(MediaQuery::Match match,
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoSeriesDescription(MediaQuery::Match match,
+                                            const QString &seriesDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoSeriesDescriptionBinding();
+    QString seriesResourceBinding = videoSeriesResourceBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoSeries(), seriesResourceBinding);
+    statement += MediaQuery::hasProperty(seriesResourceBinding, MediaVocabulary::description(), propertyBinding);
+    if (!seriesDescription.isEmpty()) {
+        QStringList seriesDescriptions = seriesDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < seriesDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, seriesDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoSeriesArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = videoSeriesResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = videoSeriesArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
     return statement;
 }
 
@@ -1254,9 +1330,8 @@ QString MediaVocabulary::hasVideoWriter(MediaQuery::Match match,
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoWriterBinding();
-    QString contactResourceBinding = "writerResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), contactResourceBinding);
-    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), writerResourceBinding());
+    statement += MediaQuery::hasProperty(writerResourceBinding(), MediaVocabulary::ncoFullname(), propertyBinding);
     if (!writer.isEmpty()) {
         QStringList writers = writer.split("|OR|");
         statement += QString("FILTER (");
@@ -1272,15 +1347,52 @@ QString MediaVocabulary::hasVideoWriter(MediaQuery::Match match,
     return statement;
 }
 
+QString MediaVocabulary::hasVideoWriterDescription(MediaQuery::Match match,
+                                            const QString &writerDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoWriterDescriptionBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoWriter(), writerResourceBinding());
+    statement += MediaQuery::hasProperty(writerResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!writerDescription.isEmpty()) {
+        QStringList writerDescriptions = writerDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < writerDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, writerDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoWriterArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = writerResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = videoWriterArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
 QString MediaVocabulary::hasVideoDirector(MediaQuery::Match match,
                                           const QString &director, 
                                           MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoDirectorBinding();
-    QString contactResourceBinding = "directorResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), contactResourceBinding);
-    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), directorResourceBinding());
+    statement += MediaQuery::hasProperty(directorResourceBinding(), MediaVocabulary::ncoFullname(), propertyBinding);
     if (!director.isEmpty()) {
         QStringList directors = director.split("|OR|");
         statement += QString("FILTER (");
@@ -1296,39 +1408,52 @@ QString MediaVocabulary::hasVideoDirector(MediaQuery::Match match,
     return statement;
 }
 
-QString MediaVocabulary::hasVideoAssistantDirector(MediaQuery::Match match,
-                                                   const QString &assistantDirector, 
-                                                   MediaQuery::Constraint constraint)
-                                                   
+QString MediaVocabulary::hasVideoDirectorDescription(MediaQuery::Match match,
+                                            const QString &directorDescription,
+                                            MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString propertyBinding = videoAssistantDirectorBinding();
-    QString contactResourceBinding = "assistantDirectorResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), contactResourceBinding);
-    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
-    if (!assistantDirector.isEmpty()) {
-        QStringList assistantDirectors = assistantDirector.split("|OR|");
+    QString propertyBinding = videoDirectorDescriptionBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoDirector(), directorResourceBinding());
+    statement += MediaQuery::hasProperty(directorResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!directorDescription.isEmpty()) {
+        QStringList directorDescriptions = directorDescription.split("|OR|");
         statement += QString("FILTER (");
-        for (int i = 0; i < assistantDirectors.count(); i++) {
-            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, assistantDirectors.at(i), constraint));
+        for (int i = 0; i < directorDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, directorDescriptions.at(i), constraint));
         }
         statement.chop(4);
         statement += QString(") ");
     }
+
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
     }
     return statement;
 }
+
+QString MediaVocabulary::hasVideoDirectorArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = directorResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = videoDirectorArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
 QString MediaVocabulary::hasVideoProducer(MediaQuery::Match match,
                                           const QString &producer, 
                                           MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoProducerBinding();
-    QString contactResourceBinding = "producerResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), contactResourceBinding);
-    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), producerResourceBinding());
+    statement += MediaQuery::hasProperty(producerResourceBinding(), MediaVocabulary::ncoFullname(), propertyBinding);
     if (!producer.isEmpty()) {
         QStringList producers = producer.split("|OR|");
         statement += QString("FILTER (");
@@ -1344,20 +1469,120 @@ QString MediaVocabulary::hasVideoProducer(MediaQuery::Match match,
     return statement;
 }
 
+QString MediaVocabulary::hasVideoProducerDescription(MediaQuery::Match match,
+                                            const QString &producerDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoProducerDescriptionBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoProducer(), producerResourceBinding());
+    statement += MediaQuery::hasProperty(producerResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!producerDescription.isEmpty()) {
+        QStringList producerDescriptions = producerDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < producerDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, producerDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoProducerArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = producerResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = videoProducerArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
 QString MediaVocabulary::hasVideoActor(MediaQuery::Match match,
                                        const QString &actor, 
                                        MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = videoActorBinding();
-    QString contactResourceBinding = "actorResource";
-    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), contactResourceBinding);
-    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), actorResourceBinding());
+    statement += MediaQuery::hasProperty(actorResourceBinding(), MediaVocabulary::ncoFullname(), propertyBinding);
     if (!actor.isEmpty()) {
         QStringList actors = actor.split("|OR|");
         statement += QString("FILTER (");
         for (int i = 0; i < actors.count(); i++) {
             statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, actors.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoActorDescription(MediaQuery::Match match,
+                                            const QString &actorDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoActorDescriptionBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoActor(), actorResourceBinding());
+    statement += MediaQuery::hasProperty(actorResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!actorDescription.isEmpty()) {
+        QStringList actorDescriptions = actorDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < actorDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, actorDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoActorArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = actorResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = videoActorArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
+QString MediaVocabulary::hasVideoAssistantDirector(MediaQuery::Match match,
+                                                   const QString &assistantDirector,
+                                                   MediaQuery::Constraint constraint)
+
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = videoAssistantDirectorBinding();
+    QString contactResourceBinding = "assistantDirectorResource";
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::videoAssistantDirector(), contactResourceBinding);
+    statement += MediaQuery::hasProperty(contactResourceBinding, MediaVocabulary::ncoFullname(), propertyBinding);
+    if (!assistantDirector.isEmpty()) {
+        QStringList assistantDirectors = assistantDirector.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < assistantDirectors.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, assistantDirectors.at(i), constraint));
         }
         statement.chop(4);
         statement += QString(") ");
@@ -1395,6 +1620,41 @@ QString MediaVocabulary::hasVideoCinematographer(MediaQuery::Match match,
 QString MediaVocabulary::mediaResourceBinding()
 {
     return "r";
+}
+
+QString MediaVocabulary::artistResourceBinding()
+{
+    return "artistResource";
+}
+
+QString MediaVocabulary::albumResourceBinding()
+{
+    return "albumResource";
+}
+
+QString MediaVocabulary::videoSeriesResourceBinding()
+{
+    return "videoSeriesResource";
+}
+
+QString MediaVocabulary::writerResourceBinding()
+{
+    return "writerResource";
+}
+
+QString MediaVocabulary::directorResourceBinding()
+{
+    return "directorResource";
+}
+
+QString MediaVocabulary::producerResourceBinding()
+{
+    return "producerResource";
+}
+
+QString MediaVocabulary::actorResourceBinding()
+{
+    return "actorResource";
 }
 
 QString MediaVocabulary::mediaResourceUrlBinding()
@@ -1467,6 +1727,16 @@ QString MediaVocabulary::musicArtistNameBinding()
     return "artist";
 }
 
+QString MediaVocabulary::musicArtistDescriptionBinding()
+{
+    return "artistDescription";
+}
+
+QString MediaVocabulary::musicArtistArtworkBinding()
+{
+    return "artistArtwork";
+}
+
 QString MediaVocabulary::musicAlbumBinding()
 {
     return "album";
@@ -1502,6 +1772,16 @@ QString MediaVocabulary::videoSeriesTitleBinding()
     return "seriesTitle";
 }
 
+QString MediaVocabulary::videoSeriesDescriptionBinding()
+{
+    return "videoSeriesDescription";
+}
+
+QString MediaVocabulary::videoSeriesArtworkBinding()
+{
+    return "videoSeriesArtwork";
+}
+
 QString MediaVocabulary::videoSynopsisBinding()
 {
     return "synopsis";
@@ -1527,14 +1807,29 @@ QString MediaVocabulary::videoWriterBinding()
     return "writer";
 }
 
+QString MediaVocabulary::videoWriterDescriptionBinding()
+{
+    return "writerDescription";
+}
+
+QString MediaVocabulary::videoWriterArtworkBinding()
+{
+    return "writerArtwork";
+}
+
 QString MediaVocabulary::videoDirectorBinding()
 {
     return "director";
 }
 
-QString MediaVocabulary::videoAssistantDirectorBinding()
+QString MediaVocabulary::videoDirectorDescriptionBinding()
 {
-    return "assistantDirector";
+    return "directorDescription";
+}
+
+QString MediaVocabulary::videoDirectorArtworkBinding()
+{
+    return "directorArtwork";
 }
 
 QString MediaVocabulary::videoProducerBinding()
@@ -1542,14 +1837,39 @@ QString MediaVocabulary::videoProducerBinding()
     return "producer";
 }
 
+QString MediaVocabulary::videoProducerDescriptionBinding()
+{
+    return "producerDescription";
+}
+
+QString MediaVocabulary::videoProducerArtworkBinding()
+{
+    return "producerArtwork";
+}
+
 QString MediaVocabulary::videoActorBinding()
 {
     return "actor";
 }
 
+QString MediaVocabulary::videoActorDescriptionBinding()
+{
+    return "actorDescription";
+}
+
+QString MediaVocabulary::videoActorArtworkBinding()
+{
+    return "actorArtwork";
+}
+
 QString MediaVocabulary::videoCinematographerBinding()
 {
     return "cinematographer";
+}
+
+QString MediaVocabulary::videoAssistantDirectorBinding()
+{
+    return "assistantDirector";
 }
 
 QStringList MediaVocabulary::storageProcedure(QUrl mediaProperty)

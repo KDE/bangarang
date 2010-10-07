@@ -4,6 +4,7 @@
 #include <KDebug>
 #include <KUrl>
 #include <KLocale>
+#include <Soprano/Vocabulary/RDF>
 
 NepomukWriter::NepomukWriter(QObject *parent) :
     QObject(parent)
@@ -124,6 +125,8 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
                 if (res.hasProperty(mediaVocabulary.musicArtist())) {
                     res.removeProperty(mediaVocabulary.musicArtist());
                 }
+                res.removeProperty(mediaVocabulary.musicPerformer());
+                res.removeProperty(mediaVocabulary.musicComposer());;
                 if (res.hasProperty(mediaVocabulary.musicAlbum())) {
                     res.removeProperty(mediaVocabulary.musicAlbum());
                 }
@@ -232,194 +235,232 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     QString resourceUri = fields["resourceUri"].toString();
     QString type = fields["type"].toString();
     QString url = fields["url"].toString();
-    Nepomuk::Resource res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
 
-    //Write media metadata info to nepomuk store;
-    // Update the media type
-    if (type == "Audio") {
-        QUrl audioType;
-        if (fields["audioType"] == "Music") {
-            audioType = mediaVocabulary.typeAudioMusic();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioStream());
-            removeType(res, mediaVocabulary.typeAudio());
-        } else if (fields["audioType"] == "Audio Stream") {
-            audioType = mediaVocabulary.typeAudioStream();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioMusic());
-            removeType(res, mediaVocabulary.typeAudio());
-        } else if (fields["audioType"] == "Audio Clip") {
-            audioType = mediaVocabulary.typeAudio();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, audioType);
-            }
-            removeType(res, mediaVocabulary.typeAudioMusic());
-            removeType(res, mediaVocabulary.typeAudioStream());
-        }
-        if (!res.hasType(audioType)) {
-            res.addType(audioType);
-        }
-    } else if (type == "Video") {
-        //Update the media type
-        mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
-        QUrl videoType;
-        if (fields["videoType"] == "Movie") {
-            videoType = mediaVocabulary.typeVideoMovie();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, videoType);
-            }
-            removeType(res, mediaVocabulary.typeVideoTVShow());
-            removeType(res, mediaVocabulary.typeVideo());
-        } else if (fields["videoType"] == "TV Show") {
-            videoType = mediaVocabulary.typeVideoTVShow();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, videoType);
-            }
-            removeType(res, mediaVocabulary.typeVideoMovie());
-            removeType(res, mediaVocabulary.typeVideo());
-        } else if (fields["videoType"] == "Video Clip") {
-            videoType = mediaVocabulary.typeVideo();
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, videoType);
-            }
-            removeType(res, mediaVocabulary.typeVideoMovie());
-            removeType(res, mediaVocabulary.typeVideoTVShow());
-        }
-        if (!res.hasType(videoType)) {
-            res.addType(videoType);
-        }
+    //Find corresponding Nepomuk resource
+    Nepomuk::Resource res;
+    if (type == "Audio" || type =="Video") {
+        res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
     } else if (type == "Category") {
-        if (fields["categoryType"] == "Audio Feed") {
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, mediaVocabulary.typeAudioFeed());
-            } else {
-                if (!res.hasType(mediaVocabulary.typeAudioFeed())) {
-                    res.addType(mediaVocabulary.typeAudioFeed());
+        QUrl categoryProperty;
+        if (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed") {
+            res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
+        } else if (fields["categoryType"] == "Artist") {
+            categoryProperty = mediaVocabulary.musicArtist();
+        } else if (fields["categoryType"] == "Album") {
+            categoryProperty = mediaVocabulary.musicAlbum();
+        } else if (fields["categoryType"] == "TV Series") {
+            categoryProperty = mediaVocabulary.videoSeries();
+        } else if (fields["categoryType"] == "Actor") {
+            categoryProperty = mediaVocabulary.videoActor();
+        } else if (fields["categoryType"] == "Director") {
+            categoryProperty = mediaVocabulary.videoDirector();
+        } else if (fields["categoryType"] == "Writer") {
+            categoryProperty = mediaVocabulary.videoWriter();
+        } else if (fields["categoryType"] == "Producer") {
+            categoryProperty = mediaVocabulary.videoProducer();
+        }
+        res = findPropertyResourceByTitle(categoryProperty, fields["title"].toString());
+    }
+    if (!res.isValid()) {
+        return;
+    }
+
+    // Update the media type
+    {
+        if (type == "Audio") {
+            QUrl audioType;
+            if (fields["audioType"] == "Music") {
+                audioType = mediaVocabulary.typeAudioMusic();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, audioType);
+                }
+                removeType(res, mediaVocabulary.typeAudioStream());
+                removeType(res, mediaVocabulary.typeAudio());
+            } else if (fields["audioType"] == "Audio Stream") {
+                audioType = mediaVocabulary.typeAudioStream();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, audioType);
+                }
+                removeType(res, mediaVocabulary.typeAudioMusic());
+                removeType(res, mediaVocabulary.typeAudio());
+            } else if (fields["audioType"] == "Audio Clip") {
+                audioType = mediaVocabulary.typeAudio();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, audioType);
+                }
+                removeType(res, mediaVocabulary.typeAudioMusic());
+                removeType(res, mediaVocabulary.typeAudioStream());
+            }
+            if (!res.hasType(audioType)) {
+                res.addType(audioType);
+            }
+        } else if (type == "Video") {
+            //Update the media type
+            mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
+            QUrl videoType;
+            if (fields["videoType"] == "Movie") {
+                videoType = mediaVocabulary.typeVideoMovie();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
+                }
+                removeType(res, mediaVocabulary.typeVideoTVShow());
+                removeType(res, mediaVocabulary.typeVideo());
+            } else if (fields["videoType"] == "TV Show") {
+                videoType = mediaVocabulary.typeVideoTVShow();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
+                }
+                removeType(res, mediaVocabulary.typeVideoMovie());
+                removeType(res, mediaVocabulary.typeVideo());
+            } else if (fields["videoType"] == "Video Clip") {
+                videoType = mediaVocabulary.typeVideo();
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, videoType);
+                }
+                removeType(res, mediaVocabulary.typeVideoMovie());
+                removeType(res, mediaVocabulary.typeVideoTVShow());
+            }
+            if (!res.hasType(videoType)) {
+                res.addType(videoType);
+            }
+        } else if (type == "Category") {
+            if (fields["categoryType"] == "Audio Feed") {
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeAudioFeed());
+                } else {
+                    if (!res.hasType(mediaVocabulary.typeAudioFeed())) {
+                        res.addType(mediaVocabulary.typeAudioFeed());
+                    }
+                }
+            } else if (fields["categoryType"] == "Video Feed") {
+                if (!res.exists()) {
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeVideoFeed());
+                } else {
+                    if (!res.hasType(mediaVocabulary.typeVideoFeed())) {
+                        res.addType(mediaVocabulary.typeVideoFeed());
+                    }
                 }
             }
-        } else if (fields["categoryType"] == "Video Feed") {
-            if (!res.exists()) {
-                res = Nepomuk::Resource(url, mediaVocabulary.typeVideoFeed());
+        }
+    }
+
+
+    //Set properties common to all types
+    {
+        if (fields.contains("description")) {
+            QString description = fields["description"].toString();
+            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+        }
+        if (fields.contains("artworkUrl")) {
+            QString artworkUrl = fields["artworkUrl"].toString();
+            if (!artworkUrl.isEmpty()) {
+                Nepomuk::Resource artworkRes(artworkUrl);
+                if (!artworkRes.exists()) {
+                    artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+                }
+                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
             } else {
-                if (!res.hasType(mediaVocabulary.typeVideoFeed())) {
-                    res.addType(mediaVocabulary.typeVideoFeed());
+                if (res.hasProperty(mediaVocabulary.artwork())) {
+                    res.removeProperty(mediaVocabulary.artwork());
                 }
             }
         }
     }
-    //Set properties common to all media types
-    if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
-        res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
-                        QUrl(url));
-    }
-    if (fields.contains("rating")) {
-        unsigned int rating = fields["rating"].toInt();
-        if (rating != res.rating()) {
-            res.setRating(rating);
+
+    //Set properties common to Audio, Video and Feeds
+    if (type == "Audio" || type == "Video" ||
+        (type == "Category" && (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed"))) {
+        if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
+            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
+                            QUrl(url));
         }
-    }
-    if (fields.contains("playCount")) {
-        int playCount = fields["playCount"].toInt();
-        res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
-    }
-    if (fields.contains("lastPlayed")) {
-        Nepomuk::Variant value;
-        QDateTime lastPlayed = fields["lastPlayed"].toDateTime();
-        if (lastPlayed.isValid()) {
-            value = Nepomuk::Variant(lastPlayed);
+        if (fields.contains("title")) {
+            QString title = fields["title"].toString();
+            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
         }
-        res.setProperty(mediaVocabulary.lastPlayed(), value);
-    }
-    if (fields.contains("title")) {
-        QString title = fields["title"].toString();
-        res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
-    }
-    if (fields.contains("description")) {
-        QString description = fields["description"].toString();
-        res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
-    }
-    if (fields.contains("tags")) {
-        QStringList tagStrList = fields["tags"].toString().split(";", QString::SkipEmptyParts);
-        QList<Nepomuk::Tag> tags;
-        QList<Nepomuk::Tag> currentTags = res.tags();
-        bool tagsChanged = false;
-        for (int i = 0; i < tagStrList.count(); i++) {
-            Nepomuk::Tag tag(tagStrList.at(i).trimmed());
-            tag.setLabel(tagStrList.at(i).trimmed());
-            tags.append(tag);
-            if (currentTags.indexOf(tag) == -1) {
+        if (fields.contains("rating")) {
+            unsigned int rating = fields["rating"].toInt();
+            if (rating != res.rating()) {
+                res.setRating(rating);
+            }
+        }
+        if (fields.contains("playCount")) {
+            int playCount = fields["playCount"].toInt();
+            res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
+        }
+        if (fields.contains("lastPlayed")) {
+            Nepomuk::Variant value;
+            QDateTime lastPlayed = fields["lastPlayed"].toDateTime();
+            if (lastPlayed.isValid()) {
+                value = Nepomuk::Variant(lastPlayed);
+            }
+            res.setProperty(mediaVocabulary.lastPlayed(), value);
+        }
+        if (fields.contains("tags")) {
+            QStringList tagStrList = fields["tags"].toString().split(";", QString::SkipEmptyParts);
+            QList<Nepomuk::Tag> tags;
+            QList<Nepomuk::Tag> currentTags = res.tags();
+            bool tagsChanged = false;
+            for (int i = 0; i < tagStrList.count(); i++) {
+                Nepomuk::Tag tag(tagStrList.at(i).trimmed());
+                tag.setLabel(tagStrList.at(i).trimmed());
+                tags.append(tag);
+                if (currentTags.indexOf(tag) == -1) {
+                    tagsChanged = true;
+                }
+            }
+            if (tags.count() != currentTags.count()) {
                 tagsChanged = true;
             }
-        }
-        if (tags.count() != currentTags.count()) {
-            tagsChanged = true;
-        }
-        if (tagsChanged) {
-            res.setTags(tags);
-        }
-    }
-    if (fields.contains("artworkUrl")) {
-        QString artworkUrl = fields["artworkUrl"].toString();
-        if (!artworkUrl.isEmpty()) {
-            Nepomuk::Resource artworkRes(artworkUrl);
-            if (!artworkRes.exists()) {
-                artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
-            }
-            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
-        } else {
-            if (res.hasProperty(mediaVocabulary.artwork())) {
-                res.removeProperty(mediaVocabulary.artwork());
+            if (tagsChanged) {
+                res.setTags(tags);
             }
         }
-    }
-    if (fields.contains("associatedImage")) {
-        QString associatedImage = fields["associatedImage"].toString();
-        if (!associatedImage.isEmpty()) {
-            Nepomuk::Resource associatedImageRes(associatedImage);
-            if (!associatedImageRes.exists()) {
-                associatedImageRes = Nepomuk::Resource(QUrl(associatedImage), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
-            }
-            res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(associatedImageRes));
-        } else {
-            if (res.hasProperty(mediaVocabulary.artwork())) {
-                res.removeProperty(mediaVocabulary.artwork());
-            }
-        }
-    }
-    if (fields.contains("dataSourceUrl")) {
-        QString dataSourceUrl = fields["dataSourceUrl"].toString();
-        QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource");
-        if (!dataSourceUrl.isEmpty()) {
-            Nepomuk::Resource dataSourceRes(dataSourceUrl);
-            if (dataSourceRes.exists()) {
-                res.setProperty(property, Nepomuk::Variant(dataSourceRes));
-            }
-        } else {
-            if (res.hasProperty(property)) {
-                res.removeProperty(property);
+        if (fields.contains("associatedImage")) {
+            QString associatedImage = fields["associatedImage"].toString();
+            if (!associatedImage.isEmpty()) {
+                Nepomuk::Resource associatedImageRes(associatedImage);
+                if (!associatedImageRes.exists()) {
+                    associatedImageRes = Nepomuk::Resource(QUrl(associatedImage), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+                }
+                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(associatedImageRes));
+            } else {
+                if (res.hasProperty(mediaVocabulary.artwork())) {
+                    res.removeProperty(mediaVocabulary.artwork());
+                }
             }
         }
-    }
-    if (fields.contains("isLogicalPartOfUrl")) {
-        QString isLogicalPartOfUrl = fields["isLogicalPartOfUrl"].toString();
-        QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf");
-        if (!isLogicalPartOfUrl.isEmpty()) {
-            Nepomuk::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
-            if (isLogicalPartOfRes.exists()) {
-                res.setProperty(property, Nepomuk::Variant(isLogicalPartOfRes));
+        if (fields.contains("dataSourceUrl")) {
+            QString dataSourceUrl = fields["dataSourceUrl"].toString();
+            QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource");
+            if (!dataSourceUrl.isEmpty()) {
+                Nepomuk::Resource dataSourceRes(dataSourceUrl);
+                if (dataSourceRes.exists()) {
+                    res.setProperty(property, Nepomuk::Variant(dataSourceRes));
+                }
+            } else {
+                if (res.hasProperty(property)) {
+                    res.removeProperty(property);
+                }
             }
-        } else {
-            if (res.hasProperty(property)) {
-                res.removeProperty(property);
+        }
+        if (fields.contains("isLogicalPartOfUrl")) {
+            QString isLogicalPartOfUrl = fields["isLogicalPartOfUrl"].toString();
+            QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf");
+            if (!isLogicalPartOfUrl.isEmpty()) {
+                Nepomuk::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
+                if (isLogicalPartOfRes.exists()) {
+                    res.setProperty(property, Nepomuk::Variant(isLogicalPartOfRes));
+                }
+            } else {
+                if (res.hasProperty(property)) {
+                    res.removeProperty(property);
+                }
             }
         }
     }
 
-    //Set type-specific properties
+    //Set Audio properties
     if (type == "Audio") {
         if (fields["audioType"] == "Music") {
             if (fields.contains("artist")) {
@@ -428,7 +469,6 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 res.removeProperty(mediaVocabulary.musicComposer());;
                 if (!artist.isEmpty()) {
                     Nepomuk::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(),artist, true);
-                    outputMessage(Debug, artistResource.resourceUri().toString());
                     res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artistResource));
                 } else {
                     if (res.hasProperty(mediaVocabulary.musicArtist())) {
@@ -485,8 +525,10 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         } else if ((fields["audioType"] == "Audio Stream") ||
             (fields["audioType"] == "Audio Clip")) {
         }
+    }
 
-    } else if (type == "Video") {
+    //Set Video properties
+    if (type == "Video") {
         mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
         if ((fields["videoType"] == "Movie") || (fields["videoType"] == "TV Show")) {
             if (fields.contains("genre")) {
@@ -596,6 +638,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             }
         }
     }
+
     outputMessage(InfoUpdated, QUrl::toPercentEncoding(url));
 }
 
@@ -663,33 +706,42 @@ Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QStr
 
     QString resourceBinding = "pres";
     QString valueBinding = "title";
+    QString typeBinding = "type";
 
     MediaQuery query;
     QStringList bindings;
     bindings.append(resourceBinding);
+    bindings.append(typeBinding);
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
-    query.addCondition(MediaQuery::hasType(resourceBinding, resourceType));
-    query.addCondition(MediaQuery::hasProperty(resourceBinding,resourceProperty, valueBinding));
+    query.addCondition(MediaQuery::hasProperty(resourceBinding, resourceProperty, valueBinding));
+    query.addCondition(MediaQuery::addOptional(MediaQuery::hasProperty(resourceBinding, Soprano::Vocabulary::RDF::type(), typeBinding)));
     query.startFilter();
     query.addFilterConstraint(valueBinding, title, MediaQuery::Equal);
     query.endFilter();
     query.endWhere();
 
-    QString q = query.query();
-
     Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
 
     KUrl propertyResource;
+    QUrl type;
     while( it.next() ) {
         propertyResource = it.binding(resourceBinding).uri();
-        break; //There should only be one resource of the specified type with the specified title.
+        type = it.binding(typeBinding).uri();
+        if (!type.isEmpty() && type == resourceType) {
+            break; //There should only be one resource of the specified type with the specified title.
+        }
     }
 
     if (!propertyResource.isEmpty()) {
-        outputMessage(Debug, QString("Found resource:%1").arg(title));
         m_propertyResourceCache[cacheKey] = propertyResource;
-        return Nepomuk::Resource::fromResourceUri(propertyResource);
+        Nepomuk::Resource resource;
+        resource =  Nepomuk::Resource::fromResourceUri(propertyResource);
+        //If found resource has no type, assign the correct type and use it.
+        if (type.isEmpty()) {
+            resource.addType(resourceType);
+        }
+        return resource;
     } else if (createIfMissing){
         Nepomuk::Resource resource;
         resource.setProperty(resourceProperty, Nepomuk::Variant(title));

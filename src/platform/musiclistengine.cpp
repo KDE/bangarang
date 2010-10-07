@@ -77,13 +77,17 @@ void MusicListEngine::run()
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.musicArtistDescriptionBinding());
+            bindings.append(mediaVocabulary.musicArtistArtworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasMusicArtistDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
-            QStringList orderByBindings = bindings;
+            QStringList orderByBindings = QStringList(mediaVocabulary.musicArtistNameBinding());
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
@@ -102,7 +106,9 @@ void MusicListEngine::run()
                     mediaItem.artwork = KIcon("system-users");
                     mediaItem.fields["title"] = artist;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    
+                    mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
+                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
+
                     //Provide context info for artist
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
                     mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));

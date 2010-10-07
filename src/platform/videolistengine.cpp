@@ -158,13 +158,17 @@ void VideoListEngine::run()
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.videoSeriesTitleBinding());
+            bindings.append(mediaVocabulary.videoSeriesDescriptionBinding());
+            bindings.append(mediaVocabulary.videoSeriesArtworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoSeriesDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoSeriesArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
-            QStringList orderByBindings = bindings;
+            QStringList orderByBindings(mediaVocabulary.videoSeriesTitleBinding());
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
@@ -180,6 +184,8 @@ void VideoListEngine::run()
                     mediaItem.fields["categoryType"] = QString("TV Series");
                     mediaItem.fields["title"] = seriesName;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoSeriesDescriptionBinding()).literal().toString().trimmed();
+                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoSeriesArtworkBinding()).uri().toString();
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     
@@ -446,13 +452,17 @@ void VideoListEngine::run()
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.videoActorBinding());
+            bindings.append(mediaVocabulary.videoActorDescriptionBinding());
+            bindings.append(mediaVocabulary.videoActorArtworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoActorDescription());
+            query.addCondition(mediaVocabulary.hasVideoActorArtwork());
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
-            QStringList orderByBindings = bindings;
+            QStringList orderByBindings(mediaVocabulary.videoActorBinding());
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
@@ -468,6 +478,8 @@ void VideoListEngine::run()
                     mediaItem.fields["categoryType"] = QString("Actor");
                     mediaItem.fields["title"] = actor;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoActorDescriptionBinding()).literal().toString().trimmed();
+                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoActorArtworkBinding()).uri().toString();
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -489,13 +501,17 @@ void VideoListEngine::run()
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.videoDirectorBinding());
+            bindings.append(mediaVocabulary.videoDirectorDescriptionBinding());
+            bindings.append(mediaVocabulary.videoDirectorArtworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasVideoDirectorDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoDirectorArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
-            QStringList orderByBindings = bindings;
+            QStringList orderByBindings(mediaVocabulary.videoDirectorBinding());
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
@@ -511,6 +527,8 @@ void VideoListEngine::run()
                     mediaItem.fields["categoryType"] = QString("Director");
                     mediaItem.fields["title"] = director;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoDirectorDescriptionBinding()).literal().toString().trimmed();
+                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoDirectorArtworkBinding()).uri().toString();
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 

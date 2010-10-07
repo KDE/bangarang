@@ -26,6 +26,7 @@
 class MediaItem;
 class MediaItemModel;
 class InfoFetcher;
+class MediaIndexer;
 
 /*
 * This model is responsible for 
@@ -65,6 +66,7 @@ class InfoItemModel : public QStandardItemModel
         bool m_modified;
         QList<InfoFetcher *> m_infoFetchers;
         FetchType m_fetchType;
+        MediaIndexer * m_indexer;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool forceEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);

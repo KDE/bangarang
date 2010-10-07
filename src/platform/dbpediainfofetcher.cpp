@@ -149,7 +149,10 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
             //Get Thumbnail
             KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
             if (thumbnailUrl.isValid()) {
-                QString thumbnailTargetFile = QString("bangarang/thumbnails/%1").arg(thumbnailUrl.fileName());
+                QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
+                                              .arg(subType)
+                                              .arg(title)
+                                              .arg(thumbnailUrl.fileName());
                 KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
                 QFile downloadTarget(thumbnailTargetUrl.path());
                 downloadTarget.remove();

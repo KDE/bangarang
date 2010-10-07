@@ -267,6 +267,8 @@ void MediaIndexer::processWriterOutput()
                         status["description"] = message;
                         status["progress"] = m_percent;
                         emit updateStatus(status);
+                    } else if (line.startsWith("BangarangDebug:")) {
+                        kDebug() << line.remove("BangarangDebug:");
                     }
                 }
             }
