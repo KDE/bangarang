@@ -37,6 +37,7 @@
 #include <KUrl>
 #include <KMessageBox>
 #include <KDebug>
+#include <KStandardDirs>
 #include <Nepomuk/ResourceManager>
 
 #include <QDBusConnection>
@@ -179,7 +180,7 @@ void BangarangApplication::setup()
     if (!itemLoaded) {
         m_savedListsManager->loadPlaylist();
     }
-    
+
     //connect signal from notfier, so that pause/resume will work
     connect(m_statusNotifierItem, SIGNAL(changeStateRequested(Phonon::State)), this,
       SLOT(handleNotifierStateRequest(Phonon::State)));

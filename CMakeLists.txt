@@ -33,5 +33,6 @@ endif( WITHTRANSLATIONS)
 
 install(FILES data/bangarang.desktop  DESTINATION ${XDG_APPS_INSTALL_DIR})
 install(FILES data/bangarang_play_dvd.desktop data/bangarang_play_cd.desktop DESTINATION ${DATA_INSTALL_DIR}/solid/actions)
-#install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang)
+#install(FILES data/genrerc DESTINATION ${DATA_INSTALL_DIR}/bangarang)
+#install(FILES data/thumbnails/Rock.png DESTINATION ${DATA_INSTALL_DIR}/bangarang/thumbnails/genres)
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})

@@ -272,8 +272,9 @@ void MusicListEngine::run()
                     mediaItem.fields["title"] = genre;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
+                    mediaItem.fields["artworkUrl"] = Utilities::getGenreArtworkUrl(genre);
                     mediaItem.artwork = KIcon("flag-blue");
-                    
+
                     //Provide context info for genre
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
                     mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
@@ -456,27 +457,17 @@ void MusicListEngine::run()
             for (int i = 0; i < mediaList.count(); i++) {
                 MediaItem mediaItem = mediaList.at(i);
                 if (mediaItem.fields["categoryType"].toString() == "Album") {
-                    MediaQuery query;
-                    QStringList bindings;
-                    bindings.append(mediaVocabulary.mediaResourceBinding());
-                    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                    bindings.append(mediaVocabulary.artworkBinding());
-                    query.select(bindings, MediaQuery::Distinct);
-                    query.startWhere();
-                    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-                    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, mediaItem.title, MediaQuery::Equal));
-                    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-                    query.endWhere();
-                    query.addLimit(5);
-                    Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-                    
-                    while( it.next() ) {
-                        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+                    QImage artwork = Utilities::getAlbumArtwork(mediaItem.title);
+                    if (!artwork.isNull()) {
+                        mediaItem.hasCustomArtwork = true;
+                        emit updateArtwork(artwork, mediaItem);
+                    }
+                }
+                if (mediaItem.fields["categoryType"].toString() == "AudioGenre") {
+                    if (!mediaItem.fields["artworkUrl"].toString().isEmpty()) {
+                        QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                         if (!artwork.isNull()) {
-                            mediaItem.hasCustomArtwork = true;
                             emit updateArtwork(artwork, mediaItem);
-                            break;
                         }
                     }
                 }

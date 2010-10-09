@@ -40,7 +40,8 @@ class InfoItemModel : public QStandardItemModel
                             FieldNameRole = Qt::UserRole + 1,
                             MultipleValuesRole = Qt::UserRole + 2,
                             OriginalValueRole = Qt::UserRole + 3,
-                            ValueListRole = Qt::UserRole + 4};
+                            ValueListRole = Qt::UserRole + 4,
+                            ArtworkListRole = Qt::UserRole + 5};
         enum FetchType {AutoFetch = 0,
                         Fetch = 1};
         InfoItemModel(QObject * parent = 0);
