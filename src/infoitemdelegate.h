@@ -58,6 +58,7 @@ class InfoItemDelegate : public QItemDelegate
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
         int heightForWordWrap(QFont font, int width, QString text) const;
+        QList<qreal> m_artworkRotations;
         
         
     Q_SIGNALS:

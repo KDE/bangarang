@@ -45,6 +45,7 @@
 #include <QTextEdit>
 #include <QSpinBox>
 #include <QComboBox>
+#include <math.h>
 
 InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -52,7 +53,13 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
     
     m_nepomukInited = Utilities::nepomukInited();
 
-    
+    for (int i = 0; i < 19; i++) {
+        if (i%2) {
+            m_artworkRotations.append(10);
+        } else {
+            m_artworkRotations.append(-10);
+        }
+    }
 }
 
 InfoItemDelegate::~InfoItemDelegate()
@@ -99,6 +106,8 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::transparent);
     QPainter p(&pixmap);
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
+    p.setRenderHint(QPainter::Antialiasing);
     p.translate(-option.rect.topLeft());
     
     if (index.column() == 0) {
@@ -158,8 +167,40 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         //Paint field data
         if (isArtwork) {
-            QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-            artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
+            QList<QVariant> artworkList = index.data(InfoItemModel::ArtworkListRole).toList();
+            if (artworkList.count() == 0) {
+                QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
+                artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
+            } else {
+                p.save();
+                int artworkSize  = 100;
+                if (artworkList.count() == 1) {
+                    artworkSize = 128;
+                }
+                int spacing = (width - padding - artworkSize - 30)/artworkList.count();
+                int aTop = (height-artworkSize)/2;
+                int startx = (width/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
+                p.translate(startx, aTop);
+                for (int i = artworkList.count()-1; i >= 0; i--) {
+                    qreal rot = m_artworkRotations.at(i);
+                    if (artworkList.count() == 1) {
+                        rot = 0;
+                    }
+                    double rotRad = (3.14159/180)*rot;
+                    qreal r = (sqrt(2.0*artworkSize*artworkSize))/2.0;
+                    int transX = (artworkSize/2) - r*cos(rotRad +(3.14159/4));
+                    int transY = r*sin(rotRad + (3.14159/4)) - (artworkSize/2);
+                    p.rotate(rot);
+                    p.translate(transX, -transY);
+                    p.fillRect(0,0,artworkSize, artworkSize, Qt::white);
+                    p.drawPixmap(0, 0, artworkSize, artworkSize, artworkList.at(i).value<QPixmap>());
+                    p.drawRect(0, 0, artworkSize, artworkSize);
+                    p.translate(-transX, transY);
+                    p.rotate(-rot);
+                    p.translate(-spacing, 0);
+                }
+                p.restore();
+            }
         } else {
             int textWidth = width - 4 * padding - fieldNameWidth;
             int textLeft = left + fieldNameWidth + 3 * padding;
@@ -354,7 +395,7 @@ int InfoItemDelegate::rowHeight(int row) const
 
     int height;
     if (field == "artwork") {
-        height = 128 + 2*padding;
+        height = 128 + 40 + 2*padding ; //40 pixel to accomodate rotated artwork
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         QFont textFont = KGlobalSettings::smallestReadableFont();

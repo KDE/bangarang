@@ -134,7 +134,7 @@ class MediaVocabulary {
                          const QString &title = QString(), 
                          MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasTag(MediaQuery::Match match = MediaQuery::Required,
-                       const QString &tag_url = QString(),
+                       const QString &tag = QString(),
 		       MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasDescription(MediaQuery::Match match = MediaQuery::Required, 
                                const QString &description = QString(), 
