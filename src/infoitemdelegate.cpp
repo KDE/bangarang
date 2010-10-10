@@ -178,7 +178,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     artworkSize = 128;
                 }
                 int spacing = (width - padding - artworkSize - 30)/artworkList.count();
-                int aTop = (height-artworkSize)/2;
+                int aTop = top + (height-artworkSize)/2;
                 int startx = (width/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
                 p.translate(startx, aTop);
                 for (int i = artworkList.count()-1; i >= 0; i--) {
@@ -194,6 +194,9 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.translate(transX, -transY);
                     p.fillRect(0,0,artworkSize, artworkSize, Qt::white);
                     p.drawPixmap(0, 0, artworkSize, artworkSize, artworkList.at(i).value<QPixmap>());
+                    QColor outlineColor = QColor(Qt::black);
+                    outlineColor.setAlphaF(0.7);
+                    p.setPen(outlineColor);
                     p.drawRect(0, 0, artworkSize, artworkSize);
                     p.translate(-transX, transY);
                     p.rotate(-rot);
@@ -395,7 +398,7 @@ int InfoItemDelegate::rowHeight(int row) const
 
     int height;
     if (field == "artwork") {
-        height = 128 + 40 + 2*padding ; //40 pixel to accomodate rotated artwork
+        height = 128 + 10 + 2*padding ; //10 pixel to accomodate rotated artwork
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         QFont textFont = KGlobalSettings::smallestReadableFont();
