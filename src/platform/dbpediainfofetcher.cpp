@@ -78,11 +78,12 @@ bool DBPediaInfoFetcher::available(const QString &subType)
     return (networkConnected && handlesType);
 }
 
-void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields)
+void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields, bool updateArtwork)
 {
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     m_requestKeys.clear();
+    m_updateArtwork = updateArtwork;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
         if (mediaItem.subType() == "Artist") {
@@ -147,17 +148,19 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
         if (foundIndex != -1 && results.count() > 0) {
             Soprano::BindingSet binding = results.at(0);
             //Get Thumbnail
-            KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
-            if (thumbnailUrl.isValid()) {
-                QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
-                                              .arg(subType)
-                                              .arg(title)
-                                              .arg(thumbnailUrl.fileName());
-                KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
-                QFile downloadTarget(thumbnailTargetUrl.path());
-                downloadTarget.remove();
-                m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
-                emit download(thumbnailUrl, thumbnailTargetUrl);
+            if (m_updateArtwork) {
+                KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
+                if (thumbnailUrl.isValid()) {
+                    QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
+                                                  .arg(subType)
+                                                  .arg(title)
+                                                  .arg(thumbnailUrl.fileName());
+                    KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+                    QFile downloadTarget(thumbnailTargetUrl.path());
+                    downloadTarget.remove();
+                    m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
+                    emit download(thumbnailUrl, thumbnailTargetUrl);
+                }
             }
 
             //Set Title
@@ -266,6 +269,7 @@ void DBPediaInfoFetcher::setFetching()
 
 void DBPediaInfoFetcher::timeout()
 {
+    kDebug() << "TIMEOUT";
     m_timeout = true;
     emit fetchComplete();
 }

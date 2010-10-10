@@ -425,7 +425,6 @@ bool Utilities::compareImage(const QImage &image1, const QImage image2, int stre
 {
     //Do the gross comparisons first
     if (image1.size() != image2.size()) {
-        kDebug() << "Different image size!";
         return false;
     }
 

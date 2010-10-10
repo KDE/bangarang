@@ -151,7 +151,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                         }
                     }
                     if (fetchableFieldsEmpty) {
-                        autoFetch(m_infoFetchers.at(i), false);
+                        autoFetch(m_infoFetchers.at(i), false, false);
                         break;
                     }
                 }
@@ -202,7 +202,7 @@ void InfoItemModel::saveChanges()
                         mediaItem.url = currentItem->data(Qt::EditRole).toString();
                     }
                 } else if (field == "artwork") {              
-                    mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).value<KUrl>().url();
+                    mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).toString();
                 } else if (field == "tags") {
                     QStringList rawTagStrList = currentItem->data(Qt::EditRole).toString().split(";", QString::SkipEmptyParts);
                     QStringList tags;
@@ -304,16 +304,16 @@ bool InfoItemModel::fetchIsAvailable(InfoFetcher* infoFetcher)
     return available;
 }
 
-void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields)
+void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields, bool updateArtwork)
 {
     m_fetchType = AutoFetch;
-    infoFetcher->fetchInfo(m_mediaList, updateRequiredFields);
+    infoFetcher->fetchInfo(m_mediaList, updateRequiredFields, updateArtwork);
 }
 
 void InfoItemModel::fetch(InfoFetcher* infoFetcher)
 {
     m_fetchType = Fetch;
-    infoFetcher->fetchInfo(m_mediaList);
+    infoFetcher->fetchInfo(m_mediaList, true, true);
 }
 
 
@@ -355,12 +355,10 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
             } else if (field == "artwork") {
                 item(i)->setData(mediaItem.artwork, Qt::DecorationRole);
                 item(i)->setData(mediaItem.fields["artworkUrl"], Qt::DisplayRole);
-                item(i)->setData(mediaItem.fields["artworkUrl"], Qt::EditRole);
             } else {
                 item(i)->setData(mediaItem.fields[field], Qt::DisplayRole);
                 item(i)->setData(mediaItem.fields[field], Qt::EditRole);
             }
-            checkInfoModified(item(i));
         }
     }
 }
@@ -373,9 +371,6 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     fieldItem->setData(fieldTitle, InfoItemModel::FieldNameRole);
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
-    /*if ((field == "playCount" || field == "lastPlayed" || field == "url") && !forceEditable) {
-        isEditable = false;
-    }*/
     fieldItem->setEditable(isEditable);
     if (isEditable) {
         fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
@@ -383,86 +378,13 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
 
     //Set artwork
     if (field == "artwork") {
-        KUrl artworkUrl = KUrl(m_mediaList.at(0).fields["artworkUrl"].toString());
+        QString artworkUrl = m_mediaList.at(0).fields["artworkUrl"].toString();
         fieldItem->setData(artworkUrl, Qt::DisplayRole);
         fieldItem->setData(artworkUrl, Qt::EditRole);
         fieldItem->setData(artworkUrl, InfoItemModel::OriginalValueRole); //stores copy of original data
 
         //Get artwork for selected items
-        bool artworkExists = true;
-        if (m_mediaList.count() == 1) {
-            MediaItem mediaItem = m_mediaList.at(0);
-            if (mediaItem.type == "Category") {
-                QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
-                if (!artwork.isNull()) {
-                    fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
-                } else {
-                    QList<QImage> artworks;
-                    if (mediaItem.subType() == "AudioGenre") {
-                        artworks = Utilities::getGenreArtworks(mediaItem.title, "audio");
-                    } else if (mediaItem.subType() == "VideoGenre") {
-                        artworks = Utilities::getGenreArtworks(mediaItem.title, "video");
-                    } else if (mediaItem.subType() == "Artist") {
-                        artworks = Utilities::getArtistArtworks(mediaItem.title);
-                    } else if (mediaItem.subType() == "AudioTag") {
-                        artworks = Utilities::getTagArtworks(mediaItem.title, "audio");
-                    } else if (mediaItem.subType() == "VideoTag") {
-                        artworks = Utilities::getTagArtworks(mediaItem.title, "video");
-                    } else if (mediaItem.subType() == "TV Series") {
-                        artworks = Utilities::getTVSeriesArtworks(mediaItem.title);
-                    } else if (mediaItem.subType() == "Actor") {
-                        artworks = Utilities::getActorArtworks(mediaItem.title);
-                    } else if (mediaItem.subType() == "Director") {
-                        artworks = Utilities::getDirectorArtworks(mediaItem.title);
-                    }
-                    if (artworks.count() > 0 ) {
-                        //Convert to Pixmap list
-                        QList<QVariant> artworkPixmaps;
-                        for (int i = 0; i < artworks.count(); i++) {
-                            artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
-                        }
-                        fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
-                    } else {
-                        fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
-                    }
-                }
-            } else {
-                QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
-                if (!artwork.isNull()) {
-                    fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
-                } else {
-                    fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
-                }
-            }
-        } else {
-            if (m_mediaList.at(0).type == "Audio" || m_mediaList.at(0).type == "Video") {
-                QList<QVariant> artworkPixmaps;
-                QImage lastItemArtwork;
-                for (int i = 0; i < qMin(10, m_mediaList.count()); i++) {
-                    QImage itemArtwork = Utilities::getArtworkImageFromMediaItem(m_mediaList.at(i));
-                    if (!lastItemArtwork.isNull() && !itemArtwork.isNull()) {
-                        bool sameImage = Utilities::compareImage(lastItemArtwork, itemArtwork, 50);
-                        if (!sameImage) {
-                            artworkPixmaps.append(QPixmap::fromImage(itemArtwork));
-                        }
-                    } else if (lastItemArtwork.isNull() && !itemArtwork.isNull()) {
-                        artworkPixmaps.append(QPixmap::fromImage(itemArtwork));
-                    } else if (itemArtwork.isNull()) {
-                        itemArtwork = m_mediaList.at(i).artwork.pixmap(128,128).toImage();
-                        artworkPixmaps.append(m_mediaList.at(i).artwork.pixmap(128,128));
-                    }
-                    lastItemArtwork = itemArtwork;
-                }
-                if (artworkPixmaps.count() > 0) {
-                    fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
-                } else {
-                    artworkExists = false;
-                }
-            } else {
-                artworkExists = false;
-            }
-        }
-        if (artworkExists) {
+        if (getArtwork(fieldItem)) {
             rowData.append(fieldItem);
             appendRow(rowData);
         }
@@ -581,8 +503,15 @@ bool InfoItemModel::isEmpty(const QString &field)
 
 void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
 {
-    if (changedItem->data(Qt::DisplayRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
+    if (changedItem->data(Qt::EditRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
         m_modified = true;
+        QString field = changedItem->data(InfoItemModel::FieldRole).toString();
+        if (field == "artwork") {
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+            QString artworkUrl = changedItem->data(Qt::EditRole).toString();
+            getArtwork(changedItem, artworkUrl);
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+        }
     } else {
         m_modified = false;
         for (int row = 0; row < rowCount(); row++) {
@@ -644,6 +573,93 @@ void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
             }
         }
     }
+}
+
+bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride)
+{
+    bool artworkExists = true;
+    QList<QVariant> emptyArtworkPixmaps;
+    fieldItem->setData(emptyArtworkPixmaps, InfoItemModel::ArtworkListRole);
+    if (m_mediaList.count() == 1) {
+        MediaItem mediaItem = m_mediaList.at(0);
+        if (!artworkUrlOverride.isNull()) {
+            mediaItem.fields["artworkUrl"] = artworkUrlOverride;
+        }
+        if (mediaItem.type == "Category") {
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            if (!artwork.isNull()) {
+                fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+            } else {
+                QList<QImage> artworks;
+                if (mediaItem.subType() == "AudioGenre") {
+                    artworks = Utilities::getGenreArtworks(mediaItem.title, "audio");
+                } else if (mediaItem.subType() == "VideoGenre") {
+                    artworks = Utilities::getGenreArtworks(mediaItem.title, "video");
+                } else if (mediaItem.subType() == "Artist") {
+                    artworks = Utilities::getArtistArtworks(mediaItem.title);
+                } else if (mediaItem.subType() == "AudioTag") {
+                    artworks = Utilities::getTagArtworks(mediaItem.title, "audio");
+                } else if (mediaItem.subType() == "VideoTag") {
+                    artworks = Utilities::getTagArtworks(mediaItem.title, "video");
+                } else if (mediaItem.subType() == "TV Series") {
+                    artworks = Utilities::getTVSeriesArtworks(mediaItem.title);
+                } else if (mediaItem.subType() == "Actor") {
+                    artworks = Utilities::getActorArtworks(mediaItem.title);
+                } else if (mediaItem.subType() == "Director") {
+                    artworks = Utilities::getDirectorArtworks(mediaItem.title);
+                }
+                if (artworks.count() > 0 ) {
+                    //Convert to Pixmap list
+                    QList<QVariant> artworkPixmaps;
+                    for (int i = 0; i < artworks.count(); i++) {
+                        artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
+                    }
+                    fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+                } else {
+                    fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
+                }
+            }
+        } else {
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            if (!artwork.isNull()) {
+                fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
+            } else {
+                fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
+            }
+        }
+    } else {
+        if (m_mediaList.at(0).type == "Audio" || m_mediaList.at(0).type == "Video") {
+            QList<QVariant> artworkPixmaps;
+            QImage lastItemArtwork;
+            for (int i = 0; i < qMin(10, m_mediaList.count()); i++) {
+                MediaItem mediaItem = m_mediaList.at(i);
+                if (!artworkUrlOverride.isNull()) {
+                    mediaItem.fields["artworkUrl"] = artworkUrlOverride;
+                }
+                QImage itemArtwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+                if (!lastItemArtwork.isNull() && !itemArtwork.isNull()) {
+                    bool sameImage = Utilities::compareImage(lastItemArtwork, itemArtwork, 50);
+                    if (!sameImage) {
+                        artworkPixmaps.append(QPixmap::fromImage(itemArtwork));
+                    }
+                } else if (lastItemArtwork.isNull() && !itemArtwork.isNull()) {
+                    artworkPixmaps.append(QPixmap::fromImage(itemArtwork));
+                } else if (itemArtwork.isNull()) {
+                    itemArtwork = mediaItem.artwork.pixmap(128,128).toImage();
+                    artworkPixmaps.append(mediaItem.artwork.pixmap(128,128));
+                }
+                lastItemArtwork = itemArtwork;
+            }
+            if (artworkPixmaps.count() > 0) {
+                fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+            } else {
+                artworkExists = false;
+            }
+        } else {
+            artworkExists = false;
+        }
+    }
+    return artworkExists;
 }
 
         
