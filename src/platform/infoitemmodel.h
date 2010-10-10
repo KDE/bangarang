@@ -55,7 +55,7 @@ class InfoItemModel : public QStandardItemModel
         QList<InfoFetcher *> availableInfoFetchers();
         bool autoFetchIsAvailable(InfoFetcher* infoFetcher);
         bool fetchIsAvailable(InfoFetcher* infoFetcher);
-        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = true);
+        void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = true, bool updateArtwork = true);
         void fetch(InfoFetcher* infoFetcher);
                    
     private:
@@ -75,6 +75,7 @@ class InfoItemModel : public QStandardItemModel
         QStringList valueList(const QString &field);
         bool isEmpty(const QString &field);
         void saveFileMetaData(QList<MediaItem> mediaList);
+        bool getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride = QString());
 
     Q_SIGNALS:
         void infoChanged(bool modified);

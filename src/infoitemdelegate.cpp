@@ -221,7 +221,19 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         //Paint little arrow indicating field is editable
         if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
-            KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
+            if (isArtwork) {
+                //Show clear field "button" when artworkUrl is specified
+                QString artworkUrl = index.data(Qt::EditRole).toString();
+                if (!artworkUrl.isEmpty()) {
+                    int clrTop = top + (height - 16)/2;
+                    int clrLeft = option.rect.right() - 16;
+                    KIcon("edit-clear-locationbar-rtl").paint(&p, clrLeft, clrTop, 16, 16);
+                } else {
+                    KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
+                }
+            } else {
+                KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
+            }
         }
     }
     p.end();
@@ -237,19 +249,21 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     return QSize(0, rowHeight(index.row()));
 }
 
-bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model,                                                const QStyleOptionViewItem &option, const QModelIndex &index)
+bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    QPoint mousePos = ((QMouseEvent *)event)->pos();
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
         if (event->type() == QEvent::MouseButtonDblClick) {
             KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
             if (newUrl.isValid()) {
-                QPixmap pixmap = QPixmap(newUrl.path()).scaled(QSize(128,128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                if (!pixmap.isNull()) {
-                    model->setData(index, QIcon(pixmap), Qt::DecorationRole);
-                    model->setData(index, newUrl, Qt::EditRole);
-                    model->setData(index, false, InfoItemModel::MultipleValuesRole);
-                }
+                model->setData(index, newUrl.url(), Qt::EditRole);
+                model->setData(index, false, InfoItemModel::MultipleValuesRole);
+            }
+        } else if (event->type() == QEvent::MouseButtonPress) {
+            QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
+            if (clearButtonRect.contains(mousePos)) {
+                model->setData(index, QString(""), Qt::EditRole);
             }
         }
         return true;
@@ -346,7 +360,7 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
-        model->setData(index, comboBox->currentIndex());
+        model->setData(index, comboBox->currentIndex(), Qt::EditRole);
     } else {
         QItemDelegate::setModelData(editor, model, index);
     }

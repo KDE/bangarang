@@ -41,7 +41,7 @@ class DBPediaInfoFetcher : public InfoFetcher
         bool available(const QString &subType);
 
     public slots:
-        void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true);
+        void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true, bool updateArtwork = true);
         
     private:
         DBPediaQuery * m_dbPediaQuery;
@@ -51,6 +51,7 @@ class DBPediaInfoFetcher : public InfoFetcher
         QStringList m_requestKeys;
         bool m_timeout;
         QTimer *m_timer;
+        bool m_updateArtwork;
 
         void setFetching();
         
