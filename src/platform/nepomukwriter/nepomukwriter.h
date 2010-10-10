@@ -7,6 +7,7 @@
 #include <Nepomuk/Variant>
 #include <Nepomuk/Tag>
 #include <KApplication>
+#include <KUrl>
 #include <QtCore>
 #include <QFile>
 
