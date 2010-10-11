@@ -24,6 +24,9 @@
 #include <KLocale>
 #include <KDebug>
 #include <KUrl>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KStandardDirs>
 #include <QPainter>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
@@ -201,8 +204,16 @@ void InfoItemModel::saveChanges()
                         mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
                         mediaItem.url = currentItem->data(Qt::EditRole).toString();
                     }
-                } else if (field == "artwork") {              
+                } else if (field == "artwork") {
+                    QString artworkUrl = currentItem->data(Qt::EditRole).toString();
                     mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).toString();
+                    if (!artworkUrl.isEmpty() && (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre")) {
+                        mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
+                        mediaItem.hasCustomArtwork = true;
+                    } else if (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre"){
+                        mediaItem.artwork = KIcon("flag-blue");
+                        mediaItem.hasCustomArtwork = false;
+                    }
                 } else if (field == "tags") {
                     QStringList rawTagStrList = currentItem->data(Qt::EditRole).toString().split(";", QString::SkipEmptyParts);
                     QStringList tags;
@@ -218,6 +229,9 @@ void InfoItemModel::saveChanges()
         updatedList << mediaItem;
     }
     m_mediaList = updatedList;
+
+    //Update Custom Genre Info
+    saveCustomGenreInfo(m_mediaList);
     
     //Update File Metadata
     saveFileMetaData(m_mediaList);
@@ -571,6 +585,37 @@ void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
                     file.save();
                 }
             }
+        }
+    }
+}
+
+void InfoItemModel::saveCustomGenreInfo(QList<MediaItem> mediaList)
+{
+    if (mediaList.count() > 0) {
+        if (mediaList.at(0).type == "Category" &&
+            (mediaList.at(0).subType() == "AudioGenre" || mediaList.at(0).subType() == "VideoGenre")) {
+            QString localGenreFile = KGlobal::dirs()->locateLocal("data","bangarang/genrerc", true);
+            if (localGenreFile.isEmpty()) {
+                return;
+            }
+
+            KConfig genreConfig(localGenreFile);
+            for (int i = 0; i < mediaList.count(); i++) {
+                MediaItem mediaItem = mediaList.at(i);
+                if (mediaItem.type == "Category" &&
+                    (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre")) {
+                    KConfigGroup genreGroup(&genreConfig, mediaItem.title);
+                    QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+                    if (artworkUrl.isEmpty()) {
+                        if (genreGroup.exists()) {
+                            genreGroup.deleteEntry("artworkUrl");
+                        }
+                    } else {
+                        genreGroup.writeEntry("artworkUrl", artworkUrl);
+                    }
+                }
+            }
+            genreConfig.sync();
         }
     }
 }

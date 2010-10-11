@@ -466,6 +466,7 @@ void MusicListEngine::run()
                 if (mediaItem.fields["categoryType"].toString() == "AudioGenre") {
                     if (!mediaItem.fields["artworkUrl"].toString().isEmpty()) {
                         QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+                        mediaItem.hasCustomArtwork = true;
                         if (!artwork.isNull()) {
                             emit updateArtwork(artwork, mediaItem);
                         }

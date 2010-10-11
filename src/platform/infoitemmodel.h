@@ -75,6 +75,7 @@ class InfoItemModel : public QStandardItemModel
         QStringList valueList(const QString &field);
         bool isEmpty(const QString &field);
         void saveFileMetaData(QList<MediaItem> mediaList);
+        void saveCustomGenreInfo(QList<MediaItem> mediaList);
         bool getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride = QString());
 
     Q_SIGNALS:
