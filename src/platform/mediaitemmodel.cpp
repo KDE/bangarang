@@ -653,7 +653,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
     QString tooltip;
     if (!mediaItem.fields["description"].toString().isEmpty()) {
-        tooltip.append(mediaItem.fields["description"].toString());
+        tooltip.append(QString("<br>%1").arg(mediaItem.fields["description"].toString()));
     }
     if (!mediaItem.semanticComment.isEmpty()) {
         tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));

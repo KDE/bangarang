@@ -224,11 +224,11 @@ void SemanticsListEngine::run()
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
-                        mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
+                        mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
-                        mediaItem.semanticComment = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y"); 
+                        mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
                     mediaList.append(mediaItem);
