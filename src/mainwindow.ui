@@ -2000,6 +2000,9 @@
                                  </item>
                                  <item>
                                   <widget class="QToolButton" name="showInfoFetcherExpander">
+                                   <property name="toolTip">
+                                    <string>Additional info may be available...</string>
+                                   </property>
                                    <property name="text">
                                     <string/>
                                    </property>
