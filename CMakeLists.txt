@@ -2,7 +2,7 @@ project(Bangarang)
 
 set(WITHTRANSLATIONS:BOOL YES)
 
-find_package(KDE4 4.4.0 REQUIRED)
+find_package(KDE4 4.5.0 REQUIRED)
 find_package(Nepomuk REQUIRED)
 
 include(KDE4Defaults)
