@@ -810,6 +810,12 @@ void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool ne
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
         listEngine->updateSourceInfo(mediaList, nepomukOnly);
     }
+
+    //Always update model info in case list engine is unable to update source of media items
+    //Note that if the list engine doesn't update source of information then data in model will
+    //only last until data is reloaded.
+    updateMediaItems(mediaList);
+
 }
 
 void MediaItemModel::setCacheThreshold(int msec)

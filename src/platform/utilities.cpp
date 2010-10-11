@@ -549,6 +549,15 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
             KConfig genreConfig(localGenreFile);
             KConfigGroup genreGroup(&genreConfig, genre);
             artworkUrl = KGlobal::dirs()->locate("data", genreGroup.readEntry("artworkUrl", "|||").trimmed());
+            if (artworkUrl.isEmpty()) {
+                KUrl testUrl(genreGroup.readEntry("artworkUrl", QString()));
+                if (!testUrl.isEmpty() && testUrl.isLocalFile()) {
+                    artworkUrl = testUrl.path();
+                    if (!QFile::exists(artworkUrl)) {
+                        artworkUrl = QString();
+                    }
+                }
+            }
         }
     }
     if (artworkUrl.isEmpty()) {
