@@ -194,10 +194,12 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.translate(transX, -transY);
                     p.fillRect(0,0,artworkSize, artworkSize, Qt::white);
                     p.drawPixmap(0, 0, artworkSize, artworkSize, artworkList.at(i).value<QPixmap>());
-                    QColor outlineColor = QColor(Qt::black);
-                    outlineColor.setAlphaF(0.7);
-                    p.setPen(outlineColor);
-                    p.drawRect(0, 0, artworkSize, artworkSize);
+                    if (artworkList.count() > 1) {
+                        QColor outlineColor = QColor(Qt::black);
+                        outlineColor.setAlphaF(0.7);
+                        p.setPen(outlineColor);
+                        p.drawRect(0, 0, artworkSize, artworkSize);
+                    }
                     p.translate(-transX, transY);
                     p.rotate(-rot);
                     p.translate(-spacing, 0);
