@@ -119,15 +119,24 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
     if (pixmap.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
-            pixmap = QPixmap(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            QPixmap rawPixmap= QPixmap(KUrl(artworkUrl).path());
+            if (!rawPixmap.isNull()) {
+                //Always scale height to 128
+                qreal widthScale = 128.0/rawPixmap.height();
+                int width = rawPixmap.width()*widthScale;
+                pixmap = rawPixmap.scaled(width,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
         }
         
         if (pixmap.isNull()) {
             artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
             if (!artworkUrl.isEmpty()) {
                 QPixmap rawPixmap= QPixmap(artworkUrl);
-                if (!pixmap.isNull()) {
-                    pixmap = rawPixmap.scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                if (!rawPixmap.isNull()) {
+                    //Always scale height to 128
+                    qreal widthScale = 128.0/rawPixmap.height();
+                    int width = rawPixmap.width()*widthScale;
+                    pixmap = rawPixmap.scaled(width,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 }
             }
 	}
@@ -144,13 +153,22 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
     if (image.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
-            image = QImage(KUrl(artworkUrl).path()).scaled(128,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            QImage rawImage= QImage(KUrl(artworkUrl).path());
+            if (!rawImage.isNull()) {
+                //Always scale height to 128
+                qreal widthScale = 128.0/rawImage.height();
+                int width = rawImage.width()*widthScale;
+                image = rawImage.scaled(width, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
         } else {
             artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
             if (!artworkUrl.isEmpty()) {
                 QImage rawImage = QImage(artworkUrl);
                 if (!rawImage.isNull()) {
-                    image = rawImage.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    //Always scale height to 128
+                    qreal widthScale = 128.0/rawImage.height();
+                    int width = rawImage.width()*widthScale;
+                    image = rawImage.scaled(width, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 }
             }
 	}
