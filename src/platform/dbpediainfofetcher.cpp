@@ -271,5 +271,6 @@ void DBPediaInfoFetcher::timeout()
 {
     kDebug() << "TIMEOUT";
     m_timeout = true;
+    m_isFetching = false;
     emit fetchComplete();
 }
