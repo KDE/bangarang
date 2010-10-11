@@ -170,7 +170,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             QList<QVariant> artworkList = index.data(InfoItemModel::ArtworkListRole).toList();
             if (artworkList.count() == 0) {
                 QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-                artwork.paint(&p, option.rect, Qt::AlignCenter, QIcon::Normal);
+                artwork.paint(&p, padding, padding, width -2*padding, height-2*padding, Qt::AlignCenter, QIcon::Normal);
             } else {
                 p.save();
                 int artworkSize  = 100;
