@@ -244,25 +244,24 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         QUrl categoryProperty;
         if (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed") {
             res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
-        } else if (fields["categoryType"] == "Artist") {
-            categoryProperty = mediaVocabulary.musicArtist();
-        } else if (fields["categoryType"] == "Album") {
-            categoryProperty = mediaVocabulary.musicAlbum();
-        } else if (fields["categoryType"] == "TV Series") {
-            categoryProperty = mediaVocabulary.videoSeries();
-        } else if (fields["categoryType"] == "Actor") {
-            categoryProperty = mediaVocabulary.videoActor();
-        } else if (fields["categoryType"] == "Director") {
-            categoryProperty = mediaVocabulary.videoDirector();
-        } else if (fields["categoryType"] == "Writer") {
-            categoryProperty = mediaVocabulary.videoWriter();
-        } else if (fields["categoryType"] == "Producer") {
-            categoryProperty = mediaVocabulary.videoProducer();
+        } else {
+            if (fields["categoryType"] == "Artist") {
+                categoryProperty = mediaVocabulary.musicArtist();
+            } else if (fields["categoryType"] == "Album") {
+                categoryProperty = mediaVocabulary.musicAlbum();
+            } else if (fields["categoryType"] == "TV Series") {
+                categoryProperty = mediaVocabulary.videoSeries();
+            } else if (fields["categoryType"] == "Actor") {
+                categoryProperty = mediaVocabulary.videoActor();
+            } else if (fields["categoryType"] == "Director") {
+                categoryProperty = mediaVocabulary.videoDirector();
+            } else if (fields["categoryType"] == "Writer") {
+                categoryProperty = mediaVocabulary.videoWriter();
+            } else if (fields["categoryType"] == "Producer") {
+                categoryProperty = mediaVocabulary.videoProducer();
+            }
+            res = findPropertyResourceByTitle(categoryProperty, fields["title"].toString(), true);
         }
-        res = findPropertyResourceByTitle(categoryProperty, fields["title"].toString());
-    }
-    if (!res.isValid()) {
-        return;
     }
 
     // Update the media type
