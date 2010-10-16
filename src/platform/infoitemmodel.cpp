@@ -386,9 +386,9 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
     fieldItem->setEditable(isEditable);
-    if (isEditable) {
+    /*if (isEditable) {
         fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
-    }
+    }*/
 
     //Set artwork
     if (field == "artwork") {

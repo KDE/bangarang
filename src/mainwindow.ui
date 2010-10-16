@@ -1910,8 +1910,11 @@
                              <property name="horizontalScrollBarPolicy">
                               <enum>Qt::ScrollBarAlwaysOff</enum>
                              </property>
+                             <property name="editTriggers">
+                              <set>QAbstractItemView::CurrentChanged|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+                             </property>
                              <property name="selectionMode">
-                              <enum>QAbstractItemView::NoSelection</enum>
+                              <enum>QAbstractItemView::SingleSelection</enum>
                              </property>
                              <property name="selectionBehavior">
                               <enum>QAbstractItemView::SelectRows</enum>

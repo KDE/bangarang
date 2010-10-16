@@ -18,6 +18,7 @@
 
 #include "infoitemdelegate.h"
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "sensiblewidgets.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
@@ -75,8 +76,9 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     const int top = option.rect.top();
     const int width = option.rect.width();
     const int height = option.rect.height();   
-    QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
-    option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
+    QColor foregroundColor = option.palette.color(QPalette::Text);
+    QColor hoverColor = option.palette.color(QPalette::Highlight);
+    hoverColor.setAlpha(35);
 
     //Get basic information about field
     QString field = index.data(InfoItemModel::FieldRole).toString();
@@ -148,7 +150,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 textFont.setItalic(true);
             }
         } else if (field == "url") {
-            int textWidth = width - 4 * padding - fieldNameWidth;
+            int textWidth = width - 5 * padding - fieldNameWidth;
             text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textWidth);
         }
 
@@ -167,10 +169,18 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         //Paint field data
         if (isArtwork) {
+            if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+                p.save();
+                QRect hoverRect(left+padding, top, width-2*padding, height);
+                p.setPen(Qt::NoPen);
+                p.setBrush(QBrush(hoverColor));
+                p.drawRoundedRect(hoverRect, 3.0, 3.0);
+                p.restore();
+            }
             QList<QVariant> artworkList = index.data(InfoItemModel::ArtworkListRole).toList();
             if (artworkList.count() == 0) {
                 QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-                artwork.paint(&p, padding, padding, width -2*padding, height-2*padding, Qt::AlignCenter, QIcon::Normal);
+                artwork.paint(&p, left+padding, top+padding, width -2*padding, height-2*padding, Qt::AlignCenter, QIcon::Normal);
             } else {
                 p.save();
                 int artworkSize  = 100;
@@ -207,15 +217,23 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 p.restore();
             }
         } else {
-            int textWidth = width - 4 * padding - fieldNameWidth;
+            int textWidth = width - 5 * padding - fieldNameWidth;
             int textLeft = left + fieldNameWidth + 3 * padding;
             if (fieldNameWidth == 0) {
-                textWidth = width - 2 * padding;
-                textLeft = left + padding;
+                textWidth = width - 4 * padding;
+                textLeft = left + 2*padding;
             }
             QTextOption textOption(hAlign | Qt::AlignVCenter);
             textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
             QRect textRect(textLeft, top, textWidth, height);
+            if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+                p.save();
+                QRect hoverRect(textLeft-padding, top, textWidth+2*padding, height);
+                p.setPen(Qt::NoPen);
+                p.setBrush(QBrush(hoverColor));
+                p.drawRoundedRect(hoverRect, 3.0, 3.0);
+                p.restore();
+            }
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
@@ -230,11 +248,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     int clrTop = top + (height - 16)/2;
                     int clrLeft = option.rect.right() - 16;
                     KIcon("edit-clear-locationbar-rtl").paint(&p, clrLeft, clrTop, 16, 16);
-                } else {
-                    KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
                 }
-            } else {
-                KIcon("arrow-left").paint(&p, option.rect.right() - 8, top + (height - 8)/2, 8, 8);
             }
         }
     }
@@ -256,12 +270,13 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
     QPoint mousePos = ((QMouseEvent *)event)->pos();
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
-        if (event->type() == QEvent::MouseButtonDblClick) {
+        if (event->type() == QEvent::MouseButtonRelease) {
             KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
             if (newUrl.isValid()) {
                 model->setData(index, newUrl.url(), Qt::EditRole);
                 model->setData(index, false, InfoItemModel::MultipleValuesRole);
             }
+            m_parent->ui->mediaView->setFocus();
         } else if (event->type() == QEvent::MouseButtonPress) {
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(mousePos)) {
@@ -279,6 +294,9 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+    if (field == "artwork") {
+        return 0;
+    }
     if (value.type() == QVariant::Int) {
         if (field == "audioType") {
             QStringList list;
@@ -439,7 +457,7 @@ int InfoItemDelegate::rowHeight(int row) const
         if (modified) {
             textFont.setBold(true);
         }
-        height = heightForWordWrap(textFont, availableWidth, text) + padding;
+        height = heightForWordWrap(textFont, availableWidth, text) + 2*padding;
     }
 
     return height;
