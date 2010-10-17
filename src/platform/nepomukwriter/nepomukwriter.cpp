@@ -487,8 +487,8 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("genre")) {
-                QString genre  = fields["genre"].toString();
-                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+                QStringList genres  = fields["genre"].toString().split("||");
+                res.setProperty(mediaVocabulary.genre(), variantListFromStringList(genres));
             }
             if (fields.contains("trackNumber")) {
                 int track   = fields["trackNumber"].toInt();
@@ -531,8 +531,8 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
         if ((fields["videoType"] == "Movie") || (fields["videoType"] == "TV Show")) {
             if (fields.contains("genre")) {
-                QString genre   = fields["genre"].toString();
-                res.setProperty(mediaVocabulary.genre(), Nepomuk::Variant(genre));
+                QStringList genres  = fields["genre"].toString().split("||");
+                res.setProperty(mediaVocabulary.genre(), variantListFromStringList(genres));
             }
             if (fields.contains("synopsis")) {
                 QString synopsis   = fields["synopsis"].toString();
@@ -787,11 +787,17 @@ void NepomukWriter::removeUnusedPropertyResources()
         QUrl propertyResource = it.binding(resourceBinding).uri();
         Nepomuk::Resource resource = Nepomuk::Resource::fromResourceUri(propertyResource);
         QString name = it.binding("name").literal().toString().trimmed();
-        outputMessage(Debug, QString("%1 will be removed").arg(name));
         resource.remove();
     }
     outputMessage(Progress, QString("%1").arg(100));
 
 }
 
-
+QList<Nepomuk::Variant> NepomukWriter::variantListFromStringList(const QStringList &stringList)
+{
+    QList<Nepomuk::Variant> variantList;
+    for (int i = 0; i < stringList.count(); i++) {
+        variantList.append(Nepomuk::Variant(stringList.at(i)));
+    }
+    return variantList;
+}

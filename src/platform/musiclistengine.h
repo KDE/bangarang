@@ -45,6 +45,7 @@ class MusicListEngine : public NepomukListEngine
         ~MusicListEngine();
         void run();
         void setFilterForSources(const QString& engineFilter);
+
 };
 
 #endif // MUSICLISTENGINE_H

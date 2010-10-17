@@ -556,7 +556,6 @@ QString Utilities::getGenreFromTag(const QString &url)
 
 QString Utilities::getGenreArtworkUrl(const QString &genre)
 {
-    kDebug() << genre;
     if (genre.isEmpty()) {
         return QString();
     }
@@ -1255,8 +1254,8 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
     }
-    QString genre = res.property(mediaVocabulary.genre()).toString();
-    mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
+    QStringList rawGenres =  res.property(mediaVocabulary.genre()).toStringList();
+    mediaItem.fields["genre"] = genresFromRawTagGenres(rawGenres);
     mediaItem.fields["rating"] = res.rating();
 
     QStringList tags;
@@ -1369,8 +1368,10 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
 MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri)
 {
     MediaItem mediaItem;
+    MediaVocabulary mediaVocabulary;
     
-    KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+    Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
+    KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
     mediaItem.url = url.prettyUrl();
@@ -1394,10 +1395,9 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
     }
-    QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
-    mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
+    QStringList rawGenres =  res.property(mediaVocabulary.genre()).toStringList();
+    mediaItem.fields["genre"] = genresFromRawTagGenres(rawGenres);
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
-    Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
     QStringList tags;
     foreach (Nepomuk::Tag tag, res.tags()) {
         tags.append(tag.label());
@@ -1926,8 +1926,6 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
         }
         query.endWhere();
         
-        //kDebug() << query.query();
-        
         Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
         Soprano::QueryResultIterator it = query.executeSelect(mainModel);
         
@@ -2201,12 +2199,34 @@ QString Utilities::rawTagGenreFromGenre(QString genre)
     }
     return tagGenre;
 }
+QStringList Utilities::genresFromRawTagGenres(QStringList rawTagGenres)
+{
+    QStringList genres;
+    for (int i = 0; i < rawTagGenres.count(); i++) {
+        QString genre = genreFromRawTagGenre(rawTagGenres.at(i));
+        if (genres.indexOf(genre) == -1) {
+            genres.append(genre);
+        }
+    }
+    return genres;
+}
+
+QStringList Utilities::rawTagGenresFromGenres(QStringList genres)
+{
+    QStringList rawTagGenres;
+    for (int i = 0; i < genres.count(); i++) {
+        QString rawTagGenre = rawTagGenreFromGenre(genres.at(i));
+        if (rawTagGenres.indexOf(rawTagGenre) == -1) {
+            rawTagGenres.append(rawTagGenre);
+        }
+    }
+    return rawTagGenres;
+}
 
 QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
 {
     for (int i = 0; i < genreList.count(); i++) {
         MediaItem genreItem = genreList.at(i);
-        kDebug() << genreItem.title;
         if (genreItem.type == "Category" && genreItem.fields["categoryType"] == "AudioGenre") {
             QString rawGenre = genreItem.title;
             QString convertedGenre = Utilities::genreFromRawTagGenre(rawGenre);
@@ -2233,7 +2253,6 @@ QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
                             }
                         }
                         newUrl.append(mergedFilter);
-                        kDebug() << newUrl;
                         matchedGenre.url = newUrl;
                         genreList.replace(j, matchedGenre);
                         genreList.removeAt(i);
@@ -2242,7 +2261,6 @@ QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
                 }
                 if (!matchFound) {
                     genreItem.title = convertedGenre;
-                    kDebug() << convertedGenre;
                     genreList.replace(i, genreItem);
                 }
             }
@@ -2275,4 +2293,3 @@ bool Utilities::nepomukInited()
     }
     return nepomukInited;
 }
-

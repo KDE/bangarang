@@ -142,6 +142,8 @@ namespace Utilities {
     QHash<int, QString> tagGenreDictionary();
     QString genreFromRawTagGenre(QString rawTagGenre);
     QString rawTagGenreFromGenre(QString genre);
+    QStringList genresFromRawTagGenres(QStringList rawTagGenres);
+    QStringList rawTagGenresFromGenres(QStringList genres);
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
     bool nepomukInited();

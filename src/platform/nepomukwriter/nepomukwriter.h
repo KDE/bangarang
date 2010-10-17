@@ -37,6 +37,7 @@ private:
     void outputMessage(MessageType messageType, QString urlOrProgressOrMessage = QString());
     Nepomuk::Resource findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing = false);
     void removeUnusedPropertyResources();
+    QList<Nepomuk::Variant> variantListFromStringList(const QStringList &stringList);
 
 };
 
