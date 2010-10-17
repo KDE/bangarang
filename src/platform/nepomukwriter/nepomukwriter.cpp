@@ -396,7 +396,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             res.setProperty(mediaVocabulary.lastPlayed(), value);
         }
         if (fields.contains("tags")) {
-            QStringList tagStrList = fields["tags"].toString().split(";", QString::SkipEmptyParts);
+            QStringList tagStrList = fields["tags"].toString().split("||", QString::SkipEmptyParts);
             QList<Nepomuk::Tag> tags;
             QList<Nepomuk::Tag> currentTags = res.tags();
             bool tagsChanged = false;

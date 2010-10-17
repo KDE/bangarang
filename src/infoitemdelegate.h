@@ -46,6 +46,7 @@ class InfoItemDelegate : public QItemDelegate
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
         QWidget *createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+        void setEditorData ( QWidget * editor, const QModelIndex & index ) const;
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
         void setView(QAbstractItemView * view);
         void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -59,7 +60,12 @@ class InfoItemDelegate : public QItemDelegate
         bool m_nepomukInited;
         int heightForWordWrap(QFont font, int width, QString text) const;
         QList<qreal> m_artworkRotations;
-        
+        QPoint m_mousePos;
+        int m_stringListIndexEditing;
+        QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
         
     Q_SIGNALS:
 };
