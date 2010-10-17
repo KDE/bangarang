@@ -82,7 +82,10 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //Get basic information about field
     QString field = index.data(InfoItemModel::FieldRole).toString();
-    QString text = index.data(Qt::DisplayRole).toString();
+    QString text;
+    if (!index.data(Qt::DisplayRole).isNull()) {
+        text  = index.data(Qt::DisplayRole).toString();
+    }
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
     bool isEditable = model->itemFromIndex(index)->isEditable();
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
@@ -347,11 +350,11 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             comboBox->setAutoFillBackground(true);
             return comboBox;
         } else {
-            QSpinBox *spinBox = new QSpinBox(parent);
-            spinBox->setFont(KGlobalSettings::smallestReadableFont());
-            spinBox->setRange(0,9999);
-            spinBox->setAutoFillBackground(true);
-            return spinBox;
+            KLineEdit *lineEdit = new KLineEdit(parent);
+            lineEdit->setInputMask("0000");
+            lineEdit->setFont(KGlobalSettings::smallestReadableFont());
+            lineEdit->setAutoFillBackground(true);
+            return lineEdit;
         }
     } else if (value.type() == QVariant::StringList) {
         KLineEdit *lineEdit = new KLineEdit(parent);
@@ -399,6 +402,16 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
                 lineEdit->setText(textList.at(m_stringListIndexEditing));
             }
         }
+    } else if (index.data(Qt::EditRole).type() == QVariant::Int) {
+        bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+        KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
+        if (!multipleValues) {
+            if (!index.data(Qt::EditRole).isNull()) {
+                lineEdit->setText(index.data(Qt::EditRole).toString());
+            } else {
+                lineEdit->setText(QString());
+            }
+        }
     } else {
         QItemDelegate::setEditorData(editor, index);
     }
@@ -438,6 +451,16 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
         }
         model->setData(index, textList, Qt::DisplayRole);
         model->setData(index, textList, Qt::EditRole);
+    } else if (index.data(Qt::EditRole).type() == QVariant::Int) {
+        KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
+        if (!lineEdit->text().trimmed().isEmpty()) {
+            int value = lineEdit->text().toInt();
+            model->setData(index, value, Qt::DisplayRole);
+            model->setData(index, value, Qt::EditRole);
+        } else {
+            model->setData(index, QVariant(QVariant::Int), Qt::DisplayRole);
+            model->setData(index, QVariant(QVariant::Int), Qt::EditRole);
+        }
     } else {
         QItemDelegate::setModelData(editor, model, index);
     }
