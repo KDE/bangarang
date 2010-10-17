@@ -1010,7 +1010,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         foreach (Nepomuk::Tag tag, res.tags()) {
             tags.append(tag.label());
         }
-        mediaItem.fields["tags"] = tags.join(";");
+        mediaItem.fields["tags"] = tags;
         mediaItem.fields["playCount"] = res.property(mediaVocabulary.playCount()).toInt();
         if (res.property(mediaVocabulary.lastPlayed()).isValid()) {
             QDateTime lastPlayed = res.property(mediaVocabulary.lastPlayed()).toDateTime();
@@ -1263,7 +1263,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     foreach (Nepomuk::Tag tag, res.tags()) {
         tags.append(tag.label());
     }
-    mediaItem.fields["tags"] = tags.join(";");
+    mediaItem.fields["tags"] = tags;
     mediaItem.fields["playCount"] = res.property(mediaVocabulary.playCount()).toInt();
     if (res.property(mediaVocabulary.lastPlayed()).isValid()) {
         QDateTime lastPlayed = res.property(mediaVocabulary.lastPlayed()).toDateTime();
@@ -1402,7 +1402,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     foreach (Nepomuk::Tag tag, res.tags()) {
         tags.append(tag.label());
     }
-    mediaItem.fields["tags"] = tags.join(";");
+    mediaItem.fields["tags"] = tags;
     mediaItem.fields["playCount"] = it.binding(MediaVocabulary::playCountBinding()).literal().toInt();
     if (it.binding(MediaVocabulary::lastPlayedBinding()).isValid()) {
         QDateTime lastPlayed = it.binding(MediaVocabulary::lastPlayedBinding()).literal().toDateTime();

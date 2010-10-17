@@ -224,6 +224,8 @@ void MediaIndexer::writeUpdateInfo(MediaItem mediaItem, QTextStream &out)
             out << i.key() << " = " << i.value().toDateTime().toString("yyyyMMddhhmmss") << "\n";
         } else if (i.value().type() == QVariant::DateTime) {
             out << i.key() << " = " << i.value().toDateTime().toString("yyyyMMdd") << "\n";
+        } else if (i.value().type() == QVariant::StringList){
+            out << i.key() << " = " << i.value().toStringList().join("||")  << "\n";
         } else {
             out << i.key() << " = " << i.value().toString()  << "\n";
         }

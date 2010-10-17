@@ -214,13 +214,6 @@ void InfoItemModel::saveChanges()
                         mediaItem.artwork = KIcon("flag-blue");
                         mediaItem.hasCustomArtwork = false;
                     }
-                } else if (field == "tags") {
-                    QStringList rawTagStrList = currentItem->data(Qt::EditRole).toString().split(";", QString::SkipEmptyParts);
-                    QStringList tags;
-                    for (int i = 0; i < rawTagStrList.count(); i++) {
-                        tags.append(rawTagStrList.at(i).trimmed());
-                    }
-                    mediaItem.fields["tags"] = tags.join(";");
                 } else {
                     mediaItem.fields[field] = currentItem->data(Qt::EditRole);
                 }
@@ -386,9 +379,6 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
     bool hasMultiple = hasMultipleValues(field);
     fieldItem->setData(hasMultiple, InfoItemModel::MultipleValuesRole);
     fieldItem->setEditable(isEditable);
-    /*if (isEditable) {
-        fieldItem->setData(i18n("Double-click to edit"), Qt::ToolTipRole);
-    }*/
 
     //Set artwork
     if (field == "artwork") {
@@ -427,10 +417,19 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         //Set default field value
         QVariant value = m_mediaList.at(0).fields[field];
         if (value.type() == QVariant::String) {
+            fieldItem->setData(QString(), Qt::DisplayRole);
             fieldItem->setData(QString(), Qt::EditRole);
+            fieldItem->setData(QString(), InfoItemModel::OriginalValueRole);
+            fieldItem->setData(valueList(field), InfoItemModel::ValueListRole);
+        } else if (value.type() == QVariant::StringList) {
+            fieldItem->setData(QStringList(), Qt::DisplayRole);
+            fieldItem->setData(QStringList(), Qt::EditRole);
+            fieldItem->setData(QStringList(), InfoItemModel::OriginalValueRole);
             fieldItem->setData(valueList(field), InfoItemModel::ValueListRole);
         } else if (value.type() == QVariant::Int) {
+            fieldItem->setData(0, Qt::DisplayRole);
             fieldItem->setData(0, Qt::EditRole);
+            fieldItem->setData(0, InfoItemModel::OriginalValueRole);
         }
     }
     rowData.append(fieldItem);
