@@ -458,8 +458,8 @@ void VideoListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasVideoActorDescription());
-            query.addCondition(mediaVocabulary.hasVideoActorArtwork());
+            query.addCondition(mediaVocabulary.hasVideoActorDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoActorArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.videoActorBinding());
