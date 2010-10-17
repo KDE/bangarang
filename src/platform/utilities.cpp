@@ -514,6 +514,43 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
   return QString();
 }
 
+MediaItem Utilities::getArtistCategoryItem(const QString &artist)
+{
+    MediaItem mediaItem;
+    MediaVocabulary mediaVocabulary;
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append(mediaVocabulary.musicArtistNameBinding());
+    bindings.append(mediaVocabulary.musicArtistDescriptionBinding());
+    bindings.append(mediaVocabulary.musicArtistArtworkBinding());
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+    query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required, artist, MediaQuery::Equal));
+    query.addCondition(mediaVocabulary.hasMusicArtistDescription(MediaQuery::Optional));
+    query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
+    query.endWhere();
+    query.addLimit(1);
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+
+    while( it.next() ) {
+        QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
+        if (!artist.isEmpty()) {
+            mediaItem.url = QString("music://albums?artist=%1").arg(artist);
+            mediaItem.title = artist;
+            mediaItem.type = QString("Category");
+            mediaItem.fields["categoryType"] = QString("Artist");
+            mediaItem.nowPlaying = false;
+            mediaItem.artwork = KIcon("system-users");
+            mediaItem.fields["title"] = artist;
+            mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
+            mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
+        }
+    }
+    return mediaItem;
+
+}
+
 QString Utilities::getArtistFromTag(const QString &url)
 {
     QString artist;

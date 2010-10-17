@@ -134,6 +134,7 @@ void MusicListEngine::run()
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("AudioGenre");
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    mediaItem.fields["artworkUrl"] = Utilities::getGenreArtworkUrl(singleGenreName);
                     mediaItem.artwork = KIcon("audio-x-monkey");
 
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
@@ -204,13 +205,10 @@ void MusicListEngine::run()
                     m_mediaListProperties.name = i18n("Albums - %1", artist);
                     
                     //Add an additional item to show all songs on all albums for artist
-                    MediaItem mediaItem;
+                    MediaItem mediaItem = Utilities::getArtistCategoryItem(artist);
                     mediaItem.url = QString("music://songs?%1||%2||%3").arg(albumFilter, artistFilter, genreFilter);
                     mediaItem.title = QString( "  " ) + i18n("All songs");
-                    mediaItem.fields["title"] = artist;
                     mediaItem.subTitle = QString("  %1").arg(artist);
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("Artist");
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.artwork = KIcon("audio-x-monkey");
 

@@ -553,7 +553,7 @@ void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
                 }
                 TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
                 if (!file.isNull()) {
-                    QString title = mediaItem.title;
+                    QString title = mediaItem.fields["title"].toString();
                     if (!title.isEmpty()) {
                         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
                         file.tag()->setTitle(tTitle);
@@ -603,7 +603,7 @@ void InfoItemModel::saveCustomGenreInfo(QList<MediaItem> mediaList)
                 MediaItem mediaItem = mediaList.at(i);
                 if (mediaItem.type == "Category" &&
                     (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre")) {
-                    KConfigGroup genreGroup(&genreConfig, mediaItem.title);
+                    KConfigGroup genreGroup(&genreConfig, mediaItem.fields["title"].toString());
                     QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
                     if (artworkUrl.isEmpty()) {
                         if (genreGroup.exists()) {
@@ -635,22 +635,23 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
             } else {
                 QList<QImage> artworks;
+                QString itemTitle = mediaItem.fields["title"].toString();
                 if (mediaItem.subType() == "AudioGenre") {
-                    artworks = Utilities::getGenreArtworks(mediaItem.title, "audio");
+                    artworks = Utilities::getGenreArtworks(itemTitle, "audio");
                 } else if (mediaItem.subType() == "VideoGenre") {
-                    artworks = Utilities::getGenreArtworks(mediaItem.title, "video");
+                    artworks = Utilities::getGenreArtworks(itemTitle, "video");
                 } else if (mediaItem.subType() == "Artist") {
-                    artworks = Utilities::getArtistArtworks(mediaItem.title);
+                    artworks = Utilities::getArtistArtworks(itemTitle);
                 } else if (mediaItem.subType() == "AudioTag") {
-                    artworks = Utilities::getTagArtworks(mediaItem.title, "audio");
+                    artworks = Utilities::getTagArtworks(itemTitle, "audio");
                 } else if (mediaItem.subType() == "VideoTag") {
-                    artworks = Utilities::getTagArtworks(mediaItem.title, "video");
+                    artworks = Utilities::getTagArtworks(itemTitle, "video");
                 } else if (mediaItem.subType() == "TV Series") {
-                    artworks = Utilities::getTVSeriesArtworks(mediaItem.title);
+                    artworks = Utilities::getTVSeriesArtworks(itemTitle);
                 } else if (mediaItem.subType() == "Actor") {
-                    artworks = Utilities::getActorArtworks(mediaItem.title);
+                    artworks = Utilities::getActorArtworks(itemTitle);
                 } else if (mediaItem.subType() == "Director") {
-                    artworks = Utilities::getDirectorArtworks(mediaItem.title);
+                    artworks = Utilities::getDirectorArtworks(itemTitle);
                 }
                 if (artworks.count() > 0 ) {
                     //Convert to Pixmap list
