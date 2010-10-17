@@ -463,7 +463,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     if (type == "Audio") {
         if (fields["audioType"] == "Music") {
             if (fields.contains("artist")) {
-                QStringList artists  = fields["artist"].toString().split("||");
+                QStringList artists  = fields["artist"].toString().split("||", QString::SkipEmptyParts);
                 res.removeProperty(mediaVocabulary.musicPerformer());
                 res.removeProperty(mediaVocabulary.musicComposer());;
                 if (!artists.isEmpty()) {
@@ -491,7 +491,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("genre")) {
-                QStringList genres  = fields["genre"].toString().split("||");
+                QStringList genres  = fields["genre"].toString().split("||", QString::SkipEmptyParts);
                 res.setProperty(mediaVocabulary.genre(), variantListFromStringList(genres));
             }
             if (fields.contains("trackNumber")) {
@@ -535,7 +535,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         mediaVocabulary.setVocabulary(MediaVocabulary::nmm);
         if ((fields["videoType"] == "Movie") || (fields["videoType"] == "TV Show")) {
             if (fields.contains("genre")) {
-                QStringList genres  = fields["genre"].toString().split("||");
+                QStringList genres  = fields["genre"].toString().split("||", QString::SkipEmptyParts);
                 res.setProperty(mediaVocabulary.genre(), variantListFromStringList(genres));
             }
             if (fields.contains("synopsis")) {
@@ -562,10 +562,14 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 res.setProperty(mediaVocabulary.releaseDate(), Nepomuk::Variant(releaseDate));
             }
             if (fields.contains("writer")) {
-                QString writer   = fields["writer"].toString();
-                if (!writer.isEmpty()) {
-                    Nepomuk::Resource writerResource = findPropertyResourceByTitle(mediaVocabulary.videoWriter(), writer, true);
-                    res.setProperty(mediaVocabulary.videoWriter(), Nepomuk::Variant(writerResource));
+                QStringList writers  = fields["writer"].toString().split("||", QString::SkipEmptyParts);
+                if (!writers.isEmpty()) {
+                    QList<Nepomuk::Variant> writerResources;
+                    for (int i = 0; i < writers.count(); i++) {
+                        Nepomuk::Resource writerResource = findPropertyResourceByTitle(mediaVocabulary.videoWriter(), writers.at(i), true);
+                        writerResources.append(writerResource);
+                    }
+                    res.setProperty(mediaVocabulary.videoWriter(), writerResources);
                 } else {
                     if (res.hasProperty(mediaVocabulary.videoWriter())) {
                         res.removeProperty(mediaVocabulary.videoWriter());
@@ -573,10 +577,14 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("director")) {
-                QString director   = fields["director"].toString();
-                if (!director.isEmpty()) {
-                    Nepomuk::Resource directorResource = findPropertyResourceByTitle(mediaVocabulary.videoDirector(), director, true);
-                    res.setProperty(mediaVocabulary.videoDirector(), Nepomuk::Variant(directorResource));
+                QStringList directors  = fields["director"].toString().split("||", QString::SkipEmptyParts);
+                if (!directors.isEmpty()) {
+                    QList<Nepomuk::Variant> directorResources;
+                    for (int i = 0; i < directors.count(); i++) {
+                        Nepomuk::Resource directorResource = findPropertyResourceByTitle(mediaVocabulary.videoDirector(), directors.at(i), true);
+                        directorResources.append(directorResource);
+                    }
+                    res.setProperty(mediaVocabulary.videoDirector(), directorResources);
                 } else {
                     if (res.hasProperty(mediaVocabulary.videoDirector())) {
                         res.removeProperty(mediaVocabulary.videoDirector());
@@ -584,10 +592,14 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("producer")) {
-                QString producer   = fields["producer"].toString();
-                if (!producer.isEmpty()) {
-                    Nepomuk::Resource producerResource = findPropertyResourceByTitle(mediaVocabulary.videoProducer(), producer, true);
-                    res.setProperty(mediaVocabulary.videoProducer(), Nepomuk::Variant(producerResource));
+                QStringList producers  = fields["producer"].toString().split("||", QString::SkipEmptyParts);
+                if (!producers.isEmpty()) {
+                    QList<Nepomuk::Variant> producerResources;
+                    for (int i = 0; i < producers.count(); i++) {
+                        Nepomuk::Resource producerResource = findPropertyResourceByTitle(mediaVocabulary.videoProducer(), producers.at(i), true);
+                        producerResources.append(producerResource);
+                    }
+                    res.setProperty(mediaVocabulary.videoProducer(), producerResources);
                 } else {
                     if (res.hasProperty(mediaVocabulary.videoProducer())) {
                         res.removeProperty(mediaVocabulary.videoProducer());
@@ -595,10 +607,14 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("actor")) {
-                QString actor   = fields["actor"].toString();
-                if (!actor.isEmpty()) {
-                    Nepomuk::Resource actorResource = findPropertyResourceByTitle(mediaVocabulary.videoActor(), actor, true);
-                    res.setProperty(mediaVocabulary.videoActor(), Nepomuk::Variant(actorResource));
+                QStringList actors  = fields["actor"].toString().split("||", QString::SkipEmptyParts);
+                if (!actors.isEmpty()) {
+                    QList<Nepomuk::Variant> actorResources;
+                    for (int i = 0; i < actors.count(); i++) {
+                        Nepomuk::Resource actorResource = findPropertyResourceByTitle(mediaVocabulary.videoActor(), actors.at(i), true);
+                        actorResources.append(actorResource);
+                    }
+                    res.setProperty(mediaVocabulary.videoActor(), actorResources);
                 } else {
                     if (res.hasProperty(mediaVocabulary.videoActor())) {
                         res.removeProperty(mediaVocabulary.videoActor());

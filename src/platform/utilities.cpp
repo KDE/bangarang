@@ -1255,17 +1255,20 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
         type = "TV Show";
     }
 
-    //If nepomuk resource type is not recognized try recognition by mimetype
     QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
-    QString url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
-    if (isAudio(url)) {
-        type = "Audio Clip";
-    }
-    if (isMusic(url)) {
-        type = "Music";
-    }
-    if (isVideo(url)){
-        type = "Video Clip";
+
+    //If nepomuk resource type is not recognized try recognition by mimetype
+    if (type.isEmpty()) {
+        QString url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
+        if (isAudio(url)) {
+            type = "Audio Clip";
+        }
+        if (isMusic(url)) {
+            type = "Music";
+        }
+        if (isVideo(url)){
+            type = "Video Clip";
+        }
     }
 
     MediaItem mediaItem;
@@ -1372,15 +1375,49 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                     mediaItem.fields["year"] = releaseDate.year();
                 }
             }
-            //TODO: Multiple writers/directors/producers/actors
-            mediaItem.fields["writer"] = res.property(mediaVocabulary.videoWriter()).toResource()
-                                         .property(mediaVocabulary.ncoFullname()).toString();
-            mediaItem.fields["director"] = res.property(mediaVocabulary.videoDirector()).toResource()
-                                           .property(mediaVocabulary.ncoFullname()).toString();
-            mediaItem.fields["producer"] = res.property(mediaVocabulary.videoProducer()).toResource()
-                                           .property(mediaVocabulary.ncoFullname()).toString();
-            mediaItem.fields["actor"] = res.property(mediaVocabulary.videoActor()).toResource()
-                                        .property(mediaVocabulary.ncoFullname()).toString();
+            QStringList writers;
+            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            for (int i = 0; i < writerResources.count(); i++) {
+                QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    writers.append(name);
+                }
+            }
+            writers.removeDuplicates();
+            mediaItem.fields["writer"] = writers;
+
+            QStringList directors;
+            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            for (int i = 0; i < directorResources.count(); i++) {
+                QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    directors.append(name);
+                }
+            }
+            directors.removeDuplicates();
+            mediaItem.fields["director"] = directors;
+
+            QStringList producers;
+            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            for (int i = 0; i < producerResources.count(); i++) {
+                QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    producers.append(name);
+                }
+            }
+            producers.removeDuplicates();
+            mediaItem.fields["producer"] = producers;
+
+            QStringList actors;
+            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            for (int i = 0; i < actorResources.count(); i++) {
+                QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    actors.append(name);
+                }
+            }
+            actors.removeDuplicates();
+            mediaItem.fields["actor"] = actors;
             if (type == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
                 QString seriesName = res.property(mediaVocabulary.videoSeries()).toResource()
@@ -1522,10 +1559,49 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                     mediaItem.fields["year"] = releaseDate.year();
                 }
             }
-            mediaItem.fields["writer"] = it.binding(MediaVocabulary::videoWriterBinding()).literal().toString();
-            mediaItem.fields["director"] = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
-            mediaItem.fields["producer"] = it.binding(MediaVocabulary::videoProducerBinding()).literal().toString();
-            mediaItem.fields["actor"] = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
+            QStringList writers;
+            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            for (int i = 0; i < writerResources.count(); i++) {
+                QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    writers.append(name);
+                }
+            }
+            writers.removeDuplicates();
+            mediaItem.fields["writer"] = writers;
+
+            QStringList directors;
+            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            for (int i = 0; i < directorResources.count(); i++) {
+                QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    directors.append(name);
+                }
+            }
+            directors.removeDuplicates();
+            mediaItem.fields["director"] = directors;
+
+            QStringList producers;
+            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            for (int i = 0; i < producerResources.count(); i++) {
+                QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    producers.append(name);
+                }
+            }
+            producers.removeDuplicates();
+            mediaItem.fields["producer"] = producers;
+
+            QStringList actors;
+            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            for (int i = 0; i < actorResources.count(); i++) {
+                QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    actors.append(name);
+                }
+            }
+            actors.removeDuplicates();
+            mediaItem.fields["actor"] = actors;
             if (type == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
                 QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
@@ -1993,10 +2069,50 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
         Soprano::QueryResultIterator it = query.executeSelect(mainModel);
         
         while (it.next()) {
-            mediaItem.fields["writer"] = it.binding(MediaVocabulary::videoWriterBinding()).literal().toString();
-            mediaItem.fields["director"] = it.binding(MediaVocabulary::videoDirectorBinding()).literal().toString();
-            mediaItem.fields["producer"] = it.binding(MediaVocabulary::videoProducerBinding()).literal().toString();
-            mediaItem.fields["actor"] = it.binding(MediaVocabulary::videoActorBinding()).literal().toString();
+            Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
+            QStringList writers;
+            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            for (int i = 0; i < writerResources.count(); i++) {
+                QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    writers.append(name);
+                }
+            }
+            writers.removeDuplicates();
+            mediaItem.fields["writer"] = writers;
+
+            QStringList directors;
+            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            for (int i = 0; i < directorResources.count(); i++) {
+                QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    directors.append(name);
+                }
+            }
+            directors.removeDuplicates();
+            mediaItem.fields["director"] = directors;
+
+            QStringList producers;
+            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            for (int i = 0; i < producerResources.count(); i++) {
+                QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    producers.append(name);
+                }
+            }
+            producers.removeDuplicates();
+            mediaItem.fields["producer"] = producers;
+
+            QStringList actors;
+            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            for (int i = 0; i < actorResources.count(); i++) {
+                QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
+                if (!name.isEmpty()) {
+                    actors.append(name);
+                }
+            }
+            actors.removeDuplicates();
+            mediaItem.fields["actor"] = actors;
             if (subType == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
                 QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
@@ -2267,7 +2383,7 @@ QStringList Utilities::genresFromRawTagGenres(QStringList rawTagGenres)
     QStringList genres;
     for (int i = 0; i < rawTagGenres.count(); i++) {
         QString genre = genreFromRawTagGenre(rawTagGenres.at(i));
-        if (genres.indexOf(genre) == -1) {
+        if (genres.indexOf(genre) == -1 && !genre.isEmpty()) {
             genres.append(genre);
         }
     }
@@ -2279,7 +2395,7 @@ QStringList Utilities::rawTagGenresFromGenres(QStringList genres)
     QStringList rawTagGenres;
     for (int i = 0; i < genres.count(); i++) {
         QString rawTagGenre = rawTagGenreFromGenre(genres.at(i));
-        if (rawTagGenres.indexOf(rawTagGenre) == -1) {
+        if (rawTagGenres.indexOf(rawTagGenre) == -1 && !rawTagGenre.isEmpty()) {
             rawTagGenres.append(rawTagGenre);
         }
     }
