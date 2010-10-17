@@ -214,6 +214,13 @@ void InfoItemModel::saveChanges()
                         mediaItem.artwork = KIcon("flag-blue");
                         mediaItem.hasCustomArtwork = false;
                     }
+                } else if (field == "year") {
+                    mediaItem.fields["year"] = currentItem->data(Qt::EditRole);
+                    if (!mediaItem.fields["year"].isNull() && mediaItem.fields["year"].toInt() !=0) {
+                        mediaItem.fields["releaseDate"] = QDate(mediaItem.fields["year"].toInt(),1, 1);
+                    } else {
+                        mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
+                    }
                 } else {
                     mediaItem.fields[field] = currentItem->data(Qt::EditRole);
                 }
