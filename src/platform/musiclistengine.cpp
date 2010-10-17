@@ -351,7 +351,7 @@ void MusicListEngine::run()
             orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
             query.orderBy(orderByBindings);
             
-            QList<QString> urls;
+            QStringList urls;
             int limit = 100;
             int resultSetCount = limit;
             int resultCount = 0;
@@ -365,10 +365,15 @@ void MusicListEngine::run()
                 //Build media list from results
                 resultSetCount = 0;
                 while( it.next() ) {
-                    MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
-                    if (urls.indexOf(mediaItem.url) == -1) {
+                    KUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri().isEmpty() ?
+                    it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
+                    it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
+                    QString urlString = url.prettyUrl();
+                    if (urls.indexOf(urlString) == -1) {
+                        //Only create new mediaItem if url is new
+                        MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                         mediaList.append(mediaItem);
-                        urls.append(mediaItem.url);
+                        urls.append(urlString);
                     }
                     resultSetCount++;
                 }
