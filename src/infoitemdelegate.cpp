@@ -461,9 +461,6 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
     int fmHeight = fm.lineSpacing() + 1;
     int heightMultiplier = 1;
     QString fitText = text;
-    if (text.isEmpty()) {
-        return fmHeight;
-    }
     while (fmWidth > width) {
         QStringList wordList = fitText.split(QRegExp("\\s+"));
         QString wordWrapText = fitText;
@@ -473,11 +470,8 @@ int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) con
         }
         heightMultiplier++;
         if (wordWrapText.isEmpty()) {
-            wordList = fitText.split(QRegExp("\\s+"));
-            if (!wordList.isEmpty()) {
-                wordWrapText = wordList.at(0);
-            }
-            wordWrapText = fitText;
+            QStringList wordList = fitText.split(QRegExp("\\s+"));
+            wordWrapText = wordList.at(0);
         }
         fitText = fitText.mid(wordWrapText.length());
         fmWidth = fm.boundingRect(fitText).width();
@@ -507,13 +501,14 @@ int InfoItemDelegate::rowHeight(int row) const
         }
         QFont textFont = KGlobalSettings::smallestReadableFont();
         int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
-        int availableWidth = width - fieldNameWidth - 2*padding;
+        int availableWidth = width - 5 * padding - fieldNameWidth;
         if (field == "title") {
             textFont = QFont();
             textFont.setPointSize(1.5*textFont.pointSize());
-            availableWidth = width - 2*padding;
+            availableWidth = width - 4*padding;
+        } else if (field == "description") {
+            availableWidth = width - 4*padding;
         } else if (field == "url") {
-            textFont = KGlobalSettings::smallestReadableFont();
             text = QString(); // url text is elided to a single line anyway
         }
         if (availableWidth <= 0) {
@@ -529,7 +524,6 @@ int InfoItemDelegate::rowHeight(int row) const
         }
 
     }
-
     return height;
 }
 
