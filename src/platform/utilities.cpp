@@ -1317,19 +1317,31 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.artwork = KIcon("text-html");
         } else if (type == "Music") {
             mediaItem.artwork = KIcon("audio-mpeg");
-            //TODO:: Multiple artists per resource
-            QString artist = res.property(mediaVocabulary.musicArtist()).toResource()
-                             .property(mediaVocabulary.musicArtistName()).toString();
-            if (!artist.isEmpty()) {
-                mediaItem.fields["artist"] = artist;
-                mediaItem.subTitle = artist;
+
+            QStringList artists;
+            QList<Nepomuk::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            artistResources = res.property(mediaVocabulary.musicPerformer()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            artistResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            artists.removeDuplicates();
+            mediaItem.fields["artist"] = artists;
+            if (artists.count() == 1) {
+                mediaItem.subTitle = artists.at(0);
             }
 
             QString album = res.property(mediaVocabulary.musicAlbum()).toResource()
                             .property(mediaVocabulary.musicAlbumName()).toString();
             if (!album.isEmpty()) {
                 mediaItem.fields["album"] = album;
-                if (!artist.isEmpty()) {
+                if (artists.count() == 1) {
                     mediaItem.subTitle += QString(" - %1").arg(album);
                 } else {
                     mediaItem.subTitle = album;
@@ -1456,16 +1468,30 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.artwork = KIcon("text-html");
         } else if (type == "Music") {
             mediaItem.artwork = KIcon("audio-mpeg");
-            QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
-            if (!artist.isEmpty()) {
-                mediaItem.fields["artist"] = artist;
-                mediaItem.subTitle = artist;
+
+            QStringList artists;
+            QList<Nepomuk::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
-            
+            artistResources = res.property(mediaVocabulary.musicPerformer()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            artistResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            for (int i = 0; i < artistResources.count(); i++) {
+                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            artists.removeDuplicates();
+            mediaItem.fields["artist"] = artists;
+            if (artists.count() == 1) {
+                mediaItem.subTitle = artists.at(0);
+            }
+
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             if (!album.isEmpty()) {
                 mediaItem.fields["album"] = album;
-                if (!artist.isEmpty()) {
+                if (artists.count() == 1) {
                     mediaItem.subTitle += QString(" - %1").arg(album);
                 } else {
                     mediaItem.subTitle = album;
