@@ -463,12 +463,16 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     if (type == "Audio") {
         if (fields["audioType"] == "Music") {
             if (fields.contains("artist")) {
-                QString artist  = fields["artist"].toString();
+                QStringList artists  = fields["artist"].toString().split("||");
                 res.removeProperty(mediaVocabulary.musicPerformer());
                 res.removeProperty(mediaVocabulary.musicComposer());;
-                if (!artist.isEmpty()) {
-                    Nepomuk::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(),artist, true);
-                    res.setProperty(mediaVocabulary.musicArtist(), Nepomuk::Variant(artistResource));
+                if (!artists.isEmpty()) {
+                    QList<Nepomuk::Variant> artistResources;
+                    for (int i = 0; i < artists.count(); i++) {
+                        Nepomuk::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(), artists.at(i), true);
+                        artistResources.append(artistResource);
+                    }
+                    res.setProperty(mediaVocabulary.musicArtist(), artistResources);
                 } else {
                     if (res.hasProperty(mediaVocabulary.musicArtist())) {
                         res.removeProperty(mediaVocabulary.musicArtist());
