@@ -242,7 +242,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.drawRoundedRect(hoverRect, 3.0, 3.0);
                     p.restore();
                     if (!drillIconRect.isNull()) {
-                        KIcon("bangarang-category-browse").paint(&p, drillIconRect);
+                        KIcon("bangarang-category-browse").paint(&p, drillIconRect.adjusted(0,-padding, padding, padding));
                     }
                 }
                 if (i < textList.count()) {
@@ -257,7 +257,11 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     int addTop = hoverRect.top() + (hoverRect.height()-6)/2;
                     int addLeft = hoverRect.left()+ (hoverRect.height()-6)/2;
                     QColor color = foregroundColor;
-                    color.setAlpha(150);
+                    if (option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
+                        color.setAlpha(200);
+                    } else {
+                        color.setAlpha(80);
+                    }
                     QPen pen(color);
                     pen.setWidth(2);
                     p.setPen(pen);
@@ -282,7 +286,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 p.drawRoundedRect(hoverRect, 3.0, 3.0);
                 p.restore();
                 if (!drillIconRect.isNull()) {
-                    KIcon("bangarang-category-browse").paint(&p, drillIconRect);
+                    KIcon("bangarang-category-browse").paint(&p, drillIconRect.adjusted(0,-padding, padding, padding));
                 }
             }
             p.setFont(textFont);
