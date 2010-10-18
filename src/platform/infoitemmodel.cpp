@@ -99,6 +99,15 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_restrictedFields["Director"] = QStringList() << "title";
     m_restrictedFields["VideoTag"] = QStringList() << "artwork" << "title";
 
+    m_drillLris["Artist"] = "music://albums?artist=%1";
+    m_drillLris["Album"] = "music://songs?album=%1";
+    m_drillLris["AudioGenre"] = "music://artists?genre=%1";
+    m_drillLris["VideoGenre"] = "video://sources?||genre=%1";
+    m_drillLris["AudioTag"] = "tag://audio?tag=%1";
+    m_drillLris["VideoTag"] = "tag://video?tag=%1";
+    m_drillLris["TV Series"] = "video://seasons?||seriesName=%1";
+    m_drillLris["Actor"] = "video://sources?||actor=%1";
+    m_drillLris["Director"] = "video://sources?||director=%1";
 
     //Set up InfoFetchers
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
@@ -417,6 +426,21 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(value, Qt::DisplayRole);
         fieldItem->setData(value, Qt::EditRole);
         fieldItem->setData(value, InfoItemModel::OriginalValueRole); //stores copy of original data
+
+        //Store drill lri(s)
+        if (value.type() == QVariant::StringList &&
+            !categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
+            QStringList values = value.toStringList();
+            QStringList drillLris;
+            for (int i = 0; i < values.count(); i++) {
+                QString drillLri = m_drillLris[categoryTypeForField(field, m_mediaList.at(0).type)].arg(values.at(i));
+                drillLris.append(drillLri);
+            }
+            fieldItem->setData(drillLris, InfoItemModel::DrillLriRole);
+        } else if (!categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
+            QString drillLri = m_drillLris[categoryTypeForField(field, m_mediaList.at(0).type)].arg(value.toString());
+            fieldItem->setData(drillLri, InfoItemModel::DrillLriRole);
+        }
         if (field == "url") {
             fieldItem->setData(value, Qt::ToolTipRole);
         }
@@ -714,4 +738,25 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
     return artworkExists;
 }
 
-        
+QString InfoItemModel::categoryTypeForField(const QString &field, const QString &type)
+{
+    QString categoryType;
+    if (field == "artist") {
+        categoryType = "Artist";
+    } else if (field == "album") {
+        categoryType = "Album";
+    } else if (field == "genre" && type == "Audio") {
+        categoryType = "AudioGenre";
+    } else if (field == "genre" && type == "Video") {
+        categoryType = "VideoGenre";
+    } else if (field == "tag" && type == "Audio") {
+        categoryType = "AudioTag";
+    } else if (field == "tag" && type == "Video") {
+        categoryType = "VideoTag";
+    } else if (field == "actor") {
+        categoryType = "Actor";
+    } else if (field == "director") {
+        categoryType = "Director";
+    }
+    return categoryType;
+}
