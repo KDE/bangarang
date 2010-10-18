@@ -20,6 +20,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "sensiblewidgets.h"
+#include "bangarangapplication.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
 #include "platform/utilities.h"
@@ -223,20 +224,30 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
             //Render field data in a list
             QStringList textList = index.data(Qt::DisplayRole).toStringList();
+            QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
             int textHeight = QFontMetrics(textFont).height();
             for (int i = 0; i <= textList.count(); i++) {
-                QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*padding), dataRect.width(), textHeight);
-                QRect hoverRect(textRect.left()-padding, textRect.top()-padding, textRect.width()+2*padding, textRect.height()+2*padding);
+                QRect drillIconRect;
+                if (i < drillLriList.count()) {
+                    if (!drillLriList.at(i).isEmpty()) {
+                        drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top()+i*(textHeight+2*padding), 16, textHeight);
+                    }
+                }
+                QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*padding), dataRect.width() - drillIconRect.width(), textHeight);
+                QRect hoverRect(textRect.left()-padding, textRect.top()-padding, dataRect.width()+2*padding, textRect.height()+2*padding);
                 if (isEditable && option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
                     p.save();
                     p.setPen(Qt::NoPen);
                     p.setBrush(QBrush(hoverColor));
                     p.drawRoundedRect(hoverRect, 3.0, 3.0);
                     p.restore();
+                    if (!drillIconRect.isNull()) {
+                        KIcon("bangarang-category-browse").paint(&p, drillIconRect);
+                    }
                 }
                 if (i < textList.count()) {
                     //Paint field list data
-                    text = textList.at(i);
+                    text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideRight, textRect.width());
                     p.setFont(textFont);
                     p.setPen(foregroundColor);
                     p.drawText(QRectF(textRect), text, textOption);
@@ -257,18 +268,27 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
         } else {
             //Render field data
-            QRect textRect = dataRect;
-            QRect hoverRect(textRect.left()-padding, textRect.top()-padding, textRect.width()+2*padding, textRect.height()+2*padding);
+            QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+            QRect drillIconRect;
+            if (!drillLri.isEmpty()) {
+                drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top(), 16, dataRect.height());
+            }
+            QRect textRect = QRect(dataRect.left(), dataRect.top(), dataRect.width() - drillIconRect.width(), dataRect.height());
+            QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
             if (isEditable && option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
                 p.save();
                 p.setPen(Qt::NoPen);
                 p.setBrush(QBrush(hoverColor));
                 p.drawRoundedRect(hoverRect, 3.0, 3.0);
                 p.restore();
+                if (!drillIconRect.isNull()) {
+                    KIcon("bangarang-category-browse").paint(&p, drillIconRect);
+                }
             }
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
+
         }
     }
 
@@ -320,11 +340,45 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         int padding = 3;
         QRect dataRect = fieldDataRect(option, index);
         QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
+        QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+        QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+        QRect drillIconRect;
+        if (!drillLri.isEmpty() || !drillLriList.isEmpty()) {
+            drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top()-padding, 16+padding, dataRect.height()+2*padding);
+            hoverRect = QRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()-16+padding, dataRect.height()+2*padding);
+        }
         if (hoverRect.contains(m_mousePos)) {
             if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
                 m_stringListIndexEditing = stringListIndexAtMousePos(option, index);
             }
             return QItemDelegate::editorEvent(event, model, option, index);
+        } else if (drillIconRect.contains(m_mousePos)) {
+            if (event->type() == QEvent::MouseButtonRelease) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
+                    int drillListIndex = stringListIndexAtMousePos(option, index);
+                    if (drillListIndex != -1) {
+                        drillLri = drillLriList.at(drillListIndex);
+                    } else {
+                        return true;
+                    }
+                }
+                MediaListProperties mediaListProperties;
+                mediaListProperties.lri = drillLri;
+                mediaListProperties.name = index.data(Qt::DisplayRole).toString();
+                //TODO:: build more complete category item so enough context will be provided to InfoView
+                MediaItem categoryItem;
+                categoryItem.title = mediaListProperties.name;
+                categoryItem.fields["title"] = categoryItem.title;
+                mediaListProperties.category = categoryItem;
+                m_parent->addListToHistory();
+                BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
+                application->browsingModel()->clearMediaListData();
+                application->browsingModel()->setMediaListProperties(mediaListProperties);
+                application->browsingModel()->load();
+                return true;
+            } else {
+                return true;
+            }
         } else {
             return true;
         }

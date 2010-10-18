@@ -41,7 +41,8 @@ class InfoItemModel : public QStandardItemModel
                             MultipleValuesRole = Qt::UserRole + 2,
                             OriginalValueRole = Qt::UserRole + 3,
                             ValueListRole = Qt::UserRole + 4,
-                            ArtworkListRole = Qt::UserRole + 5};
+                            ArtworkListRole = Qt::UserRole + 5,
+                            DrillLriRole = Qt::UserRole + 6};
         enum FetchType {AutoFetch = 0,
                         Fetch = 1};
         InfoItemModel(QObject * parent = 0);
@@ -64,6 +65,7 @@ class InfoItemModel : public QStandardItemModel
         QHash<QString, QStringList> m_fieldsOrder;
         QHash<QString, QString> m_fieldNames;
         QHash<QString, QStringList> m_restrictedFields;
+        QHash<QString, QString> m_drillLris;
         bool m_defaultEditable;
         bool m_modified;
         QList<InfoFetcher *> m_infoFetchers;
@@ -77,6 +79,7 @@ class InfoItemModel : public QStandardItemModel
         void saveFileMetaData(QList<MediaItem> mediaList);
         void saveCustomGenreInfo(QList<MediaItem> mediaList);
         bool getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride = QString());
+        QString categoryTypeForField(const QString &field, const QString &type);
 
     Q_SIGNALS:
         void infoChanged(bool modified);
