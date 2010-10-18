@@ -235,13 +235,24 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.restore();
                 }
                 if (i < textList.count()) {
+                    //Paint field list data
                     text = textList.at(i);
                     p.setFont(textFont);
                     p.setPen(foregroundColor);
                     p.drawText(QRectF(textRect), text, textOption);
                 } else if (isEditable){
-                    int addIconSize = qMin(8, textHeight);
-                    KIcon("list-add").paint(&p, textRect.left(), textRect.top(), addIconSize, textRect.height());
+                    //Paint add icon for new field data entry
+                    p.save();
+                    int addTop = hoverRect.top() + (hoverRect.height()-6)/2;
+                    int addLeft = hoverRect.left()+ (hoverRect.height()-6)/2;
+                    QColor color = foregroundColor;
+                    color.setAlpha(150);
+                    QPen pen(color);
+                    pen.setWidth(2);
+                    p.setPen(pen);
+                    p.drawLine(addLeft+3, addTop, addLeft+3, addTop+6);
+                    p.drawLine(addLeft, addTop+3, addLeft+6, addTop+3);
+                    p.restore();
                 }
             }
         } else {
@@ -261,7 +272,6 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
 
-    //Paint little arrow indicating field is editable
     if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
         if (isArtwork) {
             //Show clear field "button" when artworkUrl is specified
