@@ -149,5 +149,6 @@ namespace Utilities {
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
     bool nepomukInited();
+    QStringList cleanStringList(QStringList stringList);
 }
 #endif //UTILITIES_H    
