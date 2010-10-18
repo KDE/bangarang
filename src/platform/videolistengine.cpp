@@ -82,7 +82,6 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -91,7 +90,6 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
@@ -347,7 +345,6 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -356,7 +353,6 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
@@ -567,7 +563,6 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -580,7 +575,6 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), searchTerm, MediaQuery::Contains);
@@ -647,7 +641,6 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.videoAudienceRatingBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -657,7 +650,6 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));

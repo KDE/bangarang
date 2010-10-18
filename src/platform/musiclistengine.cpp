@@ -325,7 +325,6 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             bindings.append(mediaVocabulary.playCountBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -338,7 +337,6 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
@@ -403,7 +401,6 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
-            bindings.append(mediaVocabulary.genreBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
@@ -411,7 +408,6 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Optional));
-            query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
