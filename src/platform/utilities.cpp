@@ -54,9 +54,16 @@
 #include <phonon/MediaObject>
 
 #include <taglib/mpegfile.h>
+#include <taglib/vorbisfile.h>
+#include <taglib/speexfile.h>
+#include <taglib/flacfile.h>
+#include <taglib/mpcfile.h>
+#include <taglib/trueaudiofile.h>
+#include <taglib/wavpackfile.h>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
+#include <taglib/xiphcomment.h>
 #include <taglib/attachedpictureframe.h>
 //#include "blur.cpp"
 
@@ -549,6 +556,45 @@ MediaItem Utilities::getArtistCategoryItem(const QString &artist)
     }
     return mediaItem;
 
+}
+
+QString Utilities::tagType(const QString &url)
+{
+    if (isMusic(url)) {
+        TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::Ogg::XiphComment *oggTag = vorbisFile.tag();
+        if (oggTag) {
+            return "OGG";
+        }
+        TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+        oggTag = flacFile.xiphComment(false);
+        if (oggTag) {
+            return "OGG";
+        }
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::APE::Tag *apeTag = mpegFile.APETag(false);
+        if (apeTag) {
+            return "APE";
+        }
+        TagLib::ID3v2::Tag *id3v2Tag = flacFile.ID3v2Tag(false);
+        if (id3v2Tag) {
+            return "ID3V2";
+        }
+        TagLib::ID3v1::Tag *id3v1Tag = flacFile.ID3v1Tag(false);
+        if (id3v1Tag) {
+            return "ID3V1";
+        }
+        id3v2Tag = mpegFile.ID3v2Tag(false);
+        if (id3v2Tag) {
+            return "ID3V2";
+        }
+        id3v1Tag = mpegFile.ID3v1Tag(false);
+        if (id3v1Tag) {
+            return "ID3V1";
+        }
+
+    }
+    return QString();
 }
 
 QString Utilities::getArtistFromTag(const QString &url)
