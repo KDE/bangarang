@@ -1380,7 +1380,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
-            artists.removeDuplicates();
+            artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
             if (artists.count() == 1) {
                 mediaItem.subTitle = artists.at(0);
@@ -1439,7 +1439,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                     writers.append(name);
                 }
             }
-            writers.removeDuplicates();
+            writers = cleanStringList(writers);
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
@@ -1450,7 +1450,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                     directors.append(name);
                 }
             }
-            directors.removeDuplicates();
+            directors = cleanStringList(directors);
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
@@ -1461,7 +1461,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                     producers.append(name);
                 }
             }
-            producers.removeDuplicates();
+            producers = cleanStringList(producers);
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
@@ -1472,7 +1472,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                     actors.append(name);
                 }
             }
-            actors.removeDuplicates();
+            actors = cleanStringList(actors);
             mediaItem.fields["actor"] = actors;
             if (type == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
@@ -1579,7 +1579,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
-            artists.removeDuplicates();
+            artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
             if (artists.count() == 1) {
                 mediaItem.subTitle = artists.at(0);
@@ -1637,7 +1637,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                     writers.append(name);
                 }
             }
-            writers.removeDuplicates();
+            writers = cleanStringList(writers);
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
@@ -1648,7 +1648,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                     directors.append(name);
                 }
             }
-            directors.removeDuplicates();
+            directors = cleanStringList(directors);
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
@@ -1659,7 +1659,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                     producers.append(name);
                 }
             }
-            producers.removeDuplicates();
+            producers = cleanStringList(producers);
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
@@ -1670,7 +1670,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                     actors.append(name);
                 }
             }
-            actors.removeDuplicates();
+            actors = cleanStringList(actors);
             mediaItem.fields["actor"] = actors;
             if (type == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
@@ -2152,7 +2152,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                     writers.append(name);
                 }
             }
-            writers.removeDuplicates();
+            writers = cleanStringList(writers);
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
@@ -2163,7 +2163,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                     directors.append(name);
                 }
             }
-            directors.removeDuplicates();
+            directors = cleanStringList(directors);
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
@@ -2174,7 +2174,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                     producers.append(name);
                 }
             }
-            producers.removeDuplicates();
+            producers = cleanStringList(producers);
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
@@ -2185,7 +2185,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                     actors.append(name);
                 }
             }
-            actors.removeDuplicates();
+            actors = cleanStringList(actors);
             mediaItem.fields["actor"] = actors;
             if (subType == "TV Show") {
                 mediaItem.artwork = KIcon("video-television");
@@ -2549,4 +2549,17 @@ bool Utilities::nepomukInited()
         nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
     }
     return nepomukInited;
+}
+
+QStringList Utilities::cleanStringList(QStringList stringList)
+{
+    QStringList returnList;
+    stringList.removeDuplicates();
+    for (int i = 0; i < stringList.count(); i++) {
+        QString string = stringList.at(i);
+        if (!string.isEmpty()) {
+            returnList.append(string);
+        }
+    }
+    return returnList;
 }
