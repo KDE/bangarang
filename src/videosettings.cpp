@@ -171,7 +171,7 @@ void VideoSettings::setSubtitle(int idx)
         return;
     int sidx = ui->subtitleSelection->itemData(idx).toInt();
     SubtitleDescription sub = SubtitleDescription::fromIndex(sidx);
-//     m_mediaController->setCurrentSubtitle(sub);
+    m_mediaController->setCurrentSubtitle(sub);
 }
 
 void VideoSettings::updateAngles(int no)
@@ -211,7 +211,7 @@ void VideoSettings::updateSubtitles()
     int no = subs.count();
     ui->subtitleSelectionHolder->setEnabled( no > 0 ); //can have no subtitles at all
     cb->clear();
-    for (int i = 0; i <= no; i++ ) { //no subtitles + disable subtitle
+    for (int i = 0; i < no; i++ ) { //no subtitles + disable subtitle
         if ( i == 0 ) {
             cb->addItem(i18n("Disable"), QVariant( -1 ));
             continue;
@@ -285,12 +285,12 @@ void VideoSettings::disconnectAngleCombo()
 
 void VideoSettings::connectSubtitleCombo()
 {
-    connect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
+    connect(ui->subtitleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
 }
 
 void VideoSettings::disconnectSubtitleCombo()
 {
-    disconnect(ui->angleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
+    disconnect(ui->subtitleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
 }
 
 
