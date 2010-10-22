@@ -171,7 +171,7 @@ void VideoSettings::setSubtitle(int idx)
         return;
     int sidx = ui->subtitleSelection->itemData(idx).toInt();
     SubtitleDescription sub = SubtitleDescription::fromIndex(sidx);
-    m_mediaController->setCurrentSubtitle(sub);
+//     m_mediaController->setCurrentSubtitle(sub);
 }
 
 void VideoSettings::updateAngles(int no)
