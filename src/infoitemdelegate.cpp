@@ -57,6 +57,17 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 
     m_stringListIndexEditing = -1;
 
+    m_rowOfNewValue = -1;
+
+    m_padding = 3;
+
+    m_isEditing = false;
+
+    m_drillIcon = KIcon("bangarang-category-browse");
+    QImage drillIconHighlightImage = KIcon("bangarang-category-browse").pixmap(16+m_padding,16+m_padding).toImage();
+    KIconEffect::toGamma(drillIconHighlightImage, 0.5);
+    m_drillIconHighlight = QIcon(QPixmap::fromImage(drillIconHighlightImage));
+
     for (int i = 0; i < 19; i++) {
         if (i%2) {
             m_artworkRotations.append(10);
@@ -64,6 +75,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
             m_artworkRotations.append(-10);
         }
     }
+
+    connect(this, SIGNAL(closeEditor(QWidget*)), this, SLOT(endEditing(QWidget*)));
 }
 
 InfoItemDelegate::~InfoItemDelegate()
@@ -76,7 +89,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //Get basic information about painting area
     const int width = option.rect.width();
-    const int height = option.rect.height();   
+    const int height = option.rect.height();
     QColor foregroundColor = option.palette.color(QPalette::Text);
     QColor hoverColor = option.palette.color(QPalette::Highlight);
     hoverColor.setAlpha(35);
@@ -94,7 +107,6 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
     //Set basic formatting info
     QRect dataRect = fieldDataRect(option, index);
-    int padding = 3;
     QFont textFont = KGlobalSettings::smallestReadableFont();
     Qt::AlignmentFlag hAlign = Qt::AlignLeft;
     bool showFieldName = true;
@@ -159,10 +171,10 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         QString fieldName = index.data(InfoItemModel::FieldNameRole).toString();
         QFont fieldNameFont = KGlobalSettings::smallestReadableFont();
         fieldNameFont.setItalic(true);
-        int fieldNameWidth = width - dataRect.width() - 3*padding;
+        int fieldNameWidth = width - dataRect.width() - 3*m_padding;
         QTextOption textOption(Qt::AlignRight | Qt::AlignTop);
         textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-        QRect fieldNameRect(dataRect.left()-fieldNameWidth-2*padding, dataRect.top(), fieldNameWidth, dataRect.height());
+        QRect fieldNameRect(dataRect.left()-fieldNameWidth-2*m_padding, dataRect.top(), fieldNameWidth, dataRect.height());
         p.setFont(fieldNameFont);
         p.setPen(foregroundColor);
         p.drawText(QRectF(fieldNameRect), fieldName, textOption);
@@ -171,9 +183,12 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     //Paint field data
     if (isArtwork) {
         //Paint Artwork
-        if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
+        if (isEditable &&
+            option.state.testFlag(QStyle::State_MouseOver) &&
+            !m_isEditing) {
+            //Draw hover rectangle
             p.save();
-            QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
+            QRect hoverRect(dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding));
             p.setPen(Qt::NoPen);
             p.setBrush(QBrush(hoverColor));
             p.drawRoundedRect(hoverRect, 3.0, 3.0);
@@ -218,77 +233,150 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
             p.restore();
         }
+
+        if (isEditable &&
+            option.state.testFlag(QStyle::State_MouseOver)) {
+            QString artworkUrl = index.data(Qt::EditRole).toString();
+            //Draw clear field "button"
+            if (!artworkUrl.isEmpty()) {
+                int clrTop = dataRect.top() + (dataRect.height() - 16)/2;
+                int clrLeft = dataRect.right() - 16;
+                KIcon("edit-clear-locationbar-rtl").paint(&p, clrLeft, clrTop, 16, 16);
+            }
+        }
     } else {
         QTextOption textOption(hAlign | Qt::AlignTop);
         textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
             //Render field data in a list
             QStringList textList = index.data(Qt::DisplayRole).toStringList();
+            QStringList originalTextList = index.data(InfoItemModel::OriginalValueRole).toStringList();
             QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
             int textHeight = QFontMetrics(textFont).height();
-            for (int i = 0; i <= textList.count(); i++) {
-                QRect drillIconRect;
-                if (i < drillLriList.count()) {
-                    if (!drillLriList.at(i).isEmpty()) {
-                        drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top()+i*(textHeight+2*padding), 16, textHeight);
-                    }
-                }
-                QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*padding), dataRect.width() - drillIconRect.width(), textHeight);
-                QRect hoverRect(textRect.left()-padding, textRect.top()-padding, dataRect.width()+2*padding, textRect.height()+2*padding);
-                if (isEditable && option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
+            for (int i = 0; i < textList.count(); i++) {
+                int top = dataRect.top()+i*(textHeight+2*m_padding);
+                QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
+                QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
+                if (isEditable &&
+                    option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos) &&
+                    !m_isEditing) {
+                    //Draw hover rectangle
                     p.save();
                     p.setPen(Qt::NoPen);
                     p.setBrush(QBrush(hoverColor));
                     p.drawRoundedRect(hoverRect, 3.0, 3.0);
                     p.restore();
+
+                    //Draw drill icon
+                    QRect drillIconRect;
+                    if (i < drillLriList.count()) {
+                        if (!drillLriList.at(i).isEmpty()) {
+                            drillIconRect = textRect.adjusted(textRect.width()-16, 0, 0, 0);
+                        }
+                    }
                     if (!drillIconRect.isNull()) {
-                        KIcon("bangarang-category-browse").paint(&p, drillIconRect.adjusted(0,-padding, padding, padding));
+                        p.save();
+                        p.setPen(Qt::NoPen);
+                        QColor drillHoverColor = hoverColor;
+                        drillHoverColor.setAlpha(255);
+                        p.setBrush(QBrush(drillHoverColor));
+                        p.drawRoundedRect(drillIconRect.adjusted(0,-m_padding, m_padding, m_padding), 3.0, 3.0);
+                        p.drawRect(drillIconRect.adjusted(0,-m_padding, 0, m_padding));
+                        p.restore();
+                        if (drillIconRect.contains(m_mousePos)) {
+                            m_drillIconHighlight.paint(&p, drillIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                        } else {
+                            m_drillIcon.paint(&p, drillIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                        }
+                        textRect.adjust(0, 0, -drillIconRect.width(), 0);
+                    }
+                    //Draw plus icon
+                    QRect plusIconRect;
+                    if (i == textList.count()-1) {
+                        plusIconRect = textRect.adjusted(textRect.width()-16, 0, 0, 0);
+                    }
+                    if (!plusIconRect.isNull()) {
+                        p.save();
+                        p.setPen(Qt::NoPen);
+                        QColor plusHoverColor = hoverColor;
+                        plusHoverColor.setAlpha(255);
+                        p.setBrush(QBrush(plusHoverColor));
+                        if (drillIconRect.isNull()) {
+                            p.drawRoundedRect(plusIconRect.adjusted(0,-m_padding, m_padding, m_padding), 3.0, 3.0);
+                        }
+                        p.drawRect(plusIconRect.adjusted(0,-m_padding, 0, m_padding));
+                        int addTop = plusIconRect.top() + (plusIconRect.height()-6)/2;
+                        int addLeft = plusIconRect.left() + (plusIconRect.width()-6)/2 + 1;
+                        QColor color = option.palette.color(QPalette::HighlightedText);
+                        if (plusIconRect.contains(m_mousePos)) {
+                            color.setAlpha(255);
+                        } else {
+                            color.setAlpha(200);
+                        }
+                        QPen pen(color);
+                        pen.setWidth(2);
+                        p.setPen(pen);
+                        p.drawLine(addLeft+3, addTop, addLeft+3, addTop+6);
+                        p.drawLine(addLeft, addTop+3, addLeft+6, addTop+3);
+                        p.restore();
+                        textRect.adjust(0, 0, -plusIconRect.width(), 0);
                     }
                 }
+
+                //Paint field list data
                 if (i < textList.count()) {
-                    //Paint field list data
+                    if (i >= originalTextList.count())  {
+                        textFont.setBold(true);
+                    } else if (textList.at(i) == originalTextList.at(i)) {
+                        textFont.setBold(false);
+                    } else {
+                        textFont.setBold(true);
+                    }
                     text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideRight, textRect.width());
                     p.setFont(textFont);
                     p.setPen(foregroundColor);
                     p.drawText(QRectF(textRect), text, textOption);
-                } else if (isEditable){
-                    //Paint add icon for new field data entry
-                    p.save();
-                    int addTop = hoverRect.top() + (hoverRect.height()-6)/2;
-                    int addLeft = hoverRect.left()+ (hoverRect.height()-6)/2;
-                    QColor color = foregroundColor;
-                    if (option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
-                        color.setAlpha(200);
-                    } else {
-                        color.setAlpha(80);
-                    }
-                    QPen pen(color);
-                    pen.setWidth(2);
-                    p.setPen(pen);
-                    p.drawLine(addLeft+3, addTop, addLeft+3, addTop+6);
-                    p.drawLine(addLeft, addTop+3, addLeft+6, addTop+3);
-                    p.restore();
                 }
             }
         } else {
             //Render field data
-            QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
-            QRect drillIconRect;
-            if (!drillLri.isEmpty()) {
-                drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top(), 16, dataRect.height());
-            }
-            QRect textRect = QRect(dataRect.left(), dataRect.top(), dataRect.width() - drillIconRect.width(), dataRect.height());
-            QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
-            if (isEditable && option.state.testFlag(QStyle::State_MouseOver) && hoverRect.contains(m_mousePos)) {
+            QRect textRect = dataRect;
+            QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
+            if (isEditable &&
+                option.state.testFlag(QStyle::State_MouseOver) &&
+                hoverRect.contains(m_mousePos) &&
+                !m_isEditing) {
+                //Draw hover rectangle
                 p.save();
                 p.setPen(Qt::NoPen);
                 p.setBrush(QBrush(hoverColor));
                 p.drawRoundedRect(hoverRect, 3.0, 3.0);
                 p.restore();
+
+                //Draw drill icon
+                QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+                QRect drillIconRect;
+                if (!drillLri.isEmpty()) {
+                    drillIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
+                }
                 if (!drillIconRect.isNull()) {
-                    KIcon("bangarang-category-browse").paint(&p, drillIconRect.adjusted(0,-padding, padding, padding));
+                    p.save();
+                    p.setPen(Qt::NoPen);
+                    QColor drillHoverColor = hoverColor;
+                    drillHoverColor.setAlpha(255);
+                    p.setBrush(QBrush(drillHoverColor));
+                    p.drawRoundedRect(drillIconRect.adjusted(0,-m_padding, m_padding, m_padding), 3.0, 3.0);
+                    p.drawRect(drillIconRect.adjusted(0,-m_padding, 0, m_padding));
+                    p.restore();
+                    if (drillIconRect.contains(m_mousePos)) {
+                        m_drillIconHighlight.paint(&p, drillIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                    } else {
+                        m_drillIcon.paint(&p, drillIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                    }
+                    textRect.adjust(0, 0, -drillIconRect.width(), 0);
                 }
             }
+            //Draw field data
             p.setFont(textFont);
             p.setPen(foregroundColor);
             p.drawText(QRectF(textRect), text, textOption);
@@ -296,21 +384,10 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
 
-    if (isEditable && option.state.testFlag(QStyle::State_MouseOver)) {
-        if (isArtwork) {
-            //Show clear field "button" when artworkUrl is specified
-            QString artworkUrl = index.data(Qt::EditRole).toString();
-            if (!artworkUrl.isEmpty()) {
-                int clrTop = dataRect.top() + (dataRect.height() - 16)/2;
-                int clrLeft = dataRect.right() - 16;
-                KIcon("edit-clear-locationbar-rtl").paint(&p, clrLeft, clrTop, 16, 16);
-            }
-        }
-    }
     p.end();
 
     //Draw finished pixmap
-    painter->drawPixmap(option.rect.topLeft(), pixmap);    
+    painter->drawPixmap(option.rect.topLeft(), pixmap);
 }
 
 QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
@@ -323,14 +400,18 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     m_mousePos = ((QMouseEvent *)event)->pos();
-    m_view->update(index);
+    if (!m_isEditing) {
+        m_view->update(index);
+    }
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
         if (event->type() == QEvent::MouseButtonRelease) {
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(m_mousePos)) {
+                //Clear set artwork
                 model->setData(index, QString(""), Qt::EditRole);
             } else {
+                //Get artwork url from user
                 KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
                 if (newUrl.isValid()) {
                     model->setData(index, newUrl.url(), Qt::EditRole);
@@ -341,29 +422,68 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         }
         return true;
     } else {
-        int padding = 3;
+        //Determine where mouse button was pressed and handle approriate
+        int listIndex = stringListIndexAtMousePos(option, index);
         QRect dataRect = fieldDataRect(option, index);
-        QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
-        QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+        QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
+
         QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+        bool drillIconExists = false;
+        if (index.data(Qt::DisplayRole).type() == QVariant::String) {
+            QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+            if (!drillLri.isEmpty()) {
+                drillIconExists = true;
+            }
+        }
+        if (index.data(Qt::DisplayRole).type() == QVariant::StringList ) {
+            QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+            if (listIndex != -1 && listIndex < drillLriList.count()) {
+                if (!drillLriList.at(listIndex).isEmpty()) {
+                    drillIconExists = true;
+                }
+            }
+        }
         QRect drillIconRect;
-        if (!drillLri.isEmpty() || !drillLriList.isEmpty()) {
-            drillIconRect = QRect(dataRect.left() + dataRect.width() - 16, dataRect.top()-padding, 16+padding, dataRect.height()+2*padding);
-            hoverRect = QRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()-16+padding, dataRect.height()+2*padding);
+        if (drillIconExists) {
+            drillIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
+            hoverRect.adjust(0, 0, -16 - m_padding, 0);
+            dataRect.adjust(0, 0, -16, 0);
+        }
+        QRect plusIconRect;
+        QStringList textList = index.data(Qt::DisplayRole).toStringList();
+        if (index.data(Qt::DisplayRole).type() == QVariant::StringList &&
+            listIndex == textList.count()-1) {
+            plusIconRect = dataRect.adjusted(dataRect.width()-16, 0, 0, 0);
         }
         if (hoverRect.contains(m_mousePos)) {
-            if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
-                m_stringListIndexEditing = stringListIndexAtMousePos(option, index);
+            if (event->type() != QEvent::MouseMove) {
+                m_isEditing = true;
+            }
+            if (plusIconRect.contains(m_mousePos)) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
+                    //Editing new value
+                    m_stringListIndexEditing = -1;
+                    m_rowOfNewValue = index.row();
+                    emit sizeHintChanged(index);
+                    QApplication::processEvents();
+                    m_view->update(index);
+                }
+            } else {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
+                    //Editing existing value
+                    m_stringListIndexEditing = stringListIndexAtMousePos(option, index);
+                    m_rowOfNewValue = -1;
+                }
             }
             return QItemDelegate::editorEvent(event, model, option, index);
         } else if (drillIconRect.contains(m_mousePos)) {
             if (event->type() == QEvent::MouseButtonRelease) {
+                m_rowOfNewValue = -1;
+                QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
                 if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
-                    int drillListIndex = stringListIndexAtMousePos(option, index);
-                    if (drillListIndex != -1) {
-                        drillLri = drillLriList.at(drillListIndex);
-                    } else {
-                        return true;
+                    QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+                    if (listIndex != -1 && listIndex < drillLriList.count()) {
+                        drillLri = drillLriList.at(listIndex);
                     }
                 }
                 MediaListProperties mediaListProperties;
@@ -455,7 +575,7 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
         return 0;
     }
     Q_UNUSED(option);
-        
+
 }
 
 void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & index) const
@@ -465,7 +585,8 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
         KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
         if (!multipleValues) {
             QStringList textList = index.data(Qt::EditRole).toStringList();
-            if (m_stringListIndexEditing != -1 && m_stringListIndexEditing < textList.count()) {
+            if (m_stringListIndexEditing != -1 &&
+                m_stringListIndexEditing < textList.count()) {
                 QString text = textList.at(m_stringListIndexEditing);
                 lineEdit->setText(textList.at(m_stringListIndexEditing));
             }
@@ -488,13 +609,12 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
 void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
-    int padding = 3;
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect editorRect = stringListRectAtMousePos(option, index);
         editor->setGeometry(editorRect);
     } else {
         QRect dataRect = fieldDataRect(option, index);
-        QRect editorRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
+        QRect editorRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
         editor->setGeometry(editorRect);
     }
 }
@@ -576,12 +696,11 @@ int InfoItemDelegate::rowHeight(int row) const
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant::Type fieldType = index.data(Qt::DisplayRole).type();
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
-    int padding = 3;
     int width = m_view->width();
 
     int height;
     if (field == "artwork") {
-        height = 128 + 10 + 2*padding ; //10 pixel to accomodate rotated artwork
+        height = 128 + 10 + 2*m_padding ; //10 pixel to accomodate rotated artwork
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         if (fieldType == QVariant::StringList) {
@@ -591,14 +710,14 @@ int InfoItemDelegate::rowHeight(int row) const
             }
         }
         QFont textFont = KGlobalSettings::smallestReadableFont();
-        int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
-        int availableWidth = width - 5 * padding - fieldNameWidth;
+        int fieldNameWidth = qMax(70, (width - 4 * m_padding)/4);
+        int availableWidth = width - 5 * m_padding - fieldNameWidth;
         if (field == "title") {
             textFont = QFont();
             textFont.setPointSize(1.5*textFont.pointSize());
-            availableWidth = width - 4*padding;
+            availableWidth = width - 4*m_padding;
         } else if (field == "description") {
-            availableWidth = width - 4*padding;
+            availableWidth = width - 4*m_padding;
         } else if (field == "url") {
             text = QString(); // url text is elided to a single line anyway
         }
@@ -608,10 +727,14 @@ int InfoItemDelegate::rowHeight(int row) const
         if (modified) {
             textFont.setBold(true);
         }
-        height = heightForWordWrap(textFont, availableWidth, text) + 2*padding;
+        height = heightForWordWrap(textFont, availableWidth, text) + 2*m_padding;
         if (fieldType == QVariant::StringList) {
             QStringList textList = index.data(Qt::DisplayRole).toStringList();
-            height = height*(textList.count()+1);
+            int rows = textList.count();
+            if (m_rowOfNewValue == row){
+               rows++;
+            }
+            height = rows*height;
         }
 
     }
@@ -660,13 +783,12 @@ int InfoItemDelegate::stringListIndexAtMousePos(const QStyleOptionViewItem &opti
 {
     int foundIndex = -1;
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
-        int padding = 3;
         QRect dataRect = fieldDataRect(option, index);
         QStringList textList = index.data(Qt::DisplayRole).toStringList();
         int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
         for (int i = 0; i < textList.count(); i++) {
-            QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*padding), dataRect.width(), textHeight);
-            QRect hoverRect(textRect.left()-padding, textRect.top()-padding, textRect.width()+2*padding, textRect.height()+2*padding);
+            QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*m_padding), dataRect.width(), textHeight);
+            QRect hoverRect(textRect.left()-m_padding, textRect.top()-m_padding, textRect.width()+2*m_padding, textRect.height()+2*m_padding);
             if (hoverRect.contains(m_mousePos)) {
                 foundIndex = i;
                 break;
@@ -680,24 +802,49 @@ QRect InfoItemDelegate::stringListRectAtMousePos(const QStyleOptionViewItem &opt
 {
     QRect foundRect;
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
-        int padding = 3;
         QRect dataRect = fieldDataRect(option, index);
         QStringList textList = index.data(Qt::DisplayRole).toStringList();
         int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
         int i;
         for (i = 0; i < textList.count(); i++) {
-            QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*padding), dataRect.width(), textHeight);
-            QRect hoverRect(textRect.left()-padding, textRect.top()-padding, textRect.width()+2*padding, textRect.height()+2*padding);
+            int top = dataRect.top()+i*(textHeight+2*m_padding);
+            QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
+            QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
             if (hoverRect.contains(m_mousePos)) {
-                foundRect = hoverRect;
+                QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+                QRect drillIconRect;
+                if (i < drillLriList.count()) {
+                    if (!drillLriList.at(i).isEmpty()) {
+                        drillIconRect = textRect.adjusted(textRect.width()-16, -m_padding, m_padding, m_padding);
+                        textRect.adjust(0,0,-16,0);
+                    }
+                }
+                QRect plusIconRect;
+                if (i == textList.count() - 1) {
+                    plusIconRect = textRect.adjusted(textRect.width()-16, -m_padding, 0, m_padding);
+                }
+                if (plusIconRect.contains(m_mousePos)) {
+                    foundRect = hoverRect.adjusted(0, textHeight+2*m_padding, 0, textHeight+2*m_padding);
+                } else {
+                    foundRect = hoverRect;
+                }
                 break;
             }
-        }
-        QRect hoverRect(dataRect.left()-padding, dataRect.top()-padding, dataRect.width()+2*padding, dataRect.height()+2*padding);
-        if (foundRect.isNull() && hoverRect.contains(m_mousePos)) {
-            foundRect = QRect(hoverRect.left(), hoverRect.top() + i*(textHeight+2*padding), hoverRect.width(), textHeight+2*padding);
         }
     }
     return foundRect;
 }
+
+void InfoItemDelegate::endEditing(QWidget * editor)
+{
+    m_isEditing = false;
+    if (m_rowOfNewValue != -1) {
+        InfoItemModel * model = (InfoItemModel *)m_view->model();
+        QModelIndex index = model->index(m_rowOfNewValue,0);
+        emit sizeHintChanged(index);
+        m_rowOfNewValue = -1;
+    }
+    Q_UNUSED(editor);
+}
+
 

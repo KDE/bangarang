@@ -62,12 +62,20 @@ class InfoItemDelegate : public QItemDelegate
         QList<qreal> m_artworkRotations;
         QPoint m_mousePos;
         int m_stringListIndexEditing;
+        int m_rowOfNewValue;
+        QIcon m_drillIcon;
+        QIcon m_drillIconHighlight;
+        int m_padding;
+        bool m_isEditing;
         QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
         
     Q_SIGNALS:
+
+    private Q_SLOTS:
+        void endEditing(QWidget * editor);
 };
 
 #endif // INFOITEMDELEGATE_H
