@@ -240,7 +240,7 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
       update.fields["rating"] = rating;
       cmodel->replaceMediaItemAt(row, update);
       if (!indexerUpdated) {
-          m_mediaIndexer->updateInfo(update);
+          m_mediaIndexer->updateRating(update.fields["resourceUri"].toString(),rating);
           indexerUpdated = true;
       }
   }

@@ -84,7 +84,7 @@ class MediaIndexer : public QObject
          * @param incrementPlayCount if true, the play count will be incremented
          * @param playDateTime DateTime of playback
          */
-        void updatePlaybackInfo(const QString &url, bool incrementPlayCount, const QDateTime &playDateTime);
+        void updatePlaybackInfo(const QString &resourceUri, bool incrementPlayCount, const QDateTime &playDateTime);
         
         /**
          * Update the rating of the specified url.
@@ -92,7 +92,7 @@ class MediaIndexer : public QObject
          * @param url Url of MediaItem
          * @param rating Rating: and integer between 0 and 10
          */
-        void updateRating(const QString &url, int rating);
+        void updateRating(const QString &resourceUri, int rating);
         
         void state();
         

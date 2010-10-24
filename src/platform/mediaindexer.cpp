@@ -133,9 +133,10 @@ void MediaIndexer::removeInfo(const MediaItem &mediaItem)
     removeInfo(mediaList);
 }
 
-void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCount, const QDateTime &playDateTime)
+void MediaIndexer::updatePlaybackInfo(const QString &resourceUri, bool incrementPlayCount, const QDateTime &playDateTime)
 {
-    if (m_nepomukInited && !url.isEmpty()) {
+    if (m_nepomukInited && !resourceUri.isEmpty()) {
+        kDebug() << "Updating playback info...";
         QString filename = QString("bangarang/%1.jb")
         .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
         QString path = KStandardDirs::locateLocal("data", filename, true);
@@ -144,11 +145,11 @@ void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCoun
             return;
         }
         QTextStream out(&file);
-        out << "[" << url << "]\n";
+        out << "[" << resourceUri << "]\n";
         out << "lastPlayed = " << playDateTime.toString("yyyyMMddhhmmss") << "\n";
         if (incrementPlayCount) {
             int playCount = 0;
-            Nepomuk::Resource res(url);
+            Nepomuk::Resource res(resourceUri);
             if (res.exists()) {
                 playCount = res.property(MediaVocabulary().playCount()).toInt();
             }   
@@ -160,6 +161,7 @@ void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCoun
         writer->setProgram("bangarangnepomukwriter", QStringList(path));
         writer->setWorkingDirectory(KStandardDirs::locateLocal("data", "bangarang/", true));
         writer->setOutputChannelMode(KProcess::OnlyStdoutChannel);
+        connect(writer, SIGNAL(readyReadStandardOutput()), this, SLOT(processWriterOutput()));
         connect(writer, SIGNAL(started()), this, SIGNAL(started()));
         connect(writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
         connect(writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
@@ -169,9 +171,9 @@ void MediaIndexer::updatePlaybackInfo(const QString &url, bool incrementPlayCoun
     }
 }
 
-void MediaIndexer::updateRating(const QString &url, int rating)
+void MediaIndexer::updateRating(const QString & resourceUri, int rating)
 {
-    if (m_nepomukInited && !url.isEmpty()
+    if (m_nepomukInited && !resourceUri.isEmpty()
         && (rating >= 0) && (rating <= 10)) {
         QString filename = QString("bangarang/%1.jb")
         .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
@@ -181,7 +183,7 @@ void MediaIndexer::updateRating(const QString &url, int rating)
             return;
         }
         QTextStream out(&file);
-        out << "[" << url << "]\n";
+        out << "[" << resourceUri << "]\n";
         out << "rating = " << rating << "\n";
         out << "\n" << "\n";
         KProcess * writer = new KProcess();
