@@ -583,30 +583,37 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
 
 void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & index) const
 {
-    if (index.data(Qt::EditRole).type() == QVariant::StringList) {
-        bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+
+    QString field = index.data(InfoItemModel::FieldRole).toString();
+    QVariant::Type type = index.data(Qt::EditRole).type();
+    bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+    if (type == QVariant::StringList) {
         KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
-        if (!multipleValues) {
-            QStringList textList = index.data(Qt::EditRole).toStringList();
-            if (m_stringListIndexEditing != -1 &&
-                m_stringListIndexEditing < textList.count()) {
-                QString text = textList.at(m_stringListIndexEditing);
-                lineEdit->setText(textList.at(m_stringListIndexEditing));
-            }
-        }
-    } else if (index.data(Qt::EditRole).type() == QVariant::Int) {
-        bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
-        KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
-        if (!multipleValues) {
-            if (!index.data(Qt::EditRole).isNull()) {
-                lineEdit->setText(index.data(Qt::EditRole).toString());
-            } else {
-                lineEdit->setText(QString());
-            }
-        }
-    } else {
-        QItemDelegate::setEditorData(editor, index);
+        if (multipleValues)
+	    return;
+	QStringList textList = index.data(Qt::EditRole).toStringList();
+	if (m_stringListIndexEditing != -1 && m_stringListIndexEditing < textList.count()) {
+	    QString text = textList.at(m_stringListIndexEditing);
+	    lineEdit->setText(textList.at(m_stringListIndexEditing));
+	}
+	return;
+    } 
+    if (index.data(Qt::EditRole).type() == QVariant::Int) {
+	if (multipleValues)
+	    return;
+	QVariant data = index.data(Qt::EditRole);
+	if (data.isNull())
+	    return;
+        if (field == "audioType" || field == "videoType") {
+            QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
+	    comboBox->setCurrentIndex(data.toInt());
+	    return;
+	}
+	KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
+	lineEdit->setText(data.toString());
+	return;
     }
+    QItemDelegate::setEditorData(editor, index);
 }
 
 void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
