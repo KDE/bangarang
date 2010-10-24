@@ -238,30 +238,27 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
 
     //Find corresponding Nepomuk resource
     Nepomuk::Resource res;
-    if (type == "Audio" || type =="Video") {
+    if (!resourceUri.isEmpty()) {
         res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
-    } else if (type == "Category") {
+    }
+    if (type == "Category") {
         QUrl categoryProperty;
-        if (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed") {
-            res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
-        } else {
-            if (fields["categoryType"] == "Artist") {
-                categoryProperty = mediaVocabulary.musicArtist();
-            } else if (fields["categoryType"] == "Album") {
-                categoryProperty = mediaVocabulary.musicAlbum();
-            } else if (fields["categoryType"] == "TV Series") {
-                categoryProperty = mediaVocabulary.videoSeries();
-            } else if (fields["categoryType"] == "Actor") {
-                categoryProperty = mediaVocabulary.videoActor();
-            } else if (fields["categoryType"] == "Director") {
-                categoryProperty = mediaVocabulary.videoDirector();
-            } else if (fields["categoryType"] == "Writer") {
-                categoryProperty = mediaVocabulary.videoWriter();
-            } else if (fields["categoryType"] == "Producer") {
-                categoryProperty = mediaVocabulary.videoProducer();
-            }
-            res = findPropertyResourceByTitle(categoryProperty, fields["title"].toString(), true);
+        if (fields["categoryType"] == "Artist") {
+            categoryProperty = mediaVocabulary.musicArtist();
+        } else if (fields["categoryType"] == "Album") {
+            categoryProperty = mediaVocabulary.musicAlbum();
+        } else if (fields["categoryType"] == "TV Series") {
+            categoryProperty = mediaVocabulary.videoSeries();
+        } else if (fields["categoryType"] == "Actor") {
+            categoryProperty = mediaVocabulary.videoActor();
+        } else if (fields["categoryType"] == "Director") {
+            categoryProperty = mediaVocabulary.videoDirector();
+        } else if (fields["categoryType"] == "Writer") {
+            categoryProperty = mediaVocabulary.videoWriter();
+        } else if (fields["categoryType"] == "Producer") {
+            categoryProperty = mediaVocabulary.videoProducer();
         }
+        res = findPropertyResourceByTitle(categoryProperty, fields["title"].toString(), true);
     }
 
     // Update the media type
@@ -364,14 +361,11 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
         }
-    }
-
-    //Set properties common to Audio, Video and Feeds
-    if (type == "Audio" || type == "Video" ||
-        (type == "Category" && (fields["categoryType"] == "Audio Feed" || fields["categoryType"] == "Video Feed"))) {
-        if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
-            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
-                            QUrl(url));
+        if (!url.isEmpty()) {
+            if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
+                res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
+                                QUrl(url));
+            }
         }
         if (fields.contains("title")) {
             QString title = fields["title"].toString();
@@ -458,6 +452,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             }
         }
     }
+
 
     //Set Audio properties
     if (type == "Audio") {

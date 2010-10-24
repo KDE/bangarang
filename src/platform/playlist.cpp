@@ -563,7 +563,7 @@ void Playlist::updatePlaybackInfo(qint64 time)
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
             Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
             if (res.exists()) {
-                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).url, true, QDateTime::currentDateTime());
+                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).fields["resourceUri"].toString(), true, QDateTime::currentDateTime());
             }
         }
         m_playbackInfoWritten = true;

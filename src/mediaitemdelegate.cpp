@@ -396,13 +396,14 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 m_application->playlist()->nowPlayingModel(),
                 m_application->browsingModel()
             };
-            MediaItem update = cmodel->mediaItemAt(index.row());
-            update.fields["rating"] = rating;
-            m_mediaIndexer->updateInfo(update);
+            MediaItem updatedItem = cmodel->mediaItemAt(index.row());
+            m_mediaIndexer->updateRating(updatedItem.fields["resourceUri"].toString(),rating);
             for (int i = 0; i < MODELS_TO_BE_UPDATED; cmodel = models[++i])
             {
                 int row = cmodel->rowOfUrl(url);
                 if (row >= 0) {
+                    MediaItem update = cmodel->mediaItemAt(row);
+                    update.fields["rating"] = rating;
                     cmodel->replaceMediaItemAt(row, update);
                 }
             }
