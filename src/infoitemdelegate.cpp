@@ -31,6 +31,7 @@
 #include <KIconEffect>
 #include <KLineEdit>
 #include <KFileDialog>
+#include <KDateTime>
 #include <KDebug>
 #include <Soprano/Vocabulary/NAO>
 #include <nepomuk/variant.h>
@@ -98,7 +99,12 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QString text;
     if (!index.data(Qt::DisplayRole).isNull()) {
-        text  = index.data(Qt::DisplayRole).toString();
+        if (index.data(Qt::DisplayRole).type() == QVariant::DateTime) {
+            KDateTime dateTime(index.data(Qt::DisplayRole).toDateTime());
+            text = dateTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+        } else {
+            text  = index.data(Qt::DisplayRole).toString();
+        }
     }
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
     bool isEditable = model->itemFromIndex(index)->isEditable();
