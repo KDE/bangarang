@@ -253,7 +253,10 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             QStringList originalTextList = index.data(InfoItemModel::OriginalValueRole).toStringList();
             QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
             int textHeight = QFontMetrics(textFont).height();
-            for (int i = 0; i < textList.count(); i++) {
+            for (int i = 0; i <= textList.count(); i++) {
+                if (i == textList.count() && i > 0) {
+                    break;
+                }
                 int top = dataRect.top()+i*(textHeight+2*m_padding);
                 QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
                 QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
@@ -731,7 +734,7 @@ int InfoItemDelegate::rowHeight(int row) const
         if (fieldType == QVariant::StringList) {
             QStringList textList = index.data(Qt::DisplayRole).toStringList();
             int rows = textList.count();
-            if (m_rowOfNewValue == row){
+            if (m_rowOfNewValue == row || rows == 0){
                rows++;
             }
             height = rows*height;
@@ -785,13 +788,20 @@ int InfoItemDelegate::stringListIndexAtMousePos(const QStyleOptionViewItem &opti
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect dataRect = fieldDataRect(option, index);
         QStringList textList = index.data(Qt::DisplayRole).toStringList();
-        int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
-        for (int i = 0; i < textList.count(); i++) {
-            QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*m_padding), dataRect.width(), textHeight);
-            QRect hoverRect(textRect.left()-m_padding, textRect.top()-m_padding, textRect.width()+2*m_padding, textRect.height()+2*m_padding);
+        if (textList.count() == 0) {
+            QRect hoverRect(dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding));
             if (hoverRect.contains(m_mousePos)) {
-                foundIndex = i;
-                break;
+                foundIndex = 0;
+            }
+        } else {
+            int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
+            for (int i = 0; i < textList.count(); i++) {
+                QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*m_padding), dataRect.width(), textHeight);
+                QRect hoverRect(textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding));
+                if (hoverRect.contains(m_mousePos)) {
+                    foundIndex = i;
+                    break;
+                }
             }
         }
     }
@@ -804,31 +814,37 @@ QRect InfoItemDelegate::stringListRectAtMousePos(const QStyleOptionViewItem &opt
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect dataRect = fieldDataRect(option, index);
         QStringList textList = index.data(Qt::DisplayRole).toStringList();
-        int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
-        int i;
-        for (i = 0; i < textList.count(); i++) {
-            int top = dataRect.top()+i*(textHeight+2*m_padding);
-            QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
-            QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
+        if (textList.count() == 0) {
+            QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
             if (hoverRect.contains(m_mousePos)) {
-                QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
-                QRect drillIconRect;
-                if (i < drillLriList.count()) {
-                    if (!drillLriList.at(i).isEmpty()) {
-                        drillIconRect = textRect.adjusted(textRect.width()-16, -m_padding, m_padding, m_padding);
-                        textRect.adjust(0,0,-16,0);
+                foundRect = hoverRect;
+            }
+        } else {
+            int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
+            for (int i = 0; i < textList.count(); i++) {
+                int top = dataRect.top()+i*(textHeight+2*m_padding);
+                QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
+                QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
+                if (hoverRect.contains(m_mousePos)) {
+                    QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+                    QRect drillIconRect;
+                    if (i < drillLriList.count()) {
+                        if (!drillLriList.at(i).isEmpty()) {
+                            drillIconRect = textRect.adjusted(textRect.width()-16, -m_padding, m_padding, m_padding);
+                            textRect.adjust(0,0,-16,0);
+                        }
                     }
+                    QRect plusIconRect;
+                    if (i == textList.count() - 1) {
+                        plusIconRect = textRect.adjusted(textRect.width()-16, -m_padding, 0, m_padding);
+                    }
+                    if (plusIconRect.contains(m_mousePos)) {
+                        foundRect = hoverRect.adjusted(0, textHeight+2*m_padding, 0, textHeight+2*m_padding);
+                    } else {
+                        foundRect = hoverRect;
+                    }
+                    break;
                 }
-                QRect plusIconRect;
-                if (i == textList.count() - 1) {
-                    plusIconRect = textRect.adjusted(textRect.width()-16, -m_padding, 0, m_padding);
-                }
-                if (plusIconRect.contains(m_mousePos)) {
-                    foundRect = hoverRect.adjusted(0, textHeight+2*m_padding, 0, textHeight+2*m_padding);
-                } else {
-                    foundRect = hoverRect;
-                }
-                break;
             }
         }
     }
