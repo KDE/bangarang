@@ -58,6 +58,7 @@ class InfoItemModel : public QStandardItemModel
         bool fetchIsAvailable(InfoFetcher* infoFetcher);
         void autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields = true, bool updateArtwork = true);
         void fetch(InfoFetcher* infoFetcher);
+        void setRating(int rating);
                    
     private:
         QList<MediaItem> m_mediaList;

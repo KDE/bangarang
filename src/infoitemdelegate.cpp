@@ -21,9 +21,11 @@
 #include "ui_mainwindow.h"
 #include "sensiblewidgets.h"
 #include "bangarangapplication.h"
+#include "starrating.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
 #include "platform/utilities.h"
+#include "platform/playlist.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>
@@ -110,6 +112,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     bool isEditable = model->itemFromIndex(index)->isEditable();
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
     bool isArtwork = (field == "artwork");
+    bool isRating = (field == "rating");
 
     //Set basic formatting info
     QRect dataRect = fieldDataRect(option, index);
@@ -250,6 +253,20 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 KIcon("edit-clear-locationbar-rtl").paint(&p, clrLeft, clrTop, 16, 16);
             }
         }
+    } else if (isRating) {
+        //Paint rating
+        int rating = index.data(Qt::DisplayRole).toInt();
+        StarRating starRating = StarRating(rating, StarRating::Big);
+        starRating.setRating(rating);
+        QSize ratingSize = starRating.sizeHint();
+        int ratingLeft = dataRect.left() + (dataRect.width()-ratingSize.width())/2;
+        int ratingTop = dataRect.top() + (dataRect.height() - ratingSize.height())/2;
+        QRect ratingRect = QRect(QPoint(ratingLeft, ratingTop), ratingSize);
+        starRating.setPoint(ratingRect.topLeft());
+        if (option.state.testFlag(QStyle::State_MouseOver)) {
+            starRating.setHoverAtPosition(m_mousePos);
+        }
+        starRating.paint(&p);
     } else {
         QTextOption textOption(hAlign | Qt::AlignTop);
         textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
@@ -427,6 +444,39 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     model->setData(index, false, InfoItemModel::MultipleValuesRole);
                 }
                 m_parent->ui->mediaView->setFocus();
+            }
+        }
+        return true;
+    } else if (field == "rating") {
+        if (event->type() == QEvent::MouseButtonPress) {
+            //Determine rating set a mouse position
+            QRect dataRect = fieldDataRect(option, index);
+            QSize ratingSize = StarRating::SizeHint(StarRating::Big);
+            int ratingLeft = dataRect.left() + (dataRect.width()-ratingSize.width())/2;
+            int ratingTop = dataRect.top() + (dataRect.height() - ratingSize.height())/2;
+            QRect ratingRect = QRect(QPoint(ratingLeft, ratingTop), ratingSize);
+            int rating = StarRating::RatingAtPosition(m_mousePos, StarRating::Big, ratingRect.topLeft());
+
+            //Set rating
+            InfoItemModel *model = (InfoItemModel *)index.model();
+            model->setRating(rating);
+            BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
+            QList<MediaItem> mediaList = model->mediaList();
+            QList<MediaItemModel *> modelsToUpdate;
+            modelsToUpdate.append(application->playlist()->playlistModel());
+            modelsToUpdate.append(application->playlist()->queueModel());
+            modelsToUpdate.append(application->playlist()->nowPlayingModel());
+            modelsToUpdate.append(application->browsingModel());
+            for (int i = 0; i < modelsToUpdate.count(); i++) {
+                MediaItemModel *modelToUpdate = modelsToUpdate.at(i);
+                for (int j = 0; j < mediaList.count(); j++) {
+                    int row = modelToUpdate->rowOfUrl(mediaList.at(j).url);
+                    if (row != -1) {
+                        MediaItem mediaItem = modelToUpdate->mediaItemAt(row);
+                        mediaItem.fields["rating"] = rating;
+                        modelToUpdate->replaceMediaItemAt(row, mediaItem);
+                    }
+                }
             }
         }
         return true;
@@ -714,6 +764,8 @@ int InfoItemDelegate::rowHeight(int row) const
     int height;
     if (field == "artwork") {
         height = 128 + 10 + 2*m_padding ; //10 pixel to accomodate rotated artwork
+    } else if (field == "rating") {
+        height = StarRating::SizeHint(StarRating::Big).height() + 2 *m_padding;
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         if (fieldType == QVariant::StringList) {
@@ -783,6 +835,7 @@ QRect InfoItemDelegate::fieldDataRect(const QStyleOptionViewItem &option, const 
     //Special handling for some field types
     if (field == "artwork" ||
         field == "title" ||
+        field == "rating" ||
         field == "description") {
         textWidth = width - 4 * padding;
         textLeft = left + 2*padding;

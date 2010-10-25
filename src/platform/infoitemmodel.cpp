@@ -40,12 +40,12 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_modified = false;
 
     //Store field order
-    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "actor" << "director" << "writer" << "producer" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "description" << "seriesName" << "actor" << "director" << "writer" << "producer" << "season" << "episodeNumber" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "actor" << "director" << "writer" << "producer" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "seriesName" << "actor" << "director" << "writer" << "producer" << "season" << "episodeNumber" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Artist"] = QStringList() << "artwork" << "title" << "description";
     m_fieldsOrder["Album"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title";
@@ -337,6 +337,27 @@ void InfoItemModel::fetch(InfoFetcher* infoFetcher)
 {
     m_fetchType = Fetch;
     infoFetcher->fetchInfo(m_mediaList, true, true);
+}
+
+void InfoItemModel::setRating(int rating)
+{
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        MediaItem mediaItem = m_mediaList.at(i);
+        mediaItem.fields["rating"] = rating;
+        m_mediaList.replace(i, mediaItem);
+        m_indexer->updateRating(mediaItem.fields["resourceUri"].toString(), rating);
+    }
+    for (int i = 0 ; i < rowCount(); i++) {
+        QStandardItem *currentItem = item(i);
+        if (currentItem->data(InfoItemModel::FieldRole).toString() == "rating") {
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            currentItem->setData(rating, Qt::DisplayRole);
+            currentItem->setData(rating, Qt::EditRole);
+            currentItem->setData(rating, InfoItemModel::OriginalValueRole);
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            break;
+        }
+    }
 }
 
 
