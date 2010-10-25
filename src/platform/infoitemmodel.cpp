@@ -793,9 +793,9 @@ QString InfoItemModel::categoryTypeForField(const QString &field, const QString 
         categoryType = "AudioGenre";
     } else if (field == "genre" && type == "Video") {
         categoryType = "VideoGenre";
-    } else if (field == "tag" && type == "Audio") {
+    } else if (field == "tags" && type == "Audio") {
         categoryType = "AudioTag";
-    } else if (field == "tag" && type == "Video") {
+    } else if (field == "tags" && type == "Video") {
         categoryType = "VideoTag";
     } else if (field == "seriesName") {
         categoryType = "TV Series";
@@ -833,6 +833,8 @@ MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &ty
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "AudioGenre" ||
                categoryType == "VideoGenre") {
+        mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = categoryType;
         mediaItem.title = value;
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = m_drillLris[categoryType].arg(value);
@@ -848,6 +850,8 @@ MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &ty
         }
     } else if (categoryType == "AudioTag" ||
                categoryType == "VideoTag") {
+        mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = categoryType;
         mediaItem.title = value;
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = m_drillLris[categoryType].arg(value);
