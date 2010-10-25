@@ -523,7 +523,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     m_stringListIndexEditing = -1;
                     m_rowOfNewValue = index.row();
                     emit sizeHintChanged(index);
-                    QApplication::processEvents();
+//                     QApplication::processEvents(); //this would disturb the flow and cause a wrong line edit to exist
                     m_view->update(index);
                 }
             } else {
@@ -851,12 +851,7 @@ int InfoItemDelegate::stringListIndexAtMousePos(const QStyleOptionViewItem &opti
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect dataRect = fieldDataRect(option, index);
         QStringList textList = index.data(Qt::DisplayRole).toStringList();
-        if (textList.count() == 0) {
-            QRect hoverRect(dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding));
-            if (hoverRect.contains(m_mousePos)) {
-                foundIndex = 0;
-            }
-        } else {
+        if (textList.count() != 0) {
             int textHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
             for (int i = 0; i < textList.count(); i++) {
                 QRect textRect(dataRect.left(), dataRect.top()+i*(textHeight+2*m_padding), dataRect.width(), textHeight);
