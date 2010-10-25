@@ -192,6 +192,8 @@ void InfoManager::fetchInfo()
 
 void InfoManager::selectInfoFetcher(int index)
 {
+    if (index < 0)
+      return;
     m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(index);
 }
 
