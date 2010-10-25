@@ -42,7 +42,7 @@ class InfoItemModel : public QStandardItemModel
                             OriginalValueRole = Qt::UserRole + 3,
                             ValueListRole = Qt::UserRole + 4,
                             ArtworkListRole = Qt::UserRole + 5,
-                            DrillLriRole = Qt::UserRole + 6};
+                            DrillRole = Qt::UserRole + 6};
         enum FetchType {AutoFetch = 0,
                         Fetch = 1};
         InfoItemModel(QObject * parent = 0);
@@ -79,7 +79,9 @@ class InfoItemModel : public QStandardItemModel
         void saveFileMetaData(QList<MediaItem> mediaList);
         void saveCustomGenreInfo(QList<MediaItem> mediaList);
         bool getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride = QString());
+        void setDrill(QStandardItem *item, const QString &field, const QVariant &value);
         QString categoryTypeForField(const QString &field, const QString &type);
+        MediaItem createDrillItem(const QString &field, const QString &type, const QString &value);
 
     Q_SIGNALS:
         void infoChanged(bool modified);
@@ -87,7 +89,7 @@ class InfoItemModel : public QStandardItemModel
         void fetchComplete();
         
     private Q_SLOTS:
-        void checkInfoModified(QStandardItem *changedItem);
+        void itemChanged(QStandardItem *changedItem);
         void infoFetched(MediaItem mediaItem);
 };
 

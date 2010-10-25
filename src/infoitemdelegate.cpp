@@ -257,7 +257,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             //Render field data in a list
             QStringList textList = index.data(Qt::DisplayRole).toStringList();
             QStringList originalTextList = index.data(InfoItemModel::OriginalValueRole).toStringList();
-            QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+            QList<QVariant> drillList = index.data(InfoItemModel::DrillRole).toList();
             int textHeight = QFontMetrics(textFont).height();
             for (int i = 0; i <= textList.count(); i++) {
                 if (i == textList.count() && i > 0) {
@@ -278,8 +278,8 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
                     //Draw drill icon
                     QRect drillIconRect;
-                    if (i < drillLriList.count()) {
-                        if (!drillLriList.at(i).isEmpty()) {
+                    if (i < drillList.count()) {
+                        if (!drillList.at(i).isNull()) {
                             drillIconRect = textRect.adjusted(textRect.width()-16, 0, 0, 0);
                         }
                     }
@@ -363,9 +363,9 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 p.restore();
 
                 //Draw drill icon
-                QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+                QVariant drillItem = index.data(InfoItemModel::DrillRole);
                 QRect drillIconRect;
-                if (!drillLri.isEmpty()) {
+                if (!drillItem.isNull()) {
                     drillIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
                 }
                 if (!drillIconRect.isNull()) {
@@ -436,18 +436,17 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         QRect dataRect = fieldDataRect(option, index);
         QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
 
-        QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
         bool drillIconExists = false;
         if (index.data(Qt::DisplayRole).type() == QVariant::String) {
-            QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
-            if (!drillLri.isEmpty()) {
+            QVariant drillItem = index.data(InfoItemModel::DrillRole);
+            if (!drillItem.isNull()) {
                 drillIconExists = true;
             }
         }
         if (index.data(Qt::DisplayRole).type() == QVariant::StringList ) {
-            QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
-            if (listIndex != -1 && listIndex < drillLriList.count()) {
-                if (!drillLriList.at(listIndex).isEmpty()) {
+            QList<QVariant> drillList = index.data(InfoItemModel::DrillRole).toList();
+            if (listIndex != -1 && listIndex < drillList.count()) {
+                if (!drillList.at(listIndex).isNull()) {
                     drillIconExists = true;
                 }
             }
@@ -488,26 +487,24 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         } else if (drillIconRect.contains(m_mousePos)) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 m_rowOfNewValue = -1;
-                QString drillLri = index.data(InfoItemModel::DrillLriRole).toString();
+                MediaItem drillItem = index.data(InfoItemModel::DrillRole).value<MediaItem>();
                 if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
-                    QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
-                    if (listIndex != -1 && listIndex < drillLriList.count()) {
-                        drillLri = drillLriList.at(listIndex);
+                    QList<QVariant> drillList = index.data(InfoItemModel::DrillRole).toList();
+                    if (listIndex != -1 && listIndex < drillList.count()) {
+                        drillItem = drillList.at(listIndex).value<MediaItem>();
                     }
                 }
-                MediaListProperties mediaListProperties;
-                mediaListProperties.lri = drillLri;
-                mediaListProperties.name = index.data(Qt::DisplayRole).toString();
-                //TODO:: build more complete category item so enough context will be provided to InfoView
-                MediaItem categoryItem;
-                categoryItem.title = mediaListProperties.name;
-                categoryItem.fields["title"] = categoryItem.title;
-                mediaListProperties.category = categoryItem;
-                m_parent->addListToHistory();
-                BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
-                application->browsingModel()->clearMediaListData();
-                application->browsingModel()->setMediaListProperties(mediaListProperties);
-                application->browsingModel()->load();
+                if (!drillItem.url.isEmpty()) {
+                    MediaListProperties mediaListProperties;
+                    mediaListProperties.lri = drillItem.url;
+                    mediaListProperties.name = drillItem.title;
+                    mediaListProperties.category = drillItem;
+                    m_parent->addListToHistory();
+                    BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
+                    application->browsingModel()->clearMediaListData();
+                    application->browsingModel()->setMediaListProperties(mediaListProperties);
+                    application->browsingModel()->load();
+                }
                 return true;
             } else {
                 return true;
@@ -839,10 +836,10 @@ QRect InfoItemDelegate::stringListRectAtMousePos(const QStyleOptionViewItem &opt
                 QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
                 QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
                 if (hoverRect.contains(m_mousePos)) {
-                    QStringList drillLriList = index.data(InfoItemModel::DrillLriRole).toStringList();
+                    QList<QVariant> drillLriList = index.data(InfoItemModel::DrillRole).toList();
                     QRect drillIconRect;
                     if (i < drillLriList.count()) {
-                        if (!drillLriList.at(i).isEmpty()) {
+                        if (!drillLriList.at(i).isNull()) {
                             drillIconRect = textRect.adjusted(textRect.width()-16, -m_padding, m_padding, m_padding);
                             textRect.adjust(0,0,-16,0);
                         }

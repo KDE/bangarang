@@ -34,7 +34,7 @@
 
 InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
-    connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+    connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
 
     m_defaultEditable = true;
     m_modified = false;
@@ -428,19 +428,8 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(value, InfoItemModel::OriginalValueRole); //stores copy of original data
 
         //Store drill lri(s)
-        if (value.type() == QVariant::StringList &&
-            !categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
-            QStringList values = value.toStringList();
-            QStringList drillLris;
-            for (int i = 0; i < values.count(); i++) {
-                QString drillLri = m_drillLris[categoryTypeForField(field, m_mediaList.at(0).type)].arg(values.at(i));
-                drillLris.append(drillLri);
-            }
-            fieldItem->setData(drillLris, InfoItemModel::DrillLriRole);
-        } else if (!categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
-            QString drillLri = m_drillLris[categoryTypeForField(field, m_mediaList.at(0).type)].arg(value.toString());
-            fieldItem->setData(drillLri, InfoItemModel::DrillLriRole);
-        }
+        setDrill(fieldItem, field, value);
+
         if (field == "url") {
             fieldItem->setData(value, Qt::ToolTipRole);
         }
@@ -545,16 +534,22 @@ bool InfoItemModel::isEmpty(const QString &field)
     return isEmpty;
 }
 
-void InfoItemModel::checkInfoModified(QStandardItem *changedItem)
+void InfoItemModel::itemChanged(QStandardItem *changedItem)
 {
     if (changedItem->data(Qt::EditRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
         m_modified = true;
         QString field = changedItem->data(InfoItemModel::FieldRole).toString();
         if (field == "artwork") {
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
             getArtwork(changedItem, artworkUrl);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(checkInfoModified(QStandardItem *)));
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        } else {
+            //Update drill for changed item
+            QVariant value = changedItem->data(Qt::EditRole);
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            setDrill(changedItem, field, value);
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         }
     } else {
         m_modified = false;
@@ -673,6 +668,8 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
                     artworks = Utilities::getGenreArtworks(itemTitle, "video");
                 } else if (mediaItem.subType() == "Artist") {
                     artworks = Utilities::getArtistArtworks(itemTitle);
+                } else if (mediaItem.subType() == "Album") {
+                    artworks.append(Utilities::getAlbumArtwork(itemTitle));
                 } else if (mediaItem.subType() == "AudioTag") {
                     artworks = Utilities::getTagArtworks(itemTitle, "audio");
                 } else if (mediaItem.subType() == "VideoTag") {
@@ -738,6 +735,32 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
     return artworkExists;
 }
 
+void InfoItemModel::setDrill(QStandardItem *item, const QString &field, const QVariant &value)
+{
+    if (value.type() == QVariant::StringList &&
+        !categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
+        QStringList values = value.toStringList();
+        QList<QVariant> drillItems;
+        for (int i = 0; i < values.count(); i++) {
+            MediaItem drillItem = createDrillItem(field, m_mediaList.at(0).type, value.toString());
+            if (!drillItem.url.isEmpty()) {
+                drillItems.append(QVariant::fromValue(drillItem));
+            } else {
+                drillItems.append(QVariant());
+            }
+        }
+        item->setData(drillItems, InfoItemModel::DrillRole);
+    } else if (!categoryTypeForField(field, m_mediaList.at(0).type).isEmpty()) {
+        MediaItem drillItem = createDrillItem(field, m_mediaList.at(0).type, value.toString());
+        if (!drillItem.url.isEmpty()) {
+            item->setData(QVariant::fromValue(drillItem), InfoItemModel::DrillRole);
+        } else {
+            item->setData(QVariant(), InfoItemModel::DrillRole);
+        }
+    }
+
+}
+
 QString InfoItemModel::categoryTypeForField(const QString &field, const QString &type)
 {
     QString categoryType;
@@ -753,10 +776,74 @@ QString InfoItemModel::categoryTypeForField(const QString &field, const QString 
         categoryType = "AudioTag";
     } else if (field == "tag" && type == "Video") {
         categoryType = "VideoTag";
+    } else if (field == "seriesName") {
+        categoryType = "TV Series";
     } else if (field == "actor") {
         categoryType = "Actor";
     } else if (field == "director") {
         categoryType = "Director";
     }
     return categoryType;
+}
+
+MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &type, const QString &value)
+{
+    MediaItem mediaItem;
+    QString categoryType = categoryTypeForField(field, type);
+    if (categoryType == "Artist") {
+        Nepomuk::Resource res(Utilities::artistResource(value));
+        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+    } else if (categoryType == "Actor") {
+        Nepomuk::Resource res(Utilities::artistResource(value));
+        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+    } else if (categoryType == "Director") {
+        Nepomuk::Resource res(Utilities::directorResource(value));
+        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+    } else if (categoryType == "Album") {
+        Nepomuk::Resource res(Utilities::albumResource(value));
+        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+    } else if (categoryType == "TV Series") {
+        Nepomuk::Resource res(Utilities::TVSeriesResource(value));
+        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+    } else if (categoryType == "AudioGenre" ||
+               categoryType == "VideoGenre") {
+        mediaItem.title = value;
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+        mediaItem.fields["artworkUrl"] = Utilities::getGenreArtworkUrl(value);
+        if (categoryType == "AudioGenre") {
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||genre=%1").arg(value));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||genre=%1").arg(value));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||genre=%1").arg(value));
+        } else {
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||genre=%1").arg(value));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||genre=%1").arg(value));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||genre=%1").arg(value));
+        }
+    } else if (categoryType == "AudioTag" ||
+               categoryType == "VideoTag") {
+        mediaItem.title = value;
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.url = m_drillLris[categoryType].arg(value);
+        if (categoryType == "AudioTag") {
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?audio||limit=4||tag=%1").arg(value));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?audio||limit=4||tag=%1").arg(value));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?audio||limit=4||tag=%1").arg(value));
+        } else {
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||tag=%1").arg(value));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||tag=%1").arg(value));
+            mediaItem.addContext(i18n("Frequently Played"),QString("semantics://frequent?video||limit=4||tag=%1").arg(value));
+        }
+    }
+
+    if (mediaItem.title.isEmpty()) {
+        mediaItem.title = value;
+        mediaItem.fields["title"] = value;
+    }
+    return mediaItem;
 }

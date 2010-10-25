@@ -1708,6 +1708,115 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     return mediaItem;
 }
 
+MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const QString &type, const QString &sourceLri)
+{
+    MediaVocabulary mediaVocabulary;
+    MediaItem mediaItem;
+
+    if (type == "Artist" ||
+         type == "Album" ||
+         type == "TV Series" ||
+         type == "Actor" ||
+         type == "Director") {
+        mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = type;
+        mediaItem.nowPlaying = false;
+        mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+
+        if (type =="Artist") {
+            kDebug() << mediaVocabulary.musicArtistName();
+            QString artist = res.property(mediaVocabulary.musicArtistName()).toString();
+            QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
+            QString artworkUrl;
+            if (res.hasProperty(mediaVocabulary.artwork())) {
+                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
+            }
+            mediaItem.url = QString("music://albums?%1")
+                            .arg(artistFilter);
+            mediaItem.title = artist;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("system-users");
+            mediaItem.fields["artworkUrl"] = artworkUrl;
+            mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
+            //Provide context info for artist
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1").arg(artist));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1").arg(artist));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1").arg(artist));
+        } else if (type == "Album") {
+            QString album = res.property(mediaVocabulary.musicAlbumName()).toString();
+            QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
+            //TODO: Get corresponding artist name
+            mediaItem.url = QString("music://songs?%1")
+                            .arg(albumFilter);
+            mediaItem.title = album;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("media-optical-audio");
+            //Provide context info for album
+            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||album=%1").arg(album));
+            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||album=%1").arg(album));
+            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||album=%1").arg(album));
+        } else if (type == "TV Series") {
+            QString seriesName = res.property(mediaVocabulary.videoSeriesTitle()).toString();
+            QString seriesNameFilter = seriesName.isEmpty() ? QString(): QString("seriesName=%1").arg(seriesName);
+            QString artworkUrl;
+            if (res.hasProperty(mediaVocabulary.artwork())) {
+                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
+            }
+            mediaItem.url = QString("video://seasons?||%1")
+                            .arg(seriesNameFilter);
+            mediaItem.title = seriesName;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("video-television");
+            mediaItem.fields["artworkUrl"] = artworkUrl;
+            mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
+            //Provide context info for TV series
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||seriesName=%1").arg(seriesName));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||seriesName=%1").arg(seriesName));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||seriesName=%1").arg(seriesName));
+        } else if (type == "Actor") {
+            QString actor = res.property(mediaVocabulary.ncoFullname()).toString();
+            QString actorFilter = actor.isEmpty() ? QString(): QString("actor=%1").arg(actor);
+            QString artworkUrl;
+            if (res.hasProperty(mediaVocabulary.artwork())) {
+                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
+            }
+            mediaItem.url = QString("video://sources?||%1")
+                            .arg(actorFilter);
+            mediaItem.title = actor;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("view-media-artist");
+            mediaItem.fields["artworkUrl"] = artworkUrl;
+            mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||actor=%1").arg(actor));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||actor=%1").arg(actor));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||actor=%1").arg(actor));
+        } else if (type == "Director") {
+            QString director = res.property(mediaVocabulary.ncoFullname()).toString();
+            QString directorFilter = director.isEmpty() ? QString(): QString("director=%1").arg(director);
+            QString artworkUrl;
+            if (res.hasProperty(mediaVocabulary.artwork())) {
+                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
+            }
+            mediaItem.url = QString("video://sources?||%1")
+                            .arg(directorFilter);
+            mediaItem.title = director;
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.artwork = KIcon("view-media-artist");
+            mediaItem.fields["artworkUrl"] = artworkUrl;
+            mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
+            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||director=%1").arg(director));
+            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||director=%1").arg(director));
+            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||director=%1").arg(director));
+        }
+        mediaItem.fields["sourceLri"] = sourceLri;
+    }
+    return mediaItem;
+}
+
 MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri, const QString &sourceLri)
 {
     MediaItem mediaItem;
@@ -1865,14 +1974,6 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.artwork = KIcon("view-pim-notes");;
             //Provide context info for tag
-            QStringList contextTitles;
-            contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-            QStringList contextLRIs;
-            contextLRIs << QString("semantics://recent?video||limit=4||tag=%1").arg(tag);
-            contextLRIs << QString("semantics://highest?video||limit=4||tag=%1").arg(tag);
-            contextLRIs << QString("semantics://frequent?video||limit=4||tag=%1").arg(tag);
-            mediaItem.fields["contextTitles"] = contextTitles;
-            mediaItem.fields["contextLRIs"] = contextLRIs;
             mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||tag=%1").arg(tag));
             mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||tag=%1").arg(tag));
             mediaItem.addContext(i18n("Frequently Played"),QString("semantics://frequent?video||limit=4||tag=%1").arg(tag));
@@ -1971,16 +2072,119 @@ QUrl Utilities::artistResource(const QString &artistName)
     bindings.append("r");
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
-    query.addCondition(QString("?r rdf:type %1 . ").arg(mediaVocabulary.typeMusicArtist().toString()));
-    query.addCondition(QString("?r nco:fullname ?name ."));
+    query.addCondition(QString("{?pr <%1> ?r. } UNION {?pr <%2> ?r . } UNION {?pr <%3> ?r . } ")
+                       .arg(mediaVocabulary.musicArtist().toString())
+                       .arg(mediaVocabulary.musicPerformer().toString())
+                       .arg(mediaVocabulary.musicComposer().toString()));
+    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
     query.startFilter();
-    query.addFilterConstraint("r", artistName, MediaQuery::Equal);
+    query.addFilterConstraint("name", artistName, MediaQuery::Equal);
     query.endFilter();
     query.endWhere();
-    
+
     Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
     
+    QUrl resource;
+    while (it.next()) {
+        resource = it.binding("r").uri();
+    }
+    return resource;
+}
+
+QUrl Utilities::albumResource(const QString &albumName)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append("r");
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeMusicAlbum().toString()));
+    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.musicAlbumName().toString()));
+    query.startFilter();
+    query.addFilterConstraint("name", albumName, MediaQuery::Equal);
+    query.endFilter();
+    query.endWhere();
+
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+
+    QUrl resource;
+    while (it.next()) {
+        resource = it.binding("r").uri();
+    }
+    return resource;
+}
+
+QUrl Utilities::TVSeriesResource(const QString &seriesName)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append("r");
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(QString("?r rdf:type %1 . ").arg(mediaVocabulary.typeTVSeries().toString()));
+    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.videoSeriesTitle().toString()));
+    query.startFilter();
+    query.addFilterConstraint("name", seriesName, MediaQuery::Equal);
+    query.endFilter();
+    query.endWhere();
+
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+
+    QUrl resource;
+    while (it.next()) {
+        resource = it.binding("r").uri();
+    }
+    return resource;
+}
+
+QUrl Utilities::actorResource(const QString &actorName)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append("r");
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoActor().toString()));
+    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
+    query.startFilter();
+    query.addFilterConstraint("name", actorName, MediaQuery::Equal);
+    query.endFilter();
+    query.endWhere();
+
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+
+    QUrl resource;
+    while (it.next()) {
+        resource = it.binding("r").uri();
+    }
+    return resource;
+}
+
+QUrl Utilities::directorResource(const QString &directorName)
+{
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append("r");
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoDirector().toString()));
+    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
+    query.startFilter();
+    query.addFilterConstraint("name", directorName, MediaQuery::Equal);
+    query.endFilter();
+    query.endWhere();
+
+    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+
     QUrl resource;
     while (it.next()) {
         resource = it.binding("r").uri();

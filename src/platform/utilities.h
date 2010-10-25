@@ -126,11 +126,16 @@ namespace Utilities {
     QString videoMimeFilter();
     MediaItem mediaItemFromNepomuk(Nepomuk::Resource res, const QString &sourceLri = QString());
     MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri = QString());
+    MediaItem categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const QString &type, const QString &sourceLri = QString());
     MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString(), const QString &sourceLri = QString());
     Nepomuk::Resource mediaResourceFromUrl(KUrl Url);
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
     QString mergeLRIs(const QString &lri, const QString &lriToMerge);
     QUrl artistResource(const QString &artistName);
+    QUrl albumResource(const QString &albumName);
+    QUrl TVSeriesResource(const QString &seriesName);
+    QUrl actorResource(const QString &actorName);
+    QUrl directorResource(const QString &directorName);
     QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
     KUrl deviceUrl(const QString &type, const QString &udi, const QString& name = QString(), QString content = QString(), int title = -1 );
