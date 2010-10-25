@@ -18,6 +18,7 @@
 
 #include "nowplayingdelegate.h"
 #include "bangarangapplication.h"
+#include "infomanager.h"
 #include "platform/utilities.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/mediaindexer.h"
@@ -244,5 +245,6 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
           indexerUpdated = true;
       }
   }
+  m_application->infoManager()->loadSelectedInfo();
   return false;
 }

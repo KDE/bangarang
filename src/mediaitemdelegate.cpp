@@ -311,7 +311,7 @@ int MediaItemDelegate::columnWidth (int column, int viewWidth) const {
     return viewWidth;
 }
 
-bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model,                                                const QStyleOptionViewItem &option, const QModelIndex &_index)
+bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, const QStyleOptionViewItem &option, const QModelIndex &_index)
 {
     static bool s_mouseOverRating = false;
     QEvent::Type eventType = event->type();
@@ -408,6 +408,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 }
             }
             #undef MODELS_TO_BE_UPDATED
+            m_application->infoManager()->loadSelectedInfo();
             return true;
         } else {
             if (s_mouseOverRating) { //onLeave effect
