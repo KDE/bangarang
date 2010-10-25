@@ -212,7 +212,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
             int spacing = (dataRect.width() - artworkSize - 30)/artworkList.count();
             int aTop = dataRect.top() + (dataRect.height()-artworkSize)/2;
-            int startx = (dataRect.width()/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
+            int startx = dataRect.left() + (dataRect.width()/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
             p.translate(startx, aTop);
             for (int i = artworkList.count()-1; i >= 0; i--) {
                 qreal rot = m_artworkRotations.at(i);
