@@ -763,7 +763,7 @@ void InfoItemModel::setDrill(QStandardItem *item, const QString &field, const QV
         QStringList values = value.toStringList();
         QList<QVariant> drillItems;
         for (int i = 0; i < values.count(); i++) {
-            MediaItem drillItem = createDrillItem(field, m_mediaList.at(0).type, value.toString());
+            MediaItem drillItem = createDrillItem(field, m_mediaList.at(0).type, values.at(i));
             if (!drillItem.url.isEmpty()) {
                 drillItems.append(QVariant::fromValue(drillItem));
             } else {
