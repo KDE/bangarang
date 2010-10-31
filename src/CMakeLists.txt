@@ -1,44 +1,41 @@
 add_subdirectory(platform/nepomukwriter)
 
 set(BangarangSources
+    actionsmanager.cpp
+    audiosettings.cpp
     bangarangapplication.cpp
     bangarangnotifieritem.cpp
+    bookmarksmanager.cpp
+    dbusobjects.cpp
     mainwindow.cpp
     main.cpp
-    sensiblewidgets.cpp
     mediaitemdelegate.cpp
-    nowplayingdelegate.cpp
+    medialistsettings.cpp
     mediaview.cpp
-    playlistview.cpp
+    nowplayingdelegate.cpp
     nowplayingview.cpp
+    playlistview.cpp
     infobox.cpp
     infomanager.cpp
     infoitemdelegate.cpp
     savedlistsmanager.cpp
-    actionsmanager.cpp
-    bookmarksmanager.cpp
-    videosettings.cpp
-    audiosettings.cpp
-    medialistsettings.cpp
-    pluginexport.cpp
+    sensiblewidgets.cpp
     starrating.cpp
-    dbusobjects.cpp
+    videosettings.cpp
+    platform/bangarangvideowidget.cpp
+    platform/dbpediaquery.cpp
+    platform/downloader.cpp
+    platform/dvdcontroller.cpp
+    platform/infoitemmodel.cpp
     platform/mediaitemmodel.cpp
-    platform/playlist.cpp
     platform/mediaindexer.cpp
     platform/mediavocabulary.cpp
     platform/mediaquery.cpp
     platform/medialistcache.cpp
-    platform/infoitemmodel.cpp
-    platform/dbpediaquery.cpp
     platform/ontologyupdater.cpp
-    platform/downloader.cpp
-    platform/dvdcontroller.cpp
-    platform/bangarangvideowidget.cpp
-    platform/infofetchers/infofetcher.cpp
+    platform/playlist.cpp
     platform/infofetchers/dbpediainfofetcher.cpp
-    platform/listengines/listengine.cpp
-    platform/listengines/listenginefactory.cpp
+    platform/infofetchers/infofetcher.cpp
     platform/listengines/audioclipslistengine.cpp
     platform/listengines/audiostreamlistengine.cpp
     platform/listengines/cachelistengine.cpp
@@ -46,6 +43,8 @@ set(BangarangSources
     platform/listengines/dvdlistengine.cpp
     platform/listengines/feedlistengine.cpp
     platform/listengines/filelistengine.cpp
+    platform/listengines/listengine.cpp
+    platform/listengines/listenginefactory.cpp
     platform/listengines/medialistsengine.cpp
     platform/listengines/musiclistengine.cpp
     platform/listengines/nepomuklistengine.cpp
@@ -61,6 +60,7 @@ kde4_add_ui_files(BangarangSources mainwindow.ui)
 kde4_add_executable(bangarang ${BangarangSources})
 
 kde4_add_app_icon(BangarangSources "${CMAKE_CURRENT_SOURCE_DIR}/../icons/hi*.png")
+
 # Executable
 target_link_libraries(bangarang
     ${QT_QTCORE_LIBRARY}
@@ -77,20 +77,6 @@ target_link_libraries(bangarang
     tag
 )
 
-# # Plugin-Module
-# kde4_add_plugin(krossmodulebangarangmod  ${BangarangSources})
-# target_link_libraries( krossmodulebangarangmod
-#     ${KDE4_KDEUI_LIBS}
-#     ${KDE4_KPARTS_LIBS}
-#     ${KDE4_PHONON_LIBS}
-#     ${KDE4_KROSSCORE_LIBS}
-#     ${NEPOMUK_LIBRARIES}
-#     ${KDEMULTIMEDIA_LIBRARIES}
-#     ${SOPRANO_LIBRARIES}
-#     ${TAGLIB_LIBRARIES}
-#     tag
-#     ${KDE4_KROSSCORE_LIBS}
-#     )
 
 ########### install files ###############
 
