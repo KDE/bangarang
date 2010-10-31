@@ -16,11 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include "videolistengine.h"
 #include "listenginefactory.h"
-#include "mediavocabulary.h"
-#include "utilities.h"
+#include "../mediavocabulary.h"
+#include "../utilities.h"
 
 #include <Soprano/QueryResultIterator>
 #include <KIcon>

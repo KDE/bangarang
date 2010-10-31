@@ -17,8 +17,8 @@
 */
 
 #include "mediaitemmodel.h"
-#include "listengine.h"
-#include "listenginefactory.h"
+#include "listengines/listengine.h"
+#include "listengines/listenginefactory.h"
 #include "medialistcache.h"
 #include "utilities.h"
 

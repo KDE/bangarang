@@ -16,11 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "audiostreamlistengine.h"
-#include "mediaitemmodel.h"
+#include "audioclipslistengine.h"
 #include "listenginefactory.h"
-#include "mediavocabulary.h"
-#include "utilities.h"
+#include "../mediaitemmodel.h"
+#include "../mediavocabulary.h"
+#include "../utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KLocale>
@@ -28,16 +28,17 @@
 #include <nepomuk/variant.h>
 #include <QApplication>
 #include <QTime>
+#include <taglib/fileref.h>
 
-AudioStreamListEngine::AudioStreamListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
+AudioClipsListEngine::AudioClipsListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
 }
 
-AudioStreamListEngine::~AudioStreamListEngine()
+AudioClipsListEngine::~AudioClipsListEngine()
 {
 }
 
-void AudioStreamListEngine::run()
+void AudioClipsListEngine::run()
 {
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
@@ -64,7 +65,7 @@ void AudioStreamListEngine::run()
             //bindings.append(mediaVocabulary.genreBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTypeAudio(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
@@ -78,22 +79,11 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = i18np("1 stream", "%1 streams", mediaList.count());
-            
-            MediaItem mediaItem;
-            mediaItem.type = "Audio";
-            mediaItem.url = QString();
-            mediaItem.title = i18n("New Audio Stream");
-            mediaItem.subTitle = i18n("Edit info to create new audio stream");
-            mediaItem.artwork = KIcon("text-html");
-            mediaItem.fields["title"] = "Untitled";
-            mediaItem.fields["audioType"] = "Audio Stream";
-            mediaItem.fields["isTemplate"] = true;
-            mediaList.append(mediaItem);
+            m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             
             m_mediaListProperties.type = QString("Sources");
             
@@ -109,11 +99,12 @@ void AudioStreamListEngine::run()
             //bindings.append(mediaVocabulary.genreBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasTypeAudio(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+	    query.addCondition(mediaVocabulary.hasTag(MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), engineFilter, MediaQuery::Contains);
             query.addFilterOr();
@@ -128,58 +119,29 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
+                MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
             
-            m_mediaListProperties.summary = i18np("1 stream", "%1 streams", mediaList.count());
+            m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }
     }
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    
-    //Get artwork
-    if (m_nepomukInited) {
-        MediaVocabulary mediaVocabulary;
-        for (int i = 0; i < mediaList.count(); i++) {
-            MediaItem mediaItem = mediaList.at(i);
-            MediaQuery query;
-            QStringList bindings;
-            bindings.append(mediaVocabulary.mediaResourceBinding());
-            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-            bindings.append(mediaVocabulary.artworkBinding());
-            query.select(bindings, MediaQuery::Distinct);
-            query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasUrl(MediaQuery::Required, mediaItem.url));
-            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Required));
-            query.endWhere();
-            query.addLimit(5);
-            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
-            while( it.next() ) {
-                MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
-                if (!artwork.isNull()) {
-                    mediaItem.hasCustomArtwork = true;
-                    emit updateArtwork(artwork, mediaItem);
-                    break;
-                }
-            }
-        }
-    }
 
+    //Check if MediaItems in mediaList exist
+    QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
+    if (mediaItems.count() > 0) {
+        emit updateMediaItems(mediaItems);
+    }
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }
 
-void AudioStreamListEngine::setFilterForSources(const QString& engineFilter)
+void AudioClipsListEngine::setFilterForSources(const QString& engineFilter)
 {
-    //Always return streams
-    m_mediaListProperties.lri = QString("audiostreams://?%1").arg(engineFilter);
+    //Always return songs
+    m_mediaListProperties.lri = QString("audioclips://?%1").arg(engineFilter);
 }
 
-void AudioStreamListEngine::activateAction()
-{
-}

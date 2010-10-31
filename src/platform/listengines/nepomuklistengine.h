@@ -20,8 +20,8 @@
 #define NEPOMUKLISTENGINE_H
 
 #include "listengine.h"
-#include "mediaindexer.h"
-#include "mediaitemmodel.h"
+#include "../mediaindexer.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include <QtCore>
 #include <Nepomuk/Resource>

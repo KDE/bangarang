@@ -17,7 +17,7 @@
 */
 
 #include "listenginefactory.h"
-#include "downloader.h"
+#include "../downloader.h"
 #include "listengine.h"
 #include "musiclistengine.h"
 #include "filelistengine.h"
@@ -30,8 +30,8 @@
 #include "semanticslistengine.h"
 #include "cachelistengine.h"
 #include "audioclipslistengine.h"
-#include "taglistengine.h"	
-#include "feedlistengine.h" 
+#include "taglistengine.h"
+#include "feedlistengine.h"
 #include <KDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)

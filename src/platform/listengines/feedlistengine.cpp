@@ -16,12 +16,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include "feedlistengine.h"
 #include "listenginefactory.h"
-#include "mediaindexer.h"
-#include "utilities.h"
-#include "mediavocabulary.h"
+#include "../mediaindexer.h"
+#include "../utilities.h"
+#include "../mediavocabulary.h"
 
 #include <QApplication>
 #include <KIcon>

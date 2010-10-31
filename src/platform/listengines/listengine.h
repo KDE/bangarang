@@ -19,7 +19,7 @@
 #ifndef LISTENGINE_H
 #define LISTENGINE_H
 
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include <QtCore>
 #include <QImage>

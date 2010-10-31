@@ -17,7 +17,7 @@
 */
 
 #include "listengine.h"
-#include "downloader.h"
+#include "../downloader.h"
 
 ListEngine::ListEngine(ListEngineFactory * parent) : QThread(parent)
 {
