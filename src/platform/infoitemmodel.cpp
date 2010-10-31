@@ -19,7 +19,7 @@
 #include "infoitemmodel.h"
 #include "mediaitemmodel.h"
 #include "utilities.h"
-#include "dbpediainfofetcher.h"
+#include "infofetchers/dbpediainfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>

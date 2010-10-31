@@ -25,7 +25,7 @@
 #include "platform/playlist.h"
 #include "platform/ontologyupdater.h"
 #include "platform/dvdcontroller.h"
-#include "platform/infofetcher.h"
+#include "platform/infofetchers/infofetcher.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"

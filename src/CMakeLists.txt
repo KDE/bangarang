@@ -34,10 +34,10 @@ set(BangarangSources
     platform/dbpediaquery.cpp
     platform/ontologyupdater.cpp
     platform/downloader.cpp
-    platform/infofetcher.cpp
     platform/dvdcontroller.cpp
-    platform/dbpediainfofetcher.cpp
     platform/bangarangvideowidget.cpp
+    platform/infofetchers/infofetcher.cpp
+    platform/infofetchers/dbpediainfofetcher.cpp
     platform/listengines/listengine.cpp
     platform/listengines/listenginefactory.cpp
     platform/listengines/audioclipslistengine.cpp
