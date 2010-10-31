@@ -26,7 +26,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
 #include "platform/playlist.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "platform/infofetchers/infofetcher.h"
 #include "platform/infofetchers/dbpediainfofetcher.h"
 #include <KUrlRequester>

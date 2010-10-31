@@ -22,7 +22,7 @@
 
 #include "platform/playlist.h"
 #include "platform/mediaitemmodel.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 
 #include <QDBusMetaType>
 #include <KAboutData>

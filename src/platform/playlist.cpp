@@ -18,7 +18,7 @@
 
 #include "playlist.h"
 #include "mediaitemmodel.h"
-#include "utilities.h"
+#include "utilities/utilities.h"
 #include "mediavocabulary.h"
 #include "mediaindexer.h"
 #include "bangarangapplication.h"

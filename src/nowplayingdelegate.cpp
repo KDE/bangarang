@@ -19,7 +19,7 @@
 #include "nowplayingdelegate.h"
 #include "bangarangapplication.h"
 #include "infomanager.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/mediaindexer.h"
 #include "platform/mediavocabulary.h"

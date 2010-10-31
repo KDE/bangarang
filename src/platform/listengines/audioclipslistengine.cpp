@@ -20,7 +20,7 @@
 #include "listenginefactory.h"
 #include "../mediaitemmodel.h"
 #include "../mediavocabulary.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KLocale>

@@ -25,7 +25,6 @@ set(BangarangSources
     dbusobjects.cpp
     platform/mediaitemmodel.cpp
     platform/playlist.cpp
-    platform/utilities.cpp
     platform/mediaindexer.cpp
     platform/mediavocabulary.cpp
     platform/mediaquery.cpp
@@ -54,6 +53,7 @@ set(BangarangSources
     platform/listengines/savedlistsengine.cpp
     platform/listengines/taglistengine.cpp
     platform/listengines/videolistengine.cpp
+    platform/utilities/utilities.cpp
 )
 
 kde4_add_ui_files(BangarangSources mainwindow.ui)

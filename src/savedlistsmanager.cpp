@@ -18,7 +18,7 @@
 
 #include "savedlistsmanager.h"
 #include "bangarangapplication.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "mainwindow.h"
 #include "infomanager.h"
 #include "actionsmanager.h"

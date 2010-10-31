@@ -18,7 +18,7 @@
 
 #include "mediaindexer.h"
 #include "mediaitemmodel.h"
-#include "utilities.h"
+#include "utilities/utilities.h"
 #include "mediavocabulary.h"
 
 #include <KUrl>

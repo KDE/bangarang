@@ -19,7 +19,7 @@
 #include "../mediaitemmodel.h"
 #include "savedlistsengine.h"
 #include "listenginefactory.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 #include "../mediavocabulary.h"
 
 #include <KIcon>

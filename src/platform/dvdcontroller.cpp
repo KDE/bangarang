@@ -17,7 +17,7 @@
 */
 
 #include "dvdcontroller.h"
-#include "utilities.h"
+#include "utilities/utilities.h"
 
 #include <KLocalizedString>
 #include <phonon/ObjectDescription>

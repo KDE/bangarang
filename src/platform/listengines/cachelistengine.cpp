@@ -18,7 +18,7 @@
 
 #include "../mediaitemmodel.h"
 #include "cachelistengine.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 #include "listenginefactory.h"
 #include "../medialistcache.h"
 

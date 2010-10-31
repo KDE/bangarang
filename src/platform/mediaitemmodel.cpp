@@ -20,7 +20,7 @@
 #include "listengines/listengine.h"
 #include "listengines/listenginefactory.h"
 #include "medialistcache.h"
-#include "utilities.h"
+#include "utilities/utilities.h"
 
 #include <QFontMetrics>
 #include <QDateTime>

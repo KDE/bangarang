@@ -20,7 +20,7 @@
 #include "videolistengine.h"
 #include "listenginefactory.h"
 #include "../mediavocabulary.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 
 #include <Soprano/QueryResultIterator>
 #include <KIcon>
