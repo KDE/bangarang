@@ -23,8 +23,7 @@
 #include <QtCore>
 #include <QStandardItemModel>
 
-class MediaItem;
-class MediaItemModel;
+#include "mediaitemmodel.h"
 class InfoFetcher;
 class MediaIndexer;
 
