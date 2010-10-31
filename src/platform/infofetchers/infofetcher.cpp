@@ -17,7 +17,7 @@
 */
 
 #include "infofetcher.h"
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include <KIcon>
 
 InfoFetcher::InfoFetcher(QObject * parent) : QObject(parent)

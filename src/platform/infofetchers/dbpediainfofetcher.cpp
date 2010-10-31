@@ -17,9 +17,9 @@
 */
 
 #include "dbpediainfofetcher.h"
-#include "dbpediaquery.h"
-#include "mediaitemmodel.h"
-#include "downloader.h"
+#include "../dbpediaquery.h"
+#include "../mediaitemmodel.h"
+#include "../downloader.h"
 #include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
