@@ -19,8 +19,8 @@
 #ifndef LISTENGINEFACTORY_H
 #define LISTENGINEFACTORY_H
 
-#include "mediaitemmodel.h"
-#include "downloader.h"
+#include "../mediaitemmodel.h"
+#include "../downloader.h"
 #include <KUrl>
 #include <KDirLister>
 #include <QObject>

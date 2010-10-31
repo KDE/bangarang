@@ -24,29 +24,12 @@ set(BangarangSources
     starrating.cpp
     dbusobjects.cpp
     platform/mediaitemmodel.cpp
-    platform/musiclistengine.cpp
-    platform/videolistengine.cpp
-    platform/filelistengine.cpp
-    platform/cdlistengine.cpp
-    platform/dvdlistengine.cpp
-    platform/medialistsengine.cpp
-    platform/audiostreamlistengine.cpp
-    platform/nepomuklistengine.cpp
-    platform/semanticslistengine.cpp
     platform/playlist.cpp
     platform/utilities.cpp
-    platform/listengine.cpp
-    platform/savedlistsengine.cpp
-    platform/listenginefactory.cpp
     platform/mediaindexer.cpp
     platform/mediavocabulary.cpp
     platform/mediaquery.cpp
     platform/medialistcache.cpp
-    platform/cachelistengine.cpp
-    platform/audioclipslistengine.cpp
-    platform/taglistengine.cpp
-    platform/feedlistengine.cpp
-    platform/bangarangvideowidget.cpp
     platform/infoitemmodel.cpp
     platform/dbpediaquery.cpp
     platform/ontologyupdater.cpp
@@ -54,6 +37,23 @@ set(BangarangSources
     platform/infofetcher.cpp
     platform/dvdcontroller.cpp
     platform/dbpediainfofetcher.cpp
+    platform/bangarangvideowidget.cpp
+    platform/listengines/listengine.cpp
+    platform/listengines/listenginefactory.cpp
+    platform/listengines/audioclipslistengine.cpp
+    platform/listengines/audiostreamlistengine.cpp
+    platform/listengines/cachelistengine.cpp
+    platform/listengines/cdlistengine.cpp
+    platform/listengines/dvdlistengine.cpp
+    platform/listengines/feedlistengine.cpp
+    platform/listengines/filelistengine.cpp
+    platform/listengines/medialistsengine.cpp
+    platform/listengines/musiclistengine.cpp
+    platform/listengines/nepomuklistengine.cpp
+    platform/listengines/semanticslistengine.cpp
+    platform/listengines/savedlistsengine.cpp
+    platform/listengines/taglistengine.cpp
+    platform/listengines/videolistengine.cpp
 )
 
 kde4_add_ui_files(BangarangSources mainwindow.ui)

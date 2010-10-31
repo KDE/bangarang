@@ -16,11 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include "cachelistengine.h"
-#include "utilities.h"
+#include "../utilities.h"
 #include "listenginefactory.h"
-#include "medialistcache.h"
+#include "../medialistcache.h"
 
 CacheListEngine::CacheListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {

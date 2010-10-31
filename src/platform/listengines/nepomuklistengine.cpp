@@ -17,8 +17,8 @@
 */
 
 #include "nepomuklistengine.h"
-#include "mediavocabulary.h"
-#include "utilities.h"
+#include "../mediavocabulary.h"
+#include "../utilities.h"
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 #include <KDebug>

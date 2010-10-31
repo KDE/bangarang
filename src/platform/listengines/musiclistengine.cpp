@@ -17,11 +17,11 @@
 */
 
 #include "musiclistengine.h"
-#include "mediaitemmodel.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
-#include "mediavocabulary.h"
-#include "mediaquery.h"
-#include "utilities.h"
+#include "../mediavocabulary.h"
+#include "../mediaquery.h"
+#include "../utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KLocale>

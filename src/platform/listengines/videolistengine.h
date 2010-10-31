@@ -20,7 +20,7 @@
 #define VIDEOLISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include "mediavocabulary.h"
+#include "../mediavocabulary.h"
 #include <QtCore>
 
 class MediaItem;
