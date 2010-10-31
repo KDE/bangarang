@@ -23,7 +23,7 @@
 #include <mediaitemdelegate.h>
 #include <actionsmanager.h>
 #include <bangarangapplication.h>
-#include <platform/utilities.h>
+#include <platform/utilities/utilities.h>
 #include <ui_mainwindow.h>
 
 PlaylistView::PlaylistView(QWidget* parent): QTreeView(parent)

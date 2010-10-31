@@ -24,7 +24,7 @@
 #include "starrating.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "platform/playlist.h"
 
 #include <KGlobalSettings>

@@ -21,7 +21,7 @@
 #include "listenginefactory.h"
 #include "../mediavocabulary.h"
 #include "../mediaquery.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 #include <KIcon>
 #include <KUrl>
 #include <KLocale>

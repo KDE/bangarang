@@ -24,7 +24,7 @@
 #include "platform/playlist.h"
 #include "platform/mediaindexer.h"
 #include "platform/mediaitemmodel.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 
 #include <KGlobalSettings>
 #include <KColorScheme>

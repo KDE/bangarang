@@ -20,7 +20,7 @@
 #include "bangarangapplication.h"
 #include "bangarangnotifieritem.h"
 #include "ui_mainwindow.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"

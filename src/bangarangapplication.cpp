@@ -29,7 +29,7 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "platform/dvdcontroller.h"
 
 #include <KCmdLineArgs>

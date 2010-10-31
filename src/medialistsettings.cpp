@@ -17,7 +17,7 @@
 */
 
 #include "medialistsettings.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "platform/mediaitemmodel.h"

@@ -19,7 +19,7 @@
 #include "ontologyupdater.h"
 #include "mediavocabulary.h"
 #include "mediaquery.h"
-#include "utilities.h"
+#include "utilities/utilities.h"
 #include <KDebug>
 #include <KLocale>
 #include <Nepomuk/Variant>

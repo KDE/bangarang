@@ -20,7 +20,7 @@
 #include "filelistengine.h"
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
-#include "../utilities.h"
+#include "../utilities/utilities.h"
 #include "../mediavocabulary.h"
 
 #include <Soprano/QueryResultIterator>

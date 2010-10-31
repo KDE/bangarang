@@ -21,7 +21,7 @@
 #include "mainwindow.h"
 #include "actionsmanager.h"
 #include "platform/mediaitemmodel.h"
-#include "platform/utilities.h"
+#include "platform/utilities/utilities.h"
 #include <KIcon>
 #include <QMenu>
 #include <QHeaderView>
