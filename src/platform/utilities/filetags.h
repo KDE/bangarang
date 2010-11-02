@@ -19,6 +19,7 @@
 #ifndef UTILITIES_FILETAGS_H
 #define UTILITIES_FILETAGS_H
 
+#include "../mediaitemmodel.h"
 #include <KUrl>
 #include <KIcon>
 #include <KMimeType>
@@ -37,6 +38,7 @@ namespace Utilities {
     QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(128,128));
     QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(128,128));
     QString tagType(const QString &url);
+    MediaItem getAllInfoFromTag(const QString &url, MediaItem templateItem = MediaItem());
     QString getArtistFromTag(const QString &url);
     QString getAlbumFromTag(const QString &url);
     QString getTitleFromTag(const QString &url);

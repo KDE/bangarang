@@ -30,6 +30,8 @@
 #include <QFile>
 #include <QPainter>
 #include <QImage>
+#include <QTextCodec>
+#include <QTime>
 
 #include <taglib/mpegfile.h>
 #include <taglib/vorbisfile.h>
@@ -112,6 +114,62 @@ QString Utilities::tagType(const QString &url)
 
     }
     return QString();
+}
+
+MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateItem)
+{
+    MediaItem mediaItem = templateItem;
+    mediaItem.url = url;
+    mediaItem.fields["url"] = url;
+    TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+    if (!file.isNull()) {
+        QString title = TStringToQString(file.tag()->title()).trimmed();
+        QString artist  = TStringToQString(file.tag()->artist()).trimmed();
+        QString album   = TStringToQString(file.tag()->album()).trimmed();
+        QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+        if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
+            // detect encoding for mpeg id3v2
+            QString tmp = title + artist + album + genre;
+            KEncodingProber prober(KEncodingProber::Universal);
+            KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
+            if (result != KEncodingProber::NotMe) {
+                QByteArray encodingname = prober.encoding().toLower();
+                if ( prober.confidence() > 0.47
+                    && ( ( encodingname == "gb18030" )
+                    || ( encodingname == "big5" )
+                    || ( encodingname == "euc-kr" )
+                    || ( encodingname == "euc-jp" )
+                    || ( encodingname == "koi8-r" ) ) ) {
+                    title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
+                    artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
+                    album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
+                    genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
+                } else if ((prober.confidence() < 0.3 || encodingname != "utf-8")
+                    && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
+                    title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
+                    artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
+                    album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
+                    genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
+                }
+            }
+        }
+        int track   = file.tag()->track();
+        int duration = file.audioProperties()->length();
+        int year = file.tag()->year();
+        if (!title.isEmpty()) {
+            mediaItem.title = title;
+        }
+        mediaItem.subTitle = artist + QString(" - ") + album;
+        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+        mediaItem.fields["duration"] = duration;
+        mediaItem.fields["title"] = title;
+        mediaItem.fields["artist"] = artist;
+        mediaItem.fields["album"] = album;
+        mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
+        mediaItem.fields["trackNumber"] = track;
+        mediaItem.fields["year"] = year;
+    }
+    return mediaItem;
 }
 
 QString Utilities::getArtistFromTag(const QString &url)
