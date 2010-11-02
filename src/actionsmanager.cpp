@@ -252,7 +252,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
     m_infoMenu = new QMenu(i18n("Manage info"), m_parent);
-    connect(m_infoMenu, SIGNAL(triggered(QAction *)), m_application->infoManager(), SLOT(infoFetcherSelected(QAction *)));
     
     //controls always visible at startup
     m_controlsVisible = true;
