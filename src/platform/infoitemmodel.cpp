@@ -590,49 +590,7 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
 
 void InfoItemModel::saveFileMetaData(QList<MediaItem> mediaList)
 {
-    for (int i = 0; i < mediaList.count(); i++) {
-        MediaItem mediaItem = mediaList.at(i);
-        if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
-            if (Utilities::isMusic(mediaList.at(i).url)) {
-                QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
-                if (!artworkUrl.isEmpty()) {
-                    Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
-                }
-                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
-                if (!file.isNull()) {
-                    QString title = mediaItem.fields["title"].toString();
-                    if (!title.isEmpty()) {
-                        TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setTitle(tTitle);
-                    }
-                    QString artist = mediaItem.fields["artist"].toString();
-                    if (!artist.isEmpty()) {
-                        TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setArtist(tArtist);
-                    }
-                    QString album = mediaItem.fields["album"].toString();
-                    if (!album.isEmpty()) {
-                        TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setAlbum(tAlbum);
-                    }
-                    int year = mediaItem.fields["year"].toInt();
-                    if (year != 0) {
-                        file.tag()->setYear(year);
-                    }
-                    int trackNumber = mediaItem.fields["trackNumber"].toInt();
-                    if (trackNumber != 0) {
-                        file.tag()->setTrack(trackNumber);
-                    }
-                    QString genre = mediaItem.fields["genre"].toString();
-                    if (!genre.isEmpty()) {
-                        TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setGenre(tGenre);
-                    }
-                    file.save();
-                }
-            }
-        }
-    }
+    Utilities::saveAllInfoToTag(mediaList);
 }
 
 void InfoItemModel::saveCustomGenreInfo(QList<MediaItem> mediaList)
