@@ -189,54 +189,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         } else if (mediaItem.fields["audioType"] == "Music") {
             mediaItem.artwork = KIcon("audio-mp4");
             //File metadata is always primary for music items.
-            TagLib::FileRef file(KUrl(mediaItem.url).path().toLocal8Bit().constData());
-            if (!file.isNull()) {
-                QString title = TStringToQString(file.tag()->title()).trimmed();
-                QString artist  = TStringToQString(file.tag()->artist()).trimmed();
-                QString album   = TStringToQString(file.tag()->album()).trimmed();
-                QString genre   = TStringToQString(file.tag()->genre()).trimmed();
-                if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
-                    // detect encoding for mpeg id3v2
-                    QString tmp = title + artist + album + genre;
-                    KEncodingProber prober(KEncodingProber::Universal);
-                    KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
-                    if (result != KEncodingProber::NotMe) {
-                        QByteArray encodingname = prober.encoding().toLower();
-                        if ( prober.confidence() > 0.47
-                            && ( ( encodingname == "gb18030" )
-                            || ( encodingname == "big5" )
-                            || ( encodingname == "euc-kr" )
-                            || ( encodingname == "euc-jp" )
-                            || ( encodingname == "koi8-r" ) ) ) {
-                            title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
-                            artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
-                            album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
-                            genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
-                        } else if ((prober.confidence() < 0.3 || encodingname != "utf-8")
-                            && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
-                            title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
-                            artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
-                            album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
-                            genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
-                        }
-                    }
-                }
-                int track   = file.tag()->track();
-                int duration = file.audioProperties()->length();
-                int year = file.tag()->year();
-                if (!title.isEmpty()) {
-                    mediaItem.title = title;
-                }
-                mediaItem.subTitle = artist + QString(" - ") + album;
-                mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                mediaItem.fields["duration"] = duration;
-                mediaItem.fields["title"] = title;
-                mediaItem.fields["artist"] = artist;
-                mediaItem.fields["album"] = album;
-                mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
-                mediaItem.fields["trackNumber"] = track;
-                mediaItem.fields["year"] = year;
-            }
+            mediaItem = Utilities::getAllInfoFromTag(mediaItem.url, mediaItem);
         } else if (mediaItem.fields["audioType"] == "Audio Stream") {
             mediaItem.artwork = KIcon("text-html");
             if (mediaItem.title.isEmpty()) {
@@ -780,7 +733,6 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
         mediaItem.fields["resourceUri"] = res.resourceUri().toString();
 
         if (type =="Artist") {
-            kDebug() << mediaVocabulary.musicArtistName();
             QString artist = res.property(mediaVocabulary.musicArtistName()).toString();
             QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
             QString artworkUrl;
