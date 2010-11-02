@@ -59,6 +59,7 @@ namespace Utilities {
     QString rawTagGenreFromGenre(QString genre);
     QStringList genresFromRawTagGenres(QStringList rawTagGenres);
     QStringList rawTagGenresFromGenres(QStringList genres);
+    QString genreFilter(QString genre);
 }
 
 #endif //UTILITIES_FILETAGS_H
