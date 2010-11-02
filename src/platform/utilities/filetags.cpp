@@ -534,4 +534,16 @@ QStringList Utilities::rawTagGenresFromGenres(QStringList genres)
     return rawTagGenres;
 }
 
+QString Utilities::genreFilter(QString genre)
+{
+    QHash<int, QString> genreDictionary = tagGenreDictionary();
+
+    QString genreFilter = genre;
+    int tagGenreNo = genreDictionary.key(genre, -1);
+    if (tagGenreNo != -1) {
+        genreFilter += QString("|OR|(%1)|OR|%1").arg(tagGenreNo);
+    }
+    return genreFilter;
+}
+
 #endif //UTILITIES_FILETAGS_CPP

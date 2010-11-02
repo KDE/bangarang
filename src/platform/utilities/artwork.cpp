@@ -21,12 +21,14 @@
 
 #include "artwork.h"
 #include "typechecks.h"
+#include "filetags.h"
 #include "../mediaitemmodel.h"
 #include "../mediaquery.h"
 #include "../mediavocabulary.h"
 
 #include <KConfig>
 #include <KConfigGroup>
+#include <KDebug>
 #include <KIconEffect>
 #include <KStandardDirs>
 #include <Soprano/QueryResultIterator>
@@ -145,7 +147,9 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
         query.startWhere();
         query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
         query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required, genre, MediaQuery::Equal));
+        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+                                                    Utilities::genreFilter(genre),
+                                                    MediaQuery::Equal));
         query.endWhere();
         QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
         query.orderBy(orderByBindings);
