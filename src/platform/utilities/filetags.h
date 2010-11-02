@@ -46,6 +46,7 @@ namespace Utilities {
     int getYearFromTag(const QString &url);
     int getDurationFromTag(const QString &url);
     int getTrackNumberFromTag(const QString &url);
+    void saveAllInfoToTag(const QList<MediaItem> &mediaList);
     bool saveArtworkToTag(const QString &url, const QPixmap *pixmap);
     bool saveArtworkToTag(const QString &url, const QString &imageUrl);
     void setArtistTag(const QString &url, const QString &artist);
