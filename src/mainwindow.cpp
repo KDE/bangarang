@@ -25,7 +25,6 @@
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
 #include "platform/bangarangvideowidget.h"
-#include "platform/dvdcontroller.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -647,10 +646,7 @@ void MainWindow::showLoading()
         ui->seekTime->setIcon(KIcon("bookmarks-organize"));
         if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
             if (m_application->bookmarksManager()->hasBookmarks(m_application->playlist()->nowPlayingModel()->mediaItemAt(0)) ||
-                 (
-                    m_application->mediaObject()->currentSource().discType() == Phonon::Dvd &&
-                    m_application->dvdController()->chapterMenu()
-                 )
+                m_application->playlist()->mediaController()->availableChapters() > 1
             ){
                 ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
             } else {
