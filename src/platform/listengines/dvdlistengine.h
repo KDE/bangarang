@@ -23,7 +23,6 @@
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
-#include <libkcompactdisc/kcompactdisc.h>
 #include <phonon/mediaobject.h>
 
 class MediaItem;
@@ -46,8 +45,7 @@ class DVDListEngine : public ListEngine
         void run();
         
     private:
-        KCompactDisc *m_cdObject;
-        Phonon::MediaObject *m_mediaObject;
+         Phonon::MediaObject *m_mediaObject;
         bool m_loadWhenReady;
     
     private slots:
