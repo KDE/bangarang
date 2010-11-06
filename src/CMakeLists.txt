@@ -52,7 +52,12 @@ set(BangarangSources
     platform/listengines/savedlistsengine.cpp
     platform/listengines/taglistengine.cpp
     platform/listengines/videolistengine.cpp
-    platform/utilities/utilities.cpp
+    #platform/utilities/utilities.cpp
+    platform/utilities/artwork.cpp
+    platform/utilities/filetags.cpp
+    platform/utilities/general.cpp
+    platform/utilities/mediaitems.cpp
+    platform/utilities/typechecks.cpp
 )
 
 kde4_add_ui_files(BangarangSources mainwindow.ui)
