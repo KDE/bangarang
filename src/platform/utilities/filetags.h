@@ -46,6 +46,7 @@ namespace Utilities {
     int getYearFromTag(const QString &url);
     int getDurationFromTag(const QString &url);
     int getTrackNumberFromTag(const QString &url);
+    QStringList getID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type);
     void saveAllInfoToTag(const QList<MediaItem> &mediaList);
     bool saveArtworkToTag(const QString &url, const QPixmap *pixmap);
     bool saveArtworkToTag(const QString &url, const QString &imageUrl);
@@ -56,6 +57,7 @@ namespace Utilities {
     void setYearTag(const QString &url, int year);
     void setDurationTag(const QString &url, int duration);
     void setTrackNumberTag(const QString &url, int trackNumber);
+    void setID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type, QStringList values);
     TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);
     QHash<int, QString> tagGenreDictionary();
     QString genreFromRawTagGenre(QString rawTagGenre);

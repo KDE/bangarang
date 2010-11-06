@@ -156,11 +156,23 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                 }
             }
         }
-        QString composer;
+        QStringList artists(artist);
+        QStringList genres(genre);
+        QStringList composers;
+
+        //Read tag type specific fields
         TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
         TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
-        if (!id3v2->frameListMap()["TCOM"].isEmpty()) {
-            composer = TStringToQString(id3v2->frameListMap()["TCOM"].front()->toString());
+        if (!id3v2->isEmpty()) {
+            if (!id3v2->frameListMap()["TPE1"].isEmpty()) {
+                artists = getID3V2TextFrameFields(id3v2, "TPE1");
+            }
+            if (!id3v2->frameListMap()["TCOM"].isEmpty()) {
+                composers = getID3V2TextFrameFields(id3v2, "TCOM");
+            }
+            if (!id3v2->frameListMap()["TCON"].isEmpty()) {
+                genres = getID3V2TextFrameFields(id3v2, "TCON");
+            }
         }
         int track   = file.tag()->track();
         int duration = file.audioProperties()->length();
@@ -168,14 +180,14 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         if (!title.isEmpty()) {
             mediaItem.title = title;
         }
-        mediaItem.subTitle = artist + QString(" - ") + album;
+        mediaItem.subTitle = artists.at(0) + QString(" - ") + album;
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
         mediaItem.fields["title"] = title;
-        mediaItem.fields["artist"] = artist;
-        mediaItem.fields["composer"] = composer;
+        mediaItem.fields["artist"] = artists;
+        mediaItem.fields["composer"] = composers;
         mediaItem.fields["album"] = album;
-        mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
+        mediaItem.fields["genre"] = genresFromRawTagGenres(genres);
         mediaItem.fields["trackNumber"] = track;
         mediaItem.fields["year"] = year;
     }
@@ -252,6 +264,22 @@ int Utilities::getTrackNumberFromTag(const QString &url)
     return track;
 }
 
+QStringList Utilities::getID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type)
+{
+    QStringList values;
+    if (!id3v2->frameListMap()[type].isEmpty()) {
+        TagLib::ID3v2::TextIdentificationFrame *tFrame = dynamic_cast<TagLib::ID3v2::TextIdentificationFrame *>(id3v2->frameListMap()[type].front());
+        TagLib::StringList tValues = tFrame->fieldList();
+        if (!tValues.isEmpty()) {
+            values.clear();
+            for (uint j = 0; j < tValues.size(); j++) {
+                values.append(TStringToQString(tValues[j]));
+            }
+        }
+    }
+    return values;
+}
+
 void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
@@ -269,9 +297,9 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
                         file.tag()->setTitle(tTitle);
                     }
-                    QString artist = mediaItem.fields["artist"].toString();
-                    if (!artist.isEmpty()) {
-                        TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                    QStringList artists = mediaItem.fields["artist"].toStringList();
+                    if (!artists.isEmpty()) {
+                        TagLib::String tArtist(artists.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
                         file.tag()->setArtist(tArtist);
                     }
                     QString album = mediaItem.fields["album"].toString();
@@ -287,33 +315,22 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                     if (trackNumber != 0) {
                         file.tag()->setTrack(trackNumber);
                     }
-                    QStringList genreList = mediaItem.fields["genre"].toStringList();
-                    if (!genreList.isEmpty()) {
-                        QString genre = genreList.at(0);
-                        TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        /* This code is an attempt to store multiple genres to ID3V2 tags
-                         * TODO: figure out how taglib is used to store multiple genres
-                        TagLib::String tGenre(genreList.at(0).toUtf8().data(), TagLib::String::UTF8);
-                        for (int i = 1; i < genreList.count(); i++) {
-                            tGenre.append(char(0));
-                            tGenre.append(genreList.at(i).toUtf8().data());
-                        }*/
+                    QStringList genres = mediaItem.fields["genre"].toStringList();
+                    if (!genres.isEmpty()) {
+                        TagLib::String tGenre(genres.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
                         file.tag()->setGenre(tGenre);
                     }
                     file.save();
                     //Save tag type specific fields
-                    QString composer = mediaItem.fields["composer"].toString();
                     TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toUtf8().constData());
                     TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
-                    TagLib::String tComposer(composer.toUtf8().data(), TagLib::String::UTF8);
                     if (!id3v2->isEmpty()) {
-                        if (!id3v2->frameListMap()["TCOM"].isEmpty()) {
-                            id3v2->frameListMap()["TCOM"].front()->setText(tComposer);
-                        } else {
-                            TagLib::ID3v2::TextIdentificationFrame *tFrame = new TagLib::ID3v2::TextIdentificationFrame("TCOM", TagLib::String::UTF8);
-                            id3v2->addFrame(tFrame);
-                            tFrame->setText(tComposer);
-                        }
+                        QStringList artists = mediaItem.fields["artist"].toStringList();
+                        setID3V2TextFrameFields(id3v2, "TPE1", artists);
+                        QStringList composers = mediaItem.fields["composer"].toStringList();
+                        setID3V2TextFrameFields(id3v2, "TCOM", composers);
+                        QStringList genres = mediaItem.fields["genre"].toStringList();
+                        setID3V2TextFrameFields(id3v2, "TCON", genres);
                     }
                     mpegFile.save();
                 }
@@ -426,6 +443,29 @@ void Utilities::setTrackNumberTag(const QString &url, int trackNumber)
         TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
         file.tag()->setTrack(trackNumber);
         file.save();
+    }
+}
+
+void Utilities::setID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type, QStringList values)
+{
+    if (!values.isEmpty()) {
+        TagLib::StringList tValues;
+        for (int j = 0; j < values.count(); j++) {
+            TagLib::String tValue(values.at(j).toUtf8().data(), TagLib::String::UTF8);
+            tValues.append(tValue);
+        }
+        if (!id3v2->frameListMap()[type].isEmpty()) {
+            TagLib::ID3v2::TextIdentificationFrame *tFrame = dynamic_cast<TagLib::ID3v2::TextIdentificationFrame *>(id3v2->frameListMap()[type].front());
+            tFrame->setText(tValues);
+        } else {
+            TagLib::ID3v2::TextIdentificationFrame *tFrame = new TagLib::ID3v2::TextIdentificationFrame(type, TagLib::String::UTF8);
+            id3v2->addFrame(tFrame);
+            tFrame->setText(tValues);
+        }
+    } else {
+        if (!id3v2->frameListMap()[type].isEmpty()) {
+            id3v2->removeFrames(type);
+        }
     }
 }
 
