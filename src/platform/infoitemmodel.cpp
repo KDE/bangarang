@@ -40,7 +40,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_modified = false;
 
     //Store field order
-    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "composer" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
@@ -65,6 +65,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["artwork"] = i18n("Artwork");
     m_fieldNames["title"]= i18n("Title");
     m_fieldNames["artist"] = i18n("Artist");
+    m_fieldNames["composer"] = i18n("Composer");
     m_fieldNames["album"] = i18n("Album");
     m_fieldNames["trackNumber"] = i18n("Track");
     m_fieldNames["year"] = i18n("Year");
@@ -744,6 +745,8 @@ QString InfoItemModel::categoryTypeForField(const QString &field, const QString 
 {
     QString categoryType;
     if (field == "artist") {
+        categoryType = "Artist";
+    } else if (field == "composer") {
         categoryType = "Artist";
     } else if (field == "album") {
         categoryType = "Album";

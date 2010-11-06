@@ -1048,8 +1048,8 @@ QString MediaVocabulary::hasRating(MediaQuery::Match match,
     return statement;
 }
 
-QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
-                                            const QString &artistName, 
+QString MediaVocabulary::hasMusicAnyArtistName(MediaQuery::Match match,
+                                            const QString &artistName,
                                             MediaQuery::Constraint constraint)
 {
     QString resourceBinding = mediaResourceBinding();
@@ -1060,6 +1060,64 @@ QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
         .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
         .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()))
         .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding()));
+        statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::musicArtistName(), propertyBinding);
+    } else {
+        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
+    }
+
+    if (!artistName.isEmpty()) {
+        QStringList artistNames = artistName.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < artistNames.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, artistNames.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicAnyArtistDescription(MediaQuery::Match match,
+                                            const QString &artistDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicArtistDescriptionBinding();
+    QString statement;
+    statement = QString("{%1} UNION  {%2} UNION {%3} ")
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()))
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding()));
+    statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!artistDescription.isEmpty()) {
+        QStringList artistDescriptions = artistDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < artistDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, artistDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicArtistName(MediaQuery::Match match,
+                                            const QString &artistName, 
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicArtistNameBinding();
+    QString statement;
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        statement = QString("{%1} UNION  {%2} ")
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
+                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()));
         statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::musicArtistName(), propertyBinding);
     } else {
         statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
@@ -1087,10 +1145,9 @@ QString MediaVocabulary::hasMusicArtistDescription(MediaQuery::Match match,
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = musicArtistDescriptionBinding();
     QString statement;
-    statement = QString("{%1} UNION  {%2} UNION {%3} ")
-                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
-                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()))
-                .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), artistResourceBinding()));
+    statement = QString("{%1} UNION  {%2} ")
+            .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtist(), artistResourceBinding()))
+            .arg(MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicPerformer(), artistResourceBinding()));
     statement += MediaQuery::hasProperty(artistResourceBinding(), MediaVocabulary::description(), propertyBinding);
     if (!artistDescription.isEmpty()) {
         QStringList artistDescriptions = artistDescription.split("|OR|");
@@ -1110,6 +1167,73 @@ QString MediaVocabulary::hasMusicArtistDescription(MediaQuery::Match match,
 QString MediaVocabulary::hasMusicArtistArtwork(MediaQuery::Match match)
 {
     QString resourceBinding = artistResourceBinding();
+    QString artworkResourceBinding = "artworkResource";
+    QString propertyBinding = musicArtistArtworkBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
+    statement += QString("?%1 nie:url ?%2 . ").arg(artworkResourceBinding).arg(propertyBinding);
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicComposerName(MediaQuery::Match match,
+                                            const QString &composerName,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicComposerNameBinding();
+    QString statement;
+    if (m_musicVocabulary == MediaVocabulary::nmm) {
+        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), composerResourceBinding());
+        statement += MediaQuery::hasProperty(composerResourceBinding(), MediaVocabulary::musicArtistName(), propertyBinding);
+    } else {
+        statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicArtistName(), propertyBinding);
+    }
+
+    if (!composerName.isEmpty()) {
+        QStringList composerNames = composerName.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < composerNames.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, composerNames.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicComposerDescription(MediaQuery::Match match,
+                                            const QString &composerDescription,
+                                            MediaQuery::Constraint constraint)
+{
+    QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = musicComposerDescriptionBinding();
+    QString statement;
+    statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::musicComposer(), composerResourceBinding());
+    statement += MediaQuery::hasProperty(composerResourceBinding(), MediaVocabulary::description(), propertyBinding);
+    if (!composerDescription.isEmpty()) {
+        QStringList composerDescriptions = composerDescription.split("|OR|");
+        statement += QString("FILTER (");
+        for (int i = 0; i < composerDescriptions.count(); i++) {
+            statement += QString("%1 || ").arg(MediaQuery::filterConstraint(propertyBinding, composerDescriptions.at(i), constraint));
+        }
+        statement.chop(4);
+        statement += QString(") ");
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasMusicComposerArtwork(MediaQuery::Match match)
+{
+    QString resourceBinding = composerResourceBinding();
     QString artworkResourceBinding = "artworkResource";
     QString propertyBinding = musicArtistArtworkBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::artwork(), artworkResourceBinding);
@@ -1657,6 +1781,11 @@ QString MediaVocabulary::actorResourceBinding()
     return "actorResource";
 }
 
+QString MediaVocabulary::composerResourceBinding()
+{
+    return "composerResource";
+}
+
 QString MediaVocabulary::mediaResourceUrlBinding()
 {
     return "url";
@@ -1730,6 +1859,16 @@ QString MediaVocabulary::musicArtistNameBinding()
 QString MediaVocabulary::musicArtistDescriptionBinding()
 {
     return "artistDescription";
+}
+
+QString MediaVocabulary::musicComposerNameBinding()
+{
+    return "composer";
+}
+
+QString MediaVocabulary::musicComposerDescriptionBinding()
+{
+    return "composerDescription";
 }
 
 QString MediaVocabulary::musicArtistArtworkBinding()

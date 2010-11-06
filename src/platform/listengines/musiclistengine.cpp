@@ -82,8 +82,8 @@ void MusicListEngine::run()
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasMusicArtistDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Required));
+            query.addCondition(mediaVocabulary.hasMusicAnyArtistDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
@@ -164,7 +164,7 @@ void MusicListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
@@ -330,7 +330,9 @@ void MusicListEngine::run()
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
+            if (artistFilter.isEmpty()) {
+                query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Optional));
+            }
             query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicTrackNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
@@ -346,7 +348,7 @@ void MusicListEngine::run()
             orderByBindings.append(mediaVocabulary.musicAlbumTitleBinding());
             orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
             query.orderBy(orderByBindings);
-            
+
             QStringList urls;
             int limit = 100;
             int resultSetCount = limit;

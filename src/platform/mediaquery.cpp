@@ -329,7 +329,11 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                         value.toInt(),
                                                         constraint));
     } else if (field == "artist") {
-        addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required,
+        addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Required,
+                                                        value,
+                                                        constraint));
+    } else if (field == "composer") {
+        addCondition(mediaVocabulary.hasMusicComposerName(MediaQuery::Required,
                                                         value,
                                                         constraint));
     } else if (field == "album") {

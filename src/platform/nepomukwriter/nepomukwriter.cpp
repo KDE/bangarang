@@ -459,18 +459,35 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         if (fields["audioType"] == "Music") {
             if (fields.contains("artist")) {
                 QStringList artists  = fields["artist"].toString().split("||", QString::SkipEmptyParts);
-                res.removeProperty(mediaVocabulary.musicPerformer());
-                res.removeProperty(mediaVocabulary.musicComposer());;
+                res.removeProperty(mediaVocabulary.musicArtist());
                 if (!artists.isEmpty()) {
                     QList<Nepomuk::Variant> artistResources;
                     for (int i = 0; i < artists.count(); i++) {
                         Nepomuk::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(), artists.at(i), true);
                         artistResources.append(artistResource);
                     }
-                    res.setProperty(mediaVocabulary.musicArtist(), artistResources);
+                    res.setProperty(mediaVocabulary.musicPerformer(), artistResources);
                 } else {
-                    if (res.hasProperty(mediaVocabulary.musicArtist())) {
-                        res.removeProperty(mediaVocabulary.musicArtist());
+                    if (res.hasProperty(mediaVocabulary.musicPerformer())) {
+                        res.removeProperty(mediaVocabulary.musicPerformer());
+                    }
+                }
+            }
+            if (fields.contains("composer")) {
+                QStringList composers  = fields["composer"].toString().split("||", QString::SkipEmptyParts);
+                if (!composers.isEmpty()) {
+                    QList<Nepomuk::Variant> composerResources;
+                    for (int i = 0; i < composers.count(); i++) {
+                        outputMessage(Debug, composers.at(i));
+                        if (!composers.at(i).isEmpty()) {
+                            Nepomuk::Resource composerResource = findPropertyResourceByTitle(mediaVocabulary.musicComposer(), composers.at(i), true);
+                            composerResources.append(composerResource);
+                        }
+                    }
+                    res.setProperty(mediaVocabulary.musicComposer(), composerResources);
+                } else {
+                    if (res.hasProperty(mediaVocabulary.musicComposer())) {
+                        res.removeProperty(mediaVocabulary.musicComposer());
                     }
                 }
             }
@@ -700,6 +717,9 @@ Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QStr
     QUrl resourceProperty;
     QUrl resourceType;
     if (property == mediaVocabulary.musicArtist()) {
+        resourceProperty = mediaVocabulary.musicArtistName();
+        resourceType = mediaVocabulary.typeMusicArtist();
+    } else if (property == mediaVocabulary.musicComposer()) {
         resourceProperty = mediaVocabulary.musicArtistName();
         resourceType = mediaVocabulary.typeMusicArtist();
     } else if (property == mediaVocabulary.musicAlbum()) {
