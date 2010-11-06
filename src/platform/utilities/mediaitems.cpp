@@ -19,8 +19,10 @@
 #ifndef UTILITIES_MEDIAITEMS_CPP
 #define UTILITIES_MEDIAITEMS_CPP
 
+#include "mediaitems.h"
 #include "filetags.h"
 #include "typechecks.h"
+#include "general.h"
 #include "../mediaitemmodel.h"
 #include "../mediavocabulary.h"
 #include "../mediaquery.h"
@@ -72,8 +74,8 @@ MediaItem Utilities::getArtistCategoryItem(const QString &artist)
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
     query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required, artist, MediaQuery::Equal));
-    query.addCondition(mediaVocabulary.hasMusicArtistDescription(MediaQuery::Optional));
+    query.addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Required, artist, MediaQuery::Equal));
+    query.addCondition(mediaVocabulary.hasMusicAnyArtistDescription(MediaQuery::Optional));
     query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
     query.endWhere();
     query.addLimit(1);
@@ -385,15 +387,19 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
-            artistResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
-            for (int i = 0; i < artistResources.count(); i++) {
-                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
-            }
             artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
             if (artists.count() == 1) {
                 mediaItem.subTitle = artists.at(0);
             }
+
+            QStringList composers;
+            QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            for (int i = 0; i < composerResources.count(); i++) {
+                composers.append(composerResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            composers = cleanStringList(composers);
+            mediaItem.fields["composer"] = composers;
 
             QString album = res.property(mediaVocabulary.musicAlbum()).toResource()
                             .property(mediaVocabulary.musicAlbumName()).toString();
@@ -584,15 +590,19 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
-            artistResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
-            for (int i = 0; i < artistResources.count(); i++) {
-                artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
-            }
             artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
             if (artists.count() == 1) {
                 mediaItem.subTitle = artists.at(0);
             }
+
+            QStringList composers;
+            QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            for (int i = 0; i < composerResources.count(); i++) {
+                composers.append(composerResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
+            }
+            composers = cleanStringList(composers);
+            mediaItem.fields["composer"] = composers;
 
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             if (!album.isEmpty()) {

@@ -22,8 +22,9 @@
 #include "filetags.h"
 #include "typechecks.h"
 
-#include <KUrl>
+#include <KDebug>
 #include <KEncodingProber>
+#include <KUrl>
 
 #include <QByteArray>
 #include <QBuffer>
@@ -42,7 +43,9 @@
 #include <taglib/wavpackfile.h>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
+#include <taglib/id3v1tag.h>
 #include <taglib/id3v2tag.h>
+#include <taglib/textidentificationframe.h>
 #include <taglib/xiphcomment.h>
 #include <taglib/attachedpictureframe.h>
 
@@ -96,19 +99,19 @@ QString Utilities::tagType(const QString &url)
             return "APE";
         }
         TagLib::ID3v2::Tag *id3v2Tag = flacFile.ID3v2Tag(false);
-        if (id3v2Tag) {
+        if (!id3v2Tag->isEmpty()) {
             return "ID3V2";
         }
         TagLib::ID3v1::Tag *id3v1Tag = flacFile.ID3v1Tag(false);
-        if (id3v1Tag) {
+        if (!id3v1Tag->isEmpty()) {
             return "ID3V1";
         }
         id3v2Tag = mpegFile.ID3v2Tag(false);
-        if (id3v2Tag) {
+        if (!id3v2Tag->isEmpty()) {
             return "ID3V2";
         }
         id3v1Tag = mpegFile.ID3v1Tag(false);
-        if (id3v1Tag) {
+        if (!id3v1Tag->isEmpty()) {
             return "ID3V1";
         }
 
@@ -153,6 +156,12 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                 }
             }
         }
+        QString composer;
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
+        TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
+        if (!id3v2->frameListMap()["TCOM"].isEmpty()) {
+            composer = TStringToQString(id3v2->frameListMap()["TCOM"].front()->toString());
+        }
         int track   = file.tag()->track();
         int duration = file.audioProperties()->length();
         int year = file.tag()->year();
@@ -164,6 +173,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         mediaItem.fields["duration"] = duration;
         mediaItem.fields["title"] = title;
         mediaItem.fields["artist"] = artist;
+        mediaItem.fields["composer"] = composer;
         mediaItem.fields["album"] = album;
         mediaItem.fields["genre"] = genreFromRawTagGenre(genre);
         mediaItem.fields["trackNumber"] = track;
@@ -277,12 +287,35 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                     if (trackNumber != 0) {
                         file.tag()->setTrack(trackNumber);
                     }
-                    QString genre = mediaItem.fields["genre"].toString();
-                    if (!genre.isEmpty()) {
+                    QStringList genreList = mediaItem.fields["genre"].toStringList();
+                    if (!genreList.isEmpty()) {
+                        QString genre = genreList.at(0);
                         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
+                        /* This code is an attempt to store multiple genres to ID3V2 tags
+                         * TODO: figure out how taglib is used to store multiple genres
+                        TagLib::String tGenre(genreList.at(0).toUtf8().data(), TagLib::String::UTF8);
+                        for (int i = 1; i < genreList.count(); i++) {
+                            tGenre.append(char(0));
+                            tGenre.append(genreList.at(i).toUtf8().data());
+                        }*/
                         file.tag()->setGenre(tGenre);
                     }
                     file.save();
+                    //Save tag type specific fields
+                    QString composer = mediaItem.fields["composer"].toString();
+                    TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toUtf8().constData());
+                    TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
+                    TagLib::String tComposer(composer.toUtf8().data(), TagLib::String::UTF8);
+                    if (!id3v2->isEmpty()) {
+                        if (!id3v2->frameListMap()["TCOM"].isEmpty()) {
+                            id3v2->frameListMap()["TCOM"].front()->setText(tComposer);
+                        } else {
+                            TagLib::ID3v2::TextIdentificationFrame *tFrame = new TagLib::ID3v2::TextIdentificationFrame("TCOM", TagLib::String::UTF8);
+                            id3v2->addFrame(tFrame);
+                            tFrame->setText(tComposer);
+                        }
+                    }
+                    mpegFile.save();
                 }
             }
         }

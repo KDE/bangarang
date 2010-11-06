@@ -22,6 +22,7 @@
 #include "artwork.h"
 #include "typechecks.h"
 #include "filetags.h"
+#include "mediaitems.h"
 #include "../mediaitemmodel.h"
 #include "../mediaquery.h"
 #include "../mediavocabulary.h"

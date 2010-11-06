@@ -165,13 +165,26 @@ class MediaVocabulary {
                              int rating = -1, 
                              MediaQuery::Constraint constraint = MediaQuery::Equal);
         
-        QString hasMusicArtistName(MediaQuery::Match match = MediaQuery::Required, 
+        QString hasMusicAnyArtistName(MediaQuery::Match match = MediaQuery::Required,
+                                   const QString &artistName = QString(),
+                                   MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicAnyArtistDescription(MediaQuery::Match match = MediaQuery::Required,
+                                   const QString &artistDescription = QString(),
+                                   MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicArtistName(MediaQuery::Match match = MediaQuery::Required,
                                    const QString &artistName = QString(), 
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasMusicArtistDescription(MediaQuery::Match match = MediaQuery::Required,
                                    const QString &artistDescription = QString(),
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
         QString hasMusicArtistArtwork(MediaQuery::Match match = MediaQuery::Required);
+        QString hasMusicComposerName(MediaQuery::Match match = MediaQuery::Required,
+                                   const QString &composerName = QString(),
+                                   MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicComposerDescription(MediaQuery::Match match = MediaQuery::Required,
+                                   const QString &composerDescription = QString(),
+                                   MediaQuery::Constraint constraint = MediaQuery::Equal);
+        QString hasMusicComposerArtwork(MediaQuery::Match match = MediaQuery::Required);
         QString hasMusicAlbumTitle(MediaQuery::Match match = MediaQuery::Required,
                                    const QString &albumTitle = QString(),
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -239,6 +252,7 @@ class MediaVocabulary {
         static QString mediaResourceBinding();
         static QString mediaResourceUrlBinding();
         static QString artistResourceBinding();
+        static QString composerResourceBinding();
         static QString albumResourceBinding();
         static QString videoSeriesResourceBinding();
         static QString writerResourceBinding();
@@ -260,6 +274,8 @@ class MediaVocabulary {
         static QString musicArtistBinding();
         static QString musicArtistNameBinding();
         static QString musicArtistDescriptionBinding();
+        static QString musicComposerNameBinding();
+        static QString musicComposerDescriptionBinding();
         static QString musicArtistArtworkBinding();
         static QString musicAlbumBinding();
         static QString musicAlbumTitleBinding();
