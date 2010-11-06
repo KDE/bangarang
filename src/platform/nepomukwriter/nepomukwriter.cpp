@@ -478,7 +478,6 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 if (!composers.isEmpty()) {
                     QList<Nepomuk::Variant> composerResources;
                     for (int i = 0; i < composers.count(); i++) {
-                        outputMessage(Debug, composers.at(i));
                         if (!composers.at(i).isEmpty()) {
                             Nepomuk::Resource composerResource = findPropertyResourceByTitle(mediaVocabulary.musicComposer(), composers.at(i), true);
                             composerResources.append(composerResource);
