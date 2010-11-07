@@ -23,7 +23,6 @@
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
-#include <libkcompactdisc/kcompactdisc.h>
 #include <Soprano/Model>
 #include <phonon/mediaobject.h>
 
@@ -47,7 +46,6 @@ class CDListEngine : public ListEngine
         void run();
         
     private:
-        KCompactDisc *m_cdObject;
         Phonon::MediaObject *m_mediaObject;
         bool m_loadWhenReady;
     
