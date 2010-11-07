@@ -28,6 +28,7 @@
 #include <QImage>
 
 #include <taglib/id3v2tag.h>
+#include <taglib/xiphcomment.h>
 #include <taglib/attachedpictureframe.h>
 
 /**
@@ -47,6 +48,7 @@ namespace Utilities {
     int getDurationFromTag(const QString &url);
     int getTrackNumberFromTag(const QString &url);
     QStringList getID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type);
+    QStringList getXiphTextFields(TagLib::Ogg::XiphComment *xiph, const TagLib::ByteVector &type);
     void saveAllInfoToTag(const QList<MediaItem> &mediaList);
     bool saveArtworkToTag(const QString &url, const QPixmap *pixmap);
     bool saveArtworkToTag(const QString &url, const QString &imageUrl);
@@ -57,7 +59,8 @@ namespace Utilities {
     void setYearTag(const QString &url, int year);
     void setDurationTag(const QString &url, int duration);
     void setTrackNumberTag(const QString &url, int trackNumber);
-    void setID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type, QStringList values);
+    void setID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type, const QStringList &values);
+    void setXiphTextFields(TagLib::Ogg::XiphComment *xiph, const TagLib::ByteVector &type, const QStringList &values);
     TagLib::ID3v2::AttachedPictureFrame *attachedPictureFrame(TagLib::ID3v2::Tag *id3Tag, bool create = false);
     QHash<int, QString> tagGenreDictionary();
     QString genreFromRawTagGenre(QString rawTagGenre);
