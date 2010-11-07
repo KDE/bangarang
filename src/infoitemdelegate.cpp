@@ -606,6 +606,14 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
         lineEdit->setAutoFillBackground(true);
         return lineEdit;
     } else if (value.type() == QVariant::String) {
+        if (field == "description") {
+            QTextEdit *textEdit = new QTextEdit(parent);
+            textEdit->setAcceptRichText(false);
+            textEdit->setFont(KGlobalSettings::smallestReadableFont());
+            textEdit->setAutoFillBackground(true);
+            textEdit->setToolTip(i18n("Press <Tab> to finish editing."));
+            return textEdit;
+        }
         QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
         if (valueList.count() == 0) {
             KLineEdit *lineEdit = new KLineEdit(parent);
@@ -688,6 +696,10 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentIndex(), Qt::EditRole);
+    } else if (field == "description") {
+        QTextEdit * textEdit = qobject_cast<QTextEdit*>(editor);
+        model->setData(index, textEdit->toPlainText(), Qt::DisplayRole);
+        model->setData(index, textEdit->toPlainText(), Qt::EditRole);
     } else if (index.data(Qt::EditRole).type() == QVariant::StringList){
         KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
         QStringList textList = index.data(Qt::EditRole).toStringList();
