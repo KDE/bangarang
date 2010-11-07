@@ -49,11 +49,13 @@ DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
     m_fetchableFields["Artist"] = QStringList() << "artwork" << "title" << "description";
     m_fetchableFields["Actor"] = QStringList() << "artwork" << "title" << "description";
     m_fetchableFields["Director"] = QStringList() << "artwork" << "title" << "description";
+    m_fetchableFields["Movie"] = QStringList() << "artwork" << "title" << "description" << "actor" << "director" << "writer";
 
     //Define required fields
     m_requiredFields["Artist"] = QStringList() << "title";
     m_requiredFields["Actor"] = QStringList() << "title";
     m_requiredFields["Director"] = QStringList() << "title";
+    m_requiredFields["Movie"] = QStringList() << "title";
 }
 
 DBPediaInfoFetcher::~DBPediaInfoFetcher()
@@ -116,14 +118,16 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequir
             setFetching();
             m_dbPediaQuery->getDirectorInfo(mediaItem.fields["title"].toString());
         }
-        /*if (mediaItem.type == "Video") {
-            QString subType = mediaItem.fields["videoType"].toString();
-            if (subType == "Movie") {
-                m_mediaList.append(mediaItem);
-                kDebug() << "getting movie info:" << mediaList.count();
-                m_dbPediaQuery->getMovieInfo(mediaItem.title);
-            }
-        }*/
+        if (mediaItem.subType() == "Movie") {
+            m_mediaList.append(mediaItem);
+            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.fields["title"].toString()));
+            connect (m_dbPediaQuery,
+                     SIGNAL(gotMovieInfo(bool , const QList<Soprano::BindingSet>, const QString)),
+                     this,
+                     SLOT(gotMovieInfo(bool , const QList<Soprano::BindingSet>, const QString)));
+            setFetching();
+            m_dbPediaQuery->getMovieInfo(mediaItem.title);
+        }
     }
 }
 
@@ -193,39 +197,98 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
 
 void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
-    int index = -1;
-    for (int i = 0; i< m_mediaList.count(); i++) {
-        QString keyForCurrentItem = "Movie:" + m_mediaList.at(i).title;
-        if (keyForCurrentItem == requestKey) {
-            index = i;
-            break;
+    //Find corresponding MediaItem
+    m_requestKeys.removeAll(requestKey);
+    if (successful & !m_timeout) {
+        //Find item corresponding to fetched info
+        QString subType = requestKey.left(requestKey.indexOf(":"));
+        QString title = requestKey.mid(requestKey.indexOf(":") + 1);
+        MediaItem mediaItem;
+        int foundIndex = -1;
+        for (int i = 0; i < m_mediaList.count(); i++) {
+            MediaItem item = m_mediaList.at(i);
+            if (item.subType() == subType && item.fields["title"].toString() == title) {
+                mediaItem = item;
+                foundIndex = i;
+                break;
+            }
         }
-    }
-
-    kDebug() << "Got movie info for " << requestKey << " index:" << index << " successful:" << successful;
-    
-    if (index != -1 && successful) {
-        if (results.count() > 0) {
-            MediaItem mediaItem = m_mediaList.at(index);
-            
+        if (foundIndex != -1 && results.count() > 0) {
             Soprano::BindingSet binding = results.at(0);
             
             //Get Thumbnail
-            KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
-            if (thumbnailUrl.isValid()) {
-                //getThumbnail(thumbnailUrl);
+            if (m_updateArtwork) {
+                KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
+                if (thumbnailUrl.isValid()) {
+                    QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
+                                                  .arg(subType)
+                                                  .arg(title)
+                                                  .arg(thumbnailUrl.fileName());
+                    KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+                    QFile downloadTarget(thumbnailTargetUrl.path());
+                    downloadTarget.remove();
+                    m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
+                    emit download(thumbnailUrl, thumbnailTargetUrl);
+                }
             }
-            
+
             //Set Title
-            mediaItem.title = binding.value("title").literal().toString().trimmed();
-            mediaItem.fields["title"] = mediaItem.title;
-            
+            QString title = binding.value("title").literal().toString().trimmed();
+            if (!title.isEmpty() && m_updateRequiredFields) {
+                mediaItem.title = title;
+                mediaItem.fields["title"] = mediaItem.title;
+            }
+
             //Set Description
-            mediaItem.fields["description"] = binding.value("description").literal().toString().trimmed();
-            
-            m_mediaList.replace(index, mediaItem);
+            QString description = binding.value("description").literal().toString().trimmed();
+            if (!description.isEmpty()) {
+                mediaItem.fields["description"] = description;
+            }
+
+            //Set Actors, Directors, Writers
+            QStringList actors;
+            QStringList directors;
+            QStringList writers;
+            for (int i = 0; i < results.count(); i++) {
+                binding = results.at(i);
+                kDebug() << title;
+                if (mediaItem.title == binding.value("title").literal().toString().trimmed()) {
+                    QString actor = binding.value("actor").literal().toString().trimmed();
+                    if (actors.indexOf(actor) == -1) {
+                        actors.append(actor);
+                    }
+                    QString director = binding.value("directorr").literal().toString().trimmed();
+                    if (directors.indexOf(director) == -1) {
+                        directors.append(director);
+                    }
+                    QString writer = binding.value("writer").literal().toString().trimmed();
+                    if (writers.indexOf(writer) == -1) {
+                        writers.append(writer);
+                    }
+                }
+            }
+            if (!actors.isEmpty()) {
+                mediaItem.fields["actor"] = actors;
+            }
+            if (!directors.isEmpty()) {
+                mediaItem.fields["director"] = directors;
+            }
+            if (!writers.isEmpty()) {
+                mediaItem.fields["writer"] = writers;
+            }
+
+            m_mediaList.replace(foundIndex, mediaItem);
             emit infoFetched(mediaItem);
         }
+    }
+    if (m_requestKeys.count() == 0) {
+        m_isFetching = false;
+        if (!m_timeout) {
+            m_timer->stop();
+            emit fetchComplete();
+        }
+    } else if (!m_timeout){
+        m_timer->start(6000);
     }
 }
 

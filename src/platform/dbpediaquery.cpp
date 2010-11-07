@@ -26,7 +26,9 @@
 #include <Soprano/Node>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
+
 #include <QDomDocument>
+#include <QFile>
 
 DBPediaQuery::DBPediaQuery(QObject * parent) : QObject(parent)
 {
@@ -143,6 +145,8 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
                     "} ")
                     .arg(movieName);
     
+    kDebug() << query;
+
     //Create Request Key
     QString requestKey = QString("Movie:%1").arg(movieName);
     m_requests.clear();
