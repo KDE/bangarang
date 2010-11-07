@@ -128,24 +128,30 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
 void DBPediaQuery::getMovieInfo(const QString & movieName)
 {
     //Create query url
+    QString lang = KGlobal::locale()->language();
+    if (lang.size() > 2) {
+        lang = lang.left(2);
+    }
     QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?writer ?director ?actor"
+                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?duration ?actor ?writer ?director ?producer "
                     "WHERE { "
                     "{ ?work rdf:type dbo:Film . } "
                     "?work foaf:name ?title . "
                     "?title bif:contains \"'%1'\" . "
                     "?work rdfs:comment ?description . "
-                    "OPTIONAL { ?work dbo:director ?directorres . " 
+                    "OPTIONAL { ?work dbo:starring ?actorres . "
+                    "?actorres foaf:name ?actor . } "
+                    "OPTIONAL { ?work dbo:director ?directorres . "
                     "?directorres foaf:name ?director . } "
                     "OPTIONAL { ?work dbo:writer ?writerres . " 
                     "?writerres foaf:name ?writer . } "
-                    "OPTIONAL { ?work dbo:starring ?actorres . " 
-                    "?actorres foaf:name ?actor . } "
-                    "OPTIONAL {?work dbo:thumbnail ?thumbnail . } "
-                    "} ")
-                    .arg(movieName);
-    
-    kDebug() << query;
+                    "OPTIONAL { ?work dbo:producer ?producerres . "
+                    "?producerres foaf:name ?producer . } "
+                    "OPTIONAL { ?work dbo:duration ?duration . } "
+                    "OPTIONAL {?work foaf:depiction ?thumbnail . } "
+                    "FILTER (lang(?description) ='%2') } ")
+                    .arg(movieName)
+                    .arg(lang);
 
     //Create Request Key
     QString requestKey = QString("Movie:%1").arg(movieName);
