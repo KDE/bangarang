@@ -151,6 +151,7 @@ class InfoItemModel : public QStandardItemModel
 
     private:
         QList<MediaItem> m_mediaList;
+        QList<MediaItem> m_originalList;
         MediaItemModel * m_sourceModel;
         QHash<QString, QStringList> m_fieldsOrder;
         QHash<QString, QString> m_fieldNames;
@@ -166,6 +167,7 @@ class InfoItemModel : public QStandardItemModel
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
         bool isEmpty(const QString &field);
+        void updateMediaList();
         void saveFileMetaData(QList<MediaItem> mediaList);
         void saveCustomGenreInfo(QList<MediaItem> mediaList);
         bool getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride = QString());

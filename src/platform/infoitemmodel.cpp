@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "utilities/utilities.h"
 #include "infofetchers/dbpediainfofetcher.h"
+#include "infofetchers/feedinfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>
@@ -117,6 +118,12 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
     m_infoFetchers.append(dbPediaInfoFetcher);
 
+    FeedInfoFetcher * feedInfoFetcher = new FeedInfoFetcher(this);
+    connect(feedInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
+    connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    m_infoFetchers.append(feedInfoFetcher);
+
     //Setup indexer
     m_indexer = new MediaIndexer(this);
 }
@@ -129,6 +136,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
 {
     m_modified = false;
     m_mediaList = mediaList;
+    m_originalList = mediaList;
     clear();
     
     if (m_mediaList.count() > 0) {
@@ -176,70 +184,6 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
 
 void InfoItemModel::saveChanges()
 {
-    QList<MediaItem> updatedList;
-    for (int i = 0; i < m_mediaList.count(); i++) {
-        MediaItem mediaItem = m_mediaList.at(i);
-        for (int row = 0; row < rowCount(); row++) {
-            QStandardItem *currentItem = item(row, 0);
-            QString field = currentItem->data(InfoItemModel::FieldRole).toString();
-
-            //Save any field that does not have multiple values.
-            //If multiple items are selected and a field is edited
-            //then the edited field won't have multiple values
-            bool multipleValues = currentItem->data(InfoItemModel::MultipleValuesRole).toBool();
-            if (!multipleValues) { 
-                if (field == "audioType") {
-                    int value = currentItem->data(Qt::EditRole).toInt();
-                    if (value == 0) {
-                        mediaItem.fields["audioType"] = "Music";
-                    } else if (value == 1) {
-                        mediaItem.fields["audioType"] = "Audio Stream";
-                    } else if (value == 2) {
-                        mediaItem.fields["audioType"] = "Audio Clip";
-                    }
-                } else if (field == "videoType") {
-                    int value = currentItem->data(Qt::EditRole).toInt();
-                    if (value == 0) {
-                        mediaItem.fields["videoType"] = "Movie";
-                    } else if (value == 1) {
-                        mediaItem.fields["videoType"] = "TV Show";
-                    } else if (value == 2) {
-                        mediaItem.fields["videoType"] = "Video Clip";
-                    }
-                } else if (field == "title") {
-                    mediaItem.fields["title"] = currentItem->data(Qt::EditRole);
-                    mediaItem.title = currentItem->data(Qt::EditRole).toString();
-                } else if (field == "url") {
-                    if (mediaItem.fields["audioType"].toString() == "Audio Stream") {
-                        mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
-                        mediaItem.url = currentItem->data(Qt::EditRole).toString();
-                    }
-                } else if (field == "artwork") {
-                    QString artworkUrl = currentItem->data(Qt::EditRole).toString();
-                    mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).toString();
-                    if (!artworkUrl.isEmpty() && (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre")) {
-                        mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
-                        mediaItem.hasCustomArtwork = true;
-                    } else if (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre"){
-                        mediaItem.artwork = KIcon("flag-blue");
-                        mediaItem.hasCustomArtwork = false;
-                    }
-                } else if (field == "year") {
-                    mediaItem.fields["year"] = currentItem->data(Qt::EditRole);
-                    if (!mediaItem.fields["year"].isNull() && mediaItem.fields["year"].toInt() !=0) {
-                        mediaItem.fields["releaseDate"] = QDate(mediaItem.fields["year"].toInt(),1, 1);
-                    } else {
-                        mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
-                    }
-                } else {
-                    mediaItem.fields[field] = currentItem->data(Qt::EditRole);
-                }
-            }
-        }
-        updatedList << mediaItem;
-    }
-    m_mediaList = updatedList;
-
     //Update Custom Genre Info
     saveCustomGenreInfo(m_mediaList);
     
@@ -255,7 +199,7 @@ void InfoItemModel::saveChanges()
 
 void InfoItemModel::cancelChanges()
 {
-    loadInfo(m_mediaList);
+    loadInfo(m_originalList);
 }
 
 QList<MediaItem> InfoItemModel::mediaList()
@@ -348,6 +292,7 @@ void InfoItemModel::setRating(int rating)
         m_mediaList.replace(i, mediaItem);
         m_indexer->updateRating(mediaItem.fields["resourceUri"].toString(), rating);
     }
+    m_originalList = m_mediaList;
     for (int i = 0 ; i < rowCount(); i++) {
         QStandardItem *currentItem = item(i);
         if (currentItem->data(InfoItemModel::FieldRole).toString() == "rating") {
@@ -382,6 +327,8 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
         loadInfo(m_mediaList);
         emit infoChanged(false);
     } else if (foundIndex != -1 && m_fetchType == Fetch) {
+        m_mediaList.replace(foundIndex, mediaItem);
+
         //Update model data
         for (int i = 0; i < rowCount(); i++) {
             QString field = item(i)->data(InfoItemModel::FieldRole).toString();
@@ -410,6 +357,11 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
 
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable)
 {
+    //NOTE: This method must only be called by loadInfo.  The reason is that this
+    // method as well as supporting method, commonValue(), use m_mediaList to
+    // store the original value: loadInfo is the only place m_medialist and
+    // m_originalList are set equal.
+
     QList<QStandardItem *> rowData;
     QStandardItem *fieldItem = new QStandardItem();
     fieldItem->setData(field, InfoItemModel::FieldRole);
@@ -547,6 +499,8 @@ bool InfoItemModel::isEmpty(const QString &field)
                 isEmpty = !mediaItem.fields[field].toDateTime().isValid();
             } else if (fieldType == QVariant::Int){
                 isEmpty = !mediaItem.fields[field].isValid();
+            } else {
+                isEmpty = mediaItem.fields[field].isNull();
             }
             if (isEmpty) {
                 break;
@@ -554,6 +508,71 @@ bool InfoItemModel::isEmpty(const QString &field)
         }
     }
     return isEmpty;
+}
+
+void InfoItemModel::updateMediaList()
+{
+    QList<MediaItem> updatedList;
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        MediaItem mediaItem = m_mediaList.at(i);
+        for (int row = 0; row < rowCount(); row++) {
+            QStandardItem *currentItem = item(row, 0);
+            QString field = currentItem->data(InfoItemModel::FieldRole).toString();
+
+            //Save any field that does not have multiple values.
+            //If multiple items are selected and a field is edited
+            //then the edited field won't have multiple values
+            bool multipleValues = currentItem->data(InfoItemModel::MultipleValuesRole).toBool();
+            if (!multipleValues) {
+                if (field == "audioType") {
+                    int value = currentItem->data(Qt::EditRole).toInt();
+                    if (value == 0) {
+                        mediaItem.fields["audioType"] = "Music";
+                    } else if (value == 1) {
+                        mediaItem.fields["audioType"] = "Audio Stream";
+                    } else if (value == 2) {
+                        mediaItem.fields["audioType"] = "Audio Clip";
+                    }
+                } else if (field == "videoType") {
+                    int value = currentItem->data(Qt::EditRole).toInt();
+                    if (value == 0) {
+                        mediaItem.fields["videoType"] = "Movie";
+                    } else if (value == 1) {
+                        mediaItem.fields["videoType"] = "TV Show";
+                    } else if (value == 2) {
+                        mediaItem.fields["videoType"] = "Video Clip";
+                    }
+                } else if (field == "title") {
+                    mediaItem.fields["title"] = currentItem->data(Qt::EditRole);
+                    mediaItem.title = currentItem->data(Qt::EditRole).toString();
+                } else if (field == "url") {
+                    mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
+                    mediaItem.url = currentItem->data(Qt::EditRole).toString();
+                } else if (field == "artwork") {
+                    QString artworkUrl = currentItem->data(Qt::EditRole).toString();
+                    mediaItem.fields["artworkUrl"] = currentItem->data(Qt::EditRole).toString();
+                    if (!artworkUrl.isEmpty() && (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre")) {
+                        mediaItem.artwork = currentItem->data(Qt::DecorationRole).value<QIcon>();
+                        mediaItem.hasCustomArtwork = true;
+                    } else if (mediaItem.subType() == "AudioGenre" || mediaItem.subType() == "VideoGenre"){
+                        mediaItem.artwork = KIcon("flag-blue");
+                        mediaItem.hasCustomArtwork = false;
+                    }
+                } else if (field == "year") {
+                    mediaItem.fields["year"] = currentItem->data(Qt::EditRole);
+                    if (!mediaItem.fields["year"].isNull() && mediaItem.fields["year"].toInt() !=0) {
+                        mediaItem.fields["releaseDate"] = QDate(mediaItem.fields["year"].toInt(),1, 1);
+                    } else {
+                        mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
+                    }
+                } else {
+                    mediaItem.fields[field] = currentItem->data(Qt::EditRole);
+                }
+            }
+        }
+        updatedList << mediaItem;
+    }
+    m_mediaList = updatedList;
 }
 
 void InfoItemModel::itemChanged(QStandardItem *changedItem)
@@ -566,6 +585,11 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
             getArtwork(changedItem, artworkUrl);
             connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        } else if (field == "url") {
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            QString url = changedItem->data(Qt::EditRole).toString();
+            changedItem->setData(url, Qt::ToolTipRole);
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         } else {
             //Update drill for changed item
             QVariant value = changedItem->data(Qt::EditRole);
@@ -573,6 +597,7 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
             setDrill(changedItem, field, value);
             connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         }
+        updateMediaList();
     } else {
         m_modified = false;
         for (int row = 0; row < rowCount(); row++) {

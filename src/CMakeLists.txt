@@ -35,6 +35,7 @@ set(BangarangSources
     platform/ontologyupdater.cpp
     platform/playlist.cpp
     platform/infofetchers/dbpediainfofetcher.cpp
+    platform/infofetchers/feedinfofetcher.cpp
     platform/infofetchers/infofetcher.cpp
     platform/listengines/audioclipslistengine.cpp
     platform/listengines/audiostreamlistengine.cpp

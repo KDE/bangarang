@@ -241,7 +241,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     if (!resourceUri.isEmpty()) {
         res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
     }
-    if (type == "Category") {
+    if (type == "Category" &&
+        fields["categoryType"] != "Audio Feed" &&
+        fields["categoryType"] != "Video Feed") {
         QUrl categoryProperty;
         if (fields["categoryType"] == "Artist") {
             categoryProperty = mediaVocabulary.musicArtist();

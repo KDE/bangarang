@@ -156,6 +156,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             textFont.setItalic(true);
         }
     } else if (field == "url") {
+        textFont.setBold(modified);
         text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, dataRect.width());
     }
     if (multipleValues) {
