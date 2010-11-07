@@ -218,7 +218,9 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             
             //Get Thumbnail
             if (m_updateArtwork) {
-                KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
+                QString thumbnailUrlString = binding.value("thumbnail").uri().toString();
+                thumbnailUrlString.replace("wikipedia/commons/d/dd", "wikipedia/en/d/dd"); //Wikipedia appears to be storing posters here instead
+                KUrl thumbnailUrl = KUrl(thumbnailUrlString);
                 if (thumbnailUrl.isValid()) {
                     QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
                                                   .arg(subType)
@@ -245,10 +247,18 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
                 mediaItem.fields["description"] = description;
             }
 
+            //Set Duration
+            int duration = binding.value("duration").literal().toInt();
+            if (duration != 0) {
+                mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                mediaItem.fields["duration"] = duration;
+            }
+
             //Set Actors, Directors, Writers
             QStringList actors;
             QStringList directors;
             QStringList writers;
+            QStringList producers;
             for (int i = 0; i < results.count(); i++) {
                 binding = results.at(i);
                 kDebug() << title;
@@ -257,13 +267,17 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
                     if (actors.indexOf(actor) == -1) {
                         actors.append(actor);
                     }
-                    QString director = binding.value("directorr").literal().toString().trimmed();
+                    QString director = binding.value("director").literal().toString().trimmed();
                     if (directors.indexOf(director) == -1) {
                         directors.append(director);
                     }
                     QString writer = binding.value("writer").literal().toString().trimmed();
                     if (writers.indexOf(writer) == -1) {
                         writers.append(writer);
+                    }
+                    QString producer = binding.value("producer").literal().toString().trimmed();
+                    if (producers.indexOf(producer) == -1) {
+                        producers.append(producer);
                     }
                 }
             }
@@ -275,6 +289,9 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             }
             if (!writers.isEmpty()) {
                 mediaItem.fields["writer"] = writers;
+            }
+            if (!producers.isEmpty()) {
+                mediaItem.fields["producer"] = producers;
             }
 
             m_mediaList.replace(foundIndex, mediaItem);
