@@ -325,7 +325,7 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor)
     bindings.append(mediaVocabulary.artworkBinding());
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
     query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
     query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
     query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required, actor, MediaQuery::Equal));
@@ -334,7 +334,7 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor)
     Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
         QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
         if (!artwork.isNull()) {
             artworks.append(artwork);
@@ -354,7 +354,7 @@ QList<QImage> Utilities::getDirectorArtworks(const QString &director)
     bindings.append(mediaVocabulary.artworkBinding());
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
     query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
     query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
     query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required, director, MediaQuery::Equal));
@@ -363,7 +363,7 @@ QList<QImage> Utilities::getDirectorArtworks(const QString &director)
     Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
         QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
         if (!artwork.isNull()) {
             artworks.append(artwork);

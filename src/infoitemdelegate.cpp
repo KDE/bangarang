@@ -229,13 +229,15 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                 int transY = r*sin(rotRad + (3.14159/4)) - (artworkSize/2);
                 p.rotate(rot);
                 p.translate(transX, -transY);
-                p.fillRect(0,0,artworkSize, artworkSize, Qt::white);
-                p.drawPixmap(0, 0, artworkSize, artworkSize, artworkList.at(i).value<QPixmap>());
+                QPixmap artwork = artworkList.at(i).value<QPixmap>().scaledToHeight(artworkSize);
+                int ARxOffset = (artworkSize - artwork.width())/2;
+                p.fillRect(ARxOffset, 0, artwork.width(), artwork.height(), Qt::white);
+                p.drawPixmap(ARxOffset, 0, artwork.width(), artwork.height(), artwork);
                 if (artworkList.count() > 1) {
                     QColor outlineColor = QColor(Qt::black);
                     outlineColor.setAlphaF(0.7);
                     p.setPen(outlineColor);
-                    p.drawRect(0, 0, artworkSize, artworkSize);
+                    p.drawRect(ARxOffset, 0, artwork.width(), artwork.height());
                 }
                 p.translate(-transX, transY);
                 p.rotate(-rot);
