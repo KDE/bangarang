@@ -39,6 +39,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 
     m_defaultEditable = true;
     m_modified = false;
+    m_suppressFetchOnLoad = false;
 
     //Store field order
     m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "composer" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
@@ -159,7 +160,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
 
         //Upon selection of only one media item, launch Autofetch if NO info
         //is available in the fetchable fields of the media item.
-        if (m_mediaList.count() == 1) {
+        if (m_mediaList.count() == 1 && !m_suppressFetchOnLoad) {
             for (int i = 0; i < m_infoFetchers.count(); i++) {
                 if (autoFetchIsAvailable(m_infoFetchers.at(i))) {
                     QStringList fetchableFields = m_infoFetchers.at(i)->fetchableFields(subType);
@@ -178,8 +179,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 }
             }
         }
-
     }
+
+    //Fetch on load can only be suppressed for one load
+    m_suppressFetchOnLoad = false;
 }
 
 void InfoItemModel::saveChanges()
@@ -199,6 +202,7 @@ void InfoItemModel::saveChanges()
 
 void InfoItemModel::cancelChanges()
 {
+    m_suppressFetchOnLoad = true;
     loadInfo(m_originalList);
 }
 

@@ -162,6 +162,7 @@ class InfoItemModel : public QStandardItemModel
         QList<InfoFetcher *> m_infoFetchers;
         FetchType m_fetchType;
         MediaIndexer * m_indexer;
+        bool m_suppressFetchOnLoad;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);

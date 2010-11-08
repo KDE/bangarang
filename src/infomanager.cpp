@@ -178,8 +178,6 @@ void InfoManager::autoFetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->autoFetch(m_currentInfoFetcher);
     }
-    toggleShowInfoFetcherExpander();
-
 }
 
 void InfoManager::fetchInfo()
@@ -187,7 +185,6 @@ void InfoManager::fetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->fetch(m_currentInfoFetcher);
     }
-    toggleShowInfoFetcherExpander();
 }
 
 void InfoManager::selectInfoFetcher(int index)
