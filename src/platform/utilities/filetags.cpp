@@ -58,26 +58,34 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
-    TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
+    QImage attachedImage;
+    KMimeType::Ptr type = KMimeType::findByUrl(KUrl(url), 0, true);
+    if (type->is("audio/mpeg") ||
+        type->is("audio/MPA") ||
+        type->is("audio/mpa-robust") ||
+        type->is("audio/mp4") ||
+        type->is("video/mp4") ||
+        type->is("application/mp4")) {
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
 
-    if (!id3tag) {
-        return QImage();
+        if (id3tag->isEmpty()) {
+            return QImage();
+        }
+
+        TagLib::ID3v2::AttachedPictureFrame *selectedFrame = Utilities::attachedPictureFrame(id3tag);
+
+        if (!selectedFrame) { // Could occur for encrypted picture frames.
+            return QImage();
+        }
+
+        QByteArray pictureData = QByteArray(selectedFrame->picture().data(), selectedFrame->picture().size());
+        attachedImage = QImage::fromData(pictureData);
+
+        if (size != attachedImage.size() && !attachedImage.isNull()) {
+            attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
     }
-
-    TagLib::ID3v2::AttachedPictureFrame *selectedFrame = Utilities::attachedPictureFrame(id3tag);
-
-    if (!selectedFrame) { // Could occur for encrypted picture frames.
-        return QImage();
-    }
-
-    QByteArray pictureData = QByteArray(selectedFrame->picture().data(), selectedFrame->picture().size());
-    QImage attachedImage = QImage::fromData(pictureData);
-
-    if (size != attachedImage.size() && !attachedImage.isNull()) {
-        attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-
     return attachedImage;
 }
 
