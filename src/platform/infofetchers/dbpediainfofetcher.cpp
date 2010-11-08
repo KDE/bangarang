@@ -219,7 +219,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             //Get Thumbnail
             if (m_updateArtwork) {
                 QString thumbnailUrlString = binding.value("thumbnail").uri().toString();
-                thumbnailUrlString.replace("wikipedia/commons/d/dd", "wikipedia/en/d/dd"); //Wikipedia appears to be storing posters here instead
+                thumbnailUrlString.replace("/wikipedia/commons/", "/wikipedia/en/"); //Wikipedia appears to be storing posters here instead
                 KUrl thumbnailUrl = KUrl(thumbnailUrlString);
                 if (thumbnailUrl.isValid()) {
                     QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
