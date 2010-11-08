@@ -261,7 +261,6 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             QStringList producers;
             for (int i = 0; i < results.count(); i++) {
                 binding = results.at(i);
-                kDebug() << title;
                 if (mediaItem.title == binding.value("title").literal().toString().trimmed()) {
                     QString actor = binding.value("actor").literal().toString().trimmed();
                     if (actors.indexOf(actor) == -1) {
