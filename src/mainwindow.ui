@@ -874,8 +874,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>133</width>
+                    <height>219</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -2068,9 +2068,6 @@
                              </item>
                              <item>
                               <widget class="QToolButton" name="showInfoFetcherExpander">
-                               <property name="toolTip">
-                                <string>Additional info may be available...</string>
-                               </property>
                                <property name="text">
                                 <string/>
                                </property>

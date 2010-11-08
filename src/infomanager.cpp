@@ -178,7 +178,8 @@ void InfoManager::autoFetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->autoFetch(m_currentInfoFetcher);
     }
-    ui->infoFetcherExpander->setVisible(false);
+    toggleShowInfoFetcherExpander();
+
 }
 
 void InfoManager::fetchInfo()
@@ -186,7 +187,7 @@ void InfoManager::fetchInfo()
     if (m_currentInfoFetcher) {
         m_infoItemModel->fetch(m_currentInfoFetcher);
     }
-    ui->infoFetcherExpander->setVisible(false);
+    toggleShowInfoFetcherExpander();
 }
 
 void InfoManager::selectInfoFetcher(int index)
@@ -275,6 +276,11 @@ void InfoManager::infoChanged(bool modified)
 void InfoManager::toggleShowInfoFetcherExpander()
 {
     ui->infoFetcherExpander->setVisible(!ui->infoFetcherExpander->isVisible());
+    if (ui->infoFetcherExpander->isVisible()) {
+        ui->showInfoFetcherExpander->setToolTip(i18n("Click to hide"));
+    } else {
+        ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
+    }
     updateViewsLayout();
 }
 
@@ -494,6 +500,7 @@ void InfoManager::showInfoFetcher()
         } else {
             ui->infoFetcherMessage->setVisible(false);
             ui->showInfoFetcherExpander->setVisible(true);
+            ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
         }
         ui->infoAutoFetch->setVisible(autoFetchVisible);
         ui->infoFetch->setVisible(fetchVisible);
