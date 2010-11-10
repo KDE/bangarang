@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //Set up device notifier
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )), this, SLOT(deviceAdded(const QString & )));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString & )), this, SLOT(deviceRemoved(const QString & )));
-    
+
     //Set up media object
     m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));

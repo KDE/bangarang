@@ -148,6 +148,11 @@ void Playlist::playItemAt(int row, Model model)
         int title = nextMediaItem.fields["trackNumber"].toInt();
         if (m_mediaObject->currentSource().deviceName() != src.deviceName())
             m_mediaObject->setCurrentSource(src);
+        bool autoplay = m_mediaController->autoplayTitles();
+        if ( !autoplay )
+            m_mediaController->setAutoplayTitles(true);
+        m_mediaController->setCurrentTitle(title);
+        m_mediaController->setAutoplayTitles(autoplay);
         titleChanged(title);
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
