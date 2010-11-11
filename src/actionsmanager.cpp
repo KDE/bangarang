@@ -24,7 +24,6 @@
 #include "platform/mediaitemmodel.h"
 #include "platform/playlist.h"
 #include "platform/ontologyupdater.h"
-#include "platform/dvdcontroller.h"
 #include "platform/infofetchers/infofetcher.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
@@ -382,8 +381,6 @@ QMenu *ActionsManager::nowPlayingContextMenu()
         m_nowPlayingContextMenu->addAction(action("show_video_settings"));
     }
     m_nowPlayingContextMenu->addAction(action("toggle_controls"));
-    if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
-        m_nowPlayingContextMenu->addMenu(m_application->dvdController()->menu());
     return m_nowPlayingContextMenu;
 }
 
@@ -409,8 +406,6 @@ KMenu *ActionsManager::nowPlayingMenu()
     m_nowPlayingMenu->addAction(action("show_video_settings"));
     m_nowPlayingMenu->addAction(action("show_audio_settings"));
     m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
-    if (m_application->playlist()->mediaObject()->currentSource().discType() == Phonon::Dvd)
-        m_nowPlayingContextMenu->addMenu(m_application->dvdController()->menu());
     m_nowPlayingMenu->addSeparator();
     m_nowPlayingMenu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     return m_nowPlayingMenu;
@@ -436,17 +431,13 @@ QMenu *ActionsManager::bookmarksMenu()
     action("add_bookmark")->setEnabled((state == Phonon::PlayingState || state == Phonon::PausedState));
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         QString url = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
-        //chapters, if dvd
-        if (Utilities::isDvd(url) && m_application->dvdController()->chapterMenu()) {
-            QList<QAction *> chapters_actions = m_application->dvdController()->chapterMenu()->actions();
-            foreach (QAction *cur, chapters_actions) {
-                QVariant data = cur->data();
-                if (!data.isValid())
-                    continue;
-                int no = data.toInt();
-                QString title = i18n("Chapter %1").arg(no);
+        Phonon::MediaController *mctrl = m_application->playlist()->mediaController();
+        int noChaps = mctrl->availableChapters();
+        if (noChaps > 1) {
+            for (int i = 0; i < noChaps; i++) {
+                QString title = i18n("Chapter %1").arg(i);
                 QAction * ac = m_bookmarksMenu->addAction(KIcon("media-optical-dvd"), title);
-                ac->setData(QString("Chapter:%1").arg(no));
+                ac->setData(QString("Chapter:%1").arg(i));
             }
             m_bookmarksMenu->addSeparator();
         }
@@ -860,8 +851,8 @@ void ActionsManager::activateBookmark(QAction *bookmarkAction)
         m_application->playlist()->mediaObject()->seek(time);
     } else if (bookmark.startsWith("Chapter:")) {
         int no = bookmark.remove(0,8).toInt();
-        m_application->dvdController()->setChapter(no);
-    }        
+        m_application->playlist()->mediaController()->setCurrentChapter(no);
+    }
 }
 
 void ActionsManager::removeBookmark(QAction *bookmarkAction)

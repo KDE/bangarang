@@ -32,7 +32,6 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <platform/dvdcontroller.h>
 #include <QDBusInterface>
 #include <actionsmanager.h>
 #include <Solid/Device>
@@ -149,7 +148,11 @@ void Playlist::playItemAt(int row, Model model)
         int title = nextMediaItem.fields["trackNumber"].toInt();
         if (m_mediaObject->currentSource().deviceName() != src.deviceName())
             m_mediaObject->setCurrentSource(src);
-        m_application->dvdController()->setTitle(title);
+        bool autoplay = m_mediaController->autoplayTitles();
+        if ( !autoplay )
+            m_mediaController->setAutoplayTitles(true);
+        m_mediaController->setCurrentTitle(title);
+        m_mediaController->setAutoplayTitles(autoplay);
         titleChanged(title);
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();

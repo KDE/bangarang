@@ -30,7 +30,6 @@
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
 #include "platform/utilities/utilities.h"
-#include "platform/dvdcontroller.h"
 
 #include <KCmdLineArgs>
 #include <KConfig>
@@ -77,10 +76,6 @@ void BangarangApplication::setup()
     //Set up main window
     m_mainWindow = new MainWindow();
     
-    //Set up the Dvd Controller
-    m_dvdController = new DvdController(m_mainWindow, m_playlist->mediaController());
-    m_dvdController->setShowChapterMenu(false);
-        
     //Setup Info Manager
     m_infoManager = new InfoManager(m_mainWindow);
 
@@ -257,7 +252,6 @@ Phonon::MediaObject * BangarangApplication::newMediaObject()
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setTickInterval(500);
     m_playlist->setMediaObject(m_mediaObject);
-    m_dvdController->setMediaController(m_playlist->mediaController());
     m_audioSettings->setMediaController(m_playlist->mediaController());
     m_videoSettings->setMediaController(m_playlist->mediaController());
     m_videoPath.reconnect(m_mediaObject, m_mainWindow->videoWidget());

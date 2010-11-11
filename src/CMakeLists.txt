@@ -25,7 +25,6 @@ set(BangarangSources
     platform/bangarangvideowidget.cpp
     platform/dbpediaquery.cpp
     platform/downloader.cpp
-    platform/dvdcontroller.cpp
     platform/infoitemmodel.cpp
     platform/mediaitemmodel.cpp
     platform/mediaindexer.cpp
