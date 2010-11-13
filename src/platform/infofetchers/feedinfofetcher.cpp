@@ -34,10 +34,6 @@ FeedInfoFetcher::FeedInfoFetcher(QObject *parent) :
 {
     m_name = i18n("Feed Info");
     m_icon = KIcon("application-rss+xml");
-    m_timeout = false;
-    m_timer = new QTimer(this);
-    m_timer->setSingleShot(true);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 
     m_downloader = new Downloader(this);
     connect(this, SIGNAL(download(KUrl,KUrl)), m_downloader, SLOT(download(KUrl,KUrl)));
@@ -55,16 +51,6 @@ FeedInfoFetcher::FeedInfoFetcher(QObject *parent) :
 
 FeedInfoFetcher::~FeedInfoFetcher()
 {
-}
-
-QStringList FeedInfoFetcher::fetchableFields(const QString &subType)
-{
-    return m_fetchableFields[subType];
-}
-
-QStringList FeedInfoFetcher::requiredFields(const QString &subType)
-{
-    return m_requiredFields[subType];
 }
 
 bool FeedInfoFetcher::available(const QString &subType)
@@ -208,23 +194,6 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
             emit fetchComplete();
         }
     } else if (!m_timeout){
-        m_timer->start(6000);
+        m_timer->start(m_timeoutLength);
     }
 }
-
-void FeedInfoFetcher::setFetching()
-{
-    m_isFetching = true;
-    m_timer->start(6000);
-    emit fetching();
-}
-
-void FeedInfoFetcher::timeout()
-{
-    kDebug() << "TIMEOUT";
-    m_timeout = true;
-    m_isFetching = false;
-    emit fetchComplete();
-}
-
-

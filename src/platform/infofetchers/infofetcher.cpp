@@ -19,12 +19,19 @@
 #include "infofetcher.h"
 #include "../mediaitemmodel.h"
 #include <KIcon>
+#include <KDebug>
 
 InfoFetcher::InfoFetcher(QObject * parent) : QObject(parent)
 {
     m_name = QString();
     m_icon = KIcon("run-build");
     m_isFetching = false;
+    m_timeout = false;
+    m_timeoutLength = 6000;
+    m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
+
 }
 
 InfoFetcher::~InfoFetcher()
@@ -156,3 +163,19 @@ QStringList InfoFetcher::valueList(const QString &field)
     }
     return value;   
 }
+
+void InfoFetcher::setFetching()
+{
+    m_isFetching = true;
+    m_timer->start(m_timeoutLength);
+    emit fetching();
+}
+
+void InfoFetcher::timeout()
+{
+    kDebug() << "TIMEOUT";
+    m_timeout = true;
+    m_isFetching = false;
+    emit fetchComplete();
+}
+

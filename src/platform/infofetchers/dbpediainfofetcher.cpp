@@ -32,10 +32,7 @@ DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
 {
     m_name = i18n("DBPedia");
     //m_icon = KIcon("dbpedia");
-    m_timeout = false;
-    m_timer = new QTimer(this);
-    m_timer->setSingleShot(true);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
+
     m_dbPediaQuery = new DBPediaQuery(this);
     connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
     connect (m_dbPediaQuery, SIGNAL(gotActorInfo(bool , const QList<Soprano::BindingSet>, const QString)), this, SLOT(gotPersonInfo(bool , const QList<Soprano::BindingSet>, const QString)));
@@ -60,16 +57,6 @@ DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
 
 DBPediaInfoFetcher::~DBPediaInfoFetcher()
 {
-}
-
-QStringList DBPediaInfoFetcher::fetchableFields(const QString &subType)
-{
-    return m_fetchableFields[subType];
-}
-
-QStringList DBPediaInfoFetcher::requiredFields(const QString &subType)
-{
-    return m_requiredFields[subType];
 }
 
 bool DBPediaInfoFetcher::available(const QString &subType)
@@ -191,7 +178,7 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
             emit fetchComplete();
         }
     } else if (!m_timeout){
-        m_timer->start(6000);
+        m_timer->start(m_timeoutLength);
     }
 }
 
@@ -304,7 +291,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             emit fetchComplete();
         }
     } else if (!m_timeout){
-        m_timer->start(6000);
+        m_timer->start(m_timeoutLength);
     }
 }
 
@@ -337,19 +324,4 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
             emit infoFetched(mediaItem);
         }
     }
-}
-
-void DBPediaInfoFetcher::setFetching()
-{
-    m_isFetching = true;
-    m_timer->start(6000);
-    emit fetching();
-}
-
-void DBPediaInfoFetcher::timeout()
-{
-    kDebug() << "TIMEOUT";
-    m_timeout = true;
-    m_isFetching = false;
-    emit fetchComplete();
 }

@@ -36,13 +36,11 @@ class InfoFetcher : public QObject
         QIcon icon();
         virtual QStringList fetchableFields(const QString &subType)
         {
-            Q_UNUSED(subType);
-            return QStringList();
+            return m_fetchableFields[subType];
         }
         virtual QStringList requiredFields(const QString &subType)
         {
-            Q_UNUSED(subType);
-            return QStringList();
+            return m_requiredFields[subType];
         }
         virtual bool available(const QString &subType)
         {
@@ -80,11 +78,20 @@ class InfoFetcher : public QObject
         QHash<QString, QStringList> m_fetchableFields;
         QHash<QString, QStringList> m_requiredFields;
         bool m_isFetching;
-        
+        bool m_updateRequiredFields;
+        bool m_updateArtwork;
+        bool m_timeout;
+        QTimer *m_timer;
+        int m_timeoutLength;
+
         void setValue(const QString &field, const QVariant &value);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);
+        void setFetching();
+
+    protected slots:
+        void timeout();
         
     signals:
         void infoFetched(MediaItem mediaItem);

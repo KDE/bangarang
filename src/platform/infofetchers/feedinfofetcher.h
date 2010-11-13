@@ -31,24 +31,15 @@ class FeedInfoFetcher : public InfoFetcher
     public:
         FeedInfoFetcher(QObject *parent = 0);
         ~FeedInfoFetcher();
-        QStringList fetchableFields(const QString &subType);
-        QStringList requiredFields(const QString &subType);
         bool available(const QString &subType);
 
     private:
         Downloader * m_downloader;
-        bool m_timeout;
-        QTimer *m_timer;
         QStringList m_requestKeys;
-        bool m_updateRequiredFields;
-        bool m_updateArtwork;
         QHash<QString, QString> m_thumbnailKeys;
-
-        void setFetching();
 
     private slots:
         void gotFeedInfo(const KUrl &from, const KUrl &to);
-        void timeout();
 
     signals:
         void download(const KUrl &from, const KUrl &to);
