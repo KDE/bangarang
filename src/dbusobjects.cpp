@@ -99,7 +99,7 @@ MprisPlayerObject::MprisPlayerObject(BangarangApplication *app_)
 : QObject(app_), app(app_)
 {
     qDBusRegisterMetaType<MprisStatusStruct>();
-    connect(app->playlist()->mediaObject(), SIGNAL(currentSourceChanged(const Phonon::MediaSource&)), this, SLOT(slotTrackChange()));
+    connect(app->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackChange()));
     connect(app->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(slotStatusChange()));
     connect(app->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(slotStatusChange()));
     connect(app->playlist()->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(slotMediaStateChange(Phonon::State,Phonon::State)));
@@ -192,7 +192,7 @@ QVariantMap MprisPlayerObject::GetMetadata()
     map["genre"] = item.fields.value("genre");
 //     map["rating"] = item.fields.value("rating");
     map["year"] = item.fields.value("year");
-//     map["arturl"] = item.fields.value("artworkUrl");
+    map["arturl"] = item.fields.value("artworkUrl");
     return map;// TODO: more metadata
 }
 

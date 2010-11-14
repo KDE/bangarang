@@ -26,6 +26,7 @@
 #include <KUrl>
 #include <KIcon>
 #include <KDebug>
+#include <KStandardDirs>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
 #include <Nepomuk/ResourceManager>
@@ -679,8 +680,8 @@ void Playlist::playlistChanged()
 
 void Playlist::updateNowPlaying()
 {
-    //ACTUALLY UPDATE THE NOW PLAYING VIEW HERE!
-    //THIS SHOULD BE THE ONLY PLACE THAT UPDATES THE NOW PLAYING VIEW!
+    //ACTUALLY UPDATE THE NOW PLAYING MODEL HERE!
+    //THIS SHOULD BE THE ONLY PLACE THAT UPDATES THE NOW PLAYING MODEL!
     
     //Get row and url of previously playing item and add to history
     int oldItemRow = -1;
@@ -706,13 +707,25 @@ void Playlist::updateNowPlaying()
         }
     }
     
-    //Update Now Playing view
+    //Update Now Playing model
     if (queueRow != -1) {
         MediaItem nowPlayingItem = m_queue->mediaItemAt(queueRow);
+
+        //Get artwork
         QPixmap artwork = Utilities::getArtworkFromMediaItem(nowPlayingItem);
         if (!artwork.isNull()) {
             nowPlayingItem.artwork = KIcon(artwork);
         }
+        //Create a file containing artwork so that it can, for example,
+        //be exposed through the MPRIS dbus interface.
+        if (nowPlayingItem.fields["artworkUrl"].toString().isEmpty()) {
+            QString thumbnailTargetFile = QString("bangarang/thumbnails/nowPlaying-artwork.png");
+            KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+            nowPlayingItem.artwork.pixmap(200,200).save(thumbnailTargetUrl.path(), "PNG");
+            nowPlayingItem.fields["artworkUrl"] = thumbnailTargetUrl.path();
+        }
+
+        //Update model
         if (m_nowPlaying->rowCount() > 0) {
             m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem, true);
         } else {
