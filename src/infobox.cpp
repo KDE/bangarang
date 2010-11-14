@@ -107,6 +107,7 @@ void InfoBox::setInfo(const QString &title, const QString & lri)
         m_mediaView->setMode(MediaItemDelegate::MiniMode);
     }
     MediaItemModel * model = (MediaItemModel *)m_mediaView->sourceModel();
+    hide();
     model->loadLRI(lri);
 }
 
