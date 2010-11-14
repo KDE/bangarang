@@ -360,6 +360,7 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
         if (!thumbnail.isNull()) {
             match.artwork = QIcon(thumbnail);
             match.fields["artworkUrl"] = to.prettyUrl();
+            match.hasCustomArtwork = true;
             m_fetchedMatches.replace(foundIndex, match);
             emit updateFetchedInfo(foundIndex, match);
         }
