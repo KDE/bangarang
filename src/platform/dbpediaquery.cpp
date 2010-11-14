@@ -202,10 +202,18 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
 
     QList<Soprano::BindingSet> resultsBindingSets;
     QString requestKey = m_requests.key(from);
+    /*kDebug() << "Final From Url:" << from.prettyUrl();
+    QHashIterator<QString, KUrl> i(m_requests);
+    while (i.hasNext()) {
+        i.next();
+        kDebug() << i.key() << ": " << (from.prettyUrl() == i.value().prettyUrl()) << ": " << i.value();
+    }*/
+
     QFile file(to.path());
 
     //Check to see if result file can be opened
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text) ||
+        requestKey.isEmpty()) {
         kDebug() << QString("Couldn't open dbpedia query result file:%1").arg(from.path());
         if (requestKey.startsWith("Artist")) {
             emit gotArtistInfo(false, resultsBindingSets, requestKey);

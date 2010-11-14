@@ -314,7 +314,6 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
                     if (!producers.isEmpty()) {
                         match.fields["producer"] = producers;
                     }
-                    m_mediaList.replace(foundIndex, match);
                     m_fetchedMatches.append(match);
                 }
 
@@ -358,9 +357,11 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
     if (foundIndex != -1) {
         QString thumbnailFile = to.path();
         QPixmap thumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        match.artwork = QIcon(thumbnail);
-        match.fields["artworkUrl"] = to.prettyUrl();
-        m_fetchedMatches.replace(foundIndex, match);
-        emit updateFetchedInfo(foundIndex, match);
+        if (!thumbnail.isNull()) {
+            match.artwork = QIcon(thumbnail);
+            match.fields["artworkUrl"] = to.prettyUrl();
+            m_fetchedMatches.replace(foundIndex, match);
+            emit updateFetchedInfo(foundIndex, match);
+        }
     }
 }
