@@ -183,6 +183,7 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
             MediaItem mediaItem = m_mediaList.at(foundIndex);
             mediaItem.artwork = QIcon(thumbnail);
             mediaItem.fields["artworkUrl"] = to.prettyUrl();
+            mediaItem.hasCustomArtwork = true;
             m_mediaList.replace(foundIndex, mediaItem);
             QList<MediaItem> fetchedMatches;
             fetchedMatches.append(mediaItem);
