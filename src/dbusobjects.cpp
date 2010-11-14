@@ -190,7 +190,7 @@ QVariantMap MprisPlayerObject::GetMetadata()
     map["tracknumber"] = item.fields.value("trackNumber");
     map["time"] = item.fields.value("duration");
     map["genre"] = item.fields.value("genre");
-//     map["rating"] = item.fields.value("rating");
+    map["rating"] = item.fields.value("rating");
     map["year"] = item.fields.value("year");
     map["arturl"] = item.fields.value("artworkUrl");
     return map;// TODO: more metadata
@@ -281,7 +281,7 @@ QVariantMap MprisTrackListObject::GetMetadata(int index)
     map["tracknumber"] = item.fields.value("trackNumber");
     map["time"] = item.fields.value("duration");
     map["genre"] = item.fields.value("genre");
-//     map["rating"] = item.fields.value("rating");
+    map["rating"] = item.fields.value("rating");
     map["year"] = item.fields.value("year");
 //     map["arturl"] = item.fields.value("artworkUrl");
     return map;// TODO: more metadata
