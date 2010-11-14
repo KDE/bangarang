@@ -101,6 +101,8 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_restrictedFields["Actor"] = QStringList() << "title";
     m_restrictedFields["Director"] = QStringList() << "title";
     m_restrictedFields["VideoTag"] = QStringList() << "artwork" << "title";
+    m_restrictedFields["Basic"] = QStringList() << "title";
+    m_restrictedFields["Basic+Artwork"] = QStringList() << "artwork" << "title";
 
     m_drillLris["Artist"] = "music://albums?artist=%1";
     m_drillLris["Album"] = "music://songs?album=%1";
@@ -157,7 +159,8 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                 (field == "url")) {
                 addFieldToValuesModel(i18n("Location"), "album", false); //or the user would see the ugly udi
             } else {
-                bool isEditable = !m_restrictedFields[subType].contains(field);
+                QStringList restrictedFields = m_restrictedFields.value(subType, m_restrictedFields["Basic"]);
+                bool isEditable = !restrictedFields.contains(field);
                 addFieldToValuesModel(m_fieldNames[field],field, isEditable);
             }
         }
