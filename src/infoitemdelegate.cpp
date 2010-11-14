@@ -441,7 +441,8 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                 model->setData(index, QString(""), Qt::EditRole);
             } else {
                 //Get artwork url from user
-                KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(), m_parent, i18n("Open artwork file"));
+                QString artworkUrl = index.data(Qt::EditRole).toString();
+                KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(artworkUrl), m_parent, i18n("Open artwork file"));
                 if (newUrl.isValid()) {
                     model->setData(index, newUrl.url(), Qt::EditRole);
                     model->setData(index, false, InfoItemModel::MultipleValuesRole);

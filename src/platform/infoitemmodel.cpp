@@ -314,9 +314,9 @@ void InfoItemModel::selectFetchedMatch(int index)
 
     //Find corresponding media item
     int foundIndex = -1;
-    MediaItem mediaItem = m_fetchedMatches.at(index);
+    MediaItem match = m_fetchedMatches.at(index);
     for (int i = 0; i < m_mediaList.count(); i++) {
-        if (m_mediaList.at(i).url == mediaItem.url) {
+        if (m_mediaList.at(i).url == match.url) {
             foundIndex = i;
             break;
         }
@@ -327,13 +327,13 @@ void InfoItemModel::selectFetchedMatch(int index)
     }
 
     m_selectedFetchedMatch = index;
-    m_mediaList.replace(foundIndex, mediaItem);
+    m_mediaList.replace(foundIndex, match);
 
     //Update model data
     for (int i = 0; i < rowCount(); i++) {
         QString field = item(i)->data(InfoItemModel::FieldRole).toString();
         if (field == "audioType" || field == "videoType") {
-            QString subType = mediaItem.subType();
+            QString subType = match.subType();
             QVariant value;
             if (subType == "Music" || subType == "Movie") {
                 value = QVariant(0);
@@ -345,12 +345,14 @@ void InfoItemModel::selectFetchedMatch(int index)
             item(i)->setData(value, Qt::DisplayRole);
             item(i)->setData(value, Qt::EditRole);
         } else if (field == "artwork") {
-            item(i)->setData(mediaItem.artwork, Qt::DecorationRole);
-            item(i)->setData(mediaItem.fields["artworkUrl"], Qt::DisplayRole);
-            item(i)->setData(mediaItem.fields["artworkUrl"], Qt::EditRole);
+            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            item(i)->setData(match.artwork, Qt::DecorationRole);
+            item(i)->setData(match.fields["artworkUrl"], Qt::DisplayRole);
+            item(i)->setData(match.fields["artworkUrl"], Qt::EditRole);
+            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         } else {
-            item(i)->setData(mediaItem.fields[field], Qt::DisplayRole);
-            item(i)->setData(mediaItem.fields[field], Qt::EditRole);
+            item(i)->setData(match.fields[field], Qt::DisplayRole);
+            item(i)->setData(match.fields[field], Qt::EditRole);
         }
     }
 
@@ -383,18 +385,18 @@ void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
 {
     //Find corresponding media item
     int foundIndex = -1;
-    MediaItem mediaItem = fetchedMatches.at(0);
+    MediaItem match = fetchedMatches.at(0);
     for (int i = 0; i < m_mediaList.count(); i++) {
-        if (m_mediaList.at(i).url == mediaItem.url) {
+        if (m_mediaList.at(i).url == match.url) {
             foundIndex = i;
             break;
         }
     }
     if (foundIndex != -1 && m_fetchType == AutoFetch) {
-        m_mediaList.replace(foundIndex, mediaItem);
+        m_mediaList.replace(foundIndex, match);
 
         //Cache autofetched info in nepomuk
-        m_indexer->updateInfo(mediaItem);
+        m_indexer->updateInfo(match);
 
         //Ensure original values in model are updated to reflect saved(no-edits) state
         m_suppressFetchOnLoad = true;
@@ -671,7 +673,7 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
         for (int row = 0; row < rowCount(); row++) {
             QStandardItem *otherItem = item(row, 0);
             if (otherItem->data(InfoItemModel::FieldRole).toString() != "artwork") {
-                if (otherItem->data(Qt::DisplayRole) != otherItem->data(InfoItemModel::OriginalValueRole)) {
+                if (otherItem->data(Qt::EditRole) != otherItem->data(InfoItemModel::OriginalValueRole)) {
                     m_modified = true;
                     break;
                 }
