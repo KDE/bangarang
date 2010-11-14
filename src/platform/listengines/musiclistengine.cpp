@@ -384,6 +384,8 @@ void MusicListEngine::run()
                     mediaList.clear();
                     offset += limit;
                     query.addOffset(offset);
+                } else {
+                    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
                 }
             }
         } 
