@@ -270,7 +270,7 @@ QVariantMap MprisTrackListObject::GetMetadata(int index)
 {
     if ( index < 0 || index >= GetLength() || GetLength() == 0 )
         return QVariantMap();
-    MediaItem item = app->playlist()->nowPlayingModel()->mediaList().value(index);
+    MediaItem item = app->playlist()->playlistModel()->mediaList().value(index);
     if ( item.type != "Audio" && item.type != "Video" )
         return QVariantMap();
     QVariantMap map;
@@ -300,15 +300,13 @@ int MprisTrackListObject::GetLength()
 int MprisTrackListObject::AddTrack(const QString &url, bool playImmediately)
 {
     MediaItem item = Utilities::mediaItemFromUrl( KUrl( url ) );
-    if ( playImmediately ) {
-        // insert the item at the first place
-        QList<MediaItem> mediaList = app->browsingModel()->mediaList();
-        mediaList.insert( 0, item );
-        app->playlist()->playlistModel()->setMediaListProperties(app->browsingModel()->mediaListProperties());
-        app->playlist()->playMediaList(mediaList);
-        return 0;
-    }
     app->playlist()->addMediaItem( item );
+    if (playImmediately) {
+        int playlistIndex = app->playlist()->playlistModel()->rowCount() - 1;
+        if (playlistIndex >=0) {
+            app->playlist()->playItemAt(playlistIndex, Playlist::PlaylistModel);
+        }
+    }
     return 0;
 }
 
