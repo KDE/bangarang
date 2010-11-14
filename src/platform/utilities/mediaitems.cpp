@@ -190,8 +190,9 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
             mediaItem.artwork = KIcon("audio-x-generic");
         } else if (mediaItem.fields["audioType"] == "Music") {
             mediaItem.artwork = KIcon("audio-mp4");
-            //File metadata is always primary for music items.
-            mediaItem = Utilities::getAllInfoFromTag(mediaItem.url, mediaItem);
+            if (!foundInNepomuk || preferFileMetaData) {
+                mediaItem = Utilities::getAllInfoFromTag(mediaItem.url, mediaItem);
+            }
         } else if (mediaItem.fields["audioType"] == "Audio Stream") {
             mediaItem.artwork = KIcon("text-html");
             if (mediaItem.title.isEmpty()) {
