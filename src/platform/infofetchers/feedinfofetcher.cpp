@@ -148,7 +148,9 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
 
         if (mediaItemUpdated) {
             m_mediaList.replace(foundIndex, mediaItem);
-            emit infoFetched(mediaItem);
+            QList<MediaItem> fetchedMatches;
+            fetchedMatches.append(mediaItem);
+            emit infoFetched(fetchedMatches);
         }
 
         //Fetch Thumbnail
@@ -182,7 +184,9 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
             mediaItem.artwork = QIcon(thumbnail);
             mediaItem.fields["artworkUrl"] = to.prettyUrl();
             m_mediaList.replace(foundIndex, mediaItem);
-            emit infoFetched(mediaItem);
+            QList<MediaItem> fetchedMatches;
+            fetchedMatches.append(mediaItem);
+            emit infoFetched(fetchedMatches);
         }
         m_requestKeys.removeAll(requestKey);
     }

@@ -41,8 +41,7 @@ class DBPediaQuery : public QObject
     private:
         QString m_queryPrefix;
         QHash<QString, KUrl> m_requests;
-        int m_artistInfoBindingsCount;
-        int m_albumInfoBindingsCount;
+        QString m_lang;
         void launchQuery(const QString &query, const QString &requestKey);
         
     Q_SIGNALS:

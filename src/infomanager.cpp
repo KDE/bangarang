@@ -84,8 +84,9 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoFetch, SIGNAL(clicked()), this, SLOT(fetchInfo()));
     connect(ui->showInfoFetcherExpander, SIGNAL(clicked()), this, SLOT(toggleShowInfoFetcherExpander()));
     connect(ui->infoFetcherSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectInfoFetcher(int)));
-    connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showInfoFetcher()));
-    connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(showInfoFetcher()));
+    connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showFetching()));
+    connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(fetchComplete()));
+    connect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
 
     connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), this, SLOT(infoChanged(bool)));
@@ -162,6 +163,9 @@ void InfoManager::saveItemInfo()
     //Now that data is saved hide Save/Cancel controls
     ui->infoSaveHolder->setVisible(false);
     showIndexer();
+    if (ui->infoFetcherExpander->isVisible()) {
+        toggleShowInfoFetcherExpander();
+    }
     updateViewsLayout();
 }
 
@@ -170,6 +174,9 @@ void InfoManager::cancelItemEdit()
     m_infoItemModel->cancelChanges();
     ui->infoSaveHolder->setVisible(false);
     showIndexer();
+    if (ui->infoFetcherExpander->isVisible()) {
+        toggleShowInfoFetcherExpander();
+    }
     updateViewsLayout();
 }
 
@@ -189,8 +196,9 @@ void InfoManager::fetchInfo()
 
 void InfoManager::selectInfoFetcher(int index)
 {
-    if (index < 0)
+    if (index < 0) {
       return;
+  }
     m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(index);
 }
 
@@ -277,6 +285,7 @@ void InfoManager::toggleShowInfoFetcherExpander()
         ui->showInfoFetcherExpander->setToolTip(i18n("Click to hide"));
     } else {
         ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
+        ui->infoFetcherExpander->setCurrentIndex(0);  //switch to infofetcher selector page everytime it is hidden.
     }
     updateViewsLayout();
 }
@@ -358,6 +367,9 @@ void InfoManager::loadSelectedInfo()
 
     //Load contextual data into info model and info boxes
     m_infoItemModel->loadInfo(m_context);
+
+    //Show/Hide Info Fetcher
+    showInfoFetcher();
 
     //Get context data for info boxes
     QStringList contextLRIs;
@@ -466,43 +478,80 @@ void InfoManager::showIndexer()
 
 void InfoManager::showInfoFetcher()
 {
-    bool infoFetcherVisible = false;
-    bool autoFetchVisible = false;
-    bool fetchVisible = false;
     if (m_infoItemModel->availableInfoFetchers().count() > 0) {
-        infoFetcherVisible = true;
-        bool isFetching = false;
+        //Show Info Fetcher UI
+        //bool isFetching = false;
+        ui->infoFetcherMessage->setVisible(false);
+        ui->showInfoFetcherExpander->setVisible(true);
+        ui->infoFetcherHolder->setVisible(true);
+
+        //Load available InfoFetchers and determine if any are fetching info
         ui->infoFetcherSelector->clear();
         for (int i = 0; i < m_infoItemModel->availableInfoFetchers().count(); i++) {
             InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
             ui->infoFetcherSelector->addItem(infoFetcher->icon(), infoFetcher->name());
             if (infoFetcher->isFetching()) {
-                isFetching = true;
-                m_currentInfoFetcher = infoFetcher;
                 ui->infoFetcherSelector->setCurrentIndex(i);
+                m_currentInfoFetcher = infoFetcher;
             }
         }
-        if (!isFetching) {
-            ui->infoFetcherSelector->setCurrentIndex(0);
+
+        //Select default InfoFetcher
+        if (ui->infoFetcherSelector->currentIndex() == -1) {
             m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
-            autoFetchVisible = m_infoItemModel->autoFetchIsAvailable(m_currentInfoFetcher);
-            fetchVisible = m_infoItemModel->fetchIsAvailable(m_currentInfoFetcher);
+            ui->infoFetcherSelector->setCurrentIndex(0);
         }
-    }
-    ui->infoFetcherHolder->setVisible(infoFetcherVisible);
-    if (infoFetcherVisible) {
-        if (m_currentInfoFetcher->isFetching()) {
-            ui->infoFetcherMessage->setVisible(true);
-            ui->showInfoFetcherExpander->setVisible(false);
-        } else {
-            ui->infoFetcherMessage->setVisible(false);
-            ui->showInfoFetcherExpander->setVisible(true);
-            ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
-        }
+
+        //Offer Autofetch and Fetch buttons
+        bool autoFetchVisible = m_infoItemModel->autoFetchIsAvailable(m_currentInfoFetcher);
+        bool fetchVisible = m_infoItemModel->fetchIsAvailable(m_currentInfoFetcher);
         ui->infoAutoFetch->setVisible(autoFetchVisible);
         ui->infoFetch->setVisible(fetchVisible);
+
+    } else {
+        ui->infoFetcherHolder->setVisible(false);
     }
-    ui->infoFetcherExpander->setVisible(false);
+}
+
+void InfoManager::showFetching()
+{
+    //Hide everything but the fetching message
+    ui->infoFetcherMessage->setVisible(true);
+    ui->showInfoFetcherExpander->setVisible(false);
+    if (ui->infoFetcherExpander->isVisible()) {
+        toggleShowInfoFetcherExpander();
+    }
+    ui->infoFetcherHolder->setVisible(true);
+}
+
+void InfoManager::fetchComplete()
+{
+    //Hide fetching message
+    ui->infoFetcherMessage->setVisible(false);
+    ui->showInfoFetcherExpander->setVisible(true);
+
+    //Determine if multiple matches are available for fetched info and show them
+    if (m_infoItemModel->fetchedMatches().count() > 1) {
+        disconnect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
+        ui->fetchedMatches->clear();
+        QList<MediaItem> fetchedMatches = m_infoItemModel->fetchedMatches();
+        for (int i = 0; i < fetchedMatches.count(); i++) {
+            ui->fetchedMatches->addItem(fetchedMatches.at(i).title);
+        }
+        ui->fetchedMatches->setCurrentRow(0);;
+        connect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
+        ui->infoFetcherExpander->setCurrentIndex(1);
+        if (!ui->infoFetcherExpander->isVisible()) {
+            toggleShowInfoFetcherExpander();
+        }
+        ui->fetchedMatches->setFocus();
+    } else {
+        ui->infoFetcherExpander->setCurrentIndex(0);
+        if (ui->infoFetcherExpander->isVisible()) {
+            toggleShowInfoFetcherExpander();
+        }
+    }
+    ui->infoFetcherHolder->setVisible(true);
 }
 
 void InfoManager::updateViewsLayout()

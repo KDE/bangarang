@@ -44,8 +44,11 @@ DBPediaQuery::DBPediaQuery(QObject * parent) : QObject(parent)
                             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
                             "PREFIX dbo: <http://dbpedia.org/ontology/> ");
                             
-     m_artistInfoBindingsCount = 3;
-     m_albumInfoBindingsCount = 3;
+     m_lang = KGlobal::locale()->language();
+     if (m_lang.size() > 2) {
+         m_lang = m_lang.left(2);
+     }
+
 }
 
 DBPediaQuery::~DBPediaQuery()
@@ -55,18 +58,20 @@ DBPediaQuery::~DBPediaQuery()
 void DBPediaQuery::getArtistInfo(const QString & artistName)
 {
     //Create query url
-    QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?artistName ?description ?thumbnail "
+    QString query = m_queryPrefix +
+                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
                     "WHERE { "
-                    "{ ?person rdf:type dbo:Band . } "
+                    "{?person rdf:type dbo:Band . } "
                     "UNION "
                     "{?person rdf:type dbo:MusicalArtist . } "
-                    "?person foaf:name ?artistName . "
-                    "?artistName bif:contains \"'%1'\" . "
-                    "?person rdfs:comment ?description . "
+                    "?person foaf:name ?name . "
+                    "?name bif:contains \"'%1'\" . "
+                    "OPTIONAL {?person rdfs:comment ?description . "
+                               "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
                     "} ")
-                    .arg(artistName);
+                    .arg(artistName)
+                    .arg(m_lang);
     
     //Create Request Key
     QString requestKey = QString("Artist:%1").arg(artistName);
@@ -84,16 +89,18 @@ void DBPediaQuery::getAlbumInfo(const QString & albumName)
 void DBPediaQuery::getActorInfo(const QString & actorName)
 {
     //Create query url
-    QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?actorName ?description ?thumbnail "
+    QString query = m_queryPrefix +
+                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
                     "WHERE { "
-                    "{ ?person rdf:type dbo:Actor . } "
-                    "?person foaf:name ?actorName . "
-                    "?actorName bif:contains \"'%1'\" . "
-                    "?person rdfs:comment ?description . "
+                    "?person rdf:type dbo:Actor . "
+                    "?person foaf:name ?name . "
+                    "?name bif:contains \"'%1'\" . "
+                    "OPTIONAL {?person rdfs:comment ?description . "
+                               "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
                     "} ")
-                    .arg(actorName);
+                    .arg(actorName)
+                    .arg(m_lang);
     
     //Create Request Key
     QString requestKey = QString("Actor:%1").arg(actorName);
@@ -106,16 +113,18 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
 void DBPediaQuery::getDirectorInfo(const QString & directorName)
 {
     //Create query url
-    QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?directorName ?description ?thumbnail "
+    QString query = m_queryPrefix +
+                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
                     "WHERE { "
-                    "{ ?work dbo:director ?person . } "
-                    "?person foaf:name ?directorName . "
-                    "?directorName bif:contains \"'%1'\" . "
-                    "?person rdfs:comment ?description . "
+                    "?person rdf:type dbo:Director . "
+                    "?person foaf:name ?name . "
+                    "?name bif:contains \"'%1'\" . "
+                    "OPTIONAL {?person rdfs:comment ?description . "
+                               "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
                     "} ")
-                    .arg(directorName);
+                    .arg(directorName)
+                    .arg(m_lang);
     
     //Create Request Key
     QString requestKey = QString("Director:%1").arg(directorName);
@@ -128,10 +137,6 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
 void DBPediaQuery::getMovieInfo(const QString & movieName)
 {
     //Create query url
-    QString lang = KGlobal::locale()->language();
-    if (lang.size() > 2) {
-        lang = lang.left(2);
-    }
     QString query = m_queryPrefix + 
                     QString("SELECT DISTINCT ?title ?description ?thumbnail ?duration ?actor ?writer ?director ?producer "
                     "WHERE { "
@@ -151,7 +156,7 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
                     "OPTIONAL {?work foaf:depiction ?thumbnail . } "
                     "FILTER (lang(?description) ='%2') } ")
                     .arg(movieName)
-                    .arg(lang);
+                    .arg(m_lang);
 
     //Create Request Key
     QString requestKey = QString("Movie:%1").arg(movieName);
@@ -225,49 +230,25 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     QDomNodeList results = resultsDoc.elementsByTagName("result");
     for (int i = 0; i < results.count(); i++) {
         QDomNodeList resultBindings = results.at(i).childNodes();
-        bool addResult = true;
-        
-        //Check bindings for explicit language attributes and only add
-        //result if explicit language attribute matches system default;
+        Soprano::BindingSet bindingSet = Soprano::BindingSet();
         for (int j = 0; j < resultBindings.count(); j++) {
-            QDomNode currentBinding = resultBindings.at(j);
+            QDomElement currentBinding = resultBindings.at(j).toElement();
+            QString bindingName = currentBinding.attribute("name");
+            Soprano::Node value;
             QDomElement currentBindingContent = currentBinding.firstChild().toElement();
-            if (currentBindingContent.tagName() == "literal") {
-                if (currentBindingContent.hasAttribute("xml:lang")) {
-                    addResult = false;
-                    QString language = currentBindingContent.attribute("xml:lang");
-                    if (language == KLocale::defaultLanguage()) {
-                        addResult = true;
-                    } else if (language.startsWith(KLocale::defaultLanguage()) ||
-                        KLocale::defaultLanguage().startsWith(language)) {
-                        addResult = true;
-                    }
+            if (currentBindingContent.tagName() == "uri") {
+                value = Soprano::Node(QUrl(currentBindingContent.text()));
+            } else if (currentBindingContent.tagName() == "literal") {
+                if (currentBindingContent.attribute("datatype") == "http://www.w3.org/2001/XMLSchema#date") {
+                    QDate dateValue = QDate::fromString(currentBindingContent.text(), "yyyy-MM-dd");
+                    value = Soprano::Node(Soprano::LiteralValue(dateValue));
+                } else {
+                    value = Soprano::Node(Soprano::LiteralValue(currentBindingContent.text()));
                 }
             }
+            bindingSet.insert(bindingName, value);
         }
-        
-        //Add results
-        if (addResult) {
-            Soprano::BindingSet bindingSet = Soprano::BindingSet();
-            for (int j = 0; j < resultBindings.count(); j++) {
-                QDomElement currentBinding = resultBindings.at(j).toElement();
-                QString bindingName = currentBinding.attribute("name");
-                Soprano::Node value;
-                QDomElement currentBindingContent = currentBinding.firstChild().toElement();
-                if (currentBindingContent.tagName() == "uri") {
-                    value = Soprano::Node(QUrl(currentBindingContent.text()));
-                } else if (currentBindingContent.tagName() == "literal") {
-                    if (currentBindingContent.attribute("datatype") == "http://www.w3.org/2001/XMLSchema#date") {
-                        QDate dateValue = QDate::fromString(currentBindingContent.text(), "yyyy-MM-dd");
-                        value = Soprano::Node(Soprano::LiteralValue(dateValue));
-                    } else {
-                        value = Soprano::Node(Soprano::LiteralValue(currentBindingContent.text()));
-                    }
-                }
-                bindingSet.insert(bindingName, value);
-            }
-            resultsBindingSets.append(bindingSet);
-        }
+        resultsBindingSets.append(bindingSet);
     }
     
     //Check type of request and emit appropriate results signal

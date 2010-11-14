@@ -72,6 +72,7 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequir
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     m_requestKeys.clear();
+    m_fetchedMatches.clear();
     m_updateArtwork = updateArtwork;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
@@ -137,38 +138,57 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
             }
         }
         if (foundIndex != -1 && results.count() > 0) {
-            Soprano::BindingSet binding = results.at(0);
-            //Get Thumbnail
-            if (m_updateArtwork) {
-                KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
-                if (thumbnailUrl.isValid()) {
-                    QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
-                                                  .arg(subType)
-                                                  .arg(title)
-                                                  .arg(thumbnailUrl.fileName());
-                    KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
-                    QFile downloadTarget(thumbnailTargetUrl.path());
-                    downloadTarget.remove();
-                    m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
-                    emit download(thumbnailUrl, thumbnailTargetUrl);
+            for (int i = 0; i < results.count(); i++) {
+                Soprano::BindingSet binding = results.at(i);
+                QString name = binding.value("name").literal().toString().trimmed();
+                bool newName = true;
+
+                //Check if this result is for a new title
+                if (!m_fetchedMatches.isEmpty()) {
+                    for (int j = 0; j < m_fetchedMatches.count(); j++) {
+                        if (m_fetchedMatches.at(j).title == name) {
+                            newName = false;
+                        }
+                    }
+                }
+
+                //Create new match item based on result and add to matches
+                if (newName && !name.isEmpty()) {
+                    MediaItem match = mediaItem;
+
+                    //Get Thumbnail
+                    if (m_updateArtwork) {
+                        KUrl thumbnailUrl = KUrl(binding.value("thumbnail").uri());
+                        if (thumbnailUrl.isValid()) {
+                            QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
+                                                          .arg(subType)
+                                                          .arg(title)
+                                                          .arg(thumbnailUrl.fileName());
+                            KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+                            QFile downloadTarget(thumbnailTargetUrl.path());
+                            downloadTarget.remove();
+                            m_thumbnailKeys[QString("%1:%2").arg(subType).arg(name)] = thumbnailUrl.prettyUrl();
+                            emit download(thumbnailUrl, thumbnailTargetUrl);
+                        }
+                    }
+
+                    //Set Title
+                    match.title = name;
+                    if (m_updateRequiredFields) {
+                        match.fields["title"] = mediaItem.title;
+                    }
+
+                    //Set Description
+                    QString description = binding.value("description").literal().toString().trimmed();
+                    if (!description.isEmpty()) {
+                        match.fields["description"] = description;
+                    }
+                    m_fetchedMatches.append(match);
                 }
             }
-
-            //Set Title
-            QString title = binding.value("title").literal().toString().trimmed();
-            if (!title.isEmpty() && m_updateRequiredFields) {
-                mediaItem.title = title;
-                mediaItem.fields["title"] = mediaItem.title;
+            if (!m_fetchedMatches.isEmpty()) {
+                emit infoFetched(m_fetchedMatches);
             }
-
-            //Set Description
-            QString description = binding.value("description").literal().toString().trimmed();
-            if (!description.isEmpty()) {
-                mediaItem.fields["description"] = description;
-            }
-
-            m_mediaList.replace(foundIndex, mediaItem);
-            emit infoFetched(mediaItem);
         }
     }
     if (m_requestKeys.count() == 0) {
@@ -201,87 +221,108 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             }
         }
         if (foundIndex != -1 && results.count() > 0) {
-            Soprano::BindingSet binding = results.at(0);
-            
-            //Get Thumbnail
-            if (m_updateArtwork) {
-                QString thumbnailUrlString = binding.value("thumbnail").uri().toString();
-                thumbnailUrlString.replace("/wikipedia/commons/", "/wikipedia/en/"); //Wikipedia appears to be storing posters here instead
-                KUrl thumbnailUrl = KUrl(thumbnailUrlString);
-                if (thumbnailUrl.isValid()) {
-                    QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
-                                                  .arg(subType)
-                                                  .arg(title)
-                                                  .arg(thumbnailUrl.fileName());
-                    KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
-                    QFile downloadTarget(thumbnailTargetUrl.path());
-                    downloadTarget.remove();
-                    m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
-                    emit download(thumbnailUrl, thumbnailTargetUrl);
-                }
-            }
-
-            //Set Title
-            QString title = binding.value("title").literal().toString().trimmed();
-            if (!title.isEmpty() && m_updateRequiredFields) {
-                mediaItem.title = title;
-                mediaItem.fields["title"] = mediaItem.title;
-            }
-
-            //Set Description
-            QString description = binding.value("description").literal().toString().trimmed();
-            if (!description.isEmpty()) {
-                mediaItem.fields["description"] = description;
-            }
-
-            //Set Duration
-            int duration = binding.value("duration").literal().toInt();
-            if (duration != 0) {
-                mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                mediaItem.fields["duration"] = duration;
-            }
-
-            //Set Actors, Directors, Writers
-            QStringList actors;
-            QStringList directors;
-            QStringList writers;
-            QStringList producers;
             for (int i = 0; i < results.count(); i++) {
-                binding = results.at(i);
-                if (mediaItem.title == binding.value("title").literal().toString().trimmed()) {
-                    QString actor = binding.value("actor").literal().toString().trimmed();
-                    if (actors.indexOf(actor) == -1) {
-                        actors.append(actor);
-                    }
-                    QString director = binding.value("director").literal().toString().trimmed();
-                    if (directors.indexOf(director) == -1) {
-                        directors.append(director);
-                    }
-                    QString writer = binding.value("writer").literal().toString().trimmed();
-                    if (writers.indexOf(writer) == -1) {
-                        writers.append(writer);
-                    }
-                    QString producer = binding.value("producer").literal().toString().trimmed();
-                    if (producers.indexOf(producer) == -1) {
-                        producers.append(producer);
+                Soprano::BindingSet binding = results.at(i);
+                QString title = binding.value("title").literal().toString().trimmed();
+                bool newTitle = true;
+
+                //Check if this result is for a new title
+                if (!m_fetchedMatches.isEmpty()) {
+                    for (int j = 0; j < m_fetchedMatches.count(); j++) {
+                        if (m_fetchedMatches.at(j).title == title) {
+                            newTitle = false;
+                        }
                     }
                 }
+
+                //Create new match item based on result and add to matches
+                if (newTitle && !title.isEmpty()) {
+                    MediaItem match = mediaItem;
+
+                    //Get Thumbnail
+                    if (m_updateArtwork) {
+                        QString thumbnailUrlString = binding.value("thumbnail").uri().toString();
+                        thumbnailUrlString.replace("/wikipedia/commons/", "/wikipedia/en/"); //Wikipedia appears to be storing posters here instead
+                        KUrl thumbnailUrl = KUrl(thumbnailUrlString);
+                        if (thumbnailUrl.isValid()) {
+                            QString thumbnailTargetFile = QString("bangarang/thumbnails/%1-%2-%3")
+                                                          .arg(subType)
+                                                          .arg(title)
+                                                          .arg(thumbnailUrl.fileName());
+                            KUrl thumbnailTargetUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailTargetFile, true));
+                            QFile downloadTarget(thumbnailTargetUrl.path());
+                            downloadTarget.remove();
+                            m_thumbnailKeys[QString("%1:%2").arg(subType).arg(title)] = thumbnailUrl.prettyUrl();
+                            emit download(thumbnailUrl, thumbnailTargetUrl);
+                        }
+                    }
+
+                    //Set Title
+                    match.title = title;
+                    if (m_updateRequiredFields) {
+                        match.fields["title"] = title;
+                    }
+
+                    //Set Description
+                    QString description = binding.value("description").literal().toString().trimmed();
+                    if (!description.isEmpty()) {
+                        match.fields["description"] = description;
+                    }
+
+                    //Set Duration
+                    int duration = binding.value("duration").literal().toInt();
+                    if (duration != 0) {
+                        match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        match.fields["duration"] = duration;
+                    }
+
+                    //Set Actors, Directors, Writers
+                    QStringList actors;
+                    QStringList directors;
+                    QStringList writers;
+                    QStringList producers;
+                    for (int j = 0; j < results.count(); j++) {
+                        binding = results.at(j);
+                        if (match.title == binding.value("title").literal().toString().trimmed()) {
+                            QString actor = binding.value("actor").literal().toString().trimmed();
+                            if (actors.indexOf(actor) == -1) {
+                                actors.append(actor);
+                            }
+                            QString director = binding.value("director").literal().toString().trimmed();
+                            if (directors.indexOf(director) == -1) {
+                                directors.append(director);
+                            }
+                            QString writer = binding.value("writer").literal().toString().trimmed();
+                            if (writers.indexOf(writer) == -1) {
+                                writers.append(writer);
+                            }
+                            QString producer = binding.value("producer").literal().toString().trimmed();
+                            if (producers.indexOf(producer) == -1) {
+                                producers.append(producer);
+                            }
+                        }
+                    }
+                    if (!actors.isEmpty()) {
+                        match.fields["actor"] = actors;
+                    }
+                    if (!directors.isEmpty()) {
+                        match.fields["director"] = directors;
+                    }
+                    if (!writers.isEmpty()) {
+                        match.fields["writer"] = writers;
+                    }
+                    if (!producers.isEmpty()) {
+                        match.fields["producer"] = producers;
+                    }
+                    m_mediaList.replace(foundIndex, match);
+                    m_fetchedMatches.append(match);
+                }
+
             }
-            if (!actors.isEmpty()) {
-                mediaItem.fields["actor"] = actors;
-            }
-            if (!directors.isEmpty()) {
-                mediaItem.fields["director"] = directors;
-            }
-            if (!writers.isEmpty()) {
-                mediaItem.fields["writer"] = writers;
-            }
-            if (!producers.isEmpty()) {
-                mediaItem.fields["producer"] = producers;
+            if (!m_fetchedMatches.isEmpty()) {
+                emit infoFetched(m_fetchedMatches);
             }
 
-            m_mediaList.replace(foundIndex, mediaItem);
-            emit infoFetched(mediaItem);
         }
     }
     if (m_requestKeys.count() == 0) {
@@ -298,30 +339,28 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
 
 void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
 {
-    QString thumbnailFile = to.path();
-    QPixmap thumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    if (!thumbnail.isNull())  {
-        //Find item corresponding to fetched info
-        QString requestKey = m_thumbnailKeys.key(from.prettyUrl());
-        QString subType = requestKey.left(requestKey.indexOf(":"));
-        QString title = requestKey.mid(requestKey.indexOf(":") + 1);
-        MediaItem mediaItem;
-        int foundIndex = -1;
-        for (int i = 0; i < m_mediaList.count(); i++) {
-            MediaItem item = m_mediaList.at(i);
-            if (item.subType() == subType && item.fields["title"].toString() == title) {
-                mediaItem = item;
-                foundIndex = i;
-                break;
-            }
+    //Find item corresponding to fetched thumbnail
+    QString requestKey = m_thumbnailKeys.key(from.prettyUrl());
+    QString subType = requestKey.left(requestKey.indexOf(":"));
+    QString title = requestKey.mid(requestKey.indexOf(":") + 1);
+    MediaItem match;
+    int foundIndex = -1;
+    for (int i = 0; i < m_fetchedMatches.count(); i++) {
+        MediaItem item = m_fetchedMatches.at(i);
+        if (item.subType() == subType && item.title == title) {
+            match = item;
+            foundIndex = i;
+            break;
         }
+    }
 
-        //Update artwork
-        if (foundIndex != -1) {
-            mediaItem.artwork = QIcon(thumbnail);
-            mediaItem.fields["artworkUrl"] = to.prettyUrl();
-            m_mediaList.replace(foundIndex, mediaItem);
-            emit infoFetched(mediaItem);
-        }
+    //Update artwork
+    if (foundIndex != -1) {
+        QString thumbnailFile = to.path();
+        QPixmap thumbnail = QPixmap(thumbnailFile).scaled(200,200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        match.artwork = QIcon(thumbnail);
+        match.fields["artworkUrl"] = to.prettyUrl();
+        m_fetchedMatches.replace(foundIndex, match);
+        emit updateFetchedInfo(foundIndex, match);
     }
 }

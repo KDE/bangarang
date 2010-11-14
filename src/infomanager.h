@@ -91,6 +91,8 @@ class InfoManager : public QObject
         void infoChanged(bool modified);
         void fetchInfo();
         void autoFetchInfo();
+        void showFetching();
+        void fetchComplete();
         void showInfoFetcher();
         void toggleShowInfoFetcherExpander();
         void selectInfoFetcher(int index);

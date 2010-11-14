@@ -114,16 +114,20 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 
     //Set up InfoFetchers
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
-    connect(dbPediaInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
+    connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(dbPediaInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(dbPediaInfoFetcher);
 
     FeedInfoFetcher * feedInfoFetcher = new FeedInfoFetcher(this);
-    connect(feedInfoFetcher, SIGNAL(infoFetched(MediaItem)), this, SLOT(infoFetched(MediaItem)));
+    connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
+
+    m_selectedFetchedMatch = -1;
 
     //Setup indexer
     m_indexer = new MediaIndexer(this);
@@ -138,6 +142,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     m_modified = false;
     m_mediaList = mediaList;
     m_originalList = mediaList;
+    m_fetchedMatches.clear();
     clear();
     
     if (m_mediaList.count() > 0) {
@@ -279,13 +284,73 @@ bool InfoItemModel::fetchIsAvailable(InfoFetcher* infoFetcher)
 void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredFields, bool updateArtwork)
 {
     m_fetchType = AutoFetch;
+    m_fetchedMatches.clear();
+    m_selectedFetchedMatch = -1;
     infoFetcher->fetchInfo(m_mediaList, updateRequiredFields, updateArtwork);
 }
 
 void InfoItemModel::fetch(InfoFetcher* infoFetcher)
 {
     m_fetchType = Fetch;
+    m_fetchedMatches.clear();
+    m_selectedFetchedMatch = -1;
     infoFetcher->fetchInfo(m_mediaList, true, true);
+}
+
+QList<MediaItem> InfoItemModel::fetchedMatches()
+{
+    return m_fetchedMatches;
+}
+
+void InfoItemModel::selectFetchedMatch(int index)
+{
+    if (index >= m_fetchedMatches.count() ||
+        index < 0) {
+        return;
+    }
+
+    //Find corresponding media item
+    int foundIndex = -1;
+    MediaItem mediaItem = m_fetchedMatches.at(index);
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        if (m_mediaList.at(i).url == mediaItem.url) {
+            foundIndex = i;
+            break;
+        }
+    }
+
+    if (foundIndex == -1) {
+        return;
+    }
+
+    m_selectedFetchedMatch = index;
+    m_mediaList.replace(foundIndex, mediaItem);
+
+    //Update model data
+    for (int i = 0; i < rowCount(); i++) {
+        QString field = item(i)->data(InfoItemModel::FieldRole).toString();
+        if (field == "audioType" || field == "videoType") {
+            QString subType = mediaItem.subType();
+            QVariant value;
+            if (subType == "Music" || subType == "Movie") {
+                value = QVariant(0);
+            } else if (subType == "Audio Stream" || subType == "TV Show") {
+                value = QVariant(1);
+            } else if (subType == "Audio Clip" || subType == "Video Clip") {
+                value = QVariant(2);
+            }
+            item(i)->setData(value, Qt::DisplayRole);
+            item(i)->setData(value, Qt::EditRole);
+        } else if (field == "artwork") {
+            item(i)->setData(mediaItem.artwork, Qt::DecorationRole);
+            item(i)->setData(mediaItem.fields["artworkUrl"], Qt::DisplayRole);
+            item(i)->setData(mediaItem.fields["artworkUrl"], Qt::EditRole);
+        } else {
+            item(i)->setData(mediaItem.fields[field], Qt::DisplayRole);
+            item(i)->setData(mediaItem.fields[field], Qt::EditRole);
+        }
+    }
+
 }
 
 void InfoItemModel::setRating(int rating)
@@ -311,10 +376,11 @@ void InfoItemModel::setRating(int rating)
 }
 
 
-void InfoItemModel::infoFetched(MediaItem mediaItem)
+void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
 {
     //Find corresponding media item
     int foundIndex = -1;
+    MediaItem mediaItem = fetchedMatches.at(0);
     for (int i = 0; i < m_mediaList.count(); i++) {
         if (m_mediaList.at(i).url == mediaItem.url) {
             foundIndex = i;
@@ -328,35 +394,30 @@ void InfoItemModel::infoFetched(MediaItem mediaItem)
         m_indexer->updateInfo(mediaItem);
 
         //Ensure original values in model are updated to reflect saved(no-edits) state
+        m_suppressFetchOnLoad = true;
         loadInfo(m_mediaList);
         emit infoChanged(false);
     } else if (foundIndex != -1 && m_fetchType == Fetch) {
-        m_mediaList.replace(foundIndex, mediaItem);
-
-        //Update model data
-        for (int i = 0; i < rowCount(); i++) {
-            QString field = item(i)->data(InfoItemModel::FieldRole).toString();
-            if (field == "audioType" || field == "videoType") {
-                QString subType = mediaItem.subType();
-                QVariant value;
-                if (subType == "Music" || subType == "Movie") {
-                    value = QVariant(0);
-                } else if (subType == "Audio Stream" || subType == "TV Show") {
-                    value = QVariant(1);
-                } else if (subType == "Audio Clip" || subType == "Video Clip") {
-                    value = QVariant(2);
-                }
-                item(i)->setData(value, Qt::DisplayRole);
-                item(i)->setData(value, Qt::EditRole);
-            } else if (field == "artwork") {
-                item(i)->setData(mediaItem.artwork, Qt::DecorationRole);
-                item(i)->setData(mediaItem.fields["artworkUrl"], Qt::DisplayRole);
-            } else {
-                item(i)->setData(mediaItem.fields[field], Qt::DisplayRole);
-                item(i)->setData(mediaItem.fields[field], Qt::EditRole);
-            }
-        }
+        m_fetchedMatches = fetchedMatches;
+        selectFetchedMatch(0);
     }
+}
+
+void InfoItemModel::updateFetchedInfo(int index, MediaItem match)
+{
+    if (index >= m_fetchedMatches.count() ||
+        index < 0) {
+        return;
+    }
+
+    //Update fetched matches
+    m_fetchedMatches.replace(index, match);
+
+    //If match is currently selected, update model to reflect updated fetched information
+    if (index == m_selectedFetchedMatch) {
+        selectFetchedMatch(index);
+    }
+
 }
 
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable)

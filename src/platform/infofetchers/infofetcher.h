@@ -52,17 +52,6 @@ class InfoFetcher : public QObject
             return m_isFetching;
         }
 
-        virtual QStringList possibleMatches(const MediaItem &mediaItem)
-        {
-            Q_UNUSED(mediaItem);
-            return QStringList();
-        }
-        virtual void selectMatch(const MediaItem &mediaItem, const QString &match)
-        {
-            Q_UNUSED(mediaItem);
-            Q_UNUSED(match);
-        }
-
     public slots:
         virtual void fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields = true, bool fetchArtwork = true)
         {
@@ -94,7 +83,8 @@ class InfoFetcher : public QObject
         void timeout();
         
     signals:
-        void infoFetched(MediaItem mediaItem);
+        void infoFetched(QList<MediaItem> fetchedMatches);
+        void updateFetchedInfo(int index, MediaItem match);
         void fetching();
         void fetchComplete();
 };
