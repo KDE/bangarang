@@ -90,6 +90,8 @@ void SavedListsEngine::run()
                 QString title;
                 QString url;
                 int duration = 0;
+
+                //Read playlist entry to get title and url
                 if ((isM3U) && line.startsWith("#EXTINF:")) {
                     line = line.replace("#EXTINF:","");
                     QStringList durTitle = line.split(",");
@@ -114,25 +116,37 @@ void SavedListsEngine::run()
                         duration = line.mid(line.indexOf("=") + 1).trimmed().toInt();
                     }
                 }
-                    
+
+                //Create a basic mediaItem for each entry
                 MediaItem mediaItem;
                 KUrl itemUrl(workingDir, url);
                 if (!url.isEmpty()) {
-                    mediaItem = Utilities::mediaItemFromUrl(itemUrl);
-                } else {
-                    continue;
+                    if (!title.isEmpty()) {
+                        mediaItem.title = title;
+                    } else {
+                        mediaItem.title = itemUrl.fileName();
+                    }
+                    mediaItem.fields["title"] = mediaItem.title;
+                    mediaItem.url = itemUrl.prettyUrl();
+                    mediaItem.fields["url"] = mediaItem.url;
+                    if (Utilities::isVideo(mediaItem.url)) {
+                        mediaItem.type = "Video";
+                        mediaItem.artwork = KIcon("video-x-generic");
+                        mediaItem.fields["videoType"] = "Video Clip";
+                    } else {
+                        mediaItem.type = "Audio";
+                        mediaItem.artwork = KIcon("audio-x-generic");
+                        mediaItem.fields["audioType"] = "Audio Clip";
+                    }
+                    if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        mediaItem.fields["duration"] = duration;
+                    } else if (duration == -1) {
+                        mediaItem.duration = QString();
+                        mediaItem.fields["audioType"] = "Audio Stream";
+                    }
+                    mediaList << mediaItem;
                 }
-                if (mediaItem.title == itemUrl.fileName()) {
-                    mediaItem.title = title;
-                }
-                if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                    mediaItem.fields["duration"] = duration;
-                } else if (duration == -1) {
-                    mediaItem.duration = QString();
-                    mediaItem.fields["audioType"] = "Audio Stream";
-                }
-                mediaList << mediaItem;
             }
         }
         
@@ -140,12 +154,19 @@ void SavedListsEngine::run()
     
     m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    
+
+    //Get more detailed mediaItem info
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaItem detailedMediaItem = Utilities::mediaItemFromUrl(KUrl(mediaList.at(i).url));
+        emit updateMediaItem(detailedMediaItem);
+    }
+
     //Check if MediaItems in mediaList exist
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     }
+
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }
