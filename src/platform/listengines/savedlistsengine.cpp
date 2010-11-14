@@ -54,7 +54,7 @@ void SavedListsEngine::run()
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));
         if (file.exists()) {
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+                emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
                 return;
             }
         } else {
@@ -62,7 +62,7 @@ void SavedListsEngine::run()
             workingDir = url.directory(KUrl::AppendTrailingSlash);
             file.setFileName(url.path());
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                model()->addResults(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+                emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
                 return;
             }
         }
