@@ -27,7 +27,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -874,8 +874,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>133</width>
+                    <height>219</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -4003,6 +4003,12 @@
                  <enum>Qt::Horizontal</enum>
                 </property>
                 <widget class="QStackedWidget" name="viewerStack">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>10</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>250</width>
