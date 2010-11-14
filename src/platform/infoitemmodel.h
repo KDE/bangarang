@@ -127,6 +127,17 @@ class InfoItemModel : public QStandardItemModel
         void fetch(InfoFetcher* infoFetcher);
 
         /**
+          * Return list of MediaItems containing matching fetched information.
+          */
+        QList<MediaItem> fetchedMatches();
+
+    public slots:
+        /**
+          * Selects the index of the MediaItem containing fetched information to load into the model
+          */
+        void selectFetchedMatch(int index);
+
+        /**
           * Set the rating for all currently loaded MediaItems. Rating changes are automatically saved.
           **/
 
@@ -163,6 +174,8 @@ class InfoItemModel : public QStandardItemModel
         FetchType m_fetchType;
         MediaIndexer * m_indexer;
         bool m_suppressFetchOnLoad;
+        QList<MediaItem> m_fetchedMatches;
+        int m_selectedFetchedMatch;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
@@ -178,7 +191,8 @@ class InfoItemModel : public QStandardItemModel
 
     private Q_SLOTS:
         void itemChanged(QStandardItem *changedItem);
-        void infoFetched(MediaItem mediaItem);
+        void infoFetched(QList<MediaItem> fetchedMatches);
+        void updateFetchedInfo(int index, MediaItem match);
 };
 
 #endif // INFOITEMDELEGATE_H

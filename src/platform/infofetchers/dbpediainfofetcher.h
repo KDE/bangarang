@@ -46,6 +46,7 @@ class DBPediaInfoFetcher : public InfoFetcher
         Downloader * m_downloader;
         QHash<QString, QString> m_thumbnailKeys;
         QStringList m_requestKeys;
+        QList<MediaItem> m_fetchedMatches;
         
     private slots:
         void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
