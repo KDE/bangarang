@@ -127,10 +127,10 @@ QString Utilities::tagType(const QString &url)
         if (!id3v1Tag->isEmpty()) {
             return "ID3V1";
         }
-        TagLib::APE::Tag *apeTag = mpegFile.APETag(false);
+        /*TagLib::APE::Tag *apeTag = mpegFile.APETag(false);
         if (!apeTag->isEmpty()) {
             return "APE";
-        }
+        }*/
     }
     return QString();
 }
@@ -221,7 +221,9 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         if (!title.isEmpty()) {
             mediaItem.title = title;
         }
-        mediaItem.subTitle = artists.at(0) + QString(" - ") + album;
+        if (!artists.isEmpty()) {
+            mediaItem.subTitle = artists.at(0) + QString(" - ") + album;
+        }
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
         mediaItem.fields["title"] = title;
