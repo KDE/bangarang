@@ -66,6 +66,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoIndexerHolder->setVisible(false);
     ui->infoFetcherHolder->setVisible(false);
     ui->infoFetcherExpander->setVisible(false);
+    ui->infoFetcherExpander->setCurrentIndex(0);
     QFont fetcherMessageFont = KGlobalSettings::smallestReadableFont();
     ui->infoFetcherMessage->setFont(fetcherMessageFont);
     ui->infoFetcherLabel->setFont(fetcherMessageFont);
