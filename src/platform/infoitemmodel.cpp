@@ -21,6 +21,7 @@
 #include "utilities/utilities.h"
 #include "infofetchers/dbpediainfofetcher.h"
 #include "infofetchers/feedinfofetcher.h"
+#include "infofetchers/filenameinfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>
@@ -128,6 +129,13 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
     connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
+
+    FileNameInfoFetcher * fileNameInfoFetcher = new FileNameInfoFetcher(this);
+    connect(fileNameInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
+    connect(fileNameInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(fileNameInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(fileNameInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
+    m_infoFetchers.append(fileNameInfoFetcher);
 
     m_selectedFetchedMatch = -1;
 
