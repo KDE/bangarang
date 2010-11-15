@@ -56,6 +56,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequi
     *   but could potentially be expanded
     *   it's not really necessary for music files as the indexer gets metadata from the files themselves
     *   (Contributed by: Miha Čančula)
+    *   TODO: Add more search patterns to cover things like "SeasonXXEpisodeYY", etc.
     */
     QList<MediaItem> updatedItems;
     setFetching();
