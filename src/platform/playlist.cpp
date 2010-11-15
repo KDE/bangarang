@@ -417,30 +417,30 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
     //i.e. This slot is only called when the next mediaItem is not the next title
     // on a disc (a different title or a new url).
     
-    addToQueue();
-    if (m_queue->rowCount() == 1) {
+    if (m_queue->rowCount() == 1 && !m_repeat) {
         //Playlist is finished
         m_state = Playlist::Finished;
-    }
-    if (m_queue->rowCount() > 1) {
+    } else {
         m_queue->removeMediaItemAt(0);
-        //Load next queued item
-        MediaItem nextMediaItem = m_queue->mediaItemAt(0);
-        if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
-            QList<Phonon::MediaSource> queue;
-            queue << Phonon::MediaSource(Phonon::Cd);
-            m_mediaObject->setQueue(queue);
-        } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
-            QList<Phonon::MediaSource> queue;
-            queue << Phonon::MediaSource(Phonon::Dvd);
-            m_mediaObject->setQueue(queue);
-        } else {
-            QList<QUrl> queue;
-            queue << QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
-            m_mediaObject->setQueue(queue);
+        addToQueue();
+        if (m_queue->rowCount() > 0) {
+            //Load next queued item
+            MediaItem nextMediaItem = m_queue->mediaItemAt(0);
+            if (nextMediaItem.fields["audioType"].toString() == "CD Track") {
+                QList<Phonon::MediaSource> queue;
+                queue << Phonon::MediaSource(Phonon::Cd);
+                m_mediaObject->setQueue(queue);
+            } else if (nextMediaItem.fields["videoType"].toString() == "DVD Title") {
+                QList<Phonon::MediaSource> queue;
+                queue << Phonon::MediaSource(Phonon::Dvd);
+                m_mediaObject->setQueue(queue);
+            } else {
+                QList<QUrl> queue;
+                queue << QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
+                m_mediaObject->setQueue(queue);
+            }
         }
     }
-    
 }
 
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
