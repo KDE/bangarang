@@ -140,7 +140,7 @@ QUrl Utilities::TVSeriesResource(const QString &seriesName)
     bindings.append("r");
     query.select(bindings, MediaQuery::Distinct);
     query.startWhere();
-    query.addCondition(QString("?r rdf:type %1 . ").arg(mediaVocabulary.typeTVSeries().toString()));
+    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeTVSeries().toString()));
     query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.videoSeriesTitle().toString()));
     query.startFilter();
     query.addFilterConstraint("name", seriesName, MediaQuery::Equal);

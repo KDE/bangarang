@@ -360,7 +360,6 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             if (seriesName == "~") {
-                query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Optional));
                 query.startFilter();
                 query.addFilterConstraint(mediaVocabulary.videoSeriesTitleBinding(), QString(), MediaQuery::NotBound);
                 query.addFilterOr();
@@ -368,7 +367,6 @@ void VideoListEngine::run()
                 query.endFilter();
             }
             if (season == -1) {
-                query.addCondition(mediaVocabulary.hasVideoSeason(MediaQuery::Optional));
                 query.startFilter();
                 query.addFilterConstraint(mediaVocabulary.videoSeasonBinding(), QString(), MediaQuery::NotBound);
                 query.endFilter();

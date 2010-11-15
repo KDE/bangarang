@@ -96,7 +96,7 @@ class MediaQuery {
             } else if (agg == CountAverage) {
                 return QString("(AVG(?%1)*COUNT(?r)) as ?%1_countavg ").arg(binding);
             } else {
-                return QString();
+                return QString("dummy");
             }
         }
         
