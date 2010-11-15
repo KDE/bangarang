@@ -150,7 +150,7 @@ private slots:
     void on_playAll_clicked();
     void on_playSelected_clicked();
     void on_mediaLists_currentChanged(int i);
-    void on_showPlaylist_clicked(bool checked);
+    void on_showPlaylist_clicked();
     void on_clearPlaylist_clicked();
     void on_playlistView_doubleClicked(const QModelIndex & index);
     void on_seekTime_clicked();

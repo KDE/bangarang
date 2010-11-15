@@ -506,7 +506,7 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-    if(ui->contextStack->currentIndex() != 2 ) {
+    if(ui->contextStack->currentIndex() != 2 || !ui->contextStack->isVisible()) {
         m_contextStackWasVisible = ui->contextStack->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(2);
@@ -529,7 +529,7 @@ void ActionsManager::toggleVideoSettings()
 
 void ActionsManager::toggleAudioSettings()
 {
-    if(ui->contextStack->currentIndex() != 1 ) {
+    if(ui->contextStack->currentIndex() != 1 || !ui->contextStack->isVisible()) {
         m_contextStackWasVisible = ui->contextStack->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(1);
@@ -583,7 +583,7 @@ void ActionsManager::cancelFSHC()
 
 void ActionsManager::toggleShortcutsEditor()
 {
-    if(ui->contextStack->currentIndex() != 3 ) {
+    if(ui->contextStack->currentIndex() != 3 || !ui->contextStack->isVisible()) {
         m_contextStackWasVisible = ui->contextStack->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(3);

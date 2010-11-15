@@ -300,14 +300,19 @@ void MainWindow::on_collectionButton_clicked()
     ui->collectionButton->setFocus();
 }
 
-void MainWindow::on_showPlaylist_clicked(bool checked)
+void MainWindow::on_showPlaylist_clicked()
 {
-    ui->contextStack->setVisible(checked);
-    QFrame *filter = currentFilterFrame();
-    KFilterProxySearchLine *line = currentFilterProxyLine();
-    if (filter->isVisible() && line->lineEdit()->text().isEmpty())
-        m_application->actionsManager()->action("toggle_filter")->trigger();
-    ui->contextStack->setCurrentIndex(0);  
+    if (ui->contextStack->isVisible() && ui->contextStack->currentIndex() == 0) {
+        ui->contextStack->setVisible(false);
+    } else {
+        ui->contextStack->setCurrentIndex(0);
+        ui->contextStack->setVisible(true);
+        QFrame *filter = currentFilterFrame();
+        KFilterProxySearchLine *line = currentFilterProxyLine();
+        if (filter->isVisible() && line->lineEdit()->text().isEmpty()) {
+            m_application->actionsManager()->action("toggle_filter")->trigger();
+        }
+    }
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show Video Settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
 }
