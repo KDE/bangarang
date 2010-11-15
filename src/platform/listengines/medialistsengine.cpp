@@ -271,7 +271,7 @@ void MediaListsEngine::run()
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=seriesName");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=seriesName");
-            mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=SeriesName");
+            mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=seriesName");
             mediaList << mediaItem;
             mediaItem.title = i18n("Genres");
             mediaItem.fields["title"] = mediaItem.title;

@@ -159,7 +159,7 @@ void SemanticsListEngine::run()
                     order.append(MediaQuery::Descending);
                     query.orderBy(orderByBindings, order);
                 } 
-                
+
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
