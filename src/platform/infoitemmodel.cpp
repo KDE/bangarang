@@ -82,7 +82,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["producer"] = i18n("Producer");
     m_fieldNames["seriesName"] = i18n("Series");
     m_fieldNames["season"] = i18n("Season");
-    m_fieldNames["episodeNumber"] = i18n("episodeNumber");
+    m_fieldNames["episodeNumber"] = i18n("Episode");
     m_fieldNames["playCount"] = i18n("Play Count");
     m_fieldNames["lastPlayed"] = i18n("Last Played");
 
