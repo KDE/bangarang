@@ -46,6 +46,9 @@ MediaListsEngine::~MediaListsEngine()
 
 void MediaListsEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     QList<MediaItem> mediaList;
     if (m_mediaListProperties.engineArg() == "audio") {
         QStringList contextTitles;
@@ -172,6 +175,9 @@ void MediaListsEngine::run()
         //Show Audio CDs if present
         QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::Audio);
         foreach (QString udi, udis) {
+            if (m_stop) {
+                return;
+            }
             Solid::Device device = Solid::Device( udi );
             if ( !device.isValid() )
                 continue;
@@ -188,6 +194,9 @@ void MediaListsEngine::run()
             if (indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 QTextStream in(&indexFile);
                 while (!in.atEnd()) {
+                    if (m_stop) {
+                        return;
+                    }
                     QString line = in.readLine();
                     QStringList nameUrl = line.split(":::");
                     if (nameUrl.count() >= 3) {
@@ -335,6 +344,9 @@ void MediaListsEngine::run()
         
         QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::VideoDvd);
         foreach (QString udi, udis) {
+            if (m_stop) {
+                return;
+            }
             Solid::Device device = Solid::Device( udi );
             if ( !device.isValid() )
                 continue;
@@ -355,6 +367,9 @@ void MediaListsEngine::run()
             if (indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 QTextStream in(&indexFile);
                 while (!in.atEnd()) {
+                    if (m_stop) {
+                        return;
+                    }
                     QString line = in.readLine();
                     QStringList nameUrl = line.split(":::");
                     if (nameUrl.count() >= 3) {

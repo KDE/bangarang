@@ -49,6 +49,9 @@ DVDListEngine::~DVDListEngine()
 
 void DVDListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     QString udi = m_mediaListProperties.engineArg();
     Solid::Device device = Solid::Device( udi );
     const Solid::Block* block = device.as<const Solid::Block>();
@@ -68,6 +71,9 @@ void DVDListEngine::run()
     int trackCount = mediaController->availableTitles();
     //int duration;
     for (int i = 1; i <= trackCount; i++) {
+        if (m_stop) {
+            return;
+        }
         KUrl url = Utilities::deviceUrl("dvd", udi, discTitle, "Video", i);
         MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
         if (discTitle.isEmpty())

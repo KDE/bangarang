@@ -47,6 +47,9 @@ SemanticsListEngine::~SemanticsListEngine()
 
 void SemanticsListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -101,6 +104,7 @@ void SemanticsListEngine::run()
     
     if (m_nepomukInited) {
         if (engineArg.toLower() == "frequent") {
+            mediaList.clear();
             if (mediaType == "audio" || mediaType == "video") {
                 MediaQuery query;
                 if (groupByCategoryType.isEmpty()) {
@@ -164,6 +168,9 @@ void SemanticsListEngine::run()
                 
                 //Build media list from results
                 while( it.next() ) {
+                    if (m_stop) {
+                        return;
+                    }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
@@ -183,6 +190,7 @@ void SemanticsListEngine::run()
             }
         }
         if (engineArg.toLower() == "recent") {
+            mediaList.clear();
             if (!mediaType.isEmpty()) {
                 MediaQuery query;
                 QStringList bindings;
@@ -219,6 +227,9 @@ void SemanticsListEngine::run()
                 
                 //Build media list from results
                 while( it.next() ) {
+                    if (m_stop) {
+                        return;
+                    }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
@@ -238,6 +249,7 @@ void SemanticsListEngine::run()
             }
         }
         if (engineArg.toLower() == "highest") {
+            mediaList.clear();
             if (!mediaType.isEmpty()) {
                 MediaQuery query;
                 QStringList bindings;
@@ -280,6 +292,9 @@ void SemanticsListEngine::run()
                 
                 //Build media list from results
                 while( it.next() ) {
+                    if (m_stop) {
+                        return;
+                    }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
@@ -307,6 +322,9 @@ void SemanticsListEngine::run()
         //Get any remaining metadata for mediaItems
         if (mediaType == "video") {
             for (int i = 0; i < mediaList.count(); i++) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
                 emit updateMediaItem(mediaItem);
             }
@@ -316,6 +334,9 @@ void SemanticsListEngine::run()
         if (m_nepomukInited) {
             MediaVocabulary mediaVocabulary;
             for (int i = 0; i < mediaList.count(); i++) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = mediaList.at(i);
                 if (mediaItem.fields["categoryType"].toString() == "Album") {
                     MediaQuery query;

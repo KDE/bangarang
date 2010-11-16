@@ -761,6 +761,7 @@ class MediaItemModel : public QStandardItemModel
         void hideLoadingMessage();
         void showNoResultsMessage();
         QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
+        void loadSourcesForNextCat();
         QObject * m_parent;
         QString m_dataEngine;
         QString m_filter;
@@ -784,6 +785,7 @@ class MediaItemModel : public QStandardItemModel
         QList<QString> m_lrisLoading; 
         bool m_loadSources;
         QList<MediaItem> m_mediaListForLoadSources;
+        QList<MediaItem> m_remainingCatsForLoadSources;
         bool m_reload;
         bool m_lriIsLoadable;
         bool m_suppressNoResultsMessage;

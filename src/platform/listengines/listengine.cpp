@@ -22,6 +22,7 @@
 ListEngine::ListEngine(ListEngineFactory * parent) : QThread(parent)
 {
     m_parent = parent;
+    m_stop = false;
 }
 
 ListEngine::~ListEngine()
@@ -104,4 +105,14 @@ void ListEngine::disconnectDownloader()
     disconnect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
     disconnect(this, SIGNAL(listDir(KUrl)), m_parent->downloader(), SLOT(listDir(KUrl)));
     disconnect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
+}
+
+void ListEngine::stop(unsigned long waitToTerminate)
+{
+    m_stop = true;
+    quit();
+    if (waitToTerminate > 0 && isRunning()) {
+        wait(waitToTerminate);
+        terminate();
+    }
 }

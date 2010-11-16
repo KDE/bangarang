@@ -32,6 +32,9 @@ CacheListEngine::~CacheListEngine()
 
 void CacheListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     QList<MediaItem> mediaList;
     MediaListProperties mediaListProperties;
     

@@ -39,6 +39,9 @@ AudioStreamListEngine::~AudioStreamListEngine()
 
 void AudioStreamListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -78,6 +81,9 @@ void AudioStreamListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }

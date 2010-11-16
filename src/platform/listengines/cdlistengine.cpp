@@ -52,6 +52,9 @@ CDListEngine::~CDListEngine()
 
 void CDListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     //check if Audio CD is present
     QString udi = m_mediaListProperties.engineArg();
     Solid::Device device = Solid::Device( udi );
@@ -65,6 +68,9 @@ void CDListEngine::run()
             m_loadWhenReady = true;
         }
         forever {
+            if (m_stop) {
+                return;
+            }
             if (m_mediaObject->state() != Phonon::LoadingState) {
                 msleep(100);
                 continue;
@@ -74,6 +80,9 @@ void CDListEngine::run()
             int trackCount = mediaController->availableTitles();
             //int duration;
             for (int i = 1; i <= trackCount; i++) {
+                if (m_stop) {
+                    return;
+                }
                 KUrl url = Utilities::deviceUrl("cd", udi, QString(), "Audio", i);
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
                 mediaItem.subTitle = i18nc("%1=Total number of tracks on the CD", "Audio CD - %1 Tracks", trackCount);

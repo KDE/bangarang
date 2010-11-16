@@ -50,6 +50,7 @@ MusicListEngine::~MusicListEngine()
 void MusicListEngine::run()
 {
     QThread::setTerminationEnabled(true);
+    m_stop = false;
     
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
@@ -95,6 +96,9 @@ void MusicListEngine::run()
             //Build media list from results
             int i = 0;
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
                 if (!artist.isEmpty()) {
                     MediaItem mediaItem;
@@ -175,6 +179,9 @@ void MusicListEngine::run()
             //Build media list from results
             int i = 0;
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
                 QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
@@ -260,6 +267,9 @@ void MusicListEngine::run()
             //Build media list from results
             int i = 0;
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString genre = it.binding(mediaVocabulary.genreBinding()).literal().toString().trimmed();
                 if (!genre.isEmpty()) {
                     MediaItem mediaItem;
@@ -356,13 +366,19 @@ void MusicListEngine::run()
             int offset = 0;
             query.addLimit(limit);
             while (resultSetCount >= limit) {
-                
+                if (m_stop) {
+                    return;
+                }
+
                 //Execute Query
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
                 //Build media list from results
                 resultSetCount = 0;
                 while( it.next() ) {
+                    if (m_stop) {
+                        return;
+                    }
                     KUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri().isEmpty() ?
                     it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
                     it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
@@ -435,6 +451,9 @@ void MusicListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
@@ -456,6 +475,9 @@ void MusicListEngine::run()
         if (m_nepomukInited) {
             MediaVocabulary mediaVocabulary;
             for (int i = 0; i < mediaList.count(); i++) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = mediaList.at(i);
                 if (mediaItem.fields["categoryType"].toString() == "Album") {
                     QImage artwork = Utilities::getAlbumArtwork(mediaItem.title);

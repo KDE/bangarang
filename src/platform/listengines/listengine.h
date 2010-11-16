@@ -136,6 +136,11 @@ class ListEngine : public QThread
             Q_UNUSED(mediaList);
             Q_UNUSED(nepomukOnly);
         }
+
+        /**
+         * Stop execution at as soon as possible. Terminate after waitToTerminate millseconds.
+         */
+        void stop(unsigned long waitToTerminate = 0);
         
     public Q_SLOTS:
         virtual void downloadComplete(const KUrl &from, const KUrl &to)
@@ -165,6 +170,7 @@ class ListEngine : public QThread
         QString m_requestSignature;
         QString m_subRequestSignature;
         MediaItemModel * m_mediaItemModel;
+        bool m_stop;
         void connectDownloader();
         void disconnectDownloader();
 

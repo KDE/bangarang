@@ -48,6 +48,9 @@ TagListEngine::~TagListEngine()
 
 void TagListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -84,6 +87,9 @@ void TagListEngine::run()
 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString tag = it.binding(mediaVocabulary.tagBinding()).literal().toString().trimmed();
                 MediaItem mediaItem;
                 mediaItem.url = QString("tag://%1?tag=%2").arg(mediaType).arg(tag);
@@ -125,6 +131,9 @@ void TagListEngine::run()
 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                 MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
