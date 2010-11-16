@@ -102,7 +102,6 @@ void SavedListsEngine::run()
                     line = line.replace("#EXTINF:","");
                     QStringList durTitle = line.split(",");
 
-                    int duration;
                     if (durTitle.count() == 1) {
                         //No title
                         title = durTitle.at(0);
