@@ -101,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_videoWidget,SIGNAL(skipBackward(int)),this, SLOT(skipBackward(int)));
     connect(m_videoWidget,SIGNAL(fullscreenChanged(bool)),this,SLOT(on_fullScreen_toggled(bool)));
     
-    //Add video widget to video frame on viewer stack
+    //Add video widget to video frame
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_videoWidget);
     layout->setContentsMargins(0,0,0,0);
@@ -179,8 +179,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->nowPlayingView->setMainWindow( this );
     updateCustomColors();
     connect( (MediaItemModel *) ui->nowPlayingView->model(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
-    connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateCustomColors())); 
-    
+    connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), this, SLOT(updateCustomColors()));
+    m_videoSize = Normal;
+    ui->videoFrame->setVisible(false);
+    ui->nowPlayingView->move(0,0);
+    ui->nowPlayingView->resize(ui->nowPlayingHolder->size());
+    ui->videoFrame->move(0,0);
+    ui->videoFrame->resize(ui->nowPlayingHolder->size());
+
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
     
@@ -232,6 +238,21 @@ void MainWindow::completeSetup()
 /*---------------------
  -- UI widget slots  --
  ----------------------*/
+void MainWindow::on_nowPlayingHolder_resized()
+{
+    ui->nowPlayingView->move(0,0);
+    ui->nowPlayingView->resize(ui->nowPlayingHolder->size());
+    if (m_videoSize == Normal) {
+        ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
+    } else {
+        int width = qMax(200, ui->nowPlayingHolder->width()/3);
+        int height = qMax(150, width*3/4);
+        int top = ui->nowPlayingHolder->width() - width - 20;
+        int left = ui->nowPlayingHolder->height() - height - 20;
+        ui->videoFrame->setGeometry(top, left, width, height);
+    }
+}
+
 void MainWindow::on_Filter_returnPressed()
 {
     ui->mediaView->setFocus();
@@ -580,9 +601,9 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
        
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_application->mediaObject()->hasVideo()) {
-            ui->viewerStack->setCurrentIndex(1);
+            ui->videoFrame->setVisible(true);
         } else {
-            ui->viewerStack->setCurrentIndex(0);
+            ui->videoFrame->setVisible(false);
         }
         ui->mediaPlayPause->setToolTip(i18n("<b>Playing</b><br>Click to pause<br>Click and hold to stop"));
     } else {
@@ -964,7 +985,7 @@ void MainWindow::showApplicationBanner()
     applicationBanner.type = "Application Banner";
     applicationBanner.url = "-";
     m_application->playlist()->nowPlayingModel()->loadMediaItem(applicationBanner, true);
-    ui->viewerStack->setCurrentIndex(0);
+    ui->videoFrame->setVisible(false);
 }
 
 void MainWindow::updateCachedDevicesList()
@@ -1103,6 +1124,25 @@ void MainWindow::setShowRemainingTime(bool showRemainingTime)
     }
 }
 
+void MainWindow::setVideoSize(VideoSize size)
+{
+    m_videoSize = size;
+    if (m_videoSize == Normal) {
+        ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
+    } else {
+        int width = qMax(200, ui->nowPlayingHolder->width()/3);
+        int height = qMax(150, width*3/4);
+        int top = ui->nowPlayingHolder->width() - width - 20;
+        int left = ui->nowPlayingHolder->height() - height - 20;
+        ui->videoFrame->setGeometry(top, left, width, height);
+    }
+}
+
+MainWindow::VideoSize MainWindow::videoSize()
+{
+    return m_videoSize;
+}
+
 void MainWindow::nowPlayingChanged()
 {
     MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
@@ -1116,9 +1156,9 @@ void MainWindow::nowPlayingChanged()
     //Tidy up view and switch to the correct viewing widget
     ui->nowPlayingView->tidyHeader();
     if (nowPlayingItem.type == "Video") {
-        ui->viewerStack->setCurrentIndex(1);
+        ui->videoFrame->setVisible(true);
     } else if (nowPlayingItem.type == "Audio") {
-        ui->viewerStack->setCurrentIndex(0);
+        ui->videoFrame->setVisible(false);
     }
             
     //Update Now Playing button in Media Lists view
