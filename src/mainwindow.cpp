@@ -67,6 +67,7 @@
 #include <QFile>
 #include <QScrollBar>
 #include <QTimer>
+#include <QPropertyAnimation>
 #include <kross/core/action.h> 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
@@ -1128,13 +1129,24 @@ void MainWindow::setVideoSize(VideoSize size)
 {
     m_videoSize = size;
     if (m_videoSize == Normal) {
-        ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
+        QPoint topLeft = ui->videoFrame->mapToParent(ui->videoFrame->rect().topLeft());
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
+        animation->setDuration(500);
+        animation->setStartValue(QRect(topLeft, ui->videoFrame->size()));
+        animation->setEndValue(ui->nowPlayingHolder->rect());
+        animation->setEasingCurve(QEasingCurve::InOutQuad);
+        animation->start();
     } else {
         int width = qMax(200, ui->nowPlayingHolder->width()/3);
         int height = qMax(150, width*3/4);
         int top = ui->nowPlayingHolder->width() - width - 20;
         int left = ui->nowPlayingHolder->height() - height - 20;
-        ui->videoFrame->setGeometry(top, left, width, height);
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
+        animation->setDuration(500);
+        animation->setStartValue(ui->videoFrame->rect());
+        animation->setEndValue(QRect(top, left, width, height));
+        animation->setEasingCurve(QEasingCurve::InOutQuad);
+        animation->start();
     }
 }
 
