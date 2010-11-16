@@ -747,6 +747,11 @@ class MediaItemModel : public QStandardItemModel
          * Update model status
          */
         void updateStatus(QHash<QString, QVariant> updatedStatus);
+
+        /**
+         * Suppress tooltips
+         */
+        void setSuppressTooltip(bool suppress = true);
         
     private Q_SLOTS:
         void synchRemoveRows(const QModelIndex &index, int start, int end);
@@ -783,6 +788,7 @@ class MediaItemModel : public QStandardItemModel
         bool m_lriIsLoadable;
         bool m_suppressNoResultsMessage;
         bool m_pendingUpdateRefresh;
+        bool m_suppressTooltip;
         QHash<QString, QVariant> m_status;
 
 };

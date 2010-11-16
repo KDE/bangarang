@@ -44,6 +44,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_reload = false;
     m_suppressNoResultsMessage = false;
     m_pendingUpdateRefresh = false;
+    m_suppressTooltip = false;
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -637,6 +638,11 @@ void MediaItemModel::updateStatus(QHash<QString, QVariant> updatedStatus)
     emit statusUpdated();
 }
 
+void MediaItemModel::setSuppressTooltip(bool suppress)
+{
+    m_suppressTooltip = suppress;
+}
+
 QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
 {
     QList<QStandardItem *> rowData;
@@ -651,17 +657,19 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
-    QString tooltip;
-    if (!mediaItem.fields["description"].toString().isEmpty()) {
-        tooltip.append(QString("<br>%1").arg(mediaItem.fields["description"].toString()));
+    if (!m_suppressTooltip) {
+        QString tooltip;
+        if (!mediaItem.fields["description"].toString().isEmpty()) {
+            tooltip.append(QString("<br>%1").arg(mediaItem.fields["description"].toString()));
+        }
+        if (!mediaItem.semanticComment.isEmpty()) {
+            tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));
+        }
+        if (!tooltip.isEmpty()) {
+            tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
+            titleItem->setData(tooltip, Qt::ToolTipRole);
+        }
     }
-    if (!mediaItem.semanticComment.isEmpty()) {
-        tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));
-    }
-    if (!tooltip.isEmpty()) {
-        tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
-        titleItem->setData(tooltip, Qt::ToolTipRole);
-    } 
     if (!mediaItem.fields["rating"].isNull()) {
         titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
     }
