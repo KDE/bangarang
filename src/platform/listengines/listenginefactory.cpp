@@ -43,84 +43,7 @@ ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 
 ListEngineFactory::~ListEngineFactory()
 {
-    for (int i = 0; i < m_musicListEngines.count(); ++i) {
-        if (!m_musicListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_musicListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_fileListEngines.count(); ++i) {
-        if (!m_fileListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_fileListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_videoListEngines.count(); ++i) {
-        if (!m_videoListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_videoListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_cdListEngines.count(); ++i) {
-        if (!m_cdListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_cdListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_dvdListEngines.count(); ++i) {
-        if (!m_dvdListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_dvdListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_savedListsEngines.count(); ++i) {
-        if (!m_savedListsEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_savedListsEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_mediaListsEngines.count(); ++i) {
-        if (!m_mediaListsEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_mediaListsEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
-        if (!m_audioStreamListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_audioStreamListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_semanticsListEngines.count(); ++i) {
-        if (!m_semanticsListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_semanticsListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_cacheListEngines.count(); ++i) {
-        if (!m_cacheListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_cacheListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
-        if (!m_audioClipsListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_audioClipsListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_tagListEngines.count(); ++i) {
-        if (!m_tagListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_tagListEngines.at(i)->terminate();
-        }
-    }
-    for (int i = 0; i < m_feedListEngines.count(); ++i) {
-        if (!m_feedListEngines.at(i)->isFinished()) {
-            //This could be dangerous but list engines can't be left running after main program termination
-            m_feedListEngines.at(i)->terminate();
-        }
-    }
+    stopAll(200);
 }
 
 ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
@@ -368,4 +291,74 @@ bool ListEngineFactory::engineExists(const QString &engine)
 Downloader * ListEngineFactory::downloader()
 {
     return m_downloader;
+}
+
+void ListEngineFactory::stopAll(unsigned long waitToTerminate)
+{
+    for (int i = 0; i < m_musicListEngines.count(); ++i) {
+        if (m_musicListEngines.at(i)->isRunning()) {
+            m_musicListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_fileListEngines.count(); ++i) {
+        if (m_fileListEngines.at(i)->isRunning()) {
+            m_fileListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_videoListEngines.count(); ++i) {
+        if (m_videoListEngines.at(i)->isRunning()) {
+            m_videoListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_cdListEngines.count(); ++i) {
+        if (m_cdListEngines.at(i)->isRunning()) {
+            m_cdListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_dvdListEngines.count(); ++i) {
+        if (m_dvdListEngines.at(i)->isRunning()) {
+            m_dvdListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_savedListsEngines.count(); ++i) {
+        if (m_savedListsEngines.at(i)->isRunning()) {
+            m_savedListsEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_mediaListsEngines.count(); ++i) {
+        if (m_mediaListsEngines.at(i)->isRunning()) {
+            m_mediaListsEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
+        if (m_audioStreamListEngines.at(i)->isRunning()) {
+            m_audioStreamListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_semanticsListEngines.count(); ++i) {
+        if (m_semanticsListEngines.at(i)->isRunning()) {
+            m_semanticsListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_cacheListEngines.count(); ++i) {
+        if (m_cacheListEngines.at(i)->isRunning()) {
+            m_cacheListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
+        if (m_audioClipsListEngines.at(i)->isRunning()) {
+            m_audioClipsListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_tagListEngines.count(); ++i) {
+        if (m_tagListEngines.at(i)->isRunning()) {
+            m_tagListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+    for (int i = 0; i < m_feedListEngines.count(); ++i) {
+        if (m_feedListEngines.at(i)->isRunning()) {
+            m_feedListEngines.at(i)->stop(waitToTerminate);
+        }
+    }
+
 }

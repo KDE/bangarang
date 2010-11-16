@@ -89,6 +89,12 @@ class ListEngineFactory : public QObject
          **/
         Downloader * downloader();
 
+        /**
+         * Stop all running list engines as soon as possible.
+         */
+        void stopAll(unsigned long waitToTerminate = 0);
+
+
     private:
         MediaItemModel * m_parent;
         int m_requestSignatureSeed;

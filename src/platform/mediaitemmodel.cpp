@@ -144,6 +144,7 @@ void MediaItemModel::load()
                 if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
                     // Since this lri is not currently being loaded by any list engine
                     // go ahead and start a new load
+                    m_listEngineFactory->stopAll();
                     ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
                     m_requestSignature = m_listEngineFactory->generateRequestSignature();
                     listEngine->setRequestSignature(m_requestSignature);
@@ -230,6 +231,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
         removeRows(0, rowCount());
         setLoadingState(true);
         // Load data from from the cache
+        m_listEngineFactory->stopAll();
         ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
         MediaListProperties cacheListProperties;
         cacheListProperties.lri = QString("cache://dummyarg?%1").arg(m_mediaListProperties.lri);
@@ -244,6 +246,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
             if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
                 // Since this lri is not currently being loaded by any list engine
                 // go ahead and start a new load
+                m_listEngineFactory->stopAll();
                 ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
                 m_requestSignature = m_listEngineFactory->generateRequestSignature();
                 listEngine->setRequestSignature(m_requestSignature);
@@ -266,6 +269,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
         m_mediaListProperties = mediaListProperties;
         removeRows(0, rowCount());
         setLoadingState(true);
+        m_listEngineFactory->stopAll();
         ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
@@ -286,7 +290,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
     m_subRequestSignatures.clear();
     m_subRequestsDone = 0;
     bool onlySources = true;
-    QList<MediaItem> categories;
+    m_remainingCatsForLoadSources.clear();
     m_requestSignature = m_listEngineFactory->generateRequestSignature();
     for (int i = 0; i < mediaList.count(); ++i) {
         if ((mediaList.at(i).type == "Audio") || (mediaList.at(i).type == "Video") || (mediaList.at(i).type == "Image")){
@@ -295,7 +299,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
             }
         } else if (mediaList.at(i).type == "Category") {
             onlySources = false;
-            categories.append(mediaList.at(i));
+            m_remainingCatsForLoadSources.append(mediaList.at(i));
             if (mediaList.count() == 1) {
                 MediaListProperties mediaListProperties;
                 mediaListProperties.lri =  mediaList.at(i).url;
@@ -331,55 +335,73 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
             showNoResultsMessage();
         }
         emit mediaListChanged();
-    } else {
-        //Launch load requests
+    } else if (!m_remainingCatsForLoadSources.isEmpty()){
+        //Launch load request(s)
+        m_listEngineFactory->stopAll();
+        int maxSimultaneous = 1; //Limit threads to one.  May increase later if stability is better.
         setLoadingState(true);
-        for (int i = 0; i < categories.count(); ++i) {
-            MediaListProperties mediaListProperties;
-            mediaListProperties.lri = categories.at(i).url;
-            mediaListProperties.name = categories.at(i).title;
-            if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
-                
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
-                listEngine->setMediaListProperties(mediaListProperties);
-                listEngine->setFilterForSources(mediaListProperties.engineFilter());
-                QString loadSourcesLri = listEngine->mediaListProperties().lri;
-                
-                if (m_mediaListCache->isInCache(loadSourcesLri)) {
-                    // Load data from from the cache
-                    listEngine = m_listEngineFactory->availableListEngine("cache://");
-                    MediaListProperties cacheListProperties;
-                    cacheListProperties.lri = QString("cache://dummyarg?%1").arg(loadSourcesLri);
-                    m_requestSignature = m_listEngineFactory->generateRequestSignature();
-                    listEngine->setRequestSignature(m_requestSignature);
-                    if (mediaList.count() > 1) {
-                        listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
-                    }
-                    listEngine->setMediaListProperties(cacheListProperties);
-                    listEngine->start();
-                    
-                } else {
-                    if (m_lrisLoading.indexOf(loadSourcesLri) == -1) {
-                        // Since this lri is not currently being loaded by any list engine
-                        // go ahead and start a new load
-                        listEngine->setRequestSignature(m_requestSignature);
-                        if (mediaList.count() > 1) {
-                            listEngine->setSubRequestSignature(m_subRequestSignatures.at(i));
-                        }
-                        m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
-                        m_lrisLoading.append(loadSourcesLri);
-                        listEngine->start();
-                        kDebug()<< "started load for " << loadSourcesLri;
-                    } else {
-                        kDebug()<< "waiting for " << mediaListProperties.lri;
-                    }
-                }
-            }
+        for (int i = 0; i < maxSimultaneous; i++) {
+            loadSourcesForNextCat();
         }
     }
     
     m_loadSources = true;
     m_mediaListForLoadSources = mediaList;
+}
+
+void MediaItemModel::loadSourcesForNextCat()
+{
+    if (!m_remainingCatsForLoadSources.isEmpty()) {
+        int subRequestSignatureIndex = m_subRequestSignatures.count() - m_remainingCatsForLoadSources.count();
+        if (subRequestSignatureIndex < 0) {
+            QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
+            m_subRequestSignatures.append(subRequestSignature);
+            QList<MediaItem> emptyList;
+            m_subRequestMediaLists.append(emptyList);
+            subRequestSignatureIndex = 0;
+        }
+        MediaItem category = m_remainingCatsForLoadSources.takeFirst();
+        MediaListProperties mediaListProperties;
+        mediaListProperties.lri = category.url;
+        mediaListProperties.name = category.title;
+        if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
+            listEngine->setMediaListProperties(mediaListProperties);
+            listEngine->setFilterForSources(mediaListProperties.engineFilter());
+            QString loadSourcesLri = listEngine->mediaListProperties().lri;
+
+            if (m_mediaListCache->isInCache(loadSourcesLri)) {
+                // Load data from from the cache
+                listEngine = m_listEngineFactory->availableListEngine("cache://");
+                MediaListProperties cacheListProperties;
+                cacheListProperties.lri = QString("cache://dummyarg?%1").arg(loadSourcesLri);
+                m_requestSignature = m_listEngineFactory->generateRequestSignature();
+                listEngine->setRequestSignature(m_requestSignature);
+                if (m_subRequestSignatures.count() > 0) {
+                    listEngine->setSubRequestSignature(m_subRequestSignatures.at(subRequestSignatureIndex));
+                }
+                listEngine->setMediaListProperties(cacheListProperties);
+                listEngine->start();
+
+            } else {
+                if (m_lrisLoading.indexOf(loadSourcesLri) == -1) {
+                    // Since this lri is not currently being loaded by any list engine
+                    // go ahead and start a new load
+                    listEngine->setRequestSignature(m_requestSignature);
+                    if (m_subRequestSignatures.count() > 0) {
+                        listEngine->setSubRequestSignature(m_subRequestSignatures.at(subRequestSignatureIndex));
+                    }
+                    m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
+                    m_lrisLoading.append(loadSourcesLri);
+                    listEngine->start();
+                    kDebug()<< "started load for " << loadSourcesLri;
+                } else {
+                    kDebug()<< "waiting for " << mediaListProperties.lri;
+                }
+            }
+        }
+    }
 }
 
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
@@ -407,6 +429,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 emit mediaListChanged();
             }
         } else {
+            loadSourcesForNextCat();
             //Place subrequest results in the correct order
             int indexOfSubRequest = m_subRequestSignatures.indexOf(subRequestSignature);
             if (indexOfSubRequest != -1) {

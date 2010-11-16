@@ -40,6 +40,8 @@ AudioClipsListEngine::~AudioClipsListEngine()
 
 void AudioClipsListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -79,6 +81,9 @@ void AudioClipsListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
@@ -119,6 +124,9 @@ void AudioClipsListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }

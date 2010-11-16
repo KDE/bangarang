@@ -60,6 +60,9 @@ FileListEngine::~FileListEngine()
 
 void FileListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         //Make sure to crawl dirs if necessary
         if (m_updateSourceInfo) {
@@ -90,6 +93,9 @@ void FileListEngine::run()
         if (browseUrl.isEmpty()) {
             //Load Places if no folder is specified
             for (int i =0; i < m_filePlacesModel->rowCount(); i ++) {
+                if (m_stop) {
+                    return;
+                }
                 QString newBrowseUrl = m_filePlacesModel->url(m_filePlacesModel->index(i,0)).prettyUrl();
                 if (!newBrowseUrl.isEmpty() && newBrowseUrl != "trash:/") {
                     MediaItem mediaItem;
@@ -125,6 +131,9 @@ void FileListEngine::run()
             QList<MediaItem> listToGetFiles;
             listToGetFiles.append(mediaItem);
             mediaList = getFiles(listToGetFiles, true); //Get basic file info first
+            if (m_stop) {
+                return;
+            }
 
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
@@ -133,6 +142,9 @@ void FileListEngine::run()
 
             //Get more detailed info for each mediaitem and update;
             for (int i = 0; i < mediaList.count(); i++) {
+                if (m_stop) {
+                    return;
+                }
                 QApplication::processEvents();
                 MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(mediaList.at(i).url), true);
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
@@ -167,6 +179,9 @@ void FileListEngine::listingComplete(const KUrl &url)
     QList<MediaItem> mediaList;
     m_dirSortProxyModel->sort(0);
     for (int i = 0; i < m_dirSortProxyModel->rowCount(); i++) {
+        if (m_stop) {
+            quit();
+        }
         MediaItem mediaItem;
         KFileItem fileItem = m_dirModel->itemForIndex(m_dirSortProxyModel->mapToSource(m_dirSortProxyModel->index(i,0)));
         if (fileItem.isDir()) {
@@ -217,6 +232,9 @@ void FileListEngine::listingComplete(const KUrl &url)
 
     //Get more detailed info for each mediaitem and update;
     for (int i = 0; i < mediaList.count(); i++) {
+        if (m_stop) {
+            quit();
+        }
         QApplication::processEvents();
         MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(mediaList.at(i).url), true);
         mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
@@ -232,6 +250,9 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
     //This routine looks for directories in mediaList, crawls and returns a media list with files only
     QList<MediaItem> crawledList;
     for (int i = 0; i < mediaList.count(); i++) {
+        if (m_stop) {
+            return crawledList;
+        }
         if (mediaList.at(i).type == "Category" && !mediaList.at(i).url.isEmpty()) {
             MediaListProperties categoryProperties;
             categoryProperties.lri = mediaList.at(i).url;
@@ -251,6 +272,9 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                     }
                     QFileInfoList fileList = crawlDir(QDir(directoryUrl.path()), categoryProperties.engineArg());
                     for (int j = 0; j < fileList.count(); ++j) {
+                        if (m_stop) {
+                            return crawledList;
+                        }
                         QFileInfo fileInfo = fileList.at(j);
                         MediaItem mediaItem;
                         if (basicInfo) {

@@ -42,6 +42,9 @@ SavedListsEngine::~SavedListsEngine()
 
 void SavedListsEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -86,6 +89,9 @@ void SavedListsEngine::run()
         //Create a MediaItem for each entry
         if (valid) {
             while (!in.atEnd()) {
+                if (m_stop) {
+                    return;
+                }
                 QString line = in.readLine();
                 QString title;
                 QString url;
@@ -157,6 +163,9 @@ void SavedListsEngine::run()
 
     //Get more detailed mediaItem info
     for (int i = 0; i < mediaList.count(); i++) {
+        if (m_stop) {
+            return;
+        }
         MediaItem detailedMediaItem = Utilities::mediaItemFromUrl(KUrl(mediaList.at(i).url));
         emit updateMediaItem(detailedMediaItem);
     }

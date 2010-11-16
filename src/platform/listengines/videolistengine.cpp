@@ -41,6 +41,9 @@ VideoListEngine::~VideoListEngine()
 
 void VideoListEngine::run()
 {
+    QThread::setTerminationEnabled(true);
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -103,6 +106,9 @@ void VideoListEngine::run()
 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
@@ -142,6 +148,9 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
@@ -173,6 +182,9 @@ void VideoListEngine::run()
 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString seriesName = it.binding(mediaVocabulary.videoSeriesTitleBinding()).literal().toString();
                 if (!seriesName.isEmpty()) {
                     MediaItem mediaItem;
@@ -268,6 +280,9 @@ void VideoListEngine::run()
             //Build media list from results
             int lastSeason = -1;
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 int season = it.binding("season").literal().toInt();
                 MediaItem mediaItem;
                 mediaItem.url = QString("video://episodes?||season=%1||%2||%3")
@@ -382,6 +397,9 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"), m_mediaListProperties.lri);
                 mediaList.append(mediaItem);
             }
@@ -416,6 +434,9 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString genre = it.binding("genre").literal().toString().trimmed();
                 if (!genre.isEmpty()) {
                     MediaItem mediaItem;
@@ -463,6 +484,9 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString actor = it.binding(mediaVocabulary.videoActorBinding()).literal().toString().trimmed();
                 if (!actor.isEmpty()) {
                     MediaItem mediaItem;
@@ -512,6 +536,9 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString director = it.binding(mediaVocabulary.videoDirectorBinding()).literal().toString().trimmed();
                 if (!director.isEmpty()) {
                     MediaItem mediaItem;
@@ -601,7 +628,10 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+                if (m_stop) {
+                    return;
+                }
+                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
                 it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
                 it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
                 Nepomuk::Resource res(url);
@@ -667,7 +697,10 @@ void VideoListEngine::run()
             
             //Build media list from results
             while( it.next() ) {
-                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ? 
+                if (m_stop) {
+                    return;
+                }
+                QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
                 it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
                 it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
                 Nepomuk::Resource res(url);
@@ -702,6 +735,9 @@ void VideoListEngine::run()
         //Get any remaining metadata and local artwork
         if (m_nepomukInited) {
             for (int i = 0; i < mediaList.count(); i++) {
+                if (m_stop) {
+                    return;
+                }
                 MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
                 emit updateMediaItem(mediaItem);
                 if (mediaItem.fields["videoType"].toString() == "Movie") {

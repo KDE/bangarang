@@ -46,7 +46,8 @@ FeedListEngine::~FeedListEngine()
 void FeedListEngine::run()
 {
     QThread::setTerminationEnabled(true);
-    
+    m_stop = false;
+
     if (m_updateSourceInfo || m_removeSourceInfo) {
         NepomukListEngine::run();
         return;
@@ -85,6 +86,9 @@ void FeedListEngine::run()
                 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString title = it.binding(mediaVocabulary.titleBinding()).literal().toString().trimmed();
                 QString description = it.binding(mediaVocabulary.descriptionBinding()).literal().toString().trimmed();
                 QString feedUrl = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().toString();
@@ -144,6 +148,9 @@ void FeedListEngine::run()
                 
             //Build media list from results
             while( it.next() ) {
+                if (m_stop) {
+                    return;
+                }
                 QString title = it.binding(mediaVocabulary.titleBinding()).literal().toString().trimmed();
                 QString description = it.binding(mediaVocabulary.descriptionBinding()).literal().toString().trimmed();
                 QString feedUrl = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().toString();
@@ -199,6 +206,9 @@ void FeedListEngine::run()
         //Get local feed artwork
         MediaVocabulary mediaVocabulary;
         for (int i = 0; i < mediaList.count(); i++) {
+            if (m_stop) {
+                return;
+            }
             MediaItem mediaItem = mediaList.at(i);
             if (mediaItem.fields["categoryType"].toString() == "Audio Feed" ||
                 mediaItem.fields["categoryType"].toString() == "Video Feed") {
