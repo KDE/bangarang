@@ -167,6 +167,7 @@ QStringList InfoFetcher::valueList(const QString &field)
 void InfoFetcher::setFetching()
 {
     m_isFetching = true;
+    m_timeout = false;
     m_timer->start(m_timeoutLength);
     emit fetching();
 }
