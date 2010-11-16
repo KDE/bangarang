@@ -4006,6 +4006,12 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>240</width>
+                   <height>400</height>
+                  </size>
+                 </property>
                  <property name="palette">
                   <palette>
                    <active>
