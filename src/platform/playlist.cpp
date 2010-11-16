@@ -47,6 +47,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_currentPlaylist = new MediaItemModel(this);
     m_currentPlaylist->setSuppressNoResultsMessage(true);
     m_nowPlaying = new MediaItemModel(this);
+    m_nowPlaying->setSuppressTooltip(true);
     m_nowPlaying->setSuppressNoResultsMessage(true);
     m_queue = new MediaItemModel(this);
     m_queue->setSuppressNoResultsMessage(true);
