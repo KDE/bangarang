@@ -83,11 +83,13 @@ Q_SIGNALS:
     void entered();
     void exited();
     void mouseMoved();
+    void resized();
     
 protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent *);
     
 protected Q_SLOTS:
     void hoverTimeout();

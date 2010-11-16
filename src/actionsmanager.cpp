@@ -214,7 +214,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Show Now Playing Info
     action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
     connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
-    m_othersCollection->addAction("show_now_playing", action);
+    m_othersCollection->addAction("show_now_playing_info", action);
 
     //Show Info View
     action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
@@ -364,6 +364,12 @@ QMenu *ActionsManager::playlistViewMenu()
 QMenu *ActionsManager::nowPlayingContextMenu()
 {
     m_nowPlayingContextMenu->clear();
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        if (ui->videoFrame->isVisible()) {
+            m_nowPlayingContextMenu->addAction(action("show_now_playing_info"));
+            m_nowPlayingContextMenu->addSeparator();
+        }
+    }
     if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
         m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
         m_nowPlayingContextMenu->addAction(action("play_previous"));
@@ -390,19 +396,19 @@ KMenu *ActionsManager::nowPlayingMenu()
     helpMenu->menu();
     
     m_nowPlayingMenu = new KMenu(m_parent);
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        if (ui->videoFrame->isVisible()) {
+            m_nowPlayingMenu->addAction(action("show_now_playing_info"));
+            m_nowPlayingMenu->addSeparator();
+        }
+    }
     if (ui->contextStack->isVisible() && ui->contextStack->currentIndex() == 0) {
         m_nowPlayingMenu->addAction(action("toggle_filter"));
-    }
-    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        MediaItem mediaItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
-        if ((mediaItem.type == "Audio") || (mediaItem.type == "Video")) {
-            m_nowPlayingMenu->addAction(action("show_now_playing_info"));
-        }
+        m_nowPlayingMenu->addSeparator();
     }
     if (!m_parent->isFullScreen()) {
         m_nowPlayingMenu->addAction(action("toggle_controls"));
     }
-    m_nowPlayingMenu->addSeparator();
     m_nowPlayingMenu->addAction(action("show_video_settings"));
     m_nowPlayingMenu->addAction(action("show_audio_settings"));
     m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
@@ -776,10 +782,14 @@ void ActionsManager::loadSelectedSources()
 
 void ActionsManager::showInfoForNowPlaying()
 {
-    MediaItemModel * nowPlayingModel = m_application->playlist()->nowPlayingModel();
-    if(nowPlayingModel->rowCount() > 0) {
-        MediaItem mediaItem = nowPlayingModel->mediaItemAt(0);
-        m_application->infoManager()->showInfoViewForMediaItem(mediaItem);
+    if (m_application->mainWindow()->videoSize() == MainWindow::Normal) {
+        m_application->mainWindow()->setVideoSize(MainWindow::Mini);
+        action("show_now_playing_info")->setText("Restore Video Size");
+        action("show_now_playing_info")->setIcon(KIcon("transform-scale"));
+    } else {
+        m_application->mainWindow()->setVideoSize(MainWindow::Normal);
+        action("show_now_playing_info")->setText("Show information");
+        action("show_now_playing_info")->setIcon(KIcon("help-about"));
     }
 }
 

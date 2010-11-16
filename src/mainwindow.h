@@ -80,6 +80,7 @@ public:
     
     enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2, Playlist = 3};
     enum MainWidget{ MainMediaList = 0, MainNowPlaying = 1 };
+    enum VideoSize{Normal = 0, Mini = 1 };
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void completeSetup();
@@ -87,6 +88,8 @@ public:
     void addListToHistory();
     Phonon::VideoWidget * videoWidget();
     bool showingRemainingTime();
+    void setVideoSize(VideoSize size = Normal);
+    VideoSize videoSize();
     void switchMainWidget(MainWidget which);
     MainWidget currentMainWidget();
     QFrame *currentFilterFrame();
@@ -137,8 +140,10 @@ private:
     MediaListSettings *m_mediaListSettings;
     VideoSettings * m_videoSettings;
     BangarangApplication * m_application;
+    VideoSize m_videoSize;
 
 private slots:
+    void on_nowPlayingHolder_resized();
     void on_nowPlaying_clicked();
     void on_configureAudioList_clicked();
     void on_configureVideoList_clicked();

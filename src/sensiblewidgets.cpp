@@ -125,6 +125,10 @@ void SFrame::mouseMoveEvent(QMouseEvent *event)
     emit mouseMoved();
     Q_UNUSED(event);
 }
+void SFrame::resizeEvent(QResizeEvent *)
+{
+    emit resized();
+}
 void SFrame::hoverTimeout()
 {
     if (m_hovered) {
