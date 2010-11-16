@@ -107,8 +107,13 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequir
             m_dbPediaQuery->getDirectorInfo(mediaItem.fields["title"].toString());
         }
         if (mediaItem.subType() == "Movie") {
+            QString title = mediaItem.title;
+            if (title.lastIndexOf(".") == title.length() - 4) { //chop file extension
+                title.chop(4);
+                mediaItem.title = title;
+            }
             m_mediaList.append(mediaItem);
-            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.fields["title"].toString()));
+            m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.title));
             connect (m_dbPediaQuery,
                      SIGNAL(gotMovieInfo(bool , const QList<Soprano::BindingSet>, const QString)),
                      this,
@@ -175,7 +180,7 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
                     //Set Title
                     match.title = name;
                     if (m_updateRequiredFields) {
-                        match.fields["title"] = mediaItem.title;
+                        match.fields["title"] = match.title;
                     }
 
                     //Set Description
@@ -214,7 +219,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
         int foundIndex = -1;
         for (int i = 0; i < m_mediaList.count(); i++) {
             MediaItem item = m_mediaList.at(i);
-            if (item.subType() == subType && item.fields["title"].toString() == title) {
+            if (item.subType() == subType && item.title == title) {
                 mediaItem = item;
                 foundIndex = i;
                 break;
