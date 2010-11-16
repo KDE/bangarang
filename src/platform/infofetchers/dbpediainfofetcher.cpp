@@ -275,6 +275,12 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
                         match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
                         match.fields["duration"] = duration;
                     }
+                    //Set releaseDate
+                    QDate releaseDate = binding.value("releaseDate").literal().toDate();
+                    if (releaseDate.isValid()) {
+                        match.fields["releaseDate"] = releaseDate;
+                        match.fields["year"] = releaseDate.year();
+                    }
 
                     //Set Actors, Directors, Writers
                     QStringList actors;
