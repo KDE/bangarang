@@ -447,6 +447,9 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                 mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
             }
+            if (mediaItem.fields["year"].toInt() != 0) {
+                mediaItem.subTitle = QString("%1").arg(mediaItem.fields["year"].toInt());
+            }
             QStringList writers;
             QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
             for (int i = 0; i < writerResources.count(); i++) {
@@ -648,6 +651,9 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             } else {
                 mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
+            }
+            if (mediaItem.fields["year"].toInt() != 0) {
+                mediaItem.subTitle = QString("%1").arg(mediaItem.fields["year"].toInt());
             }
             QStringList writers;
             QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
