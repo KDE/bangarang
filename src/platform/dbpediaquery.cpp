@@ -64,7 +64,7 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
                     "{?person rdf:type dbo:Band . } "
                     "UNION "
                     "{?person rdf:type dbo:MusicalArtist . } "
-                    "?person foaf:name ?name . "
+                    "?person rdfs:label ?name . "
                     "?name bif:contains \"'%1'\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
@@ -93,7 +93,7 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
                     QString("SELECT DISTINCT ?name ?description ?thumbnail "
                     "WHERE { "
                     "?person rdf:type dbo:Actor . "
-                    "?person foaf:name ?name . "
+                    "?person rdfs:label ?name . "
                     "?name bif:contains \"'%1'\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
@@ -117,7 +117,7 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
                     QString("SELECT DISTINCT ?name ?description ?thumbnail "
                     "WHERE { "
                     "?person rdf:type dbo:Director . "
-                    "?person foaf:name ?name . "
+                    "?person rdfs:label ?name . "
                     "?name bif:contains \"'%1'\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
@@ -138,10 +138,10 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
 {
     //Create query url
     QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?duration ?actor ?writer ?director ?producer "
+                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?duration ?releaseDate ?actor ?writer ?director ?producer "
                     "WHERE { "
                     "{ ?work rdf:type dbo:Film . } "
-                    "?work foaf:name ?title . "
+                    "?work rdfs:label ?title . "
                     "?title bif:contains \"'%1'\" . "
                     "?work rdfs:comment ?description . "
                     "OPTIONAL { ?work dbo:starring ?actorres . "
@@ -154,6 +154,7 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
                     "?producerres foaf:name ?producer . } "
                     "OPTIONAL { ?work dbo:duration ?duration . } "
                     "OPTIONAL {?work foaf:depiction ?thumbnail . } "
+                    "OPTIONAL {?work dbo:releaseDate ?releaseDate . } "
                     "FILTER (lang(?description) ='%2') } ")
                     .arg(movieName)
                     .arg(m_lang);

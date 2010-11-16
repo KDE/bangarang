@@ -623,6 +623,10 @@ void InfoItemModel::updateMediaList()
                 } else if (field == "title") {
                     mediaItem.fields["title"] = currentItem->data(Qt::EditRole);
                     mediaItem.title = currentItem->data(Qt::EditRole).toString();
+                } else if (field == "duration") {
+                    int duration = currentItem->data(Qt::EditRole).toInt();
+                    mediaItem.fields["duration"] = currentItem->data(Qt::EditRole);
+                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
                 } else if (field == "url") {
                     mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
                     mediaItem.url = currentItem->data(Qt::EditRole).toString();

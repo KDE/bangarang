@@ -480,13 +480,8 @@ void InfoManager::showIndexer()
 void InfoManager::showInfoFetcher()
 {
     if (m_infoItemModel->availableInfoFetchers().count() > 0) {
-        //Show Info Fetcher UI
-        //bool isFetching = false;
-        ui->infoFetcherMessage->setVisible(false);
-        ui->showInfoFetcherExpander->setVisible(true);
-        ui->infoFetcherHolder->setVisible(true);
-
         //Load available InfoFetchers and determine if any are fetching info
+        bool isFetching = false;
         ui->infoFetcherSelector->clear();
         for (int i = 0; i < m_infoItemModel->availableInfoFetchers().count(); i++) {
             InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
@@ -494,6 +489,7 @@ void InfoManager::showInfoFetcher()
             if (infoFetcher->isFetching()) {
                 ui->infoFetcherSelector->setCurrentIndex(i);
                 m_currentInfoFetcher = infoFetcher;
+                isFetching = true;
             }
         }
 
@@ -501,6 +497,13 @@ void InfoManager::showInfoFetcher()
         if (ui->infoFetcherSelector->currentIndex() == -1) {
             m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
             ui->infoFetcherSelector->setCurrentIndex(0);
+        }
+
+        //Show Info Fetcher UI
+        if (!isFetching) {
+            ui->infoFetcherMessage->setVisible(false);
+            ui->showInfoFetcherExpander->setVisible(true);
+            ui->infoFetcherHolder->setVisible(true);
         }
 
         //Offer Autofetch and Fetch buttons
@@ -517,12 +520,12 @@ void InfoManager::showInfoFetcher()
 void InfoManager::showFetching()
 {
     //Hide everything but the fetching message
-    ui->infoFetcherMessage->setVisible(true);
-    ui->showInfoFetcherExpander->setVisible(false);
     if (ui->infoFetcherExpander->isVisible()) {
         toggleShowInfoFetcherExpander();
     }
     ui->infoFetcherHolder->setVisible(true);
+    ui->showInfoFetcherExpander->setVisible(false);
+    ui->infoFetcherMessage->setVisible(true);
 }
 
 void InfoManager::fetchComplete()
