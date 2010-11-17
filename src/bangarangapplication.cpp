@@ -378,6 +378,7 @@ void BangarangApplication::nowPlayingChanged()
     if (changed) {
         m_audioPath.reconnect(m_mediaObject, m_audioOutput);
         m_audioOutput->setVolume(m_volume);
+        m_audioSettings->reconnectAudioPath(&m_audioPath);
         connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
         m_mainWindow->connectPhononWidgets();
     }

@@ -47,6 +47,7 @@ class AudioSettings : public QObject
         AudioSettings(MainWindow * parent = 0);
         ~AudioSettings();
         void setAudioPath(Phonon::Path *audioPath);
+        void reconnectAudioPath(Phonon::Path *audioPath);
         void setMediaController(Phonon::MediaController *mediaController);
         void saveAudioSettings(KConfigGroup *configGroup);
         void restoreAudioSettings(KConfigGroup *configGroup);
@@ -61,6 +62,7 @@ class AudioSettings : public QObject
         void updateAudioChannelCombo();
         
     private:
+        bool insertAudioEffects(Phonon::Path *audioPath);
         void connectAudioChannelCombo();
         void disconnectAudioChannelCombo();
         
