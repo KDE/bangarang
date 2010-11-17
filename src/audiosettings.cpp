@@ -79,21 +79,7 @@ void AudioSettings::setMediaController(MediaController* mediaController)
 void AudioSettings::setAudioPath(Path *audioPath)
 {
     //Determine if equalizer capability is present
-    bool eqCapable = false;
-    QList<EffectDescription> effects = BackendCapabilities::availableAudioEffects();
-    foreach (EffectDescription effect, effects) {
-        if(effect.name()=="KEqualizer") {
-            m_audioEq = new Effect(effect, this);
-            if (m_audioEq == NULL)
-                continue;
-            audioPath->insertEffect(m_audioEq);
-            eqCapable = true;
-            connectEq();
-            break;
-        }
-    }
-    
-    if (!eqCapable) {
+    if (!insertAudioEffects(audioPath)) {
         ui->eqHolder->setEnabled(false);
     }
     //Load presets
@@ -142,6 +128,20 @@ void AudioSettings::setAudioPath(Path *audioPath)
     ui->eqPresets->setCurrentIndex(0);
     connect(ui->eqPresets, SIGNAL(currentIndexChanged(const QString)), this, SLOT(loadPreset(const QString)));
 }
+
+void AudioSettings::reconnectAudioPath(Path* audioPath)
+{
+    if (!insertAudioEffects(audioPath)) {
+       ui->eqHolder->setEnabled(false);
+       return;
+    }
+
+    //be sure the values are still set
+    for (int i = 0; i < m_eqCount; i++ ) {
+        m_audioEq->setParameterValue(m_audioEq->parameters()[i], m_uiEqs.at(i)->value());
+    }
+}
+
 
 void AudioSettings::saveAudioSettings(KConfigGroup *configGroup)
 {
@@ -289,6 +289,24 @@ void AudioSettings::updateAudioChannelCombo()
     }
     connectAudioChannelCombo();
 }
+
+bool AudioSettings::insertAudioEffects(Path* audioPath)
+{
+    QList<EffectDescription> effects = BackendCapabilities::availableAudioEffects();
+    foreach (EffectDescription effect, effects) {
+        if(effect.name() != "KEqualizer") {
+            continue;
+        }
+        m_audioEq = new Effect(effect, this);
+        if (m_audioEq == NULL)
+            continue;
+        audioPath->insertEffect(m_audioEq);
+        connectEq();
+        return true;
+    }
+    return false;
+}
+
 
 void AudioSettings::connectAudioChannelCombo()
 {
