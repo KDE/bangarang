@@ -176,7 +176,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
 
         //Upon selection of only one media item, launch Autofetch if NO info
         //is available in the fetchable fields of the media item.
-        if (m_mediaList.count() == 1 && !m_suppressFetchOnLoad) {
+        //NOTE: Automatic autofetching is more intrusive to the user experience than I'd like.
+        //      So it is disabled below. For now I'd rather leave it to the user to decide
+        //      when to fetch info.
+        /*if (m_mediaList.count() == 1 && !m_suppressFetchOnLoad) {
             for (int i = 0; i < m_infoFetchers.count(); i++) {
                 if (autoFetchIsAvailable(m_infoFetchers.at(i))) {
                     QStringList fetchableFields = m_infoFetchers.at(i)->fetchableFields(subType);
@@ -194,7 +197,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
                     }
                 }
             }
-        }
+        }*/
     }
 
     //Fetch on load can only be suppressed for one load
