@@ -120,7 +120,9 @@ void SemanticsListEngine::run()
                         query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                     }
                     query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
-                    query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    if (m_mediaListProperties.filterForField("playCount").isEmpty()) {
+                        query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    }
                     query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
                     query.endWhere();
                     QStringList orderByBindings;
@@ -149,7 +151,9 @@ void SemanticsListEngine::run()
                     } else if (mediaType == "video") {
                         subQuery.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                     }
-                    subQuery.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    if (m_mediaListProperties.filterForField("playCount").isEmpty()) {
+                        subQuery.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    }
                     QStringList subQueryLRIFilterList = engineFilterList;
                     subQueryLRIFilterList.removeAll(limitFilter);
                     subQuery.addLRIFilterConditions(subQueryLRIFilterList, mediaVocabulary);
@@ -235,11 +239,15 @@ void SemanticsListEngine::run()
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
-                        mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+                        if (lastPlayedTime.isValid()) {
+                            mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+                        }
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         KDateTime lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
-                        mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+                        if (lastPlayedTime.isValid()) {
+                            mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+                        }
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
                     mediaList.append(mediaItem);
@@ -271,7 +279,9 @@ void SemanticsListEngine::run()
                     query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
                 }
                 query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
-                query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                if (m_mediaListProperties.filterForField("rating").isEmpty()) {
+                    query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                }
                 query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
                 query.endWhere();
                 QStringList orderByBindings;

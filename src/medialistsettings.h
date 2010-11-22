@@ -51,7 +51,13 @@ class MediaListSettings : public QObject
     private:
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
-        QString configEntryForLRI(const QString &lri);
-        
+        void showMediaListSettingsForLri(const QString &lri);
+        QStringList configEntryForLRI(const QString &lri);
+        void readConfigEntryForLRI(const QString &lri);
+        void writeConfigEntryForLRI(const QString &lri);
+
+    private slots:
+        void moreSelected(bool);
+
 };
 #endif //MEDIALISTSETTINGS_H

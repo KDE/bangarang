@@ -61,8 +61,7 @@ void MediaListsEngine::run()
             KConfigGroup generalGroup( &config, "General" );
             mediaItem.title = i18n("Recently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            int limit = generalGroup.readEntry("RecentAudioLimit", 20);
-            mediaItem.url = QString("semantics://recent?audio||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForRecent("Audio");
             mediaItem.artwork = KIcon("chronometer");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Artists"), "semantics://recent?audio||limit=4||groupBy=artist");
@@ -71,8 +70,7 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("HighestAudioLimit", 20);
-            mediaItem.url = QString("semantics://highest?audio||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForHighest("Audio");
             mediaItem.artwork = KIcon("rating");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Artists"), "semantics://highest?audio||limit=4||groupBy=artist");
@@ -81,8 +79,7 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("FrequentAudioLimit", 20);
-            mediaItem.url = QString("semantics://frequent?audio||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForFrequent("Audio");
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Artists"), "semantics://frequent?audio||limit=4||groupBy=artist");
@@ -235,8 +232,7 @@ void MediaListsEngine::run()
             KConfigGroup generalGroup( &config, "General" );
             mediaItem.title = i18n("Recently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            int limit = generalGroup.readEntry("RecentVideoLimit", 20);
-            mediaItem.url = QString("semantics://recent?video||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForRecent("Video");
             mediaItem.artwork = KIcon("chronometer");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Genres"), "semantics://recent?video||limit=4||groupBy=genre");
@@ -245,8 +241,7 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("HighestVideoLimit", 20);
-            mediaItem.url = QString("semantics://highest?video||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForHighest("Video");
             mediaItem.artwork = KIcon("rating");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Genres"), "semantics://highest?video||limit=4||groupBy=genre");
@@ -255,8 +250,7 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
-            limit = generalGroup.readEntry("FrequentVideoLimit", 20);
-            mediaItem.url = QString("semantics://frequent?video||limit=%1").arg(limit);
+            mediaItem.url = semanticsLriForFrequent("Video");
             mediaItem.artwork = KIcon("office-chart-bar");
             mediaItem.clearContexts();
             mediaItem.addContext(i18n("Genres"), "semantics://frequent?video||limit=4||groupBy=genre");
@@ -403,4 +397,85 @@ void MediaListsEngine::run()
     m_subRequestSignature = QString();
     m_loadWhenReady = false;
     //exec();    
+}
+
+QString MediaListsEngine::semanticsLriForRecent(const QString &type)
+{
+    QString lri;
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    if (type == "Audio") {
+        int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+        lri = QString("semantics://recent?audio||limit=%1").arg(limit);
+        if (generalGroup.hasKey("RecentAudioPlayed")) {
+            QStringList entry = generalGroup.readEntry("RecentAudioPlayed", QStringList());
+            QString comp = entry.at(0);
+            QDateTime recentDateTime = QDateTime::fromString(entry.at(1), "yyyyMMddHHmmss");
+            lri.append(QString("||lastPlayed%1%2").arg(comp).arg(recentDateTime.toString("yyyyMMddHHmmss")));
+        }
+    } else {
+        int limit = generalGroup.readEntry("RecentVideoLimit", 20);
+        lri = QString("semantics://recent?video||limit=%1").arg(limit);
+        if (generalGroup.hasKey("RecentVideoPlayed")) {
+            QStringList entry = generalGroup.readEntry("RecentVideoPlayed", QStringList());
+            QString comp = entry.at(0);
+            QDateTime recentDateTime = QDateTime::fromString(entry.at(1), "yyyyMMddHHmmss");
+            lri.append(QString("||lastPlayed%1%2").arg(comp).arg(recentDateTime.toString("yyyyMMddHHmmss")));
+        }
+    }
+    return lri;
+}
+
+QString MediaListsEngine::semanticsLriForHighest(const QString &type)
+{
+    QString lri;
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    if (type == "Audio") {
+        int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+        lri = QString("semantics://highest?audio||limit=%1").arg(limit);
+        if (generalGroup.hasKey("HighestAudioRated")) {
+            QStringList entry = generalGroup.readEntry("HighestAudioRated", QStringList());
+            QString comp = entry.at(0);
+            int rating = entry.at(1).toInt();
+            lri.append(QString("||rating%1%2").arg(comp).arg(rating));
+        }
+    } else {
+        int limit = generalGroup.readEntry("HighestVideoLimit", 20);
+        lri = QString("semantics://highest?video||limit=%1").arg(limit);
+        if (generalGroup.hasKey("HighestVideoRated")) {
+            QStringList entry = generalGroup.readEntry("HighestVideoRated", QStringList());
+            QString comp = entry.at(0);
+            int rating = entry.at(1).toInt();
+            lri.append(QString("||rating%1%2").arg(comp).arg(rating));
+        }
+    }
+    return lri;
+}
+
+QString MediaListsEngine::semanticsLriForFrequent(const QString &type)
+{
+    QString lri;
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    if (type == "Audio") {
+        int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+        lri = QString("semantics://frequent?audio||limit=%1").arg(limit);
+        if (generalGroup.hasKey("FrequentAudioPlayed")) {
+            QStringList entry = generalGroup.readEntry("FrequentAudioPlayed", QStringList());
+            QString comp = entry.at(0);
+            int playCount = entry.at(1).toInt();
+            lri.append(QString("||playCount%1%2").arg(comp).arg(playCount));
+        }
+    } else {
+        int limit = generalGroup.readEntry("FrequentVideoLimit", 20);
+        lri = QString("semantics://frequent?video||limit=%1").arg(limit);
+        if (generalGroup.hasKey("FrequentVideoPlayed")) {
+            QStringList entry = generalGroup.readEntry("FrequentVideoPlayed", QStringList());
+            QString comp = entry.at(0);
+            int playCount = entry.at(1).toInt();
+            lri.append(QString("||playCount%1%2").arg(comp).arg(playCount));
+        }
+    }
+    return lri;
 }

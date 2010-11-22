@@ -469,34 +469,21 @@ void MainWindow::on_mediaLists_currentChanged(int i)
     int selectedRow = -1;
     MediaListProperties currentProperties;
     if (i == 0) {
+        ui->audioListsStack->setCurrentIndex(0);
         if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
             selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-            currentProperties.name = m_audioListsModel->mediaItemAt(selectedRow).title;
-            currentProperties.lri = m_audioListsModel->mediaItemAt(selectedRow).url;
-            currentProperties.category = m_audioListsModel->mediaItemAt(selectedRow);
+            loadMediaList(m_audioListsModel, selectedRow);
         }
         ui->audioLists->setFocus();
         ui->Filter->setClickMessage(i18n("Search for audio"));
     } else {
+        ui->videoListsStack->setCurrentIndex(0);
         if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
             selectedRow = ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-            currentProperties.name = m_videoListsModel->mediaItemAt(selectedRow).title;
-            currentProperties.lri = m_videoListsModel->mediaItemAt(selectedRow).url;
-            currentProperties.category = m_videoListsModel->mediaItemAt(selectedRow);
+            loadMediaList(m_videoListsModel, selectedRow);
         }
         ui->videoLists->setFocus();
         ui->Filter->setClickMessage(i18n("Search for video"));
-    }
-    if (selectedRow != -1) {
-        if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
-            m_application->browsingModel()->clearMediaListData();
-            m_application->browsingModel()->setMediaListProperties(currentProperties);
-            m_application->browsingModel()->load();
-            m_mediaListHistory.clear();
-            m_mediaListPropertiesHistory.clear();
-            ui->previous->setVisible(false);
-            ui->mediaViewHolder->setCurrentIndex(0);
-        }
     }
 }
 
