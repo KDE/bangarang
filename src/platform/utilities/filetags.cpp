@@ -59,14 +59,16 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
     QImage attachedImage;
-    KMimeType::Ptr type = KMimeType::findByUrl(KUrl(url), 0, true);
-    if (type->is("audio/mpeg") ||
+    KUrl kUrl(url);
+    KMimeType::Ptr type = KMimeType::findByUrl(kUrl, 0, true);
+    if (kUrl.isValid() && (type->is("audio/mpeg") ||
         type->is("audio/MPA") ||
         type->is("audio/mpa-robust") ||
         type->is("audio/mp4") ||
         type->is("video/mp4") ||
-        type->is("application/mp4")) {
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+        type->is("application/mp4"))) {
+
+        TagLib::MPEG::File mpegFile(kUrl.path().toLocal8Bit().constData(), false);
         TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
 
         if (!id3tag || id3tag->isEmpty()) {
