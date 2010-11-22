@@ -141,11 +141,21 @@ class SComboBox : public QComboBox
 {
     Q_OBJECT
     public:
-        SComboBox(QWidget * parent = 0) : QComboBox(parent) {};
-        ~SComboBox(){};
+        SComboBox(QWidget * parent = 0) : QComboBox(parent) {}
+        ~SComboBox(){}
         
         //I have no idea why there is no default USER property in QComboBox
         Q_PROPERTY(QString currentText READ currentText USER true);
+};
+
+class SRatingCombo : public QComboBox
+{
+    Q_OBJECT
+    public:
+        SRatingCombo(QWidget * parent = 0);
+        ~SRatingCombo(){}
+
+        void paintEvent ( QPaintEvent * e );
 };
 #endif // SENSIBLEWIDGETS_H
 

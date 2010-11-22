@@ -47,5 +47,8 @@ class MediaListsEngine : public NepomukListEngine
         
     private:
         bool m_loadWhenReady;
+        QString semanticsLriForRecent(const QString &type);
+        QString semanticsLriForHighest(const QString &type);
+        QString semanticsLriForFrequent(const QString &type);
 };
 #endif // MEDIALISTSENGINE_H

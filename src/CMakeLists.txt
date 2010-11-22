@@ -18,6 +18,7 @@ set(BangarangSources
     infobox.cpp
     infomanager.cpp
     infoitemdelegate.cpp
+    ratingdelegate.cpp
     savedlistsmanager.cpp
     sensiblewidgets.cpp
     starrating.cpp

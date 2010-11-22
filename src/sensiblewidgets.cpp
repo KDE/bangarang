@@ -17,9 +17,12 @@
 */
 
 #include "sensiblewidgets.h"
+#include "ratingdelegate.h"
+#include "starrating.h"
 
 #include <KIcon>
 #include <KFileDialog>
+#include <QStylePainter>
 
 SToolButton::SToolButton(QWidget * parent):QToolButton (parent) 
 {
@@ -197,6 +200,44 @@ void SListWidget::selectorEntered()
 void SListWidget::selectorExited()
 {
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+}
+
+SRatingCombo::SRatingCombo(QWidget * parent) : QComboBox(parent)
+{
+    this->setItemDelegate(new RatingDelegate(this));
+}
+
+void SRatingCombo::paintEvent (QPaintEvent * e)
+{
+    QVariant ratingData = this->itemData(this->currentIndex(),Qt::UserRole).toInt();
+    if (ratingData.isValid()) {
+        QStylePainter p(this);
+        QStyleOptionComboBox option;
+        option.initFrom(this);
+
+        p.drawComplexControl(QStyle::CC_ComboBox, option);
+
+        QRect subRect = p.style()->subElementRect(QStyle::SE_ComboBoxFocusRect, &option);
+        const int left = subRect.left();
+        const int top = subRect.top();
+        const int height = subRect.height();
+
+        int rating = ratingData.toInt();
+        StarRating starRating = StarRating(rating, StarRating::Medium);
+        starRating.setRating(rating);
+        QSize ratingSize = starRating.sizeHint();
+        int ratingLeft = left + 2;
+        int ratingTop = top + (height - ratingSize.height())/2;
+        QRect ratingRect = QRect(QPoint(ratingLeft, ratingTop), ratingSize);
+        starRating.setPoint(ratingRect.topLeft());
+        if (!this->isEnabled()) {
+            starRating.setHoverAtPosition(ratingRect.topLeft());
+        }
+        starRating.paint(&p);
+    } else {
+        QComboBox::paintEvent(e);
+    }
+
 }
 
 #include "sensiblewidgets.moc"

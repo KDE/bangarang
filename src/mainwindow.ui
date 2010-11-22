@@ -285,7 +285,7 @@
                   <number>0</number>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <property name="tabSpacing">
                   <number>0</number>
@@ -759,6 +759,12 @@
                        <item>
                         <widget class="QWidget" name="widget" native="true">
                          <layout class="QVBoxLayout" name="verticalLayout_52">
+                          <property name="spacing">
+                           <number>4</number>
+                          </property>
+                          <property name="margin">
+                           <number>4</number>
+                          </property>
                           <item>
                            <widget class="QLabel" name="aConfigureSemListTitle">
                             <property name="text">
@@ -786,33 +792,396 @@
                               <number>0</number>
                              </property>
                              <item>
-                              <widget class="QLabel" name="label_15">
-                               <property name="text">
-                                <string>Show</string>
-                               </property>
+                              <widget class="QWidget" name="widget_47" native="true">
+                               <layout class="QVBoxLayout" name="verticalLayout_69">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                               </layout>
                               </widget>
                              </item>
                              <item>
-                              <widget class="QSpinBox" name="semALimit">
-                               <property name="minimum">
-                                <number>5</number>
-                               </property>
-                               <property name="maximum">
-                                <number>1000</number>
-                               </property>
+                              <widget class="QWidget" name="widget_48" native="true">
+                               <layout class="QVBoxLayout" name="verticalLayout_70">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_49" native="true">
+                                  <layout class="QHBoxLayout" name="horizontalLayout_46">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QLabel" name="label_15">
+                                     <property name="text">
+                                      <string>Show</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QSpinBox" name="semALimit">
+                                     <property name="minimum">
+                                      <number>5</number>
+                                     </property>
+                                     <property name="maximum">
+                                      <number>500</number>
+                                     </property>
+                                     <property name="value">
+                                      <number>20</number>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QLabel" name="label_32">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <property name="text">
+                                      <string>items</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QWidget" name="widget_38" native="true">
+                            <layout class="QVBoxLayout" name="verticalLayout_71">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
+                             <property name="margin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QWidget" name="widget_37" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_47">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QCheckBox" name="semASelectMore">
+                                  <property name="text">
+                                   <string/>
+                                  </property>
+                                  <property name="checked">
+                                   <bool>true</bool>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QLabel" name="semAMoreVerb">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>22</height>
+                                   </size>
+                                  </property>
+                                  <property name="text">
+                                   <string>played</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
                               </widget>
                              </item>
                              <item>
-                              <widget class="QLabel" name="label_14">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="text">
-                                <string>results</string>
-                               </property>
+                              <widget class="QWidget" name="semATimeHolder" native="true">
+                               <layout class="QVBoxLayout" name="verticalLayout_11">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_36" native="true">
+                                  <layout class="QHBoxLayout" name="horizontalLayout_42">
+                                   <property name="spacing">
+                                    <number>2</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QWidget" name="widget_46" native="true">
+                                     <layout class="QVBoxLayout" name="verticalLayout_68">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <spacer name="verticalSpacer_21">
+                                        <property name="orientation">
+                                         <enum>Qt::Vertical</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                         <size>
+                                          <width>20</width>
+                                          <height>40</height>
+                                         </size>
+                                        </property>
+                                       </spacer>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QWidget" name="widget_45" native="true">
+                                     <layout class="QVBoxLayout" name="verticalLayout_67">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <widget class="QComboBox" name="semATimeComp">
+                                        <property name="sizePolicy">
+                                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                         </sizepolicy>
+                                        </property>
+                                        <item>
+                                         <property name="text">
+                                          <string>before</string>
+                                         </property>
+                                        </item>
+                                        <item>
+                                         <property name="text">
+                                          <string>after</string>
+                                         </property>
+                                        </item>
+                                       </widget>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QDateTimeEdit" name="semATime"/>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QWidget" name="semARatingHolder" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_44">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_40" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_61">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <spacer name="verticalSpacer_15">
+                                     <property name="orientation">
+                                      <enum>Qt::Vertical</enum>
+                                     </property>
+                                     <property name="sizeHint" stdset="0">
+                                      <size>
+                                       <width>20</width>
+                                       <height>40</height>
+                                      </size>
+                                     </property>
+                                    </spacer>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget_39" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_17">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="SRatingCombo" name="semARating">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <property name="minimumSize">
+                                      <size>
+                                       <width>0</width>
+                                       <height>30</height>
+                                      </size>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QComboBox" name="semARatingComp">
+                                     <item>
+                                      <property name="text">
+                                       <string>or more</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>exactly</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>or less</string>
+                                      </property>
+                                     </item>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QWidget" name="semAFreqHolder" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_43">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_42" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_65">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <spacer name="verticalSpacer_20">
+                                     <property name="orientation">
+                                      <enum>Qt::Vertical</enum>
+                                     </property>
+                                     <property name="sizeHint" stdset="0">
+                                      <size>
+                                       <width>20</width>
+                                       <height>40</height>
+                                      </size>
+                                     </property>
+                                    </spacer>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget_43" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_66">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QWidget" name="widget_44" native="true">
+                                     <layout class="QHBoxLayout" name="horizontalLayout_45">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <widget class="QSpinBox" name="semAFreq">
+                                        <property name="minimum">
+                                         <number>0</number>
+                                        </property>
+                                        <property name="value">
+                                         <number>2</number>
+                                        </property>
+                                       </widget>
+                                      </item>
+                                      <item>
+                                       <widget class="QLabel" name="label_14">
+                                        <property name="text">
+                                         <string>times</string>
+                                        </property>
+                                       </widget>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QComboBox" name="semAFreqComp">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <item>
+                                      <property name="text">
+                                       <string>or more</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>exactly</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>or less</string>
+                                      </property>
+                                     </item>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                               </layout>
                               </widget>
                              </item>
                             </layout>
@@ -874,8 +1243,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>133</width>
-                    <height>219</height>
+                    <width>152</width>
+                    <height>367</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1292,7 +1661,13 @@
                        </item>
                        <item>
                         <widget class="QWidget" name="widget_27" native="true">
-                         <layout class="QVBoxLayout" name="verticalLayout_54">
+                         <layout class="QVBoxLayout" name="verticalLayout_79">
+                          <property name="spacing">
+                           <number>4</number>
+                          </property>
+                          <property name="margin">
+                           <number>4</number>
+                          </property>
                           <item>
                            <widget class="QLabel" name="vConfigureSemListTitle">
                             <property name="text">
@@ -1345,8 +1720,345 @@
                                 </sizepolicy>
                                </property>
                                <property name="text">
-                                <string>results</string>
+                                <string>items</string>
                                </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QWidget" name="widget_41" native="true">
+                            <layout class="QVBoxLayout" name="verticalLayout_72">
+                             <property name="spacing">
+                              <number>0</number>
+                             </property>
+                             <property name="margin">
+                              <number>0</number>
+                             </property>
+                             <item>
+                              <widget class="QWidget" name="widget_50" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_48">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QCheckBox" name="semVSelectMore">
+                                  <property name="text">
+                                   <string/>
+                                  </property>
+                                  <property name="checked">
+                                   <bool>true</bool>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QLabel" name="semVMoreVerb">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>22</height>
+                                   </size>
+                                  </property>
+                                  <property name="text">
+                                   <string>played</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QWidget" name="semVTimeHolder" native="true">
+                               <layout class="QVBoxLayout" name="verticalLayout_54">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_51" native="true">
+                                  <layout class="QHBoxLayout" name="horizontalLayout_49">
+                                   <property name="spacing">
+                                    <number>2</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QWidget" name="widget_52" native="true">
+                                     <layout class="QVBoxLayout" name="verticalLayout_73">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <spacer name="verticalSpacer_22">
+                                        <property name="orientation">
+                                         <enum>Qt::Vertical</enum>
+                                        </property>
+                                        <property name="sizeHint" stdset="0">
+                                         <size>
+                                          <width>20</width>
+                                          <height>40</height>
+                                         </size>
+                                        </property>
+                                       </spacer>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QWidget" name="widget_53" native="true">
+                                     <layout class="QVBoxLayout" name="verticalLayout_74">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <widget class="QComboBox" name="semVTimeComp">
+                                        <property name="sizePolicy">
+                                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                          <horstretch>0</horstretch>
+                                          <verstretch>0</verstretch>
+                                         </sizepolicy>
+                                        </property>
+                                        <item>
+                                         <property name="text">
+                                          <string>before</string>
+                                         </property>
+                                        </item>
+                                        <item>
+                                         <property name="text">
+                                          <string>after</string>
+                                         </property>
+                                        </item>
+                                       </widget>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QDateTimeEdit" name="semVTime">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QWidget" name="semVRatingHolder" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_50">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_54" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_75">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <spacer name="verticalSpacer_23">
+                                     <property name="orientation">
+                                      <enum>Qt::Vertical</enum>
+                                     </property>
+                                     <property name="sizeHint" stdset="0">
+                                      <size>
+                                       <width>20</width>
+                                       <height>40</height>
+                                      </size>
+                                     </property>
+                                    </spacer>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget_55" native="true">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <layout class="QVBoxLayout" name="verticalLayout_76">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="SRatingCombo" name="semVRating">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <property name="minimumSize">
+                                      <size>
+                                       <width>0</width>
+                                       <height>30</height>
+                                      </size>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QComboBox" name="semVRatingComp">
+                                     <item>
+                                      <property name="text">
+                                       <string>or more</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>exactly</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>or less</string>
+                                      </property>
+                                     </item>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QWidget" name="semVFreqHolder" native="true">
+                               <layout class="QHBoxLayout" name="horizontalLayout_51">
+                                <property name="spacing">
+                                 <number>0</number>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                                <item>
+                                 <widget class="QWidget" name="widget_56" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_77">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <spacer name="verticalSpacer_24">
+                                     <property name="orientation">
+                                      <enum>Qt::Vertical</enum>
+                                     </property>
+                                     <property name="sizeHint" stdset="0">
+                                      <size>
+                                       <width>20</width>
+                                       <height>40</height>
+                                      </size>
+                                     </property>
+                                    </spacer>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QWidget" name="widget_57" native="true">
+                                  <layout class="QVBoxLayout" name="verticalLayout_78">
+                                   <property name="spacing">
+                                    <number>0</number>
+                                   </property>
+                                   <property name="margin">
+                                    <number>0</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QWidget" name="widget_58" native="true">
+                                     <layout class="QHBoxLayout" name="horizontalLayout_52">
+                                      <property name="spacing">
+                                       <number>0</number>
+                                      </property>
+                                      <property name="margin">
+                                       <number>0</number>
+                                      </property>
+                                      <item>
+                                       <widget class="QSpinBox" name="semVFreq">
+                                        <property name="minimum">
+                                         <number>0</number>
+                                        </property>
+                                        <property name="value">
+                                         <number>2</number>
+                                        </property>
+                                       </widget>
+                                      </item>
+                                      <item>
+                                       <widget class="QLabel" name="label_28">
+                                        <property name="text">
+                                         <string>times</string>
+                                        </property>
+                                       </widget>
+                                      </item>
+                                     </layout>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QComboBox" name="semVFreqComp">
+                                     <property name="sizePolicy">
+                                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                       <horstretch>0</horstretch>
+                                       <verstretch>0</verstretch>
+                                      </sizepolicy>
+                                     </property>
+                                     <item>
+                                      <property name="text">
+                                       <string>or more</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>exactly</string>
+                                      </property>
+                                     </item>
+                                     <item>
+                                      <property name="text">
+                                       <string>or less</string>
+                                      </property>
+                                     </item>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </widget>
+                                </item>
+                               </layout>
                               </widget>
                              </item>
                             </layout>
@@ -8023,6 +8735,11 @@ color: rgb(255, 255, 255);</string>
    <class>NowPlayingView</class>
    <extends>QTreeView</extends>
    <header>nowplayingview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SRatingCombo</class>
+   <extends>QComboBox</extends>
+   <header>sensiblewidgets.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

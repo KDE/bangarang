@@ -307,9 +307,13 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                         valueDateTime,
                                                         constraint));
     } else if (field == "playCount") {
-        addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required,
-                                                        value.toInt(),
-                                                        constraint));
+        MediaQuery::Match match = MediaQuery::Required;
+        if (value.toInt() == 0 || constraint == MediaQuery::LessThan || constraint == MediaQuery::LessThanOrEqual) {
+            match = MediaQuery::Optional;
+        }
+        addCondition(mediaVocabulary.hasPlayCount(match,
+                                                  value.toInt(),
+                                                  constraint));
     } else if (field == "created") {
         QDate valueDate = QDate::fromString(value, "yyyyMMdd");
         addCondition(mediaVocabulary.hasCreated(MediaQuery::Required,
@@ -325,9 +329,16 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                     valueDate,
                                                     constraint));
     } else if (field == "rating") {
-        addCondition(mediaVocabulary.hasRating(MediaQuery::Required,
-                                                        value.toInt(),
-                                                        constraint));
+        MediaQuery::Match match = MediaQuery::Required;
+        if (value.toInt() == 0 && (constraint == MediaQuery::Equal ||
+                                   constraint == MediaQuery::LessThanOrEqual ||
+                                   constraint == MediaQuery::LessThan ||
+                                   constraint == MediaQuery::GreaterThanOrEqual)) {
+            match = MediaQuery::Optional;
+        }
+        addCondition(mediaVocabulary.hasRating(match,
+                                               value.toInt(),
+                                               constraint));
     } else if (field == "artist") {
         addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Required,
                                                         value,
