@@ -63,7 +63,6 @@ class BangarangNotifierItem : public KStatusNotifierItem
     void changeVolumeRequested(int delta);
     
   private:
-    void updateOverlayIcon();
     
     Phonon::State m_currentState;
     
