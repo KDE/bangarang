@@ -28,19 +28,20 @@ Phonon::State BangarangNotifierItem::state() const
 
 void BangarangNotifierItem::setState(Phonon::State state)
 {
-  if (m_currentState == state)
-    return;
-  
-  m_currentState = state;
-  
-  if (m_currentState == Phonon::StoppedState)
-  {
-    setToolTip("bangarang-notifier", i18n("Not Playing"), QString());
-    setStatus(KStatusNotifierItem::Passive);
-  }
-  else setStatus(KStatusNotifierItem::Active);
- 
-  updateOverlayIcon();
+    if (m_currentState == state)
+        return;
+
+    m_currentState = state;
+
+    if (m_currentState == Phonon::StoppedState) {
+        setStatus(KStatusNotifierItem::Passive);
+    } else if (m_currentState == Phonon::PausedState){
+        setStatus(KStatusNotifierItem::Active);
+        setIconByName("bangarang-notifier-active-pause");
+    } else {
+        setStatus(KStatusNotifierItem::Active);
+        setIconByName("bangarang-notifier-active");
+    }
 }
 
 
@@ -57,13 +58,4 @@ void BangarangNotifierItem::handleScrollRequested(int delta, Qt::Orientation ori
   if (orientation == Qt::Vertical)
     emit changeVolumeRequested(delta/120);
  // else emit changeTrackRequested(delta/120);
-}
-
-void BangarangNotifierItem::updateOverlayIcon()
-{
-  if (m_currentState == Phonon::PlayingState)
-    setOverlayIconByName("media-playback-start");
-  else if (m_currentState == Phonon::PausedState)
-    setOverlayIconByName("media-playback-pause");
-  else setOverlayIconByName(QString());
 }
