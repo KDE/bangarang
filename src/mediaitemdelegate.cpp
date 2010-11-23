@@ -216,7 +216,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint Rating
-    if (m_renderMode == NormalMode || (m_renderMode == MiniRatingMode && !option.state.testFlag(QStyle::State_MouseOver))) {
+    if (m_renderMode == NormalMode ||
+        (m_renderMode == MiniRatingMode && (!option.state.testFlag(QStyle::State_MouseOver) || !isCategory))) {
         if ((m_nepomukInited) && 
             (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
             (subType != "CD Track") &&
@@ -233,7 +234,9 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint PlayCount
-    if (m_renderMode == MiniPlayCountMode && !index.data(MediaItem::PlayCountRole).isNull() && !option.state.testFlag(QStyle::State_MouseOver)) {
+    if (m_renderMode == MiniPlayCountMode &&
+        !index.data(MediaItem::PlayCountRole).isNull() &&
+        (!option.state.testFlag(QStyle::State_MouseOver) || !isCategory)) {
         QString playCountText = QString("%1").arg(index.data(MediaItem::PlayCountRole).toInt());
         p.drawText(left + width - m_durRatingSpacer,
                     top+1, m_durRatingSpacer - 1, height,
