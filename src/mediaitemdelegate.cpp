@@ -84,16 +84,16 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);    
     
-    const int left = option.rect.left();
-    const int top = option.rect.top();
-    const int width = option.rect.width();
-    //const int height = calcItemHeight();   
-    const int height = option.rect.height();   
-    
     if (index.column() != 0)
         return;
 
     
+    //Determin basic information
+    const int left = option.rect.left();
+    const int top = option.rect.top();
+    const int width = option.rect.width();
+    const int height = option.rect.height();
+
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
     QColor subColor = (option.state.testFlag(QStyle::State_Selected))?
@@ -113,24 +113,35 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     } else if (type == "Video") {
         subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
     }
+    bool hasSubTitle = false;
+    if (index.data(MediaItem::SubTitleRole).isValid() ||
+        index.data(MediaItem::SemanticCommentRole).isValid()) {
+        if (!index.data(MediaItem::SubTitleRole).toString().isEmpty() ||
+            !index.data(MediaItem::SemanticCommentRole).toString().isEmpty()) {
+            hasSubTitle = true;
+        }
+    }
     bool isMediaItem = Utilities::isMedia(type);
     bool isCategory =  Utilities::isCategory(type);
     bool isAction = type == "Action";
     bool isMessage = type == "Message";
     bool hasUrl = !index.data(MediaItem::UrlRole).toString().isEmpty();
-    
+    bool exists = index.data(MediaItem::ExistsRole).toBool();
+    bool hasCustomArtwork = index.data(MediaItem::HasCustomArtworkRole).toBool();
+
     //Create base pixmap
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::transparent);
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
     
-    //Paint backgroung for currently playing item
+    //Paint background for currently playing item
     KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
         if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
             icon = m_showPlaying;
+            hasCustomArtwork = false;
             QLinearGradient linearGrad(QPointF(left, top), QPointF(left+width, top));
             linearGrad.setColorAt(0, nowPlayingColor);
             linearGrad.setColorAt(0.7, nowPlayingColor);
@@ -141,8 +152,6 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint Icon
-    bool exists = index.data(MediaItem::ExistsRole).toBool();
-    bool hasCustomArtwork = index.data(MediaItem::HasCustomArtworkRole).toBool();
     int iconSize = hasCustomArtwork ? height - 2: m_iconSize;
     int topOffset = (height - iconSize) / 2;
     if (m_renderMode == NormalMode) {
@@ -152,19 +161,6 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     if (!exists && m_renderMode == NormalMode) {
         KIcon("emblem-unmounted").paint(&p, left + m_padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
-    }
-    
-    bool hasSubTitle;
-    if (index.data(MediaItem::SubTitleRole).isValid() || 
-        index.data(MediaItem::SemanticCommentRole).isValid()) {
-        if (!index.data(MediaItem::SubTitleRole).toString().isEmpty() ||
-            !index.data(MediaItem::SemanticCommentRole).toString().isEmpty()) {
-            hasSubTitle = true;
-        } else {
-            hasSubTitle = false;
-        }
-    } else {
-        hasSubTitle = false;
     }
     
     //Paint text
@@ -208,6 +204,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             p.setFont(textFont);
         }
     }
+
     
     //Paint duration
     if (m_renderMode == NormalMode || m_renderMode == MiniMode) {
@@ -219,7 +216,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint Rating
-    if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode) {
+    if (m_renderMode == NormalMode || (m_renderMode == MiniRatingMode && !option.state.testFlag(QStyle::State_MouseOver))) {
         if ((m_nepomukInited) && 
             (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
             (subType != "CD Track") &&
@@ -227,7 +224,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             hasUrl ) {
             int rating = (index.data(MediaItem::RatingRole).isValid()) ?
                             index.data(MediaItem::RatingRole).toInt() : 0;
-            StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
+            QPoint topLeft = ratingRect(&option.rect).topLeft();
+            StarRating r = StarRating(rating, m_starRatingSize, topLeft);
             if (option.state.testFlag(QStyle::State_MouseOver))
                 r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
             r.paint(&p);
@@ -235,7 +233,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint PlayCount
-    if (m_renderMode == MiniPlayCountMode && !index.data(MediaItem::PlayCountRole).isNull()) {
+    if (m_renderMode == MiniPlayCountMode && !index.data(MediaItem::PlayCountRole).isNull() && !option.state.testFlag(QStyle::State_MouseOver)) {
         QString playCountText = QString("%1").arg(index.data(MediaItem::PlayCountRole).toInt());
         p.drawText(left + width - m_durRatingSpacer,
                     top+1, m_durRatingSpacer - 1, height,
@@ -263,9 +261,14 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         int stateIconWidth = 16;
         int topOffset = (height - m_iconSize) / 2;
         icon.paint(&p, left + width - m_padding - stateIconWidth, top + topOffset, m_iconSize, stateIconWidth, Qt::AlignCenter, QIcon::Normal);
-    } else if (isCategory && hasUrl && m_renderMode == NormalMode) {
+    } else if (isCategory && hasUrl &&
+               (m_renderMode == NormalMode ||
+                (m_renderMode != NormalMode && option.state.testFlag(QStyle::State_MouseOver)))) {
         //Paint Category Icon
         int stateIconWidth = 22;
+        if (m_renderMode != NormalMode) {
+            stateIconWidth = 18;
+        }
         int topOffset = (height - stateIconWidth) / 2;
         m_categoryActionIcon.paint(&p, left + width - stateIconWidth, top + topOffset, stateIconWidth, stateIconWidth, Qt::AlignLeft, QIcon::Normal);
     }
@@ -357,7 +360,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         QRect curArea = addRmPlaylistRect(&option.rect);
         //doubleclick on the item or click on the "add to/remove from playlist" area
         if ((eventType == QEvent::MouseButtonDblClick) ||
-            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos) && m_renderMode == NormalMode )
+            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos))
             ) {
                 emit categoryActivated(index);
                 return true;
@@ -475,9 +478,15 @@ QRect MediaItemDelegate::ratingRect(const QRect *rect) const
 
 QRect MediaItemDelegate::addRmPlaylistRect(const QRect* rect) const
 {
-    QPoint p = QPoint(rect->left() + rect->width() - m_iconSize,
-                      rect->top() + m_padding);
-    return QRect(p, QSize(m_iconSize, m_iconSize));
+    if (m_renderMode == NormalMode) {
+        QPoint p = QPoint(rect->left() + rect->width() - m_iconSize,
+                          rect->top() + m_padding);
+        return QRect(p, QSize(m_iconSize, m_iconSize));
+    } else {
+        QPoint p = QPoint(rect->left() + rect->width() - 18,
+                          rect->top() + m_padding);
+        return QRect(p, QSize(18, 18));
+    }
 }
 
 MediaItemDelegate::RenderMode MediaItemDelegate::currentRenderMode()
