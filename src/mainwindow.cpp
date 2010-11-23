@@ -335,8 +335,8 @@ void MainWindow::on_showPlaylist_clicked()
             m_application->actionsManager()->action("toggle_filter")->trigger();
         }
     }
-    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show Video Settings"));
-    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show Audio Settings"));
+    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video Settings"));
+    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio Settings"));
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
