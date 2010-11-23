@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2010-10-31 14:06-0700\n"
-"PO-Revision-Date: 2010-09-05 15:34+0200\n"
+"PO-Revision-Date: 2010-11-22 14:34+0100\n"
 "Last-Translator: \n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
@@ -133,9 +133,8 @@ msgstr "Rimuovi segnalibro"
 
 #: actionsmanager.cpp:237 actionsmanager.cpp:537 actionsmanager.cpp:560
 #: actionsmanager.cpp:609
-#, fuzzy
 msgid "Show shortcuts editor"
-msgstr "Scorciatoie"
+msgstr "Mostra editor scorciatoie"
 
 #: actionsmanager.cpp:244
 msgid "Update ontologies..."
@@ -168,16 +167,15 @@ msgstr "Nascondi impostazioni audio"
 
 #: actionsmanager.cpp:601
 msgid "Hide shortcuts editor"
-msgstr ""
+msgstr "Nascondi editor scorciatoie"
 
 #: actionsmanager.cpp:653
 msgid "Restore Volume"
 msgstr "Ripristina Volume"
 
 #: actionsmanager.cpp:834
-#, fuzzy
 msgid "Show elapsed time"
-msgstr "Mostra Tempo Trascorso"
+msgstr "Mostra tempo trascorso"
 
 #: actionsmanager.cpp:914 actionsmanager.cpp:921
 msgid "Update Ontologies"
@@ -424,13 +422,13 @@ msgstr "Mostra Output di Debug Aggiuntivo"
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
 #: mainwindow.cpp:175 rc.cpp:245
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #. i18n: file: mainwindow.ui:6040
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
 #: mainwindow.cpp:176 rc.cpp:242
 msgid "Yes"
-msgstr ""
+msgstr "Sì"
 
 #: mainwindow.cpp:312
 msgid "Show Video Settings"
@@ -570,19 +568,16 @@ msgid "Add to playlist/Remove from playlist"
 msgstr "Aggiungi alla scaletta/Rimuovi dalla scaletta"
 
 #: mediaview.cpp:142
-#, fuzzy
 msgid "Show Songs"
-msgstr "Mostra Controlli"
+msgstr "Mostra Canzoni"
 
 #: mediaview.cpp:144
-#, fuzzy
 msgid "Show Albums"
-msgstr "Album"
+msgstr "Mostra Album"
 
 #: mediaview.cpp:146
-#, fuzzy
 msgid "Show Artists"
-msgstr "Artisti"
+msgstr "Mostra Artisti"
 
 #. i18n: file: mainwindow.ui:5736
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
@@ -823,50 +818,49 @@ msgstr "Filtro"
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherMessage)
 #: rc.cpp:164
 msgid "   Fetching info..."
-msgstr ""
+msgstr "   Recupero info..."
 
 #. i18n: file: mainwindow.ui:2010
 #. i18n: ectx: property (toolTip), widget (QToolButton, showInfoFetcherExpander)
 #: rc.cpp:167
 msgid "Additional info may be available..."
-msgstr ""
+msgstr "Info aggiuntive potrebbero essere disponibili..."
 
 #. i18n: file: mainwindow.ui:2042
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
 #: rc.cpp:170
 msgid "Additional information may be available from:"
-msgstr ""
+msgstr "Informazioni aggiuntive potrebbero essere disponibili da:"
 
 #. i18n: file: mainwindow.ui:2061
 #. i18n: ectx: property (toolTip), widget (QToolButton, infoFetch)
 #: rc.cpp:173
 msgid "Fetch info and edit"
-msgstr ""
+msgstr "Recupera info e modifica"
 
 #. i18n: file: mainwindow.ui:2064
 #. i18n: ectx: property (text), widget (QToolButton, infoFetch)
 #: rc.cpp:176
 msgid "Fetch info and edit changes"
-msgstr ""
+msgstr "Recupera info e modifica cambiamenti"
 
 #. i18n: file: mainwindow.ui:2083
 #. i18n: ectx: property (toolTip), widget (QToolButton, infoAutoFetch)
 #: rc.cpp:179
 msgid "Fetch info for selected item(s)"
-msgstr ""
+msgstr "Recupera info per gli elementi selezionati"
 
 #. i18n: file: mainwindow.ui:2086
 #. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
 #: rc.cpp:182
 msgid "Fetch info and save changes"
-msgstr ""
+msgstr "Recupera info e salva cambiamenti"
 
 #. i18n: file: mainwindow.ui:2179
 #. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
 #: rc.cpp:185
-#, fuzzy
 msgid "Index Selected"
-msgstr "Riproduci Selezionati"
+msgstr "Indicizza Selezionati"
 
 #. i18n: file: mainwindow.ui:2226
 #. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
@@ -935,9 +929,8 @@ msgstr "[ ]"
 #. i18n: file: mainwindow.ui:6027
 #. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
 #: rc.cpp:239
-#, fuzzy
 msgid "Notification"
-msgstr "Testo Notifica"
+msgstr "Notifica"
 
 #. i18n: file: mainwindow.ui:6209
 #. i18n: ectx: property (text), widget (QLabel, label_2)
@@ -948,9 +941,8 @@ msgstr "Impostazioni Audio"
 #. i18n: file: mainwindow.ui:6258
 #. i18n: ectx: property (text), widget (QLabel, label_20)
 #: rc.cpp:260
-#, fuzzy
 msgid "Audio Channel:"
-msgstr "Canali Audio"
+msgstr "Canali Audio:"
 
 #. i18n: file: mainwindow.ui:6322
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
@@ -1055,50 +1047,44 @@ msgstr "Impostazioni Video"
 #. i18n: file: mainwindow.ui:6897
 #. i18n: ectx: property (text), widget (QLabel, label_26)
 #: rc.cpp:311
-#, fuzzy
 msgid "Subtitle:"
-msgstr "Sottotitoli"
+msgstr "Sottotitoli:"
 
 #. i18n: file: mainwindow.ui:6944
 #. i18n: ectx: property (text), widget (QLabel, label_25)
 #: rc.cpp:314
-#, fuzzy
 msgid "Angle:"
-msgstr "Angoli"
+msgstr "Angoli:"
 
 #. i18n: file: mainwindow.ui:7000
 #. i18n: ectx: property (text), widget (QLabel, label_21)
 #: rc.cpp:317
-#, fuzzy
 msgid "Brightness:"
-msgstr "Luminosità"
+msgstr "Luminosità:"
 
 #. i18n: file: mainwindow.ui:7047
 #. i18n: ectx: property (text), widget (QLabel, label_22)
 #: rc.cpp:320
-#, fuzzy
 msgid "Contrast:"
-msgstr "Contrasto"
+msgstr "Contrasto:"
 
 #. i18n: file: mainwindow.ui:7094
 #. i18n: ectx: property (text), widget (QLabel, label_23)
 #: rc.cpp:323
 msgid "Hue:"
-msgstr ""
+msgstr "Colore:"
 
 #. i18n: file: mainwindow.ui:7141
 #. i18n: ectx: property (text), widget (QLabel, label_24)
 #: rc.cpp:326
-#, fuzzy
 msgid "Saturation:"
-msgstr "Saturazione"
+msgstr "Saturazione:"
 
 #. i18n: file: mainwindow.ui:7204
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
 #: rc.cpp:329
-#, fuzzy
 msgid "Aspect Ratio"
-msgstr "Impostazioni Rapporto d'Aspetto"
+msgstr "Rapporto d'Aspetto"
 
 #. i18n: file: mainwindow.ui:7216
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatioAuto)
@@ -1127,9 +1113,8 @@ msgstr "16:9"
 #. i18n: file: mainwindow.ui:7247
 #. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
 #: rc.cpp:344
-#, fuzzy
 msgid "Scaling"
-msgstr "Modalità Scala"
+msgstr "Scala"
 
 #. i18n: file: mainwindow.ui:7259
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
@@ -1307,9 +1292,8 @@ msgid "Season"
 msgstr "Stagione"
 
 #: platform/infoitemmodel.cpp:81
-#, fuzzy
 msgid "episodeNumber"
-msgstr "1 episodio"
+msgstr "Numero episodio"
 
 #: platform/infoitemmodel.cpp:82
 msgid "Play Count"
@@ -1348,16 +1332,16 @@ msgstr "Riprodotti di Frequente"
 
 #: platform/mediaindexer.cpp:80 platform/mediaindexer.cpp:123
 msgid "Starting update..."
-msgstr ""
+msgstr "Inizio aggiornamento..."
 
 #: platform/mediaindexer.cpp:257
 #, kde-format
 msgid "Updated: %1 - %2"
-msgstr ""
+msgstr "Aggiornato: %1 - %2"
 
 #: platform/mediaindexer.cpp:264
 msgid "Removing info..."
-msgstr ""
+msgstr "Rimozione informazioni..."
 
 #: platform/mediaitemmodel.cpp:431
 #, kde-format
