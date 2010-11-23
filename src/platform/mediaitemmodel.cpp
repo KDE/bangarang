@@ -541,6 +541,7 @@ void MediaItemModel::removeMediaItemByResource(QString resourceUri)
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    m_listEngineFactory->stopAll();
     removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
