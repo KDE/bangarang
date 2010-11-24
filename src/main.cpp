@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     aboutData.addCredit(ki18n("Kristof Bal"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Ryan Kavanagh"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Sebastian Jambor"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Shuizhuyuanluo"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Ni Hui"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
     aboutData.setHomepage("http://gitorious.org/bangarang");
