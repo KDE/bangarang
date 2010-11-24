@@ -148,13 +148,14 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         QString artist  = TStringToQString(file.tag()->artist()).trimmed();
         QString album   = TStringToQString(file.tag()->album()).trimmed();
         QString genre   = TStringToQString(file.tag()->genre()).trimmed();
+        QByteArray encodingname = "utf-8";
         if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
             // detect encoding for mpeg id3v2
             QString tmp = title + artist + album + genre;
             KEncodingProber prober(KEncodingProber::Universal);
             KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
             if (result != KEncodingProber::NotMe) {
-                QByteArray encodingname = prober.encoding().toLower();
+                encodingname = prober.encoding().toLower();
                 if ( prober.confidence() > 0.47
                     && ( ( encodingname == "gb18030" )
                     || ( encodingname == "big5" )
@@ -171,6 +172,9 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                     artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
                     album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
                     genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
+                    encodingname = QTextCodec::codecForLocale()->name().toLower();
+                } else {
+                    encodingname = "utf-8";
                 }
             }
         }
@@ -185,12 +189,24 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         QString tag = tagType(url);
         if (tag == "ID3V2" || tag == "FLACID3V2") {
             if (tag == "ID3V2") {
-                TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
+                TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
                 TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
                 if (id3v2 && !id3v2->isEmpty()) {
                     artists = getID3V2TextFrameFields(id3v2, "TPE1");
                     composers = getID3V2TextFrameFields(id3v2, "TCOM");
                     genres = getID3V2TextFrameFields(id3v2, "TCON");
+                    // Convert from decoded encoding
+                    if ( encodingname != "utf-8" ) {
+                        for ( int i = 0; i != artists.size(); ++i ) {
+                            artists[i] = QTextCodec::codecForName(encodingname)->toUnicode(artists[i].toAscii());
+                        }
+                        for ( int i = 0; i != composers.size(); ++i ) {
+                            composers[i] = QTextCodec::codecForName(encodingname)->toUnicode(composers[i].toAscii());
+                        }
+                        for ( int i = 0; i != genres.size(); ++i ) {
+                            genres[i] = QTextCodec::codecForName(encodingname)->toUnicode(genres[i].toAscii());
+                        }
+                    }
                 }
             } else {
                 TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
@@ -384,7 +400,7 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                     QString tag = tagType(url);
                     if (tag == "ID3V2" || tag == "FLACID3V2") {
                         if (tag == "ID3V2") {
-                            TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toUtf8().constData());
+                            TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
                             TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
                             setID3V2TextFrameFields(id3v2, "TPE1", artists);
                             setID3V2TextFrameFields(id3v2, "TCOM", composers);
@@ -444,7 +460,7 @@ bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
     if (result->is("audio/mpeg")) {
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toUtf8().constData());
+        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
         if (mpegFile.isValid()) {
             TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
 
