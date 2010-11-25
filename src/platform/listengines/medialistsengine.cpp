@@ -432,7 +432,7 @@ QString MediaListsEngine::semanticsLriForHighest(const QString &type)
     KConfig config;
     KConfigGroup generalGroup( &config, "General" );
     if (type == "Audio") {
-        int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+        int limit = generalGroup.readEntry("HighestAudioLimit", 20);
         lri = QString("semantics://highest?audio||limit=%1").arg(limit);
         if (generalGroup.hasKey("HighestAudioRated")) {
             QStringList entry = generalGroup.readEntry("HighestAudioRated", QStringList());
@@ -459,7 +459,7 @@ QString MediaListsEngine::semanticsLriForFrequent(const QString &type)
     KConfig config;
     KConfigGroup generalGroup( &config, "General" );
     if (type == "Audio") {
-        int limit = generalGroup.readEntry("RecentAudioLimit", 20);
+        int limit = generalGroup.readEntry("FrequentAudioLimit", 20);
         lri = QString("semantics://frequent?audio||limit=%1").arg(limit);
         if (generalGroup.hasKey("FrequentAudioPlayed")) {
             QStringList entry = generalGroup.readEntry("FrequentAudioPlayed", QStringList());
