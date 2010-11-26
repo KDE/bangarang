@@ -575,7 +575,7 @@ void MainWindow::updateSeekTime(qint64 time)
     if (nowPlayingModel->rowCount() > 0) {
         if (nowPlayingModel->mediaItemAt(0).type != "Application Banner") {
             QString title = nowPlayingModel->mediaItemAt(0).title;
-            ui->nowPlaying->setText(i18n("Now Playing") + QString("(")+ displayTime + QString(")\n") + title);
+            ui->nowPlaying->setText(i18n("Now Playing") + QString(" (")+ displayTime + QString(")\n") + title);
         } else {
             ui->nowPlaying->setText(i18n("Now Playing"));
         }
