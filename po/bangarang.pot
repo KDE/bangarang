@@ -579,7 +579,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
+msgid "<b>Playlist</b> (Upcoming)"
 msgstr ""
 
 #: rc.cpp:1
