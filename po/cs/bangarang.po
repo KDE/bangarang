@@ -623,8 +623,8 @@ msgstr[1] "%1 položky"
 msgstr[2] "%1 položek"
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>Seznam stop</b>(Následující)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Seznam stop</b> (Následující)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"

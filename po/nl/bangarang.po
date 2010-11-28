@@ -601,8 +601,8 @@ msgstr[0] "1 item, %2"
 msgstr[1] "%1 items, %2"
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>Afspeellijst</b>(Volgende)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Afspeellijst</b> (Volgende)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"

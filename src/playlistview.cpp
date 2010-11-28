@@ -93,7 +93,7 @@ void PlaylistView::playlistChanged()
             m_playlistDuration->setText(QString());
         }
     } else {
-        m_playlistName->setText(i18n("<b>Playlist</b>(Upcoming)"));
+        m_playlistName->setText(i18n("<b>Playlist</b> (Upcoming)"));
     }
 }
 
