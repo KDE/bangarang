@@ -22,6 +22,8 @@
 #include <KUrl>
 #include <phonon/Global>
 #include <solid/opticaldisc.h>
+#include <QtCore>
+#include <QMutex>
 
 namespace Phonon {
 class MediaObject;
@@ -47,6 +49,7 @@ class MediaObject;
  * used throughout bangarang.
  */
 namespace Utilities {
+    static QMutex mutex;
     QString mergeLRIs(const QString &lri, const QString &lriToMerge);
     QUrl artistResource(const QString &artistName);
     QUrl albumResource(const QString &albumName);
