@@ -345,28 +345,31 @@ void InfoItemModel::selectFetchedMatch(int index)
 
     //Update model data
     for (int i = 0; i < rowCount(); i++) {
+        QString subType = match.subType();
         QString field = item(i)->data(InfoItemModel::FieldRole).toString();
-        if (field == "audioType" || field == "videoType") {
-            QString subType = match.subType();
-            QVariant value;
-            if (subType == "Music" || subType == "Movie") {
-                value = QVariant(0);
-            } else if (subType == "Audio Stream" || subType == "TV Show") {
-                value = QVariant(1);
-            } else if (subType == "Audio Clip" || subType == "Video Clip") {
-                value = QVariant(2);
+        bool restricted = m_restrictedFields[subType].contains(field);
+        if (!restricted) {
+            if (field == "audioType" || field == "videoType") {
+                QVariant value;
+                if (subType == "Music" || subType == "Movie") {
+                    value = QVariant(0);
+                } else if (subType == "Audio Stream" || subType == "TV Show") {
+                    value = QVariant(1);
+                } else if (subType == "Audio Clip" || subType == "Video Clip") {
+                    value = QVariant(2);
+                }
+                item(i)->setData(value, Qt::DisplayRole);
+                item(i)->setData(value, Qt::EditRole);
+            } else if (field == "artwork") {
+                disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+                item(i)->setData(match.artwork, Qt::DecorationRole);
+                item(i)->setData(match.fields["artworkUrl"], Qt::DisplayRole);
+                item(i)->setData(match.fields["artworkUrl"], Qt::EditRole);
+                connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            } else {
+                item(i)->setData(match.fields[field], Qt::DisplayRole);
+                item(i)->setData(match.fields[field], Qt::EditRole);
             }
-            item(i)->setData(value, Qt::DisplayRole);
-            item(i)->setData(value, Qt::EditRole);
-        } else if (field == "artwork") {
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
-            item(i)->setData(match.artwork, Qt::DecorationRole);
-            item(i)->setData(match.fields["artworkUrl"], Qt::DisplayRole);
-            item(i)->setData(match.fields["artworkUrl"], Qt::EditRole);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
-        } else {
-            item(i)->setData(match.fields[field], Qt::DisplayRole);
-            item(i)->setData(match.fields[field], Qt::EditRole);
         }
     }
 
