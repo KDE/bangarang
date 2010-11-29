@@ -193,6 +193,7 @@ class InfoItemModel : public QStandardItemModel
         void itemChanged(QStandardItem *changedItem);
         void infoFetched(QList<MediaItem> fetchedMatches);
         void updateFetchedInfo(int index, MediaItem match);
+        void autoSaveFetchedInfo();
 };
 
 #endif // INFOITEMDELEGATE_H

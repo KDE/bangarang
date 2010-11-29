@@ -75,7 +75,6 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
     
     //Create Request Key
     QString requestKey = QString("Artist:%1").arg(artistName);
-    m_requests.clear();
     
     //Launch Query
     launchQuery(query, requestKey);
@@ -104,7 +103,6 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
     
     //Create Request Key
     QString requestKey = QString("Actor:%1").arg(actorName);
-    m_requests.clear();
     
     //Launch Query
     launchQuery(query, requestKey);
@@ -128,7 +126,6 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
     
     //Create Request Key
     QString requestKey = QString("Director:%1").arg(directorName);
-    m_requests.clear();
     
     //Launch Query
     launchQuery(query, requestKey);
@@ -161,7 +158,6 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
 
     //Create Request Key
     QString requestKey = QString("Movie:%1").arg(movieName);
-    m_requests.clear();
     
     //Launch Query
     launchQuery(query, requestKey);
@@ -259,6 +255,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
         }
         resultsBindingSets.append(bindingSet);
     }
+    m_requests.remove(requestKey);
     
     //Check type of request and emit appropriate results signal
     if (requestKey.startsWith("Artist")) {
