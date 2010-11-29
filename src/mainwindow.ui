@@ -295,8 +295,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>147</width>
+                    <height>299</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -2606,7 +2606,7 @@
                             <number>4</number>
                            </property>
                            <item>
-                            <widget class="QListView" name="infoItemView">
+                            <widget class="InfoItemView" name="infoItemView">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                                <horstretch>0</horstretch>
@@ -2618,6 +2618,9 @@
                              </property>
                              <property name="frameShape">
                               <enum>QFrame::NoFrame</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Plain</enum>
                              </property>
                              <property name="verticalScrollBarPolicy">
                               <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -8740,6 +8743,11 @@ color: rgb(255, 255, 255);</string>
    <class>SRatingCombo</class>
    <extends>QComboBox</extends>
    <header>sensiblewidgets.h</header>
+  </customwidget>
+  <customwidget>
+   <class>InfoItemView</class>
+   <extends>QListView</extends>
+   <header>infoitemview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
