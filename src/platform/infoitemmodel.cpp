@@ -120,6 +120,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
     connect(dbPediaInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(dbPediaInfoFetcher);
 
@@ -127,6 +128,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
     connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
 
@@ -134,6 +136,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(fileNameInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(fileNameInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(fileNameInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
+    connect(fileNameInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
     connect(fileNameInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(fileNameInfoFetcher);
 
@@ -406,16 +409,16 @@ void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
     if (foundIndex != -1 && m_fetchType == AutoFetch) {
         m_mediaList.replace(foundIndex, match);
 
-        //Cache autofetched info in nepomuk
-        m_indexer->updateInfo(match);
-
-        //Ensure original values in model are updated to reflect saved(no-edits) state
-        m_suppressFetchOnLoad = true;
-        loadInfo(m_mediaList);
-        emit infoChanged(false);
     } else if (foundIndex != -1 && m_fetchType == Fetch) {
         m_fetchedMatches = fetchedMatches;
         selectFetchedMatch(0);
+    }
+}
+
+void InfoItemModel::autoSaveFetchedInfo()
+{
+    if (m_fetchType == AutoFetch) {
+        saveChanges();
     }
 }
 
