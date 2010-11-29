@@ -40,6 +40,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QPixmap>
+#include <QMutex>
 
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
@@ -417,13 +418,16 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
   if (url.isNull() || url.isEmpty())
     return QString();
 
+  QMutex mutex;
   const QString title = url.split("/").last();
   QString path = url;
   path.remove(title); // string containg an 'url'
   path = KUrl(path).path();
-  QDir dir(path);
 
+  mutex.lock();
+  QDir dir(path);
   QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
+  mutex.unlock();
 
   if (files.count() == 1)
     return path + files[0];
