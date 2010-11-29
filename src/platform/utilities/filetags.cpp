@@ -143,7 +143,6 @@ QString Utilities::tagType(const QString &url)
 
 MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateItem)
 {
-    QMutexLocker locker(&mutex);
     MediaItem mediaItem = templateItem;
     mediaItem.url = url;
     mediaItem.fields["url"] = url;
