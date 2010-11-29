@@ -747,26 +747,9 @@ void InfoItemDelegate::setView(QAbstractItemView * view)
 int InfoItemDelegate::heightForWordWrap(QFont font, int width, QString text) const
 {
     QFontMetrics fm(font);
-    int fmWidth = fm.boundingRect(text).width();
-    int fmHeight = fm.lineSpacing() + 1;
-    int heightMultiplier = 1;
-    QString fitText = text;
-    while (fmWidth > width) {
-        QStringList wordList = fitText.split(QRegExp("\\s+"));
-        QString wordWrapText = fitText;
-        while (fmWidth > width) {
-            wordWrapText.truncate(wordWrapText.lastIndexOf(wordList.takeLast()));
-            fmWidth = fm.boundingRect(wordWrapText).width();
-        }
-        heightMultiplier++;
-        if (wordWrapText.isEmpty()) {
-            QStringList wordList = fitText.split(QRegExp("\\s+"));
-            wordWrapText = wordList.at(0);
-        }
-        fitText = fitText.mid(wordWrapText.length());
-        fmWidth = fm.boundingRect(fitText).width();
-    }
-    return heightMultiplier*fmHeight;
+    QRect rect(0, 0, width, fm.lineSpacing());
+    int height = fm.boundingRect(rect, Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap,text).height();
+    return height;
 }
 
 int InfoItemDelegate::rowHeight(int row) const
