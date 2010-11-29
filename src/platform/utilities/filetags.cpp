@@ -19,6 +19,7 @@
 #ifndef UTILITIES_FILETAGS_CPP
 #define UTILITIES_FILETAGS_CPP
 
+#include "general.h"
 #include "filetags.h"
 #include "typechecks.h"
 
@@ -33,7 +34,7 @@
 #include <QImage>
 #include <QTextCodec>
 #include <QTime>
-#include <QMutex>
+#include <QMutexLocker>
 
 #include <taglib/mpegfile.h>
 #include <taglib/vorbisfile.h>
@@ -59,6 +60,7 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
+    QMutexLocker locker(&mutex);
     QImage attachedImage;
     KUrl kUrl(url);
     KMimeType::Ptr type = KMimeType::findByUrl(kUrl, 0, true);
@@ -69,8 +71,6 @@ QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
         type->is("video/mp4") ||
         type->is("application/mp4"))) {
 
-        QMutex mutex;
-        mutex.lock();  //Taglib isn't thread safe
         TagLib::MPEG::File mpegFile(kUrl.path().toLocal8Bit().constData(), false);
         TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
 
@@ -90,18 +90,15 @@ QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
         if (size != attachedImage.size() && !attachedImage.isNull()) {
             attachedImage = attachedImage.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
-        mutex.unlock();
     }
     return attachedImage;
 }
 
 QString Utilities::tagType(const QString &url)
 {
+    QMutexLocker locker(&mutex);
     KMimeType::Ptr type = KMimeType::findByUrl(KUrl(url), 0, true);
     if (isMusic(url)) {
-        QMutex mutex;
-        mutex.lock();  //Taglib isn't thread safe
-
         if (type->is("audio/ogg") ||
             type->is("application/ogg") ||
             type->is("audio/vorbis") ||
@@ -140,18 +137,16 @@ QString Utilities::tagType(const QString &url)
         if (apeTag && !apeTag->isEmpty()) {
             return "APE";
         }
-        mutex.unlock();
     }
     return QString();
 }
 
 MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateItem)
 {
+    QMutexLocker locker(&mutex);
     MediaItem mediaItem = templateItem;
     mediaItem.url = url;
     mediaItem.fields["url"] = url;
-    QMutex mutex;
-    mutex.lock();  //Taglib isn't thread safe
     TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
     if (!file.isNull()) {
         QString title = TStringToQString(file.tag()->title()).trimmed();
@@ -262,7 +257,6 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         mediaItem.fields["trackNumber"] = track;
         mediaItem.fields["year"] = year;
     }
-    mutex.unlock();
     return mediaItem;
 }
 
@@ -366,6 +360,7 @@ QStringList Utilities::getXiphTextFields(TagLib::Ogg::XiphComment *xiph, const T
 void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
+        QMutexLocker locker(&mutex);
         MediaItem mediaItem = mediaList.at(i);
         if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
             QString url = mediaList.at(i).url;
@@ -374,8 +369,6 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                 if (!artworkUrl.isEmpty()) {
                     Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
                 }
-                QMutex mutex;
-                mutex.lock();  //Taglib isn't thread safe
                 TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
                 if (!file.isNull()) {
                     QString title = mediaItem.fields["title"].toString();
@@ -447,7 +440,6 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                         }
                     }
                 }
-                mutex.unlock();
             }
         }
     }

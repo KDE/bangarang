@@ -19,6 +19,7 @@
 #ifndef UTILITIES_ARTWORK_CPP
 #define UTILITIES_ARTWORK_CPP
 
+#include "general.h"
 #include "artwork.h"
 #include "typechecks.h"
 #include "filetags.h"
@@ -40,7 +41,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QPixmap>
-#include <QMutex>
+#include <QMutexLocker>
 
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
@@ -418,16 +419,15 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
   if (url.isNull() || url.isEmpty())
     return QString();
 
-  QMutex mutex;
+  QMutexLocker locker(&mutex);
+
   const QString title = url.split("/").last();
   QString path = url;
   path.remove(title); // string containg an 'url'
   path = KUrl(path).path();
 
-  mutex.lock();
   QDir dir(path);
   QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
-  mutex.unlock();
 
   if (files.count() == 1)
     return path + files[0];
