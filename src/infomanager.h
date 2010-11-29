@@ -84,9 +84,7 @@ class InfoManager : public QObject
         InfoFetcher *m_currentInfoFetcher;
         
     private slots:
-        void updateViewsLayout();
         void cancelItemEdit();
-        void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
         void infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
         void infoChanged(bool modified);
         void fetchInfo();
@@ -96,7 +94,6 @@ class InfoManager : public QObject
         void showInfoFetcher();
         void toggleShowInfoFetcherExpander();
         void selectInfoFetcher(int index);
-        void splitterResized(int, int);
         
     Q_SIGNALS:
         void infoBoxSelectionChanged(QList<MediaItem> selectedItems);

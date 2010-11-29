@@ -56,12 +56,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
 
     m_nepomukInited = Utilities::nepomukInited();
     
-    m_infoItemModel = new InfoItemModel(this);
+    m_infoItemModel = (InfoItemModel *)ui->infoItemView->model();
     m_infoItemModel->setSourceModel(m_application->browsingModel());
-    ui->infoItemView->setModel(m_infoItemModel);
-    m_infoItemDelegate = new InfoItemDelegate(m_parent);
-    m_infoItemDelegate->setView(ui->infoItemView);
-    ui->infoItemView->setItemDelegate(m_infoItemDelegate);
     ui->infoSaveHolder->setVisible(false);
     ui->infoIndexerHolder->setVisible(false);
     ui->infoFetcherHolder->setVisible(false);
@@ -95,10 +91,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->infoIndexSelected, SIGNAL(clicked()), this, SLOT(addSelectedItemsInfo()));
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
-    connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(ui->mediaViewSplitter, SIGNAL(splitterMoved(int,int)), this, SLOT(splitterResized(int,int)));
 }
 
 InfoManager::~InfoManager()
@@ -167,7 +161,6 @@ void InfoManager::saveItemInfo()
     if (ui->infoFetcherExpander->isVisible()) {
         toggleShowInfoFetcherExpander();
     }
-    updateViewsLayout();
 }
 
 void InfoManager::cancelItemEdit()
@@ -178,7 +171,6 @@ void InfoManager::cancelItemEdit()
     if (ui->infoFetcherExpander->isVisible()) {
         toggleShowInfoFetcherExpander();
     }
-    updateViewsLayout();
 }
 
 void InfoManager::autoFetchInfo()
@@ -229,7 +221,6 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
         return;
     }
     m_infoItemModel->loadInfo(mediaList);
-    updateViewsLayout();
 }
 
 void InfoManager::setContext(const MediaItem &category)
@@ -275,7 +266,6 @@ void InfoManager::infoChanged(bool modified)
     } else {
         showIndexer();
     }
-    updateViewsLayout();
     showInfoFetcher();
 }
 
@@ -288,12 +278,6 @@ void InfoManager::toggleShowInfoFetcherExpander()
         ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
         ui->infoFetcherExpander->setCurrentIndex(0);  //switch to infofetcher selector page everytime it is hidden.
     }
-    updateViewsLayout();
-}
-
-void InfoManager::splitterResized(int, int)
-{
-    updateViewsLayout();
 }
 
 //----------------------
@@ -434,8 +418,6 @@ void InfoManager::loadSelectedInfo()
             }
         }
     }
-
-    updateViewsLayout();
 }
 
 void InfoManager::showIndexer()
@@ -556,21 +538,6 @@ void InfoManager::fetchComplete()
         }
     }
     ui->infoFetcherHolder->setVisible(true);
-}
-
-void InfoManager::updateViewsLayout()
-{
-    //Update infoItemView
-    int infoItemViewHeight = m_infoItemDelegate->heightForAllRows();
-    ui->infoItemView->setMinimumHeight(infoItemViewHeight);
-    ui->infoItemView->setMaximumHeight(infoItemViewHeight);
-}
-
-void InfoManager::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
-{
-    updateViewsLayout();
-    Q_UNUSED(topleft);
-    Q_UNUSED(bottomright);
 }
 
 void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected)
