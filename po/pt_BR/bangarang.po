@@ -627,7 +627,7 @@ msgstr[1] "%1 itens, %2%n"
 
 #: playlistview.cpp:96
 #, fuzzy
-msgid "<b>Playlist</b>(Upcoming)"
+msgid "<b>Playlist</b> (Upcoming)"
 msgstr "<b>Lista de reprodução</b>"
 
 #: rc.cpp:1

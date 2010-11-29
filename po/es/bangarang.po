@@ -610,8 +610,8 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>Lista de Reproducción</b>(Próximos)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Lista de Reproducción</b> (Próximos)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"

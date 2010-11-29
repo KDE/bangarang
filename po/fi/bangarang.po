@@ -595,8 +595,8 @@ msgstr[0] "1 kohde, %2"
 msgstr[1] ""
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>Soittolista</b>(Seuraavaksi)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Soittolista</b> (Seuraavaksi)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"

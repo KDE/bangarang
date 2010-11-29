@@ -621,7 +621,7 @@ msgstr[1] "%1 елементи, %2"
 msgstr[2] "%1 елементів, %2"
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
+msgid "<b>Playlist</b> (Upcoming)"
 msgstr "<b>Список відтворення</b> (наступний)"
 
 #: rc.cpp:1

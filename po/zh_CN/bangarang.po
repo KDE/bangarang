@@ -617,8 +617,8 @@ msgid_plural "%1 items, %2"
 msgstr[0] "%1 项，%2"
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>播放列表</b>(即将播放)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>播放列表</b> (即将播放)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"

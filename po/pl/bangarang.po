@@ -616,8 +616,8 @@ msgstr[1] "%1 pozycje, %2"
 msgstr[2] "%1 pozycji, %2"
 
 #: playlistview.cpp:96
-msgid "<b>Playlist</b>(Upcoming)"
-msgstr "<b>Lista odtwarzania</b>(Nadchodzące)"
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Lista odtwarzania</b> (Nadchodzące)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"
