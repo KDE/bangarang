@@ -27,6 +27,7 @@
 #include <Soprano/LiteralValue>
 #include <Soprano/Node>
 #include <Solid/Networking>
+#include <platform/utilities/general.h>
 
 DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
 {
@@ -117,11 +118,7 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequir
             m_dbPediaQuery->getDirectorInfo(mediaItem.fields["title"].toString());
         }
         if (mediaItem.subType() == "Movie") {
-            QString title = mediaItem.title;
-            if (title.lastIndexOf(".") == title.length() - 4) { //chop file extension
-                title.chop(4);
-                mediaItem.title = title;
-            }
+            mediaItem.title = Utilities::titleForRequest(mediaItem.title);
             m_mediaList.append(mediaItem);
             m_requestKeys.append(QString("%1:%2").arg(mediaItem.subType()).arg(mediaItem.title));
             connect (m_dbPediaQuery,

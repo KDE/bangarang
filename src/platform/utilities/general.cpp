@@ -301,6 +301,40 @@ QStringList Utilities::cleanStringList(QStringList stringList)
     return returnList;
 }
 
+QString Utilities::removeRangeFromString(const QString &str, QString begin, QString end)
+{
+    QString edited = str;
+    int bPos = edited.indexOf(begin);
+    int ePos = edited.indexOf(end);
+    if ( bPos >= 0 && ePos > bPos ) {
+        edited.remove(bPos, ePos - bPos);
+    }
+    return edited;
+}
+
+QString Utilities::titleForRequest(const QString& title)
+{
+    QString edited = title, tmp;
+    int extLen = edited.length() - edited.lastIndexOf(".");
+    //if no "." is found extLen is greater than title.length()
+    if ( extLen < 5 && extLen < edited.length() ) {
+               edited.chop(extLen);
+    }
+    //remove square brackets as filenames may contain information about the track in it
+    // as [1080p;x286;AUD_en,de;SUB_en]
+    tmp = Utilities::removeRangeFromString(title, "[", "]");
+    if ( !tmp.isEmpty() )
+        edited = tmp;
+    //as this is only for requesting data we will also remove normal brackets
+    //user like to store year, etc in it which is NOT the real title
+    //if they are relevant for the fetching the user will see the choices anyway.
+    tmp = Utilities::removeRangeFromString(title, "(", ")f");
+    if ( !tmp.isEmpty() )
+        edited = tmp;
+    return edited;
+}
+
+
 #endif //UTILITIES_GENERAL_CPP
 
 
