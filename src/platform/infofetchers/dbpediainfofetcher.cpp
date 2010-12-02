@@ -61,8 +61,18 @@ DBPediaInfoFetcher::~DBPediaInfoFetcher()
 
 bool DBPediaInfoFetcher::available(const QString &subType)
 {
-    //Available if connected to network
-    bool networkConnected = (Solid::Networking::status() == Solid::Networking::Connected);
+    /*
+     * We check if the network is connected. As some distributions use ifup to set up their connection
+     * Solid::Networking may return Unknow, as it only checks NetworkManager, not ifup.
+     * A real check to the dbpedia server would be overkill and take too long here.
+     * In general this fetcher should not be available if the dbpedia server cannot be reached.
+     * Maybe we get an idea to handle this properly later on, but there's currently the following problem:
+     * A connection test would take some, so maybe the user wouldn't see this infofetcher directly or
+     * even worse this test would block the whole application.
+     */
+    Solid::Networking::Status state = Solid::Networking::status();
+    bool networkConnected = ( state == Solid::Networking::Connected ||
+			      state == Solid::Networking::Unknown );
     bool handlesType = (m_requiredFields[subType].count() > 0);
     return (networkConnected && handlesType);
 }
