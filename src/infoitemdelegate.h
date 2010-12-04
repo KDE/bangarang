@@ -54,7 +54,6 @@ class InfoItemDelegate : public QItemDelegate
         int heightForAllRows();
             
     private:
-        MainWindow * m_parent;
         QAbstractItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
