@@ -54,8 +54,6 @@
 
 InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
-    m_parent = (MainWindow *)parent;
-    
     m_nepomukInited = Utilities::nepomukInited();
 
     m_stringListIndexEditing = -1;
@@ -428,6 +426,8 @@ QSize InfoItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
 bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
+
     m_mousePos = ((QMouseEvent *)event)->pos();
     if (!m_isEditing) {
         m_view->update(index);
@@ -442,12 +442,12 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             } else {
                 //Get artwork url from user
                 QString artworkUrl = index.data(Qt::EditRole).toString();
-                KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(artworkUrl), m_parent, i18n("Open artwork file"));
+                KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(artworkUrl), application->mainWindow(), i18n("Open artwork file"));
                 if (newUrl.isValid()) {
                     model->setData(index, newUrl.url(), Qt::EditRole);
                     model->setData(index, false, InfoItemModel::MultipleValuesRole);
                 }
-                m_parent->ui->mediaView->setFocus();
+                application->mainWindow()->ui->mediaView->setFocus();
             }
         }
         return true;
@@ -464,7 +464,6 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             //Set rating
             InfoItemModel *model = (InfoItemModel *)index.model();
             model->setRating(rating);
-            BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
             QList<MediaItem> mediaList = model->mediaList();
             QList<MediaItemModel *> modelsToUpdate;
             modelsToUpdate.append(application->playlist()->playlistModel());
@@ -553,8 +552,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     mediaListProperties.lri = drillItem.url;
                     mediaListProperties.name = drillItem.title;
                     mediaListProperties.category = drillItem;
-                    m_parent->addListToHistory();
-                    BangarangApplication *application = (BangarangApplication *)KApplication::kApplication();
+                    application->mainWindow()->addListToHistory();
                     application->browsingModel()->clearMediaListData();
                     application->browsingModel()->setMediaListProperties(mediaListProperties);
                     application->browsingModel()->load();
