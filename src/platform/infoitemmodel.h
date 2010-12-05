@@ -26,6 +26,9 @@
 #include "mediaitemmodel.h"
 class InfoFetcher;
 class MediaIndexer;
+namespace Utilities {
+    class Thread;
+}
 
 /*
 * This model is responsible for storing information contained in a MediaItem or list of MediaItems.
@@ -176,6 +179,7 @@ class InfoItemModel : public QStandardItemModel
         bool m_suppressFetchOnLoad;
         QList<MediaItem> m_fetchedMatches;
         int m_selectedFetchedMatch;
+        Utilities::Thread * m_utilThread;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
@@ -194,6 +198,7 @@ class InfoItemModel : public QStandardItemModel
         void infoFetched(QList<MediaItem> fetchedMatches);
         void updateFetchedInfo(int index, MediaItem match);
         void autoSaveFetchedInfo();
+        void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
 };
 
 #endif // INFOITEMDELEGATE_H

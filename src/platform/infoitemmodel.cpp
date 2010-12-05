@@ -41,6 +41,8 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_defaultEditable = true;
     m_modified = false;
     m_suppressFetchOnLoad = false;
+    m_utilThread = new Utilities::Thread(this);
+    connect(m_utilThread, SIGNAL(gotArtworks(QList<QImage>,MediaItem)), this, SLOT(gotArtworks(QList<QImage>,MediaItem)));
 
     //Store field order
     m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "composer" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
@@ -759,37 +761,8 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
             if (!artwork.isNull()) {
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
             } else {
-                QList<QImage> artworks;
-                QString itemTitle = mediaItem.fields["title"].toString();
-                if (mediaItem.subType() == "AudioGenre") {
-                    artworks = Utilities::getGenreArtworks(itemTitle, "audio");
-                } else if (mediaItem.subType() == "VideoGenre") {
-                    artworks = Utilities::getGenreArtworks(itemTitle, "video");
-                } else if (mediaItem.subType() == "Artist") {
-                    artworks = Utilities::getArtistArtworks(itemTitle);
-                } else if (mediaItem.subType() == "Album") {
-                    artworks.append(Utilities::getAlbumArtwork(itemTitle));
-                } else if (mediaItem.subType() == "AudioTag") {
-                    artworks = Utilities::getTagArtworks(itemTitle, "audio");
-                } else if (mediaItem.subType() == "VideoTag") {
-                    artworks = Utilities::getTagArtworks(itemTitle, "video");
-                } else if (mediaItem.subType() == "TV Series") {
-                    artworks = Utilities::getTVSeriesArtworks(itemTitle);
-                } else if (mediaItem.subType() == "Actor") {
-                    artworks = Utilities::getActorArtworks(itemTitle);
-                } else if (mediaItem.subType() == "Director") {
-                    artworks = Utilities::getDirectorArtworks(itemTitle);
-                }
-                if (artworks.count() > 0 ) {
-                    //Convert to Pixmap list
-                    QList<QVariant> artworkPixmaps;
-                    for (int i = 0; i < artworks.count(); i++) {
-                        artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
-                    }
-                    fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
-                } else {
-                    fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
-                }
+                fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
+                m_utilThread->getArtworksFromMediaItem(mediaItem);
             }
         } else {
             QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
@@ -832,6 +805,39 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
         }
     }
     return artworkExists;
+}
+
+void InfoItemModel::gotArtworks(QList<QImage> artworks, MediaItem mediaItem)
+{
+    if (artworks.isEmpty()) {
+        return;
+    }
+
+    if (m_mediaList.isEmpty()) {
+        return;
+    }
+
+    if (m_mediaList.at(0).url != mediaItem.url) {
+        return;
+    }
+
+    for (int i = 0; i < rowCount(); i++) {
+        QStandardItem * fieldItem = item(i);
+        QString field = fieldItem->data(InfoItemModel::FieldRole).toString();
+        if (field == "artwork") {
+            //Convert Image list to Pixmap list
+            QList<QVariant> artworkPixmaps;
+            for (int i = 0; i < artworks.count(); i++) {
+                artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
+            }
+            if (artworkPixmaps.count() == 1 ) {
+                fieldItem->setData(artworkPixmaps.at(0), Qt::DecorationRole);
+            } else {
+                fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+            }
+            break;
+        }
+    }
 }
 
 void InfoItemModel::setDrill(QStandardItem *item, const QString &field, const QVariant &value)

@@ -59,6 +59,7 @@ set(BangarangSources
     platform/utilities/filetags.cpp
     platform/utilities/general.cpp
     platform/utilities/mediaitems.cpp
+    platform/utilities/thread.cpp
     platform/utilities/typechecks.cpp
 )
 

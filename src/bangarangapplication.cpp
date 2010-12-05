@@ -47,6 +47,7 @@ void BangarangApplication::setup()
     qRegisterMetaType<MediaItem>("MediaItem");
     qRegisterMetaType<MediaListProperties>("MediaListProperties");
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
+    qRegisterMetaType<QList<QImage> >("QList<QImage>");
     
     //setup locale
     m_locale = new KLocale( aboutData()->appName() );
