@@ -1,5 +1,5 @@
 /* BANGARANG MEDIA PLAYER
-* Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)
+* Copyright (C) 2010 Andrew Lake (jamboarder@yahoo.com)
 * <http://gitorious.org/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,31 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef UTILITIES_THREAD_H
+#define UTILITIES_THREAD_H
 
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#include "../mediaitemmodel.h"
+#include <QThread>
+#include <QtCore>
+#include <QImage>
 
-#include "filetags.h"
-#include "typechecks.h"
-#include "artwork.h"
-#include "mediaitems.h"
-#include "general.h"
-#include "thread.h"
+namespace Utilities {
+    class Thread : public QThread
+    {
+        Q_OBJECT
+    public:
+        explicit Thread(QObject *parent = 0);
+        ~Thread();
+        void run();
+        void getArtworksFromMediaItem(const MediaItem &mediaItem);
 
-#endif //UTILITIES_H    
+    private:
+        MediaItem m_mediaItem;
+        QString m_action;
+
+    signals:
+        void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
+    };
+}
+
+#endif // UTLITIES_THREAD_H
