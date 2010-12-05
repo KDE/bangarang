@@ -830,11 +830,7 @@ void InfoItemModel::gotArtworks(QList<QImage> artworks, MediaItem mediaItem)
             for (int i = 0; i < artworks.count(); i++) {
                 artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
             }
-            if (artworkPixmaps.count() == 1 ) {
-                fieldItem->setData(artworkPixmaps.at(0), Qt::DecorationRole);
-            } else {
-                fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
-            }
+            fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
             break;
         }
     }
