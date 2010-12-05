@@ -65,5 +65,7 @@ namespace Utilities {
     QStringList availableDiscUdis(Solid::OpticalDisc::ContentType type);
     bool nepomukInited();
     QStringList cleanStringList(QStringList stringList);
+    QString removeRangesFromString(const QString& str, QString begin, QString end);
+    QString titleForRequest(const QString &title);
 }
 #endif //UTILITIES_GENERAL_H
