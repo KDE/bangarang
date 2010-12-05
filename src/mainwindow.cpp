@@ -978,18 +978,18 @@ void MainWindow::showApplicationBanner()
 
 void MainWindow::updateCachedDevicesList()
 {
-//     m_devicesAdded.clear();
-//     foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString())) {
-//         const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
-//         if (disc == NULL)
-//             continue;
-//         if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-//             m_devicesAdded << QString("CD:%1").arg(device.udi());
-//         }
-//         if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-//             m_devicesAdded << QString("DVD:%1").arg(device.udi());
-//         }
-//     }
+    m_devicesAdded.clear();
+    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString())) {
+        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
+        if (disc == NULL)
+            continue;
+        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
+            m_devicesAdded << QString("CD:%1").arg(device.udi());
+        }
+        if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
+            m_devicesAdded << QString("DVD:%1").arg(device.udi());
+        }
+    }
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
