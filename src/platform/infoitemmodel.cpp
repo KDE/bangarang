@@ -154,6 +154,21 @@ InfoItemModel::~InfoItemModel()
 
 void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList) 
 {
+    //Only load if mediaList is not already loaded
+    bool alreadyLoaded = false;
+    if (mediaList.count() == m_mediaList.count()) {
+        alreadyLoaded = true;
+        for (int i = 0; i < mediaList.count(); i++) {
+            if (m_mediaList.at(i).url != mediaList.at(i).url) {
+                alreadyLoaded = false;
+                break;
+            }
+        }
+    }
+    if (alreadyLoaded) {
+        return;
+    }
+
     m_modified = false;
     m_mediaList = mediaList;
     m_originalList = mediaList;
