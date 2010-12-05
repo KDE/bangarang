@@ -67,6 +67,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Artists"), "semantics://recent?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Albums"), "semantics://recent?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Genres"), "semantics://recent?audio||limit=4||groupBy=genre");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
@@ -76,6 +77,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Artists"), "semantics://highest?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Albums"), "semantics://highest?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Genres"), "semantics://highest?audio||limit=4||groupBy=genre");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
@@ -85,6 +87,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Artists"), "semantics://frequent?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Albums"), "semantics://frequent?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Genres"), "semantics://frequent?audio||limit=4||groupBy=genre");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             
             mediaItem.title = i18n("Artists");
@@ -95,6 +98,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=artist");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||groupBy=artist");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Albums");
             mediaItem.fields["title"] = mediaItem.title;
@@ -104,6 +108,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=album");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||groupBy=album");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Genres");
             mediaItem.fields["title"] = mediaItem.title;
@@ -113,6 +118,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||groupBy=genre");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Songs");
             mediaItem.fields["title"] = mediaItem.title;
@@ -123,6 +129,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||audioType=music");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||audioType=music");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||audioType=music");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Clips");
             mediaItem.fields["title"] = mediaItem.title;
@@ -133,6 +140,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||audioType=audio clip");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||audioType=audio clip");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||audioType=audio clip");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Audio Streams");
             mediaItem.fields["title"] = mediaItem.title;
@@ -143,12 +151,14 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||audioType=audio stream");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||audioType=audio stream");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||audioType=audio stream");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Audio Feeds");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "feeds://audiofeeds";
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaItem.clearContexts();
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
@@ -159,6 +169,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Played"), "semantics://recent?audio||limit=4||groupBy=tag");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?audio||limit=4||groupBy=tag");
             mediaItem.addContext(i18n("Frequently Played"), "semantics://frequent?audio||limit=4||groupBy=tag");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
         
@@ -167,6 +178,7 @@ void MediaListsEngine::run()
         mediaItem.url = "files://audio?browseFolder";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaItem.clearContexts();
+        mediaItem.fields["isConfigurable"] = false;
         mediaList << mediaItem;
         
         //Show Audio CDs if present
@@ -182,6 +194,7 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = QString( "cdaudio://%1" ).arg(udi);
             mediaItem.artwork = KIcon("media-optical-audio");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
 
@@ -207,6 +220,7 @@ void MediaListsEngine::run()
                                 mediaItem.artwork = KIcon("view-media-playlist");
                             }
                             mediaItem.isSavedList = true;
+                            mediaItem.fields["isConfigurable"] = true;
                             if (m_nepomukInited) {
                                 mediaList << mediaItem;
                             } else {
@@ -238,6 +252,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Genres"), "semantics://recent?video||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Actors"), "semantics://recent?video||limit=4||groupBy=actor");
             mediaItem.addContext(i18n("Directors"), "semantics://recent?video||limit=4||groupBy=director");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             mediaItem.title = i18n("Highest Rated");
             mediaItem.fields["title"] = mediaItem.title;
@@ -247,6 +262,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Genres"), "semantics://highest?video||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Actors"), "semantics://highest?video||limit=4||groupBy=actor");
             mediaItem.addContext(i18n("Directors"), "semantics://highest?video||limit=4||groupBy=director");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             mediaItem.title = i18n("Frequently Played");
             mediaItem.fields["title"] = mediaItem.title;
@@ -256,6 +272,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Genres"), "semantics://frequent?video||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Actors"), "semantics://frequent?video||limit=4||groupBy=actor");
             mediaItem.addContext(i18n("Directors"), "semantics://frequent?video||limit=4||groupBy=director");
+            mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
             
             mediaItem.title = i18n("Movies");
@@ -266,6 +283,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||videoType=movie");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||videoType=movie");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||videoType=movie");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("TV Shows");
             mediaItem.fields["title"] = mediaItem.title;
@@ -275,6 +293,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=seriesName");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=seriesName");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=seriesName");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Genres");
             mediaItem.fields["title"] = mediaItem.title;
@@ -284,6 +303,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=genre");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=genre");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Actors");
             mediaItem.fields["title"] = mediaItem.title;
@@ -293,6 +313,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=actor");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=actor");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=actor");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Directors");
             mediaItem.fields["title"] = mediaItem.title;
@@ -302,6 +323,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=director");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=director");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=director");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Video Clips");
             mediaItem.fields["title"] = mediaItem.title;
@@ -311,12 +333,14 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||videoType=video clip");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||videoType=video clip");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||videoType=video clip");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Video Feeds");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "feeds://videofeeds";
             mediaItem.artwork = KIcon("application-rss+xml");
             mediaItem.clearContexts();
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
             mediaItem.title = i18n("Tags");
             mediaItem.fields["title"] = mediaItem.title;
@@ -326,6 +350,7 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Recently Watched"), "semantics://recent?video||limit=4||groupBy=tag");
             mediaItem.addContext(i18n("Highest Rated"), "semantics://highest?video||limit=4||groupBy=tag");
             mediaItem.addContext(i18n("Frequently Watched"), "semantics://frequent?video||limit=4||groupBy=tag");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
         
@@ -334,6 +359,7 @@ void MediaListsEngine::run()
         mediaItem.url = "files://video?browseFolder";
         mediaItem.artwork = KIcon("document-open-folder");
         mediaItem.clearContexts();
+        mediaItem.fields["isConfigurable"] = false;
         mediaList << mediaItem;
         
         QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::VideoDvd);
@@ -352,6 +378,7 @@ void MediaListsEngine::run()
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = QString( "dvdvideo://%1" ).arg(udi);
             mediaItem.artwork = KIcon("media-optical-dvd");
+            mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
         
@@ -377,6 +404,7 @@ void MediaListsEngine::run()
                                 mediaItem.artwork = KIcon("view-media-playlist");
                             }
                             mediaItem.isSavedList = true;
+                            mediaItem.fields["isConfigurable"] = true;
                             if (m_nepomukInited) {
                                 mediaList << mediaItem;
                             } else {

@@ -286,12 +286,14 @@ void MainWindow::on_configureAudioList_clicked()
     if ((ui->mediaLists->currentIndex() == 0) && (ui->audioLists->selectionModel()->selectedIndexes().count() > 0)) {
         int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_audioListsModel->mediaItemAt(selectedRow);
-        if (selectedItem.url.startsWith("savedlists://")) {
-            m_application->savedListsManager()->showAudioSavedListSettings();
-        } else if (selectedItem.url.startsWith("semantics://recent") ||
-            selectedItem.url.startsWith("semantics://frequent") ||
-            selectedItem.url.startsWith("semantics://highest")) {
-            m_mediaListSettings->showMediaListSettings();
+        if (selectedItem.fields["isConfigurable"].toBool()) {
+            if (selectedItem.url.startsWith("semantics://recent") ||
+                selectedItem.url.startsWith("semantics://frequent") ||
+                selectedItem.url.startsWith("semantics://highest")) {
+                m_mediaListSettings->showMediaListSettings();
+            } else {
+                m_application->savedListsManager()->showAudioSavedListSettings();
+            }
         }
     }
 }
@@ -1270,13 +1272,7 @@ void MainWindow::loadMediaList(MediaItemModel *listsModel, int row)
     //Determine if selected list is configurable
     bool isAudioList = (listsModel->mediaListProperties().lri == "medialists://audio");
     bool isVideoList = (listsModel->mediaListProperties().lri == "medialists://video");
-    bool selectedIsConfigurable = false;
-    if (selectedItem.url.startsWith("savedlists://") ||
-        selectedItem.url.startsWith("semantics://recent") ||
-        selectedItem.url.startsWith("semantics://frequent") ||
-        selectedItem.url.startsWith("semantics://highest")) {
-        selectedIsConfigurable = true;
-    }
+    bool selectedIsConfigurable = selectedItem.fields["isConfigurable"].toBool();
     if (isAudioList) {
         ui->configureAudioList->setVisible(selectedIsConfigurable);
     } else if (isVideoList) {
