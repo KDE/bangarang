@@ -392,6 +392,18 @@ class MediaItemModel : public QStandardItemModel
         Qt::ItemFlags flags(const QModelIndex &index) const;
         
         /**
+         * Insert MediaItem at the specified row in the model with the one
+         * provided.
+         *
+         * @param row row of model
+         * @param mediaItem MediaItem to replace with
+         * @param emitMediaListChanged emits mediaListChanged() signal if true,
+         *                             otherwise don't emit mediaListChanged().
+         *
+         */
+        void insertMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged = false);
+
+        /**
          * Loads list of MediaItems as specified by the MediaListProperties.lri
          *
          * Note: Loading is asynchronous. Use mediaListChanged() signal to detect

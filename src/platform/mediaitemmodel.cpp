@@ -584,6 +584,18 @@ void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, boo
     }
 }
 
+void MediaItemModel::insertMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged)
+{
+    m_mediaList.insert(row, mediaItem);
+    m_urlList.insert(row, mediaItem.url);
+    m_resourceUriList.insert(row, mediaItem.fields["resourceUri"].toString());
+    QList<QStandardItem *> rowData = rowDataFromMediaItem(mediaItem);
+    insertRow(row, rowData);
+    if (emitMediaListChanged) {
+        emit mediaListChanged();
+    }
+}
+
 void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int end)
 {
     for (int i = start; i <= end; ++i) {
