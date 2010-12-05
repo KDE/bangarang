@@ -124,6 +124,13 @@ class Playlist : public QObject
         void insertMediaListAt(int row, Model model, const QList<MediaItem> &mediaList);
 
         /**
+         * Returns true if mediaItem is in playlist
+         *
+         * @param mediaItem MediaItem to check.
+         **/
+        bool isInPlaylist(const MediaItem &mediaItem);
+
+        /**
          * Plays item at the specified row of the specified model
          *
          * @param row row of the specified model

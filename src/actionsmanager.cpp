@@ -294,6 +294,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     bool isFeed = false;
     bool isCategory = false;
     bool isBrowsingFiles = false;
+    bool isInPlaylist = false;
     QList<MediaItem> selectedItems = selectedMediaItems();
     if (selectedItems.count() > 0) {
         type = selectedItems.at(0).type;
@@ -302,18 +303,27 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         isCategory = Utilities::isCategory(type);
         isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
         isBrowsingFiles  = m_application->browsingModel()->mediaListProperties().lri.startsWith("files://");
+        for (int i = 0; i < selectedItems.count(); i++) {
+            if (m_application->playlist()->isInPlaylist(selectedItems.at(i))) {
+                isInPlaylist = true;
+                break;
+            }
+        }
     }
     
     //Playlist/Playback actions
     if (isMedia || isCategory) {
-        menu->addAction(action("add_to_playlist"));
-        if (selection && isMedia) {
-            if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
-                            m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        if (selection && !isInPlaylist) {
+            menu->addAction(action("add_to_playlist"));
+            if (isMedia && (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
+                            m_application->playlist()->mediaObject()->state() == Phonon::PausedState)) {
                 menu->addAction(action("add_after_now_playing"));
             }
+        }
+        if (selection && isMedia && isInPlaylist) {
             menu->addAction(action("remove_from_playlist"));
         }
+
         if (selection) {
             menu->addAction(action("play_selected"));
         }
