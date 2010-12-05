@@ -298,6 +298,48 @@ void Playlist::removeMediaItemAt(int row)
     m_currentPlaylist->removeMediaItemAt(row, true);
 }
 
+void Playlist::insertMediaItemAt(int row, Model model, const MediaItem &mediaItem)
+{
+    if (model == PlaylistModel) {
+        if (row >= m_currentPlaylist->rowCount()) {
+            return;
+        }
+        m_currentPlaylist->insertMediaItemAt(row, mediaItem, true);
+    } else {
+        if (row >= m_queue->rowCount()) {
+            return;
+        }
+        //Update Playlist
+        if (m_shuffle) {
+            m_currentPlaylist->loadMediaItem(mediaItem, false);
+            m_playlistIndices.append(m_currentPlaylist->rowCount()-1);
+        } else {
+            MediaItem itemAtRow = m_queue->mediaItemAt(row);
+            int playlistRow = m_currentPlaylist->rowOfUrl(itemAtRow.url);
+            if (playlistRow != -1) {
+                m_currentPlaylist->insertMediaItemAt(playlistRow, mediaItem, false);
+                m_playlistIndices.append(playlistRow);
+            }
+        }
+        //Update queue
+        m_queue->insertMediaItemAt(row, mediaItem);
+        if (m_queue->rowCount() > m_queueDepth) {
+            m_queue->removeMediaItemAt(m_queue->rowCount() - 1);
+        }
+        if (row == 0 && (m_mediaObject->state() == Phonon::PlayingState ||
+                         m_mediaObject->state() == Phonon::PausedState)) {
+            playItemAt(0, QueueModel);
+        }
+    }
+}
+
+void Playlist::insertMediaListAt(int row, Model model, const QList<MediaItem> &mediaList)
+{
+    for (int i = mediaList.count()-1; i >= 0; i--) {
+        insertMediaItemAt(row, model, mediaList.at(i));
+    }
+}
+
 void Playlist::clearPlaylist()
 {
     stop();

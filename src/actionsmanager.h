@@ -110,6 +110,7 @@ class ActionsManager : public QObject
         void smartPlay();
         void muteAudio();
         void addSelectedToPlaylistSlot();
+        void addAfterNowPlaying();
         void removeSelectedFromPlaylistSlot();
         void removePlaylistSelectionFromPlaylistSlot();
         void removeSelectedItemsInfoSlot();

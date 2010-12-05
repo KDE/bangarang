@@ -114,6 +114,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));
     m_othersCollection->addAction("add_to_playlist", action);
 
+    //Add After Now Playing Action
+    action = new KAction(KIcon("mail-mark-notjunk"), i18n("Add after Now Playing"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(addAfterNowPlaying()));
+    m_othersCollection->addAction("add_after_now_playing", action);
+
     //Remove Selected From Playlist Action
     action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
@@ -303,7 +308,10 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     if (isMedia || isCategory) {
         menu->addAction(action("add_to_playlist"));
         if (selection && isMedia) {
-
+            if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
+                            m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
+                menu->addAction(action("add_after_now_playing"));
+            }
             menu->addAction(action("remove_from_playlist"));
         }
         if (selection) {
@@ -665,6 +673,19 @@ void ActionsManager::addSelectedToPlaylistSlot()
         } else if ( !Utilities::isCategory(item.type) )
             continue;
         m_application->playlist()->addMediaItem(item);
+    }
+}
+
+void ActionsManager::addAfterNowPlaying()
+{
+    //Get selected mediaitems and play
+    QList<MediaItem> mediaList = selectedMediaItems();
+
+    //Insert into Playlist
+    if (m_application->playlist()->queueModel()->rowCount() <= 1) {
+        m_application->playlist()->addMediaList(mediaList);
+    } else {
+        m_application->playlist()->insertMediaListAt(1, Playlist::QueueModel, mediaList);
     }
 }
 

@@ -106,13 +106,31 @@ class Playlist : public QObject
         QSortFilterProxyModel * filterProxyModel();
         
         /**
+         * Insert item at specified row of the specified model
+         *
+         * @param row row of the specified model
+         * @param model either Playlist::PlaylistModel or Playlist::QueueModel
+         * @param mediaItem MediaItem to insert.
+         */
+        void insertMediaItemAt(int row, Model model, const MediaItem &mediaItem);
+
+        /**
+         * Insert item at specified row of the specified model
+         *
+         * @param row row of the specified model
+         * @param model either Playlist::PlaylistModel or Playlist::QueueModel
+         * @param mediaList MediaList to insert.
+         */
+        void insertMediaListAt(int row, Model model, const QList<MediaItem> &mediaList);
+
+        /**
          * Plays item at the specified row of the specified model
          *
          * @param row row of the specified model
          * @param model either Playlist::PlaylistModel or Playlist::QueueModel
          */
         void playItemAt(int row, Model model);
-        
+
         /**
          * Returns the MediaItemModel containing the list of MediaItems
          * in the playlist.
