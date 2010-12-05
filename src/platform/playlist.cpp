@@ -340,6 +340,17 @@ void Playlist::insertMediaListAt(int row, Model model, const QList<MediaItem> &m
     }
 }
 
+bool Playlist::isInPlaylist(const MediaItem &mediaItem)
+{
+    int row = m_currentPlaylist->rowOfUrl(mediaItem.url);
+    if (row != -1) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 void Playlist::clearPlaylist()
 {
     stop();
