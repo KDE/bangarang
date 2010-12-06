@@ -410,6 +410,12 @@ class MediaItemModel : public QStandardItemModel
          *       when loading is complete.
          */
         void load();
+
+        /**
+         * Returns loading state.
+         *
+         */
+        bool isLoading();
         
         /**
         * Loads list of MediaItems as specified by the provided lri
@@ -640,6 +646,11 @@ class MediaItemModel : public QStandardItemModel
          * Emitted when the model is loading a list of MediaItems.
          */
         void loading();
+
+        /**
+         * Emitted when the loading state changes
+         */
+        void loadingStateChanged(bool loadingState);
         
         /**
          * Emitted when status is updated

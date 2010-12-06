@@ -416,7 +416,9 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
    if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
-            setLoadingState(false);
+            if (mediaList.count() > 0) {
+                hideLoadingMessage();
+            }
             loadMediaList(mediaList, false, true);
             m_mediaListProperties = mediaListProperties;
             emit mediaListPropertiesChanged();
@@ -426,6 +428,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 }
                 m_reload = false;
                 m_lriIsLoadable = true;
+                setLoadingState(false);
                 emit mediaListChanged();
             }
         } else {
@@ -433,9 +436,20 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
             //Place subrequest results in the correct order
             int indexOfSubRequest = m_subRequestSignatures.indexOf(subRequestSignature);
             if (indexOfSubRequest != -1) {
+                //Determine index of subrequest not loaded so far
+                int indexOfFirstEmpty = -1;
+                for (int i = 0; i < m_subRequestMediaLists.count(); i++) {
+                    if (m_subRequestMediaLists.at(i).isEmpty()) {
+                        indexOfFirstEmpty = i;
+                        break;
+                    }
+                }
+
+                //Store subrequest results
                 QList<MediaItem> srMediaList = m_subRequestMediaLists.at(indexOfSubRequest);
                 srMediaList.append(mediaList);
                 m_subRequestMediaLists.replace(indexOfSubRequest, srMediaList);
+
                 if (done) {
                     m_subRequestsDone = m_subRequestsDone + 1;
                     if (m_subRequestsDone == m_subRequestSignatures.count()) {
@@ -443,15 +457,18 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                         //All the subrequests results are in, go ahead and load results in correct order
                         int count = 0;
                         for (int i = 0; i < m_subRequestMediaLists.count(); ++i) {
-                            loadMediaList(m_subRequestMediaLists.at(i), false, true);
                             count += m_subRequestMediaLists.at(i).count();
+                            if (i < indexOfFirstEmpty) {
+                                continue;
+                            }
+                            loadMediaList(m_subRequestMediaLists.at(i), false, true);
                         }
                         if (rowCount() == 0 && !m_suppressNoResultsMessage) {
                             showNoResultsMessage();
                         }
                         //Need a basic lri so updateInfo and removeInfo can be performed by a list engine
                         m_mediaListProperties.lri = mediaListProperties.engine(); 
-                        if (!m_reload) {
+                        if (!m_reload && !m_mediaListProperties.name.contains(i18n("Multiple"))) {
                             m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
                         }
                         m_mediaListProperties.summary = i18np("1 item", "%1 items", count);
@@ -461,6 +478,25 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                         m_reload = false;
                         m_lriIsLoadable = false;
                         emit mediaListChanged();
+                    } else if (indexOfSubRequest == indexOfFirstEmpty) {
+                        int count = 0;
+                        for (int i = 0; i < m_subRequestMediaLists.count(); i++) {
+                            count += m_subRequestMediaLists.at(i).count();
+                            if (i < indexOfFirstEmpty) {
+                                continue;
+                            }
+                            if (m_subRequestMediaLists.at(i).count() > 0) {
+                                hideLoadingMessage();
+                                loadMediaList(m_subRequestMediaLists.at(i), false, true);
+                                if (!m_reload && !m_mediaListProperties.name.contains(i18n("Multiple"))) {
+                                    m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
+                                }
+                                m_mediaListProperties.summary = i18np("1 item", "%1 items", count);
+                                emit mediaListPropertiesChanged();
+                            } else {
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -626,6 +662,7 @@ void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int en
 
 void MediaItemModel::setLoadingState(bool state)
 {
+    bool stateChanged = (m_loadingState != state);
     m_loadingState = state;
     if (m_loadingState) {
         showLoadingMessage();
@@ -633,11 +670,19 @@ void MediaItemModel::setLoadingState(bool state)
     } else {
         hideLoadingMessage();
     }
+    if (stateChanged) {
+        emit loadingStateChanged(m_loadingState);
+    }
+}
+
+bool MediaItemModel::isLoading()
+{
+    return m_loadingState;
 }
 
 void MediaItemModel::showLoadingMessage()
 {
-    if (m_loadingState) {
+    if (m_loadingState ) {
         MediaItem loadingMessage;
         m_loadingProgress += 1;
         if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
@@ -650,7 +695,8 @@ void MediaItemModel::showLoadingMessage()
         loadingMessage.fields["messageType"] = "Loading";
         if (rowCount() == 0) {
             loadMediaItem(loadingMessage, false);
-        } else {
+        } else if (m_mediaList.at(0).type == "Message" &&
+                   m_mediaList.at(0).fields["messageType"].toString() == "Loading") {
             replaceMediaItemAt(0, loadingMessage, false);
         }
         QTimer::singleShot(100, this, SLOT(showLoadingMessage()));

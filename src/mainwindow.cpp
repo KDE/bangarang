@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->configureAudioList->setVisible(false);
     ui->configureVideoList->setVisible(false);
     ui->semanticsHolder->setVisible(false);
+    ui->loadingIndicator->setVisible(false);
     
     //Initialize Nepomuk
     m_nepomukInited = Utilities::nepomukInited();
@@ -149,6 +150,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
     connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(mediaListLoading()));
+    connect(m_application->browsingModel(), SIGNAL(loadingStateChanged(bool)), this, SLOT(mediaListLoadingStateChanged(bool)));
     connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     
     connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
@@ -733,6 +735,32 @@ void MainWindow::mediaListPropertiesChanged()
 {
     ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
     ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
+}
+
+void MainWindow::mediaListLoadingStateChanged(bool loading)
+{
+    if (loading) {
+        if (!ui->loadingIndicator->isVisible()) {
+            ui->loadingIndicator->show();
+            showMediaListLoading();
+        }
+    } else {
+        ui->loadingIndicator->hide();
+    }
+}
+
+void MainWindow::showMediaListLoading()
+{
+    if (ui->loadingIndicator->isVisible()) {
+        m_loadingProgress++;
+        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
+            m_loadingProgress = 0;
+        }
+        QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
+        QPixmap pixmap = KIcon(iconName).pixmap(16, 16);
+        ui->loadingIndicator->setPixmap(pixmap);
+        QTimer::singleShot(100, this, SLOT(showMediaListLoading()));
+    }
 }
 
 void MainWindow::mediaListCategoryActivated(QModelIndex index)
