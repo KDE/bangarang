@@ -196,6 +196,7 @@ void SemanticsListEngine::run()
         if (engineArg.toLower() == "recent") {
             mediaList.clear();
             if (!mediaType.isEmpty()) {
+                KDateTime lastPlayedTime;
                 MediaQuery query;
                 QStringList bindings;
                 if (groupByCategoryType.isEmpty()) {
@@ -238,13 +239,13 @@ void SemanticsListEngine::run()
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
-                        KDateTime lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
+                        lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
                         if (lastPlayedTime.isValid()) {
                             mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
                         }
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
-                        KDateTime lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
+                        lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
                         if (lastPlayedTime.isValid()) {
                             mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
                         }
