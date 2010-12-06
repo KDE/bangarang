@@ -309,16 +309,23 @@ void Playlist::insertMediaItemAt(int row, Model model, const MediaItem &mediaIte
         if (row >= m_queue->rowCount()) {
             return;
         }
+        //Update history
+        int playlistIndex = m_currentPlaylist->rowOfUrl(mediaItem.url);
+        if (m_playlistIndicesHistory.contains(playlistIndex)) {
+            m_playlistIndicesHistory.removeAll(playlistIndex);
+            m_playlistUrlHistory.removeAll(mediaItem.url);
+        }
+        if (m_playlistIndices.contains(playlistIndex)) {
+            m_playlistIndices.removeAll(playlistIndex);
+        }
         //Update Playlist
         if (m_shuffle) {
             m_currentPlaylist->loadMediaItem(mediaItem, false);
-            m_playlistIndices.append(m_currentPlaylist->rowCount()-1);
         } else {
             MediaItem itemAtRow = m_queue->mediaItemAt(row);
             int playlistRow = m_currentPlaylist->rowOfUrl(itemAtRow.url);
             if (playlistRow != -1) {
                 m_currentPlaylist->insertMediaItemAt(playlistRow, mediaItem, false);
-                m_playlistIndices.append(playlistRow);
             }
         }
         //Update queue
