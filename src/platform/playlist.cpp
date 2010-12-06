@@ -910,6 +910,10 @@ void Playlist::playlistModelItemChanged(QStandardItem *item)
     }
     int rowInNowPlaying = m_nowPlaying->rowOfUrl(changedMediaItem.url);
     if (rowInNowPlaying != -1) {
-        m_nowPlaying->replaceMediaItemAt(rowInNowPlaying,changedMediaItem);
+        QPixmap artwork = Utilities::getArtworkFromMediaItem(changedMediaItem);
+        if (!artwork.isNull()) {
+            changedMediaItem.artwork = KIcon(artwork);
+        }
+        m_nowPlaying->replaceMediaItemAt(rowInNowPlaying, changedMediaItem);
     }
 }
