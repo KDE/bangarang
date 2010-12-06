@@ -416,40 +416,45 @@ bool Utilities::compareImage(const QImage &image1, const QImage image2, int stre
 
 QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QString& album)
 {
-  if (url.isNull() || url.isEmpty())
-    return QString();
-
-  QMutexLocker locker(&mutex);
-
-  const QString title = url.split("/").last();
-  QString path = url;
-  path.remove(title); // string containg an 'url'
-  path = KUrl(path).path();
-
-  QDir dir(path);
-  QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
-
-  if (files.count() == 1)
-    return path + files[0];
-  else if (files.count() >= 1)
-  {
-    for (int i = files.count() - 1; i >= 0; i--)
-    {
-      //TODO: find better match cases
-      //since windows media player stores more then one file,
-      //we are forced to choose the right one (e.g folder is better then
-      //albumartsmall)
-      if (files[i].contains(i18n("folder")) || files[i].contains("album"))
-        return path + files[i];
-
-      if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
-        return path + files[i];
+    if (url.isNull() || url.isEmpty()) {
+        return QString();
     }
 
-    //still here? take the first one
-    return path + files[0];
-  }
-  return QString();
+    QMutexLocker locker(&mutex);
+
+    KUrl pathUrl(url);
+    if (!pathUrl.isValid() ||
+        !pathUrl.isLocalFile()) {
+        return QString();
+    }
+    QString path = pathUrl.directory(KUrl::AppendTrailingSlash);
+    if (path.isEmpty()) {
+        return QString();
+    }
+
+    QDir dir(path);
+    QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
+
+    if (files.count() == 1) {
+        kDebug() << path + files[0];
+        return path + files[0];
+    } else if (files.count() >= 1) {
+        for (int i = files.count() - 1; i >= 0; i--) {
+            //TODO: find better match cases
+            //since windows media player stores more then one file,
+            //we are forced to choose the right one (e.g folder is better then
+            //albumartsmall)
+            if (files[i].contains(i18n("folder")) || files[i].contains("album"))
+                return path + files[i];
+
+            if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
+                return path + files[i];
+        }
+
+        //still here? take the first one
+        return path + files[0];
+    }
+    return QString();
 }
 
 QString Utilities::getGenreArtworkUrl(const QString &genre)
