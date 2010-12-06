@@ -64,6 +64,7 @@ bool Utilities::isAudioMimeType(KMimeType::Ptr type)
             type->is("audio/ogg") ||
             type->is("audio/vorbis") ||
             type->is("audio/aac") ||
+            type->is("audio/ac3") ||
             type->is("audio/aiff") ||
             type->is("audio/basic") ||
             type->is("audio/flac") ||
@@ -72,6 +73,7 @@ bool Utilities::isAudioMimeType(KMimeType::Ptr type)
             type->is("audio/vnd.rn-realaudio") ||
             type->is("audio/wav") ||
             type->is("application/ogg") ||
+            type->is("audio/x-ac3") ||
             type->is("audio/x-flac") ||
             type->is("audio/x-musepack") ||
             type->is("audio/x-m4a") ||
