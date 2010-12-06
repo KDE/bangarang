@@ -67,7 +67,8 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
         m_mediaIndexer = new MediaIndexer(this);
     }
     
-    connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));   
+    connect(m_currentPlaylist, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
+    connect(m_currentPlaylist, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(playlistModelItemChanged(QStandardItem*)));
 }
 
 Playlist::~Playlist()
@@ -896,5 +897,19 @@ void Playlist::metaDataChanged()
             mediaItem.subTitle = m_mediaObject->metaData("TITLE").join(" ");
             m_nowPlaying->replaceMediaItemAt(0, mediaItem, true);
         }
+    }
+}
+
+void Playlist::playlistModelItemChanged(QStandardItem *item)
+{
+    //Update corresponding items in queue and now playing models
+    MediaItem changedMediaItem = m_currentPlaylist->mediaItemAt(item->row());
+    int rowInQueue = m_queue->rowOfUrl(changedMediaItem.url);
+    if (rowInQueue != -1) {
+        m_queue->replaceMediaItemAt(rowInQueue,changedMediaItem);
+    }
+    int rowInNowPlaying = m_nowPlaying->rowOfUrl(changedMediaItem.url);
+    if (rowInNowPlaying != -1) {
+        m_nowPlaying->replaceMediaItemAt(rowInNowPlaying,changedMediaItem);
     }
 }

@@ -21,6 +21,7 @@
 
 #include <KNotificationRestrictions>
 #include <QObject>
+#include <QStandardItem>
 #include <phonon/mediaobject.h>
 #include <phonon/mediacontroller.h>
 
@@ -305,6 +306,7 @@ class Playlist : public QObject
         void stateChanged(Phonon::State newstate, Phonon::State oldstate);
         void updatePlaybackInfo(qint64 time);
         void metaDataChanged();
+        void playlistModelItemChanged(QStandardItem *item);
         
 };
 #endif // PLAYLIST_H
