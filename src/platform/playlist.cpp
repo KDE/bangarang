@@ -320,17 +320,21 @@ void Playlist::insertMediaItemAt(int row, Model model, const MediaItem &mediaIte
             m_playlistIndices.removeAll(playlistIndex);
         }
         //Update Playlist
+        int playlistRow = -1;
         if (m_shuffle) {
             m_currentPlaylist->loadMediaItem(mediaItem, false);
+            playlistRow = m_currentPlaylist->rowCount() - 1;
         } else {
             MediaItem itemAtRow = m_queue->mediaItemAt(row);
-            int playlistRow = m_currentPlaylist->rowOfUrl(itemAtRow.url);
+            playlistRow = m_currentPlaylist->rowOfUrl(itemAtRow.url);
             if (playlistRow != -1) {
                 m_currentPlaylist->insertMediaItemAt(playlistRow, mediaItem, false);
             }
         }
         //Update queue
-        m_queue->insertMediaItemAt(row, mediaItem);
+        MediaItem queueItem = mediaItem;
+        queueItem.playlistIndex = playlistRow;
+        m_queue->insertMediaItemAt(row, queueItem);
         if (m_queue->rowCount() > m_queueDepth) {
             m_queue->removeMediaItemAt(m_queue->rowCount() - 1);
         }
@@ -906,6 +910,7 @@ void Playlist::playlistModelItemChanged(QStandardItem *item)
     MediaItem changedMediaItem = m_currentPlaylist->mediaItemAt(item->row());
     int rowInQueue = m_queue->rowOfUrl(changedMediaItem.url);
     if (rowInQueue != -1) {
+        changedMediaItem.playlistIndex = item->row();
         m_queue->replaceMediaItemAt(rowInQueue,changedMediaItem);
     }
     int rowInNowPlaying = m_nowPlaying->rowOfUrl(changedMediaItem.url);
