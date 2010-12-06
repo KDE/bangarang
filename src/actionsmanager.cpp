@@ -317,6 +317,8 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
             menu->addAction(action("add_to_playlist"));
             if (isMedia && (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
                             m_application->playlist()->mediaObject()->state() == Phonon::PausedState)) {
+                action("add_after_now_playing")->setIcon(KIcon("mail-mark-notjunk"));
+                action("add_after_now_playing")->setText(i18n("Add after Now Playing"));
                 menu->addAction(action("add_after_now_playing"));
             }
         }
@@ -376,6 +378,19 @@ QMenu *ActionsManager::playlistViewMenu()
     m_contextMenuSource = MainWindow::Playlist;
     QMenu *menu = new QMenu(m_parent);
     menu->addAction(action("remove_from_playlist"));
+    QModelIndexList selectedRows = ui->playlistView->selectionModel()->selectedRows();
+    bool showPlayAfterAction = true;
+    if (selectedRows.count() == 1) {
+        MediaItem mediaItem = ui->playlistView->sourceModel()->mediaItemAt(selectedRows.at(0).row());
+        if (mediaItem.url == m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url) {
+            showPlayAfterAction = false;
+        }
+    }
+    if (showPlayAfterAction) {
+        action("add_after_now_playing")->setIcon(KIcon("media-playback-start"));
+        action("add_after_now_playing")->setText(i18n("Play after Now Playing"));
+        menu->addAction(action("add_after_now_playing"));
+    }
     return menu;
 }
 
