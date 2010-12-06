@@ -78,6 +78,7 @@ bool Utilities::isAudioMimeType(KMimeType::Ptr type)
             type->is("audio/x-oma") ||
             type->is("audio/x-monkeys-audio") ||
             type->is("audio/x-wv") ||
+            type->is("audio/x-ms-asf") ||
             type->is("audio/x-ms-wma") ||
             type->is("audio/3gpp")  ||
             type->is("audio/3gpp2"));
@@ -103,6 +104,8 @@ bool Utilities::isVideoMimeType(KMimeType::Ptr type)
             type->is("video/x-ogm+ogg") ||
             type->is("video/divx") ||
             type->is("video/x-msvideo") ||
+            type->is("video/x-ms-asf") ||
+            type->is("video/x-ms-wmv") ||
             type->is("video/x-wmv") ||
             type->is("video/x-flv") ||
             type->is("video/x-matroska"));

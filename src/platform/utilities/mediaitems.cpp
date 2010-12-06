@@ -167,6 +167,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
     }
 
     if (!foundInNepomuk || mediaItem.type.isEmpty()) {
+        mediaItem.type == "Audio"; // default to Audio;
         if (isAudio(mediaItem.url)) {
             mediaItem.type = "Audio";
             mediaItem.fields["audioType"] = "Audio Clip";
