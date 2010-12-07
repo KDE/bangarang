@@ -35,6 +35,7 @@ void BangarangNotifierItem::setState(Phonon::State state)
 
     if (m_currentState == Phonon::StoppedState) {
         setStatus(KStatusNotifierItem::Passive);
+        setIconByName("bangarang-notifier");
     } else if (m_currentState == Phonon::PausedState){
         setStatus(KStatusNotifierItem::Active);
         setIconByName("bangarang-notifier-active-pause");
