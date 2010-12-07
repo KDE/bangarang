@@ -22,6 +22,9 @@
 #include "bangarangapplication.h"
 #include "actionsmanager.h"
 
+#include <KFileDialog>
+#include <KDebug>
+
 #include <phonon/videowidget.h>
 
 using namespace Phonon;
@@ -60,6 +63,8 @@ void VideoSettings::setupConnections()
  
   connect(ui->restoreDefaultVideoSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
   connect(ui->hideVideoSettings, SIGNAL(clicked()), m_application->actionsManager()->action("show_video_settings"), SLOT(trigger()));
+
+  connect(m_application->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(updateSubtitles()));
 }
 
 VideoSettings::~VideoSettings()
@@ -170,8 +175,17 @@ void VideoSettings::setSubtitle(int idx)
     if ( idx < 0 )
         return;
     int sidx = ui->subtitleSelection->itemData(idx).toInt();
-    SubtitleDescription sub = SubtitleDescription::fromIndex(sidx);
-    m_mediaController->setCurrentSubtitle(sub);
+    if (sidx >= -1) {
+        SubtitleDescription sub = SubtitleDescription::fromIndex(sidx);
+        m_mediaController->setCurrentSubtitle(sub);
+        if (sidx == -1) {
+            readExternalSubtitles(KUrl());
+        }
+    } else {
+        //Read external subtitles
+        KUrl subtitleUrl(m_extSubtitleFiles.at(-sidx - 100));
+        readExternalSubtitles(subtitleUrl);
+    }
 }
 
 void VideoSettings::updateAngles(int no)
@@ -223,6 +237,25 @@ void VideoSettings::updateSubtitles()
         QString trans_name =  m_application->locale()->languageCodeToName( name );
         QString display_name = trans_name.isEmpty() ? name : trans_name;
         cb->addItem( display_name + more, QVariant( sub.index() ));
+    }
+
+    if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+        MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+        if (nowPlayingItem.type == "Video") {
+            //Search for Subtitles
+            m_extSubtitleFiles = findSubtitleFiles(KUrl(nowPlayingItem.url));
+            if (!m_extSubtitleFiles.isEmpty()) {
+                if (cb->model()->rowCount() == 0) {
+                    cb->insertItem(0, i18n("Disable"), QVariant(-1));
+                }
+                for (int i = 0; i < m_extSubtitleFiles.count(); i++) {
+                    KUrl fileUrl(m_extSubtitleFiles.at(i));
+                    cb->addItem(fileUrl.fileName(), QVariant(-100 - i));
+                    cb->model()->setData(cb->model()->index(cb->model()->rowCount()-1, 0), fileUrl.path(), Qt::ToolTipRole);
+                }
+                ui->subtitleSelectionHolder->setEnabled(true);
+            }
+        }
     }
     updateSubtitleCombo(); //will reconnect subtitle combo
 }
@@ -293,6 +326,105 @@ void VideoSettings::disconnectSubtitleCombo()
     disconnect(ui->subtitleSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setSubtitle(int)));
 }
 
+QStringList VideoSettings::findSubtitleFiles(const KUrl &url)
+{
+    if (!url.isLocalFile()) {
+        return QStringList();
+    }
 
+    QDir dir(url.directory(KUrl::AppendTrailingSlash));
+    QFileInfoList files = dir.entryInfoList(QStringList("*.srt"), QDir::Files);
+    QFileInfoList dirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (int i = 0; i < dirs.count(); i++) {
+        QDir subDir(dirs.at(i).absoluteFilePath());
+        QFileInfoList subDirFiles = subDir.entryInfoList(QStringList("*.srt"), QDir::Files);
+        files.append(subDirFiles.at(i));
+    }
+    QStringList subtitleFiles;
+    for (int i = 0; i < files.count(); i++) {
+        subtitleFiles.append(files.at(i).absoluteFilePath());
+    }
+    return subtitleFiles;
+}
+
+void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
+{
+    m_extSubtitleTimes.clear();
+    m_extSubtitles.clear();
+    if (subtitleUrl.isLocalFile()) {
+        QFile file(subtitleUrl.path());
+        if (file.open(QFile::ReadOnly)) {
+            QTextStream in(&file);
+            bool lastLineWasTime = false;
+             while (!in.atEnd()) {
+                 QString line = in.readLine().trimmed();
+                 if (line.contains("-->")) {
+                     QStringList times = line.split("-->");
+                     if (times.count() != 2) {
+                         break;
+                     }
+                     QTime startTime = QTime::fromString(times.at(0).trimmed(), "hh:mm:ss,zzz");
+                     QTime endTime = QTime::fromString(times.at(1).trimmed(), "hh:mm:ss,zzz");
+                     if (!startTime.isValid() || !endTime.isValid()) {
+                         break;
+                     }
+                     int start = QTime(0,0,0,0).msecsTo(startTime);
+                     int end = QTime(0,0,0,0).msecsTo(endTime);
+                     m_extSubtitleTimes.append(QString("%1,%2").arg(start).arg(end));
+                     lastLineWasTime = true;
+                 } else if (lastLineWasTime) {
+                     QString subtitle = line;
+                     while (!in.atEnd() && !line.isEmpty()) {
+                         line = in.readLine().trimmed();
+                         subtitle.append(QString("\n%1").arg(line));
+                     }
+                     m_extSubtitles.append(subtitle.trimmed());
+                     lastLineWasTime = false;
+                 }
+
+             }
+        }
+    }
+    if (!m_extSubtitleTimes.isEmpty()) {
+        connect(m_application->playlist()->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(showExternalSubtitles(qint64)));
+        m_application->playlist()->mediaObject()->setTickInterval(100);
+    } else {
+        disconnect(m_application->playlist()->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(showExternalSubtitles(qint64)));
+        ui->extSubtitle->hide();
+        m_application->playlist()->mediaObject()->setTickInterval(500);
+    }
+}
+
+void VideoSettings::showExternalSubtitles(qint64 time)
+{
+    QString subtitle;
+
+    //Find subtitle index corresponding to time
+    for (int i = 0; i < m_extSubtitleTimes.count(); i++) {
+        QStringList times = m_extSubtitleTimes.at(i).split(",");
+        int startTime = times.at(0).trimmed().toInt();
+        int endTime = times.at(1).trimmed().toInt();
+        if (time >= startTime && time <= endTime) {
+            subtitle = m_extSubtitles.at(i);
+        }
+        if (startTime > time) {
+            break;
+        }
+    }
+
+    //Update external subtitle display
+    if (!subtitle.isEmpty()) {
+        QFontMetrics fm(ui->extSubtitle->font());
+        QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()), Qt::AlignCenter | Qt::TextWordWrap, subtitle).size();
+        int top = ui->nowPlayingHolder->geometry().bottom() - 20 - textSize.height();
+        int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
+        ui->extSubtitle->setGeometry(left - 8, top - 8, textSize.width() + 8, textSize.height() + 8);
+        ui->extSubtitle->setText(subtitle);
+        ui->extSubtitle->show();
+        ui->extSubtitle->raise();
+    } else {
+        ui->extSubtitle->hide();
+    }
+}
 
 #include "moc_videosettings.cpp"
