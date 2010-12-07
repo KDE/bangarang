@@ -691,6 +691,7 @@ void MainWindow::showLoading()
         } else {
             ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
         }
+        setShowRemainingTime(m_showRemainingTime); //Make sure tooltip is updated
     }
 }
 
