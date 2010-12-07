@@ -255,6 +255,8 @@ void VideoSettings::updateSubtitles()
                 }
                 ui->subtitleSelectionHolder->setEnabled(true);
             }
+        } else {
+            ui->extSubtitle->hide();
         }
     }
     updateSubtitleCombo(); //will reconnect subtitle combo
@@ -338,7 +340,7 @@ QStringList VideoSettings::findSubtitleFiles(const KUrl &url)
     for (int i = 0; i < dirs.count(); i++) {
         QDir subDir(dirs.at(i).absoluteFilePath());
         QFileInfoList subDirFiles = subDir.entryInfoList(QStringList("*.srt"), QDir::Files);
-        files.append(subDirFiles.at(i));
+        files.append(subDirFiles);
     }
     QStringList subtitleFiles;
     for (int i = 0; i < files.count(); i++) {
