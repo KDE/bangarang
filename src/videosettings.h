@@ -24,6 +24,7 @@
 #include <QGroupBox>
 #include <QRadioButton>
 #include <KConfigGroup>
+#include <KUrl>
 
 
 #include <phonon/videowidget.h>
@@ -87,6 +88,7 @@ public slots: //it should also be possible to use them as normal functions
 
     void updateSubtitleCombo();
     void updateAngleCombo(int selected = -1, bool afterUpdate = false);
+    void readExternalSubtitles(const KUrl &subtitleUrl);
 
 private:
     void connectAngleCombo();
@@ -98,11 +100,16 @@ private:
     BangarangApplication * m_application;
     MediaController * m_mediaController;
     VideoWidget *m_videoWidget;
+    QStringList m_extSubtitleTimes;
+    QStringList m_extSubtitles;
+    QStringList m_extSubtitleFiles;
     void setupConnections();
+    QStringList findSubtitleFiles(const KUrl &url);
         
 private slots:  
     void updateAngles(int no);
-    void updateSubtitles();   
+    void updateSubtitles();
+    void showExternalSubtitles(qint64 time);
 
 };
 

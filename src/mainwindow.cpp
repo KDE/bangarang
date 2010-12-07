@@ -86,7 +86,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->configureVideoList->setVisible(false);
     ui->semanticsHolder->setVisible(false);
     ui->loadingIndicator->setVisible(false);
-    
+    ui->extSubtitle->setVisible(false);
+
     //Initialize Nepomuk
     m_nepomukInited = Utilities::nepomukInited();
     if (!m_nepomukInited) {
@@ -245,6 +246,14 @@ void MainWindow::on_nowPlayingHolder_resized()
 {
     ui->nowPlayingView->move(0,0);
     ui->nowPlayingView->resize(ui->nowPlayingHolder->size());
+
+    QFont extSubtitleFont = ui->extSubtitle->font();
+    extSubtitleFont.setPixelSize(qMax(int(ui->nowPlayingHolder->height()*0.045), KGlobalSettings::smallestReadableFont().pixelSize()));
+    ui->extSubtitle->setFont(extSubtitleFont);
+    ui->extSubtitle->setMaximumWidth(0.8*ui->nowPlayingHolder->width());
+    ui->extSubtitle->move((ui->nowPlayingHolder->width() - ui->extSubtitle->width())/2,
+                          ui->nowPlayingHolder->geometry().bottom() - 20 - ui->extSubtitle->height());
+
     if (m_videoSize == Normal) {
         ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
     } else {
