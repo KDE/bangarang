@@ -130,7 +130,7 @@ void MediaItemModel::load()
         if (m_mediaListCache->isInCache(m_mediaListProperties.lri) && !m_forceRefreshFromSource) {
             setLoadingState(true);
             // Load data from from the cache
-            ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(EngineTypeCache);
             MediaListProperties cacheListProperties;
             cacheListProperties.lri = QString("cache://dummyarg?%1").arg(m_mediaListProperties.lri);
             m_requestSignature = m_listEngineFactory->generateRequestSignature();
@@ -138,14 +138,16 @@ void MediaItemModel::load()
             listEngine->setMediaListProperties(cacheListProperties);
             listEngine->start();
             kDebug() << "loading from cache for " << m_mediaListProperties.lri;
-        } else {    
-            if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+        } else {
+            EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+            if (m_listEngineFactory->engineExists(type)) {
                 setLoadingState(true);
                 if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
                     // Since this lri is not currently being loaded by any list engine
                     // go ahead and start a new load
                     m_listEngineFactory->stopAll();
-                    ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                    
+                    ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
                     m_requestSignature = m_listEngineFactory->generateRequestSignature();
                     listEngine->setRequestSignature(m_requestSignature);
                     listEngine->setMediaListProperties(m_mediaListProperties);
@@ -232,22 +234,23 @@ void MediaItemModel::categoryActivated(QModelIndex index)
         setLoadingState(true);
         // Load data from from the cache
         m_listEngineFactory->stopAll();
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine("cache://");
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(EngineTypeCache);
         MediaListProperties cacheListProperties;
         cacheListProperties.lri = QString("cache://dummyarg?%1").arg(m_mediaListProperties.lri);
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
         listEngine->setMediaListProperties(cacheListProperties);
         listEngine->start();
-    } else {    
-        if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
+    } else {
+        EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+        if (m_listEngineFactory->engineExists(type)) {
             removeRows(0, rowCount());
             setLoadingState(true);
             if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
                 // Since this lri is not currently being loaded by any list engine
                 // go ahead and start a new load
                 m_listEngineFactory->stopAll();
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
                 m_requestSignature = m_listEngineFactory->generateRequestSignature();
                 listEngine->setRequestSignature(m_requestSignature);
                 listEngine->setMediaListProperties(m_mediaListProperties);
@@ -264,13 +267,13 @@ void MediaItemModel::actionActivated(QModelIndex index)
 {
     MediaListProperties mediaListProperties;
     mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
-
-    if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+    if (m_listEngineFactory->engineExists(type)) {
         m_mediaListProperties = mediaListProperties;
         removeRows(0, rowCount());
         setLoadingState(true);
         m_listEngineFactory->stopAll();
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
         m_requestSignature = m_listEngineFactory->generateRequestSignature();
         listEngine->setRequestSignature(m_requestSignature);
         listEngine->setMediaListProperties(m_mediaListProperties);
@@ -306,7 +309,8 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                 mediaListProperties.name = mediaList.at(i).title;
                 
                 // - Get the lri for loading sources using this category item
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+                EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
                 listEngine->setMediaListProperties(m_mediaListProperties);
                 listEngine->setFilterForSources(m_mediaListProperties.engineFilter());
                 QString loadSourcesLri = listEngine->mediaListProperties().lri;
@@ -321,7 +325,8 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                 MediaListProperties mediaListProperties;
                 mediaListProperties.lri = mediaList.at(i).url;
                 mediaListProperties.name = mediaList.at(i).title;
-                if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+                EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+                if (m_listEngineFactory->engineExists(type)) {
                     QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
                     m_subRequestSignatures.append(subRequestSignature);
                     QList<MediaItem> emptyList;
@@ -364,16 +369,17 @@ void MediaItemModel::loadSourcesForNextCat()
         MediaListProperties mediaListProperties;
         mediaListProperties.lri = category.url;
         mediaListProperties.name = category.title;
-        if (m_listEngineFactory->engineExists(mediaListProperties.engine())) {
+        EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+        if (m_listEngineFactory->engineExists(type)) {
 
-            ListEngine * listEngine = m_listEngineFactory->availableListEngine(mediaListProperties.engine());
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
             listEngine->setMediaListProperties(mediaListProperties);
             listEngine->setFilterForSources(mediaListProperties.engineFilter());
             QString loadSourcesLri = listEngine->mediaListProperties().lri;
 
             if (m_mediaListCache->isInCache(loadSourcesLri)) {
                 // Load data from from the cache
-                listEngine = m_listEngineFactory->availableListEngine("cache://");
+                listEngine = m_listEngineFactory->availableListEngine(EngineTypeCache);
                 MediaListProperties cacheListProperties;
                 cacheListProperties.lri = QString("cache://dummyarg?%1").arg(loadSourcesLri);
                 m_requestSignature = m_listEngineFactory->generateRequestSignature();
@@ -900,18 +906,20 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
 
 void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
 {
+    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
     //Assumes that items in mediaList are items currently in model
-    if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+    if (m_listEngineFactory->engineExists(type)) {
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
         listEngine->removeSourceInfo(mediaList);
     }
 }
 
 void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly)
 {
+    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
     //Assumes that items in mediaList are items currently in model
-    if (m_listEngineFactory->engineExists(m_mediaListProperties.engine())) {
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(m_mediaListProperties.engine());
+    if (m_listEngineFactory->engineExists(type)) {
+        ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
         listEngine->updateSourceInfo(mediaList, nepomukOnly);
     }
 

@@ -37,7 +37,19 @@
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines << "music://" << "files://" << "video://" << "cdaudio://" << "dvdvideo://" << "savedlists://" << "medialists://" << "audiostreams://" << "semantics://" << "cache://" << "audioclips://" << "tag://" << "feeds://";
+    m_engines << EngineDescription(EngineTypeMusic, QString( "music://" ))
+              << EngineDescription(EngineTypeFiles, "files://")
+              << EngineDescription(EngineTypeVideo, "video://")
+              << EngineDescription(EngineTypeCDAudio, "cdaudio://")
+              << EngineDescription(EngineTypeDVDVideo, "dvdvideo://")
+              << EngineDescription(EngineTypeSavedLists, "savedlists://")
+              << EngineDescription(EngineTypeMediaLists, "medialists://")
+              << EngineDescription(EngineTypeAudioStreams, "audiostreams://")
+              << EngineDescription(EngineTypeSemantics, "semantics://")
+              << EngineDescription(EngineTypeCache, "cache://")
+              << EngineDescription(EngineTypeAudioClips, "audioclips://")
+              << EngineDescription(EngineTypeTag, "tag://")
+              << EngineDescription(EngineTypeFeeds, "feeds://");
     m_downloader = new Downloader(this);
 }
 
@@ -46,231 +58,103 @@ ListEngineFactory::~ListEngineFactory()
     stopAll(200);
 }
 
-ListEngine * ListEngineFactory::availableListEngine(const QString &engine)
+ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemModel* model)
 {
-    if (engine.toLower() == "music://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        MusicListEngine * musicListEngine;
-        for (int i = 0; i < m_musicListEngines.count(); ++i) {
-            if (!m_musicListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                musicListEngine = m_musicListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            musicListEngine = new MusicListEngine(this);
-            musicListEngine->setModel(m_parent);
-            m_musicListEngines << musicListEngine;
-        }
-        return musicListEngine;           
-    } else if (engine.toLower() == "files://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        FileListEngine * fileListEngine;
-        for (int i = 0; i < m_fileListEngines.count(); ++i) {
-            if (!m_fileListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                fileListEngine = m_fileListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            fileListEngine = new FileListEngine(this);
-            fileListEngine->setModel(m_parent);
-            m_fileListEngines << fileListEngine;
-        }
-        return fileListEngine;        
-    } else if (engine.toLower() == "video://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        VideoListEngine * videoListEngine;
-        for (int i = 0; i < m_videoListEngines.count(); ++i) {
-            if (!m_videoListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                videoListEngine = m_videoListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            videoListEngine = new VideoListEngine(this);
-            videoListEngine->setModel(m_parent);
-            m_videoListEngines << videoListEngine;
-        }
-        return videoListEngine;        
-    } else if (engine.toLower() == "cdaudio://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        CDListEngine * cdListEngine;
-        for (int i = 0; i < m_cdListEngines.count(); ++i) {
-            if (!m_cdListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                cdListEngine = m_cdListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            cdListEngine = new CDListEngine(this);
-            cdListEngine->setModel(m_parent);
-            m_cdListEngines << cdListEngine;
-        }
-        return cdListEngine;        
-    } else if (engine.toLower() == "dvdvideo://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        DVDListEngine * dvdListEngine;
-        for (int i = 0; i < m_dvdListEngines.count(); ++i) {
-            if (!m_dvdListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                dvdListEngine = m_dvdListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            dvdListEngine = new DVDListEngine(this);
-            dvdListEngine->setModel(m_parent);
-            m_dvdListEngines << dvdListEngine;
-        }
-        return dvdListEngine;        
-    } else if (engine.toLower() == "savedlists://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        SavedListsEngine * savedListsEngine;
-        for (int i = 0; i < m_savedListsEngines.count(); ++i) {
-            if (!m_savedListsEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                savedListsEngine = m_savedListsEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            savedListsEngine = new SavedListsEngine(this);
-            savedListsEngine->setModel(m_parent);
-            m_savedListsEngines << savedListsEngine;
-        }
-        return savedListsEngine;        
-    } else if (engine.toLower() == "medialists://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        MediaListsEngine * mediaListsEngine;
-        for (int i = 0; i < m_mediaListsEngines.count(); ++i) {
-            if (!m_mediaListsEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                mediaListsEngine = m_mediaListsEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            mediaListsEngine = new MediaListsEngine(this);
-            mediaListsEngine->setModel(m_parent);
-            m_mediaListsEngines << mediaListsEngine;
-        }
-        return mediaListsEngine;        
-    } else if (engine.toLower() == "audiostreams://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        AudioStreamListEngine * audioStreamListEngine;
-        for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
-            if (!m_audioStreamListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                audioStreamListEngine = m_audioStreamListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            audioStreamListEngine = new AudioStreamListEngine(this);
-            audioStreamListEngine->setModel(m_parent);
-            m_audioStreamListEngines << audioStreamListEngine;
-        }
-        return audioStreamListEngine;        
-    } else if (engine.toLower() == "semantics://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        SemanticsListEngine * semanticsListEngine;
-        for (int i = 0; i < m_semanticsListEngines.count(); ++i) {
-            if (!m_semanticsListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                semanticsListEngine = m_semanticsListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            semanticsListEngine = new SemanticsListEngine(this);
-            semanticsListEngine->setModel(m_parent);
-            m_semanticsListEngines << semanticsListEngine;
-        }
-        return semanticsListEngine;        
-    } else if (engine.toLower() == "cache://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        CacheListEngine * cacheListEngine;
-        for (int i = 0; i < m_cacheListEngines.count(); ++i) {
-            if (!m_cacheListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                cacheListEngine = m_cacheListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            cacheListEngine = new CacheListEngine(this);
-            cacheListEngine->setModel(m_parent);
-            m_cacheListEngines << cacheListEngine;
-        }
-        return cacheListEngine;        
-    } else if (engine.toLower() == "audioclips://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        AudioClipsListEngine * audioClipsListEngine;
-        for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
-            if (!m_audioClipsListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                audioClipsListEngine = m_audioClipsListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            audioClipsListEngine = new AudioClipsListEngine(this);
-            audioClipsListEngine->setModel(m_parent);
-            m_audioClipsListEngines << audioClipsListEngine;
-        }
-        return audioClipsListEngine;        
-    } else if (engine.toLower() == "tag://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-       TagListEngine * tagListEngine;
-        for (int i = 0; i < m_tagListEngines.count(); ++i) {
-            if (!m_tagListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                tagListEngine = m_tagListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            tagListEngine = new TagListEngine(this);
-            tagListEngine->setModel(m_parent);
-            m_tagListEngines << tagListEngine;
-        }
-        return tagListEngine;        
-    } else if (engine.toLower() == "feeds://") {
-        //Search for available list engine
-        bool foundListEngine = false;
-        FeedListEngine * feedListEngine;
-        for (int i = 0; i < m_feedListEngines.count(); ++i) {
-            if (!m_feedListEngines.at(i)->isRunning()) {
-                foundListEngine = true;
-                feedListEngine = m_feedListEngines.at(i);
-                break;
-            }
-        }
-        if (!foundListEngine) {
-            feedListEngine = new FeedListEngine(this);
-            feedListEngine->setModel(m_parent);
-            m_feedListEngines << feedListEngine;
-        }
-        return feedListEngine;        
+    ListEngine *eng;
+    switch (type) {
+        case EngineTypeMusic:
+            eng = new MusicListEngine(this);
+            break;
+            
+        case EngineTypeFiles:
+            eng = new FileListEngine(this);
+            break;
+            
+        case EngineTypeVideo:
+            eng = new VideoListEngine(this);
+            break;
+            
+        case EngineTypeCDAudio:
+            eng = new CDListEngine(this);
+            break;
+
+        case EngineTypeDVDVideo:
+            eng = new DVDListEngine(this);
+            break;
+
+        case EngineTypeSavedLists:
+            eng = new SavedListsEngine(this);
+            break;
+
+        case EngineTypeMediaLists:
+            eng = new MediaListsEngine(this);
+            break;
+
+        case EngineTypeAudioStreams:
+            eng = new AudioStreamListEngine(this);
+            break;
+
+        case EngineTypeSemantics:
+            eng = new SemanticsListEngine(this);
+            break;
+            
+        case EngineTypeCache:
+            eng = new CacheListEngine(this);
+            break;
+            
+        case EngineTypeAudioClips:
+            eng = new AudioClipsListEngine(this);
+            break;
+            
+        case EngineTypeTag:
+            eng = new TagListEngine(this);
+            break;
+
+        case EngineTypeFeeds:
+            eng = new FeedListEngine(this);
+            break;
+
+        default:
+            eng = new ListEngine(this);
+            break;
     }
-    return new ListEngine(this);
+    eng->setModel(model);
+    return eng;
+}
+
+QString ListEngineFactory::engineStringFromType(const EngineType type)
+{
+    for (int i = 0; i < m_engines.count(); i++) {
+        const EngineDescription &cur = m_engines.at(i);
+        if ( cur.first == type )
+            return cur.second;
+    }
+    return QString();
+}
+
+EngineType ListEngineFactory::engineTypeFromString(const QString& str)
+{
+    for (int i = 0; i < m_engines.count(); i++) {
+        const EngineDescription &cur = m_engines.at(i);
+        if ( cur.second == str )
+            return cur.first;
+    }
+    return EngineTypeUnknown;
+}
+
+
+ListEngine * ListEngineFactory::availableListEngine(const EngineType type)
+{
+    for (int i = 0; i < m_initializedEngines.count(); ++i)
+    {
+        const EnginePointerType &cur = m_initializedEngines.at(i);
+        if (cur.second == type && !cur.first->isRunning()) {
+            return cur.first;
+        }
+    }
+    ListEngine *eng = createEngine(type, m_parent);
+    m_initializedEngines << EnginePointerType(eng, type);
+    return eng;
 }
 
 QString ListEngineFactory::generateRequestSignature()
@@ -279,13 +163,9 @@ QString ListEngineFactory::generateRequestSignature()
     return QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + m_requestSignatureSeed;
 }
 
-bool ListEngineFactory::engineExists(const QString &engine)
+bool ListEngineFactory::engineExists(const EngineType type)
 {
-    if (m_engines.indexOf(engine) != -1) {
-        return true;
-    } else {
-        return false;
-    }
+    return ( type != EngineTypeUnknown );
 }
 
 Downloader * ListEngineFactory::downloader()
@@ -295,70 +175,10 @@ Downloader * ListEngineFactory::downloader()
 
 void ListEngineFactory::stopAll(unsigned long waitToTerminate)
 {
-    for (int i = 0; i < m_musicListEngines.count(); ++i) {
-        if (m_musicListEngines.at(i)->isRunning()) {
-            m_musicListEngines.at(i)->stop(waitToTerminate);
+    for (int i = 0; i < m_initializedEngines.count(); ++i) {
+        ListEngine *eng = m_initializedEngines.at(i).first;
+        if (eng->isRunning()) {
+            eng->stop(waitToTerminate);
         }
     }
-    for (int i = 0; i < m_fileListEngines.count(); ++i) {
-        if (m_fileListEngines.at(i)->isRunning()) {
-            m_fileListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_videoListEngines.count(); ++i) {
-        if (m_videoListEngines.at(i)->isRunning()) {
-            m_videoListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_cdListEngines.count(); ++i) {
-        if (m_cdListEngines.at(i)->isRunning()) {
-            m_cdListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_dvdListEngines.count(); ++i) {
-        if (m_dvdListEngines.at(i)->isRunning()) {
-            m_dvdListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_savedListsEngines.count(); ++i) {
-        if (m_savedListsEngines.at(i)->isRunning()) {
-            m_savedListsEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_mediaListsEngines.count(); ++i) {
-        if (m_mediaListsEngines.at(i)->isRunning()) {
-            m_mediaListsEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_audioStreamListEngines.count(); ++i) {
-        if (m_audioStreamListEngines.at(i)->isRunning()) {
-            m_audioStreamListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_semanticsListEngines.count(); ++i) {
-        if (m_semanticsListEngines.at(i)->isRunning()) {
-            m_semanticsListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_cacheListEngines.count(); ++i) {
-        if (m_cacheListEngines.at(i)->isRunning()) {
-            m_cacheListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_audioClipsListEngines.count(); ++i) {
-        if (m_audioClipsListEngines.at(i)->isRunning()) {
-            m_audioClipsListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_tagListEngines.count(); ++i) {
-        if (m_tagListEngines.at(i)->isRunning()) {
-            m_tagListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-    for (int i = 0; i < m_feedListEngines.count(); ++i) {
-        if (m_feedListEngines.at(i)->isRunning()) {
-            m_feedListEngines.at(i)->stop(waitToTerminate);
-        }
-    }
-
 }
