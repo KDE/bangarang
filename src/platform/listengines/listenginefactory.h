@@ -25,21 +25,29 @@
 #include <KDirLister>
 #include <QObject>
 #include <QList>
+#include <QPair>
 
 class ListEngine;
-class MusicListEngine;
-class FileListEngine;
-class VideoListEngine;
-class CDListEngine;
-class DVDListEngine;
-class SavedListsEngine;
-class MediaListsEngine;
-class AudioStreamListEngine;
-class SemanticsListEngine;
-class CacheListEngine;
-class AudioClipsListEngine;
-class TagListEngine;
-class FeedListEngine;
+
+enum EngineType {
+    EngineTypeUnknown = -1,
+    EngineTypeMusic,
+    EngineTypeFiles,
+    EngineTypeVideo,
+    EngineTypeCDAudio,
+    EngineTypeDVDVideo,
+    EngineTypeSavedLists,
+    EngineTypeMediaLists,
+    EngineTypeAudioStreams,
+    EngineTypeSemantics,
+    EngineTypeCache,
+    EngineTypeAudioClips,
+    EngineTypeTag,
+    EngineTypeFeeds
+};
+
+typedef QPair<EngineType, QString> EngineDescription;
+typedef QPair<ListEngine *, EngineType> EnginePointerType;
 
 /**
  * This class creates ListEngines as needed for the MediaItemModel.
@@ -50,6 +58,7 @@ class ListEngineFactory : public QObject
     Q_OBJECT
     
     public:
+      
         /**
          * Constructor
          */
@@ -59,6 +68,11 @@ class ListEngineFactory : public QObject
          * Destructor
          */
         ~ListEngineFactory();
+
+        /**
+         * Creates an engine of the given type with "model" as the model
+         */
+        ListEngine *createEngine(const EngineType type, MediaItemModel* model);
         
         /** 
          * Returns an available ListEngine for the specified engine`.
@@ -66,11 +80,10 @@ class ListEngineFactory : public QObject
          * idle and create a new ListEngine if no idle ListEngines
          * are available.
          *
-         * @param engine the engine (from the lri) for which a 
-         *               ListEngine should be returned.
+         * @param type the engine type for which a ListEngine should be returned.
          */
         
-        virtual ListEngine* availableListEngine(const QString &engine);
+        virtual ListEngine* availableListEngine(const EngineType type);
         
         /**
          * Generates a unique request signature the MediaItemModel
@@ -82,12 +95,22 @@ class ListEngineFactory : public QObject
          * Returns true if a ListEngine exists for the specified
          * engine.
          */
-        bool engineExists(const QString &engine);
+        bool engineExists(const EngineType type);
         
         /**
          * Returns the downloader.
          **/
         Downloader * downloader();
+
+        /**
+         * Returns the engine type to the specific string
+         */
+        EngineType engineTypeFromString(const QString &str);
+
+        /**
+         * Returns the engine string to the specific type
+         */
+        QString engineStringFromType(const EngineType type);
 
         /**
          * Stop all running list engines as soon as possible.
@@ -98,21 +121,10 @@ class ListEngineFactory : public QObject
     private:
         MediaItemModel * m_parent;
         int m_requestSignatureSeed;
-        QStringList m_engines;
-        QList<MusicListEngine *> m_musicListEngines;
-        QList<FileListEngine *> m_fileListEngines;
-        QList<VideoListEngine *> m_videoListEngines;
-        QList<CDListEngine *> m_cdListEngines;
-        QList<DVDListEngine *> m_dvdListEngines;
-        QList<SavedListsEngine *> m_savedListsEngines;
-        QList<MediaListsEngine *> m_mediaListsEngines;
-        QList<AudioStreamListEngine *> m_audioStreamListEngines;
-        QList<SemanticsListEngine *> m_semanticsListEngines;
-        QList<CacheListEngine *> m_cacheListEngines;
-        QList<AudioClipsListEngine *> m_audioClipsListEngines;
-        QList<TagListEngine *> m_tagListEngines;
-        QList<FeedListEngine *> m_feedListEngines;
+        QList<EngineDescription> m_engines;
+        QList<EnginePointerType> m_initializedEngines;
         Downloader * m_downloader;
 };
+
 #endif // LISTENGINEFACTORY_H
         
