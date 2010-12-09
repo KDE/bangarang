@@ -422,6 +422,7 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
 
     QMutexLocker locker(&mutex);
 
+    kDebug() << "Url submitted:" << url;
     KUrl pathUrl(url);
     if (!pathUrl.isValid() ||
         !pathUrl.isLocalFile()) {
@@ -432,11 +433,13 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
         return QString();
     }
 
+    kDebug() << "Directory determined:" << path;
+
     QDir dir(path);
     QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
 
     if (files.count() == 1) {
-        kDebug() << path + files[0];
+        kDebug() << "Found 1 file:" << path + files[0];
         return path + files[0];
     } else if (files.count() >= 1) {
         for (int i = files.count() - 1; i >= 0; i--) {
@@ -444,14 +447,18 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
             //since windows media player stores more then one file,
             //we are forced to choose the right one (e.g folder is better then
             //albumartsmall)
-            if (files[i].contains(i18n("folder")) || files[i].contains("album"))
+            if (files[i].contains(i18n("folder")) || files[i].contains("album")) {
+                kDebug() << "Found multiple files, picking name [folder/album]:" << path + files[i];
                 return path + files[i];
+            }
 
             if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
+                kDebug() << "Found multiple files, picking name [album name]:" << path + files[i];
                 return path + files[i];
         }
 
         //still here? take the first one
+        kDebug() << "Found multiple files, picking first one:" << path + files[0];
         return path + files[0];
     }
     return QString();
