@@ -351,9 +351,9 @@ void InfoManager::loadSelectedInfo()
     }
 
     //Load contextual data into info model and info boxes
-    if (m_infoItemModel->mediaList().isEmpty() ||
-        (!m_infoItemModel->mediaList().isEmpty() &&
-         m_context.at(0).url != m_infoItemModel->mediaList().at(0).url)) {
+    if (!(m_context.count() == 1 &&
+          m_infoItemModel->mediaList().count() == 1 &&
+          m_context.at(0).url == m_infoItemModel->mediaList().at(0).url)) {
         m_infoItemModel->loadInfo(m_context);
     }
 
