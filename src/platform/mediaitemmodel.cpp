@@ -267,7 +267,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
 {
     MediaListProperties mediaListProperties;
     mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
-    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+    EngineType type = m_listEngineFactory->engineTypeFromString(mediaListProperties.engine());
     if (m_listEngineFactory->engineExists(type)) {
         m_mediaListProperties = mediaListProperties;
         removeRows(0, rowCount());
@@ -309,10 +309,10 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                 mediaListProperties.name = mediaList.at(i).title;
                 
                 // - Get the lri for loading sources using this category item
-                EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+                EngineType type = m_listEngineFactory->engineTypeFromString(mediaListProperties.engine());
                 ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
-                listEngine->setMediaListProperties(m_mediaListProperties);
-                listEngine->setFilterForSources(m_mediaListProperties.engineFilter());
+                listEngine->setMediaListProperties(mediaListProperties);
+                listEngine->setFilterForSources(mediaListProperties.engineFilter());
                 QString loadSourcesLri = listEngine->mediaListProperties().lri;
                 mediaListProperties.lri = loadSourcesLri;
                 
@@ -325,7 +325,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                 MediaListProperties mediaListProperties;
                 mediaListProperties.lri = mediaList.at(i).url;
                 mediaListProperties.name = mediaList.at(i).title;
-                EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+                EngineType type = m_listEngineFactory->engineTypeFromString(mediaListProperties.engine());
                 if (m_listEngineFactory->engineExists(type)) {
                     QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
                     m_subRequestSignatures.append(subRequestSignature);
@@ -335,6 +335,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
             }
         }
     }
+
     if (onlySources) {
         if (rowCount() == 0  && !m_suppressNoResultsMessage) {
             showNoResultsMessage();
