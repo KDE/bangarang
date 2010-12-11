@@ -351,9 +351,15 @@ void InfoManager::loadSelectedInfo()
     }
 
     //Load contextual data into info model and info boxes
-    m_infoItemModel->loadInfo(m_context);
+    if (m_infoItemModel->mediaList().isEmpty() ||
+        (!m_infoItemModel->mediaList().isEmpty() &&
+         m_context.at(0).url != m_infoItemModel->mediaList().at(0).url)) {
+        m_infoItemModel->loadInfo(m_context);
+    }
 
     //Show/Hide Info Fetcher
+    ui->infoFetcherExpander->setCurrentIndex(0);
+    ui->infoFetcherExpander->setVisible(false);
     showInfoFetcher();
 
     //Get context data for info boxes
@@ -462,6 +468,7 @@ void InfoManager::showIndexer()
 void InfoManager::showInfoFetcher()
 {
     if (m_infoItemModel->availableInfoFetchers().count() > 0) {
+
         //Load available InfoFetchers and determine if any are fetching info
         bool isFetching = false;
         ui->infoFetcherSelector->clear();
