@@ -115,22 +115,43 @@ void Playlist::playItemAt(int row, Model model)
         buildQueueFrom(nextMediaItem.playlistIndex);
     } else {
         int rowInQueue = isQueue ? row : m_queue->rowOfUrl(nextMediaItem.url);
-        bool inHistory = (m_playlistIndicesHistory.indexOf(row) != -1);
-        QList<MediaItem> queueMediaList = m_queue->mediaList();
+
+        //Add currently playing item to history
+        if (rowInQueue > 0 && m_nowPlaying->rowCount() > 0) {
+            if (m_nowPlaying->mediaItemAt(0).type == "Audio" || m_nowPlaying->mediaItemAt(0).type == "Video") {
+                int nowPlayingIndex = m_nowPlaying->mediaItemAt(0).playlistIndex;
+                m_playlistIndicesHistory.append(nowPlayingIndex);
+                m_playlistUrlHistory.append(m_nowPlaying->mediaItemAt(0).url);
+                if (m_queue->rowCount() > 1) {
+                    m_queue->removeMediaItemAt(0);
+                    rowInQueue--;
+                }
+            }
+        }
+
+        //Remove requested item from history
+        bool inHistory = (m_playlistIndicesHistory.indexOf(nextMediaItem.playlistIndex) != -1);
         if ( inHistory ) { //remove from history
             int idx = m_playlistIndicesHistory.indexOf(row);
             m_playlistIndicesHistory.removeAt(idx);
             m_playlistUrlHistory.removeAt(idx);
         }
+
+        //Place requested item at front of queue
+        QList<MediaItem> queueMediaList = m_queue->mediaList();
         if ( rowInQueue > 0 ) { //in queue, but not at first place, so move it
             queueMediaList.move(rowInQueue, 0);
         } else if (rowInQueue < 0) { //not in queue, so add it at first place
             queueMediaList.insert(0, nextMediaItem);
-            if (queueMediaList.count() > m_queueDepth)
+            if (queueMediaList.count() > m_queueDepth) {
                 queueMediaList.removeLast();
+            }
         } //else it is already at first place in the queue
         m_queue->clearMediaListData();
         m_queue->loadMediaList(queueMediaList, true);
+
+        //Fill out queue
+        shuffle();
     }
     
     //Play media Item
@@ -184,19 +205,9 @@ void Playlist::playNext()
 {
     if (m_mediaObject->state() == Phonon::PlayingState || m_mediaObject->state() == Phonon::PausedState || m_mediaObject->state() == Phonon::LoadingState || m_mediaObject->state() == Phonon::ErrorState) {
         //Add currently playing item to history
-        if (m_nowPlaying->rowCount() > 0) {
-            if (m_nowPlaying->mediaItemAt(0).type == "Audio" || m_nowPlaying->mediaItemAt(0).type == "Video") {
-                int row = m_nowPlaying->mediaItemAt(0).playlistIndex;
-                m_playlistIndicesHistory.append(row);
-                m_playlistUrlHistory.append(m_nowPlaying->mediaItemAt(0).url);
-            }
-        }
-        
         if (m_queue->rowCount() > 1) {
-            m_queue->removeMediaItemAt(0);
-            playItemAt(0, Playlist::QueueModel);
+            playItemAt(1, Playlist::QueueModel);
         }
-        addToQueue();
     }
 }
 
@@ -208,8 +219,11 @@ void Playlist::playPrevious()
             int previousRow = m_playlistIndicesHistory.last();
             m_playlistIndicesHistory.removeLast();
             m_playlistUrlHistory.removeLast();
+            MediaItem previousItem = m_currentPlaylist->mediaItemAt(previousRow);
+            previousItem.playlistIndex = previousRow;
+            m_queue->insertMediaItemAt(0, previousItem);
             
-            playItemAt(previousRow, Playlist::PlaylistModel);
+            playItemAt(0, Playlist::QueueModel);
         }
     }
 }
@@ -446,7 +460,22 @@ bool Playlist::shuffleMode()
 
 void Playlist::setRepeatMode(bool repeat)
 {
+    bool wasRepeat = m_repeat;
     m_repeat = repeat;
+
+    //If switching from repeat to not-repeat make sure queue is only built to end of playlist.
+    //NOTE: In shuffle mode repeat the end of the playlist is ambiguous so no need to alter queue.
+    if (wasRepeat && !repeat &&
+        !m_shuffle &&
+        m_queue->rowCount() > 0) {
+        buildQueueFrom(m_queue->mediaItemAt(0).playlistIndex);
+    }
+
+    if (!m_shuffle) {
+        orderByPlaylist();
+    } else {
+        shuffle();
+    }
     emit repeatModeChanged(m_repeat);
 }
 
@@ -826,7 +855,7 @@ void Playlist::shuffle()
 {
     srand((unsigned)time(0));
     int numberToAdd = m_queueDepth - m_queue->rowCount();
-    for (int i = 0; i < qMin(numberToAdd, m_currentPlaylist->rowCount()); ++i) {
+    for (int i = 0; i < numberToAdd; ++i) {
         addToQueue();
     }
 }
@@ -834,7 +863,7 @@ void Playlist::shuffle()
 void Playlist::orderByPlaylist()
 {
     int numberToAdd = m_queueDepth - m_queue->rowCount();
-    for (int i = 0; i < qMin(numberToAdd, m_currentPlaylist->rowCount()); ++i) {
+    for (int i = 0; i < numberToAdd; ++i) {
         addToQueue();
     }
 }
@@ -871,16 +900,11 @@ void Playlist::buildQueueFrom(int playlistRow)
             m_playlistUrlHistory.append(m_currentPlaylist->mediaItemAt(i).url);
         }
         createUrlHistoryFromIndices();
-        int lastRowOfQueue = 0;
-        for (int j = playlistRow; j < qMin(playlistRow + m_queueDepth, m_currentPlaylist->rowCount()); ++j) {
-            MediaItem nextMediaItem = m_currentPlaylist->mediaItemAt(j);
-            nextMediaItem.playlistIndex = j;
-            m_queue->loadMediaItem(nextMediaItem);
-            lastRowOfQueue = j;
+        for (int j = playlistRow; j < m_currentPlaylist->rowCount(); ++j) {
+            m_playlistIndices.append(j);
         }
-        for (int k = lastRowOfQueue + 1; k < m_currentPlaylist->rowCount(); ++k) {
-            m_playlistIndices.append(k);
-        }
+
+        orderByPlaylist();
     }   
 }
 
