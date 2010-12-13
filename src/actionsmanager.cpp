@@ -435,7 +435,7 @@ KMenu *ActionsManager::nowPlayingMenu()
             m_nowPlayingMenu->addSeparator();
         }
     }
-    if (ui->contextStack->isVisible() && ui->contextStack->currentIndex() == 0) {
+    if (ui->contextStackHolder->isVisible() && ui->contextStack->currentIndex() == 0) {
         m_nowPlayingMenu->addAction(action("toggle_filter"));
         m_nowPlayingMenu->addSeparator();
     }
@@ -543,19 +543,19 @@ void ActionsManager::toggleControls()
 
 void ActionsManager::toggleVideoSettings()
 {
-    if(ui->contextStack->currentIndex() != 2 || !ui->contextStack->isVisible()) {
-        m_contextStackWasVisible = ui->contextStack->isVisible();
+    if(ui->contextStack->currentIndex() != 2 || !ui->contextStackHolder->isVisible()) {
+        m_contextStackWasVisible = ui->contextStackHolder->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(2);
-        ui->contextStack->setVisible(true);
+        ui->contextStackHolder->setVisible(true);
         m_application->videoSettings()->updateSubtitleCombo();
         action("show_video_settings")->setText(i18n("Hide video vettings"));
     } else {
         if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
             ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-            ui->contextStack->setVisible(true);
+            ui->contextStackHolder->setVisible(true);
         } else {
-            ui->contextStack->setVisible(false);
+            ui->contextStackHolder->setVisible(false);
         }
         action("show_video_settings")->setText(i18n("Show video settings"));
     }
@@ -566,19 +566,19 @@ void ActionsManager::toggleVideoSettings()
 
 void ActionsManager::toggleAudioSettings()
 {
-    if(ui->contextStack->currentIndex() != 1 || !ui->contextStack->isVisible()) {
-        m_contextStackWasVisible = ui->contextStack->isVisible();
+    if(ui->contextStack->currentIndex() != 1 || !ui->contextStackHolder->isVisible()) {
+        m_contextStackWasVisible = ui->contextStackHolder->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(1);
-        ui->contextStack->setVisible(true);
+        ui->contextStackHolder->setVisible(true);
         m_application->audioSettings()->updateAudioChannelCombo();
         action("show_audio_settings")->setText(i18n("Hide audio settings"));
     } else {
         if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
             ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-            ui->contextStack->setVisible(true);
+            ui->contextStackHolder->setVisible(true);
         } else {
-            ui->contextStack->setVisible(false);
+            ui->contextStackHolder->setVisible(false);
         }
         action("show_audio_settings")->setText(i18n("Show audio settings"));
     }
@@ -620,18 +620,18 @@ void ActionsManager::cancelFSHC()
 
 void ActionsManager::toggleShortcutsEditor()
 {
-    if(ui->contextStack->currentIndex() != 3 || !ui->contextStack->isVisible()) {
-        m_contextStackWasVisible = ui->contextStack->isVisible();
+    if(ui->contextStack->currentIndex() != 3 || !ui->contextStackHolder->isVisible()) {
+        m_contextStackWasVisible = ui->contextStackHolder->isVisible();
         m_previousContextStackIndex = ui->contextStack->currentIndex();
         ui->contextStack->setCurrentIndex(3);
-        ui->contextStack->setVisible(true);
+        ui->contextStackHolder->setVisible(true);
         action("show_shortcuts_editor")->setText(i18n("Hide shortcuts editor"));
     } else {
         if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
             ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
-            ui->contextStack->setVisible(true);
+            ui->contextStackHolder->setVisible(true);
         } else {
-            ui->contextStack->setVisible(false);
+            ui->contextStackHolder->setVisible(false);
         }
         action("show_shortcuts_editor")->setText(i18n("Show shortcuts editor"));
     }
