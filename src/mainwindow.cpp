@@ -854,14 +854,16 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
 {
     if (selected.indexes().count() > 0) {
         int firstRow = selected.indexes().at(0).row();
-        if (m_application->browsingModel()->mediaItemAt(firstRow).fields["isTemplate"].toBool()) {
+        if (m_application->browsingModel()->mediaItemAt(firstRow).fields.contains("isTemplate") &&
+            m_application->browsingModel()->mediaItemAt(firstRow).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(false);
         } else {
             ui->playSelected->setVisible(true);
         }
         ui->playAll->setVisible(false);
     } else {
-        if (!m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
+        if (m_application->browsingModel()->mediaItemAt(0).fields.contains("isTemplate") &&
+            !m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(false);
             ui->playAll->setVisible(true);
         }

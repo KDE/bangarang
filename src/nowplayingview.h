@@ -46,6 +46,7 @@ class NowPlayingView : public QTreeView
         
     protected:
         void contextMenuEvent (QContextMenuEvent * event);
+        void resizeEvent(QResizeEvent *event);
         
     private:
         MediaItemModel *m_nowPlayingModel;

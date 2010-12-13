@@ -47,6 +47,7 @@ class NowPlayingDelegate : public QItemDelegate
         bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
         QAbstractItemView *view() { return m_view; }
         void setView(QAbstractItemView *view) { m_view = view; }
+        void updateSizeHint();
 
     protected:
         QRect ratingRect(const QRect *rect) const;
