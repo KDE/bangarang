@@ -326,7 +326,10 @@ void InfoManager::loadSelectedInfo()
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
             int row = proxy->mapToSource(selectedRows.at(i)).row();
-            m_context.append(m_application->browsingModel()->mediaItemAt(row));
+            MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(row);
+            mediaItem.subTitle = QString();
+            mediaItem.fields["isTemplate"] = false;
+            m_context.append(mediaItem);
         }
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
