@@ -27,7 +27,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -1243,8 +1243,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>147</width>
-                    <height>295</height>
+                    <width>152</width>
+                    <height>367</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -2795,27 +2795,6 @@
                               </spacer>
                              </item>
                              <item>
-                              <widget class="QLabel" name="infoFetcherMessage">
-                               <property name="enabled">
-                                <bool>false</bool>
-                               </property>
-                               <property name="font">
-                                <font>
-                                 <italic>true</italic>
-                                </font>
-                               </property>
-                               <property name="text">
-                                <string>Fetching info...</string>
-                               </property>
-                               <property name="alignment">
-                                <set>Qt::AlignCenter</set>
-                               </property>
-                               <property name="indent">
-                                <number>0</number>
-                               </property>
-                              </widget>
-                             </item>
-                             <item>
                               <widget class="QToolButton" name="showInfoFetcherExpander">
                                <property name="text">
                                 <string/>
@@ -2872,7 +2851,7 @@
                                 <bool>true</bool>
                                </property>
                                <property name="currentIndex">
-                                <number>1</number>
+                                <number>0</number>
                                </property>
                                <widget class="QWidget" name="infoFetcherExpanderPage1">
                                 <layout class="QVBoxLayout" name="verticalLayout_36">

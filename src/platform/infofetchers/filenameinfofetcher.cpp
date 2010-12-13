@@ -103,6 +103,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequi
     }
     if (!m_timeout) {
         emit fetchComplete();
+        emit fetchComplete(this);
     }
     Q_UNUSED(updateRequiredFields);
     Q_UNUSED(updateArtwork);

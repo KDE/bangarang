@@ -38,7 +38,7 @@ DBPediaQuery::DBPediaQuery(QObject * parent) : QObject(parent)
                             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
                             "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
                             "PREFIX dc: <http://purl.org/dc/elements/1.1/> "
-                            "PREFIX : <http://dbpedia.org/resource/> "
+                            "PREFIX dbr: <http://dbpedia.org/resource/> "
                             "PREFIX dbpedia2: <http://dbpedia.org/property/> "
                             "PREFIX dbpedia: <http://dbpedia.org/> "
                             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
@@ -59,13 +59,13 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
 {
     //Create query url
     QString query = m_queryPrefix +
-                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
+                    QString("SELECT DISTINCT str(?label) AS  ?name ?description ?thumbnail "
                     "WHERE { "
                     "{?person rdf:type dbo:Band . } "
                     "UNION "
                     "{?person rdf:type dbo:MusicalArtist . } "
-                    "?person rdfs:label ?name . "
-                    "?name bif:contains \"'%1'\" . "
+                    "?person rdfs:label ?label . "
+                    "?label bif:contains \"%1\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
@@ -75,7 +75,7 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
     
     //Create Request Key
     QString requestKey = QString("Artist:%1").arg(artistName);
-    
+
     //Launch Query
     launchQuery(query, requestKey);
 }
@@ -89,11 +89,11 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
 {
     //Create query url
     QString query = m_queryPrefix +
-                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
+                    QString("SELECT DISTINCT str(?label) AS  ?name ?description ?thumbnail "
                     "WHERE { "
                     "?person rdf:type dbo:Actor . "
-                    "?person rdfs:label ?name . "
-                    "?name bif:contains \"'%1'\" . "
+                    "?person rdfs:label ?label . "
+                    "?label bif:contains \"%1\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
@@ -103,7 +103,7 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
     
     //Create Request Key
     QString requestKey = QString("Actor:%1").arg(actorName);
-    
+
     //Launch Query
     launchQuery(query, requestKey);
 }
@@ -112,11 +112,11 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
 {
     //Create query url
     QString query = m_queryPrefix +
-                    QString("SELECT DISTINCT ?name ?description ?thumbnail "
+                    QString("SELECT DISTINCT str(?label) AS  ?name ?description ?thumbnail "
                     "WHERE { "
                     "?person rdf:type dbo:Director . "
-                    "?person rdfs:label ?name . "
-                    "?name bif:contains \"'%1'\" . "
+                    "?person rdfs:label ?label . "
+                    "?label bif:contains \"%1\" . "
                     "OPTIONAL {?person rdfs:comment ?description . "
                                "FILTER (lang(?description) ='%2') } "
                     "OPTIONAL {?person dbo:thumbnail ?thumbnail . } "
@@ -126,7 +126,7 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
     
     //Create Request Key
     QString requestKey = QString("Director:%1").arg(directorName);
-    
+
     //Launch Query
     launchQuery(query, requestKey);
 }
@@ -135,11 +135,11 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
 {
     //Create query url
     QString query = m_queryPrefix + 
-                    QString("SELECT DISTINCT ?title ?description ?thumbnail ?duration ?releaseDate ?actor ?writer ?director ?producer "
+                    QString("SELECT DISTINCT str(?label) AS  ?title ?description ?thumbnail ?duration ?releaseDate ?actor ?writer ?director ?producer "
                     "WHERE { "
                     "{ ?work rdf:type dbo:Film . } "
-                    "?work rdfs:label ?title . "
-                    "?title bif:contains \"'%1'\" . "
+                    "?work rdfs:label ?label . "
+                    "?label bif:contains \"%1\" . "
                     "?work rdfs:comment ?description . "
                     "OPTIONAL { ?work dbo:starring ?actorres . "
                     "?actorres foaf:name ?actor . } "
@@ -158,7 +158,7 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
 
     //Create Request Key
     QString requestKey = QString("Movie:%1").arg(movieName);
-    
+
     //Launch Query
     launchQuery(query, requestKey);
 }
@@ -199,12 +199,6 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
 
     QList<Soprano::BindingSet> resultsBindingSets;
     QString requestKey = m_requests.key(from);
-    /*kDebug() << "Final From Url:" << from.prettyUrl();
-    QHashIterator<QString, KUrl> i(m_requests);
-    while (i.hasNext()) {
-        i.next();
-        kDebug() << i.key() << ": " << (from.prettyUrl() == i.value().prettyUrl()) << ": " << i.value();
-    }*/
 
     QFile file(to.path());
 

@@ -29,6 +29,7 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
+#include <QApplication>
 #include <QPainter>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
@@ -41,6 +42,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_defaultEditable = true;
     m_modified = false;
     m_suppressFetchOnLoad = false;
+    m_fetchingStatus["progress"] = -1;
     m_utilThread = new Utilities::Thread(this);
     connect(m_utilThread, SIGNAL(gotArtworks(QList<QImage>,MediaItem)), this, SLOT(gotArtworks(QList<QImage>,MediaItem)));
 
@@ -121,24 +123,21 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
-    connect(dbPediaInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
+    connect(dbPediaInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
     connect(dbPediaInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(dbPediaInfoFetcher);
 
     FeedInfoFetcher * feedInfoFetcher = new FeedInfoFetcher(this);
     connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
-    connect(feedInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
+    connect(feedInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
     connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
 
     FileNameInfoFetcher * fileNameInfoFetcher = new FileNameInfoFetcher(this);
     connect(fileNameInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(fileNameInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(fileNameInfoFetcher, SIGNAL(fetchComplete()), this, SIGNAL(fetchComplete()));
-    connect(fileNameInfoFetcher, SIGNAL(fetchComplete()), this, SLOT(autoSaveFetchedInfo()));
+    connect(fileNameInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
     connect(fileNameInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(fileNameInfoFetcher);
 
@@ -158,6 +157,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     m_mediaList = mediaList;
     m_originalList = mediaList;
     m_fetchedMatches.clear();
+    cancelFetching();
     clear();
     
     if (m_mediaList.count() > 0) {
@@ -240,6 +240,11 @@ void InfoItemModel::setSourceModel(MediaItemModel * sourceModel)
     m_sourceModel = sourceModel;
 }
 
+QHash<QString, QVariant> InfoItemModel::fetchingStatus()
+{
+    return m_fetchingStatus;
+}
+
 QList<InfoFetcher *> InfoItemModel::infoFetchers()
 {
     return m_infoFetchers;
@@ -305,7 +310,10 @@ void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField
     m_fetchType = AutoFetch;
     m_fetchedMatches.clear();
     m_selectedFetchedMatch = -1;
-    infoFetcher->fetchInfo(m_mediaList, updateRequiredFields, updateArtwork);
+    m_itemsToFetch = m_mediaList;
+    fetchBatch(infoFetcher, updateRequiredFields, updateArtwork);
+    m_fetchingStatus["description"] = i18np("Fetching info for %1 item...", "Fetching info for %1 items...", m_mediaList.count());
+    emit fetchingStatusUpdated();
 }
 
 void InfoItemModel::fetch(InfoFetcher* infoFetcher)
@@ -313,7 +321,26 @@ void InfoItemModel::fetch(InfoFetcher* infoFetcher)
     m_fetchType = Fetch;
     m_fetchedMatches.clear();
     m_selectedFetchedMatch = -1;
-    infoFetcher->fetchInfo(m_mediaList, true, true);
+    m_itemsToFetch = m_mediaList;
+    fetchBatch(infoFetcher, true, true);
+    m_fetchingStatus["description"] = i18np("Fetching info for %1 item...", "Fetching info for %1 items...", m_mediaList.count());
+    emit fetchingStatusUpdated();
+}
+
+void InfoItemModel::fetchBatch(InfoFetcher *infoFetcher, bool updateRequiredFields, bool updateArtwork)
+{
+    //Take next 4 items to fetch
+    QList<MediaItem> mediaList;
+    for (int i = 0; i < 4; i++) {
+        if (!m_itemsToFetch.isEmpty()) {
+            mediaList.append(m_itemsToFetch.takeFirst());
+        }
+    }
+
+    if (!mediaList.isEmpty()) {
+        m_isFetching = true;
+        infoFetcher->fetchInfo(mediaList, updateRequiredFields, updateArtwork);
+    }
 }
 
 QList<MediaItem> InfoItemModel::fetchedMatches()
@@ -363,11 +390,11 @@ void InfoItemModel::selectFetchedMatch(int index)
                 item(i)->setData(value, Qt::DisplayRole);
                 item(i)->setData(value, Qt::EditRole);
             } else if (field == "artwork") {
-                disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+                //disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
                 item(i)->setData(match.artwork, Qt::DecorationRole);
                 item(i)->setData(match.fields["artworkUrl"], Qt::DisplayRole);
                 item(i)->setData(match.fields["artworkUrl"], Qt::EditRole);
-                connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+                //connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             } else {
                 item(i)->setData(match.fields[field], Qt::DisplayRole);
                 item(i)->setData(match.fields[field], Qt::EditRole);
@@ -402,6 +429,10 @@ void InfoItemModel::setRating(int rating)
 
 void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
 {
+    if (!m_isFetching) {
+        return;
+    }
+
     //Find corresponding media item
     int foundIndex = -1;
     MediaItem match = fetchedMatches.at(0);
@@ -420,15 +451,39 @@ void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
     }
 }
 
-void InfoItemModel::autoSaveFetchedInfo()
+void InfoItemModel::infoFetcherComplete(InfoFetcher *infoFetcher)
 {
-    if (m_fetchType == AutoFetch) {
-        saveChanges();
+    if (!m_isFetching) {
+        return;
+    }
+
+    if (!m_itemsToFetch.isEmpty()) {
+        m_fetchingStatus["description"] = i18n("Fetched info for %1 of %2 items...")
+                                          .arg(m_mediaList.count() - m_itemsToFetch.count())
+                                          .arg(m_mediaList.count());
+        emit fetchingStatusUpdated();
+
+        //Fetch info for another batch of items
+        fetchBatch(infoFetcher, true, true);
+    } else {
+        m_isFetching = false;
+        m_fetchingStatus["description"] = i18n("Complete");
+        emit fetchingStatusUpdated();
+        m_fetchingStatus["description"] = QString();
+        emit fetchingStatusUpdated();
+        emit fetchComplete();
+        if (m_fetchType == AutoFetch) {
+            QApplication::processEvents();  //make sure all infoFetched signals are processed before saving changes.
+            saveChanges();
+        }
     }
 }
 
 void InfoItemModel::updateFetchedInfo(int index, MediaItem match)
 {
+    if (!m_isFetching) {
+        return;
+    }
     if (index >= m_fetchedMatches.count() ||
         index < 0) {
         return;
@@ -679,6 +734,14 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
         if (field == "artwork") {
             disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
+            QString originalArtworkUrl = changedItem->data(InfoItemModel::OriginalValueRole).toString();
+            if (artworkUrl != originalArtworkUrl && artworkUrl.isEmpty()) {
+                for (int i = 0; i < m_mediaList.count(); i++) {
+                    MediaItem mediaItem = m_mediaList.at(i);
+                    mediaItem.artwork = Utilities::defaultArtworkForMediaItem(mediaItem);
+                    m_mediaList.replace(i, mediaItem);
+                }
+            }
             getArtwork(changedItem, artworkUrl);
             connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         } else if (field == "url") {
@@ -953,4 +1016,16 @@ MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &ty
         mediaItem.fields["title"] = value;
     }
     return mediaItem;
+}
+
+void InfoItemModel::cancelFetching()
+{
+    if (m_isFetching) {
+        m_isFetching = false;
+        m_fetchingStatus["description"] = i18n("Fetch Canceled");
+        emit fetchingStatusUpdated();
+        m_fetchingStatus["description"] = QString();
+        emit fetchingStatusUpdated();
+        emit fetchComplete();
+    }
 }

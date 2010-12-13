@@ -319,23 +319,44 @@ QString Utilities::removeRangesFromString(const QString &str, QString begin, QSt
 QString Utilities::titleForRequest(const QString& title)
 {
     QString edited = title, tmp;
+
+    //Chop filename extension
     int extLen = edited.length() - edited.lastIndexOf(".");
     //if no "." is found extLen is greater than title.length()
     if ( extLen < 5 && extLen < edited.length() ) {
-               edited.chop(extLen);
+        edited.chop(extLen);
     }
-    //remove square brackets as filenames may contain information about the track in it
+
+    //Remove square brackets as filenames may contain information about the track in it
     // as [1080p;x286;AUD_en,de;SUB_en]
     tmp = Utilities::removeRangesFromString(edited, "[", "]");
-    if ( !tmp.isEmpty() )
+    if ( !tmp.isEmpty() ) {
         edited = tmp;
-    //as this is only for requesting data we will also remove normal brackets
+    }
+
+    //As this is only for requesting data we will also remove normal brackets
     //user like to store year, etc in it which is NOT the real title
     //if they are relevant for the fetching the user will see the choices anyway.
     tmp = Utilities::removeRangesFromString(edited, "(", ")");
-    if ( !tmp.isEmpty() )
+    if ( !tmp.isEmpty() ) {
         edited = tmp;
-    return edited.replace('_', ' ').trimmed();
+    }
+
+    //Replace underscores with spaces
+    tmp = edited.replace('_', ' ').trimmed();
+    if ( !tmp.isEmpty() ) {
+        edited = tmp;
+    }
+
+    //Remove "the" from front of name
+    if (edited.startsWith("the", Qt::CaseInsensitive) && KGlobal::locale()->language().startsWith("en")) {
+        tmp = edited.mid(4).trimmed();
+    }
+    if ( !tmp.isEmpty() ) {
+        edited = tmp;
+    }
+
+    return edited;
 }
 
 

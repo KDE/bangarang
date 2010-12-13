@@ -106,7 +106,8 @@ public:
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
     void setShowRemainingTime(bool showRemainingTime);
-    
+    void delayedNotificationHide();
+
 signals:
     void playlistNotificationResult(bool confirmed);
     
@@ -192,7 +193,6 @@ private slots:
     void showLoading();
     void playlistLoading();
     void mediaListLoading();
-    void delayedNotificationHide();
     void browsingModelStatusUpdated();
     void updateCustomColors();
     void skipForward(int i);
