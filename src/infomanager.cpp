@@ -64,7 +64,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoFetcherExpander->setVisible(false);
     ui->infoFetcherExpander->setCurrentIndex(0);
     QFont fetcherMessageFont = KGlobalSettings::smallestReadableFont();
-    ui->infoFetcherMessage->setFont(fetcherMessageFont);
     ui->infoFetcherLabel->setFont(fetcherMessageFont);
     ui->infoFetcherSelector->setFont(fetcherMessageFont);
     ui->infoFetch->setFont(fetcherMessageFont);
@@ -82,6 +81,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->showInfoFetcherExpander, SIGNAL(clicked()), this, SLOT(toggleShowInfoFetcherExpander()));
     connect(ui->infoFetcherSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectInfoFetcher(int)));
     connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showFetching()));
+    connect(m_infoItemModel, SIGNAL(fetchingStatusUpdated()), this, SLOT(fetchingStatusUpdated()));
     connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(fetchComplete()));
     connect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
 
@@ -490,7 +490,6 @@ void InfoManager::showInfoFetcher()
 
         //Show Info Fetcher UI
         if (!isFetching) {
-            ui->infoFetcherMessage->setVisible(false);
             ui->showInfoFetcherExpander->setVisible(true);
             ui->infoFetcherHolder->setVisible(true);
         }
@@ -512,15 +511,12 @@ void InfoManager::showFetching()
     if (ui->infoFetcherExpander->isVisible()) {
         toggleShowInfoFetcherExpander();
     }
-    ui->infoFetcherHolder->setVisible(true);
+    ui->infoFetcherHolder->setVisible(false);
     ui->showInfoFetcherExpander->setVisible(false);
-    ui->infoFetcherMessage->setVisible(true);
 }
 
 void InfoManager::fetchComplete()
 {
-    //Hide fetching message
-    ui->infoFetcherMessage->setVisible(false);
     ui->showInfoFetcherExpander->setVisible(true);
 
     //Determine if multiple matches are available for fetched info and show them
@@ -619,4 +615,24 @@ void InfoManager::mediaListPropertiesChanged()
     }
 }
 
+void InfoManager::fetchingStatusUpdated()
+{
+    QHash<QString, QVariant> status = m_infoItemModel->fetchingStatus();
+    QString description = status["description"].toString();
+    int progress = status["progress"].toInt();
+    if (!description.isEmpty()) {
+        ui->notificationWidget->setVisible(true);
+        QFontMetrics fm(ui->notificationText->font());
+        QString notificationText = fm.elidedText(description, Qt::ElideRight, ui->notificationText->width());
+        ui->notificationText->setText(notificationText);
+    } else {
+        m_application->mainWindow()->delayedNotificationHide();
+    }
+    if (progress >= 0 && progress <= 100) {
+        ui->notificationProgress->setValue(progress);
+        ui->notificationProgress->setVisible(true);
+    } else {
+        ui->notificationProgress->setVisible(false);
+    }
+}
 

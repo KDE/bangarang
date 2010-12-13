@@ -178,5 +178,6 @@ void InfoFetcher::timeout()
     m_timeout = true;
     m_isFetching = false;
     emit fetchComplete();
+    emit fetchComplete(this);
 }
 

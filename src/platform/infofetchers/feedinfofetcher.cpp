@@ -197,6 +197,7 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
         if (!m_timeout) {
             m_timer->stop();
             emit fetchComplete();
+            emit fetchComplete(this);
         }
     } else if (!m_timeout){
         m_timer->start(m_timeoutLength);

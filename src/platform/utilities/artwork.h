@@ -50,6 +50,7 @@ namespace Utilities {
     QList<QImage> getDirectorArtworks(const QString &director);
     bool compareImage(const QImage &image1, const QImage image2, int strength = 20);
     QString getGenreArtworkUrl(const QString &genre);
+    QIcon defaultArtworkForMediaItem(const MediaItem &mediaItem);
     QPixmap reflection(QPixmap &pixmap);
     KIcon turnIconOff(KIcon icon, QSize size);
 }

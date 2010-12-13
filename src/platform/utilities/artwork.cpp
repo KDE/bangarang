@@ -422,7 +422,7 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
 
     QMutexLocker locker(&mutex);
 
-    kDebug() << "Url submitted:" << url;
+    //kDebug() << "Url submitted:" << url;
     KUrl pathUrl(url);
     if (!pathUrl.isValid() ||
         !pathUrl.isLocalFile()) {
@@ -433,13 +433,13 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
         return QString();
     }
 
-    kDebug() << "Directory determined:" << path;
+    //kDebug() << "Directory determined:" << path;
 
     QDir dir(path);
     QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
 
     if (files.count() == 1) {
-        kDebug() << "Found 1 file:" << path + files[0];
+        //kDebug() << "Found 1 file:" << path + files[0];
         return path + files[0];
     } else if (files.count() >= 1) {
         for (int i = files.count() - 1; i >= 0; i--) {
@@ -458,7 +458,7 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
         }
 
         //still here? take the first one
-        kDebug() << "Found multiple files, picking first one:" << path + files[0];
+        //kDebug() << "Found multiple files, picking first one:" << path + files[0];
         return path + files[0];
     }
     return QString();
@@ -496,6 +496,47 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
         }
     }
     return artworkUrl;
+}
+
+QIcon Utilities::defaultArtworkForMediaItem(const MediaItem &mediaItem)
+{
+    QIcon artwork;
+    if (mediaItem.type == "Audio") {
+        if (mediaItem.subType() == "Audio Clip") {
+            artwork = KIcon("audio-x-generic");
+        } else if (mediaItem.subType() == "Music") {
+            artwork = KIcon("audio-mp4");
+        } else if (mediaItem.subType() == "Audio Stream") {
+            artwork = KIcon("text-html");
+        }
+    } else if (mediaItem.type == "Video") {
+        if (mediaItem.subType() == "Video Clip") {
+            artwork = KIcon("video-x-generic");
+        } else if (mediaItem.subType() == "Movie") {
+            artwork = KIcon("tool-animator");
+        } else if (mediaItem.subType() == "TV Show") {
+            artwork = KIcon("video-television");
+        }
+    } else if (mediaItem.type == "Category") {
+        if (mediaItem.subType() == "Artist") {
+            artwork = KIcon("system-users");
+        } else if (mediaItem.subType() == "Album") {
+            artwork = KIcon("media-optical-audio");
+        } else if (mediaItem.subType().endsWith(" Feed")) {
+            artwork = KIcon("application-rss+xml");
+        } else if (mediaItem.subType() == "AudioGenre") {
+            artwork = KIcon("flag-blue");
+        } else if (mediaItem.subType() == "VideoGenre") {
+            artwork = KIcon("flag-green");
+        } else if (mediaItem.subType() == "Actor" ||
+                   mediaItem.subType() == "Director" ||
+                   mediaItem.subType() == "Writer" ||
+                   mediaItem.subType() == "Producer") {
+            artwork = KIcon("view-media-artist");
+        }
+    }
+
+    return artwork;
 }
 
 QPixmap Utilities::reflection(QPixmap &pixmap)

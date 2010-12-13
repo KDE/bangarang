@@ -80,12 +80,13 @@ class InfoFetcher : public QObject
         void setFetching();
 
     protected slots:
-        void timeout();
+        virtual void timeout();
         
     signals:
         void infoFetched(QList<MediaItem> fetchedMatches);
         void updateFetchedInfo(int index, MediaItem match);
         void fetching();
         void fetchComplete();
+        void fetchComplete(InfoFetcher *infoFetcher);
 };
 #endif // INFOFETCHER_H

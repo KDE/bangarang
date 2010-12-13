@@ -46,12 +46,19 @@ class DBPediaInfoFetcher : public InfoFetcher
         Downloader * m_downloader;
         QHash<QString, QString> m_thumbnailKeys;
         QStringList m_requestKeys;
-        QList<MediaItem> m_fetchedMatches;
+        QHash<int, QList<MediaItem> > m_fetchedMatches;
+        QList<int> m_indexesWithThumbnail;
+
+        bool allThumbnailsFetchedForIndex(int index);
+        void checkComplete();
         
     private slots:
         void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
         void gotThumbnail(const KUrl &from, const KUrl &to);
         void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+
+    protected slots:
+        void timeout();
 
     signals:
         void download(const KUrl &from, const KUrl &to);

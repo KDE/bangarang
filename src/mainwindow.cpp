@@ -788,7 +788,6 @@ void MainWindow::mediaListActionActivated(QModelIndex index)
 
 void MainWindow::delayedNotificationHide()
 {
-    ui->notificationText->setText(i18n("Complete"));
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
 }
 
@@ -803,6 +802,7 @@ void MainWindow::browsingModelStatusUpdated()
         ui->notificationText->setText(notificationText);
         ui->notificationWidget->setVisible(true);
     } else {
+        ui->notificationText->setText(i18n("Complete"));
         delayedNotificationHide();
     }
     if (progress >= 0 && progress <= 100) {

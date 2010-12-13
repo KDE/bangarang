@@ -134,6 +134,8 @@ class InfoItemModel : public QStandardItemModel
           */
         QList<MediaItem> fetchedMatches();
 
+        QHash<QString, QVariant> fetchingStatus();
+
     public slots:
         /**
           * Selects the index of the MediaItem containing fetched information to load into the model
@@ -163,6 +165,8 @@ class InfoItemModel : public QStandardItemModel
           **/
         void fetchComplete();
 
+        void fetchingStatusUpdated();
+
     private:
         QList<MediaItem> m_mediaList;
         QList<MediaItem> m_originalList;
@@ -173,13 +177,17 @@ class InfoItemModel : public QStandardItemModel
         QHash<QString, QString> m_drillLris;
         bool m_defaultEditable;
         bool m_modified;
+        bool m_isFetching;
         QList<InfoFetcher *> m_infoFetchers;
         FetchType m_fetchType;
         MediaIndexer * m_indexer;
         bool m_suppressFetchOnLoad;
+        QList<MediaItem> m_itemsToFetch;
         QList<MediaItem> m_fetchedMatches;
         int m_selectedFetchedMatch;
         Utilities::Thread * m_utilThread;
+        void fetchBatch(InfoFetcher *infoFetcher, bool updateRequiredFields, bool updateArtwork);
+        QHash<QString, QVariant> m_fetchingStatus;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
@@ -197,8 +205,9 @@ class InfoItemModel : public QStandardItemModel
         void itemChanged(QStandardItem *changedItem);
         void infoFetched(QList<MediaItem> fetchedMatches);
         void updateFetchedInfo(int index, MediaItem match);
-        void autoSaveFetchedInfo();
+        void infoFetcherComplete(InfoFetcher *infoFetcher);
         void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
+        void cancelFetching();
 };
 
 #endif // INFOITEMDELEGATE_H
