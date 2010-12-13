@@ -797,10 +797,10 @@ void MainWindow::browsingModelStatusUpdated()
     QString description = status["description"].toString();
     int progress = status["progress"].toInt();
     if (!description.isEmpty()) {
+        ui->notificationWidget->setVisible(true);
         QFontMetrics fm(ui->notificationText->font());
         QString notificationText = fm.elidedText(description, Qt::ElideRight, ui->notificationText->width());
         ui->notificationText->setText(notificationText);
-        ui->notificationWidget->setVisible(true);
     } else {
         ui->notificationText->setText(i18n("Complete"));
         delayedNotificationHide();
