@@ -266,8 +266,8 @@ void MainWindow::on_nowPlayingHolder_resized()
     } else {
         int width = qMax(200, ui->nowPlayingHolder->width()/3);
         int height = qMax(150, width*3/4);
-        int top = ui->nowPlayingHolder->width() - width - 20;
-        int left = ui->nowPlayingHolder->height() - height - 20;
+        int left = ui->nowPlayingHolder->width() - width - 20;
+        int top = ui->nowPlayingHolder->height() - height - 20;
         ui->videoFrame->setGeometry(left, top, width, height);
     }
 
@@ -1231,12 +1231,12 @@ void MainWindow::setVideoSize(VideoSize size)
     } else {
         int width = qMax(200, ui->nowPlayingHolder->width()/3);
         int height = qMax(150, width*3/4);
-        int top = ui->nowPlayingHolder->width() - width - 20;
-        int left = ui->nowPlayingHolder->height() - height - 20;
+        int left = ui->nowPlayingHolder->width() - width - 20;
+        int top = ui->nowPlayingHolder->height() - height - 20;
         QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
         animation->setDuration(500);
         animation->setStartValue(ui->videoFrame->rect());
-        animation->setEndValue(QRect(top, left, width, height));
+        animation->setEndValue(QRect(left, top, width, height));
         animation->setEasingCurve(QEasingCurve::InOutQuad);
         animation->start();
     }
