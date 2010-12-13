@@ -377,8 +377,11 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                  } else if (lastLineWasTime) {
                      QString subtitle = line;
                      while (!in.atEnd() && !line.isEmpty()) {
-                         line = in.readLine().trimmed();
-                         subtitle.append(QString("\n%1").arg(line));
+                         if (subtitle.contains("<i>") || line.contains("<i>") || line.contains("</i>")) {
+                             subtitle.append(QString("<br>%1").arg(line));
+                         } else {
+                             subtitle.append(QString("\n%1").arg(line));
+                         }
                      }
                      m_extSubtitles.append(subtitle.trimmed());
                      lastLineWasTime = false;
@@ -417,7 +420,18 @@ void VideoSettings::showExternalSubtitles(qint64 time)
     //Update external subtitle display
     if (!subtitle.isEmpty()) {
         QFontMetrics fm(ui->extSubtitle->font());
-        QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()), Qt::AlignCenter | Qt::TextWordWrap, subtitle).size();
+        QString textForSize = subtitle;
+        if (textForSize.contains("<i>")) {
+            textForSize.remove("<i>");
+            textForSize.remove("</i>");
+            textForSize.replace("<br>", "\n");
+            QFont font = ui->extSubtitle->font();
+            font.setItalic(true);
+            fm = QFontMetrics(font);
+        }
+        QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()),
+                                         Qt::AlignCenter | Qt::TextWordWrap,
+                                         textForSize).size();
         int top = ui->nowPlayingHolder->geometry().bottom() - 20 - textSize.height();
         int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
         ui->extSubtitle->setGeometry(left - 8, top - 8, textSize.width() + 8, textSize.height() + 8);
