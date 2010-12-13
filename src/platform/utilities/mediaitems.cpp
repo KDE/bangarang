@@ -152,7 +152,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
 
     //Determine type of file - nepomuk is primary source
     bool foundInNepomuk = false;
-    if (nepomukInited() && !preferFileMetaData) {
+    if (nepomukInited()) {
         //Try to find the corresponding resource in Nepomuk
         Nepomuk::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
@@ -163,6 +163,15 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
             res.hasType(mediaVocabulary.typeVideoTVShow())) ) {
             mediaItem = mediaItemFromNepomuk(res);
             foundInNepomuk = true;
+        }
+
+        //Get mediaItem from Nepomuk if file Metadata is not preferred OR
+        // is of type for which we are unable to read metadata
+        if (foundInNepomuk && (!preferFileMetaData ||
+                               res.hasType(mediaVocabulary.typeVideo()) ||
+                               res.hasType(mediaVocabulary.typeVideoMovie()) ||
+                               res.hasType(mediaVocabulary.typeVideoTVShow()))) {
+            mediaItem = mediaItemFromNepomuk(res);
         }
     }
 
