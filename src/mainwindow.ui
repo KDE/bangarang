@@ -27,7 +27,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -1243,8 +1243,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>147</width>
+                    <height>295</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -5654,6 +5654,79 @@ color: rgb(255, 255, 255);</string>
                   <property name="margin">
                    <number>4</number>
                   </property>
+                 </widget>
+                 <widget class="QWidget" name="floatingMenuHolder" native="true">
+                  <property name="geometry">
+                   <rect>
+                    <x>200</x>
+                    <y>50</y>
+                    <width>91</width>
+                    <height>21</height>
+                   </rect>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>true</bool>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_53">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="margin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QToolButton" name="showPlaylist_2">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Playlist</string>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../convenience/mail-mark-notjunk.png</normaloff>../convenience/mail-mark-notjunk.png</iconset>
+                     </property>
+                     <property name="checkable">
+                      <bool>false</bool>
+                     </property>
+                     <property name="toolButtonStyle">
+                      <enum>Qt::ToolButtonTextBesideIcon</enum>
+                     </property>
+                     <property name="autoRaise">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="showMenu_2">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset>
+                       <normaloff>../convenience/configure.png</normaloff>../convenience/configure.png</iconset>
+                     </property>
+                     <property name="popupMode">
+                      <enum>QToolButton::DelayedPopup</enum>
+                     </property>
+                     <property name="autoRaise">
+                      <bool>true</bool>
+                     </property>
+                     <property name="arrowType">
+                      <enum>Qt::DownArrow</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </widget>
                 <widget class="QStackedWidget" name="contextStack">

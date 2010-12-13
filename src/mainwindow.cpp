@@ -75,6 +75,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     ui->setupUi(this);
 
+    //Set up menu hiding timer
+    m_menuTimer = new QTimer(this);
+    m_menuTimer->setInterval(3000);
+    m_menuTimer->setSingleShot(true);
+    connect(m_menuTimer, SIGNAL(timeout()), ui->floatingMenuHolder, SLOT(hide()));
+
     //Setup interface icons
     setupIcons();
 
@@ -261,7 +267,22 @@ void MainWindow::on_nowPlayingHolder_resized()
         int height = qMax(150, width*3/4);
         int top = ui->nowPlayingHolder->width() - width - 20;
         int left = ui->nowPlayingHolder->height() - height - 20;
-        ui->videoFrame->setGeometry(top, left, width, height);
+        ui->videoFrame->setGeometry(left, top, width, height);
+    }
+
+    int width = ui->showPlaylist->width() + ui->showMenu->width();
+    int height = ui->showPlaylist->height();
+    if (ui->contextStack->isVisible()) {
+        ui->nowPlayingToolbar->setVisible(true);
+        ui->floatingMenuHolder->setVisible(false);
+        m_menuTimer->stop();
+    } else {
+        ui->nowPlayingToolbar->setVisible(false);
+        int left = ui->nowPlayingHolder->width() - width;
+        ui->floatingMenuHolder->setGeometry(left, 0, width, height);
+        ui->floatingMenuHolder->setVisible(true);
+        ui->floatingMenuHolder->raise();
+        m_menuTimer->start();
     }
 }
 
@@ -350,6 +371,11 @@ void MainWindow::on_showPlaylist_clicked()
     }
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video Settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio Settings"));
+}
+
+void MainWindow::on_showPlaylist_2_clicked()
+{
+    on_showPlaylist_clicked();
 }
 
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
@@ -541,10 +567,21 @@ void MainWindow::on_showQueue_clicked()
 
 void MainWindow::on_showMenu_clicked()
 {
+    m_menuTimer->stop();
     KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
 
-    QPoint menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    QPoint menuLocation;
+    if (ui->contextStack->isVisible()) {
+        menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    } else {
+        menuLocation = ui->showMenu_2->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    }
     menu->popup(menuLocation);
+}
+
+void MainWindow::on_showMenu_2_clicked()
+{
+    on_showMenu_clicked();
 }
 
 void MainWindow::on_showMediaViewMenu_clicked()
@@ -994,7 +1031,8 @@ void MainWindow::setupIcons()
     
     //Now Playing View top bar
     ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
-    
+    ui->showPlaylist_2->setIcon(KIcon("mail-mark-notjunk"));
+
     //Playlist View
     ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
     ui->shuffle->setIcon(Utilities::turnIconOff(KIcon("bangarang-shuffle"), QSize(22, 22)));
@@ -1045,25 +1083,35 @@ void MainWindow::updateCachedDevicesList()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-	if (isFullScreen()
-			&& currentMainWidget() == MainNowPlaying
-			&& event->type() == QEvent::MouseMove) {
+    if (isFullScreen() &&
+        currentMainWidget() == MainNowPlaying &&
+        event->type() == QEvent::MouseMove) {
 
-		QMouseEvent * mouseEvent = (QMouseEvent *)event;
-		QWidget* widget = (QWidget* )obj;
+        QMouseEvent * mouseEvent = (QMouseEvent *)event;
+        QWidget* widget = (QWidget* )obj;
 
-		if (mouseEvent->y() <= ui->nowPlayingToolbar->height() ||
-				widget->height() - mouseEvent->y() <= ui->widgetSet->height()) {
+        if (widget->height() - mouseEvent->y() <= ui->widgetSet->height()) {
+            //Show the widgets in the Now Playing view
+            ui->widgetSet->setVisible(true);
+        } else {
+            //Hide the widgets in the Now Playing view
+            ui->widgetSet->setVisible(false);
+        }
+    }
 
-			//Show the widgets in the Now Playing view
-			ui->widgetSet->setVisible(true);
-			ui->nowPlayingToolbar->setVisible(true);
-		} else {
-			//Hide the widgets in the Now Playing view
-			ui->widgetSet->setVisible(false);
-			ui->nowPlayingToolbar->setVisible(false);
-		}
-	}
+    //Show floating menu
+    if (event->type() == QEvent::MouseMove) {
+        if (!ui->contextStack->isVisible()) {
+            ui->floatingMenuHolder->setVisible(true);
+            ui->floatingMenuHolder->raise();
+            QPoint pos = ((QMouseEvent *)event)->globalPos();
+            if (ui->floatingMenuHolder->rect().contains(ui->floatingMenuHolder->mapFromGlobal(pos))) {
+                m_menuTimer->stop();
+            } else {
+                m_menuTimer->start();
+            }
+        }
+    }
 
     // standard event processing
     return QObject::eventFilter(obj, event);

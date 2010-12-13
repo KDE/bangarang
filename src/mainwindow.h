@@ -142,6 +142,7 @@ private:
     VideoSettings * m_videoSettings;
     BangarangApplication * m_application;
     VideoSize m_videoSize;
+    QTimer *m_menuTimer;
 
 private slots:
     void on_nowPlayingHolder_resized();
@@ -157,6 +158,7 @@ private slots:
     void on_playSelected_clicked();
     void on_mediaLists_currentChanged(int i);
     void on_showPlaylist_clicked();
+    void on_showPlaylist_2_clicked();
     void on_clearPlaylist_clicked();
     void on_playlistView_doubleClicked(const QModelIndex & index);
     void on_seekTime_clicked();
@@ -165,6 +167,7 @@ private slots:
     void on_showQueue_clicked();
     void on_Filter_returnPressed();
     void on_showMenu_clicked();
+    void on_showMenu_2_clicked();
     void on_showMediaViewMenu_clicked();
     void on_closePlaylistFilter_clicked();
     void on_closeMediaListFilter_clicked();

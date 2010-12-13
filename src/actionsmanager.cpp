@@ -530,12 +530,10 @@ void ActionsManager::toggleControls()
     if ((!m_parent->isFullScreen()) && (m_parent->currentMainWidget() == MainWindow::MainNowPlaying)) {
         if (m_controlsVisible) {
             ui->widgetSet->setVisible(false);
-            ui->nowPlayingToolbar->setVisible(false);
             toggle->setIcon(KIcon("layer-visible-on"));
             toggle->setText(i18n("Show Controls"));
         } else {
             ui->widgetSet->setVisible(true);
-            ui->nowPlayingToolbar->setVisible(true);
             toggle->setIcon(KIcon("layer-visible-off"));
             toggle->setText(i18n("Hide Controls"));
         }
