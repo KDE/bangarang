@@ -571,7 +571,7 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
 {
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
-    if (field == "artwork") {
+    if (field == "artwork" || field == "rating") {
         return 0;
     }
     if (value.type() == QVariant::Int) {
