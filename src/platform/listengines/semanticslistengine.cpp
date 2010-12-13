@@ -26,7 +26,6 @@
 #include <KUrl>
 #include <KDebug>
 #include <KLocale>
-#include <KDateTime>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
@@ -196,7 +195,6 @@ void SemanticsListEngine::run()
         if (engineArg.toLower() == "recent") {
             mediaList.clear();
             if (!mediaType.isEmpty()) {
-                KDateTime lastPlayedTime;
                 MediaQuery query;
                 QStringList bindings;
                 if (groupByCategoryType.isEmpty()) {
@@ -239,18 +237,12 @@ void SemanticsListEngine::run()
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
-                        lastPlayedTime = KDateTime(it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime());
-                        if (lastPlayedTime.isValid()) {
-                            mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
-                        }
+                        mediaItem.fields["lastPlayed"] = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime();
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
-                        lastPlayedTime = KDateTime(it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime());
-                        if (lastPlayedTime.isValid()) {
-                            mediaItem.semanticComment = i18n("Last played: ") + lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
-                        }
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
+                    mediaItem.semanticComment = QString("Last played:");
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
