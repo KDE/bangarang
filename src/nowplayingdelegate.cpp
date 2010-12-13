@@ -96,7 +96,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     
     //Paint Artwork
     KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
-    int topOffset = (height - m_iconSize) / 2;
+    int topOffset = (height - 2*m_iconSize) / 2;
     
     if (!icon.isNull() && m_iconSize > 0) {
         icon.paint(&p, left + m_padding, top + topOffset, m_iconSize, m_iconSize,
@@ -110,7 +110,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     textOption.setWrapMode(QTextOption::WordWrap);
     QRect titleRect(left + m_textInner,
                     top + m_padding, width - m_textInner - m_padding, 0.4 * m_iconSize + topOffset);
-    textFont.setPixelSize((int)(titleRect.height()/7));
+    textFont.setPixelSize((int)(m_iconSize/6));
     p.setFont(textFont);
     p.setPen(foregroundColor);
     p.drawText(QRectF(titleRect), text, textOption);
@@ -131,7 +131,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
                        top + topOffset + 0.4 * m_iconSize,
                        width - m_textInner - m_padding,
                        0.6 * m_iconSize - 18);
-    subTitleFont.setPixelSize((int)(subTitleRect.height()/4));
+    subTitleFont.setPixelSize((int)(m_iconSize/9));
     textOption.setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     QColor subTitleColor = KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color();
     p.setFont(subTitleFont);
@@ -152,12 +152,13 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
     //Draw finished pixmap
     painter->drawPixmap(option.rect.topLeft(), pixmap);
-    QPixmap reflection = Utilities::reflection(pixmap);
-    painter->drawPixmap(option.rect.topLeft() + QPoint(0, m_iconSize + 1), reflection);
+    QPixmap baseReflectionPixmap = pixmap.copy(0,0,pixmap.width(),pixmap.height()/2);
+    QPixmap reflection = Utilities::reflection(baseReflectionPixmap);
+    painter->drawPixmap(option.rect.topLeft() + QPoint(0, 1+height/2), reflection);
     
 }
 
-QSize NowPlayingDelegate::sizeHint(const QStyleOptionViewItem &option,                           const QModelIndex &index) const
+QSize NowPlayingDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
    int width;
    if (index.column() == 0)  {
@@ -166,7 +167,7 @@ QSize NowPlayingDelegate::sizeHint(const QStyleOptionViewItem &option,          
        width = 0;
    }
    
-   return QSize(width, 300);
+   return QSize(width, m_view->height());
 }
 
 int NowPlayingDelegate::columnWidth (int column, int viewWidth) const {
@@ -184,7 +185,7 @@ QRect NowPlayingDelegate::ratingRect(const QRect *rect) const
 {
     QSize sz = StarRating::SizeHint(m_starRatingSize);
     QPoint p = QPoint(rect->left() + m_textInner,
-                      rect->top() + (rect->height() + m_iconSize) / 2 - sz.height());
+                      rect->top() + (rect->height() / 2) - sz.height());
     return QRect(p, sz);
 }
 
@@ -247,4 +248,9 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
   }
   m_application->infoManager()->loadSelectedInfo();
   return false;
+}
+
+void NowPlayingDelegate::updateSizeHint()
+{
+    emit sizeHintChanged(m_view->model()->index(0,0));
 }

@@ -52,6 +52,14 @@ void NowPlayingView::contextMenuEvent(QContextMenuEvent * event)
     menu->exec(event->globalPos());
 }
 
+void NowPlayingView::resizeEvent(QResizeEvent *event)
+{
+    if (m_nowPlayingDelegate) {
+        m_nowPlayingDelegate->updateSizeHint();
+    }
+    QTreeView::resizeEvent(event);
+}
+
 void NowPlayingView::tidyHeader()
 {
     header()->setStretchLastSection(false);

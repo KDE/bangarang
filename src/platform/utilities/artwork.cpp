@@ -548,9 +548,11 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
     QPainter painter1(&alphamask);
     QLinearGradient linearGrad(QPointF(0, 0), QPointF(0, pixmap.height()));
     QColor transBlack = Qt::black;
-    transBlack.setAlpha(160);
+    transBlack.setAlpha(100);
     linearGrad.setColorAt(0, transBlack);
-    linearGrad.setColorAt(0.55, Qt::transparent);
+    transBlack.setAlpha(30);
+    linearGrad.setColorAt(0.2, transBlack);
+    linearGrad.setColorAt(0.3, Qt::transparent);
     QBrush brush(linearGrad);
     painter1.fillRect(0, 0, pixmap.width(), pixmap.height(), brush);
     painter1.setCompositionMode(QPainter::CompositionMode_SourceIn);
