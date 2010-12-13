@@ -86,13 +86,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Hide certain widgets
     ui->previous->setVisible(false);
-    ui->contextStack->setVisible(false);
+    ui->contextStackHolder->setVisible(false);
     ui->playSelected->setVisible(false);
     ui->configureAudioList->setVisible(false);
     ui->configureVideoList->setVisible(false);
     ui->semanticsHolder->setVisible(false);
     ui->loadingIndicator->setVisible(false);
     ui->extSubtitle->setVisible(false);
+    ui->playbackMessage->setVisible(false);
 
     //Initialize Nepomuk
     m_nepomukInited = Utilities::nepomukInited();
@@ -270,16 +271,12 @@ void MainWindow::on_nowPlayingHolder_resized()
         ui->videoFrame->setGeometry(left, top, width, height);
     }
 
-    int width = ui->showPlaylist->width() + ui->showMenu->width();
-    int height = ui->showPlaylist->height();
-    if (ui->contextStack->isVisible()) {
-        ui->nowPlayingToolbar->setVisible(true);
+    if (ui->contextStackHolder->isVisible()) {
         ui->floatingMenuHolder->setVisible(false);
         m_menuTimer->stop();
     } else {
-        ui->nowPlayingToolbar->setVisible(false);
-        int left = ui->nowPlayingHolder->width() - width;
-        ui->floatingMenuHolder->setGeometry(left, 0, width, height);
+        int left = ui->nowPlayingHolder->width() - ui->floatingMenuHolder->width();
+        ui->floatingMenuHolder->setGeometry(QRect(QPoint(left, 0), ui->floatingMenuHolder->size()));
         ui->floatingMenuHolder->setVisible(true);
         ui->floatingMenuHolder->raise();
         m_menuTimer->start();
@@ -358,11 +355,11 @@ void MainWindow::on_collectionButton_clicked()
 
 void MainWindow::on_showPlaylist_clicked()
 {
-    if (ui->contextStack->isVisible() && ui->contextStack->currentIndex() == 0) {
-        ui->contextStack->setVisible(false);
+    if (ui->contextStackHolder->isVisible() && ui->contextStack->currentIndex() == 0) {
+        ui->contextStackHolder->setVisible(false);
     } else {
         ui->contextStack->setCurrentIndex(0);
-        ui->contextStack->setVisible(true);
+        ui->contextStackHolder->setVisible(true);
         QFrame *filter = currentFilterFrame();
         KFilterProxySearchLine *line = currentFilterProxyLine();
         if (filter->isVisible() && line->lineEdit()->text().isEmpty()) {
@@ -386,7 +383,6 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         ui->fullScreen->setToolTip(i18n("<b>Fullscreen</b><br>Click to exit fullscreen"));
         ui->fullScreen->setChecked(true);
         ui->widgetSet->setVisible(false);
-        ui->nowPlayingToolbar->setVisible(false);
     } else {
         showNormal();
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
@@ -394,7 +390,6 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         ui->fullScreen->setChecked(false);
         if (m_application->actionsManager()->m_controlsVisible) {
           ui->widgetSet->setVisible(true);
-          ui->nowPlayingToolbar->setVisible(true);
         }
     }
 }
@@ -571,7 +566,7 @@ void MainWindow::on_showMenu_clicked()
     KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
 
     QPoint menuLocation;
-    if (ui->contextStack->isVisible()) {
+    if (ui->contextStackHolder->isVisible()) {
         menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
     } else {
         menuLocation = ui->showMenu_2->mapToGlobal(QPoint(0,ui->showMenu->height()));
@@ -643,6 +638,7 @@ void MainWindow::updateSeekTime(qint64 time)
 
 void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstate)
 {
+    kDebug() << newstate << ":" << oldstate;
     if (newstate == Phonon::PlayingState) {
        m_application->statusNotifierItem()->setState(newstate);
        
@@ -658,9 +654,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
         }
     }
-    if (newstate == Phonon::LoadingState || newstate == Phonon::BufferingState) {
-        showLoading();
-    }
+    showLoading();
     
     if (newstate == Phonon::ErrorState) {
         if (m_application->mediaObject()->errorString().isEmpty()) {
@@ -668,7 +662,17 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         } else {
             ui->playbackMessage->setText(m_application->mediaObject()->errorString());
         }
-        QTimer::singleShot(3000, ui->playbackMessage, SLOT(clear()));
+        QFontMetrics fm(ui->playbackMessage->font());
+        QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()),
+                                         Qt::AlignCenter | Qt::TextWordWrap,
+                                         ui->playbackMessage->text()).size();
+
+        int top = ui->nowPlayingHolder->geometry().bottom() - 50 - textSize.height();
+        int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
+        ui->playbackMessage->setGeometry(left - 8, top - 8, textSize.width() + 8, textSize.height() + 8);
+        ui->playbackMessage->setVisible(true);
+        ui->playbackMessage->raise();
+        QTimer::singleShot(6000, ui->playbackMessage, SLOT(hide()));
         
         //Use a new media object instead and discard
         //the old media object (whose state appears to be broken after errors) 
@@ -1103,7 +1107,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
     //Show floating menu
     if (event->type() == QEvent::MouseMove) {
-        if (!ui->contextStack->isVisible()) {
+        if (!ui->contextStackHolder->isVisible()) {
             ui->floatingMenuHolder->setVisible(true);
             ui->floatingMenuHolder->raise();
             QPoint pos = ((QMouseEvent *)event)->globalPos();
