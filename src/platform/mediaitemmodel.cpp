@@ -751,7 +751,6 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     QList<QStandardItem *> rowData;
     QStandardItem * titleItem = new QStandardItem(mediaItem.artwork, mediaItem.title);
     titleItem->setData(mediaItem.subTitle, MediaItem::SubTitleRole);
-    titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
     titleItem->setData(mediaItem.url, MediaItem::UrlRole);
     titleItem->setData(mediaItem.type, MediaItem::TypeRole);
     titleItem->setData(mediaItem.duration, MediaItem::DurationRole);
@@ -760,6 +759,14 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
+    if (mediaItem.semanticComment == "Last played:") {
+        KDateTime lastPlayedTime(mediaItem.fields["lastPlayed"].toDateTime());
+        if (lastPlayedTime.isValid()) {
+            QString lastPlayedStr = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+            mediaItem.semanticComment = i18n("Last played: %1", lastPlayedStr);
+        }
+    }
+    titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
     if (!m_suppressTooltip) {
         QString tooltip;
         if (!mediaItem.fields["description"].toString().isEmpty()) {
