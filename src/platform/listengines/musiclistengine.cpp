@@ -471,7 +471,7 @@ void MusicListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     } else {
-        //Get local album artwork
+        //Get local album/artist/genre artwork
         if (m_nepomukInited) {
             MediaVocabulary mediaVocabulary;
             for (int i = 0; i < mediaList.count(); i++) {
@@ -486,7 +486,8 @@ void MusicListEngine::run()
                         emit updateArtwork(artwork, mediaItem);
                     }
                 }
-                if (mediaItem.fields["categoryType"].toString() == "AudioGenre") {
+                if (mediaItem.fields["categoryType"].toString() == "Artist" ||
+                    mediaItem.fields["categoryType"].toString() == "AudioGenre") {
                     if (!mediaItem.fields["artworkUrl"].toString().isEmpty()) {
                         QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                         mediaItem.hasCustomArtwork = true;

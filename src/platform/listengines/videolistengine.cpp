@@ -229,6 +229,7 @@ void VideoListEngine::run()
                     mediaItem.url = QString("video://episodes?||seriesName=~");
                     mediaItem.title = i18n("Uncategorized TV Shows");
                     mediaItem.type = QString("Category");
+                    mediaItem.fields["categoryType"] = QString("TV Series");
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     mediaList.append(mediaItem);
@@ -740,7 +741,11 @@ void VideoListEngine::run()
                 }
                 MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
                 emit updateMediaItem(mediaItem);
-                if (mediaItem.fields["videoType"].toString() == "Movie") {
+                if (mediaItem.fields["videoType"].toString() == "Movie" ||
+                    mediaItem.fields["categoryType"].toString() == "TV Series" ||
+                    mediaItem.fields["categoryType"].toString() == "VideoGenre" ||
+                    mediaItem.fields["categoryType"].toString() == "Actor" ||
+                    mediaItem.fields["categoryType"].toString() == "Director") {
                     QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
                     if (!artwork.isNull()) {
                         mediaItem.hasCustomArtwork = true;
