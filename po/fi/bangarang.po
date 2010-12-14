@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2010-12-13 02:04-0800\n"
+"POT-Creation-Date: 2010-12-13 22:10-0800\n"
 "PO-Revision-Date: 2010-10-03 21:21+0300\n"
 "Last-Translator: \n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
@@ -17,189 +17,200 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 1.1\n"
 
-#: actionsmanager.cpp:59
+#: actionsmanager.cpp:60
 msgid "Quit"
 msgstr "Lopeta"
 
-#: actionsmanager.cpp:65
+#: actionsmanager.cpp:66
 msgid "Play/Pause"
 msgstr "Toista/Tauko"
 
-#: actionsmanager.cpp:73
+#: actionsmanager.cpp:74
 msgid "Play"
 msgstr "Toista"
 
-#: actionsmanager.cpp:78
+#: actionsmanager.cpp:79
 msgid "Pause"
 msgstr "Tauko"
 
-#: actionsmanager.cpp:83
+#: actionsmanager.cpp:84
 msgid "Play next"
 msgstr "Toista seuraava"
 
-#: actionsmanager.cpp:90
+#: actionsmanager.cpp:91
 msgid "Play previous"
 msgstr "Toista edellinen"
 
-#: actionsmanager.cpp:97 actionsmanager.cpp:685
+#: actionsmanager.cpp:98 actionsmanager.cpp:698
 msgid "Mute"
 msgstr "Hiljennä"
 
-#: actionsmanager.cpp:103
+#: actionsmanager.cpp:104
 msgid "Play all"
 msgstr "Toista kaikki"
 
-#: actionsmanager.cpp:108
+#: actionsmanager.cpp:109
 msgid "Play selected"
 msgstr "Toista valittu"
 
-#: actionsmanager.cpp:113
+#: actionsmanager.cpp:114
 msgid "Add to playlist"
 msgstr "Lisää soittolistaan"
 
-#: actionsmanager.cpp:118 actionsmanager.cpp:321
+#: actionsmanager.cpp:119 actionsmanager.cpp:322
 #, fuzzy
 msgid "Add after Now Playing"
 msgstr "Näytä tällä hetkellä toistettava"
 
-#: actionsmanager.cpp:123 actionsmanager.cpp:128
+#: actionsmanager.cpp:124 actionsmanager.cpp:129
 msgid "Remove from playlist"
 msgstr "Poista soittolistalta"
 
-#: actionsmanager.cpp:134
+#: actionsmanager.cpp:135
 msgid "Hide controls"
 msgstr "Piilota säätimet"
 
-#: actionsmanager.cpp:140 actionsmanager.cpp:1000 actionsmanager.cpp:1005
+#: actionsmanager.cpp:141 actionsmanager.cpp:1021 actionsmanager.cpp:1026
 msgid "Show filter"
 msgstr "Näytä hakusuodatin"
 
-#: actionsmanager.cpp:146 actionsmanager.cpp:882
+#: actionsmanager.cpp:147 actionsmanager.cpp:903
 msgid "Show remaining time"
 msgstr "Näytä jäljellä oleva aika"
 
-#: actionsmanager.cpp:151 actionsmanager.cpp:562 actionsmanager.cpp:588
-#: actionsmanager.cpp:641
+#: actionsmanager.cpp:152 actionsmanager.cpp:575 actionsmanager.cpp:601
+#: actionsmanager.cpp:654
 msgid "Show video settings"
 msgstr "Näytä videoasetukset"
 
-#: actionsmanager.cpp:157 actionsmanager.cpp:565 actionsmanager.cpp:585
-#: actionsmanager.cpp:642
+#: actionsmanager.cpp:158 actionsmanager.cpp:578 actionsmanager.cpp:598
+#: actionsmanager.cpp:655
 msgid "Show audio settings"
 msgstr "Näytä ääniasetukset"
 
-#: actionsmanager.cpp:163
+#: actionsmanager.cpp:164
 msgid "Fullscreen"
 msgstr "Koko näyttö"
 
-#: actionsmanager.cpp:176
+#: actionsmanager.cpp:177
 msgid "Save selected info"
 msgstr "Talenna valitut tiedot"
 
-#: actionsmanager.cpp:181
+#: actionsmanager.cpp:182
 msgid "Remove selected info"
 msgstr "Poista valitut tiedot"
 
-#: actionsmanager.cpp:186
+#: actionsmanager.cpp:187
 msgid "Refresh"
 msgstr "Päivitä"
 
-#: actionsmanager.cpp:192
+#: actionsmanager.cpp:193
 msgid "Remove from list"
 msgstr "Poista listalta"
 
-#: actionsmanager.cpp:197
+#: actionsmanager.cpp:198
 msgid "Add to list"
 msgstr "Lisää listalle"
 
-#: actionsmanager.cpp:201
+#: actionsmanager.cpp:202
 msgid "Add to list "
 msgstr "Lisää listalle"
 
-#: actionsmanager.cpp:205 actionsmanager.cpp:210
+#: actionsmanager.cpp:206 actionsmanager.cpp:211
 msgid "New list"
 msgstr "Uusi lista"
 
-#: actionsmanager.cpp:215
+#: actionsmanager.cpp:216
 msgid "Show items"
 msgstr "Näytä kohteet"
 
-#: actionsmanager.cpp:220 actionsmanager.cpp:225
+#: actionsmanager.cpp:221 actionsmanager.cpp:226 actionsmanager.cpp:405
+#: actionsmanager.cpp:444 actionsmanager.cpp:854
 msgid "Show information"
 msgstr "Näytä tiedot"
 
-#: actionsmanager.cpp:230
+#: actionsmanager.cpp:231
 msgid "Add bookmark"
 msgstr "Lisää kirjanmerkki"
 
-#: actionsmanager.cpp:237
+#: actionsmanager.cpp:238
 msgid "Remove bookmarks"
 msgstr "Poista kirjanmerkki"
 
-#: actionsmanager.cpp:241 actionsmanager.cpp:566 actionsmanager.cpp:589
-#: actionsmanager.cpp:638
+#: actionsmanager.cpp:242 actionsmanager.cpp:579 actionsmanager.cpp:602
+#: actionsmanager.cpp:651
 #, fuzzy
 msgid "Show shortcuts editor"
 msgstr "Oikotiet"
 
-#: actionsmanager.cpp:248
+#: actionsmanager.cpp:249
 msgid "Update ontologies..."
 msgstr "Päivitä ontologiat..."
 
-#: actionsmanager.cpp:258
+#: actionsmanager.cpp:259
 msgid "Manage info"
 msgstr "Muokkaa tietoja"
 
-#: actionsmanager.cpp:391
+#: actionsmanager.cpp:392
 #, fuzzy
 msgid "Play after Now Playing"
 msgstr "Näytä tällä hetkellä toistettava"
 
-#: actionsmanager.cpp:477
+#: actionsmanager.cpp:408 actionsmanager.cpp:447
+#, fuzzy
+msgid "Hide information"
+msgstr "Näytä tiedot"
+
+#: actionsmanager.cpp:492
 #, kde-format
 msgid "Chapter %1"
 msgstr "Kappale %1"
 
-#: actionsmanager.cpp:535
+#: actionsmanager.cpp:549
 msgid "Show Controls"
 msgstr "Näytä säätimet"
 
-#: actionsmanager.cpp:540
+#: actionsmanager.cpp:553
 msgid "Hide Controls"
 msgstr "Piilota säätimet"
 
-#: actionsmanager.cpp:554
+#: actionsmanager.cpp:567
 msgid "Hide video vettings"
 msgstr "Piilota videoasetukset"
 
-#: actionsmanager.cpp:577
+#: actionsmanager.cpp:590
 msgid "Hide audio settings"
 msgstr "Piilota ääniasetukset"
 
-#: actionsmanager.cpp:630
+#: actionsmanager.cpp:643
 msgid "Hide shortcuts editor"
 msgstr ""
 
-#: actionsmanager.cpp:682
+#: actionsmanager.cpp:695
 msgid "Restore Volume"
 msgstr "Palauta äänenvoimakkuus"
 
-#: actionsmanager.cpp:880
+#: actionsmanager.cpp:850
+#, fuzzy
+msgid "Restore video size"
+msgstr "Palauta äänenvoimakkuus"
+
+#: actionsmanager.cpp:901
 #, fuzzy
 msgid "Show elapsed time"
 msgstr "Näytä kulunut aika"
 
-#: actionsmanager.cpp:960 actionsmanager.cpp:967
+#: actionsmanager.cpp:981 actionsmanager.cpp:988
 msgid "Update Ontologies"
 msgstr "Päivitä ontologiat"
 
-#. i18n: file: mainwindow.ui:8238
+#. i18n: file: mainwindow.ui:8329
 #. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: actionsmanager.cpp:962 rc.cpp:425
+#: actionsmanager.cpp:983 rc.cpp:428
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: actionsmanager.cpp:963
+#: actionsmanager.cpp:984
 msgid ""
 "Updating ontologies ensures that media information is stored in a way that "
 "makes it most accessible to other desktop applications.  This is only "
@@ -211,15 +222,15 @@ msgstr ""
 "välttämätöntä vaan, jos olet viimeaikoina päivittänyt Bangarangin tai KDE "
 "ohjelmistokokoelman.<br><br>Tämä voi kestää muutamia minuutteja."
 
-#: actionsmanager.cpp:971
+#: actionsmanager.cpp:992
 msgid "Stop"
 msgstr "Pysäytä"
 
-#: actionsmanager.cpp:974
+#: actionsmanager.cpp:995
 msgid "Close"
 msgstr "Sulje"
 
-#: actionsmanager.cpp:998 actionsmanager.cpp:1003
+#: actionsmanager.cpp:1019 actionsmanager.cpp:1024
 msgid "Hide filter"
 msgstr "Piilota suodatin"
 
@@ -275,7 +286,7 @@ msgstr ""
 #. i18n: file: mainwindow.ui:17
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
 #: bangarangapplication.cpp:122 bangarangnotifieritem.cpp:11 main.cpp:29
-#: mainwindow.cpp:511 mainwindow.cpp:881 mainwindow.cpp:1022 rc.cpp:5
+#: mainwindow.cpp:532 mainwindow.cpp:929 mainwindow.cpp:1071 rc.cpp:5
 msgid "Bangarang"
 msgstr "Bangarang"
 
@@ -438,147 +449,147 @@ msgstr "Toista ääni-CD"
 msgid "Show Additional Debug Output"
 msgstr "Näytä tarkempi virheraportti "
 
-#. i18n: file: mainwindow.ui:6922
+#. i18n: file: mainwindow.ui:7013
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
-#: mainwindow.cpp:178 rc.cpp:305
+#: mainwindow.cpp:185 rc.cpp:308
 msgid "No"
 msgstr ""
 
-#. i18n: file: mainwindow.ui:6912
+#. i18n: file: mainwindow.ui:7003
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
-#: mainwindow.cpp:179 rc.cpp:302
+#: mainwindow.cpp:186 rc.cpp:305
 msgid "Yes"
 msgstr ""
 
-#: mainwindow.cpp:351
+#: mainwindow.cpp:369
 #, fuzzy
 msgid "Show video Settings"
 msgstr "Näytä videoasetukset"
 
-#: mainwindow.cpp:352
+#: mainwindow.cpp:370
 #, fuzzy
 msgid "Show audio Settings"
 msgstr "Näytä ääniasetukset"
 
-#: mainwindow.cpp:360
+#: mainwindow.cpp:383
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
 msgstr "<b>Koko näyttö</b><br>Poistu kokoruututilasta"
 
-#: mainwindow.cpp:367
+#: mainwindow.cpp:389
 msgid "Show fullscreen"
 msgstr "Koko näyttö"
 
-#: mainwindow.cpp:387
+#: mainwindow.cpp:408
 msgid "<b>Paused</b><br>Hold to stop"
 msgstr "<b>Pysäytetty</b><br>Paina pysäyttääksesi"
 
 #. i18n: file: mainwindow.ui:260
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: mainwindow.cpp:491 rc.cpp:11
+#: mainwindow.cpp:512 rc.cpp:11
 msgid "Search for audio"
 msgstr "Etsi äänitiedostoja"
 
-#: mainwindow.cpp:499
+#: mainwindow.cpp:520
 msgid "Search for video"
 msgstr "Etsi videotiedostoja"
 
-#. i18n: file: mainwindow.ui:6631
+#. i18n: file: mainwindow.ui:6722
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:507 rc.cpp:284
+#: mainwindow.cpp:528 rc.cpp:287
 msgid "Clear Playlist"
 msgstr "Tyhjennä soittolista"
 
-#: mainwindow.cpp:508
+#: mainwindow.cpp:529
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "Oletko varma, että tahdot tyhjentää nykyisen soittolistan?"
 
 #. i18n: file: mainwindow.ui:2175
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:513 mainwindow.cpp:600 mainwindow.cpp:602 mainwindow.cpp:883
+#: mainwindow.cpp:534 mainwindow.cpp:632 mainwindow.cpp:634 mainwindow.cpp:931
 #: rc.cpp:203
 msgid "Now Playing"
 msgstr "Toistettava"
 
-#: mainwindow.cpp:534
+#: mainwindow.cpp:555
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr "<b>Näytetän seuraava</b><br>Näytä soittolista"
 
-#. i18n: file: mainwindow.ui:6576
+#. i18n: file: mainwindow.ui:6667
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:537 rc.cpp:278
+#: mainwindow.cpp:558 rc.cpp:281
 msgid "Show Upcoming"
 msgstr "Näytä seuraava"
 
 # huono
-#: mainwindow.cpp:618
+#: mainwindow.cpp:656
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
 msgstr "<b>Toistettava</b><br>Pysäytä<br>Paina ja pidä alhaalla pysäyttääksesi"
 
-#: mainwindow.cpp:630
+#: mainwindow.cpp:666
 msgid "An error has been encountered during playback"
 msgstr "Virhe on tapahtunut toiston aikana"
 
-#: mainwindow.cpp:674
+#: mainwindow.cpp:720
 msgid "Loading playlist..."
 msgstr "Ladataan soittolistaa..."
 
-#: mainwindow.cpp:676
+#: mainwindow.cpp:722
 msgid "Buffering..."
 msgstr "Puskuroidaan..."
 
-#: mainwindow.cpp:678 platform/mediaitemmodel.cpp:700
+#: mainwindow.cpp:724 platform/mediaitemmodel.cpp:700
 msgid "Loading..."
 msgstr "Ladataan..."
 
-#: mainwindow.cpp:702
+#: mainwindow.cpp:748
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Hiljennetty</b><br>Palauta äänenvoimakkuus"
 
-#. i18n: file: mainwindow.ui:8570
+#. i18n: file: mainwindow.ui:8664
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:706 rc.cpp:444
+#: mainwindow.cpp:752 rc.cpp:447
 msgid "Mute volume"
 msgstr "Hiljennä ääni"
 
-#: mainwindow.cpp:805 platform/infoitemmodel.cpp:470
+#: mainwindow.cpp:851 platform/infoitemmodel.cpp:470
 msgid "Complete"
 msgstr "Valmis"
 
 #. i18n: file: mainwindow.ui:2172
 #. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:884 mainwindow.cpp:1220 rc.cpp:200
+#: mainwindow.cpp:932 mainwindow.cpp:1282 rc.cpp:200
 msgid "View Now Playing"
 msgstr "Näytä tällä hetkellä toistettava"
 
-#: mainwindow.cpp:892
+#: mainwindow.cpp:940
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr "<b>Toisto päällä</b><br>Paina lopettaaksesi toiston"
 
-#. i18n: file: mainwindow.ui:6658
+#. i18n: file: mainwindow.ui:6749
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:895 rc.cpp:287
+#: mainwindow.cpp:943 rc.cpp:290
 msgid "Turn on Repeat"
 msgstr "Toisto päälle"
 
-#: mainwindow.cpp:902
+#: mainwindow.cpp:950
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr "<b>Satunnainen valinta<b><br>Paina lopettaaksesi satunnaisen valinnan"
 
-#. i18n: file: mainwindow.ui:6687
+#. i18n: file: mainwindow.ui:6778
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:905 rc.cpp:293
+#: mainwindow.cpp:953 rc.cpp:296
 msgid "Turn on Shuffle"
 msgstr "Satunnainen valinta"
 
-#: mainwindow.cpp:1023
+#: mainwindow.cpp:1072
 msgid "Entertainment... Now"
 msgstr "Entertainment... Now"
 
-#: mainwindow.cpp:1160
+#: mainwindow.cpp:1220
 msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
 msgstr "<b>Aikaa jäljellä</b><br>Näytä kulunut aika ja kirjanmerkit"
 
-#: mainwindow.cpp:1162
+#: mainwindow.cpp:1222
 msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
 msgstr "<b>Aikaa kulunut</b><br>Näytä jäljellä oleva aika ja kirjanmerkit"
 
@@ -615,9 +626,39 @@ msgstr "Albumit"
 msgid "Show Artists"
 msgstr "Artistit"
 
-#. i18n: file: mainwindow.ui:6608
+#: nowplayingdelegate.cpp:210
+#, fuzzy
+msgid "Artist: "
+msgstr "Artisti"
+
+#: nowplayingdelegate.cpp:221
+#, fuzzy
+msgid "Album: "
+msgstr "Albumi"
+
+#: nowplayingdelegate.cpp:232
+#, fuzzy
+msgid "Genre: "
+msgstr "Genre"
+
+#: nowplayingdelegate.cpp:244 nowplayingdelegate.cpp:286
+#, fuzzy
+msgid "Year: "
+msgstr "Vuosi"
+
+#: nowplayingdelegate.cpp:297
+#, fuzzy
+msgid "Actor: "
+msgstr "Näyttelijä"
+
+#: nowplayingdelegate.cpp:308
+#, fuzzy
+msgid "Director: "
+msgstr "Ohjaaja"
+
+#. i18n: file: mainwindow.ui:6699
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
-#: playlistview.cpp:88 rc.cpp:281
+#: playlistview.cpp:88 rc.cpp:284
 msgid "<b>Playlist</b>"
 msgstr "<b>Soittolista</b>"
 
@@ -644,9 +685,9 @@ msgstr "tehomail@gmail.com"
 
 #. i18n: file: mainwindow.ui:156
 #. i18n: ectx: property (text), widget (QLabel, label)
-#. i18n: file: mainwindow.ui:8301
+#. i18n: file: mainwindow.ui:8395
 #. i18n: ectx: property (text), widget (QToolButton, collectionButton)
-#: rc.cpp:8 rc.cpp:431
+#: rc.cpp:8 rc.cpp:434
 msgid "Media Lists"
 msgstr "Medialistat"
 
@@ -889,25 +930,25 @@ msgstr "Tiedo"
 
 #. i18n: file: mainwindow.ui:2484
 #. i18n: ectx: property (text), widget (QToolButton, closeMediaListFilter)
-#. i18n: file: mainwindow.ui:6929
+#. i18n: file: mainwindow.ui:7020
 #. i18n: ectx: property (text), widget (QToolButton, closePlaylistNotification)
-#. i18n: file: mainwindow.ui:7028
+#. i18n: file: mainwindow.ui:7119
 #. i18n: ectx: property (text), widget (QToolButton, closePlaylistFilter)
-#. i18n: file: mainwindow.ui:8631
+#. i18n: file: mainwindow.ui:8725
 #. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
-#. i18n: file: mainwindow.ui:8660
+#. i18n: file: mainwindow.ui:8754
 #. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
-#. i18n: file: mainwindow.ui:8680
+#. i18n: file: mainwindow.ui:8774
 #. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:218 rc.cpp:308 rc.cpp:311 rc.cpp:450 rc.cpp:453 rc.cpp:456
+#: rc.cpp:218 rc.cpp:311 rc.cpp:314 rc.cpp:453 rc.cpp:456 rc.cpp:459
 msgid "..."
 msgstr "..."
 
 #. i18n: file: mainwindow.ui:2498
 #. i18n: ectx: property (text), widget (QLabel, label_19)
-#. i18n: file: mainwindow.ui:7042
+#. i18n: file: mainwindow.ui:7133
 #. i18n: ectx: property (text), widget (QLabel, label_18)
-#: rc.cpp:221 rc.cpp:314
+#: rc.cpp:221 rc.cpp:317
 msgid "Filter"
 msgstr "Suodatin"
 
@@ -996,280 +1037,282 @@ msgstr "Toista valitut"
 msgid "Play Selected"
 msgstr "Toista valittu"
 
-#. i18n: file: mainwindow.ui:3796
-#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
-#: rc.cpp:269
-msgid "Playback message"
-msgstr "Toisto viesti"
-
-#. i18n: file: mainwindow.ui:3825
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: rc.cpp:272
-msgid "Playlist"
-msgstr "Soittolista"
-
-#. i18n: file: mainwindow.ui:5649
+#. i18n: file: mainwindow.ui:5113
 #. i18n: ectx: property (text), widget (QLabel, extSubtitle)
-#: rc.cpp:275
+#: rc.cpp:269
 #, fuzzy
 msgid "ExternalSubtitle"
 msgstr "Tekstitykset"
 
-#. i18n: file: mainwindow.ui:6661
+#. i18n: file: mainwindow.ui:5162
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
+#. i18n: file: mainwindow.ui:5702
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
+#: rc.cpp:272 rc.cpp:278
+msgid "Playlist"
+msgstr "Soittolista"
+
+#. i18n: file: mainwindow.ui:5226
+#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
+#: rc.cpp:275
+msgid "Error message"
+msgstr ""
+
+#. i18n: file: mainwindow.ui:6752
 #. i18n: ectx: property (text), widget (QToolButton, repeat)
-#. i18n: file: mainwindow.ui:6690
+#. i18n: file: mainwindow.ui:6781
 #. i18n: ectx: property (text), widget (QToolButton, shuffle)
-#. i18n: file: mainwindow.ui:8345
+#. i18n: file: mainwindow.ui:8439
 #. i18n: ectx: property (text), widget (SToolButton, fullScreen)
-#: rc.cpp:290 rc.cpp:296 rc.cpp:437
+#: rc.cpp:293 rc.cpp:299 rc.cpp:440
 msgid "[ ]"
 msgstr "[ ]"
 
-#. i18n: file: mainwindow.ui:6899
+#. i18n: file: mainwindow.ui:6990
 #. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
-#: rc.cpp:299
+#: rc.cpp:302
 #, fuzzy
 msgid "Notification"
 msgstr "Ilmoitus"
 
-#. i18n: file: mainwindow.ui:7081
+#. i18n: file: mainwindow.ui:7172
 #. i18n: ectx: property (text), widget (QLabel, label_2)
-#: rc.cpp:317
+#: rc.cpp:320
 msgid "Audio Settings"
 msgstr "Ääniasetukset"
 
-#. i18n: file: mainwindow.ui:7130
+#. i18n: file: mainwindow.ui:7221
 #. i18n: ectx: property (text), widget (QLabel, label_20)
-#: rc.cpp:320
+#: rc.cpp:323
 #, fuzzy
 msgid "Audio Channel:"
 msgstr "Äänikanavat"
 
-#. i18n: file: mainwindow.ui:7194
+#. i18n: file: mainwindow.ui:7285
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
-#: rc.cpp:323
+#: rc.cpp:326
 msgid "Equalizer"
 msgstr "Taajuuskorjain"
 
-#. i18n: file: mainwindow.ui:7212
+#. i18n: file: mainwindow.ui:7303
 #. i18n: ectx: property (text), widget (QLabel, label_12)
-#: rc.cpp:326
+#: rc.cpp:329
 msgid "Presets"
 msgstr "Ajastin"
 
 # hmm
-#. i18n: file: mainwindow.ui:7275
+#. i18n: file: mainwindow.ui:7366
 #. i18n: ectx: property (text), widget (QLabel, eq1Label)
-#: rc.cpp:329
+#: rc.cpp:332
 msgid "Pre"
 msgstr "Esi"
 
-#. i18n: file: mainwindow.ui:7313
+#. i18n: file: mainwindow.ui:7404
 #. i18n: ectx: property (text), widget (QLabel, eq2Label)
-#: rc.cpp:332
+#: rc.cpp:335
 msgid "60"
 msgstr "60"
 
-#. i18n: file: mainwindow.ui:7351
+#. i18n: file: mainwindow.ui:7442
 #. i18n: ectx: property (text), widget (QLabel, eq3Label)
-#: rc.cpp:335
+#: rc.cpp:338
 msgid "170"
 msgstr "170"
 
-#. i18n: file: mainwindow.ui:7389
+#. i18n: file: mainwindow.ui:7480
 #. i18n: ectx: property (text), widget (QLabel, eq4Label)
-#: rc.cpp:338
+#: rc.cpp:341
 msgid "310"
 msgstr "310"
 
-#. i18n: file: mainwindow.ui:7427
+#. i18n: file: mainwindow.ui:7518
 #. i18n: ectx: property (text), widget (QLabel, eq5Label)
-#: rc.cpp:341
+#: rc.cpp:344
 msgid "600"
 msgstr "600"
 
-#. i18n: file: mainwindow.ui:7465
+#. i18n: file: mainwindow.ui:7556
 #. i18n: ectx: property (text), widget (QLabel, eq6Label)
-#: rc.cpp:344
+#: rc.cpp:347
 msgid "1k"
 msgstr "1k"
 
-#. i18n: file: mainwindow.ui:7503
+#. i18n: file: mainwindow.ui:7594
 #. i18n: ectx: property (text), widget (QLabel, eq7Label)
-#: rc.cpp:347
+#: rc.cpp:350
 msgid "3k"
 msgstr "3k"
 
-#. i18n: file: mainwindow.ui:7541
+#. i18n: file: mainwindow.ui:7632
 #. i18n: ectx: property (text), widget (QLabel, eq8Label)
-#: rc.cpp:350
+#: rc.cpp:353
 msgid "6k"
 msgstr "6k"
 
-#. i18n: file: mainwindow.ui:7579
+#. i18n: file: mainwindow.ui:7670
 #. i18n: ectx: property (text), widget (QLabel, eq9Label)
-#: rc.cpp:353
+#: rc.cpp:356
 msgid "12k"
 msgstr "12k"
 
-#. i18n: file: mainwindow.ui:7617
+#. i18n: file: mainwindow.ui:7708
 #. i18n: ectx: property (text), widget (QLabel, eq10Label)
-#: rc.cpp:356
+#: rc.cpp:359
 msgid "14k"
 msgstr "14k"
 
-#. i18n: file: mainwindow.ui:7655
+#. i18n: file: mainwindow.ui:7746
 #. i18n: ectx: property (text), widget (QLabel, eq11Label)
-#: rc.cpp:359
+#: rc.cpp:362
 msgid "16k"
 msgstr "16k"
 
-#. i18n: file: mainwindow.ui:7693
+#. i18n: file: mainwindow.ui:7784
 #. i18n: ectx: property (text), widget (QPushButton, restoreDefaultAudioSettings)
-#. i18n: file: mainwindow.ui:8176
+#. i18n: file: mainwindow.ui:8267
 #. i18n: ectx: property (text), widget (QPushButton, restoreDefaultVideoSettings)
-#: rc.cpp:362 rc.cpp:413
+#: rc.cpp:365 rc.cpp:416
 msgid "Restore Defaults"
 msgstr "Palauta oletukset"
 
-#. i18n: file: mainwindow.ui:7700
+#. i18n: file: mainwindow.ui:7791
 #. i18n: ectx: property (text), widget (QPushButton, hideAudioSettings)
-#. i18n: file: mainwindow.ui:8183
+#. i18n: file: mainwindow.ui:8274
 #. i18n: ectx: property (text), widget (QPushButton, hideVideoSettings)
-#: rc.cpp:365 rc.cpp:416
+#: rc.cpp:368 rc.cpp:419
 msgid "Hide"
 msgstr "Piilota"
 
-#. i18n: file: mainwindow.ui:7729
+#. i18n: file: mainwindow.ui:7820
 #. i18n: ectx: property (text), widget (QLabel, label_3)
-#: rc.cpp:368
+#: rc.cpp:371
 msgid "Video Settings"
 msgstr "Videoasetukset"
 
-#. i18n: file: mainwindow.ui:7769
+#. i18n: file: mainwindow.ui:7860
 #. i18n: ectx: property (text), widget (QLabel, label_26)
-#: rc.cpp:371
+#: rc.cpp:374
 #, fuzzy
 msgid "Subtitle:"
 msgstr "Tekstitykset"
 
-#. i18n: file: mainwindow.ui:7816
+#. i18n: file: mainwindow.ui:7907
 #. i18n: ectx: property (text), widget (QLabel, label_25)
-#: rc.cpp:374
+#: rc.cpp:377
 #, fuzzy
 msgid "Angle:"
 msgstr "Kuvakulma"
 
-#. i18n: file: mainwindow.ui:7872
+#. i18n: file: mainwindow.ui:7963
 #. i18n: ectx: property (text), widget (QLabel, label_21)
-#: rc.cpp:377
+#: rc.cpp:380
 #, fuzzy
 msgid "Brightness:"
 msgstr "Kirkkaus"
 
-#. i18n: file: mainwindow.ui:7919
+#. i18n: file: mainwindow.ui:8010
 #. i18n: ectx: property (text), widget (QLabel, label_22)
-#: rc.cpp:380
+#: rc.cpp:383
 #, fuzzy
 msgid "Contrast:"
 msgstr "Kontrasti"
 
-#. i18n: file: mainwindow.ui:7966
+#. i18n: file: mainwindow.ui:8057
 #. i18n: ectx: property (text), widget (QLabel, label_23)
-#: rc.cpp:383
+#: rc.cpp:386
 msgid "Hue:"
 msgstr ""
 
-#. i18n: file: mainwindow.ui:8013
+#. i18n: file: mainwindow.ui:8104
 #. i18n: ectx: property (text), widget (QLabel, label_24)
-#: rc.cpp:386
+#: rc.cpp:389
 #, fuzzy
 msgid "Saturation:"
 msgstr "Kylläisyys"
 
-#. i18n: file: mainwindow.ui:8076
+#. i18n: file: mainwindow.ui:8167
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
-#: rc.cpp:389
+#: rc.cpp:392
 #, fuzzy
 msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
-#. i18n: file: mainwindow.ui:8088
+#. i18n: file: mainwindow.ui:8179
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatioAuto)
-#: rc.cpp:392
+#: rc.cpp:395
 msgid "Automatic"
 msgstr "Automaattinen"
 
-#. i18n: file: mainwindow.ui:8095
+#. i18n: file: mainwindow.ui:8186
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatioWidget)
-#: rc.cpp:395
+#: rc.cpp:398
 msgid "Fit"
 msgstr "Sovita"
 
-#. i18n: file: mainwindow.ui:8102
+#. i18n: file: mainwindow.ui:8193
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatio4_3)
-#: rc.cpp:398
+#: rc.cpp:401
 msgid "4:3"
 msgstr "4:3"
 
-#. i18n: file: mainwindow.ui:8109
+#. i18n: file: mainwindow.ui:8200
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatio16_9)
-#: rc.cpp:401
+#: rc.cpp:404
 msgid "16:9"
 msgstr "16:9"
 
-#. i18n: file: mainwindow.ui:8119
+#. i18n: file: mainwindow.ui:8210
 #. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
-#: rc.cpp:404
+#: rc.cpp:407
 #, fuzzy
 msgid "Scaling"
 msgstr "Skaalaus moodi"
 
-#. i18n: file: mainwindow.ui:8131
+#. i18n: file: mainwindow.ui:8222
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
-#: rc.cpp:407
+#: rc.cpp:410
 msgid "Scale to fit"
 msgstr "Skaalaa sopivaksi"
 
-#. i18n: file: mainwindow.ui:8138
+#. i18n: file: mainwindow.ui:8229
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeScaleAndCrop)
-#: rc.cpp:410
+#: rc.cpp:413
 msgid "Scale and crop"
 msgstr "Skaalaa ja rajaa"
 
-#. i18n: file: mainwindow.ui:8215
+#. i18n: file: mainwindow.ui:8306
 #. i18n: ectx: property (text), widget (QLabel, label_13)
-#: rc.cpp:419
+#: rc.cpp:422
 msgid "Shortcuts"
 msgstr "Oikotiet"
 
-#. i18n: file: mainwindow.ui:8231
+#. i18n: file: mainwindow.ui:8322
 #. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
-#: rc.cpp:422
+#: rc.cpp:425
 msgid "Save Shortcuts"
 msgstr "Tallenan oikotiet"
 
-#. i18n: file: mainwindow.ui:8298
+#. i18n: file: mainwindow.ui:8392
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
-#: rc.cpp:428
+#: rc.cpp:431
 msgid "View Media Lists"
 msgstr "Näytä medialistat"
 
-#. i18n: file: mainwindow.ui:8342
+#. i18n: file: mainwindow.ui:8436
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
-#: rc.cpp:434
+#: rc.cpp:437
 msgid "Show full screen"
 msgstr "Näytä koko näyttö"
 
-#. i18n: file: mainwindow.ui:8447
+#. i18n: file: mainwindow.ui:8541
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
-#: rc.cpp:440
+#: rc.cpp:443
 msgid "<b>Time elapsed</b><br>Click to show remaining time"
 msgstr "<b>Kulunut aika</b><br>Näytä jäljellä oleva aika"
 
-#. i18n: file: mainwindow.ui:8608
+#. i18n: file: mainwindow.ui:8702
 #. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
-#: rc.cpp:447
+#: rc.cpp:450
 msgid "Volume"
 msgstr "Äänenvoimakkuus"
 
@@ -1449,6 +1492,11 @@ msgstr[1] "1% kohdetta"
 msgid "No results"
 msgstr "Ei hakutuloksia"
 
+#: platform/mediaitemmodel.cpp:766
+#, fuzzy, kde-format
+msgid "Last played: %1"
+msgstr "Viimeksi toistetu"
+
 #: platform/ontologyupdater.cpp:87 platform/ontologyupdater.cpp:200
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
 msgstr ""
@@ -1473,6 +1521,9 @@ msgstr "<b>Päivitys on suoritettu.</b>"
 #: platform/ontologyupdater.cpp:363
 msgid "<b>Update stopped.</b>"
 msgstr "<b>Päivitys keskeytettiin</b>"
+
+#~ msgid "Playback message"
+#~ msgstr "Toisto viesti"
 
 #~ msgid "Not Playing"
 #~ msgstr "Ei soi"
