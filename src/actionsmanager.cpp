@@ -29,6 +29,7 @@
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
 #include "videosettings.h"
+#include "nowplayingdelegate.h"
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -398,10 +399,17 @@ QMenu *ActionsManager::nowPlayingContextMenu()
 {
     m_nowPlayingContextMenu->clear();
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        if (ui->videoFrame->isVisible()) {
-            m_nowPlayingContextMenu->addAction(action("show_now_playing_info"));
-            m_nowPlayingContextMenu->addSeparator();
+        NowPlayingDelegate *delegate = (NowPlayingDelegate *)ui->nowPlayingView->itemDelegate();
+        if (!delegate->showingInfo() ||
+            (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
+            action("show_now_playing_info")->setText(i18n("Show information"));
+            action("show_now_playing_info")->setIcon(KIcon("help-about"));
+        } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
+            action("show_now_playing_info")->setText(i18n("Hide information"));
+            action("show_now_playing_info")->setIcon(KIcon("help-about"));
         }
+        m_nowPlayingContextMenu->addAction(action("show_now_playing_info"));
+        m_nowPlayingContextMenu->addSeparator();
     }
     if (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
         m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
@@ -430,10 +438,17 @@ KMenu *ActionsManager::nowPlayingMenu()
     
     m_nowPlayingMenu = new KMenu(m_parent);
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        if (ui->videoFrame->isVisible()) {
-            m_nowPlayingMenu->addAction(action("show_now_playing_info"));
-            m_nowPlayingMenu->addSeparator();
+        NowPlayingDelegate *delegate = (NowPlayingDelegate *)ui->nowPlayingView->itemDelegate();
+        if (!delegate->showingInfo() ||
+            (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
+            action("show_now_playing_info")->setText(i18n("Show information"));
+            action("show_now_playing_info")->setIcon(KIcon("help-about"));
+        } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
+            action("show_now_playing_info")->setText(i18n("Hide information"));
+            action("show_now_playing_info")->setIcon(KIcon("help-about"));
         }
+        m_nowPlayingMenu->addAction(action("show_now_playing_info"));
+        m_nowPlayingMenu->addSeparator();
     }
     if (ui->contextStackHolder->isVisible() && ui->contextStack->currentIndex() == 0) {
         m_nowPlayingMenu->addAction(action("toggle_filter"));
@@ -826,14 +841,22 @@ void ActionsManager::loadSelectedSources()
 
 void ActionsManager::showInfoForNowPlaying()
 {
-    if (m_application->mainWindow()->videoSize() == MainWindow::Normal) {
-        m_application->mainWindow()->setVideoSize(MainWindow::Mini);
-        action("show_now_playing_info")->setText("Restore Video Size");
-        action("show_now_playing_info")->setIcon(KIcon("transform-scale"));
+    if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
+        return;
+    }
+    if (m_application->playlist()->mediaObject()->hasVideo()) {
+        if (m_application->mainWindow()->videoSize() == MainWindow::Normal) {
+            m_application->mainWindow()->setVideoSize(MainWindow::Mini);
+            action("show_now_playing_info")->setText(i18n("Restore video size"));
+            action("show_now_playing_info")->setIcon(KIcon("transform-scale"));
+        } else {
+            m_application->mainWindow()->setVideoSize(MainWindow::Normal);
+            action("show_now_playing_info")->setText(i18n("Show information"));
+            action("show_now_playing_info")->setIcon(KIcon("help-about"));
+        }
     } else {
-        m_application->mainWindow()->setVideoSize(MainWindow::Normal);
-        action("show_now_playing_info")->setText("Show information");
-        action("show_now_playing_info")->setIcon(KIcon("help-about"));
+        NowPlayingDelegate * delegate = (NowPlayingDelegate *)ui->nowPlayingView->itemDelegate();
+        delegate->setShowInfo(!delegate->showingInfo());
     }
 }
 
