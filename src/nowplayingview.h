@@ -43,6 +43,8 @@ class NowPlayingView : public QTreeView
 
     public Q_SLOTS:
         void tidyHeader();
+        void showInfo();
+        void hideInfo();
         
     protected:
         void contextMenuEvent (QContextMenuEvent * event);

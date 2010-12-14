@@ -34,6 +34,7 @@
 #include <KGlobalSettings>
 #include <KColorScheme>
 #include <KIcon>
+#include <KIconEffect>
 #include <QTextOption>
 #include <nepomuk/resource.h>
 #include <nepomuk/variant.h>
@@ -52,6 +53,7 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     m_padding = 6;
     m_textInner = m_iconSize + 2 * m_padding;
     m_starRatingSize = StarRating::Big;
+    m_showInfo = false;
 
     m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
@@ -117,14 +119,6 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     
     QString subTitle = index.data(MediaItem::SubTitleRole).toString();
     
-    //TODO:Find a place in the UI to show last played and play count
-    /*Nepomuk::Resource res(QUrl(index.data(MediaItem::UrlRole).toString()));
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    int playCount = res.property(mediaVocabulary.playCount()).toInt();
-    QString lastPlayed = res.property(mediaVocabulary.lastPlayed()).toDateTime().toString();
-    subTitle = subTitle + QString(" Last Played %1 Play %2 times")
-    .arg(res.property(mediaVocabulary.lastPlayed()).toDateTime().toString())
-    .arg(res.property(mediaVocabulary.playCount()).toInt());*/
     
     QFont subTitleFont = option.font;
     QRect subTitleRect(left + m_textInner,
@@ -155,6 +149,177 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     QPixmap baseReflectionPixmap = pixmap.copy(0,0,pixmap.width(),pixmap.height()/2);
     QPixmap reflection = Utilities::reflection(baseReflectionPixmap);
     painter->drawPixmap(option.rect.topLeft() + QPoint(0, 1+height/2), reflection);
+
+    MediaItem mediaItem = model->mediaItemAt(index.row());
+    if (mediaItem.type != "Audio" && mediaItem.type != "Video") {
+        return;
+    }
+
+    //Draw additional info
+    //TODO::The code below could probably use a pass to reduce duplication
+    if (!m_showInfo) {
+        return;
+    }
+
+    QFont infoFont = KGlobalSettings::smallestReadableFont();
+    QFontMetrics fm(infoFont);
+    QFont fieldFont = KGlobalSettings::smallestReadableFont();
+    fieldFont.setBold(true);
+    QColor fieldColor = foregroundColor;
+    fieldColor.setAlpha(190);
+    int infoWidth = option.rect.width() - 20;
+    if (m_parent->videoSize() == MainWindow::Mini) {
+        infoWidth = infoWidth - m_parent->ui->videoFrame->width() - 20;
+    }
+    painter->setPen(subTitleColor);
+    painter->setFont(infoFont);
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    if (mediaItem.subType() == "Music") {
+        int line = 0;
+
+        QString artists = mediaItem.fields["artist"].toStringList().join(", ");
+        if (!artists.isEmpty()) {
+            artists = fm.elidedText(artists, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString album = mediaItem.fields["album"].toString();
+        if (!album.isEmpty()) {
+            album = fm.elidedText(album, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString year = QString("%1").arg(mediaItem.fields["year"].toInt());
+        if (!year.isEmpty()) {
+            line++;
+        }
+
+        QRect infoRect = option.rect.adjusted(5,
+                                              option.rect.height()-line*(fm.lineSpacing()+3) - 5,
+                                              -option.rect.width() + infoWidth + 5,
+                                              -5);
+        if (infoRect.height() > option.rect.height()/2) {
+            return;
+        }
+        line = 0;
+        if (!artists.isEmpty()) {
+            QString field = i18n("Artist: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, artists);
+            line++;
+        }
+        if (!album.isEmpty()) {
+            QString field = i18n("Album: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, album);
+            line++;
+        }
+        if (!genres.isEmpty()) {
+            QString field = i18n("Genre: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
+            line++;
+        }
+        if (!year.isEmpty()) {
+            painter->save();
+            QString field = i18n("Year: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, year);
+            line++;
+        }
+    }
+    if (mediaItem.subType() == "Movie") {
+        int line = 0;
+        QString year = QString("%1").arg(mediaItem.fields["year"].toInt());
+        if (!year.isEmpty()) {
+            line++;
+        }
+        QString actors = mediaItem.fields["actor"].toStringList().join(", ");
+        if (!actors.isEmpty()) {
+            actors = fm.elidedText(actors, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString directors = mediaItem.fields["director"].toStringList().join(", ");
+        if (!directors.isEmpty()) {
+            directors = fm.elidedText(directors, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
+            line = line + int((0.5+descRect.height())/fm.lineSpacing());
+        }
+
+        QRect infoRect = option.rect.adjusted(5,
+                                              option.rect.height()-line*(fm.lineSpacing()+3) - 5,
+                                              -option.rect.width() + infoWidth + 5,
+                                              -5);
+        if (infoRect.height() > option.rect.height()/2) {
+            return;
+        }
+        line = 0;
+        if (!year.isEmpty()) {
+            QString field = i18n("Year: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, year);
+            line++;
+        }
+        if (!actors.isEmpty()) {
+            QString field = i18n("Actor: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, actors);
+            line++;
+        }
+        if (!directors.isEmpty()) {
+            QString field = i18n("Director: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, directors);
+            line++;
+        }
+        if (!description.isEmpty()) {
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
+            line++;
+        }
+    }
     
 }
 
@@ -181,6 +346,18 @@ int NowPlayingDelegate::columnWidth (int column, int viewWidth) const {
     return width;
 }
 
+void NowPlayingDelegate::setShowInfo(bool showInfo)
+{
+    m_showInfo = showInfo;
+    m_view->update(m_view->model()->index(0,0));
+}
+
+bool NowPlayingDelegate::showingInfo()
+{
+    return m_showInfo;
+}
+
+
 QRect NowPlayingDelegate::ratingRect(const QRect *rect) const
 {
     QSize sz = StarRating::SizeHint(m_starRatingSize);
@@ -191,63 +368,64 @@ QRect NowPlayingDelegate::ratingRect(const QRect *rect) const
 
 bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-  static bool s_mouseOver = false;
-  Q_UNUSED(model);
-  if (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseMove)
-      return false;
-  if (index.column() != 0)
-      return false;
-  if (!Utilities::isMediaItem(&index))
-      return false;
+    static bool s_mouseOver = false;
+    Q_UNUSED(model);
+    if (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseMove)
+        return false;
+    if (index.column() != 0)
+        return false;
+    if (!Utilities::isMediaItem(&index))
+        return false;
 
-  QPoint mousePos = ((QMouseEvent *)event)->pos();
-  QRect ratingArea = ratingRect(&option.rect);
-  if (!m_nepomukInited)
-      return false;
-  if  (!ratingArea.contains(mousePos))
-  {
-    if (s_mouseOver) { //onLeave effect
-        s_mouseOver = false;
-        m_view->update();
+    QPoint mousePos = ((QMouseEvent *)event)->pos();
+    QRect ratingArea = ratingRect(&option.rect);
+    if (!m_nepomukInited) {
+        return false;
     }
+    if  (!ratingArea.contains(mousePos))
+    {
+        if (s_mouseOver) { //onLeave effect
+            s_mouseOver = false;
+            m_view->update();
+        }
+        return false;
+    }
+    if (!s_mouseOver) //mouse entered
+        s_mouseOver = true;
+    if (event->type() == QEvent::MouseMove) //mouse over
+    {
+        m_view->update();
+        return false;
+    }
+    //else the user clicked, so we have to save the new rating
+    int rating = StarRating::RatingAtPosition(mousePos, m_starRatingSize, ratingArea.topLeft());
+    MediaItemModel *cmodel = (MediaItemModel *)index.model();
+    QString url = cmodel->mediaItemAt(index.row()).url;
+    bool indexerUpdated = false;
+    //models have to be update
+    #define MODELS_TO_BE_UPDATED 4
+    MediaItemModel *models[MODELS_TO_BE_UPDATED] = {
+        cmodel,
+        m_application->playlist()->playlistModel(),
+        m_application->playlist()->queueModel(),
+        m_application->browsingModel()
+    };
+    for (int i = 0; i < MODELS_TO_BE_UPDATED; i++)
+    {
+        cmodel = models[i];
+        int row = cmodel->rowOfUrl(url);
+        if (row < 0)
+            continue;
+        MediaItem update = cmodel->mediaItemAt(row);
+        update.fields["rating"] = rating;
+        cmodel->replaceMediaItemAt(row, update);
+        if (!indexerUpdated) {
+            m_mediaIndexer->updateRating(update.fields["resourceUri"].toString(),rating);
+            indexerUpdated = true;
+        }
+    }
+    m_application->infoManager()->loadSelectedInfo();
     return false;
-  }
-  if (!s_mouseOver) //mouse entered
-      s_mouseOver = true;
-  if (event->type() == QEvent::MouseMove) //mouse over
-  {
-      m_view->update();
-      return false;
-  }
-  //else the user clicked, so we have to save the new rating
-  int rating = StarRating::RatingAtPosition(mousePos, m_starRatingSize, ratingArea.topLeft());
-  MediaItemModel *cmodel = (MediaItemModel *)index.model();
-  QString url = cmodel->mediaItemAt(index.row()).url;
-  bool indexerUpdated = false;
-  //models have to be update
-  #define MODELS_TO_BE_UPDATED 4
-  MediaItemModel *models[MODELS_TO_BE_UPDATED] = {
-      cmodel,
-      m_application->playlist()->playlistModel(),
-      m_application->playlist()->queueModel(),
-      m_application->browsingModel()
-  };
-  for (int i = 0; i < MODELS_TO_BE_UPDATED; i++)
-  {
-      cmodel = models[i];
-      int row = cmodel->rowOfUrl(url);
-      if (row < 0)
-          continue;
-      MediaItem update = cmodel->mediaItemAt(row);
-      update.fields["rating"] = rating;
-      cmodel->replaceMediaItemAt(row, update);
-      if (!indexerUpdated) {
-          m_mediaIndexer->updateRating(update.fields["resourceUri"].toString(),rating);
-          indexerUpdated = true;
-      }
-  }
-  m_application->infoManager()->loadSelectedInfo();
-  return false;
 }
 
 void NowPlayingDelegate::updateSizeHint()

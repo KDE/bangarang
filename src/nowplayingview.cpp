@@ -65,3 +65,18 @@ void NowPlayingView::tidyHeader()
     header()->setStretchLastSection(false);
     header()->setResizeMode(0, QHeaderView::Stretch);
 }
+
+void NowPlayingView::showInfo()
+{
+    if (m_nowPlayingDelegate) {
+        m_nowPlayingDelegate->setShowInfo(true);
+    }
+}
+
+void NowPlayingView::hideInfo()
+{
+    if (m_nowPlayingDelegate) {
+        m_nowPlayingDelegate->setShowInfo(false);
+    }
+}
+

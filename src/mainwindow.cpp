@@ -645,6 +645,11 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_application->mediaObject()->hasVideo()) {
             ui->videoFrame->setVisible(true);
+            if (videoSize() == Mini) {
+                ui->nowPlayingView->showInfo();
+            } else {
+                ui->nowPlayingView->hideInfo();
+            }
         } else {
             ui->videoFrame->setVisible(false);
         }
@@ -1068,6 +1073,7 @@ void MainWindow::showApplicationBanner()
     applicationBanner.type = "Application Banner";
     applicationBanner.url = "-";
     m_application->playlist()->nowPlayingModel()->loadMediaItem(applicationBanner, true);
+    setVideoSize(Normal);
     ui->videoFrame->setVisible(false);
 }
 
@@ -1221,6 +1227,7 @@ void MainWindow::setVideoSize(VideoSize size)
 {
     m_videoSize = size;
     if (m_videoSize == Normal) {
+        ui->nowPlayingView->hideInfo();
         QPoint topLeft = ui->videoFrame->mapToParent(ui->videoFrame->rect().topLeft());
         QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
         animation->setDuration(500);
@@ -1234,6 +1241,7 @@ void MainWindow::setVideoSize(VideoSize size)
         int left = ui->nowPlayingHolder->width() - width - 20;
         int top = ui->nowPlayingHolder->height() - height - 20;
         QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
+        connect(animation, SIGNAL(finished()), ui->nowPlayingView, SLOT(showInfo()));
         animation->setDuration(500);
         animation->setStartValue(ui->videoFrame->rect());
         animation->setEndValue(QRect(left, top, width, height));

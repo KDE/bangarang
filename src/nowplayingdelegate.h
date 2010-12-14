@@ -48,6 +48,8 @@ class NowPlayingDelegate : public QItemDelegate
         QAbstractItemView *view() { return m_view; }
         void setView(QAbstractItemView *view) { m_view = view; }
         void updateSizeHint();
+        void setShowInfo(bool showInfo);
+        bool showingInfo();
 
     protected:
         QRect ratingRect(const QRect *rect) const;
@@ -63,6 +65,7 @@ class NowPlayingDelegate : public QItemDelegate
         QRect m_globalRatingRect;
         QAbstractItemView *m_view;
         MediaIndexer * m_mediaIndexer;
+        bool m_showInfo;
         
 };
 
