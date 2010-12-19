@@ -5179,7 +5179,7 @@ color: rgb(255, 255, 255);</string>
                    <item>
                     <widget class="QToolButton" name="showMenu_2">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -5693,7 +5693,7 @@ color: rgb(255, 255, 255);</string>
                      <item>
                       <widget class="QToolButton" name="showPlaylist">
                        <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>

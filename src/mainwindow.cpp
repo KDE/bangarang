@@ -275,8 +275,16 @@ void MainWindow::on_nowPlayingHolder_resized()
         ui->floatingMenuHolder->setVisible(false);
         m_menuTimer->stop();
     } else {
-        int left = ui->nowPlayingHolder->width() - ui->floatingMenuHolder->width();
-        ui->floatingMenuHolder->setGeometry(QRect(QPoint(left, 0), ui->floatingMenuHolder->size()));
+        QFontMetrics fm(ui->showPlaylist_2->font());
+        QRect textRect = fm.boundingRect(i18n("Playlist"));
+        int width = textRect.width() + 32;
+        ui->showPlaylist_2->setGeometry(QRect(ui->showPlaylist_2->rect().topLeft(),
+                                              QSize(width,
+                                                    qMax(24, textRect.height() + 8))));
+        int left = ui->nowPlayingHolder->width() - (width + 24);
+        ui->floatingMenuHolder->setGeometry(QRect(QPoint(left, 0),
+                                                  QSize(width + 24,
+                                                        qMax(24, textRect.height() + 8))));
         ui->floatingMenuHolder->setVisible(true);
         ui->floatingMenuHolder->raise();
         m_menuTimer->start();
