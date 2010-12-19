@@ -88,7 +88,11 @@ void PlaylistView::playlistChanged()
         m_playlistName->setText(i18n("<b>Playlist</b>"));
         if (m_playlist->playlistModel()->rowCount() > 0) {
             QString duration = Utilities::mediaListDurationText(m_playlist->playlistModel()->mediaList());
-            m_playlistDuration->setText(i18np("1 item, %2", "%1 items, %2", m_playlist->playlistModel()->rowCount(), duration));
+            if (!duration.isEmpty()) {
+                m_playlistDuration->setText(i18np("1 item, %2", "%1 items, %2", m_playlist->playlistModel()->rowCount(), duration));
+            } else {
+                m_playlistDuration->setText(i18np("1 item", "%1 items", m_playlist->playlistModel()->rowCount()));
+            }
         } else {
             m_playlistDuration->setText(QString());
         }

@@ -260,6 +260,9 @@ int Utilities::mediaListDuration(const QList<MediaItem> &mediaList)
 QString Utilities::mediaListDurationText(const QList<MediaItem> &mediaList)
 {
     int duration = mediaListDuration(mediaList);
+    if (duration == 0) {
+        return QString();
+    }
     int hours = duration/3600;
     int minutes = (duration - (hours*3600))/60;
     int seconds = duration - (hours*3600) - (minutes*60);
