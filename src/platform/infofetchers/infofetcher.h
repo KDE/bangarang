@@ -88,5 +88,6 @@ class InfoFetcher : public QObject
         void fetching();
         void fetchComplete();
         void fetchComplete(InfoFetcher *infoFetcher);
+        void noResults(InfoFetcher *infoFetcher);
 };
 #endif // INFOFETCHER_H

@@ -156,11 +156,13 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
     m_requestKeys.removeAll(requestKey);
     if (!successful || m_timeout) {
         checkComplete();
+        emit noResults(this);
         return;
     }
 
     if (results.count() == 0) {
         checkComplete();
+        emit noResults(this);
         return;
     }
 
@@ -231,11 +233,13 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
     m_requestKeys.removeAll(requestKey);
     if (!successful || m_timeout) {
         checkComplete();
+        emit noResults(this);
         return;
     }
 
     if (results.count() == 0) {
         checkComplete();
+        emit noResults(this);
         return;
     }
 

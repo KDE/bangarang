@@ -124,6 +124,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(dbPediaInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(dbPediaInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(dbPediaInfoFetcher);
 
@@ -131,6 +132,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(feedInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(feedInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
 
@@ -138,6 +140,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(fileNameInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(fileNameInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(fileNameInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(fileNameInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(fileNameInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(fileNameInfoFetcher);
 
@@ -477,6 +480,14 @@ void InfoItemModel::infoFetcherComplete(InfoFetcher *infoFetcher)
             saveChanges();
         }
     }
+}
+void InfoItemModel::noResults(InfoFetcher *infoFetcher)
+{
+    m_fetchingStatus["description"] = i18n("No Results");
+    emit fetchingStatusUpdated();
+    m_fetchingStatus["description"] = QString();
+    emit fetchingStatusUpdated();
+    Q_UNUSED(infoFetcher)
 }
 
 void InfoItemModel::updateFetchedInfo(int index, MediaItem match)
