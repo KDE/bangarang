@@ -770,7 +770,12 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     if (!m_suppressTooltip) {
         QString tooltip;
         if (!mediaItem.fields["description"].toString().isEmpty()) {
-            tooltip.append(QString("<br>%1").arg(mediaItem.fields["description"].toString()));
+            QString description = mediaItem.fields["description"].toString();
+            if (description.length() > 300) {
+                description.chop(300);
+                description = description + QString("...");
+            }
+            tooltip.append(QString("<br>%1").arg(description));
         }
         if (!mediaItem.semanticComment.isEmpty()) {
             tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));
