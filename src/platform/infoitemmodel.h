@@ -206,6 +206,7 @@ class InfoItemModel : public QStandardItemModel
         void infoFetched(QList<MediaItem> fetchedMatches);
         void updateFetchedInfo(int index, MediaItem match);
         void infoFetcherComplete(InfoFetcher *infoFetcher);
+        void noResults(InfoFetcher *infoFetcher);
         void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
         void cancelFetching();
 };
