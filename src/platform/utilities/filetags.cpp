@@ -359,7 +359,6 @@ QStringList Utilities::getXiphTextFields(TagLib::Ogg::XiphComment *xiph, const T
 void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
-        QMutexLocker locker(&mutex);
         MediaItem mediaItem = mediaList.at(i);
         if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
             QString url = mediaList.at(i).url;
