@@ -552,7 +552,7 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
     linearGrad.setColorAt(0, transBlack);
     transBlack.setAlpha(30);
     linearGrad.setColorAt(0.2, transBlack);
-    linearGrad.setColorAt(0.3, Qt::transparent);
+    linearGrad.setColorAt(0.32, Qt::transparent);
     QBrush brush(linearGrad);
     painter1.fillRect(0, 0, pixmap.width(), pixmap.height(), brush);
     painter1.setCompositionMode(QPainter::CompositionMode_SourceIn);
