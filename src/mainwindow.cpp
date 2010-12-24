@@ -34,6 +34,7 @@
 #include "medialistsettings.h"
 
 #include <KAction>
+#include <KAcceleratorManager>
 #include <KCmdLineArgs>
 #include <KCursor>
 #include <KUrl>
@@ -123,6 +124,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->seekSlider->setIconVisible(false);
     setShowRemainingTime(false);
     ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    KAcceleratorManager::setNoAccel(ui->seekTime);
     
     //Connect to media object signals and slots
     connect(m_application->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
