@@ -111,12 +111,12 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("play_selected", action);
 
     //Add Selected To Playlist Action
-    action = new KAction(KIcon("mail-mark-notjunk"), i18n("Add to playlist"), this);
+    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add to playlist"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));
     m_othersCollection->addAction("add_to_playlist", action);
 
     //Add After Now Playing Action
-    action = new KAction(KIcon("mail-mark-notjunk"), i18n("Add after Now Playing"), this);
+    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add after Now Playing"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(addAfterNowPlaying()));
     m_othersCollection->addAction("add_after_now_playing", action);
 
@@ -318,7 +318,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
             menu->addAction(action("add_to_playlist"));
             if (isMedia && (m_application->playlist()->mediaObject()->state() == Phonon::PlayingState ||
                             m_application->playlist()->mediaObject()->state() == Phonon::PausedState)) {
-                action("add_after_now_playing")->setIcon(KIcon("mail-mark-notjunk"));
+                action("add_after_now_playing")->setIcon(KIcon("dialog-ok-apply"));
                 action("add_after_now_playing")->setText(i18n("Add after Now Playing"));
                 menu->addAction(action("add_after_now_playing"));
             }

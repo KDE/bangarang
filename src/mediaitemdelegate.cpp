@@ -52,9 +52,9 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     m_parent = (MainWindow *)parent;
     setRenderMode(NormalMode);
     m_showPlaying = KIcon("media-playback-start");
-    m_showInPlaylist = KIcon("mail-mark-notjunk");
+    m_showInPlaylist = KIcon("dialog-ok-apply");
     m_categoryActionIcon = KIcon("bangarang-category-browse");
-    QImage image = KIcon("mail-mark-notjunk").pixmap(16,16).toImage();
+    QImage image = KIcon("dialog-ok-apply").pixmap(16,16).toImage();
     KIconEffect::toGray(image, 1.0);
     QPixmap pixmap(16, 16);
     pixmap.fill(Qt::transparent);
