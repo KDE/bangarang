@@ -1049,8 +1049,8 @@ void MainWindow::setupIcons()
     ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
     
     //Now Playing View top bar
-    ui->showPlaylist->setIcon(KIcon("mail-mark-notjunk"));
-    ui->showPlaylist_2->setIcon(KIcon("mail-mark-notjunk"));
+    ui->showPlaylist->setIcon(KIcon("dialog-ok-apply"));
+    ui->showPlaylist_2->setIcon(KIcon("dialog-ok-apply"));
 
     //Playlist View
     ui->repeat->setIcon(Utilities::turnIconOff(KIcon("bangarang-repeat"), QSize(22, 22)));
