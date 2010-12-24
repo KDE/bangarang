@@ -376,8 +376,8 @@ void MainWindow::on_showPlaylist_clicked()
             m_application->actionsManager()->action("toggle_filter")->trigger();
         }
     }
-    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video Settings"));
-    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio Settings"));
+    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video settings"));
+    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio settings"));
 }
 
 void MainWindow::on_showPlaylist_2_clicked()

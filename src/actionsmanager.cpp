@@ -564,7 +564,7 @@ void ActionsManager::toggleVideoSettings()
         ui->contextStack->setCurrentIndex(2);
         ui->contextStackHolder->setVisible(true);
         m_application->videoSettings()->updateSubtitleCombo();
-        action("show_video_settings")->setText(i18n("Hide video vettings"));
+        action("show_video_settings")->setText(i18n("Hide video settings"));
     } else {
         if (m_contextStackWasVisible && m_previousContextStackIndex == 0) { //if the playlist was showing, show it
             ui->contextStack->setCurrentIndex(m_previousContextStackIndex);
