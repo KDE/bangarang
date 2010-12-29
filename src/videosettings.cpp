@@ -358,6 +358,7 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
         if (file.open(QFile::ReadOnly)) {
             QTextStream in(&file);
             bool lastLineWasTime = false;
+            kDebug() << "Loading subtitles...";
              while (!in.atEnd()) {
                  QString line = in.readLine().trimmed();
                  if (line.contains("-->")) {
@@ -377,6 +378,7 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                  } else if (lastLineWasTime) {
                      QString subtitle = line;
                      while (!in.atEnd() && !line.isEmpty()) {
+                         line = in.readLine().trimmed();
                          if (subtitle.contains("<i>") || line.contains("<i>") || line.contains("</i>")) {
                              subtitle.append(QString("<br>%1").arg(line));
                          } else {
@@ -388,6 +390,7 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                  }
 
              }
+            kDebug() << "Finished loading subtitles....";
         }
     }
     if (!m_extSubtitleTimes.isEmpty()) {
