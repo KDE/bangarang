@@ -288,6 +288,7 @@ class Playlist : public QObject
         Playlist::State m_state;
         MediaIndexer * m_mediaIndexer;
         bool m_playbackInfoWritten;
+        int m_playbackInfoChecks;
         void buildQueueFrom(int playlistRow);
         void shuffle();
         void orderByPlaylist();

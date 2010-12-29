@@ -59,6 +59,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_hadVideo = false;
     m_notificationRestrictions = 0;
     m_filterProxyModel = new MediaSortFilterProxyModel();
+    m_playbackInfoChecks = 0;
     
     setMediaObject(mediaObject);
 
@@ -657,7 +658,18 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 
 void Playlist::updatePlaybackInfo(qint64 time)
 {
-    if (time >= 10000 && !m_playbackInfoWritten) {
+    if (m_playbackInfoWritten) {
+        return;
+    }
+
+    //Check to make sure playback passed through both the 5 second and 10 second mark.
+    if (time >= 5000 && time <= 6000 && m_playbackInfoChecks == 0) {
+        m_playbackInfoChecks++;
+    } else if (time >= 10000 && time <= 11000 &&  m_playbackInfoChecks == 1) {
+        m_playbackInfoChecks++;
+    }
+
+    if (m_playbackInfoChecks == 2) {
         //Update last played date and play count after 10 seconds
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
             Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
@@ -846,6 +858,7 @@ void Playlist::updateNowPlaying()
     if ((m_mediaObject->currentSource().discType() != Phonon::Cd) && (m_mediaObject->currentSource().discType() != Phonon::Dvd)) {
         //Update last played date and play count
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
+            m_playbackInfoChecks = 0;
             m_playbackInfoWritten = false; // Written 10 seconds later with updatePlaybackInfo()
         }
     }
