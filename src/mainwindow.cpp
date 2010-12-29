@@ -298,6 +298,7 @@ void MainWindow::on_Filter_returnPressed()
     ui->mediaView->setFocus();
     ui->audioLists->selectionModel()->clearSelection();
     if (!ui->Filter->text().isEmpty()) {
+        addListToHistory();
         if (ui->mediaLists->currentIndex() == 0) {
             MediaListProperties searchProperties;
             searchProperties.name = "Audio Search";
@@ -313,9 +314,6 @@ void MainWindow::on_Filter_returnPressed()
             m_application->browsingModel()->setMediaListProperties(searchProperties);
             m_application->browsingModel()->load();
         }
-        m_mediaListHistory.clear();
-        m_mediaListPropertiesHistory.clear();
-        ui->previous->setVisible(false);
         ui->mediaViewHolder->setCurrentIndex(0);
     }
 }
