@@ -1291,6 +1291,16 @@ void MainWindow::nowPlayingChanged()
         ui->nowPlaying->setToolTip(toolTipText);
         setWindowTitle(QString(nowPlayingItem.title + " - Bangarang"));
     }
+
+    //Update Media List view
+    int startRow = ui->mediaView->indexAt(ui->mediaView->rect().topLeft()).row();
+    int endRow = ui->mediaView->indexAt(ui->mediaView->rect().bottomRight()).row();
+    if (endRow == -1) {
+        endRow = startRow + ui->mediaView->model()->rowCount();
+    }
+    for  (int i = startRow; i <= endRow; i++) {
+        ui->mediaView->update(ui->mediaView->model()->index(i, 0));
+    }
     
     //Update seekTime button
     if (m_application->bookmarksManager()->hasBookmarks(nowPlayingItem)) {
