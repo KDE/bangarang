@@ -648,17 +648,16 @@ void MainWindow::updateSeekTime(qint64 time)
 
 void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstate)
 {
-    kDebug() << newstate << ":" << oldstate;
     if (newstate == Phonon::PlayingState) {
        m_application->statusNotifierItem()->setState(newstate);
-       
+
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
         if (m_application->mediaObject()->hasVideo()) {
             ui->videoFrame->setVisible(true);
             if (videoSize() == Mini) {
                 ui->nowPlayingView->showInfo();
             } else {
-                ui->nowPlayingView->hideInfo();
+                ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
             }
         } else {
             ui->videoFrame->setVisible(false);
@@ -1277,12 +1276,7 @@ void MainWindow::nowPlayingChanged()
     QString type = nowPlayingItem.type;
     //Tidy up view and switch to the correct viewing widget
     ui->nowPlayingView->tidyHeader();
-    if (nowPlayingItem.type == "Video") {
-        ui->videoFrame->setVisible(true);
-    } else if (nowPlayingItem.type == "Audio") {
-        ui->videoFrame->setVisible(false);
-    }
-            
+
     //Update Now Playing button in Media Lists view
     if (nowPlayingItem.type != "Application Banner") {
         ui->nowPlaying->setIcon(nowPlayingItem.artwork);  
