@@ -176,9 +176,16 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     int vAlign = (hasSubTitle && m_renderMode == NormalMode) ? Qt::AlignTop : Qt::AlignVCenter;
     int hAlign = (isAction || isMessage) ? Qt::AlignCenter : Qt::AlignLeft;
-    int textWidth = (isAction || isMessage) ?
-            width - textInner - m_padding : width - textInner - m_padding - m_durRatingSpacer;
+    int textWidth = width - textInner - m_padding - m_durRatingSpacer;
+    if (isAction || isMessage) {
+        textWidth = width - textInner - m_padding;
+    }
+    if (m_renderMode == NormalMode && isCategory) {
+        textWidth = width - textInner - m_padding - m_iconSize;
+    }
     QString text = index.data(Qt::DisplayRole).toString();
+    QFontMetrics fm(textFont);
+    text = fm.elidedText(text, Qt::ElideRight, textWidth);
     textFont.setItalic(isAction || isMessage);
     p.setFont(textFont);
     p.setPen(foregroundColor);
@@ -187,16 +194,18 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 vAlign | hAlign, text);
     if (hasSubTitle && m_renderMode == NormalMode) {
         QString subTitle = index.data(MediaItem::SubTitleRole).toString();
+        subTitle = fm.elidedText(subTitle, Qt::ElideRight, textWidth);
         p.setPen(subColor);
         p.drawText(left + textInner,
                     top, textWidth, height,
                     Qt::AlignBottom | hAlign, subTitle);
-        QFontMetrics fm(textFont);
         if (fm.width(subTitle) < textWidth) {
             QFont commentFont = KGlobalSettings::smallestReadableFont();
             commentFont.setItalic(true);
             QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
             QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
+            QFontMetrics fmComment(commentFont);
+            comment = fmComment.elidedText(comment, Qt::ElideRight, textWidth - fm.width(subTitle));
             p.setFont(commentFont);
             p.drawText(left + textInner + fm.width(subTitle),
                         top, textWidth - fm.width(subTitle), height,
@@ -207,7 +216,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
     
     //Paint duration
-    if (m_renderMode == NormalMode || m_renderMode == MiniMode) {
+    if (isMediaItem && (m_renderMode == NormalMode || m_renderMode == MiniMode)) {
         QString duration = index.data(MediaItem::DurationRole).toString();
         p.setPen(subColor);
         p.drawText(left + width - m_durRatingSpacer,
