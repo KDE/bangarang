@@ -95,11 +95,10 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequi
             }
         }
         if (updated) {
-            updatedItems.append(item);
+            QList<MediaItem> matches;
+            matches.append(item);
+            emit infoFetched(matches);
         }
-    }
-    if (updatedItems.count() > 0 && !m_timeout) {
-        emit infoFetched(updatedItems);
     }
     if (!m_timeout) {
         emit fetchComplete();
