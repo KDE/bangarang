@@ -18,6 +18,7 @@
 
 #include "actionsmanager.h"
 #include "bangarangapplication.h"
+#include "bangarangnotifieritem.h"
 #include "platform/utilities/utilities.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -249,6 +250,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
     connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
     m_shortcutsCollection->addAction("update_ontologies", action);
+
+    //Hide in system tray
+    action = new KAction(KIcon("view-close"), i18n("Hide in system tray"), this);
+    connect(action, SIGNAL(triggered()), m_application->statusNotifierItem(), SLOT(activate()));
+    m_shortcutsCollection->addAction("hide_in_system_tray", action);
     
     //set up the shortcuts collection
     m_shortcutsCollection->readSettings(&m_shortcutsConfig);
@@ -454,6 +460,7 @@ KMenu *ActionsManager::nowPlayingMenu()
         m_nowPlayingMenu->addAction(action("toggle_filter"));
         m_nowPlayingMenu->addSeparator();
     }
+    m_nowPlayingMenu->addAction(action("hide_in_system_tray"));
     if (!m_parent->isFullScreen()) {
         m_nowPlayingMenu->addAction(action("toggle_controls"));
     }
