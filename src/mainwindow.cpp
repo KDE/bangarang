@@ -475,23 +475,6 @@ void MainWindow::on_previous_clicked()
         } else {
             ui->previous->setVisible(false);
         }
-        ui->playAll->setVisible(true);
-        ui->playSelected->setVisible(false);
-    } else {
-        ui->mediaViewHolder->setCurrentIndex(0);
-        if (ui->mediaView->selectionModel()->selectedRows().count() > 0) {
-            ui->playSelected->setVisible(true);
-            ui->playAll->setVisible(false);
-        } else {
-            ui->playSelected->setVisible(false);
-            ui->playAll->setVisible(true);
-        }
-        if (m_mediaListPropertiesHistory.count() > 0) {
-            ui->previous->setVisible(true);
-            ui->previous->setText(m_mediaListPropertiesHistory.last().name);
-        } else {
-            ui->previous->setVisible(false);
-        }
     }
 }
 
@@ -781,16 +764,19 @@ void MainWindow::mediaListChanged()
     ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
     
     if ((m_application->browsingModel()->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
-        QString listItemType = m_application->browsingModel()->mediaItemAt(0).type;
-        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Image")) {
-            if (!m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
+        MediaItem firstListItem = m_application->browsingModel()->mediaItemAt(0);
+        QString listItemType = firstListItem.type;
+        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Category")) {
+            if (!firstListItem.fields["isTemplate"].toBool()) {
                 ui->playAll->setVisible(true);
             }
-        } else if (listItemType == "Category") {
+        /*} else if (listItemType == "Category") {
             ui->playAll->setVisible(true);
-        } else if ((listItemType == "Action") || (listItemType == "Message")) {
+        } else if ((listItemType == "Action") || (listItemType == "Message")) {*/
+        } else {
             ui->playAll->setVisible(false);
         }
+        ui->playSelected->setVisible(false);
     }
 }
 
@@ -870,18 +856,34 @@ void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const Q
 {
     if (selected.indexes().count() > 0) {
         int firstRow = selected.indexes().at(0).row();
-        if (m_application->browsingModel()->mediaItemAt(firstRow).fields.contains("isTemplate") &&
-            m_application->browsingModel()->mediaItemAt(firstRow).fields["isTemplate"].toBool()) {
+        MediaItem firstSelectedItem = m_application->browsingModel()->mediaItemAt(firstRow);
+        QString itemType = firstSelectedItem.type;
+        if ((itemType == "Audio") || (itemType == "Video") || (itemType == "Category")) {
+            if (firstSelectedItem.fields.contains("isTemplate") &&
+                firstSelectedItem.fields["isTemplate"].toBool()) {
+                ui->playSelected->setVisible(false);
+            } else {
+                ui->playSelected->setVisible(true);
+            }
+            ui->playAll->setVisible(false);
+        } else {
+            ui->playSelected->setVisible(false);
+            ui->playAll->setVisible(false);
+        }
+    } else {
+        MediaItem firstListItem = m_application->browsingModel()->mediaItemAt(0);
+        QString itemType = firstListItem.type;
+        if ((itemType == "Audio") || (itemType == "Video") || (itemType == "Category")) {
+            if (firstListItem.fields.contains("isTemplate") &&
+                firstListItem.fields["isTemplate"].toBool()) {
+                ui->playAll->setVisible(false);
+            } else {
+                ui->playAll->setVisible(true);
+            }
             ui->playSelected->setVisible(false);
         } else {
-            ui->playSelected->setVisible(true);
-        }
-        ui->playAll->setVisible(false);
-    } else {
-        if (m_application->browsingModel()->mediaItemAt(0).fields.contains("isTemplate") &&
-            !m_application->browsingModel()->mediaItemAt(0).fields["isTemplate"].toBool()) {
             ui->playSelected->setVisible(false);
-            ui->playAll->setVisible(true);
+            ui->playAll->setVisible(false);
         }
     }
     Q_UNUSED(selected);
