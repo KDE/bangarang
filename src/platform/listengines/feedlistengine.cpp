@@ -100,11 +100,11 @@ void FeedListEngine::run()
                 mediaItem.title = title;
                 mediaItem.fields["title"] = title;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                mediaItem.subTitle = description;
                 mediaItem.fields["description"] = description;
                 mediaItem.fields["url"] = feedUrl;
                 mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
                 mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
+                mediaItem = Utilities::makeSubtitle(mediaItem);
                 mediaList.append(mediaItem);
             }
             MediaItem mediaItem;
@@ -162,11 +162,11 @@ void FeedListEngine::run()
                 mediaItem.title = title;
                 mediaItem.fields["title"] = title;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                mediaItem.subTitle = description;
                 mediaItem.fields["description"] = description;
                 mediaItem.fields["url"] = feedUrl;
                 mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
                 mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
+                mediaItem = Utilities::makeSubtitle(mediaItem);
                 mediaList.append(mediaItem);
             }
             MediaItem mediaItem;
@@ -254,7 +254,6 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             QDomElement descriptionElement = getPreferredTag(itemNodes, descriptionTagPref);
             if (!descriptionElement.text().trimmed().startsWith("<") &&
                 !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
-                mediaItem.subTitle = QString("%1...").arg(descriptionElement.text().left(50));
                 mediaItem.fields["description"] = descriptionElement.text();
             }
             QDomElement releaseDateElement = getPreferredTag(itemNodes, QStringList("pubDate"));
@@ -298,6 +297,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             }
             QDomElement thumbnailElement = getPreferredTag(itemNodes, QStringList("media:thumbnail"));
             
+            mediaItem = Utilities::makeSubtitle(mediaItem);
             if (mediaItem.type == "Audio" && m_mediaListProperties.engineArg() == "audio") {
                 m_mediaList.append(mediaItem);
                 m_artworkUrlList.append(KUrl(thumbnailElement.attribute("url")));

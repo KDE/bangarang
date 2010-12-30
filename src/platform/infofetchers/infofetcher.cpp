@@ -18,6 +18,7 @@
 
 #include "infofetcher.h"
 #include "../mediaitemmodel.h"
+#include "../utilities/utilities.h"
 #include <KIcon>
 #include <KDebug>
 
@@ -66,14 +67,6 @@ void InfoFetcher::setValue(const QString &field, const QVariant &value)
                 artist = mediaItem.fields["artist"].toString();
                 album = value.toString();
             }
-            if (!artist.isEmpty()) {
-                mediaItem.subTitle = artist;
-                if (!album.isEmpty()) {
-                    mediaItem.subTitle += QString(" - %1").arg(album);
-                }
-            } else {
-                mediaItem.subTitle = mediaItem.fields["album"].toString();
-            }
         }
         if (field == "seriesName" || field == "season" || field == "episodeNumber") {
             QString seriesName;
@@ -92,22 +85,8 @@ void InfoFetcher::setValue(const QString &field, const QVariant &value)
                 season = mediaItem.fields["season"].toInt();
                 episodeNumber = value.toInt();
             }
-            if (!seriesName.isEmpty()) {
-                mediaItem.subTitle = seriesName;
-            }
-            if (season !=0 ) {
-                if (!mediaItem.subTitle.isEmpty()) {
-                    mediaItem.subTitle += " - ";
-                }
-                mediaItem.subTitle += QString("Season %1").arg(season);
-            }
-            if (episodeNumber != 0) {
-                if (!mediaItem.subTitle.isEmpty()) {
-                    mediaItem.subTitle += " - ";
-                }
-                mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
-            }
         }
+        mediaItem = Utilities::makeSubtitle(mediaItem);
     }
 }
 

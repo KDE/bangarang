@@ -116,12 +116,9 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         mediaItem.url = url.url();
         mediaItem.artwork = dvd ? KIcon("media-optical-dvd") : KIcon("media-optical-audio");
         mediaItem.title = title;
-        if (discTitle.isEmpty() || !dvd)
-            mediaItem.subTitle = album;
-        else
-            mediaItem.subTitle = i18nc("%1=Title of DVD", "DVD Video - %1", discTitle);
         mediaItem.fields["url"] = mediaItem.url;
         mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.fields["discTitle"] = discTitle;
         if ( dvd )
             mediaItem.fields["videoType"] = "DVD Title";
         else
@@ -129,6 +126,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         mediaItem.fields["album"] = album;
         mediaItem.type = dvd ? "Video" : "Audio";
         mediaItem.fields["trackNumber"] = track;
+        mediaItem = makeSubtitle(mediaItem);
         return mediaItem;
     }
 
@@ -403,9 +401,6 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             }
             artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
-            if (artists.count() == 1) {
-                mediaItem.subTitle = artists.at(0);
-            }
 
             QStringList composers;
             QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
@@ -419,11 +414,6 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                             .property(mediaVocabulary.musicAlbumName()).toString();
             if (!album.isEmpty()) {
                 mediaItem.fields["album"] = album;
-                if (artists.count() == 1) {
-                    mediaItem.subTitle += QString(" - %1").arg(album);
-                } else {
-                    mediaItem.subTitle = album;
-                }
             }
             if (res.property(mediaVocabulary.musicAlbumYear()).isValid()) {
                 QDate yearDate = res.property(mediaVocabulary.musicAlbumYear()).toDate();
@@ -459,9 +449,6 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             } else {
                 mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
-            }
-            if (mediaItem.fields["year"].toInt() != 0) {
-                mediaItem.subTitle = QString("%1").arg(mediaItem.fields["year"].toInt());
             }
             QStringList writers;
             QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
@@ -512,16 +499,11 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                                      .property(mediaVocabulary.videoSeriesTitle()).toString();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
-                    mediaItem.subTitle = seriesName;
                 }
 
                 int season = res.property(mediaVocabulary.videoSeason()).toInt();
                 if (season !=0 ) {
                     mediaItem.fields["season"] = season;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Season %1").arg(season);
                 } else {
                     mediaItem.fields["season"] = QVariant(QVariant::Int);
                 }
@@ -529,17 +511,13 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                 int episodeNumber = res.property(mediaVocabulary.videoEpisodeNumber()).toInt();
                 if (episodeNumber != 0) {
                     mediaItem.fields["episodeNumber"] = episodeNumber;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 } else {
                     mediaItem.fields["episodeNumber"] = QVariant(QVariant::Int);
                 }
             }
         }
     }
-
+    mediaItem = makeSubtitle(mediaItem);
     return mediaItem;
 }
 
@@ -609,9 +587,6 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             }
             artists = cleanStringList(artists);
             mediaItem.fields["artist"] = artists;
-            if (artists.count() == 1) {
-                mediaItem.subTitle = artists.at(0);
-            }
 
             QStringList composers;
             QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
@@ -624,11 +599,6 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             if (!album.isEmpty()) {
                 mediaItem.fields["album"] = album;
-                if (artists.count() == 1) {
-                    mediaItem.subTitle += QString(" - %1").arg(album);
-                } else {
-                    mediaItem.subTitle = album;
-                }
             }
             if (it.binding(MediaVocabulary::musicAlbumYearBinding()).isValid()) {
                 QDate yearDate = it.binding(MediaVocabulary::musicAlbumYearBinding()).literal().toDate();
@@ -664,9 +634,6 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             } else {
                 mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
-            }
-            if (mediaItem.fields["year"].toInt() != 0) {
-                mediaItem.subTitle = QString("%1").arg(mediaItem.fields["year"].toInt());
             }
             QStringList writers;
             QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
@@ -716,16 +683,11 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                 QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
-                    mediaItem.subTitle = seriesName;
                 }
 
                 int season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toInt();
                 if (season !=0 ) {
                     mediaItem.fields["season"] = season;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Season %1").arg(season);
                 } else {
                     mediaItem.fields["season"] = QVariant(QVariant::Int);
                 }
@@ -733,17 +695,13 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                 int episodeNumber = it.binding(MediaVocabulary::videoEpisodeNumberBinding()).literal().toInt();
                 if (episodeNumber != 0) {
                     mediaItem.fields["episodeNumber"] = episodeNumber;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 } else {
                     mediaItem.fields["episodeNumber"] = QVariant(QVariant::Int);
                 }
             }
         }
     }
-
+    mediaItem = makeSubtitle(mediaItem);
     return mediaItem;
 }
 
@@ -852,6 +810,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
         }
         mediaItem.fields["sourceLri"] = sourceLri;
     }
+    mediaItem = makeSubtitle(mediaItem);
     return mediaItem;
 }
 
@@ -903,7 +862,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
                             .arg(genreFilter);
             mediaItem.title = album;
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.subTitle = artist;
+            mediaItem.fields["artist"] = artist;
             mediaItem.artwork = KIcon("media-optical-audio");
             //Provide context info for album
             mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
@@ -970,7 +929,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
                             .arg(seasonFilter);
             mediaItem.title = seriesName;
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
+            mediaItem.fields["season"] = season;
             mediaItem.artwork = KIcon("video-television");
             //Provide context info for genre
             mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season));
@@ -1022,6 +981,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
         Q_UNUSED(lri);
         mediaItem.fields["sourceLri"] = sourceLri;
     }
+    mediaItem = makeSubtitle(mediaItem);
     return mediaItem;
 }
 
@@ -1258,16 +1218,11 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                 QString seriesName = it.binding(MediaVocabulary::videoSeriesTitleBinding()).literal().toString();
                 if (!seriesName.isEmpty()) {
                     mediaItem.fields["seriesName"] = seriesName;
-                    mediaItem.subTitle = seriesName;
                 }
 
                 int season = it.binding(MediaVocabulary::videoSeasonBinding()).literal().toInt();
                 if (season !=0 ) {
                     mediaItem.fields["season"] = season;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Season %1").arg(season);
                 } else {
                     mediaItem.fields["season"] = QVariant(QVariant::Int);
                 }
@@ -1275,10 +1230,6 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
                 int episodeNumber = it.binding(MediaVocabulary::videoEpisodeNumberBinding()).literal().toInt();
                 if (episodeNumber != 0) {
                     mediaItem.fields["episodeNumber"] = episodeNumber;
-                    if (!mediaItem.subTitle.isEmpty()) {
-                        mediaItem.subTitle += " - ";
-                    }
-                    mediaItem.subTitle += QString("Episode %1").arg(episodeNumber);
                 } else {
                     mediaItem.fields["episodeNumber"] = QVariant(QVariant::Int);
                 }
@@ -1286,6 +1237,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
             break;
         }
     }
+    mediaItem = makeSubtitle(mediaItem);
     return mediaItem;
 }
 
@@ -1358,5 +1310,77 @@ QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
     }
     return sortedList;
 }
+
+MediaItem Utilities::makeSubtitle(const MediaItem & mediaItem)
+{
+    MediaItem updatedItem = mediaItem;
+    QString subType = mediaItem.subType();
+
+    if (subType == "Music") {
+        updatedItem.subTitle.clear();
+        QStringList artists = mediaItem.fields["artist"].toStringList();
+        if (artists.count() == 1) {
+            updatedItem.subTitle = artists.at(0);
+        }
+
+        QString album = mediaItem.fields["album"].toString();
+        if (!album.isEmpty()) {
+            if (!updatedItem.subTitle.isEmpty()) {
+                updatedItem.subTitle += " - ";
+            }
+            updatedItem.subTitle += album;
+        }
+    } else if (subType == "Album") {
+        updatedItem.subTitle = mediaItem.fields["artist"].toString();
+    } else if (subType == "Movie") {
+        updatedItem.subTitle.clear();
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
+            updatedItem.subTitle = QString("%1").arg(year);
+        }
+    } else if (subType == "TV Show") {
+        updatedItem.subTitle.clear();
+        QString seriesName = mediaItem.fields["seriesName"].toString();
+        if (!seriesName.isEmpty()) {
+            updatedItem.subTitle = seriesName;
+        }
+
+        int season = mediaItem.fields["season"].toInt();
+        if (season > 0 ) {
+            if (!updatedItem.subTitle.isEmpty()) {
+                updatedItem.subTitle += " - ";
+            }
+            updatedItem.subTitle += i18n("Season %1", season);
+        }
+
+        int episodeNumber = mediaItem.fields["episodeNumber"].toInt();
+        if (episodeNumber > 0) {
+            if (!updatedItem.subTitle.isEmpty()) {
+                updatedItem.subTitle += " - ";
+            }
+            updatedItem.subTitle += i18n("Episode %1", episodeNumber);
+        }
+    } else if (subType == "TV Season") {
+        updatedItem.subTitle.clear();
+        int season = mediaItem.fields["season"].toInt();
+        if (season > 0 ) {
+            updatedItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
+        }
+    } else if (subType == "Audio Feed" || subType == "Video Feed") {
+        QString description = mediaItem.fields["description"].toString();
+        updatedItem.subTitle = QString("%1...").arg(description.left(50));
+    } else if (subType == "DVD Title"){
+        updatedItem.subTitle = i18n("DVD Video");
+        QString discTitle = mediaItem.fields["discTitle"].toString();
+        if (!discTitle.isEmpty()) {
+            updatedItem.subTitle += " - ";
+            updatedItem.subTitle += discTitle;
+        }
+    } else if (subType == "CD Track") {
+        updatedItem.subTitle = i18n("Audio CD");
+    }
+    return updatedItem;
+}
+
 #endif //UTILITIES_MEDIAITEMS_CPP
 

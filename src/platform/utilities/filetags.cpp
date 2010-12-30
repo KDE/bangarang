@@ -22,6 +22,7 @@
 #include "general.h"
 #include "filetags.h"
 #include "typechecks.h"
+#include "mediaitems.h"
 
 #include <KDebug>
 #include <KEncodingProber>
@@ -243,9 +244,6 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         if (!title.isEmpty()) {
             mediaItem.title = title;
         }
-        if (!artists.isEmpty()) {
-            mediaItem.subTitle = artists.at(0) + QString(" - ") + album;
-        }
         mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
         mediaItem.fields["duration"] = duration;
         mediaItem.fields["title"] = title;
@@ -256,6 +254,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         mediaItem.fields["trackNumber"] = track;
         mediaItem.fields["year"] = year;
     }
+    mediaItem = Utilities::makeSubtitle(mediaItem);
     return mediaItem;
 }
 

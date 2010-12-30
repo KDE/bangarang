@@ -188,13 +188,14 @@ void MusicListEngine::run()
                     MediaItem mediaItem;
                     mediaItem.url = QString("music://songs?album=%1||%2||%3").arg(album, artistFilter, genreFilter);
                     mediaItem.title = album;
-                    mediaItem.subTitle = artist;
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("Album");
                     mediaItem.fields["title"] = album;
+                    mediaItem.fields["artist"] = artist;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("media-optical-audio");
+                    mediaItem = Utilities::makeSubtitle(mediaItem);
 
                     //Provide context info for album
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));

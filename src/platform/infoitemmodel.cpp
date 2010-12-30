@@ -725,13 +725,13 @@ void InfoItemModel::updateMediaList()
                         mediaItem.fields["releaseDate"] = QVariant(QVariant::Date);
                     }
                     if (mediaItem.subType() == "Movie" && mediaItem.fields["year"].toInt() != 0) {
-                        mediaItem.subTitle = QString("%1").arg(mediaItem.fields["year"].toInt());
                     }
                 } else {
                     mediaItem.fields[field] = currentItem->data(Qt::EditRole);
                 }
             }
         }
+        mediaItem = Utilities::makeSubtitle(mediaItem);
         updatedList << mediaItem;
     }
     m_mediaList = updatedList;

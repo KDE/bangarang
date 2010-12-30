@@ -46,6 +46,7 @@ namespace Utilities {
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
+    MediaItem makeSubtitle(const MediaItem & mediaItem);
 }
 
 #endif // UTILITIES_MEDIAITEMS_H

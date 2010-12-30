@@ -18,6 +18,7 @@
 
 #include "filenameinfofetcher.h"
 #include "../mediaitemmodel.h"
+#include "../utilities/utilities.h"
 
 #include <KIcon>
 #include <KLocale>
@@ -93,6 +94,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequi
                     updated = true;
                 }
             }
+            item = Utilities::makeSubtitle(item);
         }
         if (updated) {
             QList<MediaItem> matches;
