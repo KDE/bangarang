@@ -444,17 +444,20 @@ KMenu *ActionsManager::nowPlayingMenu()
     
     m_nowPlayingMenu = new KMenu(m_parent);
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
-        NowPlayingDelegate *delegate = (NowPlayingDelegate *)ui->nowPlayingView->itemDelegate();
-        if (!delegate->showingInfo() ||
-            (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
-            action("show_now_playing_info")->setText(i18n("Show information"));
-            action("show_now_playing_info")->setIcon(KIcon("help-about"));
-        } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
-            action("show_now_playing_info")->setText(i18n("Hide information"));
-            action("show_now_playing_info")->setIcon(KIcon("help-about"));
+        MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+        if (Utilities::isMedia(nowPlayingItem.type)) {
+            NowPlayingDelegate *delegate = (NowPlayingDelegate *)ui->nowPlayingView->itemDelegate();
+            if (!delegate->showingInfo() ||
+                (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
+                action("show_now_playing_info")->setText(i18n("Show information"));
+                action("show_now_playing_info")->setIcon(KIcon("help-about"));
+            } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
+                action("show_now_playing_info")->setText(i18n("Hide information"));
+                action("show_now_playing_info")->setIcon(KIcon("help-about"));
+            }
+            m_nowPlayingMenu->addAction(action("show_now_playing_info"));
+            m_nowPlayingMenu->addSeparator();
         }
-        m_nowPlayingMenu->addAction(action("show_now_playing_info"));
-        m_nowPlayingMenu->addSeparator();
     }
     if (ui->contextStackHolder->isVisible() && ui->contextStack->currentIndex() == 0) {
         m_nowPlayingMenu->addAction(action("toggle_filter"));
