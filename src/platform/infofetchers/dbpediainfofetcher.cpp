@@ -20,6 +20,7 @@
 #include "../dbpediaquery.h"
 #include "../mediaitemmodel.h"
 #include "../downloader.h"
+#include "../utilities/utilities.h"
 #include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
@@ -221,6 +222,7 @@ void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::Bin
                     lastThumbnailUrl = thumbnailUrlString;
                 }
             }
+            match = Utilities::makeSubtitle(match);
 
             matches.append(match);
         }
@@ -367,6 +369,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
                     emit download(thumbnailUrl, thumbnailTargetUrl);
                 }
             }
+            match = Utilities::makeSubtitle(match);
 
             if (matchIndex == -1) {
                 matches.append(match);

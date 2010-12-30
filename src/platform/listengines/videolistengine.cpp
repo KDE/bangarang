@@ -290,11 +290,13 @@ void VideoListEngine::run()
                                     .arg(season).arg(seriesNameFilter).arg(genreFilter);
                 mediaItem.title = seriesName;
                 mediaItem.fields["title"] = mediaItem.title;
+                mediaItem.fields["season"] = season;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                mediaItem.subTitle = i18nc("%1=Number of the Season", "Season %1", season);
                 mediaItem.type = QString("Category");
+                mediaItem.fields["categoryType"] = QString("TV Season");
                 mediaItem.nowPlaying = false;
                 mediaItem.artwork = KIcon("video-television");
+                mediaItem = Utilities::makeSubtitle(mediaItem);
 
                 //Provide context info for genre
                 mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||%2||season=%3").arg(genreFilter).arg(seriesNameFilter).arg(season));
