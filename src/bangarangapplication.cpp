@@ -19,6 +19,7 @@
 #include "bangarangapplication.h"
 #include "bangarangnotifieritem.h"
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -164,13 +165,21 @@ void BangarangApplication::setup()
     //Load Config
     KConfig config;
     KConfigGroup generalGroup( &config, "General" );
-    m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
-    m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
-    m_audioOutput->setVolume(static_cast<qreal>(generalGroup.readEntry("Volume", static_cast<int>(m_volume * 100))) / 100);
+    QSize windowSize = QSize(generalGroup.readEntry("WindowWidth", 740),
+                             generalGroup.readEntry("WindowHeight", 520));
+    m_mainWindow->setGeometry(QRect(m_mainWindow->rect().topLeft(), windowSize));
+    QList<int> mediaListSplitterSizes = generalGroup.readEntry("MediaListSplitterSizes", QList<int>() << 170 << 565);
+    m_mainWindow->ui->mediaListsSplitter->setSizes(mediaListSplitterSizes);
+    QList<int> mediaViewSplitterSizes = generalGroup.readEntry("MediaViewSplitterSizes", QList<int>() << 338 << 220);
+    m_mainWindow->ui->mediaViewSplitter->setSizes(mediaViewSplitterSizes);
+    m_mainWindow->ui->mediaLists->setCurrentIndex(generalGroup.readEntry("mediaListsType", 0));
     bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", false));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
         m_infoManager->toggleInfoView();
     }
+    m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
+    m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));
+    m_audioOutput->setVolume(static_cast<qreal>(generalGroup.readEntry("Volume", static_cast<int>(m_volume * 100))) / 100);
     m_audioSettings->restoreAudioSettings(&generalGroup);
     m_videoSettings->restoreVideoSettings(&generalGroup);
     if (!itemLoaded) {
@@ -211,6 +220,11 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("Repeat", m_playlist->repeatMode());
     generalGroup.writeEntry("InfoViewVisible", m_infoManager->infoViewVisible());
     generalGroup.writeEntry("Volume", static_cast<int>(m_volume*100));
+    generalGroup.writeEntry("WindowWidth", m_mainWindow->width());
+    generalGroup.writeEntry("WindowHeight", m_mainWindow->height());
+    generalGroup.writeEntry("MediaListSplitterSizes", m_mainWindow->ui->mediaListsSplitter->sizes());
+    generalGroup.writeEntry("MediaViewSplitterSizes", m_mainWindow->ui->mediaViewSplitter->sizes());
+    generalGroup.writeEntry("mediaListsType", m_mainWindow->ui->mediaLists->currentIndex());
     m_audioSettings->saveAudioSettings(&generalGroup);
     m_videoSettings->saveVideoSettings(&generalGroup);
     config.sync();
