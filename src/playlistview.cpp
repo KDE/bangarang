@@ -50,6 +50,7 @@ void PlaylistView::setMainWindow(MainWindow* mainWindow)
     m_playlistItemDelegate->setUseProxy(true);
     setItemDelegate(m_playlistItemDelegate);
     m_playlistItemDelegate->setView(this);
+    m_playlistItemDelegate->setSuppressSemanticComment(true);
     m_playlistName = mainWindow->ui->playlistName;
     m_playlistDuration = mainWindow->ui->playlistDuration;
 }
