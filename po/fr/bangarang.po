@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2010-12-13 22:10-0800\n"
+"POT-Creation-Date: 2010-12-31 01:07-0800\n"
 "PO-Revision-Date: 2010-12-13 17:57+0100\n"
 "Last-Translator: Jérôme Artu <solojay6@gmail.com>\n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
@@ -16,199 +16,205 @@ msgstr ""
 "X-Generator: Lokalize 1.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: actionsmanager.cpp:60
+#: actionsmanager.cpp:61
 msgid "Quit"
 msgstr "Quitter"
 
-#: actionsmanager.cpp:66
+#: actionsmanager.cpp:67
 msgid "Play/Pause"
 msgstr "Lecture/Pause"
 
-#: actionsmanager.cpp:74
+#: actionsmanager.cpp:75
 msgid "Play"
 msgstr "Lecture"
 
-#: actionsmanager.cpp:79
+#: actionsmanager.cpp:80
 msgid "Pause"
 msgstr "Pause"
 
-#: actionsmanager.cpp:84
+#: actionsmanager.cpp:85
 msgid "Play next"
 msgstr "Lire l'élément suivant"
 
-#: actionsmanager.cpp:91
+#: actionsmanager.cpp:92
 msgid "Play previous"
 msgstr "Lire l'élément précédent"
 
-#: actionsmanager.cpp:98 actionsmanager.cpp:698
+#: actionsmanager.cpp:99 actionsmanager.cpp:718
 msgid "Mute"
 msgstr "Couper le son"
 
-#: actionsmanager.cpp:104
+#: actionsmanager.cpp:105
 msgid "Play all"
 msgstr "Lire tous les éléments"
 
-#: actionsmanager.cpp:109
+#: actionsmanager.cpp:110
 msgid "Play selected"
 msgstr "Lire les éléments sélectionnés"
 
-#: actionsmanager.cpp:114
+#: actionsmanager.cpp:115
 msgid "Add to playlist"
 msgstr "Ajouter à la liste de lecture"
 
-#: actionsmanager.cpp:119 actionsmanager.cpp:322
+#: actionsmanager.cpp:120 actionsmanager.cpp:328
 msgid "Add after Now Playing"
 msgstr "Ajouter après la Lecture En Cours"
 
-#: actionsmanager.cpp:124 actionsmanager.cpp:129
+#: actionsmanager.cpp:125 actionsmanager.cpp:130
 msgid "Remove from playlist"
 msgstr "Retirer de la liste de lecture"
 
-#: actionsmanager.cpp:135
+#: actionsmanager.cpp:136
 msgid "Hide controls"
 msgstr "Masquer les contrôles"
 
-#: actionsmanager.cpp:141 actionsmanager.cpp:1021 actionsmanager.cpp:1026
+#: actionsmanager.cpp:142 actionsmanager.cpp:1041 actionsmanager.cpp:1046
 msgid "Show filter"
 msgstr "Afficher la barre de filtre"
 
-#: actionsmanager.cpp:147 actionsmanager.cpp:903
+#: actionsmanager.cpp:148 actionsmanager.cpp:923
 msgid "Show remaining time"
 msgstr "Afficher le temps restant"
 
-#: actionsmanager.cpp:152 actionsmanager.cpp:575 actionsmanager.cpp:601
-#: actionsmanager.cpp:654
+#: actionsmanager.cpp:153 actionsmanager.cpp:595 actionsmanager.cpp:621
+#: actionsmanager.cpp:674 mainwindow.cpp:377
 msgid "Show video settings"
 msgstr "Afficher les réglages vidéo"
 
-#: actionsmanager.cpp:158 actionsmanager.cpp:578 actionsmanager.cpp:598
-#: actionsmanager.cpp:655
+#: actionsmanager.cpp:159 actionsmanager.cpp:598 actionsmanager.cpp:618
+#: actionsmanager.cpp:675 mainwindow.cpp:378
 msgid "Show audio settings"
 msgstr "Afficher les réglages audio"
 
-#: actionsmanager.cpp:164
+#: actionsmanager.cpp:165
 #, fuzzy
 msgid "Fullscreen"
 msgstr "Plein écran"
 
-#: actionsmanager.cpp:177
+#: actionsmanager.cpp:178
 msgid "Save selected info"
 msgstr "Enregistre l'information sélectionné"
 
-#: actionsmanager.cpp:182
+#: actionsmanager.cpp:183
 msgid "Remove selected info"
 msgstr "Enlever l'information sélectionnée"
 
-#: actionsmanager.cpp:187
+#: actionsmanager.cpp:188
 msgid "Refresh"
 msgstr "Rafraîchir"
 
-#: actionsmanager.cpp:193
+#: actionsmanager.cpp:194
 msgid "Remove from list"
 msgstr "Retirer de la liste"
 
-#: actionsmanager.cpp:198
+#: actionsmanager.cpp:199
 msgid "Add to list"
 msgstr "Ajouter à la liste"
 
-#: actionsmanager.cpp:202
+#: actionsmanager.cpp:203
 msgid "Add to list "
 msgstr "Ajouter à la liste "
 
-#: actionsmanager.cpp:206 actionsmanager.cpp:211
+#: actionsmanager.cpp:207 actionsmanager.cpp:212
 msgid "New list"
 msgstr "Nouvelle liste"
 
-#: actionsmanager.cpp:216
+#: actionsmanager.cpp:217
 msgid "Show items"
 msgstr "Afficher les éléments"
 
-#: actionsmanager.cpp:221 actionsmanager.cpp:226 actionsmanager.cpp:405
-#: actionsmanager.cpp:444 actionsmanager.cpp:854
+#: actionsmanager.cpp:222 actionsmanager.cpp:227 actionsmanager.cpp:411
+#: actionsmanager.cpp:452 actionsmanager.cpp:874
 #, fuzzy
 msgid "Show information"
 msgstr "Afficher les informations"
 
-#: actionsmanager.cpp:231
+#: actionsmanager.cpp:232
 msgid "Add bookmark"
 msgstr "Ajouter un signet"
 
-#: actionsmanager.cpp:238
+#: actionsmanager.cpp:239
 msgid "Remove bookmarks"
 msgstr "Retirer un signet"
 
-#: actionsmanager.cpp:242 actionsmanager.cpp:579 actionsmanager.cpp:602
-#: actionsmanager.cpp:651
+#: actionsmanager.cpp:243 actionsmanager.cpp:599 actionsmanager.cpp:622
+#: actionsmanager.cpp:671
 msgid "Show shortcuts editor"
 msgstr "Afficher l'éditeur de raccourcis claviers"
 
-#: actionsmanager.cpp:249
+#: actionsmanager.cpp:250
 msgid "Update ontologies..."
 msgstr "Actualisation des ontologies…"
 
-#: actionsmanager.cpp:259
+#: actionsmanager.cpp:255
+#, fuzzy
+msgid "Hide in system tray"
+msgstr "Masquer la barre de filtre"
+
+#: actionsmanager.cpp:265
 msgid "Manage info"
 msgstr "Gérer les informations"
 
-#: actionsmanager.cpp:392
+#: actionsmanager.cpp:398
 msgid "Play after Now Playing"
 msgstr "Jouer après la Lecture En Cours"
 
-#: actionsmanager.cpp:408 actionsmanager.cpp:447
+#: actionsmanager.cpp:414 actionsmanager.cpp:455
 #, fuzzy
 msgid "Hide information"
 msgstr "Afficher les informations"
 
-#: actionsmanager.cpp:492
+#: actionsmanager.cpp:502
 #, kde-format
 msgid "Chapter %1"
 msgstr "Chapitre %1"
 
-#: actionsmanager.cpp:549
+#: actionsmanager.cpp:569
 msgid "Show Controls"
 msgstr "Afficher Les Contrôles"
 
-#: actionsmanager.cpp:553
+#: actionsmanager.cpp:573
 msgid "Hide Controls"
 msgstr "Masquer Les Contrôles"
 
-#: actionsmanager.cpp:567
-msgid "Hide video vettings"
+#: actionsmanager.cpp:587
+#, fuzzy
+msgid "Hide video settings"
 msgstr "Masquer les réglages vidéos"
 
-#: actionsmanager.cpp:590
+#: actionsmanager.cpp:610
 msgid "Hide audio settings"
 msgstr "Masquer les réglages audio"
 
-#: actionsmanager.cpp:643
+#: actionsmanager.cpp:663
 msgid "Hide shortcuts editor"
 msgstr "Masquer l'éditeur de raccourcis"
 
-#: actionsmanager.cpp:695
+#: actionsmanager.cpp:715
 msgid "Restore Volume"
 msgstr "Restaurer Le Volume"
 
-#: actionsmanager.cpp:850
+#: actionsmanager.cpp:870
 #, fuzzy
 msgid "Restore video size"
 msgstr "Restaurer Le Volume"
 
-#: actionsmanager.cpp:901
+#: actionsmanager.cpp:921
 #, fuzzy
 msgid "Show elapsed time"
 msgstr "Afficher le temps écoulé"
 
-#: actionsmanager.cpp:981 actionsmanager.cpp:988
+#: actionsmanager.cpp:1001 actionsmanager.cpp:1008
 msgid "Update Ontologies"
 msgstr "Mettre à Jour les Ontologies"
 
 #. i18n: file: mainwindow.ui:8329
 #. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: actionsmanager.cpp:983 rc.cpp:428
+#: actionsmanager.cpp:1003 rc.cpp:428
 msgid "Cancel"
 msgstr "Annuler"
 
-#: actionsmanager.cpp:984
+#: actionsmanager.cpp:1004
 msgid ""
 "Updating ontologies ensures that media information is stored in a way that "
 "makes it most accessible to other desktop applications.  This is only "
@@ -220,15 +226,15 @@ msgstr ""
 "du bureau. Celà n'est nécessaire que si vous avez récemment mise à jour "
 "Bangarang ou votre environnement KDE."
 
-#: actionsmanager.cpp:992
+#: actionsmanager.cpp:1012
 msgid "Stop"
 msgstr "Arrêt"
 
-#: actionsmanager.cpp:995
+#: actionsmanager.cpp:1015
 msgid "Close"
 msgstr "Fermer"
 
-#: actionsmanager.cpp:1019 actionsmanager.cpp:1024
+#: actionsmanager.cpp:1039 actionsmanager.cpp:1044
 msgid "Hide filter"
 msgstr "Masquer la barre de filtre"
 
@@ -273,7 +279,7 @@ msgstr "Drame"
 msgid "Manual"
 msgstr "Manuel"
 
-#: bangarangapplication.cpp:122
+#: bangarangapplication.cpp:123
 msgid ""
 "Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
 "library, rating and play count functions will be unavailable."
@@ -284,24 +290,24 @@ msgstr ""
 
 #. i18n: file: mainwindow.ui:17
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
-#: bangarangapplication.cpp:122 bangarangnotifieritem.cpp:11 main.cpp:29
-#: mainwindow.cpp:532 mainwindow.cpp:929 mainwindow.cpp:1071 rc.cpp:5
+#: bangarangapplication.cpp:123 bangarangnotifieritem.cpp:11 main.cpp:29
+#: mainwindow.cpp:523 mainwindow.cpp:938 mainwindow.cpp:1080 rc.cpp:5
 msgid "Bangarang"
 msgstr "Bangarang"
 
-#: bangarangapplication.cpp:122
+#: bangarangapplication.cpp:123
 msgid "Don't show this message again"
 msgstr "Ne plus afficher ce message"
 
-#: bangarangapplication.cpp:135
+#: bangarangapplication.cpp:136
 msgid "DVD Video"
 msgstr "DVD Vidéo"
 
-#: bangarangapplication.cpp:145
+#: bangarangapplication.cpp:146
 msgid "Audio CD"
 msgstr "CD Audio"
 
-#: bangarangapplication.cpp:200 bangarangapplication.cpp:202
+#: bangarangapplication.cpp:209 bangarangapplication.cpp:211
 msgid "Resume"
 msgstr "Reprendre"
 
@@ -453,64 +459,64 @@ msgstr "Montrer Les Informations De Débogage"
 
 #. i18n: file: mainwindow.ui:7013
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
-#: mainwindow.cpp:185 rc.cpp:308
+#: mainwindow.cpp:187 rc.cpp:308
 msgid "No"
 msgstr "Non"
 
 #. i18n: file: mainwindow.ui:7003
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
-#: mainwindow.cpp:186 rc.cpp:305
+#: mainwindow.cpp:188 rc.cpp:305
 msgid "Yes"
 msgstr "Oui"
 
-#: mainwindow.cpp:369
-msgid "Show video Settings"
-msgstr "Afficher les Réglages vidéo"
+#. i18n: file: mainwindow.ui:5162
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
+#. i18n: file: mainwindow.ui:5702
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
+#: mainwindow.cpp:281 rc.cpp:272 rc.cpp:278
+msgid "Playlist"
+msgstr "Liste de lecture"
 
-#: mainwindow.cpp:370
-msgid "Show audio Settings"
-msgstr "Afficher les Rglages audio"
-
-#: mainwindow.cpp:383
+#: mainwindow.cpp:391
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
 msgstr "<b>Plein Écran</b><br>Cliquez pour sortir du mode plein écran"
 
-#: mainwindow.cpp:389
+#: mainwindow.cpp:397
 msgid "Show fullscreen"
 msgstr "Plein écran"
 
-#: mainwindow.cpp:408
+#: mainwindow.cpp:416
 msgid "<b>Paused</b><br>Hold to stop"
 msgstr "<b>En Pause</b><br>Restez appuyé pour stopper"
 
 #. i18n: file: mainwindow.ui:260
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: mainwindow.cpp:512 rc.cpp:11
+#: mainwindow.cpp:503 rc.cpp:11
 msgid "Search for audio"
 msgstr "Rechercher de l'audio"
 
-#: mainwindow.cpp:520
+#: mainwindow.cpp:511
 msgid "Search for video"
 msgstr "Recherche des vidéos"
 
 #. i18n: file: mainwindow.ui:6722
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:528 rc.cpp:287
+#: mainwindow.cpp:519 rc.cpp:287
 msgid "Clear Playlist"
 msgstr "Vider La Liste De Lecture"
 
-#: mainwindow.cpp:529
+#: mainwindow.cpp:520
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "Voulez-vous vraiment effacer la liste de lecture courante ?"
 
 #. i18n: file: mainwindow.ui:2175
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:534 mainwindow.cpp:632 mainwindow.cpp:634 mainwindow.cpp:931
+#: mainwindow.cpp:525 mainwindow.cpp:623 mainwindow.cpp:625 mainwindow.cpp:940
 #: rc.cpp:203
 msgid "Now Playing"
 msgstr "Lecture En Cours"
 
-#: mainwindow.cpp:555
+#: mainwindow.cpp:546
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr ""
 "<b>Affiche Les Prochaines Pistes</b><br>Cliquez pour afficher la liste de "
@@ -518,84 +524,84 @@ msgstr ""
 
 #. i18n: file: mainwindow.ui:6667
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:558 rc.cpp:281
+#: mainwindow.cpp:549 rc.cpp:281
 msgid "Show Upcoming"
 msgstr "Afficher Les Prochaines Pistes"
 
-#: mainwindow.cpp:656
+#: mainwindow.cpp:646
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
 msgstr ""
 "<b>Lecture En Cours</b><br>Cliquez pour mettre en pause<br>Cliquez et restez "
 "appuyé pour stopper"
 
-#: mainwindow.cpp:666
+#: mainwindow.cpp:656
 msgid "An error has been encountered during playback"
 msgstr "Une erreur a eu lieu lors de la lecture"
 
-#: mainwindow.cpp:720
+#: mainwindow.cpp:710
 msgid "Loading playlist..."
 msgstr "Chargement de la liste de lecture…"
 
-#: mainwindow.cpp:722
+#: mainwindow.cpp:712
 msgid "Buffering..."
 msgstr "Mise en mémoire tampon…"
 
-#: mainwindow.cpp:724 platform/mediaitemmodel.cpp:700
+#: mainwindow.cpp:714 platform/mediaitemmodel.cpp:700
 msgid "Loading..."
 msgstr "Chargement…"
 
-#: mainwindow.cpp:748
+#: mainwindow.cpp:738
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Muet</b><br>Cliquez pour restaurer le volume"
 
 #. i18n: file: mainwindow.ui:8664
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:752 rc.cpp:447
+#: mainwindow.cpp:742 rc.cpp:447
 msgid "Mute volume"
 msgstr "Couper le volume"
 
-#: mainwindow.cpp:851 platform/infoitemmodel.cpp:470
+#: mainwindow.cpp:844 platform/infoitemmodel.cpp:473
 msgid "Complete"
 msgstr "Complet"
 
 #. i18n: file: mainwindow.ui:2172
 #. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:932 mainwindow.cpp:1282 rc.cpp:200
+#: mainwindow.cpp:941 mainwindow.cpp:1286 rc.cpp:200
 msgid "View Now Playing"
 msgstr "Afficher La Lecture En Cours"
 
-#: mainwindow.cpp:940
+#: mainwindow.cpp:949
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr ""
 "<b>Mode Répètition Activé</b><br>Cliquez pour désactiver le mode répétition"
 
 #. i18n: file: mainwindow.ui:6749
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:943 rc.cpp:290
+#: mainwindow.cpp:952 rc.cpp:290
 msgid "Turn on Repeat"
 msgstr "Activer Le Mode Répètition"
 
-#: mainwindow.cpp:950
+#: mainwindow.cpp:959
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr ""
 "<b>Mode Aléatoire Activé</b><br>Cliquez pour désactiver le mode aléatoire"
 
 #. i18n: file: mainwindow.ui:6778
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:953 rc.cpp:296
+#: mainwindow.cpp:962 rc.cpp:296
 msgid "Turn on Shuffle"
 msgstr "Activer le Mode Aléatoire"
 
-#: mainwindow.cpp:1072
+#: mainwindow.cpp:1081
 msgid "Entertainment... Now"
 msgstr "Divertissements… Maintenant"
 
-#: mainwindow.cpp:1220
+#: mainwindow.cpp:1229
 msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
 msgstr ""
 "<b>Temps restant</b><br>Cliquez pour afficher le temps écoulé et les signets"
 
-#: mainwindow.cpp:1222
+#: mainwindow.cpp:1231
 msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
 msgstr ""
 "<b>Temps écoulé</b><br>Cliquez pour afficher le temps restant et les signets"
@@ -665,14 +671,22 @@ msgstr "Réalisateur"
 msgid "<b>Playlist</b>"
 msgstr "<b>Liste de lecture</b>"
 
-#: playlistview.cpp:91
+#: playlistview.cpp:92
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
 msgstr[0] "Un élément, %2 "
 msgstr[1] "%1 éléments, %2"
 
-#: playlistview.cpp:96
+#: playlistview.cpp:94 platform/mediaitemmodel.cpp:481
+#: platform/mediaitemmodel.cpp:501
+#, kde-format
+msgid "1 item"
+msgid_plural "%1 items"
+msgstr[0] "Un élément"
+msgstr[1] "%1 éléments"
+
+#: playlistview.cpp:100
 msgid "<b>Playlist</b> (Upcoming)"
 msgstr "<b>Liste de lecture</b> (Prochaines pistes)"
 
@@ -1044,14 +1058,6 @@ msgstr "Lire Les Éléments Sélectionnés"
 msgid "ExternalSubtitle"
 msgstr "Sous-titre Externe"
 
-#. i18n: file: mainwindow.ui:5162
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
-#. i18n: file: mainwindow.ui:5702
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: rc.cpp:272 rc.cpp:278
-msgid "Playlist"
-msgstr "Liste de lecture"
-
 #. i18n: file: mainwindow.ui:5226
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
 #: rc.cpp:275
@@ -1363,7 +1369,7 @@ msgstr "Genre"
 msgid "Tags"
 msgstr "Tags"
 
-#: platform/infoitemmodel.cpp:81 platform/infoitemmodel.cpp:173
+#: platform/infoitemmodel.cpp:81 platform/infoitemmodel.cpp:176
 msgid "Location"
 msgstr "Emplacement"
 
@@ -1403,46 +1409,51 @@ msgstr "Nombre De Lectures"
 msgid "Last Played"
 msgstr "Dernière Lecture"
 
-#: platform/infoitemmodel.cpp:315 platform/infoitemmodel.cpp:326
+#: platform/infoitemmodel.cpp:318 platform/infoitemmodel.cpp:329
 #, kde-format
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
 msgstr[0] "Récupération des informations pour %1 élément..."
 msgstr[1] "Récupération des informations pour %1 éléments..."
 
-#: platform/infoitemmodel.cpp:461
+#: platform/infoitemmodel.cpp:464
 #, kde-format
 msgid "Fetched info for %1 of %2 items..."
 msgstr "Informations récupérées pour %1 sur %2 éléments..."
 
-#: platform/infoitemmodel.cpp:988
+#: platform/infoitemmodel.cpp:486
+#, fuzzy
+msgid "No Results"
+msgstr "Aucun résultat"
+
+#: platform/infoitemmodel.cpp:999
 msgid "Recently Played Songs"
 msgstr "Chansons Écoutées Récemment"
 
-#: platform/infoitemmodel.cpp:989
+#: platform/infoitemmodel.cpp:1000
 msgid "Highest Rated Songs"
 msgstr "Chansons Les Mieux Notées"
 
-#: platform/infoitemmodel.cpp:990
+#: platform/infoitemmodel.cpp:1001
 msgid "Frequently Played Songs"
 msgstr "Chansons Jouées Fréquemment"
 
-#: platform/infoitemmodel.cpp:992 platform/infoitemmodel.cpp:1004
-#: platform/infoitemmodel.cpp:1008
+#: platform/infoitemmodel.cpp:1003 platform/infoitemmodel.cpp:1015
+#: platform/infoitemmodel.cpp:1019
 msgid "Recently Played"
 msgstr "Écoutés Récemment"
 
-#: platform/infoitemmodel.cpp:993 platform/infoitemmodel.cpp:1005
-#: platform/infoitemmodel.cpp:1009
+#: platform/infoitemmodel.cpp:1004 platform/infoitemmodel.cpp:1016
+#: platform/infoitemmodel.cpp:1020
 msgid "Highest Rated"
 msgstr "Mieux Noté"
 
-#: platform/infoitemmodel.cpp:994 platform/infoitemmodel.cpp:1006
-#: platform/infoitemmodel.cpp:1010
+#: platform/infoitemmodel.cpp:1005 platform/infoitemmodel.cpp:1017
+#: platform/infoitemmodel.cpp:1021
 msgid "Frequently Played"
 msgstr "Écoutés Fréquemment"
 
-#: platform/infoitemmodel.cpp:1025
+#: platform/infoitemmodel.cpp:1036
 msgid "Fetch Canceled"
 msgstr "Récupération Annuler"
 
@@ -1468,21 +1479,14 @@ msgstr "Plusieurs"
 msgid "Multiple %1"
 msgstr "Plusieurs %1"
 
-#: platform/mediaitemmodel.cpp:481 platform/mediaitemmodel.cpp:501
-#, kde-format
-msgid "1 item"
-msgid_plural "%1 items"
-msgstr[0] "Un élément"
-msgstr[1] "%1 éléments"
-
 #: platform/mediaitemmodel.cpp:732
 msgid "No results"
 msgstr "Aucun résultat"
 
-#: platform/mediaitemmodel.cpp:766
+#: platform/mediaitemmodel.cpp:770
 #, fuzzy, kde-format
-msgid "Last played: %1"
-msgstr "Dernière Lecture"
+msgid "<b>Description:</b>%1"
+msgstr "Description"
 
 #: platform/ontologyupdater.cpp:87 platform/ontologyupdater.cpp:200
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
@@ -1511,6 +1515,16 @@ msgstr "<b>Mise à jour terminée.</b>"
 #: platform/ontologyupdater.cpp:363
 msgid "<b>Update stopped.</b>"
 msgstr "<b>Mise à jour stoppée.</b>"
+
+#~ msgid "Show video Settings"
+#~ msgstr "Afficher les Réglages vidéo"
+
+#~ msgid "Show audio Settings"
+#~ msgstr "Afficher les Rglages audio"
+
+#, fuzzy
+#~ msgid "Last played: %1"
+#~ msgstr "Dernière Lecture"
 
 #~ msgid "Playback message"
 #~ msgstr "Message de lecture"
@@ -1671,9 +1685,6 @@ msgstr "<b>Mise à jour stoppée.</b>"
 
 #~ msgid "Image"
 #~ msgstr "Image"
-
-#~ msgid "Description"
-#~ msgstr "Description"
 
 #~ msgid "Double-click to edit"
 #~ msgstr "Double-cliquez pour éditer"
