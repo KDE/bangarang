@@ -98,6 +98,7 @@ class ActionsManager : public QObject
         QString m_mediaListRestoreFilter;
 
     private slots:
+        void mediaViewRefresh();
         void fullScreenToggle();
         void toggleControls();
         void toggleVideoSettings();

@@ -471,34 +471,6 @@ void MusicListEngine::run()
     QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
-    } else {
-        //Get local album/artist/genre artwork
-        if (m_nepomukInited) {
-            MediaVocabulary mediaVocabulary;
-            for (int i = 0; i < mediaList.count(); i++) {
-                if (m_stop) {
-                    return;
-                }
-                MediaItem mediaItem = mediaList.at(i);
-                if (mediaItem.fields["categoryType"].toString() == "Album") {
-                    QImage artwork = Utilities::getAlbumArtwork(mediaItem.title);
-                    if (!artwork.isNull()) {
-                        mediaItem.hasCustomArtwork = true;
-                        emit updateArtwork(artwork, mediaItem);
-                    }
-                }
-                if (mediaItem.fields["categoryType"].toString() == "Artist" ||
-                    mediaItem.fields["categoryType"].toString() == "AudioGenre") {
-                    if (!mediaItem.fields["artworkUrl"].toString().isEmpty()) {
-                        QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
-                        mediaItem.hasCustomArtwork = true;
-                        if (!artwork.isNull()) {
-                            emit updateArtwork(artwork, mediaItem);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     m_requestSignature = QString();

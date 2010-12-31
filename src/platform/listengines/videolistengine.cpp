@@ -735,7 +735,7 @@ void VideoListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     } else {
-        //Get any remaining metadata and local artwork
+        //Get any remaining metadata
         if (m_nepomukInited) {
             for (int i = 0; i < mediaList.count(); i++) {
                 if (m_stop) {
@@ -743,17 +743,6 @@ void VideoListEngine::run()
                 }
                 MediaItem mediaItem = Utilities::completeMediaItem(mediaList.at(i));
                 emit updateMediaItem(mediaItem);
-                if (mediaItem.fields["videoType"].toString() == "Movie" ||
-                    mediaItem.fields["categoryType"].toString() == "TV Series" ||
-                    mediaItem.fields["categoryType"].toString() == "VideoGenre" ||
-                    mediaItem.fields["categoryType"].toString() == "Actor" ||
-                    mediaItem.fields["categoryType"].toString() == "Director") {
-                    QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
-                    if (!artwork.isNull()) {
-                        mediaItem.hasCustomArtwork = true;
-                        emit updateArtwork(artwork, mediaItem);
-                    }
-                }
             }
         }
     }

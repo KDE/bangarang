@@ -27,10 +27,14 @@
 #include <QStyle>
 #include <QStyleOptionViewItem>
 #include <QTreeView>
+#include <QTimer>
 
 class MainWindow;
 class MediaIndexer;
 class BangarangApplication;
+namespace Utilities {
+    class Thread;
+}
 
 /*
  * This Item Delegate is responsible for painting items in a 
@@ -89,10 +93,18 @@ class MediaItemDelegate : public QItemDelegate
         int m_padding;
         int m_iconSize;
         int m_textInner;
-        
+        Utilities::Thread * m_utilThread;
+        QList<MediaItem> *m_itemsThatNeedArtwork;
+
+        int artworkNeededIndex(const MediaItem &mediaItem) const;
+
     Q_SIGNALS:
         void categoryActivated(QModelIndex index);
         void actionActivated(QModelIndex index);
+
+    private Q_SLOTS:
+        void getArtwork() const;
+        void gotArtwork(const QImage &artwork, const MediaItem &mediaItem);
 };
 
 #endif // MEDIAITEMDELEGATE_H

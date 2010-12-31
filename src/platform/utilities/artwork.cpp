@@ -47,8 +47,19 @@
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
 {
     QPixmap pixmap = QPixmap();
+    if (artworkIsInCache(mediaItem)) {
+        QImage image = findArtworkInCache(mediaItem);
+        pixmap = QPixmap::fromImage(image);
+        return pixmap;
+    }
     if (Utilities::isMusic(mediaItem.url)) {
         pixmap = Utilities::getArtworkFromTag(mediaItem.url);
+    }
+    if (mediaItem.subType() == "Album") {
+        QImage image = getAlbumArtwork(mediaItem.fields["title"].toString());
+        if (!image.isNull()) {
+            pixmap = QPixmap::fromImage(image);
+        }
     }
     if (pixmap.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
@@ -75,14 +86,22 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
             }
         }
     }
+    updateImageCache(mediaItem, pixmap.toImage());
     return pixmap;
 }
 
 QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
 {
     QImage image = QImage();
+    if (artworkIsInCache(mediaItem)) {
+        image = findArtworkInCache(mediaItem);
+        return image;
+    }
     if (Utilities::isMusic(mediaItem.url)) {
         image = Utilities::getArtworkImageFromTag(mediaItem.url);
+    }
+    if (mediaItem.subType() == "Album") {
+        image = getAlbumArtwork(mediaItem.fields["title"].toString());
     }
     if (image.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
@@ -107,6 +126,7 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
             }
         }
     }
+    updateImageCache(mediaItem, image);
     return image;
 }
 
@@ -567,5 +587,34 @@ KIcon Utilities::turnIconOff(KIcon icon, QSize size)
     KIconEffect::toGray(image, 0.8);
     return KIcon(QPixmap::fromImage(image));
 }
+
+QImage Utilities::findArtworkInCache(const MediaItem & mediaItem)
+{
+    QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
+    return imageCache.value(key, QImage());
+}
+
+bool Utilities::artworkIsInCache(const MediaItem &mediaItem)
+{
+    QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
+    return imageCache.contains(key);
+}
+
+void Utilities::updateImageCache(const MediaItem &mediaItem, const QImage &image)
+{
+    QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
+    imageCache.insert(key, image);
+}
+
+void Utilities::clearSubTypesFromImageCache(const QString &subType)
+{
+    QStringList keys = imageCache.keys();
+    for (int i = 0; i < keys.count(); i++ ) {
+        if (keys.at(i).startsWith(QString("%1:").arg(subType))) {
+            imageCache.remove(keys.at(i));
+        }
+    }
+}
+
 #endif //UTILITIES_ARTWORK_CPP
 

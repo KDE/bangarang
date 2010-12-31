@@ -203,22 +203,6 @@ void FeedListEngine::run()
             exec();
         }
         
-        //Get local feed artwork
-        MediaVocabulary mediaVocabulary;
-        for (int i = 0; i < mediaList.count(); i++) {
-            if (m_stop) {
-                return;
-            }
-            MediaItem mediaItem = mediaList.at(i);
-            if (mediaItem.fields["categoryType"].toString() == "Audio Feed" ||
-                mediaItem.fields["categoryType"].toString() == "Video Feed") {
-                QImage artwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
-                if (!artwork.isNull()) {
-                    mediaItem.hasCustomArtwork = true;
-                    emit updateArtwork(artwork, mediaItem);
-                }
-            }
-        }
     }
 }
 

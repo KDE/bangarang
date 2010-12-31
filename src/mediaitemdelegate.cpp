@@ -44,6 +44,7 @@
 #include <QStandardItem>
 #include <QApplication>
 #include <QSortFilterProxyModel>
+#include <QTimer>
 #include <QToolTip>
 
 MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
@@ -63,6 +64,9 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     pp.end();
     m_showNotInPlaylist = KIcon(pixmap);
     m_removeFromPlaylist = KIcon("list-remove");
+    m_itemsThatNeedArtwork = new QList<MediaItem>();
+    m_utilThread = new Utilities::Thread(this);
+    connect(m_utilThread, SIGNAL(gotArtwork(QImage,MediaItem)), this, SLOT(gotArtwork(QImage,MediaItem)));
 
     m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
@@ -106,13 +110,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QString subType;
     QString type = index.data(MediaItem::TypeRole).toString();
     MediaItemModel * model = (MediaItemModel *) index.model();
-    if (useProxy())
+    if (useProxy()) {
         model = (MediaItemModel *)((MediaSortFilterProxyModel *)index.model())->sourceModel();
-    if (type == "Audio") {
-        subType = model->mediaItemAt(index.row()).fields["audioType"].toString();
-    } else if (type == "Video") {
-        subType = model->mediaItemAt(index.row()).fields["videoType"].toString();
     }
+    MediaItem mediaItem = model->mediaItemAt(index.row());
+    subType = mediaItem.subType();
     bool hasSubTitle = false;
     if (index.data(MediaItem::SubTitleRole).isValid() ||
         index.data(MediaItem::SemanticCommentRole).isValid()) {
@@ -136,11 +138,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     p.translate(-option.rect.topLeft());
     
     //Paint background for currently playing item
-    KIcon icon(index.data(Qt::DecorationRole).value<QIcon>());
+    bool isPlaying = false;
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
         if (nowPlayingItem.url == index.data(MediaItem::UrlRole).toString()) {
-            icon = m_showPlaying;
+            isPlaying = true;
             hasCustomArtwork = false;
             QLinearGradient linearGrad(QPointF(left, top), QPointF(left+width, top));
             linearGrad.setColorAt(0, nowPlayingColor);
@@ -152,15 +154,38 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     
     //Paint Icon
-    int iconSize = hasCustomArtwork ? height - 2: m_iconSize;
+    int iconSize = m_iconSize;
     int topOffset = (height - iconSize) / 2;
     if (m_renderMode == NormalMode) {
+        QIcon icon;
+        if (isPlaying) {
+            icon = m_showPlaying;
+        } else {
+            QPixmap artwork;
+            if (subType == "Artist" || subType == "Album" || subType == "AudioGenre" || subType =="Audio Stream" || subType == "Audio Feed" ||
+                subType == "Movie" || subType == "VideoGenre" || subType == "Actor" || subType == "Director" || subType == "Video Feed") {
+                if (Utilities::artworkIsInCache(mediaItem)) {
+                    artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+                } else if (artworkNeededIndex(mediaItem) == -1) {
+                    m_itemsThatNeedArtwork->append(mediaItem);
+                    getArtwork();
+                }
+            }
+            if (!artwork.isNull()) {
+                icon = QIcon(artwork);
+                hasCustomArtwork = true;
+            } else {
+                icon = index.data(Qt::DecorationRole).value<QIcon>();
+            }
+        }
+        iconSize = hasCustomArtwork ? height - 2: m_iconSize;
+        topOffset = (height - iconSize) / 2;
         if (!icon.isNull()) {
             icon.paint(&p, left + topOffset, top + topOffset, iconSize, iconSize, Qt::AlignCenter, QIcon::Normal);
         }
-    }
-    if (!exists && m_renderMode == NormalMode) {
-        KIcon("emblem-unmounted").paint(&p, left + m_padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
+        if (!exists) {
+            KIcon("emblem-unmounted").paint(&p, left + m_padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
+        }
     }
     
     //Paint text
@@ -515,3 +540,57 @@ void MediaItemDelegate::setUseProxy(bool b)
 {
     m_useProxy = b;
 }
+
+int MediaItemDelegate::artworkNeededIndex(const MediaItem &mediaItem) const
+{
+    int foundIndex = -1;
+    for (int i = 0; i < m_itemsThatNeedArtwork->count(); i++) {
+        MediaItem item = m_itemsThatNeedArtwork->at(i);
+        if (item.url == mediaItem.url) {
+            foundIndex = i;
+            break;
+        }
+    }
+    return foundIndex;
+}
+
+void MediaItemDelegate::getArtwork() const
+{
+    if (!m_utilThread->isRunning() && !m_itemsThatNeedArtwork->isEmpty()) {
+        MediaItem mediaItem = m_itemsThatNeedArtwork->first();
+        m_utilThread->getArtworkFromMediaItem(mediaItem);
+    }
+}
+
+void MediaItemDelegate::gotArtwork(const QImage &artwork, const MediaItem &mediaItem)
+{
+    //Find mediaItem and remove from list
+    int foundIndex = artworkNeededIndex(mediaItem);
+    if (foundIndex != -1) {
+        m_itemsThatNeedArtwork->removeAt(foundIndex);
+    }
+
+    //Determine index to update
+    if (!artwork.isNull()) {
+        QModelIndex index;
+        if (m_useProxy) {
+            MediaSortFilterProxyModel *proxyModel = (MediaSortFilterProxyModel *)m_view->model();
+            MediaItemModel *model = (MediaItemModel *)proxyModel->sourceModel();
+            int row = model->rowOfUrl(mediaItem.url);
+            index = proxyModel->mapFromSource(model->index(row, 0));
+        } else {
+            MediaItemModel * model = (MediaItemModel *) index.model();
+            int row = model->rowOfUrl(mediaItem.url);
+            index = model->index(row, 0);
+        }
+        m_view->update(index);
+    }
+
+    //Get artwork for next item
+    if (m_utilThread->wait() && !m_itemsThatNeedArtwork->isEmpty()) {
+        MediaItem mediaItem = m_itemsThatNeedArtwork->first();
+        m_utilThread->getArtworkFromMediaItem(mediaItem);
+    }
+
+}
+

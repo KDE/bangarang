@@ -333,43 +333,7 @@ void SemanticsListEngine::run()
             }
         }
         
-        //Get local album artwork
-        if (m_nepomukInited) {
-            MediaVocabulary mediaVocabulary;
-            for (int i = 0; i < mediaList.count(); i++) {
-                if (m_stop) {
-                    return;
-                }
-                MediaItem mediaItem = mediaList.at(i);
-                if (mediaItem.fields["categoryType"].toString() == "Album") {
-                    MediaQuery query;
-                    QStringList bindings;
-                    bindings.append(mediaVocabulary.mediaResourceBinding());
-                    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-                    bindings.append(mediaVocabulary.artworkBinding());
-                    query.select(bindings, MediaQuery::Distinct);
-                    query.startWhere();
-                    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-                    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, mediaItem.title, MediaQuery::Equal));
-                    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-                    query.endWhere();
-                    query.addLimit(5);
-                    Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-                    
-                    while( it.next() ) {
-                        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
-                        if (!artwork.isNull()) {
-                            mediaItem.hasCustomArtwork = true;
-                            emit updateArtwork(artwork, mediaItem);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
-
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();
