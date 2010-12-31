@@ -46,6 +46,9 @@ void Utilities::Thread::run()
             }
             emit gotArtworks(artworks, m_mediaItem);
         }
+    } else if (m_action == "getArtwork") {
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(m_mediaItem);
+        emit gotArtwork(artwork, m_mediaItem);
     }
 }
 
@@ -58,3 +61,11 @@ void Utilities::Thread::getArtworksFromMediaItem(const MediaItem &mediaItem)
     }
 }
 
+void Utilities::Thread::getArtworkFromMediaItem(const MediaItem &mediaItem)
+{
+    if (!isRunning()) {
+        m_action = "getArtwork";
+        m_mediaItem = mediaItem;
+        start();
+    }
+}

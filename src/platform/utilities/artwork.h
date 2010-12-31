@@ -53,5 +53,10 @@ namespace Utilities {
     QIcon defaultArtworkForMediaItem(const MediaItem &mediaItem);
     QPixmap reflection(QPixmap &pixmap);
     KIcon turnIconOff(KIcon icon, QSize size);
+    static QHash<QString, QImage> imageCache;
+    QImage findArtworkInCache(const MediaItem & mediaItem);
+    bool artworkIsInCache(const MediaItem & mediaItem);
+    void updateImageCache(const MediaItem & mediaItem, const QImage & image);
+    void clearSubTypesFromImageCache(const QString & subType);
 }
 #endif // UTILITIES_ARTWORK_H

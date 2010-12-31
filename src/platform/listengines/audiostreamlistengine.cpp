@@ -145,37 +145,6 @@ void AudioStreamListEngine::run()
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
-    //Get artwork
-    if (m_nepomukInited) {
-        MediaVocabulary mediaVocabulary;
-        for (int i = 0; i < mediaList.count(); i++) {
-            MediaItem mediaItem = mediaList.at(i);
-            MediaQuery query;
-            QStringList bindings;
-            bindings.append(mediaVocabulary.mediaResourceBinding());
-            bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-            bindings.append(mediaVocabulary.artworkBinding());
-            query.select(bindings, MediaQuery::Distinct);
-            query.startWhere();
-            query.addCondition(mediaVocabulary.hasTypeAudioStream(MediaQuery::Required));
-            query.addCondition(mediaVocabulary.hasUrl(MediaQuery::Required, mediaItem.url));
-            query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Required));
-            query.endWhere();
-            query.addLimit(5);
-            Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
-            
-            while( it.next() ) {
-                MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-                QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
-                if (!artwork.isNull()) {
-                    mediaItem.hasCustomArtwork = true;
-                    emit updateArtwork(artwork, mediaItem);
-                    break;
-                }
-            }
-        }
-    }
-
     m_requestSignature = QString();
     m_subRequestSignature = QString();
 }

@@ -187,7 +187,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Refresh Media View
     action = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
     action->setShortcut(Qt::Key_F5);
-    connect(action, SIGNAL(triggered()), m_application->browsingModel(), SLOT(reload()));
+    connect(action, SIGNAL(triggered()), this, SLOT(mediaViewRefresh()));
     m_shortcutsCollection->addAction("reload", action);
 
     //Remove selected from playlist
@@ -540,6 +540,16 @@ QMenu * ActionsManager::infoMenu()
 //------------------
 //-- Action SLOTS --
 //------------------
+void ActionsManager::mediaViewRefresh()
+{
+    //Clear image cache
+    if (m_application->browsingModel()->rowCount() > 0 ){
+        MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(0);
+        Utilities::clearSubTypesFromImageCache(mediaItem.subType());
+    }
+    m_application->browsingModel()->reload();
+}
+
 void ActionsManager::fullScreenToggle()
 {
     if (m_parent->isFullScreen()) {

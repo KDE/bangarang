@@ -32,6 +32,7 @@ namespace Utilities {
         ~Thread();
         void run();
         void getArtworksFromMediaItem(const MediaItem &mediaItem);
+        void getArtworkFromMediaItem(const MediaItem &mediaItem);
 
     private:
         MediaItem m_mediaItem;
@@ -39,6 +40,7 @@ namespace Utilities {
 
     signals:
         void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
+        void gotArtwork(const QImage &artwork, const MediaItem &mediaItem);
     };
 }
 
