@@ -67,6 +67,7 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     m_itemsThatNeedArtwork = new QList<MediaItem>();
     m_utilThread = new Utilities::Thread(this);
     connect(m_utilThread, SIGNAL(gotArtwork(QImage,MediaItem)), this, SLOT(gotArtwork(QImage,MediaItem)));
+    m_suppressSemanticComment = false;
 
     m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
@@ -220,7 +221,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     if (hasSubTitle && m_renderMode == NormalMode) {
         p.setPen(subColor);
         QString subTitle = index.data(MediaItem::SubTitleRole).toString();
-        QString comment = index.data(MediaItem::SemanticCommentRole).toString();
+        QString comment = m_suppressSemanticComment ? QString() : index.data(MediaItem::SemanticCommentRole).toString();
         if (!comment.isEmpty()) {
             QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
             QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
@@ -544,6 +545,16 @@ int MediaItemDelegate::heightForAllRows()
 void MediaItemDelegate::setUseProxy(bool b)
 {
     m_useProxy = b;
+}
+
+void MediaItemDelegate::setSuppressSemanticComment(bool suppress)
+{
+    m_suppressSemanticComment = suppress;
+}
+
+bool MediaItemDelegate::suppressSemanticComment()
+{
+    return m_suppressSemanticComment;
 }
 
 int MediaItemDelegate::artworkNeededIndex(const MediaItem &mediaItem) const

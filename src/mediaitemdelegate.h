@@ -65,6 +65,8 @@ class MediaItemDelegate : public QItemDelegate
         int heightForAllRows();
         void setUseProxy(bool b = true);
         bool useProxy() const { return m_useProxy; }
+        void setSuppressSemanticComment(bool suppress);
+        bool suppressSemanticComment();
         QRect ratingRect(const QRect *rect) const;
         QRect addRmPlaylistRect(const QRect *rect) const;
 
@@ -95,6 +97,7 @@ class MediaItemDelegate : public QItemDelegate
         int m_textInner;
         Utilities::Thread * m_utilThread;
         QList<MediaItem> *m_itemsThatNeedArtwork;
+        bool m_suppressSemanticComment;
 
         int artworkNeededIndex(const MediaItem &mediaItem) const;
 
