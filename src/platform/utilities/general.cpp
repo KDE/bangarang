@@ -367,8 +367,8 @@ QString Utilities::wordsForTimeSince(const QDateTime &dateTime)
         return QString();
     }
 
-    int msecsSince = dateTime.msecsTo(currentDateTime);
-    int minutesSince = msecsSince/60000;
+    int secsSince = dateTime.secsTo(currentDateTime);
+    int minutesSince = secsSince/60;
     int hoursSince = minutesSince/60;
     int daysSince = dateTime.daysTo(currentDateTime);
     int weeksSince = daysSince/7;
