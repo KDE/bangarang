@@ -218,25 +218,30 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                 top+1, textWidth, height,
                 vAlign | hAlign, text);
     if (hasSubTitle && m_renderMode == NormalMode) {
-        QString subTitle = index.data(MediaItem::SubTitleRole).toString();
-        subTitle = fm.elidedText(subTitle, Qt::ElideRight, textWidth);
         p.setPen(subColor);
-        p.drawText(left + textInner,
-                    top, textWidth, height,
-                    Qt::AlignBottom | hAlign, subTitle);
-        if (fm.width(subTitle) < textWidth) {
-            QFont commentFont = KGlobalSettings::smallestReadableFont();
-            commentFont.setItalic(true);
+        QString subTitle = index.data(MediaItem::SubTitleRole).toString();
+        QString comment = index.data(MediaItem::SemanticCommentRole).toString();
+        if (!comment.isEmpty()) {
             QString spacer  = subTitle.isEmpty() ? QString() : QString("  ");
             QString comment = spacer + index.data(MediaItem::SemanticCommentRole).toString();
+            QFont commentFont = KGlobalSettings::smallestReadableFont();
+            commentFont.setItalic(true);
             QFontMetrics fmComment(commentFont);
-            comment = fmComment.elidedText(comment, Qt::ElideRight, textWidth - fm.width(subTitle));
+            comment = fmComment.elidedText(comment, Qt::ElideRight, textWidth);
             p.setFont(commentFont);
-            p.drawText(left + textInner + fm.width(subTitle),
-                        top, textWidth - fm.width(subTitle), height,
-                        Qt::AlignBottom | hAlign, comment);
+            p.drawText(left + textInner,
+                       top, textWidth, height,
+                       Qt::AlignBottom | Qt::AlignRight, comment);
             p.setFont(textFont);
+            if (fmComment.width(comment) < textWidth) {
+                subTitle = fm.elidedText(subTitle, Qt::ElideRight, textWidth - fmComment.width(comment));
+            }
+        } else {
+            subTitle = fm.elidedText(subTitle, Qt::ElideRight, textWidth);
         }
+        p.drawText(left + textInner,
+                   top, textWidth, height,
+                   Qt::AlignBottom | hAlign, subTitle);
     }
 
     

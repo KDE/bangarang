@@ -759,13 +759,6 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
-    if (mediaItem.semanticComment == "Last played:") {
-        KDateTime lastPlayedTime(mediaItem.fields["lastPlayed"].toDateTime());
-        if (lastPlayedTime.isValid()) {
-            QString lastPlayedStr = lastPlayedTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
-            mediaItem.semanticComment = i18n("Last played: %1", lastPlayedStr);
-        }
-    }
     titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
     if (!m_suppressTooltip) {
         QString tooltip;
@@ -774,14 +767,19 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
             if (description.length() > 300) {
                 description.chop(300);
                 description = description + QString("...");
+                description = i18n("<b>Description:</b>%1", description);
             }
             tooltip.append(QString("<br>%1").arg(description));
         }
         if (!mediaItem.semanticComment.isEmpty()) {
-            tooltip.append(QString("<br>%1").arg(mediaItem.semanticComment));
+            tooltip.append(QString("<br><i>%1</i>").arg(mediaItem.semanticComment));
         }
         if (!tooltip.isEmpty()) {
-            tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
+            if (mediaItem.subTitle.isEmpty()) {
+                tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
+            } else {
+                tooltip.prepend((QString("<b>%1</b><br>%2").arg(mediaItem.title).arg(mediaItem.subTitle)));
+            }
             titleItem->setData(tooltip, Qt::ToolTipRole);
         }
     }

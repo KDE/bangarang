@@ -26,6 +26,7 @@
 
 #include <KUrl>
 #include <KDebug>
+#include <KLocale>
 #include <Solid/Device>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
@@ -359,6 +360,47 @@ QString Utilities::titleForRequest(const QString& title)
     return edited;
 }
 
+QString Utilities::wordsForTimeSince(const QDateTime &dateTime)
+{
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    if (!dateTime.isValid() && dateTime > currentDateTime) {
+        return QString();
+    }
+
+    int msecsSince = dateTime.msecsTo(currentDateTime);
+    int minutesSince = msecsSince/60000;
+    int hoursSince = minutesSince/60;
+    int daysSince = dateTime.daysTo(currentDateTime);
+    int weeksSince = daysSince/7;
+    int monthsSince = 0;
+    int yearsSince = currentDateTime.date().year() - dateTime.date().year();
+    if (currentDateTime.date().month() != dateTime.date().month() &&
+        weeksSince >= 4) {
+        if (yearsSince == 0) {
+            monthsSince = currentDateTime.date().month() - dateTime.date().month();
+        } else {
+            monthsSince = 12*yearsSince + (currentDateTime.date().month() - dateTime.date().month());
+        }
+    }
+
+    QString words;
+    if (yearsSince > 0) {
+        words = i18np("a year ago", "%1 years ago", yearsSince);
+    } else if (monthsSince > 0){
+        words = i18np("a month ago", "%1 months ago", monthsSince);
+    } else if (weeksSince > 0) {
+        words = i18np("a week ago", "%1 weeks ago", weeksSince);
+    } else if (daysSince > 0) {
+        words = i18np("a day ago", "%1 days ago", daysSince);
+    } else if (hoursSince > 0) {
+        words = i18np("an hour ago", "%1 hours ago", hoursSince);
+    } else if (minutesSince > 0) {
+        words = i18np("a minute ago", "%1 minutes ago", minutesSince);
+    } else {
+        words = i18n("a few seconds ago");
+    }
+    return words;
+}
 
 #endif //UTILITIES_GENERAL_CPP
 
