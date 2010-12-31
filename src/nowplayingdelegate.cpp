@@ -175,12 +175,17 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->setFont(infoFont);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (mediaItem.subType() == "Music") {
+    if (mediaItem.type == "Audio") {
         int line = 0;
 
         QString artists = mediaItem.fields["artist"].toStringList().join(", ");
         if (!artists.isEmpty()) {
             artists = fm.elidedText(artists, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString composers = mediaItem.fields["composer"].toStringList().join(", ");
+        if (!composers.isEmpty()) {
+            composers = fm.elidedText(composers, Qt::ElideRight, infoWidth);
             line++;
         }
         QString album = mediaItem.fields["album"].toString();
@@ -193,9 +198,14 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
             line++;
         }
-        QString year = QString("%1").arg(mediaItem.fields["year"].toInt());
-        if (!year.isEmpty()) {
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
             line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
+            line = line + int((0.5+descRect.height())/fm.lineSpacing());
         }
 
         QRect infoRect = option.rect.adjusted(5,
@@ -215,6 +225,17 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
             painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, artists);
+            line++;
+        }
+        if (!composers.isEmpty()) {
+            QString field = i18n("Composer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, composers);
             line++;
         }
         if (!album.isEmpty()) {
@@ -239,7 +260,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
             line++;
         }
-        if (!year.isEmpty()) {
+        if (year > 0) {
             painter->save();
             QString field = i18n("Year: ");
             QFontMetrics fm(fieldFont);
@@ -248,14 +269,18 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->setPen(fieldColor);
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, year);
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
+            line++;
+        }
+        if (!description.isEmpty()) {
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
             line++;
         }
     }
-    if (mediaItem.subType() == "Movie") {
+    if (mediaItem.type == "Video") {
         int line = 0;
-        QString year = QString("%1").arg(mediaItem.fields["year"].toInt());
-        if (!year.isEmpty()) {
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
             line++;
         }
         QString actors = mediaItem.fields["actor"].toStringList().join(", ");
@@ -266,6 +291,16 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         QString directors = mediaItem.fields["director"].toStringList().join(", ");
         if (!directors.isEmpty()) {
             directors = fm.elidedText(directors, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString writers = mediaItem.fields["writer"].toStringList().join(", ");
+        if (!writers.isEmpty()) {
+            writers = fm.elidedText(writers, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString producers = mediaItem.fields["producer"].toStringList().join(", ");
+        if (!producers.isEmpty()) {
+            producers = fm.elidedText(producers, Qt::ElideRight, infoWidth);
             line++;
         }
         QString description = mediaItem.fields["description"].toString();
@@ -282,7 +317,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             return;
         }
         line = 0;
-        if (!year.isEmpty()) {
+        if (year > 0) {
             QString field = i18n("Year: ");
             QFontMetrics fm(fieldFont);
             painter->save();
@@ -290,7 +325,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->setPen(fieldColor);
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, year);
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
             line++;
         }
         if (!actors.isEmpty()) {
@@ -313,6 +348,28 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
             painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, directors);
+            line++;
+        }
+        if (!writers.isEmpty()) {
+            QString field = i18n("Writer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, writers);
+            line++;
+        }
+        if (!producers.isEmpty()) {
+            QString field = i18n("Producer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, producers);
             line++;
         }
         if (!description.isEmpty()) {
