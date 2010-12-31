@@ -242,7 +242,7 @@ void SemanticsListEngine::run()
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
-                    mediaItem.semanticComment = QString("Last played:");
+                    mediaItem.semanticComment = Utilities::wordsForTimeSince(mediaItem.fields["lastPlayed"].toDateTime());
                     mediaList.append(mediaItem);
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
