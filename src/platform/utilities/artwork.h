@@ -39,15 +39,15 @@ namespace Utilities {
     */
     QString getArtworkUrlFromExternalImage(const QString& url, const QString& album = QString());
 
-    QPixmap getArtworkFromMediaItem(const MediaItem &mediaItem);
-    QImage getArtworkImageFromMediaItem(const MediaItem &mediaItem);
-    QImage getAlbumArtwork(const QString &album);
-    QList<QImage> getGenreArtworks(const QString &genre, const QString &type);
-    QList<QImage> getArtistArtworks(const QString &artist);
-    QList<QImage> getTagArtworks(const QString &tag, const QString &type);
-    QList<QImage> getTVSeriesArtworks(const QString &seriesTitle);
-    QList<QImage> getActorArtworks(const QString &actor);
-    QList<QImage> getDirectorArtworks(const QString &director);
+    QPixmap getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache = false);
+    QImage getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool ignoreCache = false);
+    QImage getAlbumArtwork(const QString &album, bool ignoreCache = false);
+    QList<QImage> getGenreArtworks(const QString &genre, const QString &type, bool ignoreCache = false);
+    QList<QImage> getArtistArtworks(const QString &artist, bool ignoreCache = false);
+    QList<QImage> getTagArtworks(const QString &tag, const QString &type, bool ignoreCache = false);
+    QList<QImage> getTVSeriesArtworks(const QString &seriesTitle, bool ignoreCache = false);
+    QList<QImage> getActorArtworks(const QString &actor, bool ignoreCache = false);
+    QList<QImage> getDirectorArtworks(const QString &director, bool ignoreCache = false);
     bool compareImage(const QImage &image1, const QImage image2, int strength = 20);
     QString getGenreArtworkUrl(const QString &genre);
     QIcon defaultArtworkForMediaItem(const MediaItem &mediaItem);
@@ -57,6 +57,7 @@ namespace Utilities {
     QImage findArtworkInCache(const MediaItem & mediaItem);
     bool artworkIsInCache(const MediaItem & mediaItem);
     void updateImageCache(const MediaItem & mediaItem, const QImage & image);
+    void removeFromImageCache(const MediaItem & mediaItem);
     void clearSubTypesFromImageCache(const QString & subType);
 }
 #endif // UTILITIES_ARTWORK_H
