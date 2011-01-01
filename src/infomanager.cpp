@@ -34,7 +34,6 @@
 #include <KGlobalSettings>
 #include <KAction>
 #include <KDebug>
-#include <QDateEdit>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -43,6 +42,8 @@
 #include <Nepomuk/ResourceManager>
 #include <nepomuk/variant.h>
 #include <QComboBox>
+#include <QDateEdit>
+#include <QDesktopServices>
 #include <QSpinBox>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
@@ -63,6 +64,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui->infoFetcherHolder->setVisible(false);
     ui->infoFetcherExpander->setVisible(false);
     ui->infoFetcherExpander->setCurrentIndex(0);
+    ui->infoFetcherLink->setVisible(false);
     QFont fetcherMessageFont = KGlobalSettings::smallestReadableFont();
     ui->infoFetcherLabel->setFont(fetcherMessageFont);
     ui->infoFetcherSelector->setFont(fetcherMessageFont);
@@ -80,6 +82,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoFetch, SIGNAL(clicked()), this, SLOT(fetchInfo()));
     connect(ui->showInfoFetcherExpander, SIGNAL(clicked()), this, SLOT(toggleShowInfoFetcherExpander()));
     connect(ui->infoFetcherSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectInfoFetcher(int)));
+    connect(ui->infoFetcherLink, SIGNAL(clicked()), this, SLOT(openInfoFetcherLink()));
     connect(m_infoItemModel, SIGNAL(fetching()), this, SLOT(showFetching()));
     connect(m_infoItemModel, SIGNAL(fetchingStatusUpdated()), this, SLOT(fetchingStatusUpdated()));
     connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(fetchComplete()));
@@ -191,8 +194,19 @@ void InfoManager::selectInfoFetcher(int index)
 {
     if (index < 0) {
       return;
-  }
+    }
     m_currentInfoFetcher = m_infoItemModel->availableInfoFetchers().at(index);
+    if (m_currentInfoFetcher->about().isEmpty()) {
+        ui->infoFetcherSelector->setToolTip(QString(""));
+    } else {
+        ui->infoFetcherSelector->setToolTip(QString("<b>%1</b><br>%2")
+                                            .arg(m_currentInfoFetcher->name())
+                                            .arg(m_currentInfoFetcher->about()));
+    }
+    ui->infoFetcherLink->setToolTip(QString("<b>%1</b><br>%2")
+                                    .arg(m_currentInfoFetcher->name())
+                                    .arg(m_currentInfoFetcher->url().prettyUrl()));
+    ui->infoFetcherLink->setVisible(m_currentInfoFetcher->url().isValid());
 }
 
 void InfoManager::selectInfoFetcher(QAction * infoFetcherAction)
@@ -481,7 +495,7 @@ void InfoManager::showInfoFetcher()
         bool isFetching = false;
         ui->infoFetcherSelector->clear();
         for (int i = 0; i < m_infoItemModel->availableInfoFetchers().count(); i++) {
-            InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(0);
+            InfoFetcher * infoFetcher = m_infoItemModel->availableInfoFetchers().at(i);
             ui->infoFetcherSelector->addItem(infoFetcher->icon(), infoFetcher->name());
             if (infoFetcher->isFetching()) {
                 ui->infoFetcherSelector->setCurrentIndex(i);
@@ -537,10 +551,10 @@ void InfoManager::fetchComplete()
         }
         ui->fetchedMatches->setCurrentRow(0);;
         connect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
-        ui->infoFetcherExpander->setCurrentIndex(1);
         if (!ui->infoFetcherExpander->isVisible()) {
             toggleShowInfoFetcherExpander();
         }
+        ui->infoFetcherExpander->setCurrentIndex(1);
         ui->fetchedMatches->setFocus();
     } else {
         ui->infoFetcherExpander->setCurrentIndex(0);
@@ -644,3 +658,9 @@ void InfoManager::fetchingStatusUpdated()
     }
 }
 
+void InfoManager::openInfoFetcherLink()
+{
+    if (m_currentInfoFetcher->url().isValid()) {
+        QDesktopServices::openUrl(m_currentInfoFetcher->url());
+    }
+}

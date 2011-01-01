@@ -19,6 +19,7 @@
 #ifndef INFOFETCHER_H
 #define INFOFETCHER_H
 
+#include <KUrl>
 #include <QtCore>
 #include <QIcon>
 class MediaItem;
@@ -34,6 +35,8 @@ class InfoFetcher : public QObject
         ~InfoFetcher();
         QString name();
         QIcon icon();
+        KUrl url();
+        QString about();
         virtual QStringList fetchableFields(const QString &subType)
         {
             return m_fetchableFields[subType];
@@ -63,6 +66,7 @@ class InfoFetcher : public QObject
     protected:
         QString m_name;
         QIcon m_icon;
+        KUrl m_url;
         QList<MediaItem> m_mediaList;
         QHash<QString, QStringList> m_fetchableFields;
         QHash<QString, QStringList> m_requiredFields;
@@ -70,6 +74,7 @@ class InfoFetcher : public QObject
         bool m_updateRequiredFields;
         bool m_updateArtwork;
         bool m_timeout;
+        QString m_about;
         QTimer *m_timer;
         int m_timeoutLength;
 

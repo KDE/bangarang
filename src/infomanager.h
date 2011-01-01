@@ -95,6 +95,7 @@ class InfoManager : public QObject
         void toggleShowInfoFetcherExpander();
         void selectInfoFetcher(int index);
         void fetchingStatusUpdated();
+        void openInfoFetcherLink();
         
     Q_SIGNALS:
         void infoBoxSelectionChanged(QList<MediaItem> selectedItems);
