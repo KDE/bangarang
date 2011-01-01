@@ -556,14 +556,6 @@ void VideoListEngine::run()
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
-                    QStringList contextTitles;
-                    contextTitles << i18n("Recently Played") << i18n("Highest Rated") << i18n("Frequently Played");
-                    QStringList contextLRIs;
-                    contextLRIs << QString("semantics://recent?video||limit=4||director=%1").arg(director);
-                    contextLRIs << QString("semantics://highest?video||limit=4||director=%1").arg(director);
-                    contextLRIs << QString("semantics://frequent?video||limit=4||director=%1").arg(director);
-                    mediaItem.fields["contextTitles"] = contextTitles;
-                    mediaItem.fields["contextLRIs"] = contextLRIs;
                     mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||director=%1").arg(director));
                     mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||director=%1").arg(director));
                     mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||director=%1").arg(director));
