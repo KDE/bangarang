@@ -1041,6 +1041,7 @@ void MainWindow::setupIcons()
     ui->closeMediaListFilter->setIcon(KIcon("dialog-close"));
     ui->infoIndexSelected->setIcon(KIcon("system-run"));
     ui->showInfoFetcherExpander->setIcon(KIcon("help-about"));
+    ui->infoFetcherLink->setIcon(KIcon("emblem-symbolic-link"));
 
 
     //Now Playing View bottom bar

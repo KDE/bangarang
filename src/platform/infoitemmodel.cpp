@@ -22,6 +22,7 @@
 #include "infofetchers/dbpediainfofetcher.h"
 #include "infofetchers/feedinfofetcher.h"
 #include "infofetchers/filenameinfofetcher.h"
+#include "infofetchers/tmdbinfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>
@@ -120,6 +121,14 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_drillLris["Director"] = "video://sources?||director=%1";
 
     //Set up InfoFetchers
+    TMDBInfoFetcher * tmdbInfoFetcher = new TMDBInfoFetcher(this);
+    connect(tmdbInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
+    connect(tmdbInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(tmdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(tmdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(tmdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
+    m_infoFetchers.append(tmdbInfoFetcher);
+
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
@@ -164,6 +173,7 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     clear();
     
     if (m_mediaList.count() > 0) {
+        Utilities::removeFromImageCache(m_mediaList.at(0));
         QString type = m_mediaList.at(0).type;
         QString subType = m_mediaList.at(0).subType();
 
@@ -394,9 +404,9 @@ void InfoItemModel::selectFetchedMatch(int index)
                 item(i)->setData(value, Qt::EditRole);
             } else if (field == "artwork") {
                 //disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
-                item(i)->setData(match.artwork, Qt::DecorationRole);
                 item(i)->setData(match.fields["artworkUrl"], Qt::DisplayRole);
                 item(i)->setData(match.fields["artworkUrl"], Qt::EditRole);
+                item(i)->setData(match.artwork, Qt::DecorationRole);
                 //connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             } else {
                 item(i)->setData(match.fields[field], Qt::DisplayRole);
@@ -432,7 +442,7 @@ void InfoItemModel::setRating(int rating)
 
 void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
 {
-    if (!m_isFetching) {
+    if (!m_isFetching || fetchedMatches.isEmpty()) {
         return;
     }
 
@@ -447,7 +457,6 @@ void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
     }
     if (foundIndex != -1 && m_fetchType == AutoFetch) {
         m_mediaList.replace(foundIndex, match);
-
     } else if (foundIndex != -1 && m_fetchType == Fetch) {
         m_fetchedMatches = fetchedMatches;
         selectFetchedMatch(0);
@@ -746,12 +755,13 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
             disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
             QString originalArtworkUrl = changedItem->data(InfoItemModel::OriginalValueRole).toString();
-            if (artworkUrl != originalArtworkUrl && artworkUrl.isEmpty()) {
-                for (int i = 0; i < m_mediaList.count(); i++) {
-                    MediaItem mediaItem = m_mediaList.at(i);
+            for (int i = 0; i < m_mediaList.count(); i++) {
+                MediaItem mediaItem = m_mediaList.at(i);
+                if (artworkUrl != originalArtworkUrl && artworkUrl.isEmpty()) {
                     mediaItem.artwork = Utilities::defaultArtworkForMediaItem(mediaItem);
                     m_mediaList.replace(i, mediaItem);
                 }
+                Utilities::removeFromImageCache(mediaItem);
             }
             getArtwork(changedItem, artworkUrl);
             connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
@@ -823,6 +833,7 @@ void InfoItemModel::saveCustomGenreInfo(QList<MediaItem> mediaList)
 bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverride)
 {
     bool artworkExists = true;
+    bool ignoreCache = m_modified;
     QList<QVariant> emptyArtworkPixmaps;
     fieldItem->setData(emptyArtworkPixmaps, InfoItemModel::ArtworkListRole);
     if (m_mediaList.count() == 1) {
@@ -831,15 +842,15 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
             mediaItem.fields["artworkUrl"] = artworkUrlOverride;
         }
         if (mediaItem.type == "Category") {
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem, ignoreCache);
             if (!artwork.isNull()) {
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
             } else {
                 fieldItem->setData(mediaItem.artwork, Qt::DecorationRole);
-                m_utilThread->getArtworksFromMediaItem(mediaItem);
+                m_utilThread->getArtworksFromMediaItem(mediaItem, ignoreCache);
             }
         } else {
-            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem);
+            QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem, ignoreCache);
             if (!artwork.isNull()) {
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
             } else {
@@ -855,7 +866,7 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
                 if (!artworkUrlOverride.isNull()) {
                     mediaItem.fields["artworkUrl"] = artworkUrlOverride;
                 }
-                QImage itemArtwork = Utilities::getArtworkImageFromMediaItem(mediaItem);
+                QImage itemArtwork = Utilities::getArtworkImageFromMediaItem(mediaItem, ignoreCache);
                 if (!lastItemArtwork.isNull() && !itemArtwork.isNull()) {
                     bool sameImage = Utilities::compareImage(lastItemArtwork, itemArtwork, 50);
                     if (!sameImage) {

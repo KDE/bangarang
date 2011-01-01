@@ -28,8 +28,9 @@
 static KAboutData aboutData( "bangarang", 0,
         ki18n("Bangarang"), "1.90 (2.0 Beta 1)",
         ki18n("A Media Player"), KAboutData::License_GPL_V2,
-        ki18n("Copyright 2010, Andrew Lake"), KLocalizedString(),
-        "" );
+        ki18n("Copyright 2010, Andrew Lake"),
+        ki18n("Note: This product uses the TMDb API but is not endorsed or certified by TMDb."),
+        "http://bangarangkde.wordpress.org" );
 
 int main(int argc, char *argv[])
 {

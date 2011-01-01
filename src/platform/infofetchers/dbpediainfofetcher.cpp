@@ -33,7 +33,8 @@
 DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
 {
     m_name = i18n("DBPedia");
-    //m_icon = KIcon("dbpedia");
+    m_icon = KIcon("bangarang-dbpedia");
+    m_url = KUrl("http://dbpedia.org");
 
     m_dbPediaQuery = new DBPediaQuery(this);
     connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));

@@ -26,6 +26,7 @@ InfoFetcher::InfoFetcher(QObject * parent) : QObject(parent)
 {
     m_name = QString();
     m_icon = KIcon("run-build");
+    m_url = KUrl();
     m_isFetching = false;
     m_timeout = false;
     m_timeoutLength = 6000;
@@ -47,6 +48,16 @@ QString InfoFetcher::name()
 QIcon InfoFetcher::icon()
 {
     return m_icon;
+}
+
+KUrl InfoFetcher::url()
+{
+    return m_url;
+}
+
+QString InfoFetcher::about()
+{
+    return m_about;
 }
 
 void InfoFetcher::setValue(const QString &field, const QVariant &value)
