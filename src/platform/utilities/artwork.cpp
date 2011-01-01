@@ -44,10 +44,12 @@
 #include <QMutexLocker>
 
 
-QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
+QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
+    kDebug() << mediaItem.fields["artworkUrl"].toString();
     QPixmap pixmap = QPixmap();
-    if (artworkIsInCache(mediaItem)) {
+    if (!ignoreCache && artworkIsInCache(mediaItem)) {
+        kDebug() << "FOUND IN CACHE!";
         QImage image = findArtworkInCache(mediaItem);
         pixmap = QPixmap::fromImage(image);
         return pixmap;
@@ -86,14 +88,16 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem)
             }
         }
     }
-    updateImageCache(mediaItem, pixmap.toImage());
+    if (!ignoreCache) {
+        updateImageCache(mediaItem, pixmap.toImage());
+    }
     return pixmap;
 }
 
-QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
+QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
     QImage image = QImage();
-    if (artworkIsInCache(mediaItem)) {
+    if (!ignoreCache && artworkIsInCache(mediaItem)) {
         image = findArtworkInCache(mediaItem);
         return image;
     }
@@ -126,11 +130,13 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem)
             }
         }
     }
-    updateImageCache(mediaItem, image);
+    if (!ignoreCache) {
+        updateImageCache(mediaItem, image);
+    }
     return image;
 }
 
-QImage Utilities::getAlbumArtwork(const QString &album)
+QImage Utilities::getAlbumArtwork(const QString &album, bool ignoreCache)
 {
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
@@ -149,7 +155,7 @@ QImage Utilities::getAlbumArtwork(const QString &album)
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
         if (!artwork.isNull()) {
             return artwork;
         }
@@ -157,7 +163,7 @@ QImage Utilities::getAlbumArtwork(const QString &album)
     return QImage();
 }
 
-QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &type)
+QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &type, bool ignoreCache)
 {
     //Get album artworks associated with genre
     QList<QImage> artworks;
@@ -183,7 +189,7 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
         while( it.next() ) {
             QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
             if (!album.isEmpty()) {
-                QImage artwork = getAlbumArtwork(album);
+                QImage artwork = getAlbumArtwork(album, ignoreCache);
                 if (!artwork.isNull()) {
                     artworks.append(artwork);
                 }
@@ -208,7 +214,7 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
 
         while( it.next() ) {
             MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
-            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
             if (!artwork.isNull()) {
                 artworks.append(artwork);
             }
@@ -217,7 +223,7 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
     return artworks;
 }
 
-QList<QImage> Utilities::getArtistArtworks(const QString &artist)
+QList<QImage> Utilities::getArtistArtworks(const QString &artist, bool ignoreCache)
 {
     //Get album artworks associated with genre
     QList<QImage> artworks;
@@ -240,7 +246,7 @@ QList<QImage> Utilities::getArtistArtworks(const QString &artist)
     while( it.next() ) {
         QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
         if (!album.isEmpty()) {
-            QImage artwork = getAlbumArtwork(album);
+            QImage artwork = getAlbumArtwork(album, ignoreCache);
             if (!artwork.isNull()) {
                 artworks.append(artwork);
             }
@@ -249,7 +255,7 @@ QList<QImage> Utilities::getArtistArtworks(const QString &artist)
     return artworks;
 }
 
-QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type)
+QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type, bool ignoreCache)
 {
     //Get album artworks associated with genre
     QList<QImage> artworks;
@@ -273,7 +279,7 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type)
         while( it.next() ) {
             QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
             if (!album.isEmpty()) {
-                QImage artwork = getAlbumArtwork(album);
+                QImage artwork = getAlbumArtwork(album, ignoreCache);
                 if (!artwork.isNull()) {
                     artworks.append(artwork);
                 }
@@ -298,7 +304,7 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type)
 
         while( it.next() ) {
             MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
-            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
             if (!artwork.isNull()) {
                 artworks.append(artwork);
             }
@@ -307,7 +313,7 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type)
     return artworks;
 }
 
-QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle)
+QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ignoreCache)
 {
     QList<QImage> artworks;
     MediaVocabulary mediaVocabulary;
@@ -328,7 +334,7 @@ QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle)
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
         if (!artwork.isNull()) {
             artworks.append(artwork);
         }
@@ -336,7 +342,7 @@ QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle)
     return artworks;
 }
 
-QList<QImage> Utilities::getActorArtworks(const QString &actor)
+QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache)
 {
     QList<QImage> artworks;
     MediaVocabulary mediaVocabulary;
@@ -357,7 +363,7 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor)
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
         if (!artwork.isNull()) {
             artworks.append(artwork);
         }
@@ -365,7 +371,7 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor)
     return artworks;
 }
 
-QList<QImage> Utilities::getDirectorArtworks(const QString &director)
+QList<QImage> Utilities::getDirectorArtworks(const QString &director, bool ignoreCache)
 {
     QList<QImage> artworks;
     MediaVocabulary mediaVocabulary;
@@ -386,7 +392,7 @@ QList<QImage> Utilities::getDirectorArtworks(const QString &director)
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem);
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
         if (!artwork.isNull()) {
             artworks.append(artwork);
         }
@@ -604,6 +610,12 @@ void Utilities::updateImageCache(const MediaItem &mediaItem, const QImage &image
 {
     QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
     imageCache.insert(key, image);
+}
+
+void Utilities::removeFromImageCache(const MediaItem &mediaItem)
+{
+    QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
+    imageCache.remove(key);
 }
 
 void Utilities::clearSubTypesFromImageCache(const QString &subType)

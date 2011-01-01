@@ -18,7 +18,7 @@ void Utilities::Thread::run()
         if (m_mediaItem.type == "Audio" || m_mediaItem.type == "Video" ||
             (m_mediaItem.type == "Category" && (m_mediaItem.subType() == "AudioFeed" ||
                                                 m_mediaItem.subType() == "VideoFeed"))) {
-            QImage artwork = Utilities::getArtworkImageFromMediaItem(m_mediaItem);
+            QImage artwork = Utilities::getArtworkImageFromMediaItem(m_mediaItem, m_ignoreCache);
             QList<QImage> artworks;
             artworks.append(artwork);
             emit gotArtworks(artworks, m_mediaItem);
@@ -26,23 +26,23 @@ void Utilities::Thread::run()
             QList<QImage> artworks;
             QString itemTitle = m_mediaItem.fields["title"].toString();
             if (m_mediaItem.subType() == "AudioGenre") {
-                artworks = Utilities::getGenreArtworks(itemTitle, "audio");
+                artworks = Utilities::getGenreArtworks(itemTitle, "audio", m_ignoreCache);
             } else if (m_mediaItem.subType() == "VideoGenre") {
-                artworks = Utilities::getGenreArtworks(itemTitle, "video");
+                artworks = Utilities::getGenreArtworks(itemTitle, "video", m_ignoreCache);
             } else if (m_mediaItem.subType() == "Artist") {
-                artworks = Utilities::getArtistArtworks(itemTitle);
+                artworks = Utilities::getArtistArtworks(itemTitle, m_ignoreCache);
             } else if (m_mediaItem.subType() == "Album") {
-                artworks.append(Utilities::getAlbumArtwork(itemTitle));
+                artworks.append(Utilities::getAlbumArtwork(itemTitle, m_ignoreCache));
             } else if (m_mediaItem.subType() == "AudioTag") {
-                artworks = Utilities::getTagArtworks(itemTitle, "audio");
+                artworks = Utilities::getTagArtworks(itemTitle, "audio", m_ignoreCache);
             } else if (m_mediaItem.subType() == "VideoTag") {
-                artworks = Utilities::getTagArtworks(itemTitle, "video");
+                artworks = Utilities::getTagArtworks(itemTitle, "video", m_ignoreCache);
             } else if (m_mediaItem.subType() == "TV Series") {
-                artworks = Utilities::getTVSeriesArtworks(itemTitle);
+                artworks = Utilities::getTVSeriesArtworks(itemTitle, m_ignoreCache);
             } else if (m_mediaItem.subType() == "Actor") {
-                artworks = Utilities::getActorArtworks(itemTitle);
+                artworks = Utilities::getActorArtworks(itemTitle, m_ignoreCache);
             } else if (m_mediaItem.subType() == "Director") {
-                artworks = Utilities::getDirectorArtworks(itemTitle);
+                artworks = Utilities::getDirectorArtworks(itemTitle, m_ignoreCache);
             }
             emit gotArtworks(artworks, m_mediaItem);
         }
@@ -52,19 +52,21 @@ void Utilities::Thread::run()
     }
 }
 
-void Utilities::Thread::getArtworksFromMediaItem(const MediaItem &mediaItem)
+void Utilities::Thread::getArtworksFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
     if (!isRunning()) {
         m_action = "getArtworks";
+        m_ignoreCache = ignoreCache;
         m_mediaItem = mediaItem;
         start();
     }
 }
 
-void Utilities::Thread::getArtworkFromMediaItem(const MediaItem &mediaItem)
+void Utilities::Thread::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
     if (!isRunning()) {
         m_action = "getArtwork";
+        m_ignoreCache = ignoreCache;
         m_mediaItem = mediaItem;
         start();
     }
