@@ -38,9 +38,12 @@ TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
     m_url = KUrl("http://themoviedb.org");
     m_about = "Note: This fetcher uses the TMDb API but is not endorsed or certified by TMDb.";
 
+    //NOTE: The API key below must be used only in Bangarang.  Please do not use this key in other applications.
+    //      API keys can be requested from themoviedb.org.
     m_apiKey = "efa7a3197ca2ab2b9af306580c42075c";
     m_movieSearchAPI = QString("http://api.themoviedb.org/2.1/Movie.search/en/xml/%1/%2").arg(m_apiKey).arg("%1");
     m_movieInfoAPI = QString("http://api.themoviedb.org/2.1/Movie.getInfo/en/xml/%1/%2").arg(m_apiKey).arg("%1");
+    m_personSearchAPI = QString("http://api.themoviedb.org/2.1/Person.search/en/xml/%1/%2").arg(m_apiKey).arg("%1");
     m_timeout = 20000;
 
     m_downloader = new Downloader(this);
@@ -49,9 +52,18 @@ TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
 
     //Define fetchable fields
     m_fetchableFields["Movie"] = QStringList() << "artwork" << "title" << "description" << "actor" << "director" << "writer" << "audienceRating";
+    m_fetchableFields["Actor"] = QStringList() << "artwork" << "title" << "description";
+    m_fetchableFields["Director"] = QStringList() << "artwork" << "title" << "description";
+    m_fetchableFields["Writer"] = QStringList() << "artwork" << "title" << "description";
+    m_fetchableFields["Producer"] = QStringList() << "artwork" << "title" << "description";
 
     //Define required fields
     m_requiredFields["Movie"] = QStringList() << "title";
+    m_requiredFields["Actor"] = QStringList() << "title";
+    m_requiredFields["Director"] = QStringList() << "title";
+    m_requiredFields["Writer"] = QStringList() << "title";
+    m_requiredFields["Producer"] = QStringList() << "title";
+
 }
 
 bool TMDBInfoFetcher::available(const QString &subType)
@@ -67,11 +79,26 @@ void TMDBInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredF
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     m_requestKeys.clear();
+    m_fetchedMatches.clear();
+    m_thumbnailKeys.clear();
+    m_moreInfoKeys.clear();
     m_updateArtwork = updateArtwork;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
-        QString searchTerm = Utilities::titleForRequest(mediaItem.fields["title"].toString());
-        QString TMDBUrlStr = m_movieSearchAPI.arg(searchTerm);
+        QString searchTerm;
+        QString TMDBUrlStr;
+        if (mediaItem.subType() == "Movie") {
+            m_requestType = MovieRequest;
+            searchTerm = Utilities::titleForRequest(mediaItem.fields["title"].toString());
+            TMDBUrlStr = m_movieSearchAPI.arg(searchTerm);
+        } else if (mediaItem.subType() == "Actor" ||
+                   mediaItem.subType() == "Writer" ||
+                   mediaItem.subType() == "Director" ||
+                   mediaItem.subType() == "Producer") {
+            m_requestType = PersonRequest;
+            searchTerm = mediaItem.fields["title"].toString();
+            TMDBUrlStr = m_personSearchAPI.arg(searchTerm);
+        }
 
         KUrl TMDBUrl(TMDBUrlStr);
         if (!TMDBUrl.isEmpty()) {
@@ -155,6 +182,7 @@ void TMDBInfoFetcher::gotTMDBInfo(const KUrl &from, const KUrl &to)
 
 void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
 {
+
     //Determine if we got original request and process
     int originalRequestIndex = m_requestKeys.indexOf(from.prettyUrl());
     bool isOriginalRequest = (originalRequestIndex != -1);
@@ -169,68 +197,121 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
     QDomDocument TMDBDoc("TMDB");
     TMDBDoc.setContent(&file);
 
-    //Iterate through item nodes of the TMDB XML document
     QHash<int, KUrl> thumbnailUrls;
     QHash<int, KUrl> moreInfoUrls;
     QList<MediaItem> fetchedMatches;
-    QDomNodeList movies = TMDBDoc.elementsByTagName("movie");
-    for (int i = 0; i < movies.count(); i++) {
-        MediaItem match = mediaItem;
 
-        //Clear artwork
-        match.artwork = Utilities::defaultArtworkForMediaItem(match);
-        match.fields["artworkUrl"] = QString("");
+    //Read Movie results
+    if (m_requestType == MovieRequest) {
+        //Iterate through item nodes of the TMDB XML document
+        QDomNodeList movies = TMDBDoc.elementsByTagName("movie");
+        for (int i = 0; i < movies.count(); i++) {
+            MediaItem match = mediaItem;
 
-        QDomNodeList nodes = movies.at(i).childNodes();
-        bool gotThumbnailUrl = false;
-        for (int j = 0; j < nodes.count(); j++) {
-            if (!nodes.at(j).isElement()) {
-                continue;
-            }
-            QDomElement element = nodes.at(j).toElement();
-            if (element.tagName() == "name") {
-                match.title = element.text();
-                match.fields["title"] = match.title;
-            } else if (element.tagName() == "overview") {
-                match.fields["description"] = element.text();
-            } else if (element.tagName() == "released") {
-                QDate releaseDate = QDate::fromString(element.text(), "yyyy-MM-dd");
-                if (releaseDate.isValid()) {
-                    match.fields["releaseDate"] = releaseDate;
-                    match.fields["year"] = releaseDate.year();
+            //Clear artwork
+            match.artwork = Utilities::defaultArtworkForMediaItem(match);
+            match.fields["artworkUrl"] = QString("");
+
+            QDomNodeList nodes = movies.at(i).childNodes();
+            bool gotThumbnailUrl = false;
+            for (int j = 0; j < nodes.count(); j++) {
+                if (!nodes.at(j).isElement()) {
+                    continue;
                 }
-            } else if (element.tagName() == "url") {
-                match.fields["relatedTo"] = element.text();
-            } else if (element.tagName() == "certification") {
-                match.fields["audienceRating"] = element.text();
-            } else if (element.tagName() == "id") {
-                QString id = element.text();
-                match.fields["TMDBID"] = id;
-                QString movieInfoUrlStr = m_movieInfoAPI.arg(id);
-                moreInfoUrls.insert(fetchedMatches.count(), movieInfoUrlStr);
-            } else if (element.tagName() == "images") {
-                QDomNodeList imageNodes = nodes.at(j).childNodes();
-                for (int k = 0; k < imageNodes.count(); k++) {
-                    QDomElement imageElement = imageNodes.at(k).toElement();
-                    if (!(imageElement.tagName() == "image" &&
-                          imageElement.attribute("type") == "poster" &&
-                          imageElement.attribute("size") == "cover")) {
-                        continue;
+                QDomElement element = nodes.at(j).toElement();
+                if (element.tagName() == "name") {
+                    match.title = element.text();
+                    match.fields["title"] = match.title;
+                } else if (element.tagName() == "overview") {
+                    match.fields["description"] = element.text();
+                } else if (element.tagName() == "released") {
+                    QDate releaseDate = QDate::fromString(element.text(), "yyyy-MM-dd");
+                    if (releaseDate.isValid()) {
+                        match.fields["releaseDate"] = releaseDate;
+                        match.fields["year"] = releaseDate.year();
                     }
-                    if (gotThumbnailUrl || !m_updateArtwork) {
-                        continue;
-                    }
-                    QString imageUrl = imageElement.attribute("url");
-                    KUrl thumbnailUrl = KUrl(imageUrl);
-                    if (thumbnailUrl.isValid()) {
-                        thumbnailUrls.insert(fetchedMatches.count(), thumbnailUrl);
-                        gotThumbnailUrl = true;
-                        break;
+                } else if (element.tagName() == "url") {
+                    match.fields["relatedTo"] = element.text();
+                } else if (element.tagName() == "certification") {
+                    match.fields["audienceRating"] = element.text();
+                } else if (element.tagName() == "id") {
+                    QString id = element.text();
+                    match.fields["TMDBID"] = id;
+                    QString movieInfoUrlStr = m_movieInfoAPI.arg(id);
+                    moreInfoUrls.insert(fetchedMatches.count(), movieInfoUrlStr);
+                } else if (element.tagName() == "images") {
+                    QDomNodeList imageNodes = nodes.at(j).childNodes();
+                    for (int k = 0; k < imageNodes.count(); k++) {
+                        QDomElement imageElement = imageNodes.at(k).toElement();
+                        if (!(imageElement.tagName() == "image" &&
+                              imageElement.attribute("type") == "poster" &&
+                              imageElement.attribute("size") == "cover")) {
+                            continue;
+                        }
+                        if (gotThumbnailUrl || !m_updateArtwork) {
+                            continue;
+                        }
+                        QString imageUrl = imageElement.attribute("url");
+                        KUrl thumbnailUrl = KUrl(imageUrl);
+                        if (thumbnailUrl.isValid()) {
+                            thumbnailUrls.insert(fetchedMatches.count(), thumbnailUrl);
+                            gotThumbnailUrl = true;
+                            break;
+                        }
                     }
                 }
             }
+            fetchedMatches.append(match);
         }
-        fetchedMatches.append(match);
+    }
+
+    //Read Movie results
+    if (m_requestType == PersonRequest) {
+        //Iterate through item nodes of the TMDB XML document
+        QDomNodeList movies = TMDBDoc.elementsByTagName("person");
+        for (int i = 0; i < movies.count(); i++) {
+            MediaItem match = mediaItem;
+
+            //Clear artwork
+            match.artwork = Utilities::defaultArtworkForMediaItem(match);
+            match.fields["artworkUrl"] = QString("");
+
+            QDomNodeList nodes = movies.at(i).childNodes();
+            bool gotThumbnailUrl = false;
+            for (int j = 0; j < nodes.count(); j++) {
+                if (!nodes.at(j).isElement()) {
+                    continue;
+                }
+                QDomElement element = nodes.at(j).toElement();
+                if (element.tagName() == "name") {
+                    match.title = element.text();
+                    match.fields["title"] = match.title;
+                } else if (element.tagName() == "biography") {
+                    match.fields["description"] = element.text();
+                } else if (element.tagName() == "images") {
+                    QDomNodeList imageNodes = nodes.at(j).childNodes();
+                    for (int k = 0; k < imageNodes.count(); k++) {
+                        QDomElement imageElement = imageNodes.at(k).toElement();
+                        if (!(imageElement.tagName() == "image" &&
+                              imageElement.attribute("type") == "profile" &&
+                              imageElement.attribute("size") == "profile")) {
+                            continue;
+                        }
+                        if (gotThumbnailUrl || !m_updateArtwork) {
+                            continue;
+                        }
+                        QString imageUrl = imageElement.attribute("url");
+                        KUrl thumbnailUrl = KUrl(imageUrl);
+                        if (thumbnailUrl.isValid()) {
+                            thumbnailUrls.insert(fetchedMatches.count(), thumbnailUrl);
+                            gotThumbnailUrl = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            fetchedMatches.append(match);
+        }
     }
     //QFile(to.path()).remove();
 

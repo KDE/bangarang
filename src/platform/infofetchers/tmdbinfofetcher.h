@@ -29,6 +29,8 @@ class TMDBInfoFetcher : public InfoFetcher
 {
     Q_OBJECT
     public:
+    enum RequestType {MovieRequest = 0,
+                      PersonRequest = 1};
         TMDBInfoFetcher(QObject *parent = 0);
         bool available(const QString &subType);
 
@@ -36,11 +38,13 @@ class TMDBInfoFetcher : public InfoFetcher
         QString m_apiKey;
         QString m_movieSearchAPI;
         QString m_movieInfoAPI;
+        QString m_personSearchAPI;
         Downloader * m_downloader;
         QStringList m_requestKeys;
         QHash<int, QList<MediaItem> > m_fetchedMatches;
         QHash<QString, QString> m_thumbnailKeys;
         QHash<QString, QString> m_moreInfoKeys;
+        RequestType m_requestType;
 
         void processOriginalRequest(const KUrl &from, const KUrl to);
         void processThumbnails(const KUrl &from, const KUrl to);
