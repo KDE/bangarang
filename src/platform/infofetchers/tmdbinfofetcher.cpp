@@ -325,7 +325,7 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
             fetchedMatches.append(match);
         }
     }
-    //QFile(to.path()).remove();
+    QFile(to.path()).remove();
 
 
     //Add fetched matches to collection of fetched matches
@@ -511,7 +511,7 @@ void TMDBInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
             match.fields["producer"] = producers;
         }
     }
-    //QFile(to.path()).remove();
+    QFile(to.path()).remove();
 
     matches.replace(matchesIndex, match);
     m_fetchedMatches[originalRequestIndex] = matches;
