@@ -48,12 +48,12 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(m_utilThread, SIGNAL(gotArtworks(QList<QImage>,MediaItem)), this, SLOT(gotArtworks(QList<QImage>,MediaItem)));
 
     //Store field order
-    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "composer" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "actor" << "director" << "writer" << "producer" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
-    m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "seriesName" << "actor" << "director" << "writer" << "producer" << "season" << "episodeNumber" << "year" << "genre" << "tags" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Music"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "artist" << "composer" << "album" << "trackNumber" << "year" << "genre" << "description" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Clip"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Audio Stream"] = QStringList() << "audioType" << "artwork" << "title" << "rating" << "description" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Video Clip"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["Movie"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "actor" << "director" << "writer" << "producer" << "year" << "genre" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
+    m_fieldsOrder["TV Show"] = QStringList() << "videoType" << "artwork" << "title" << "rating" << "description" << "seriesName" << "actor" << "director" << "writer" << "producer" << "season" << "episodeNumber" << "year" << "genre" << "tags" << "relatedTo" << "url" << "playCount" << "lastPlayed";
     m_fieldsOrder["Artist"] = QStringList() << "artwork" << "title" << "description";
     m_fieldsOrder["Album"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title";
@@ -88,6 +88,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldNames["seriesName"] = i18n("Series");
     m_fieldNames["season"] = i18n("Season");
     m_fieldNames["episodeNumber"] = i18n("Episode");
+    m_fieldNames["relatedTo"] = i18n("Links");
     m_fieldNames["playCount"] = i18n("Play Count");
     m_fieldNames["lastPlayed"] = i18n("Last Played");
 
