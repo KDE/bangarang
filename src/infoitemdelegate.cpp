@@ -41,6 +41,7 @@
 #include <Nepomuk/ResourceManager>
 
 #include <QUrl>
+#include <QDesktopServices>
 #include <QPalette>
 #include <QStyle>
 #include <QIcon>
@@ -111,6 +112,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
     bool isArtwork = (field == "artwork");
     bool isRating = (field == "rating");
+    bool isUrl = (field == "url" || field == "relatedTo");
 
     //Set basic formatting info
     QRect dataRect = fieldDataRect(option, index);
@@ -402,7 +404,17 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     }
                     textRect.adjust(0, 0, -drillIconRect.width(), 0);
                 }
+
             }
+
+            //Draw link icon
+            if (isUrl && option.state.testFlag(QStyle::State_MouseOver)) {
+                QRect linkIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
+                KIcon("emblem-symbolic-link").paint(&p, linkIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                textRect.adjust(0, 0, -linkIconRect.width(), 0);
+                text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textRect.width());
+            }
+
             //Draw field data
             p.setFont(textFont);
             p.setPen(foregroundColor);
@@ -480,6 +492,16 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                         modelToUpdate->replaceMediaItemAt(row, mediaItem);
                     }
                 }
+            }
+        }
+        return true;
+    }  else if (field == "url") {
+        if (event->type() == QEvent::MouseButtonPress) {
+            QRect dataRect = fieldDataRect(option, index);
+            QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
+            KUrl url(index.data(Qt::DisplayRole).toString());
+            if (linkIconRect.contains(m_mousePos) && url.isValid()) {
+                QDesktopServices::openUrl(KUrl(url.directory()));
             }
         }
         return true;
