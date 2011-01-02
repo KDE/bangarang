@@ -46,10 +46,8 @@
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
-    kDebug() << mediaItem.fields["artworkUrl"].toString();
     QPixmap pixmap = QPixmap();
     if (!ignoreCache && artworkIsInCache(mediaItem)) {
-        kDebug() << "FOUND IN CACHE!";
         QImage image = findArtworkInCache(mediaItem);
         pixmap = QPixmap::fromImage(image);
         return pixmap;
