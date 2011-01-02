@@ -453,6 +453,20 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
         }
+        if (fields.contains("relatedTo")) {
+            QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+            QStringList related  = fields["relatedTo"].toString().split("||", QString::SkipEmptyParts);
+            res.removeProperty(relatedProperty);
+            if (!related.isEmpty()) {
+                QList<QUrl> relatedUrls;
+                for (int i = 0; i < related.count(); i++) {
+                    outputMessage(Debug, related.at(i));
+                    relatedUrls.append(QUrl(related.at(i)));
+                }
+                res.setProperty(relatedProperty, relatedUrls);
+            }
+        }
+
     }
 
 

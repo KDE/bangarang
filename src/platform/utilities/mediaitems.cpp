@@ -232,6 +232,13 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         }
         mediaItem.fields["artworkUrl"] = res.property(mediaVocabulary.artwork()).toResource()
                                          .property(nieUrl).toString();
+        QStringList related;
+        QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+        QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
+        for (int i = 0; i < relatedUrls.count(); i++) {
+            related.append(KUrl(relatedUrls.at(i)).prettyUrl());
+        }
+        mediaItem.fields["relatedTo"] = related;
 
     }
     return mediaItem;
@@ -381,6 +388,14 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     }
     mediaItem.fields["artworkUrl"] = res.property(mediaVocabulary.artwork()).toResource()
                                      .property(nieUrl).toString();
+    QStringList related;
+    QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+    QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
+    for (int i = 0; i < relatedUrls.count(); i++) {
+        related.append(KUrl(relatedUrls.at(i)).prettyUrl());
+    }
+    mediaItem.fields["relatedTo"] = related;
+
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
         mediaItem.fields["audioType"] = type;
@@ -567,6 +582,13 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         }
     }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
+    QStringList related;
+    QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+    QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
+    for (int i = 0; i < relatedUrls.count(); i++) {
+        related.append(KUrl(relatedUrls.at(i)).prettyUrl());
+    }
+    mediaItem.fields["relatedTo"] = related;
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
         mediaItem.fields["audioType"] = type;

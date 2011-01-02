@@ -296,6 +296,22 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.drawRoundedRect(hoverRect, 3.0, 3.0);
                     p.restore();
 
+                    //Draw link icon
+                    QRect linkIconRect;
+                    if (isUrl && !textList.isEmpty() && option.state.testFlag(QStyle::State_MouseOver)) {
+                        linkIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
+                        p.save();
+                        p.setPen(Qt::NoPen);
+                        QColor linkHoverColor = hoverColor;
+                        linkHoverColor.setAlpha(255);
+                        p.setBrush(QBrush(linkHoverColor));
+                        p.drawRoundedRect(linkIconRect.adjusted(0,-m_padding, m_padding, m_padding), 3.0, 3.0);
+                        p.drawRect(linkIconRect.adjusted(0,-m_padding, 0, m_padding));
+                        p.restore();
+                        KIcon("emblem-symbolic-link").paint(&p, linkIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                        textRect.adjust(0, 0, -linkIconRect.width(), 0);
+                    }
+
                     //Draw drill icon
                     QRect drillIconRect;
                     if (i < drillList.count()) {
@@ -361,7 +377,11 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     } else {
                         textFont.setBold(true);
                     }
-                    text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideRight, textRect.width());
+                    if (!isUrl) {
+                        text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideRight, textRect.width());
+                    } else {
+                        text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideMiddle, textRect.width());
+                    }
                     p.setFont(textFont);
                     p.setPen(foregroundColor);
                     p.drawText(QRectF(textRect), text, textOption);
@@ -500,8 +520,11 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             QRect dataRect = fieldDataRect(option, index);
             QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
             KUrl url(index.data(Qt::DisplayRole).toString());
+            if (field == "url") {
+                url = KUrl(url.directory());
+            }
             if (linkIconRect.contains(m_mousePos) && url.isValid()) {
-                QDesktopServices::openUrl(KUrl(url.directory()));
+                QDesktopServices::openUrl(url);
             }
         }
         return true;
@@ -511,6 +534,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         QRect dataRect = fieldDataRect(option, index);
         QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
 
+        bool linkIconExists = (field == "url" || field == "relatedTo");
         bool drillIconExists = false;
         if (index.data(Qt::DisplayRole).type() == QVariant::String) {
             QVariant drillItem = index.data(InfoItemModel::DrillRole);
@@ -525,6 +549,13 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     drillIconExists = true;
                 }
             }
+        }
+
+        QRect linkIconRect;
+        if (linkIconExists) {
+            linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
+            hoverRect.adjust(0, 0, -16 - m_padding, 0);
+            dataRect.adjust(0, 0, -16, 0);
         }
         QRect drillIconRect;
         if (drillIconExists) {
@@ -583,6 +614,17 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             } else {
                 return true;
             }
+        } else if (linkIconRect.contains(m_mousePos)) {
+            if (event->type() == QEvent::MouseButtonRelease) {
+                KUrl url(index.data(Qt::DisplayRole).toString());
+                if (field == "url") {
+                    url = KUrl(url.directory());
+                }
+                if (url.isValid()) {
+                    QDesktopServices::openUrl(url);
+                }
+            }
+            return true;
         } else {
             return true;
         }

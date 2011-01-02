@@ -241,7 +241,7 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                         match.fields["year"] = releaseDate.year();
                     }
                 } else if (element.tagName() == "url") {
-                    match.fields["relatedTo"] = element.text();
+                    match.fields["relatedTo"] = QStringList(element.text());
                 } else if (element.tagName() == "certification") {
                     match.fields["audienceRating"] = element.text();
                 } else if (element.tagName() == "id") {
@@ -298,6 +298,8 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                     match.fields["title"] = match.title;
                 } else if (element.tagName() == "biography") {
                     match.fields["description"] = element.text();
+                } else if (element.tagName() == "url") {
+                    match.fields["relatedTo"] = QStringList(element.text());
                 } else if (element.tagName() == "images") {
                     QDomNodeList imageNodes = nodes.at(j).childNodes();
                     for (int k = 0; k < imageNodes.count(); k++) {
