@@ -41,6 +41,8 @@
 #include <phonon/backendcapabilities.h>
 #include <phonon/MediaObject>
 
+#include <QtCore>
+
 QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
 {
     QString mergedLRI;
@@ -400,6 +402,17 @@ QString Utilities::wordsForTimeSince(const QDateTime &dateTime)
         words = i18n("a few seconds ago");
     }
     return words;
+}
+
+QString Utilities::capitalize(const QString &text)
+{
+    QStringList capWords;
+    QStringList words = text.split(" ");
+    for (int i=0; i < words.count(); i++) {
+        QString capWord = words.at(i).left(1).toUpper() + words.at(i).mid(1);
+        capWords.append(capWord);
+    }
+    return capWords.join(" ");
 }
 
 #endif //UTILITIES_GENERAL_CPP

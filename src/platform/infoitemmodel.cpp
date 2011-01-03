@@ -22,6 +22,7 @@
 #include "infofetchers/dbpediainfofetcher.h"
 #include "infofetchers/feedinfofetcher.h"
 #include "infofetchers/filenameinfofetcher.h"
+#include "infofetchers/lastfminfofetcher.h"
 #include "infofetchers/tmdbinfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
@@ -129,6 +130,14 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(tmdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(tmdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(tmdbInfoFetcher);
+
+    LastfmInfoFetcher * lastfmInfoFetcher = new LastfmInfoFetcher(this);
+    connect(lastfmInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
+    connect(lastfmInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(lastfmInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(lastfmInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(lastfmInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
+    m_infoFetchers.append(lastfmInfoFetcher);
 
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
@@ -440,6 +449,27 @@ void InfoItemModel::setRating(int rating)
     }
 }
 
+void InfoItemModel::clearArtwork()
+{
+    //Clear artwork in mediaItems
+    for (int i = 0; i < m_mediaList.count(); i++) {
+        MediaItem mediaItem = m_mediaList.at(i);
+        mediaItem.fields["artworkUrl"] = QString("");
+        mediaItem.artwork = Utilities::defaultArtworkForMediaItem(mediaItem);
+        m_mediaList.replace(i, mediaItem);
+        Utilities::removeFromImageCache(mediaItem);
+    }
+
+    //Find artwork item and reset artwork;
+    for (int i = 0; i < rowCount(); i++) {
+        QString field = item(i)->data(InfoItemModel::FieldRole).toString();
+        if (field == "artwork") {
+            item(i)->setData(QString(""), Qt::EditRole);
+            getArtwork(item(i),QString(""));
+            break;
+        }
+    }
+}
 
 void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
 {
