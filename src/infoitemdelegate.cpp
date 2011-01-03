@@ -470,7 +470,8 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(m_mousePos)) {
                 //Clear set artwork
-                model->setData(index, QString(""), Qt::EditRole);
+                InfoItemModel *model = (InfoItemModel *)index.model();
+                model->clearArtwork();
             } else {
                 //Get artwork url from user
                 QString artworkUrl = index.data(Qt::EditRole).toString();

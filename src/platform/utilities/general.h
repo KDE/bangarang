@@ -68,5 +68,6 @@ namespace Utilities {
     QString removeRangesFromString(const QString& str, QString begin, QString end);
     QString titleForRequest(const QString &title);
     QString wordsForTimeSince(const QDateTime & dateTime);
+    QString capitalize(const QString & text);
 }
 #endif //UTILITIES_GENERAL_H

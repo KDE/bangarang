@@ -147,6 +147,11 @@ class InfoItemModel : public QStandardItemModel
           **/
 
         void setRating(int rating);
+
+        /**
+         * Clears the current artwork in the artwork field
+         */
+        void clearArtwork();
                    
     Q_SIGNALS:
         /**
