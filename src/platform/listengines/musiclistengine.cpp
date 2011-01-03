@@ -92,8 +92,6 @@ void MusicListEngine::run()
             QStringList orderByBindings = QStringList(mediaVocabulary.musicArtistNameBinding());
             query.orderBy(orderByBindings);
 
-            kDebug() << query.query();
-            
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
