@@ -2011,6 +2011,28 @@ QString MediaVocabulary::videoAssistantDirectorBinding()
     return "assistantDirector";
 }
 
+QString MediaVocabulary::resourceBindingForCategory(const QString & categoryType)
+{
+    if (categoryType == "Artist") {
+        return artistResourceBinding();
+    } else if (categoryType == "Album") {
+        return albumResourceBinding();
+    } else if (categoryType == "TV Series") {
+        return videoSeriesResourceBinding();
+    } else if (categoryType == "Actor") {
+        return actorResourceBinding();
+    } else if (categoryType == "Director") {
+        return directorResourceBinding();
+    } else if (categoryType == "Writer") {
+        return writerResourceBinding();
+    } else if (categoryType == "Producer") {
+        return producerResourceBinding();
+    } else {
+        return QString();
+    }
+
+}
+
 QStringList MediaVocabulary::storageProcedure(QUrl mediaProperty)
 {
     if (mediaProperty == artwork()) {

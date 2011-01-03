@@ -77,6 +77,7 @@ void MusicListEngine::run()
         if (engineArg.toLower() == "artists") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(MediaVocabulary::resourceBindingForCategory("Artist"));
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             bindings.append(mediaVocabulary.musicArtistDescriptionBinding());
             bindings.append(mediaVocabulary.musicArtistArtworkBinding());
@@ -90,6 +91,8 @@ void MusicListEngine::run()
             query.endWhere();
             QStringList orderByBindings = QStringList(mediaVocabulary.musicArtistNameBinding());
             query.orderBy(orderByBindings);
+
+            kDebug() << query.query();
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
@@ -112,6 +115,10 @@ void MusicListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
+                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Artist")).uri());
+                    if (res.isValid()) {
+                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+                    }
 
                     //Provide context info for artist
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
@@ -162,6 +169,7 @@ void MusicListEngine::run()
         if (engineArg.toLower() == "albums") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(MediaVocabulary::resourceBindingForCategory("Album"));
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             query.select(bindings, MediaQuery::Distinct);
@@ -193,6 +201,10 @@ void MusicListEngine::run()
                     mediaItem.fields["title"] = album;
                     mediaItem.fields["artist"] = artist;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Album")).uri());
+                    if (res.isValid()) {
+                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+                    }
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("media-optical-audio");
                     mediaItem = Utilities::makeSubtitle(mediaItem);

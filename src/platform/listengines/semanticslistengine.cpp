@@ -135,6 +135,10 @@ void SemanticsListEngine::run()
                     QStringList bindings;
                     //NOTE:query.addLRIFilterConditions will automatically add 
                     //the groupBy field name to the binding list.
+                    QString groupByResourceBinding = MediaVocabulary::resourceBindingForCategory(groupByCategoryType);
+                    if (!groupByResourceBinding.isEmpty()) {
+                        bindings.append(groupByResourceBinding);
+                    }
                     bindings.append(query.fieldBindingDictionary[groupByField]);
                     bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.playCountBinding(), MediaQuery::Sum));
                     query.select(bindings, MediaQuery::Distinct);
@@ -204,6 +208,10 @@ void SemanticsListEngine::run()
                 } else {
                     //NOTE:query.addLRIFilterConditions will automatically add 
                     //the groupBy field name to the binding list.
+                    QString groupByResourceBinding = MediaVocabulary::resourceBindingForCategory(groupByCategoryType);
+                    if (!groupByResourceBinding.isEmpty()) {
+                        bindings.append(groupByResourceBinding);
+                    }
                     bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.lastPlayedBinding(), MediaQuery::Max));
                 } 
                 query.select(bindings, MediaQuery::Distinct);
@@ -261,6 +269,10 @@ void SemanticsListEngine::run()
                 } else {
                     //NOTE:query.addLRIFilterConditions will automatically add 
                     //the groupBy field name to the binding list.
+                    QString groupByResourceBinding = MediaVocabulary::resourceBindingForCategory(groupByCategoryType);
+                    if (!groupByResourceBinding.isEmpty()) {
+                        bindings.append(groupByResourceBinding);
+                    }
                     bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::CountAverage));
                     bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::Average));
                 } 

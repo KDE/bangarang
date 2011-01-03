@@ -305,6 +305,7 @@ class MediaVocabulary {
         static QString videoActorArtworkBinding();
         static QString videoAssistantDirectorBinding();
         static QString videoCinematographerBinding();
+        static QString resourceBindingForCategory(const QString & categoryType);
         
         //RDF storage procedure lookup
         QStringList storageProcedure(QUrl mediaProperty);
