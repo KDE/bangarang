@@ -232,13 +232,7 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         }
         mediaItem.fields["artworkUrl"] = res.property(mediaVocabulary.artwork()).toResource()
                                          .property(nieUrl).toString();
-        QStringList related;
-        QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
-        QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
-        for (int i = 0; i < relatedUrls.count(); i++) {
-            related.append(KUrl(relatedUrls.at(i)).prettyUrl());
-        }
-        mediaItem.fields["relatedTo"] = related;
+        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
 
     }
     return mediaItem;
@@ -388,13 +382,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     }
     mediaItem.fields["artworkUrl"] = res.property(mediaVocabulary.artwork()).toResource()
                                      .property(nieUrl).toString();
-    QStringList related;
-    QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
-    QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
-    for (int i = 0; i < relatedUrls.count(); i++) {
-        related.append(KUrl(relatedUrls.at(i)).prettyUrl());
-    }
-    mediaItem.fields["relatedTo"] = related;
+    mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
 
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
@@ -582,13 +570,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         }
     }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
-    QStringList related;
-    QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
-    QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
-    for (int i = 0; i < relatedUrls.count(); i++) {
-        related.append(KUrl(relatedUrls.at(i)).prettyUrl());
-    }
-    mediaItem.fields["relatedTo"] = related;
+    mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
         mediaItem.fields["audioType"] = type;
@@ -741,6 +723,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
         mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
 
         if (type =="Artist") {
             QString artist = res.property(mediaVocabulary.musicArtistName()).toString();
@@ -852,6 +835,12 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
         mediaItem.type = "Category";
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
+        if (!MediaVocabulary::resourceBindingForCategory(type).isEmpty()) {
+            Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Artist")).uri());
+            if (res.exists()) {
+                mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+            }
+        }
 
         if (type =="Artist") {
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
@@ -1402,6 +1391,17 @@ MediaItem Utilities::makeSubtitle(const MediaItem & mediaItem)
         updatedItem.subTitle = i18n("Audio CD");
     }
     return updatedItem;
+}
+
+QStringList Utilities::getLinksForResource(Nepomuk::Resource &res)
+{
+    QStringList related;
+    QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+    QList<QUrl> relatedUrls = res.property(relatedProperty).toUrlList();
+    for (int i = 0; i < relatedUrls.count(); i++) {
+        related.append(KUrl(relatedUrls.at(i)).prettyUrl());
+    }
+    return related;
 }
 
 #endif //UTILITIES_MEDIAITEMS_CPP

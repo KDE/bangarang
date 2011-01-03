@@ -47,6 +47,7 @@ namespace Utilities {
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
     MediaItem makeSubtitle(const MediaItem & mediaItem);
+    QStringList getLinksForResource(Nepomuk::Resource &res);
 }
 
 #endif // UTILITIES_MEDIAITEMS_H

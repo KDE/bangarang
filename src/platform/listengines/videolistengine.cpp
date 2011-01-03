@@ -166,6 +166,7 @@ void VideoListEngine::run()
         if (engineArg.toLower() == "tvshows") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(MediaVocabulary::resourceBindingForCategory("TV Series"));
             bindings.append(mediaVocabulary.videoSeriesTitleBinding());
             bindings.append(mediaVocabulary.videoSeriesDescriptionBinding());
             bindings.append(mediaVocabulary.videoSeriesArtworkBinding());
@@ -198,6 +199,10 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoSeriesDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoSeriesArtworkBinding()).uri().toString();
+                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("TV Series")).uri());
+                    if (res.isValid()) {
+                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+                    }
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     
@@ -471,6 +476,7 @@ void VideoListEngine::run()
         if (engineArg.toLower() == "actors") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(MediaVocabulary::resourceBindingForCategory("Actor"));
             bindings.append(mediaVocabulary.videoActorBinding());
             bindings.append(mediaVocabulary.videoActorDescriptionBinding());
             bindings.append(mediaVocabulary.videoActorArtworkBinding());
@@ -503,6 +509,10 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoActorDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoActorArtworkBinding()).uri().toString();
+                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Actor")).uri());
+                    if (res.isValid()) {
+                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+                    }
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -523,6 +533,7 @@ void VideoListEngine::run()
         if (engineArg.toLower() == "directors") {
             MediaQuery query;
             QStringList bindings;
+            bindings.append(MediaVocabulary::resourceBindingForCategory("Director"));
             bindings.append(mediaVocabulary.videoDirectorBinding());
             bindings.append(mediaVocabulary.videoDirectorDescriptionBinding());
             bindings.append(mediaVocabulary.videoDirectorArtworkBinding());
@@ -555,6 +566,10 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoDirectorDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoDirectorArtworkBinding()).uri().toString();
+                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Director")).uri());
+                    if (res.isValid()) {
+                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+                    }
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
