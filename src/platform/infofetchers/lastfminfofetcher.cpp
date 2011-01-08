@@ -22,6 +22,7 @@
 #include "../utilities/utilities.h"
 
 #include <KDebug>
+#include <KGlobal>
 #include <KIcon>
 #include <KLocale>
 #include <KStandardDirs>
@@ -39,13 +40,18 @@ LastfmInfoFetcher::LastfmInfoFetcher(QObject *parent) :
     m_url = KUrl("http://last.fm");
     m_about = "Note: This fetcher uses the Last.fm API but is not endorsed or certified by Last.fm.";
 
+    QString lang = KGlobal::locale()->language();
+    if (lang.size() > 2) {
+        lang = lang.left(2);
+    }
+
     //NOTE: The API key below must be used only in Bangarang.  Please do not use this key in other applications.
     //      API keys can be requested from last.fm.
     m_apiKey = "07066aba654ada984ea6b45032f510c0";
     m_artistSearchAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.search&limit=5&api_key=%1&artist=%2").arg(m_apiKey).arg("%1");
-    m_artistInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.getInfo&autocorrect=1&api_key=%1&artist=%2").arg(m_apiKey).arg("%1");
-    m_albumInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=album.getInfo&autocorrect=1&api_key=%1&album=%2&artist=%3").arg(m_apiKey).arg("%1").arg("%2");
-    m_trackInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&autocorrect=1&api_key=%1&track=%2&artist=%3").arg(m_apiKey).arg("%1").arg("%2");
+    m_artistInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.getInfo&autocorrect=1&api_key=%1&lang=%2&artist=%3").arg(m_apiKey).arg(lang).arg("%1");
+    m_albumInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=album.getInfo&autocorrect=1&api_key=%1&lang=%2&album=%3&artist=%4").arg(m_apiKey).arg(lang).arg("%1").arg("%2");
+    m_trackInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&autocorrect=1&api_key=%1&lang=%2&track=%3&artist=%4").arg(m_apiKey).arg(lang).arg("%1").arg("%2");
     m_timeout = 20000;
 
     m_downloader = new Downloader(this);
