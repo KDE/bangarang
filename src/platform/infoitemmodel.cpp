@@ -1014,7 +1014,7 @@ MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &ty
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "Actor") {
-        Nepomuk::Resource res(Utilities::artistResource(value));
+        Nepomuk::Resource res(Utilities::actorResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "Director") {
