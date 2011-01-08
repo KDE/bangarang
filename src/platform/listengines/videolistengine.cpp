@@ -112,7 +112,9 @@ void VideoListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.name = i18n("Movies");
@@ -154,7 +156,9 @@ void VideoListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.name = i18n("Video Clips");
@@ -411,7 +415,9 @@ void VideoListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             if (seriesName == "~") {
@@ -658,7 +664,9 @@ void VideoListEngine::run()
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
                 
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
@@ -727,7 +735,9 @@ void VideoListEngine::run()
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
                 
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());

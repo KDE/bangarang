@@ -136,7 +136,9 @@ void TagListEngine::run()
                 }
                 Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                 MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             m_mediaListProperties.type = QString("Sources");

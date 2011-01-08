@@ -397,7 +397,9 @@ void MusicListEngine::run()
                     if (urls.indexOf(urlString) == -1) {
                         //Only create new mediaItem if url is new
                         MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
-                        mediaList.append(mediaItem);
+                        if (!mediaItem.url.startsWith("nepomuk:/")) {
+                            mediaList.append(mediaItem);
+                        }
                         urls.append(urlString);
                     }
                     resultSetCount++;
@@ -466,7 +468,9 @@ void MusicListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.summary = i18np("1 song", "%1 songs", mediaList.count());
