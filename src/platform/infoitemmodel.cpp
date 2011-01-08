@@ -139,13 +139,15 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(lastfmInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(lastfmInfoFetcher);
 
+    /* NOTE: Results returned from DBPedia SPARQL frontend is inconsistent
+             InfoFetcher is disabled until this problem is resolved
     DBPediaInfoFetcher * dbPediaInfoFetcher = new DBPediaInfoFetcher(this);
     connect(dbPediaInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(dbPediaInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
     connect(dbPediaInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
     connect(dbPediaInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(dbPediaInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
-    m_infoFetchers.append(dbPediaInfoFetcher);
+    m_infoFetchers.append(dbPediaInfoFetcher);*/
 
     FeedInfoFetcher * feedInfoFetcher = new FeedInfoFetcher(this);
     connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
