@@ -375,7 +375,7 @@ QString Utilities::wordsForTimeSince(const QDateTime &dateTime)
     int daysSince = dateTime.daysTo(currentDateTime);
     int weeksSince = daysSince/7;
     int monthsSince = 0;
-    int yearsSince = currentDateTime.date().year() - dateTime.date().year();
+    int yearsSince = (daysSince < 366) ? 0 : currentDateTime.date().year() - dateTime.date().year();
     if (currentDateTime.date().month() != dateTime.date().month() &&
         weeksSince >= 4) {
         if (yearsSince == 0) {
