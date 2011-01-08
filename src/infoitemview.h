@@ -30,8 +30,10 @@ class InfoItemView : public QListView
 public:
     explicit InfoItemView(QWidget *parent = 0);
     void resizeEvent(QResizeEvent *e);
+    void fixHeightToContents();
 
 signals:
+    void updateSizeHints(QModelIndex index);
 
 public slots:
     void infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright);
@@ -40,8 +42,6 @@ public slots:
 private:
     InfoItemModel *m_infoItemModel;
     InfoItemDelegate *m_infoItemDelegate;
-
-    void fixHeightToContents();
 
 };
 

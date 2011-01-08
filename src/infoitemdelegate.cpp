@@ -17,6 +17,7 @@
 */
 
 #include "infoitemdelegate.h"
+#include "infoitemview.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "sensiblewidgets.h"
@@ -582,6 +583,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     emit sizeHintChanged(index);
 //                     QApplication::processEvents(); //this would disturb the flow and cause a wrong line edit to exist
                     m_view->update(index);
+                    m_view->fixHeightToContents();
                 }
             } else {
                 if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
@@ -801,7 +803,7 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     }
 }   
 
-void InfoItemDelegate::setView(QAbstractItemView * view) 
+void InfoItemDelegate::setView(InfoItemView * view)
 {
     m_view = view;
     m_defaultViewSelectionMode = view->selectionMode();
@@ -946,6 +948,10 @@ QRect InfoItemDelegate::stringListRectAtMousePos(const QStyleOptionViewItem &opt
                 QRect textRect(dataRect.left(), top, dataRect.width(), textHeight);
                 QRect hoverRect = textRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
                 if (hoverRect.contains(m_mousePos)) {
+                    QString field = index.data(InfoItemModel::FieldRole).toString();
+                    if (field == "url" || field == "relatedTo") { //adjust for presence of icon rect
+                        textRect.adjust(0, 0, -16, 0);
+                    }
                     QList<QVariant> drillLriList = index.data(InfoItemModel::DrillRole).toList();
                     QRect drillIconRect;
                     if (i < drillLriList.count()) {

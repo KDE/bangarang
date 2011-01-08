@@ -28,6 +28,7 @@
 
 class MainWindow;
 class MediaIndexer;
+class InfoItemView;
 
 /*
  * This Item Delegate is responsible for painting items in a 
@@ -48,13 +49,13 @@ class InfoItemDelegate : public QItemDelegate
         QWidget *createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
         void setEditorData ( QWidget * editor, const QModelIndex & index ) const;
         void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const;
-        void setView(QAbstractItemView * view);
+        void setView(InfoItemView * view);
         void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int rowHeight(int row) const;
         int heightForAllRows();
             
     private:
-        QAbstractItemView * m_view;
+        InfoItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
         bool m_nepomukInited;
         int heightForWordWrap(QFont font, int width, QString text) const;
