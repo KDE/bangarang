@@ -85,7 +85,9 @@ void AudioClipsListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());
@@ -128,7 +130,9 @@ void AudioClipsListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Clip"), m_mediaListProperties.lri);
-                mediaList.append(mediaItem);
+                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    mediaList.append(mediaItem);
+                }
             }
             
             m_mediaListProperties.summary = i18np("1 clip", "%1 clips", mediaList.count());

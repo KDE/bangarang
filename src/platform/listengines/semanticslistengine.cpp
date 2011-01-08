@@ -190,7 +190,9 @@ void SemanticsListEngine::run()
                         mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
                         mediaItem.fields["playCount"] = playCount;
                     }
-                    mediaList.append(mediaItem);
+                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                        mediaList.append(mediaItem);
+                    }
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
                 m_mediaListProperties.type = QString("Sources");
@@ -251,7 +253,9 @@ void SemanticsListEngine::run()
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
                     mediaItem.semanticComment = Utilities::wordsForTimeSince(mediaItem.fields["lastPlayed"].toDateTime());
-                    mediaList.append(mediaItem);
+                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                        mediaList.append(mediaItem);
+                    }
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
                 m_mediaListProperties.type = QString("Sources");
@@ -319,7 +323,9 @@ void SemanticsListEngine::run()
                         int rating = it.binding(QString("%1_avg").arg(mediaVocabulary.ratingBinding())).literal().toInt();
                         mediaItem.fields["rating"] = rating;
                     }
-                    mediaList.append(mediaItem);
+                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                        mediaList.append(mediaItem);
+                    }
                 }
                 m_mediaListProperties.name = i18n("Highest Rated");
                 m_mediaListProperties.type = QString("Sources");
