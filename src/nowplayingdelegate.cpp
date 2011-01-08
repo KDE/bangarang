@@ -31,6 +31,7 @@
 #include <QFont>
 #include <QStandardItem>
 #include <QApplication>
+#include <KDebug>
 #include <KGlobalSettings>
 #include <KColorScheme>
 #include <KIcon>
@@ -193,13 +194,17 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             album = fm.elidedText(album, Qt::ElideRight, infoWidth);
             line++;
         }
-        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
-        if (!genres.isEmpty()) {
-            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
+        int trackNumber = mediaItem.fields["trackNumber"].toInt();
+        if (trackNumber > 0) {
             line++;
         }
         int year = mediaItem.fields["year"].toInt();
         if (year > 0) {
+            line++;
+        }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
             line++;
         }
         QString description = mediaItem.fields["description"].toString();
@@ -249,15 +254,15 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, album);
             line++;
         }
-        if (!genres.isEmpty()) {
-            QString field = i18n("Genre: ");
+        if (trackNumber > 0) {
+            QString field = i18n("Track: ");
             QFontMetrics fm(fieldFont);
             painter->save();
             painter->setFont(fieldFont);
             painter->setPen(fieldColor);
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(trackNumber));
             line++;
         }
         if (year > 0) {
@@ -270,6 +275,17 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
             painter->restore();
             painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
+            line++;
+        }
+        if (!genres.isEmpty()) {
+            QString field = i18n("Genre: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
             line++;
         }
         if (!description.isEmpty()) {
