@@ -38,12 +38,17 @@ TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
     m_url = KUrl("http://themoviedb.org");
     m_about = "Note: This fetcher uses the TMDb API but is not endorsed or certified by TMDb.";
 
+    QString lang = KGlobal::locale()->language();
+    if (lang.size() > 2) {
+        lang = lang.left(2);
+    }
+
     //NOTE: The API key below must be used only in Bangarang.  Please do not use this key in other applications.
     //      API keys can be requested from themoviedb.org.
     m_apiKey = "efa7a3197ca2ab2b9af306580c42075c";
-    m_movieSearchAPI = QString("http://api.themoviedb.org/2.1/Movie.search/en/xml/%1/%2").arg(m_apiKey).arg("%1");
-    m_movieInfoAPI = QString("http://api.themoviedb.org/2.1/Movie.getInfo/en/xml/%1/%2").arg(m_apiKey).arg("%1");
-    m_personSearchAPI = QString("http://api.themoviedb.org/2.1/Person.search/en/xml/%1/%2").arg(m_apiKey).arg("%1");
+    m_movieSearchAPI = QString("http://api.themoviedb.org/2.1/Movie.search/%1/xml/%2/%3").arg(lang).arg(m_apiKey).arg("%1");
+    m_movieInfoAPI = QString("http://api.themoviedb.org/2.1/Movie.getInfo/%1/xml/%2/%3").arg(lang).arg(m_apiKey).arg("%1");
+    m_personSearchAPI = QString("http://api.themoviedb.org/2.1/Person.search/%1/xml/%2/%3").arg(lang).arg(m_apiKey).arg("%1");
     m_timeout = 20000;
 
     m_downloader = new Downloader(this);
