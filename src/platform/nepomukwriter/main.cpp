@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     } else {
         cout << "You didn't provide an argument OR Nepomuk is not active!\n";
     }
+    cout.flush();
     
     return 0;
 }
