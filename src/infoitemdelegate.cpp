@@ -430,10 +430,15 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             //Draw link icon
             if (isUrl && option.state.testFlag(QStyle::State_MouseOver)) {
-                QRect linkIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
-                KIcon("emblem-symbolic-link").paint(&p, linkIconRect.adjusted(0,-m_padding, m_padding, m_padding));
-                textRect.adjust(0, 0, -linkIconRect.width(), 0);
-                text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textRect.width());
+                KUrl url(index.data().toString());
+                if (url.isValid() &&
+                    (field == "relatedTo" ||
+                     (field == "url" && url.isLocalFile()))) {
+                    QRect linkIconRect = textRect.adjusted(textRect.width() - 16, 0, 0, 0);
+                    KIcon("emblem-symbolic-link").paint(&p, linkIconRect.adjusted(0,-m_padding, m_padding, m_padding));
+                    textRect.adjust(0, 0, -linkIconRect.width(), 0);
+                    text = QFontMetrics(textFont).elidedText(text, Qt::ElideMiddle, textRect.width());
+                }
             }
 
             //Draw field data
@@ -520,13 +525,18 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
     }  else if (field == "url") {
         if (event->type() == QEvent::MouseButtonPress) {
             QRect dataRect = fieldDataRect(option, index);
-            QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
+            QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
             KUrl url(index.data(Qt::DisplayRole).toString());
-            if (field == "url") {
-                url = KUrl(url.directory());
+            url = KUrl(url.directory());
+            if (url.isValid() && url.isLocalFile()) {
+                QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
+                hoverRect.adjust(0, 0, -16 - m_padding, 0);
+                if (linkIconRect.contains(m_mousePos)) {
+                    QDesktopServices::openUrl(url);
+                }
             }
-            if (linkIconRect.contains(m_mousePos) && url.isValid()) {
-                QDesktopServices::openUrl(url);
+            if (hoverRect.contains(m_mousePos)) {
+                return QItemDelegate::editorEvent(event, model, option, index);
             }
         }
         return true;
@@ -536,7 +546,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         QRect dataRect = fieldDataRect(option, index);
         QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
 
-        bool linkIconExists = (field == "url" || field == "relatedTo");
+        bool linkIconExists = (field == "relatedTo");
         bool drillIconExists = false;
         if (index.data(Qt::DisplayRole).type() == QVariant::String) {
             QVariant drillItem = index.data(InfoItemModel::DrillRole);
@@ -619,9 +629,14 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             }
         } else if (linkIconRect.contains(m_mousePos)) {
             if (event->type() == QEvent::MouseButtonRelease) {
-                KUrl url(index.data(Qt::DisplayRole).toString());
-                if (field == "url") {
-                    url = KUrl(url.directory());
+                KUrl url;
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
+                    QList<QVariant> urlList = index.data().toList();
+                    if (listIndex != -1 && listIndex < urlList.count()) {
+                        url = urlList.at(listIndex).toString();
+                    }
+                } else {
+                    url = KUrl(index.data(Qt::DisplayRole).toString());
                 }
                 if (url.isValid()) {
                     QDesktopServices::openUrl(url);
