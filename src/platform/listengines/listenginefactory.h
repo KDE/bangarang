@@ -115,7 +115,12 @@ class ListEngineFactory : public QObject
         /**
          * Stop all running list engines as soon as possible.
          */
-        void stopAll(unsigned long waitToTerminate = 0);
+        void stopAll(unsigned long waitToTerminate = 0, bool quitEventLoop = false);
+
+        /**
+         * Resume all running list engines if possible.
+         */
+        void resumeAll();
 
 
     private:

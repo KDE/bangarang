@@ -140,7 +140,13 @@ class ListEngine : public QThread
         /**
          * Stop execution at as soon as possible. Terminate after waitToTerminate millseconds.
          */
-        void stop(unsigned long waitToTerminate = 0);
+        void stop(unsigned long waitToTerminate = 0, bool quitEventLoop = false);
+
+        /**
+         * Resume execution if possible.  This only works for ListEngines designed to resume execution
+         * after stop(0, false) was called.
+         */
+        void resume();
         
     public Q_SLOTS:
         virtual void downloadComplete(const KUrl &from, const KUrl &to)

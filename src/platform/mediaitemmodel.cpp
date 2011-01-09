@@ -430,6 +430,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
             m_mediaListProperties = mediaListProperties;
             emit mediaListPropertiesChanged();
             if (done) {
+                m_listEngineFactory->resumeAll();
                 if (rowCount() == 0 && !m_suppressNoResultsMessage) {
                     showNoResultsMessage();
                 }
@@ -460,6 +461,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 if (done) {
                     m_subRequestsDone = m_subRequestsDone + 1;
                     if (m_subRequestsDone == m_subRequestSignatures.count()) {
+                        m_listEngineFactory->resumeAll();
                         setLoadingState(false);
                         //All the subrequests results are in, go ahead and load results in correct order
                         int count = 0;
