@@ -107,12 +107,19 @@ void ListEngine::disconnectDownloader()
     disconnect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
 }
 
-void ListEngine::stop(unsigned long waitToTerminate)
+void ListEngine::stop(unsigned long waitToTerminate, bool quitEventLoop)
 {
     m_stop = true;
-    quit();
+    if (quitEventLoop) {
+        quit();
+    }
     if (waitToTerminate > 0 && isRunning()) {
         wait(waitToTerminate);
         terminate();
     }
+}
+
+void ListEngine::resume()
+{
+    m_stop = false;
 }

@@ -250,8 +250,9 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
     //This routine looks for directories in mediaList, crawls and returns a media list with files only
     QList<MediaItem> crawledList;
     for (int i = 0; i < mediaList.count(); i++) {
-        if (m_stop) {
-            return crawledList;
+        while (m_stop) {
+            //wait while m_stop is true
+            QApplication::processEvents();
         }
         if (mediaList.at(i).type == "Category" && !mediaList.at(i).url.isEmpty()) {
             MediaListProperties categoryProperties;
@@ -272,8 +273,9 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                     }
                     QFileInfoList fileList = crawlDir(QDir(directoryUrl.path()), categoryProperties.engineArg());
                     for (int j = 0; j < fileList.count(); ++j) {
-                        if (m_stop) {
-                            return crawledList;
+                        while (m_stop) {
+                            //wait while m_stop is true
+                            QApplication::processEvents();
                         }
                         QFileInfo fileInfo = fileList.at(j);
                         MediaItem mediaItem;

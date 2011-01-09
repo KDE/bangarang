@@ -55,7 +55,7 @@ ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 
 ListEngineFactory::~ListEngineFactory()
 {
-    stopAll(200);
+    stopAll(200, true);
 }
 
 ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemModel* model)
@@ -173,12 +173,22 @@ Downloader * ListEngineFactory::downloader()
     return m_downloader;
 }
 
-void ListEngineFactory::stopAll(unsigned long waitToTerminate)
+void ListEngineFactory::stopAll(unsigned long waitToTerminate, bool quitEventLoop)
 {
     for (int i = 0; i < m_initializedEngines.count(); ++i) {
         ListEngine *eng = m_initializedEngines.at(i).first;
         if (eng->isRunning()) {
-            eng->stop(waitToTerminate);
+            eng->stop(waitToTerminate, quitEventLoop);
+        }
+    }
+}
+
+void ListEngineFactory::resumeAll()
+{
+    for (int i = 0; i < m_initializedEngines.count(); ++i) {
+        ListEngine *eng = m_initializedEngines.at(i).first;
+        if (eng->isRunning()) {
+            eng->resume();
         }
     }
 }
