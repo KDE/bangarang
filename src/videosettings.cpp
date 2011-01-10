@@ -24,6 +24,7 @@
 
 #include <KFileDialog>
 #include <KDebug>
+#include <KEncodingProber>
 
 #include <phonon/videowidget.h>
 
@@ -359,8 +360,34 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
             QTextStream in(&file);
             bool lastLineWasTime = false;
             kDebug() << "Loading subtitles...";
+            QString encodingTest;
+            QByteArray encodingName;
              while (!in.atEnd()) {
                  QString line = in.readLine().trimmed();
+                 //Collect enough data to attempt to perform encoding check
+                 if (encodingName.isEmpty() && encodingTest.length() > 200) {
+                     KEncodingProber prober(KEncodingProber::Universal);
+                     KEncodingProber::ProberState result = prober.feed(encodingTest.toAscii());
+                     if (result != KEncodingProber::NotMe) {
+                         if (prober.confidence() > 0.5 ) {
+                             encodingName = prober.encoding().toLower();
+                         } else if ((prober.confidence() <= 0.3 || encodingName != "utf-8")
+                             && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
+                             encodingName = QTextCodec::codecForLocale()->name().toLower();
+                         }
+                         if (!encodingName.isEmpty()) {
+                             for (int i = 0; i < m_extSubtitles.count(); i++) {
+                                 QString encSubtitle = m_extSubtitles.at(i);
+                                 encSubtitle = QTextCodec::codecForName(encodingName)->toUnicode(encSubtitle.toAscii());
+                                 kDebug() << encSubtitle;
+                                 m_extSubtitles.replace(i, encSubtitle);
+                             }
+                         }
+                     }
+                 }
+                 if (!encodingName.isEmpty()) {
+                     line = QTextCodec::codecForName(encodingName)->toUnicode(line.toAscii());
+                 }
                  if (line.contains("-->")) {
                      QStringList times = line.split("-->");
                      if (times.count() != 2) {
@@ -386,6 +413,10 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                          }
                      }
                      m_extSubtitles.append(subtitle.trimmed());
+                     if (encodingName.isEmpty()) {
+                         encodingTest.append(subtitle);
+                     }
+
                      lastLineWasTime = false;
                  }
 
