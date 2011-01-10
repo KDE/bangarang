@@ -8,6 +8,7 @@ msgmerge -U es/bangarang.po bangarang.pot
 msgmerge -U fi/bangarang.po bangarang.pot
 msgmerge -U fr/bangarang.po bangarang.pot
 msgmerge -U it/bangarang.po bangarang.pot
+msgmerge -U lt/bangarang.po bangarang.pot
 msgmerge -U nl/bangarang.po bangarang.pot
 msgmerge -U pl/bangarang.po bangarang.pot
 msgmerge -U pt_BR/bangarang.po bangarang.pot
