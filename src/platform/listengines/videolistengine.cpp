@@ -102,8 +102,6 @@ void VideoListEngine::run()
             orderByBindings.append(mediaVocabulary.releaseDateBinding());
             query.orderBy(orderByBindings);
 
-            kDebug() << query.query();
-
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
