@@ -7,6 +7,7 @@ GenericName[nl]=Mediaspeler
 GenericName[de]=Medienwiedergabe
 GenericName[fr]=Lecteur Multimédia
 GenericName[zh_CN]=媒体播放器
+GenericName[lt]=Media grotuvas
 Icon=bangarang
 X-DocPath=bangarang/index.html
 TryExec=bangarang
