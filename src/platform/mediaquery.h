@@ -140,27 +140,27 @@ class MediaQuery {
             } else if (constraint == MediaQuery::NotEqual) {
                 statement += QString(" (?%1 != %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(testUtf8));
+                .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::Contains) {
                 statement += QString(" (regex(?%1, \"%2\", \"i\")) ")
                 .arg(binding)
-                .arg(testUtf8);
+                .arg(test);
             } else if (constraint == MediaQuery::LessThan) {
                 statement += QString(" (?%1 < %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(testUtf8));
+                .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::GreaterThan) {
                 statement += QString(" (?%1 > %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(testUtf8));
+                .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::LessThanOrEqual) {
                 statement += QString(" (?%1 <= %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(testUtf8));
+                .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::GreaterThanOrEqual) {
                 statement += QString(" (?%1 >= %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(testUtf8));
+                .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::Bound) {
                 statement += QString(" bound(?%1) ")
                 .arg(binding);
