@@ -134,33 +134,33 @@ class MediaQuery {
         {
             QString statement;
             if (constraint == MediaQuery::Equal) {
-                statement += QString(" (str(?%1) = %2) ")
+                statement += QString(" (?%1 = %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
             } else if (constraint == MediaQuery::NotEqual) {
-                statement += QString(" (str(?%1) != %2) ")
+                statement += QString(" (?%1 != %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(test));
+                .arg(Soprano::Node::literalToN3(testUtf8));
             } else if (constraint == MediaQuery::Contains) {
-                statement += QString(" (regex(str(?%1), \"%2\", \"i\")) ")
+                statement += QString(" (regex(?%1, \"%2\", \"i\")) ")
                 .arg(binding)
-                .arg(test);
+                .arg(testUtf8);
             } else if (constraint == MediaQuery::LessThan) {
-                statement += QString(" (str(?%1) < %2) ")
+                statement += QString(" (?%1 < %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(test));
+                .arg(Soprano::Node::literalToN3(testUtf8));
             } else if (constraint == MediaQuery::GreaterThan) {
-                statement += QString(" (str(?%1) > %2) ")
+                statement += QString(" (?%1 > %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(test));
+                .arg(Soprano::Node::literalToN3(testUtf8));
             } else if (constraint == MediaQuery::LessThanOrEqual) {
-                statement += QString(" (str(?%1) <= %2) ")
+                statement += QString(" (?%1 <= %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(test));
+                .arg(Soprano::Node::literalToN3(testUtf8));
             } else if (constraint == MediaQuery::GreaterThanOrEqual) {
-                statement += QString(" (str(?%1) >= %2) ")
+                statement += QString(" (?%1 >= %2) ")
                 .arg(binding)
-                .arg(Soprano::Node::literalToN3(test));
+                .arg(Soprano::Node::literalToN3(testUtf8));
             } else if (constraint == MediaQuery::Bound) {
                 statement += QString(" bound(?%1) ")
                 .arg(binding);
