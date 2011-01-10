@@ -60,7 +60,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["AudioTag"] = QStringList() << "title";
     m_fieldsOrder["TV Series"] = QStringList() << "artwork" << "title" << "description";
-    m_fieldsOrder["VideoGenre"] = QStringList() << "title";
+    m_fieldsOrder["VideoGenre"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["Actor"] = QStringList() << "artwork" << "title" << "description" << "relatedTo";
     m_fieldsOrder["Director"] = QStringList() << "artwork" << "title" << "description" << "relatedTo";
     m_fieldsOrder["VideoTag"] = QStringList() << "title";
