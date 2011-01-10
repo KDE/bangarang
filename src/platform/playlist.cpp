@@ -636,6 +636,9 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     		"org.kde.kded",
     		"/modules/powerdevil",
     		"org.kde.PowerDevil");
+
+    //NOTE:PowerDevil does not expose the profile() method over dbus which would allow
+    //     determining the current profile and setting to last profile.
     if ((newstate == Phonon::PlayingState || newstate == Phonon::PausedState)
         && oldstate != Phonon::PlayingState
                 && oldstate != Phonon::PausedState) {
