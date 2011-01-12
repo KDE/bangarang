@@ -54,6 +54,7 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
     m_mediaItemDelegate->setUseProxy(true);
     setItemDelegate(m_mediaItemDelegate);
     m_mediaItemDelegate->setView(this);
+    setDragEnabled(true);
 }
 
 void MediaView::setMode(MediaItemDelegate::RenderMode mode)
