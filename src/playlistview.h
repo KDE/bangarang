@@ -19,13 +19,13 @@
 #ifndef PLAYLISTVIEW_H
 #define PLAYLISTVIEW_H
 
-#include <QTreeView>
+#include <QListView>
 #include <QLabel>
 #include <platform/playlist.h>
 #include "mainwindow.h"
 
 
-class PlaylistView : public QTreeView
+class PlaylistView : public QListView
 {
     Q_OBJECT
     public:
