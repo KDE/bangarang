@@ -18,13 +18,13 @@
 
 #include "playlistview.h"
 
-#include <QHeaderView>
-
 #include <mediaitemdelegate.h>
 #include <actionsmanager.h>
 #include <bangarangapplication.h>
 #include <platform/utilities/utilities.h>
 #include <ui_mainwindow.h>
+
+#include <KDebug>
 
 PlaylistView::PlaylistView(QWidget* parent): QListView(parent)
 {
@@ -67,6 +67,22 @@ void PlaylistView::contextMenuEvent(QContextMenuEvent* event)
         QMenu * menu = m_application->actionsManager()->playlistViewMenu();
         menu->exec(event->globalPos());
     }
+}
+
+void PlaylistView::dropEvent(QDropEvent *e)
+{
+    QListView::dropEvent(e);
+    setDragDropMode(QAbstractItemView::DragDrop);
+}
+
+void PlaylistView::dragMoveEvent(QDragMoveEvent *e)
+{
+    if (e->source() == this) {
+        setDragDropMode(QAbstractItemView::InternalMove);
+    } else {
+        setDragDropMode(QAbstractItemView::DragDrop);
+    }
+    QListView::dragMoveEvent(e);
 }
 
 void PlaylistView::setSourceModel(MediaItemModel* model)
