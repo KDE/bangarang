@@ -26,7 +26,7 @@
 #include <platform/utilities/utilities.h>
 #include <ui_mainwindow.h>
 
-PlaylistView::PlaylistView(QWidget* parent): QTreeView(parent)
+PlaylistView::PlaylistView(QWidget* parent): QListView(parent)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
     m_playlist = m_application->playlist();
@@ -81,10 +81,10 @@ MediaItemModel *PlaylistView::sourceModel()
 
 void PlaylistView::playlistChanged()
 {
-    if (model()->rowCount() > 0) {
-        header()->setStretchLastSection(false);
-        header()->setResizeMode(0, QHeaderView::Stretch);
-    }
+//     if (model()->rowCount() > 0) {
+//         header()->setStretchLastSection(false);
+//         header()->setResizeMode(0, QHeaderView::Stretch);
+//     }
     if (m_currentModel == Playlist::PlaylistModel) {
         m_playlistName->setText(i18n("<b>Playlist</b>"));
         if (m_playlist->playlistModel()->rowCount() > 0) {

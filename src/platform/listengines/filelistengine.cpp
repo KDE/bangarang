@@ -96,6 +96,9 @@ void FileListEngine::run()
                 if (m_stop) {
                     return;
                 }
+                if (m_filePlacesModel->isHidden(m_filePlacesModel->index(i,0))) {
+                    continue;
+                }
                 QString newBrowseUrl = m_filePlacesModel->url(m_filePlacesModel->index(i,0)).prettyUrl();
                 if (!newBrowseUrl.isEmpty() && newBrowseUrl != "trash:/") {
                     MediaItem mediaItem;
