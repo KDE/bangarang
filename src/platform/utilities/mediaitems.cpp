@@ -188,6 +188,11 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
             mediaItem.fields["videoType"] = "Video Clip";
         }
         if (!url.isLocalFile()) {
+            //Audio streams are mostly internet radio and so on
+            //It's nicer for the user to see the server he's getting the stream from than anything
+            //else as e.g. radios have their own website/servers
+            mediaItem.title = url.host();
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.type = "Audio";
             mediaItem.fields["audioType"] = "Audio Stream";
         }
