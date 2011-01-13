@@ -198,8 +198,9 @@ public:
      * Returns the engine portion of the lri string.
      */
     QString engine() {
-        if (lri.indexOf("://") != -1) {
-            return lri.left(lri.indexOf("://") + 3);
+        int idxOfSlashes = lri.indexOf("://");
+        if (idxOfSlashes != -1) {
+            return lri.left(idxOfSlashes + 3);
         } else {
             return QString();
         }
@@ -210,9 +211,10 @@ public:
      */
     QString engineArg() {
         int endOfArg = (lri.indexOf("?") != -1) ? lri.indexOf("?") - 1: lri.size() - 1;
-        if ((lri.indexOf("://") != -1) && (lri.indexOf("://") != lri.size() - 3)) {
+        int idxOfSlashes = lri.indexOf("://");
+        if ((idxOfSlashes != -1) && (idxOfSlashes != lri.size() - 3)) {
             //return lri.mid(lri.indexOf("://") + 3, lri.size() - endOfArg + 1);
-            return lri.mid(lri.indexOf("://") + 3, endOfArg - (lri.indexOf("://") + 2));
+            return lri.mid(idxOfSlashes + 3, endOfArg - (lri.indexOf("://") + 2));
         } else {
             return QString();
         }
@@ -222,8 +224,9 @@ public:
      * Returns the engine filter portion of the lri string. 
      */
     QString engineFilter() {
-        if ((lri.indexOf("://") != -1)  && (lri.indexOf("?") != -1) && (lri.indexOf("?") != lri.size() - 1)){
-            return lri.right(lri.size() - (lri.indexOf("?") + 1));
+        int idxOfArgSep = lri.indexOf("?");
+        if ((lri.indexOf("://") != -1)  && (idxOfArgSep != -1) && (idxOfArgSep != lri.size() - 1)){
+            return lri.right(lri.size() - (idxOfArgSep + 1));
         } else {
             return QString();
         }

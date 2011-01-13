@@ -48,6 +48,7 @@ namespace Utilities {
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
     MediaItem makeSubtitle(const MediaItem & mediaItem);
     QStringList getLinksForResource(Nepomuk::Resource &res);
+    bool isTemporaryAudioStream(const MediaItem &item);
 }
 
 #endif // UTILITIES_MEDIAITEMS_H

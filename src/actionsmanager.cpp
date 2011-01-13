@@ -41,6 +41,7 @@
 #include <QFile>
 #include "audiosettings.h"
 
+
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 {
     /*Set up basics */
@@ -194,6 +195,11 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     action = new KAction(i18n("Remove from list"), this);
     connect(action, SIGNAL(triggered()), m_application->savedListsManager(), SLOT(removeSelected()));
     m_othersCollection->addAction("remove_from_list", action);
+
+    //Add temporary audio streams in the playlist to the MediaList "Audio Streams"
+    action = new KAction(KIcon("list-add"), i18n("Add streams to \"Audio Streams\""), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(addTemporaryAudioStreams()));
+    m_othersCollection->addAction("add_temp_audio_streams", action);
 
     //Add selected to saved audio list
     m_addToAudioSavedList = new QMenu(i18n("Add to list"), m_parent);
@@ -385,10 +391,10 @@ QMenu *ActionsManager::playlistViewMenu()
     m_contextMenuSource = MainWindow::Playlist;
     QMenu *menu = new QMenu(m_parent);
     menu->addAction(action("remove_from_playlist"));
-    QModelIndexList selectedRows = ui->playlistView->selectionModel()->selectedRows();
+    const QList<MediaItem> selectedItems = selectedMediaItems();
     bool showPlayAfterAction = true;
-    if (selectedRows.count() == 1) {
-        MediaItem mediaItem = ui->playlistView->sourceModel()->mediaItemAt(selectedRows.at(0).row());
+    if (selectedItems.count() == 1) {
+        const MediaItem &mediaItem = selectedItems.at(0);
         if (mediaItem.url == m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url) {
             showPlayAfterAction = false;
         }
@@ -397,6 +403,13 @@ QMenu *ActionsManager::playlistViewMenu()
         action("add_after_now_playing")->setIcon(KIcon("media-playback-start"));
         action("add_after_now_playing")->setText(i18n("Play after Now Playing"));
         menu->addAction(action("add_after_now_playing"));
+    }
+    //check for temporary audio streams
+    foreach(const MediaItem &itm, selectedItems) {
+        if (Utilities::isTemporaryAudioStream(itm)) {
+            menu->addAction(action("add_temp_audio_streams"));
+            break;
+        }
     }
     return menu;
 }
@@ -1046,4 +1059,18 @@ void ActionsManager::updateToggleFilterText()
             txt = i18n("Show filter");
     }
     action("toggle_filter")->setText(txt);
+}
+
+void ActionsManager::addTemporaryAudioStreams()
+{
+    QList<MediaItem> selected = selectedMediaItems();
+    QList<MediaItem> tempStreams;
+    foreach(const MediaItem &item, selected) {
+        if (Utilities::isTemporaryAudioStream(item)) {
+            tempStreams << item;
+        }
+    }
+    if (tempStreams.count() <= 0)
+        return;
+    m_application->playlist()->playlistModel()->updateSourceInfo(tempStreams, true);
 }

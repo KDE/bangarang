@@ -1404,5 +1404,21 @@ QStringList Utilities::getLinksForResource(Nepomuk::Resource &res)
     return related;
 }
 
+bool Utilities::isTemporaryAudioStream(const MediaItem& item)
+{
+    if (item.type != "Audio") {
+        return false;
+    }
+    if (item.fields["audioType"] != "Audio Stream") {
+        return false;
+    }
+    const QVariant &rscUri = item.fields["resourceUri"];
+    if (rscUri.isValid() && !rscUri.isNull()) {
+        return false;
+    }
+    return true;
+}
+
+
 #endif //UTILITIES_MEDIAITEMS_CPP
 
