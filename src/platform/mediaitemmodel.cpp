@@ -45,6 +45,8 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_suppressNoResultsMessage = false;
     m_pendingUpdateRefresh = false;
     m_suppressTooltip = false;
+    setSupportedDragActions(Qt::CopyAction);
+    
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -803,19 +805,20 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
 
 Qt::DropActions MediaItemModel::supportedDropActions() const
 {
-    return Qt::MoveAction;
+    return Qt::MoveAction | Qt::CopyAction;
 }
 
 Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
 {
-    //Qt::ItemFlags defaultFlags = QStandardItemModel::flags(index);
-    Qt::ItemFlags defaultFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    
+    Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    KUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
     if (index.isValid()) {
-        return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
-    } else {
-        return Qt::ItemIsDropEnabled | defaultFlags;
+        useFlags |= Qt::ItemIsDropEnabled;
+        if (url.isLocalFile()) {
+            useFlags |= Qt::ItemIsDragEnabled;
+        }
     }
+    return useFlags;
 }
 
 QStringList MediaItemModel::mimeTypes() const
