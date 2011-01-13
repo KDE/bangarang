@@ -38,7 +38,9 @@ class PlaylistView : public QListView
         void setupActions();
         
     protected:
-        void contextMenuEvent (QContextMenuEvent * event);   
+        void contextMenuEvent (QContextMenuEvent * event);
+        void dragMoveEvent(QDragMoveEvent *e);
+        void dropEvent(QDropEvent *e);
         
     private:
         Playlist *m_playlist;
