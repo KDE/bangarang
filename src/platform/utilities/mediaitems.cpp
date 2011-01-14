@@ -188,8 +188,14 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
             mediaItem.fields["videoType"] = "Video Clip";
         }
         if (!url.isLocalFile()) {
+            //Audio streams are mostly internet radio and so on
+            //It's nicer for the user to see the server he's getting the stream from than anything
+            //else as e.g. radios have their own website/servers
+            mediaItem.title = url.host();
+            mediaItem.fields["title"] = mediaItem.title;
             mediaItem.type = "Audio";
             mediaItem.fields["audioType"] = "Audio Stream";
+            mediaItem.fields["sourceLri"] = "audiostreams://"; //Set sourceLri so that any MediaItemModel will know how to save info
         }
     }
 
@@ -1403,6 +1409,22 @@ QStringList Utilities::getLinksForResource(Nepomuk::Resource &res)
     }
     return related;
 }
+
+bool Utilities::isTemporaryAudioStream(const MediaItem& item)
+{
+    if (item.type != "Audio") {
+        return false;
+    }
+    if (item.fields["audioType"] != "Audio Stream") {
+        return false;
+    }
+    const QVariant &rscUri = item.fields["resourceUri"];
+    if (rscUri.isValid() && !rscUri.isNull()) {
+        return false;
+    }
+    return true;
+}
+
 
 #endif //UTILITIES_MEDIAITEMS_CPP
 

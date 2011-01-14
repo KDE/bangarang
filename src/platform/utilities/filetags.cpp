@@ -359,84 +359,87 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
         MediaItem mediaItem = mediaList.at(i);
-        if ((mediaItem.type == "Audio") && (mediaItem.fields["audioType"] == "Music")) {
-            QString url = mediaList.at(i).url;
-            if (Utilities::isMusic(url)) {
-                QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
-                if (!artworkUrl.isEmpty()) {
-                    Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
-                }
-                TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
-                if (!file.isNull()) {
-                    QString title = mediaItem.fields["title"].toString();
-                    if (!title.isEmpty()) {
-                        TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setTitle(tTitle);
-                    }
-                    QStringList artists = mediaItem.fields["artist"].toStringList();
-                    if (!artists.isEmpty()) {
-                        TagLib::String tArtist(artists.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setArtist(tArtist);
-                    }
-                    QString album = mediaItem.fields["album"].toString();
-                    if (!album.isEmpty()) {
-                        TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setAlbum(tAlbum);
-                    }
-                    int year = mediaItem.fields["year"].toInt();
-                    if (year != 0) {
-                        file.tag()->setYear(year);
-                    }
-                    int trackNumber = mediaItem.fields["trackNumber"].toInt();
-                    if (trackNumber != 0) {
-                        file.tag()->setTrack(trackNumber);
-                    }
-                    QStringList genres = mediaItem.fields["genre"].toStringList();
-                    if (!genres.isEmpty()) {
-                        TagLib::String tGenre(genres.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
-                        file.tag()->setGenre(tGenre);
-                    }
-                    file.save();
+        if ( (mediaItem.type != "Audio") || (mediaItem.fields["audioType"] != "Music")) {
+            continue;
+        }
+        QString url = mediaList.at(i).url;
+        if (!Utilities::isMusic(url)) {
+            continue;
+        }
+        QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
+        if (!artworkUrl.isEmpty()) {
+            Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
+        }
+        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
+        if (file.isNull()) {
+            continue;
+        }
+        QString title = mediaItem.fields["title"].toString();
+        if (!title.isEmpty()) {
+            TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
+            file.tag()->setTitle(tTitle);
+        }
+        QStringList artists = mediaItem.fields["artist"].toStringList();
+        if (!artists.isEmpty()) {
+            TagLib::String tArtist(artists.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
+            file.tag()->setArtist(tArtist);
+        }
+        QString album = mediaItem.fields["album"].toString();
+        if (!album.isEmpty()) {
+            TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
+            file.tag()->setAlbum(tAlbum);
+        }
+        int year = mediaItem.fields["year"].toInt();
+        if (year != 0) {
+            file.tag()->setYear(year);
+        }
+        int trackNumber = mediaItem.fields["trackNumber"].toInt();
+        if (trackNumber != 0) {
+            file.tag()->setTrack(trackNumber);
+        }
+        QStringList genres = mediaItem.fields["genre"].toStringList();
+        if (!genres.isEmpty()) {
+            TagLib::String tGenre(genres.at(0).trimmed().toUtf8().data(), TagLib::String::UTF8);
+            file.tag()->setGenre(tGenre);
+        }
+        file.save();
 
-                    //Save tag type specific fields
-                    QStringList composers = mediaItem.fields["composer"].toStringList();
-                    QString tag = tagType(url);
-                    if (tag == "ID3V2" || tag == "FLACID3V2") {
-                        if (tag == "ID3V2") {
-                            TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
-                            TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
-                            setID3V2TextFrameFields(id3v2, "TPE1", artists);
-                            setID3V2TextFrameFields(id3v2, "TCOM", composers);
-                            setID3V2TextFrameFields(id3v2, "TCON", genres);
-                            mpegFile.save();
-                        } else {
-                            TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
-                            TagLib::ID3v2::Tag *id3v2 = flacFile.ID3v2Tag();
-                            setID3V2TextFrameFields(id3v2, "TPE1", artists);
-                            setID3V2TextFrameFields(id3v2, "TCOM", composers);
-                            setID3V2TextFrameFields(id3v2, "TCON", genres);
-                            flacFile.save();
-                        }
-                    } else if (tag == "OGG" || tag == "FLACOGG") {
-                        if (tag == "OGG") {
-                            TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
-                            TagLib::Ogg::XiphComment *xiph = vorbisFile.tag();
-                            setXiphTextFields(xiph, "ARTIST", artists);
-                            setXiphTextFields(xiph, "PERFORMER", artists);
-                            setXiphTextFields(xiph, "COMPOSER", composers);
-                            setXiphTextFields(xiph, "GENRE", genres);
-                            vorbisFile.save();
-                        } else {
-                            TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
-                            TagLib::Ogg::XiphComment *xiph = flacFile.xiphComment();
-                            setXiphTextFields(xiph, "ARTIST", artists);
-                            setXiphTextFields(xiph, "PERFORMER", artists);
-                            setXiphTextFields(xiph, "COMPOSER", composers);
-                            setXiphTextFields(xiph, "GENRE", genres);
-                            flacFile.save();
-                        }
-                    }
-                }
+        //Save tag type specific fields
+        QStringList composers = mediaItem.fields["composer"].toStringList();
+        QString tag = tagType(url);
+        if (tag == "ID3V2" || tag == "FLACID3V2") {
+            if (tag == "ID3V2") {
+                TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
+                TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
+                setID3V2TextFrameFields(id3v2, "TPE1", artists);
+                setID3V2TextFrameFields(id3v2, "TCOM", composers);
+                setID3V2TextFrameFields(id3v2, "TCON", genres);
+                mpegFile.save();
+            } else {
+                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::ID3v2::Tag *id3v2 = flacFile.ID3v2Tag();
+                setID3V2TextFrameFields(id3v2, "TPE1", artists);
+                setID3V2TextFrameFields(id3v2, "TCOM", composers);
+                setID3V2TextFrameFields(id3v2, "TCON", genres);
+                flacFile.save();
+            }
+        } else if (tag == "OGG" || tag == "FLACOGG") {
+            if (tag == "OGG") {
+                TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::Ogg::XiphComment *xiph = vorbisFile.tag();
+                setXiphTextFields(xiph, "ARTIST", artists);
+                setXiphTextFields(xiph, "PERFORMER", artists);
+                setXiphTextFields(xiph, "COMPOSER", composers);
+                setXiphTextFields(xiph, "GENRE", genres);
+                vorbisFile.save();
+            } else {
+                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::Ogg::XiphComment *xiph = flacFile.xiphComment();
+                setXiphTextFields(xiph, "ARTIST", artists);
+                setXiphTextFields(xiph, "PERFORMER", artists);
+                setXiphTextFields(xiph, "COMPOSER", composers);
+                setXiphTextFields(xiph, "GENRE", genres);
+                flacFile.save();
             }
         }
     }
