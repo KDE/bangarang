@@ -245,6 +245,10 @@ void MediaIndexer::processWriterOutput()
             int index = m_urlList.indexOf(url);
             if (index != -1) {
                 MediaItem mediaItem = m_mediaList.at(index);
+                Nepomuk::Resource res(KUrl(mediaItem.url));
+                if (res.exists()) {
+                    mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+                }
                 emit sourceInfoUpdated(mediaItem);
                 m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
                 m_status["progress"] = m_percent;
