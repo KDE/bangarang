@@ -922,21 +922,59 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
 
 void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
 {
-    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
-    //Assumes that items in mediaList are items currently in model
-    if (m_listEngineFactory->engineExists(type)) {
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
-        listEngine->removeSourceInfo(mediaList);
+    //Group items in list by list engine type of MediaItem sourceLris
+    QHash<EngineType, QList<MediaItem> > typeLists;
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaListProperties properties(mediaList.at(i).fields["sourceLri"].toString());
+        EngineType currentType = m_listEngineFactory->engineTypeFromString(properties.engine());
+        if (currentType == EngineTypeUnknown) {
+            currentType = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+        }
+        if (currentType != EngineTypeUnknown) {
+            QList<MediaItem> typeList = typeLists.value(currentType);
+            typeList.append(mediaList.at(i));
+            typeLists.insert(currentType, typeList);
+        }
+    }
+
+    //Remove info using appropriate list engine type
+    QList<EngineType> types = typeLists.keys();
+    for (int i = 0; i < types.count(); i++) {
+        EngineType type = types.at(i);
+        QList<MediaItem> list = typeLists.value(type);
+        if (m_listEngineFactory->engineExists(type)) {
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
+            listEngine->removeSourceInfo(mediaList);
+        }
     }
 }
 
 void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly)
 {
-    EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
-    //Assumes that items in mediaList are items currently in model
-    if (m_listEngineFactory->engineExists(type)) {
-        ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
-        listEngine->updateSourceInfo(mediaList, nepomukOnly);
+    //Group items in list by list engine type of MediaItem sourceLris
+    QHash<EngineType, QList<MediaItem> > typeLists;
+    for (int i = 0; i < mediaList.count(); i++) {
+        MediaListProperties properties(mediaList.at(i).fields["sourceLri"].toString());
+        EngineType currentType = m_listEngineFactory->engineTypeFromString(properties.engine());
+        if (currentType == EngineTypeUnknown) {
+            currentType = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
+        }
+        if (currentType != EngineTypeUnknown) {
+            QList<MediaItem> typeList = typeLists.value(currentType);
+            typeList.append(mediaList.at(i));
+            typeLists.insert(currentType, typeList);
+        }
+    }
+
+    //Update info using appropriate list engine type
+    QList<EngineType> types = typeLists.keys();
+    for (int i = 0; i < types.count(); i++) {
+        EngineType type = types.at(i);
+        QList<MediaItem> list = typeLists.value(type);
+        if (m_listEngineFactory->engineExists(type)) {
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
+            listEngine->updateSourceInfo(mediaList, nepomukOnly);
+        }
     }
 
     //Always update model info in case list engine is unable to update source of media items
