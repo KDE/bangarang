@@ -243,17 +243,18 @@ void MediaIndexer::processWriterOutput()
         } else if (line.startsWith("BangarangSignal:sourceInfoUpdated:")) {
             QString url = line.remove("BangarangSignal:sourceInfoUpdated:").trimmed();
             int index = m_urlList.indexOf(url);
-            if (index != -1) {
-                MediaItem mediaItem = m_mediaList.at(index);
-                Nepomuk::Resource res(KUrl(mediaItem.url));
-                if (res.exists()) {
-                    mediaItem.fields["resourceUri"] = res.resourceUri().toString();
-                }
-                emit sourceInfoUpdated(mediaItem);
-                m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
-                m_status["progress"] = m_percent;
-                emit updateStatus(m_status);
+            if (index == -1) {
+                continue;
             }
+            MediaItem mediaItem = m_mediaList.at(index);
+            Nepomuk::Resource res(KUrl(mediaItem.url));
+            if (res.exists()) {
+                mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+            }
+            emit sourceInfoUpdated(mediaItem);
+            m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
+            m_status["progress"] = m_percent;
+            emit updateStatus(m_status);
         } else if (line.startsWith("BangrangSignal:urlInfoRemoved:")) {
             QString resourceUri = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
             m_status["description"] = i18n("Removing info...");
