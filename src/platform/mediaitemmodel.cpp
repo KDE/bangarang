@@ -817,6 +817,8 @@ Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
         if (url.isLocalFile()) {
             useFlags |= Qt::ItemIsDragEnabled;
         }
+    } else {
+        useFlags |= Qt::ItemIsDropEnabled;
     }
     return useFlags;
 }
