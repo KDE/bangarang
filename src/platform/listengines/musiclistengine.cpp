@@ -375,6 +375,7 @@ void MusicListEngine::run()
             query.orderBy(orderByBindings);
 
             QStringList urls;
+            QList<MediaItem> fullMediaList;
             int limit = 100;
             int resultSetCount = limit;
             int resultCount = 0;
@@ -398,21 +399,23 @@ void MusicListEngine::run()
                     KUrl url = it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri().isEmpty() ?
                     it.binding(mediaVocabulary.mediaResourceBinding()).uri() :
                     it.binding(mediaVocabulary.mediaResourceUrlBinding()).uri();
-                    QString urlString = url.prettyUrl();
-                    if (urls.indexOf(urlString) == -1) {
+                    int urlsIndex = urls.indexOf(url.prettyUrl());
+                    if (urlsIndex == -1) {
                         //Only create new mediaItem if url is new
                         MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                         if (!mediaItem.url.startsWith("nepomuk:/")) {
                             relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                             mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                             mediaList.append(mediaItem);
+                            fullMediaList.append(mediaItem);
+                            urls.append(mediaItem.url);
                         }
-                        urls.append(urlString);
                     } else {
-                        MediaItem mediaItem = mediaList.at(urls.indexOf(urlString));
+                        MediaItem mediaItem = fullMediaList.at(urlsIndex);
                         relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                         mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                        mediaList.replace(urls.indexOf(urlString), mediaItem);
+                        mediaList.append(mediaItem);
+                        fullMediaList.replace(urlsIndex, mediaItem);
                     }
                     resultSetCount++;
                 }
