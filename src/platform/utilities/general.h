@@ -69,5 +69,6 @@ namespace Utilities {
     QString titleForRequest(const QString &title);
     QString wordsForTimeSince(const QDateTime & dateTime);
     QString capitalize(const QString & text);
+    QHash<QString, QStringList> multiValueAppend(QHash<QString, QStringList> multiValues, QString key, QString newValue);
 }
 #endif //UTILITIES_GENERAL_H

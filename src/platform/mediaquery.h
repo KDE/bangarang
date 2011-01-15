@@ -266,6 +266,21 @@ class MediaQuery {
             }
             return statement;
         }
+        static QString filterConstraint(const QString &binding, const QUrl &test,
+                               MediaQuery::Constraint constraint)
+        {
+            QString statement;
+            if (constraint == MediaQuery::Equal) {
+                statement += QString(" (?%1 = <%2>) ")
+                .arg(binding)
+                .arg(test.toString());
+            } else {
+                statement += QString(" (?%1 != <%2>) ")
+                .arg(binding)
+                .arg(test.toString());
+            }
+            return statement;
+        }
 
 
     private:

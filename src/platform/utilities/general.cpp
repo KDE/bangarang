@@ -415,6 +415,16 @@ QString Utilities::capitalize(const QString &text)
     return capWords.join(" ");
 }
 
+QHash<QString, QStringList> Utilities::multiValueAppend(QHash<QString, QStringList> multiValues, QString key, QString newValue)
+{
+    QStringList multiValue = multiValues.value(key);
+    if (!multiValue.contains(newValue)) {
+        multiValue.append(newValue);
+        multiValues.insert(key, multiValue);
+    }
+    return multiValues;
+}
+
 #endif //UTILITIES_GENERAL_CPP
 
 

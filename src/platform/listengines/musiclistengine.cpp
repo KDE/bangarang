@@ -81,12 +81,14 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             bindings.append(mediaVocabulary.musicArtistDescriptionBinding());
             bindings.append(mediaVocabulary.musicArtistArtworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicAnyArtistDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.artistResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings = QStringList(mediaVocabulary.musicArtistNameBinding());
@@ -95,6 +97,7 @@ void MusicListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             int i = 0;
             while( it.next() ) {
                 if (m_stop) {
@@ -113,10 +116,8 @@ void MusicListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
-                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Artist")).uri());
-                    if (res.isValid()) {
-                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
-                    }
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
 
                     //Provide context info for artist
                     mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
@@ -170,11 +171,13 @@ void MusicListEngine::run()
             bindings.append(MediaVocabulary::resourceBindingForCategory("Album"));
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
             bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasMusicAnyArtistName(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.albumResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
@@ -183,6 +186,7 @@ void MusicListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             int i = 0;
             while( it.next() ) {
                 if (m_stop) {
@@ -199,10 +203,8 @@ void MusicListEngine::run()
                     mediaItem.fields["title"] = album;
                     mediaItem.fields["artist"] = artist;
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Album")).uri());
-                    if (res.isValid()) {
-                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
-                    }
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("media-optical-audio");
                     mediaItem = Utilities::makeSubtitle(mediaItem);
@@ -347,6 +349,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
@@ -361,6 +364,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
@@ -376,6 +380,7 @@ void MusicListEngine::run()
             int resultCount = 0;
             int offset = 0;
             query.addLimit(limit);
+            QHash<QString, QStringList> relatedTos;
             while (resultSetCount >= limit) {
                 if (m_stop) {
                     return;
@@ -398,9 +403,16 @@ void MusicListEngine::run()
                         //Only create new mediaItem if url is new
                         MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                         if (!mediaItem.url.startsWith("nepomuk:/")) {
+                            relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                            mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                             mediaList.append(mediaItem);
                         }
                         urls.append(urlString);
+                    } else {
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(urlString));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(urlString), mediaItem);
                     }
                     resultSetCount++;
                 }
@@ -463,12 +475,15 @@ void MusicListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Music"), m_mediaListProperties.lri);
                 if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
                 }
             }

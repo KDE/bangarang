@@ -283,6 +283,11 @@ QUrl MediaVocabulary::tag()
   return returnUrl;
 }
 
+QUrl MediaVocabulary::relatedTo()
+{
+  return QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");
+}
+
 QUrl MediaVocabulary::description()
 {
     QUrl returnUrl = QUrl();
@@ -1041,6 +1046,20 @@ QString MediaVocabulary::hasRating(MediaQuery::Match match,
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::rating(), propertyBinding);
     if (rating != -1) {
         statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, rating, constraint);
+    }
+    if (match == MediaQuery::Optional) {
+        statement = MediaQuery::addOptional(statement);
+    }
+    return statement;
+}
+
+QString MediaVocabulary::hasRelatedTo(const QString &resourceBinding, MediaQuery::Match match, const QUrl &related, MediaQuery::Constraint constraint)
+{
+    //QString resourceBinding = mediaResourceBinding();
+    QString propertyBinding = relatedToBinding();
+    QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::relatedTo(), propertyBinding);
+    if (related.isValid()) {
+        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, related, constraint);
     }
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -1844,6 +1863,11 @@ QString MediaVocabulary::releaseDateBinding()
 QString MediaVocabulary::ratingBinding()
 {
     return "rating";
+}
+
+QString MediaVocabulary::relatedToBinding()
+{
+    return "relatedTo";
 }
 
 QString MediaVocabulary::musicArtistBinding()
