@@ -84,6 +84,7 @@ class MediaVocabulary {
         QUrl rating();
         QUrl ncoFullname();
 	QUrl tag();
+        QUrl relatedTo();
         
         //These properties are applicable to Music
         QUrl musicArtist();
@@ -164,7 +165,10 @@ class MediaVocabulary {
         QString hasRating(MediaQuery::Match match = MediaQuery::Required, 
                              int rating = -1, 
                              MediaQuery::Constraint constraint = MediaQuery::Equal);
-        
+        QString hasRelatedTo(const QString&resourceBinding, MediaQuery::Match match = MediaQuery::Required,
+                       const QUrl &related = QUrl(),
+                       MediaQuery::Constraint constraint = MediaQuery::Equal);
+
         QString hasMusicAnyArtistName(MediaQuery::Match match = MediaQuery::Required,
                                    const QString &artistName = QString(),
                                    MediaQuery::Constraint constraint = MediaQuery::Equal);
@@ -270,7 +274,8 @@ class MediaVocabulary {
         static QString releaseDateBinding();
         static QString ratingBinding();
         static QString tagBinding();
-        
+        static QString relatedToBinding();
+
         static QString musicArtistBinding();
         static QString musicArtistNameBinding();
         static QString musicArtistDescriptionBinding();

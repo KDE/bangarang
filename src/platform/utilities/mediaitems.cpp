@@ -576,7 +576,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
         }
     }
     mediaItem.fields["artworkUrl"] = it.binding(MediaVocabulary::artworkBinding()).uri().toString();
-    mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
+    //mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
     if (type == "Audio Clip" || type == "Audio Stream" || type == "Music") {
         mediaItem.type = "Audio";
         mediaItem.fields["audioType"] = type;

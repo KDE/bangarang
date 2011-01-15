@@ -86,6 +86,7 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoMovie(MediaQuery::Required));
@@ -95,6 +96,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
@@ -105,12 +107,15 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
                 if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
                 }
             }
@@ -172,12 +177,14 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoSeriesTitleBinding());
             bindings.append(mediaVocabulary.videoSeriesDescriptionBinding());
             bindings.append(mediaVocabulary.videoSeriesArtworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoSeriesDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoSeriesArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(MediaVocabulary::resourceBindingForCategory("TV Series"), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.videoSeriesTitleBinding());
@@ -186,6 +193,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
@@ -201,10 +209,8 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoSeriesDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoSeriesArtworkBinding()).uri().toString();
-                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("TV Series")).uri());
-                    if (res.isValid()) {
-                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
-                    }
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     
@@ -484,12 +490,14 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoActorBinding());
             bindings.append(mediaVocabulary.videoActorDescriptionBinding());
             bindings.append(mediaVocabulary.videoActorArtworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoActorDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoActorArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(MediaVocabulary::resourceBindingForCategory("Actor"), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.videoActorBinding());
@@ -498,6 +506,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
@@ -513,10 +522,8 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoActorDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoActorArtworkBinding()).uri().toString();
-                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Actor")).uri());
-                    if (res.isValid()) {
-                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
-                    }
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -541,12 +548,14 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.videoDirectorBinding());
             bindings.append(mediaVocabulary.videoDirectorDescriptionBinding());
             bindings.append(mediaVocabulary.videoDirectorArtworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required));
             query.addCondition(mediaVocabulary.hasVideoDirectorDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoDirectorArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(MediaVocabulary::resourceBindingForCategory("Director"), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings(mediaVocabulary.videoDirectorBinding());
@@ -555,6 +564,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
@@ -570,10 +580,8 @@ void VideoListEngine::run()
                     mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                     mediaItem.fields["description"] = it.binding(mediaVocabulary.videoDirectorDescriptionBinding()).literal().toString().trimmed();
                     mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoDirectorArtworkBinding()).uri().toString();
-                    Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Director")).uri());
-                    if (res.isValid()) {
-                        mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
-                    }
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("view-media-artist");
 
@@ -605,6 +613,7 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
@@ -617,6 +626,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), searchTerm, MediaQuery::Contains);
             query.addFilterOr();
@@ -643,6 +653,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
@@ -661,8 +672,9 @@ void VideoListEngine::run()
                     }
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
-                
                 if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
                 }
             }
@@ -688,6 +700,7 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.videoAudienceRatingBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
@@ -702,6 +715,7 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
             QStringList orderByBindings;
@@ -714,6 +728,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
@@ -732,8 +747,9 @@ void VideoListEngine::run()
                     }
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
-                
                 if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
                 }
             }
