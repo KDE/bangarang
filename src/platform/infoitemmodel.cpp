@@ -489,6 +489,7 @@ void InfoItemModel::infoFetched(QList<MediaItem> fetchedMatches)
         }
     }
     if (foundIndex != -1 && m_fetchType == AutoFetch) {
+        match = Utilities::makeSubtitle(match);
         m_mediaList.replace(foundIndex, match);
     } else if (foundIndex != -1 && m_fetchType == Fetch) {
         m_fetchedMatches = fetchedMatches;
