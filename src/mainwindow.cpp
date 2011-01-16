@@ -649,8 +649,14 @@ void MainWindow::updateSeekTime(qint64 time)
             return;
         }
         QStringList filterList = mediaListProperties.engineFilterList();
-        int filterIndex = filterList.indexOf(QRegExp("^lastPlayed", Qt::CaseInsensitive));
-        if (filterIndex > 0) {
+        int filterIndex = -1;
+        for (int i = 0; i < filterList.count(); i++) {
+            if (filterList.at(i).startsWith("lastPlayed")) {
+                filterIndex = i;
+                break;
+            }
+        }
+        if (filterIndex >= 0) {
             if (mediaListProperties.filterOperator(filterList.at(filterIndex)) != ">") {
                 return;
             }
