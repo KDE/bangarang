@@ -123,45 +123,6 @@ void BangarangApplication::setup()
         KMessageBox::information(m_mainWindow, i18n("Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media library, rating and play count functions will be unavailable."), i18n("Bangarang"), i18n("Don't show this message again"));
     }
     
-    //Process command line arguments
-    QList<MediaItem> mediaList;
-    bool itemLoaded = false;
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() > 0) {
-        for(int i = 0; i < args->count(); i++) {
-            if (args->isSet("play-dvd")) {
-                //Play DVD
-                kDebug() << "playing DVD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("DVD Video");
-                mediaItem.url = "dvdvideo://";
-                mediaItem.type = "Category";
-                mediaList << mediaItem;
-                itemLoaded = true;
-                break;
-            } else if (args->isSet("play-cd")) {
-                //Play CD
-                kDebug() << "playing CD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("Audio CD");
-                mediaItem.url = "cdaudio://";
-                mediaItem.type = "Category";
-                mediaList << mediaItem;
-                itemLoaded = true;
-                break;
-            } else {
-                //Play Url
-                KUrl cmdLineKUrl = args->url(i);
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
-                mediaList << mediaItem;
-                itemLoaded = true;
-            }
-        }
-        if (mediaList.count() > 0) {
-            m_playlist->playMediaList(mediaList);
-        }
-    }
-    
     //Load Config
     KConfig config;
     KConfigGroup generalGroup( &config, "General" );
@@ -182,9 +143,6 @@ void BangarangApplication::setup()
     m_audioOutput->setVolume(static_cast<qreal>(generalGroup.readEntry("Volume", static_cast<int>(m_volume * 100))) / 100);
     m_audioSettings->restoreAudioSettings(&generalGroup);
     m_videoSettings->restoreVideoSettings(&generalGroup);
-    if (!itemLoaded) {
-        m_savedListsManager->loadPlaylist();
-    }
 
     //connect signal from notfier, so that pause/resume will work
     connect(m_statusNotifierItem, SIGNAL(changeStateRequested(Phonon::State)), this,
@@ -398,4 +356,50 @@ void BangarangApplication::nowPlayingChanged()
         m_mainWindow->connectPhononWidgets();
     }
 
+}
+
+void BangarangApplication::processCommandLineArgs()
+{
+
+    //Process command line arguments
+    QList<MediaItem> mediaList;
+    bool itemLoaded = false;
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    if (args->count() > 0) {
+        for(int i = 0; i < args->count(); i++) {
+            if (args->isSet("play-dvd")) {
+                //Play DVD
+                kDebug() << "playing DVD";
+                MediaItem mediaItem;
+                mediaItem.title = i18n("DVD Video");
+                mediaItem.url = "dvdvideo://";
+                mediaItem.type = "Category";
+                mediaList << mediaItem;
+                itemLoaded = true;
+                break;
+            } else if (args->isSet("play-cd")) {
+                //Play CD
+                kDebug() << "playing CD";
+                MediaItem mediaItem;
+                mediaItem.title = i18n("Audio CD");
+                mediaItem.url = "cdaudio://";
+                mediaItem.type = "Category";
+                mediaList << mediaItem;
+                itemLoaded = true;
+                break;
+            } else {
+                //Play Url
+                KUrl cmdLineKUrl = args->url(i);
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
+                mediaList << mediaItem;
+                itemLoaded = true;
+            }
+        }
+        if (mediaList.count() > 0) {
+            m_playlist->playMediaList(mediaList);
+        }
+    }
+    if (!itemLoaded) {
+        m_savedListsManager->loadPlaylist();
+    }
 }
