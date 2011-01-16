@@ -69,6 +69,8 @@ TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
     m_requiredFields["Writer"] = QStringList() << "title";
     m_requiredFields["Producer"] = QStringList() << "title";
 
+    m_lastRequestTime = QDateTime::currentDateTime();
+
 }
 
 bool TMDBInfoFetcher::available(const QString &subType)
@@ -91,6 +93,12 @@ bool TMDBInfoFetcher::available(const QString &subType)
 
 void TMDBInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
+    //Wait 5 seconds before processing next request
+    //NOTE: This is intended to prevent abuse of the tmdb api during autofetches.
+    while (m_lastRequestTime.secsTo(QDateTime::currentDateTime()) < 5) {
+        sleep(1);
+    }
+
     m_updateRequiredFields = updateRequiredFields;
     m_maxMatches = maxMatches;
     m_mediaList.clear();
@@ -134,6 +142,7 @@ void TMDBInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool
 
 void TMDBInfoFetcher::gotTMDBInfo(const KUrl &from, const KUrl &to)
 {
+    m_lastRequestTime = QDateTime::currentDateTime();
 
     //Process original requests
     processOriginalRequest(from, to);
@@ -145,7 +154,6 @@ void TMDBInfoFetcher::gotTMDBInfo(const KUrl &from, const KUrl &to)
     processMoreInfo(from, to);
 
     //Determine if all info for each match set is fetched
-    QList<int> doneRequestIndices;
     for (int i = 0; i < m_requestKeys.count(); i++) {
         //Check if original request is done
         bool originalRequestDone = (m_requestKeys.at(i) == "done");
@@ -175,16 +183,12 @@ void TMDBInfoFetcher::gotTMDBInfo(const KUrl &from, const KUrl &to)
         QList<MediaItem> matches = m_fetchedMatches.value(i);
         emit infoFetched(matches);
 
-        doneRequestIndices.append(i);
+        m_requestKeys.replace(i, "alldone");
     }
 
-    //Remove request keys of completed requests
-    for (int i = 0; i < doneRequestIndices.count(); i++) {
-        int doneIndex = doneRequestIndices.at(i);
-        m_requestKeys.removeAt(doneIndex);
-    }
-
-    if (m_requestKeys.count() == 0) {
+    //Check if all requests are complete
+    bool allDone =(m_requestKeys.filter(QRegExp("^alldone")).count() == m_requestKeys.count());
+    if (allDone) {
         m_isFetching = false;
         if (!m_timeout) {
             m_timer->stop();

@@ -46,6 +46,7 @@ class TMDBInfoFetcher : public InfoFetcher
         QHash<QString, QString> m_moreInfoKeys;
         RequestType m_requestType;
         int m_maxMatches;
+        QDateTime m_lastRequestTime;
 
         void processOriginalRequest(const KUrl &from, const KUrl to);
         void processThumbnails(const KUrl &from, const KUrl to);
