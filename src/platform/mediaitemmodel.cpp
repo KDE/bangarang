@@ -765,27 +765,22 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
     titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
     if (!m_suppressTooltip) {
-        QString tooltip;
+        QString tooltip = QString("<b>%1</b>").arg(mediaItem.title);
+        if (!mediaItem.subTitle.isEmpty()) {
+            tooltip.append((QString("<br>%2").arg(mediaItem.subTitle)));
+        }
         if (!mediaItem.fields["description"].toString().isEmpty()) {
             QString description = mediaItem.fields["description"].toString();
             if (description.length() > 300) {
                 description.chop(300);
                 description = description + QString("...");
-                description = i18n("<b>Description:</b>%1", description);
             }
             tooltip.append(QString("<br>%1").arg(description));
         }
         if (!mediaItem.semanticComment.isEmpty()) {
             tooltip.append(QString("<br><i>%1</i>").arg(mediaItem.semanticComment));
         }
-        if (!tooltip.isEmpty()) {
-            if (mediaItem.subTitle.isEmpty()) {
-                tooltip.prepend(QString("<b>%1</b>").arg(mediaItem.title));
-            } else {
-                tooltip.prepend((QString("<b>%1</b><br>%2").arg(mediaItem.title).arg(mediaItem.subTitle)));
-            }
-            titleItem->setData(tooltip, Qt::ToolTipRole);
-        }
+        titleItem->setData(tooltip, Qt::ToolTipRole);
     }
     if (!mediaItem.fields["rating"].isNull()) {
         titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
