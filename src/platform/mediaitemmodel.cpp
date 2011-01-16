@@ -144,22 +144,15 @@ void MediaItemModel::load()
             EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
             if (m_listEngineFactory->engineExists(type)) {
                 setLoadingState(true);
-                if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
-                    // Since this lri is not currently being loaded by any list engine
-                    // go ahead and start a new load
-                    m_listEngineFactory->stopAll();
-                    
-                    ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
-                    m_requestSignature = m_listEngineFactory->generateRequestSignature();
-                    listEngine->setRequestSignature(m_requestSignature);
-                    listEngine->setMediaListProperties(m_mediaListProperties);
-                    m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
-                    m_lrisLoading.append(m_mediaListProperties.lri);
-                    listEngine->start();
-                    kDebug() << "started new load for " << m_mediaListProperties.lri;
-                } else {
-                    kDebug() << "waiting for " << m_mediaListProperties.lri;
-                }
+                m_listEngineFactory->stopAll();
+
+                ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
+                m_requestSignature = m_listEngineFactory->generateRequestSignature();
+                listEngine->setRequestSignature(m_requestSignature);
+                listEngine->setMediaListProperties(m_mediaListProperties);
+                m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
+                listEngine->start();
+                kDebug() << "started new load for " << m_mediaListProperties.lri;
             } else {
                 showNoResultsMessage();
             }
@@ -248,19 +241,14 @@ void MediaItemModel::categoryActivated(QModelIndex index)
         if (m_listEngineFactory->engineExists(type)) {
             removeRows(0, rowCount());
             setLoadingState(true);
-            if (m_lrisLoading.indexOf(m_mediaListProperties.lri) == -1) {
-                // Since this lri is not currently being loaded by any list engine
-                // go ahead and start a new load
-                m_listEngineFactory->stopAll();
-                ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
-                m_requestSignature = m_listEngineFactory->generateRequestSignature();
-                listEngine->setRequestSignature(m_requestSignature);
-                listEngine->setMediaListProperties(m_mediaListProperties);
-                m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
-                m_lrisLoading.append(m_mediaListProperties.lri);
-                listEngine->start();
-                kDebug()<< "started load for " << m_mediaListProperties.lri;
-            }
+            m_listEngineFactory->stopAll();
+            ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
+            m_requestSignature = m_listEngineFactory->generateRequestSignature();
+            listEngine->setRequestSignature(m_requestSignature);
+            listEngine->setMediaListProperties(m_mediaListProperties);
+            m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
+            listEngine->start();
+            kDebug()<< "started load for " << m_mediaListProperties.lri;
         }
     }
 }
@@ -394,20 +382,13 @@ void MediaItemModel::loadSourcesForNextCat()
                 listEngine->start();
 
             } else {
-                if (m_lrisLoading.indexOf(loadSourcesLri) == -1) {
-                    // Since this lri is not currently being loaded by any list engine
-                    // go ahead and start a new load
-                    listEngine->setRequestSignature(m_requestSignature);
-                    if (m_subRequestSignatures.count() > 0) {
-                        listEngine->setSubRequestSignature(m_subRequestSignatures.at(subRequestSignatureIndex));
-                    }
-                    m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
-                    m_lrisLoading.append(loadSourcesLri);
-                    listEngine->start();
-                    kDebug()<< "started load for " << loadSourcesLri;
-                } else {
-                    kDebug()<< "waiting for " << mediaListProperties.lri;
+                listEngine->setRequestSignature(m_requestSignature);
+                if (m_subRequestSignatures.count() > 0) {
+                    listEngine->setSubRequestSignature(m_subRequestSignatures.at(subRequestSignatureIndex));
                 }
+                m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
+                listEngine->start();
+                kDebug()<< "started load for " << loadSourcesLri;
             }
         }
     }
@@ -415,12 +396,6 @@ void MediaItemModel::loadSourcesForNextCat()
 
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
 {
-    //Remove lri from loading list
-    int lriIndex = m_lrisLoading.indexOf(mediaListProperties.lri);
-    if (lriIndex != -1) {
-        m_lrisLoading.removeAt(lriIndex);
-    }
-    
     //Check request signature of results and ignore results with a different signature
    if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {

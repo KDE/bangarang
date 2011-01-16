@@ -808,7 +808,6 @@ class MediaItemModel : public QStandardItemModel
         MediaListCache * m_mediaListCache;
         bool m_forceRefreshFromSource;
         QHash<QString, QTime> m_lriStartTimes;
-        QList<QString> m_lrisLoading; 
         bool m_loadSources;
         QList<MediaItem> m_mediaListForLoadSources;
         QList<MediaItem> m_remainingCatsForLoadSources;
