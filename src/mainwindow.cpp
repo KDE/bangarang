@@ -625,6 +625,18 @@ void MainWindow::updateSeekTime(qint64 time)
             ui->nowPlaying->setText(i18n("Now Playing"));
         }
     }
+
+    //Check if phonon hasVideo in case phonon reports hasVideo sometime after state change at playback start
+    if (totalTimeMSecs < 3000) {
+        if (m_application->playlist()->mediaObject()->hasVideo()) {
+            ui->videoFrame->setVisible(true);
+            if (videoSize() == Mini) {
+                ui->nowPlayingView->showInfo();
+            } else {
+                ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
+            }
+        }
+    }
 }
 
 void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstate)
