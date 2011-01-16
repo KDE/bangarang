@@ -43,6 +43,7 @@ CDListEngine::CDListEngine(ListEngineFactory * parent) : ListEngine(parent)
     m_mediaObject->setCurrentSource(Phonon::Cd);
     connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
     m_loadWhenReady = false;
+    qRegisterMetaType<Phonon::MediaSource>("MediaSource");
 }
 
 CDListEngine::~CDListEngine()
@@ -71,11 +72,10 @@ void CDListEngine::run()
             if (m_stop) {
                 return;
             }
-            if (m_mediaObject->state() != Phonon::LoadingState) {
+            if (m_mediaObject->state() == Phonon::LoadingState) {
                 msleep(100);
                 continue;
-            } else if (m_mediaObject->state() != Phonon::StoppedState)
-                break;
+            }
             Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
             int trackCount = mediaController->availableTitles();
             //int duration;
