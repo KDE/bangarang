@@ -68,6 +68,8 @@ LastfmInfoFetcher::LastfmInfoFetcher(QObject *parent) :
     m_requiredFields["Artist"] = QStringList() << "title";
     //m_requiredFields["Album"] = QStringList() << "title" << "artist";
 
+    m_lastRequestTime = QDateTime::currentDateTime();
+
 }
 
 bool LastfmInfoFetcher::available(const QString &subType)
@@ -90,6 +92,12 @@ bool LastfmInfoFetcher::available(const QString &subType)
 
 void LastfmInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
+    //Wait 5 seconds before processing next request
+    //NOTE: This is intended to prevent abuse of the last.fm api during autofetches.
+    while (m_lastRequestTime.secsTo(QDateTime::currentDateTime()) < 5) {
+        sleep(1);
+    }
+
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     m_requestKeys.clear();
@@ -134,6 +142,7 @@ void LastfmInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bo
 
 void LastfmInfoFetcher::gotLastfmInfo(const KUrl &from, const KUrl &to)
 {
+    m_lastRequestTime = QDateTime::currentDateTime();
 
     //Process original requests
     processOriginalRequest(from, to);
@@ -145,7 +154,6 @@ void LastfmInfoFetcher::gotLastfmInfo(const KUrl &from, const KUrl &to)
     processMoreInfo(from, to);
 
     //Determine if all info for each match set is fetched
-    QList<int> doneRequestIndices;
     for (int i = 0; i < m_requestKeys.count(); i++) {
         //Check if original request is done
         bool originalRequestDone = (m_requestKeys.at(i) == "done");
@@ -175,16 +183,12 @@ void LastfmInfoFetcher::gotLastfmInfo(const KUrl &from, const KUrl &to)
         QList<MediaItem> matches = m_fetchedMatches.value(i);
         emit infoFetched(matches);
 
-        doneRequestIndices.append(i);
+        m_requestKeys.replace(i, "alldone");
     }
 
-    //Remove request keys of completed requests
-    for (int i = 0; i < doneRequestIndices.count(); i++) {
-        int doneIndex = doneRequestIndices.at(i);
-        m_requestKeys.removeAt(doneIndex);
-    }
-
-    if (m_requestKeys.count() == 0) {
+    //Check if all requests are complete
+    bool allDone =(m_requestKeys.filter(QRegExp("^alldone")).count() == m_requestKeys.count());
+    if (allDone) {
         m_isFetching = false;
         if (!m_timeout) {
             m_timer->stop();
@@ -320,22 +324,17 @@ void LastfmInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                 if (element.tagName() == "name") {
                     match.title = element.text();
                     match.fields["title"] = match.title;
-                    kDebug() << "TITLE:" << match.title;
                 } else if (element.tagName() == "wiki") {
                     QDomElement descriptionElement = nodes.at(j).firstChildElement("summary");
                     match.fields["description"] = descriptionElement.text();
-                    kDebug() << "DESCRIPTION:" << descriptionElement.text();
                 } else if (element.tagName() == "artist") {
                     QDomElement artistNameElement = nodes.at(j).firstChildElement("name");
                     artists.append(artistNameElement.text());
                     match.fields["artist"] = artists;
-                    kDebug() << "ARTIST:" << artists;
                 } else if (element.tagName() == "album") {
                     QDomElement albumTitleElement = nodes.at(j).firstChildElement("title");
                     match.fields["album"] = albumTitleElement.text();
-                    kDebug() << "ALBUM:" << albumTitleElement.text();
                     match.fields["trackNumber"] = element.attribute("position").toInt();
-                    kDebug() << "TRACK#:" << element.attribute("position").toInt();
                     QDomNodeList albumNodes = nodes.at(j).childNodes();
                     for (int k = 0; k < albumNodes.count(); k++) {
                         if (gotThumbnailUrl || !m_updateArtwork) {
@@ -358,11 +357,9 @@ void LastfmInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                     if (duration > 0) {
                         match.fields["duration"] = duration;
                         match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
-                        kDebug() << "DURATION:" << duration;
                     }
                 } else if (element.tagName() == "url") {
                     match.fields["relatedTo"] = QStringList(element.text());
-                    kDebug() << "LINK:" << element.text();
                 } else if (element.tagName() == "toptags") {
                     QDomNodeList tagNodes = nodes.at(j).childNodes();
                     for (int k = 0; k < qMin(3, tagNodes.count()); k++) {
@@ -373,7 +370,6 @@ void LastfmInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                     }
                 }
             }
-            kDebug() << "GENRE:" << match.fields["genre"].toStringList();
             fetchedMatches.append(match);
         }
     }
@@ -499,7 +495,6 @@ void LastfmInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
                 continue;
             }
             QDomElement element = nodes.at(j).toElement();
-            kDebug() << "TAG NAME:" << element.tagName();
             if (element.tagName() == "bio") {
                 QDomElement descriptionElement = nodes.at(j).firstChildElement("summary");
                 QTextEdit converter;
@@ -507,7 +502,6 @@ void LastfmInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
                 converter.setHtml(descriptionElement.text());
                 QString description = converter.toPlainText();
                 match.fields["description"] = description;
-                kDebug() << "DESCRIPTION:" << description;
             }
         }
     }

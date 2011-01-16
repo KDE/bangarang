@@ -22,6 +22,7 @@
 #include "infofetcher.h"
 
 #include <KUrl>
+#include <QDateTime>
 
 class Downloader;
 
@@ -47,6 +48,7 @@ class LastfmInfoFetcher : public InfoFetcher
         QHash<QString, QString> m_thumbnailKeys;
         QHash<QString, QString> m_moreInfoKeys;
         RequestType m_requestType;
+        QDateTime m_lastRequestTime;
 
         void processOriginalRequest(const KUrl &from, const KUrl to);
         void processThumbnails(const KUrl &from, const KUrl to);
