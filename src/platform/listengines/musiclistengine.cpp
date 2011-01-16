@@ -369,9 +369,9 @@ void MusicListEngine::run()
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.musicArtistNameBinding());
-            orderByBindings.append(mediaVocabulary.musicAlbumYearBinding());
             orderByBindings.append(mediaVocabulary.musicAlbumTitleBinding());
             orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
+            orderByBindings.append(mediaVocabulary.titleBinding());
             query.orderBy(orderByBindings);
 
             QStringList urls;
@@ -470,9 +470,9 @@ void MusicListEngine::run()
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.musicArtistNameBinding());
-            orderByBindings.append(mediaVocabulary.musicAlbumYearBinding());
             orderByBindings.append(mediaVocabulary.musicAlbumTitleBinding());
             orderByBindings.append(mediaVocabulary.musicTrackNumberBinding());
+            orderByBindings.append(mediaVocabulary.titleBinding());
             query.orderBy(orderByBindings);
             
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
