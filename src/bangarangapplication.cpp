@@ -39,6 +39,7 @@
 #include <KDebug>
 #include <KStandardDirs>
 #include <Nepomuk/ResourceManager>
+#include <Solid/Device>
 
 #include <QDBusConnection>
 
@@ -380,12 +381,21 @@ void BangarangApplication::processCommandLineArgs()
             } else if (args->isSet("play-cd")) {
                 //Play CD
                 kDebug() << "playing CD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("Audio CD");
-                mediaItem.url = "cdaudio://";
-                mediaItem.type = "Category";
-                mediaList << mediaItem;
-                itemLoaded = true;
+                QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::Audio);
+                foreach (QString udi, udis) {
+                    Solid::Device device = Solid::Device( udi );
+                    if ( !device.isValid() ) {
+                        continue;
+                    }
+                    MediaItem mediaItem;
+                    mediaItem.type = "Category";
+                    mediaItem.title = i18n("Audio CD");
+                    mediaItem.fields["title"] = mediaItem.title;
+                    mediaItem.url = QString( "cdaudio://%1" ).arg(udi);
+                    mediaList << mediaItem;
+                    itemLoaded = true;
+                    break;
+                }
                 break;
             } else {
                 //Play Url
