@@ -169,6 +169,7 @@ class ListEngine : public QThread
         void download(const KUrl &from, const KUrl &to);
         void listDir(const KUrl &url);
         void updateStatus(QHash<QString, QVariant> updatedStatus);
+        void loadOtherEngine(const MediaListProperties &mediaListProperties, const QString &requestSignature, const QString &subRequestSignature);
         
     protected:
         ListEngineFactory * m_parent;

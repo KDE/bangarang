@@ -56,6 +56,10 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
             SIGNAL(updateStatus(QHash<QString,QVariant>)),
             m_mediaItemModel,
             SLOT(updateStatus(QHash<QString,QVariant>)));
+    connect(this,
+            SIGNAL(loadOtherEngine(MediaListProperties,QString,QString)),
+            m_parent,
+            SLOT(load(MediaListProperties,QString,QString)));
 }
 
 MediaItemModel * ListEngine::model()

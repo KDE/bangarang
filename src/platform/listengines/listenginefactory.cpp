@@ -192,3 +192,19 @@ void ListEngineFactory::resumeAll()
         }
     }
 }
+
+void ListEngineFactory::load(MediaListProperties mediaListProperties, const QString &requestSignature, const QString &subRequestSignature)
+{
+    if (mediaListProperties.engine().isEmpty()) {
+        return;
+    }
+    EngineType type = engineTypeFromString(mediaListProperties.engine());
+    if (engineExists(type)) {
+        stopAll();
+        ListEngine * eng = availableListEngine(type);
+        eng->setRequestSignature(requestSignature);
+        eng->setSubRequestSignature(subRequestSignature);
+        eng->setMediaListProperties(mediaListProperties);
+        eng->start();
+    }
+}
