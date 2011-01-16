@@ -111,10 +111,13 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QString subType;
     QString type = index.data(MediaItem::TypeRole).toString();
     MediaItemModel * model = (MediaItemModel *) index.model();
+    int modelRow = index.row();
     if (useProxy()) {
-        model = (MediaItemModel *)((MediaSortFilterProxyModel *)index.model())->sourceModel();
+        MediaSortFilterProxyModel *proxyModel = (MediaSortFilterProxyModel *)index.model();
+        model = (MediaItemModel *)proxyModel->sourceModel();
+        modelRow = proxyModel->mapToSource(index).row();
     }
-    MediaItem mediaItem = model->mediaItemAt(index.row());
+    MediaItem mediaItem = model->mediaItemAt(modelRow);
     subType = mediaItem.subType();
     bool hasSubTitle = false;
     if (index.data(MediaItem::SubTitleRole).isValid() ||
