@@ -627,7 +627,7 @@ void MainWindow::updateSeekTime(qint64 time)
     }
 
     //Check if phonon hasVideo in case phonon reports hasVideo sometime after state change at playback start
-    if (totalTimeMSecs < 3000) {
+    if (time < 3000) {
         if (m_application->playlist()->mediaObject()->hasVideo()) {
             ui->videoFrame->setVisible(true);
             if (videoSize() == Mini) {
