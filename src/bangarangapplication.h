@@ -62,6 +62,7 @@ class BangarangApplication : public KApplication
         VideoSettings * videoSettings() { return m_videoSettings; }
         KLocale * locale() { return m_locale; }
         const KAboutData * aboutData();
+        void processCommandLineArgs();
         
     private:
         MainWindow * m_mainWindow;

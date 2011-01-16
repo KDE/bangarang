@@ -64,5 +64,6 @@ int main(int argc, char *argv[])
 
     MainWindow * w = application.mainWindow();
     w->show();
+    application.processCommandLineArgs();
     return application.exec();
 }

@@ -633,7 +633,12 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
        m_application->statusNotifierItem()->setState(newstate);
 
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
-        if (m_application->mediaObject()->hasVideo()) {
+        bool nowPlayingItemIsVideo = false;
+        if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
+            MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+            nowPlayingItemIsVideo = (nowPlayingItem.type == "Video");
+        }
+        if (m_application->mediaObject()->hasVideo() || nowPlayingItemIsVideo) {
             ui->videoFrame->setVisible(true);
             if (videoSize() == Mini) {
                 ui->nowPlayingView->showInfo();
