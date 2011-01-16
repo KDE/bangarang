@@ -94,7 +94,7 @@ class MediaQuery {
             } else if (agg == Max) {
                 return QString("MAX(?%1) as ?%1_max ").arg(binding);
             } else if (agg == CountAverage) {
-                return QString("(AVG(?%1)*COUNT(?r)) as ?%1_countavg ").arg(binding);
+                return QString("(AVG(?%1)*COUNT(?%1)) as ?%1_countavg ").arg(binding);
             } else {
                 return QString("dummy");
             }
