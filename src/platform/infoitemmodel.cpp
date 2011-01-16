@@ -750,7 +750,7 @@ void InfoItemModel::updateMediaList()
                 } else if (field == "duration") {
                     int duration = currentItem->data(Qt::EditRole).toInt();
                     mediaItem.fields["duration"] = currentItem->data(Qt::EditRole);
-                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.duration = Utilities::durationString(duration);
                 } else if (field == "url") {
                     mediaItem.fields["url"] = currentItem->data(Qt::EditRole);
                     mediaItem.url = currentItem->data(Qt::EditRole).toString();

@@ -367,7 +367,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     mediaItem.fields["description"] = res.property(mediaVocabulary.description()).toString();
     int duration = res.property(mediaVocabulary.duration()).toInt();
     if (duration != 0) {
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+        mediaItem.duration = Utilities::durationString(duration);
         mediaItem.fields["duration"] = duration;
     }
     QStringList rawGenres =  res.property(mediaVocabulary.genre()).toStringList();
@@ -557,7 +557,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.fields["description"] = it.binding(MediaVocabulary::descriptionBinding()).literal().toString();
     int duration = it.binding(MediaVocabulary::durationBinding()).literal().toInt();
     if (duration != 0) {
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+        mediaItem.duration = Utilities::durationString(duration);
         mediaItem.fields["duration"] = duration;
     }
     QStringList rawGenres =  res.property(mediaVocabulary.genre()).toStringList();
@@ -1098,7 +1098,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocat
                     mediaItem.title = title;
                 }
                 if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.duration = Utilities::durationString(duration);
                     mediaItem.fields["duration"] = duration;
                 } else if (duration == -1) {
                     mediaItem.duration = QString();
@@ -1130,7 +1130,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocat
                     mediaItem.title = title;
                 }
                 if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.duration = Utilities::durationString(duration);
                     mediaItem.fields["duration"] = duration;
                 } else if (duration == -1) {
                     mediaItem.duration = QString();

@@ -302,7 +302,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
             //Set Duration
             int duration = binding.value("duration").literal().toInt();
             if (duration != 0) {
-                match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                match.duration = Utilities::durationString(duration);
                 match.fields["duration"] = duration;
             }
             //Set releaseDate

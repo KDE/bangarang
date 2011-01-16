@@ -383,6 +383,10 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             int playCount = fields["playCount"].toInt();
             res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
         }
+        if (fields.contains("duration")) {
+            int duration = fields["duration"].toInt();
+            res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
+        }
         if (fields.contains("lastPlayed")) {
             Nepomuk::Variant value;
             QDateTime lastPlayed = fields["lastPlayed"].toDateTime();

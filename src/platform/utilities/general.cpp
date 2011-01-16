@@ -425,6 +425,22 @@ QHash<QString, QStringList> Utilities::multiValueAppend(QHash<QString, QStringLi
     return multiValues;
 }
 
+QString Utilities::durationString(int seconds)
+{
+    QTime durTime(seconds/(60*60), (seconds / 60) % 60, (seconds) % 60);
+    int minutes = 0;
+    int remSeconds = 0;
+    minutes = durTime.hour()*60 + durTime.minute();
+    remSeconds = durTime.second();
+    QString displayTime;
+    if (remSeconds < 10) {
+        displayTime = QString("%1:0%2").arg(minutes).arg(remSeconds);
+    } else {
+        displayTime = QString("%1:%2").arg(minutes).arg(remSeconds);
+    }
+    return displayTime;
+}
+
 #endif //UTILITIES_GENERAL_CPP
 
 

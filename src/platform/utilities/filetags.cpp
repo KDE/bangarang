@@ -244,7 +244,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         if (!title.isEmpty()) {
             mediaItem.title = title;
         }
-        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+        mediaItem.duration = Utilities::durationString(duration);
         mediaItem.fields["duration"] = duration;
         mediaItem.fields["title"] = title;
         mediaItem.fields["artist"] = artists;
