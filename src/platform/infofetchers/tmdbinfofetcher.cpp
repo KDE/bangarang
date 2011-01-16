@@ -455,9 +455,9 @@ void TMDBInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
         }
         QDomElement element = nodes.at(j).toElement();
         if (element.tagName() == "runtime") {
-            int duration = element.text().toInt();
+            int duration = element.text().toInt()*60; //tmdb duration is in minutes
             match.fields["duration"] = duration;
-            match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+            match.duration = Utilities::durationString(duration);
         } else if (element.tagName() == "categories") {
             QDomNodeList genreNodes = nodes.at(j).childNodes();
             QStringList genres;
