@@ -122,6 +122,12 @@ class ListEngineFactory : public QObject
          */
         void resumeAll();
 
+    public Q_SLOTS:
+        /**
+         * Loads specified LRI with an available list engine using the specified request signature
+         */
+        void load(MediaListProperties mediaListProperties, const QString &requestSignature, const QString &subRequestSignature);
+
 
     private:
         MediaItemModel * m_parent;

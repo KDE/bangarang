@@ -52,6 +52,16 @@ void SavedListsEngine::run()
     
     QList<MediaItem> mediaList;
     
+    if (m_mediaListProperties.engineArg().isEmpty() && !m_mediaListProperties.engineFilter().isEmpty()) {
+        MediaListProperties mediaListProperties = m_mediaListProperties;
+        mediaListProperties.lri = m_mediaListProperties.engineFilter();
+        kDebug() << mediaListProperties.lri;
+        emit loadOtherEngine(mediaListProperties, m_requestSignature, m_subRequestSignature);
+        m_requestSignature = QString();
+        m_subRequestSignature = QString();
+        return;
+    }
+
     if (!m_mediaListProperties.engineArg().isEmpty()) {
         QString workingDir;
         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));

@@ -213,12 +213,20 @@ void MediaListsEngine::run()
                         if (nameUrl.at(0) == "Audio") {
                             mediaItem.title = nameUrl.at(1).trimmed();
                             mediaItem.fields["title"] = mediaItem.title;
-                            mediaItem.url = nameUrl.at(2).trimmed();
+                            QString savedLri = nameUrl.at(2).trimmed();
+                            if (savedLri.startsWith("savedlists://")) {
+                                mediaItem.url = savedLri;
+                                mediaItem.artwork = KIcon("view-list-text");
+                            } else {
+                                mediaItem.url = QString("savedlists://?%1").arg(savedLri);
+                                mediaItem.artwork = KIcon("view-media-playlist");
+                            }
+                            /*mediaItem.url = nameUrl.at(2).trimmed();
                             if (mediaItem.url.startsWith("savedlists://")) {
                                 mediaItem.artwork = KIcon("view-list-text");
                             } else {
                                 mediaItem.artwork = KIcon("view-media-playlist");
-                            }
+                            }*/
                             mediaItem.isSavedList = true;
                             mediaItem.fields["isConfigurable"] = true;
                             if (m_nepomukInited) {
