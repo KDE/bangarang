@@ -48,7 +48,7 @@ LastfmInfoFetcher::LastfmInfoFetcher(QObject *parent) :
     //NOTE: The API key below must be used only in Bangarang.  Please do not use this key in other applications.
     //      API keys can be requested from last.fm.
     m_apiKey = "07066aba654ada984ea6b45032f510c0";
-    m_artistSearchAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.search&limit=5&api_key=%1&artist=%2").arg(m_apiKey).arg("%1");
+    m_artistSearchAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.search&api_key=%1&limit=%2&artist=%3").arg(m_apiKey).arg("%1").arg("%2");
     m_artistInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=artist.getInfo&autocorrect=1&api_key=%1&lang=%2&artist=%3").arg(m_apiKey).arg(lang).arg("%1");
     m_albumInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=album.getInfo&autocorrect=1&api_key=%1&lang=%2&album=%3&artist=%4").arg(m_apiKey).arg(lang).arg("%1").arg("%2");
     m_trackInfoAPI = QString("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&autocorrect=1&api_key=%1&lang=%2&track=%3&artist=%4").arg(m_apiKey).arg(lang).arg("%1").arg("%2");
@@ -88,7 +88,7 @@ bool LastfmInfoFetcher::available(const QString &subType)
     return (networkConnected && handlesType);
 }
 
-void LastfmInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields, bool updateArtwork)
+void LastfmInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
@@ -103,7 +103,7 @@ void LastfmInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequire
         if (mediaItem.subType() == "Artist") {
             m_requestType = ArtistRequest;
             QString searchTerm = Utilities::titleForRequest(mediaItem.fields["title"].toString());
-            LastfmUrlStr = m_artistSearchAPI.arg(searchTerm);
+            LastfmUrlStr = m_artistSearchAPI.arg(maxMatches).arg(searchTerm);
         } else if (mediaItem.subType() == "Album") {
             m_requestType = AlbumRequest;
             QString album = mediaItem.fields["title"].toString();

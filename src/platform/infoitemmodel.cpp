@@ -336,7 +336,7 @@ void InfoItemModel::autoFetch(InfoFetcher* infoFetcher, bool updateRequiredField
     m_fetchedMatches.clear();
     m_selectedFetchedMatch = -1;
     m_itemsToFetch = m_mediaList;
-    fetchBatch(infoFetcher, updateRequiredFields, updateArtwork);
+    fetchBatch(infoFetcher, 1, updateRequiredFields, updateArtwork);
     m_fetchingStatus["description"] = i18np("Fetching info for %1 item...", "Fetching info for %1 items...", m_mediaList.count());
     emit fetchingStatusUpdated();
 }
@@ -347,12 +347,12 @@ void InfoItemModel::fetch(InfoFetcher* infoFetcher)
     m_fetchedMatches.clear();
     m_selectedFetchedMatch = -1;
     m_itemsToFetch = m_mediaList;
-    fetchBatch(infoFetcher, true, true);
+    fetchBatch(infoFetcher, 4, true, true);
     m_fetchingStatus["description"] = i18np("Fetching info for %1 item...", "Fetching info for %1 items...", m_mediaList.count());
     emit fetchingStatusUpdated();
 }
 
-void InfoItemModel::fetchBatch(InfoFetcher *infoFetcher, bool updateRequiredFields, bool updateArtwork)
+void InfoItemModel::fetchBatch(InfoFetcher *infoFetcher, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
     //Take next 4 items to fetch
     QList<MediaItem> mediaList;
@@ -364,7 +364,7 @@ void InfoItemModel::fetchBatch(InfoFetcher *infoFetcher, bool updateRequiredFiel
 
     if (!mediaList.isEmpty()) {
         m_isFetching = true;
-        infoFetcher->fetchInfo(mediaList, updateRequiredFields, updateArtwork);
+        infoFetcher->fetchInfo(mediaList, maxMatches, updateRequiredFields, updateArtwork);
     }
 }
 
@@ -509,7 +509,11 @@ void InfoItemModel::infoFetcherComplete(InfoFetcher *infoFetcher)
         emit fetchingStatusUpdated();
 
         //Fetch info for another batch of items
-        fetchBatch(infoFetcher, true, true);
+        if (m_fetchType == AutoFetch) {
+            fetchBatch(infoFetcher, 1, true, true);
+        } else {
+            fetchBatch(infoFetcher, 4, true, true);
+        }
     } else {
         m_isFetching = false;
         m_fetchingStatus["description"] = i18n("Complete");

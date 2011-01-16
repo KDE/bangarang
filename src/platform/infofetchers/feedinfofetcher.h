@@ -45,7 +45,7 @@ class FeedInfoFetcher : public InfoFetcher
         void download(const KUrl &from, const KUrl &to);
 
     public slots:
-        void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true, bool updateArtwork = true);
+        void fetchInfo(QList<MediaItem> mediaList, int maxMatches = 4, bool updatedRequiredFields = true, bool updateArtwork = true);
 
 };
 

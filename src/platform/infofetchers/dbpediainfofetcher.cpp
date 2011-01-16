@@ -81,8 +81,9 @@ bool DBPediaInfoFetcher::available(const QString &subType)
     return (networkConnected && handlesType);
 }
 
-void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields, bool updateArtwork)
+void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
+    Q_UNUSED(maxMatches);
     m_updateRequiredFields = updateRequiredFields;
     m_mediaList.clear();
     m_requestKeys.clear();
