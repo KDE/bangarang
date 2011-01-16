@@ -49,7 +49,7 @@ bool FileNameInfoFetcher::available(const QString &subType)
     return (handlesType);
 }
 
-void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields, bool updateArtwork)
+void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
     /*
     *   Attempts to guess metadata from MediaItem's filename
@@ -59,6 +59,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequi
     *   (Contributed by: Miha Čančula)
     *   TODO: Add more search patterns to cover things like "SeasonXXEpisodeYY", etc.
     */
+    Q_UNUSED(maxMatches);
     QList<MediaItem> updatedItems;
     setFetching();
     for (int i = 0; i < mediaList.size(); ++i)

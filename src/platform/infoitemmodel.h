@@ -191,7 +191,7 @@ class InfoItemModel : public QStandardItemModel
         QList<MediaItem> m_fetchedMatches;
         int m_selectedFetchedMatch;
         Utilities::Thread * m_utilThread;
-        void fetchBatch(InfoFetcher *infoFetcher, bool updateRequiredFields, bool updateArtwork);
+        void fetchBatch(InfoFetcher *infoFetcher, int maxMatches, bool updateRequiredFields, bool updateArtwork);
         QHash<QString, QVariant> m_fetchingStatus;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
         bool hasMultipleValues(const QString &field);

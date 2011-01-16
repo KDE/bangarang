@@ -39,7 +39,7 @@ class DBPediaInfoFetcher : public InfoFetcher
         bool available(const QString &subType);
 
     public slots:
-        void fetchInfo(QList<MediaItem> mediaList, bool updatedRequiredFields = true, bool updateArtwork = true);
+        void fetchInfo(QList<MediaItem> mediaList, int maxMatches = 4, bool updatedRequiredFields = true, bool updateArtwork = true);
         
     private:
         DBPediaQuery * m_dbPediaQuery;

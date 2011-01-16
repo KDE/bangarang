@@ -89,9 +89,10 @@ bool TMDBInfoFetcher::available(const QString &subType)
     return (networkConnected && handlesType);
 }
 
-void TMDBInfoFetcher::fetchInfo(QList<MediaItem> mediaList, bool updateRequiredFields, bool updateArtwork)
+void TMDBInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool updateArtwork)
 {
     m_updateRequiredFields = updateRequiredFields;
+    m_maxMatches = maxMatches;
     m_mediaList.clear();
     m_requestKeys.clear();
     m_fetchedMatches.clear();
@@ -220,7 +221,7 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
     if (m_requestType == MovieRequest) {
         //Iterate through item nodes of the TMDB XML document
         QDomNodeList movies = TMDBDoc.elementsByTagName("movie");
-        for (int i = 0; i < movies.count(); i++) {
+        for (int i = 0; i < qMin(movies.count(), m_maxMatches); i++) {
             MediaItem match = mediaItem;
 
             //Clear artwork
@@ -280,7 +281,7 @@ void TMDBInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
         }
     }
 
-    //Read Movie results
+    //Read Person results
     if (m_requestType == PersonRequest) {
         //Iterate through item nodes of the TMDB XML document
         QDomNodeList movies = TMDBDoc.elementsByTagName("person");
