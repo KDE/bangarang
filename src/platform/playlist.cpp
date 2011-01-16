@@ -675,9 +675,13 @@ void Playlist::updatePlaybackInfo(qint64 time)
     if (m_playbackInfoChecks == 2) {
         //Update last played date and play count after 10 seconds
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
-            Nepomuk::Resource res(m_nowPlaying->mediaItemAt(0).url);
+            MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
+            Nepomuk::Resource res(nowPlayingItem.url);
+            nowPlayingItem.fields["playCount"] = nowPlayingItem.fields["playCount"].toInt() + 1;
+            nowPlayingItem.fields["lastPlayed"] = QDateTime::currentDateTime();
+            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem);
             if (res.exists()) {
-                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).fields["resourceUri"].toString(), true, QDateTime::currentDateTime());
+                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).fields["resourceUri"].toString(), true, nowPlayingItem.fields["lastPlayed"].toDateTime());
             }
         }
         m_playbackInfoWritten = true;
