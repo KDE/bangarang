@@ -167,6 +167,10 @@ void Playlist::playItemAt(int row, Model model)
     bool isDiscTitle = Utilities::isDisc( nextMediaItem.url );
     if (isDiscTitle) {
         Solid::Device device = Solid::Device( Utilities::deviceUdiFromUrl(nextMediaItem.url) );
+        if (!device.isValid()) {
+            stop();
+            return;
+        }
         const Solid::Block* block = device.as<const Solid::Block>();
         Phonon::DiscType discType = (subType == "CD Track") ? Phonon::Cd : Phonon::Dvd;
         Phonon::MediaSource src = Phonon::MediaSource(discType, block->device());
