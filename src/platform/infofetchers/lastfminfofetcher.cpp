@@ -356,7 +356,7 @@ void LastfmInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
                     int duration = element.text().toInt();
                     if (duration > 0) {
                         match.fields["duration"] = duration;
-                        match.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        match.duration = Utilities::durationString(duration);
                     }
                 } else if (element.tagName() == "url") {
                     match.fields["relatedTo"] = QStringList(element.text());

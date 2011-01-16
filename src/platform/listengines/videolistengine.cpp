@@ -118,6 +118,8 @@ void VideoListEngine::run()
                     mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
                 }
+                kDebug() << mediaItem.fields["duration"].toInt();
+                kDebug() << mediaItem.duration;
             }
             
             m_mediaListProperties.name = i18n("Movies");

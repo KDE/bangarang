@@ -596,22 +596,11 @@ void MainWindow::updateSeekTime(qint64 time)
     int totalTimeMSecs = m_application->mediaObject()->totalTime();
     QTime currentTime(time/(60*60000), (time / 60000) % 60, (time / 1000) % 60);
     QTime totalTime(totalTimeMSecs/(60*60000), (totalTimeMSecs / 60000) % 60, (totalTimeMSecs / 1000) % 60);
-    QTime remainingTime;
-    remainingTime = remainingTime.addSecs(currentTime.secsTo(totalTime));
-    int minutes = 0;
-    int seconds = 0;
-    if (!m_showRemainingTime) {
-        minutes = currentTime.hour()*60 + currentTime.minute();
-        seconds = currentTime.second();
-    } else {
-        minutes = remainingTime.hour()*60 + remainingTime.minute();
-        seconds = remainingTime.second();
-    }
     QString displayTime;
-    if (seconds < 10) {
-        displayTime = QString("%1:0%2").arg(minutes).arg(seconds);
+    if (!m_showRemainingTime) {
+        displayTime = Utilities::durationString(time/1000);
     } else {
-        displayTime = QString("%1:%2").arg(minutes).arg(seconds);
+        displayTime = Utilities::durationString(currentTime.secsTo(totalTime));
     }
     ui->seekTime->setText(displayTime);
     

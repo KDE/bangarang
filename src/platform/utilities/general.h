@@ -70,5 +70,6 @@ namespace Utilities {
     QString wordsForTimeSince(const QDateTime & dateTime);
     QString capitalize(const QString & text);
     QHash<QString, QStringList> multiValueAppend(QHash<QString, QStringList> multiValues, QString key, QString newValue);
+    QString durationString(int seconds);
 }
 #endif //UTILITIES_GENERAL_H

@@ -263,7 +263,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             if (contentElement.tagName() == "media:content") {
                 int duration = contentElement.attribute("duration").toInt();
                 if (duration != 0 ) {
-                    mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                    mediaItem.duration = Utilities::durationString(duration);
                     mediaItem.fields["duration"] = duration;
                 }
             }
@@ -274,7 +274,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
                 } else {
                     int duration = durationElement.text().toInt();
                     if (duration != 0 ) {
-                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        mediaItem.duration = Utilities::durationString(duration);
                         mediaItem.fields["duration"] = duration;
                     }
                 }

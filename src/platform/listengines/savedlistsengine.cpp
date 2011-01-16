@@ -154,7 +154,7 @@ void SavedListsEngine::run()
                         mediaItem.fields["audioType"] = "Audio Clip";
                     }
                     if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                        mediaItem.duration = QTime(0,0,0,0).addSecs(duration).toString("m:ss");
+                        mediaItem.duration = Utilities::durationString(duration);
                         mediaItem.fields["duration"] = duration;
                     } else if (duration == -1) {
                         mediaItem.duration = QString();
