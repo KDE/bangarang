@@ -637,6 +637,28 @@ void MainWindow::updateSeekTime(qint64 time)
             }
         }
     }
+
+    //Add currently playing item to browsing model if contents is "Recently Played"
+    if (time > 12000 && time < 13000) {
+        if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
+            return;
+        }
+        MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+        MediaListProperties mediaListProperties = m_application->browsingModel()->mediaListProperties();
+        if (!mediaListProperties.lri.startsWith(QString("semantics://recent?%1").arg(nowPlayingItem.type.toLower()))) {
+            return;
+        }
+        QStringList filterList = mediaListProperties.engineFilterList();
+        int filterIndex = filterList.indexOf(QRegExp("^lastPlayed", Qt::CaseInsensitive));
+        if (filterIndex > 0) {
+            if (mediaListProperties.filterOperator(filterList.at(filterIndex)) != ">") {
+                return;
+            }
+        }
+        nowPlayingItem.artwork = Utilities::defaultArtworkForMediaItem(nowPlayingItem);
+        nowPlayingItem.semanticComment = Utilities::wordsForTimeSince(nowPlayingItem.fields["lastPlayed"].toDateTime());
+        m_application->browsingModel()->insertMediaItemAt(0, nowPlayingItem);
+    }
 }
 
 void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstate)
