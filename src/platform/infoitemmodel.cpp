@@ -24,6 +24,7 @@
 #include "infofetchers/filenameinfofetcher.h"
 #include "infofetchers/lastfminfofetcher.h"
 #include "infofetchers/tmdbinfofetcher.h"
+#include "infofetchers/tvdbinfofetcher.h"
 #include "mediaindexer.h"
 #include <KLocale>
 #include <KDebug>
@@ -130,6 +131,14 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(tmdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(tmdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(tmdbInfoFetcher);
+
+    TVDBInfoFetcher * tvdbInfoFetcher = new TVDBInfoFetcher(this);
+    connect(tvdbInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
+    connect(tvdbInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(tvdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(tvdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(tvdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
+    m_infoFetchers.append(tvdbInfoFetcher);
 
     LastfmInfoFetcher * lastfmInfoFetcher = new LastfmInfoFetcher(this);
     connect(lastfmInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));

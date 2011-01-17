@@ -41,6 +41,7 @@ set(BangarangSources
     platform/infofetchers/infofetcher.cpp
     platform/infofetchers/lastfminfofetcher.cpp
     platform/infofetchers/tmdbinfofetcher.cpp
+    platform/infofetchers/tvdbinfofetcher.cpp
     platform/listengines/audioclipslistengine.cpp
     platform/listengines/audiostreamlistengine.cpp
     platform/listengines/cachelistengine.cpp
