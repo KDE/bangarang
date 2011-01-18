@@ -635,6 +635,12 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
         
     }
     
+    //NOTE: In KDE 4.6, below is not the correct way to disable power saving.
+    //TODO: Update to use new Solid power status api in KDE 4.6 and later.
+    bool isKDE46OrGreater = false;
+    if ((KDE::versionMinor() >= 5) && (KDE::versionRelease() >= 90)) {
+        isKDE46OrGreater = true;
+    }
     
     QDBusInterface iface(
     		"org.kde.kded",
@@ -647,7 +653,9 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
         && oldstate != Phonon::PlayingState
                 && oldstate != Phonon::PausedState) {
 
-        iface.call("setProfile", "Presentation");
+        if (!isKDE46OrGreater) {
+            iface.call("setProfile", "Presentation");
+        }
         //Disable screensaver
         delete m_notificationRestrictions; //just to make sure more than one KNotificationRestrictions isn't created.
         m_notificationRestrictions = new KNotificationRestrictions(KNotificationRestrictions::ScreenSaver);
@@ -659,7 +667,9 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
          * refreshStatus call handle the case when the computer runs on battery.
          */
         //iface.call("setProfile", "Performance");
-        iface.call("refreshStatus");
+        if (!isKDE46OrGreater) {
+            iface.call("refreshStatus");
+        }
     }
 }
 
