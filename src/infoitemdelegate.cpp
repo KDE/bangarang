@@ -820,6 +820,16 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     if (index.data(Qt::EditRole) != index.data(InfoItemModel::OriginalValueRole)) {
         model->setData(index, false, InfoItemModel::MultipleValuesRole); 
     }
+
+    //If the type has changed then make sure to tell model to reload fields and view to adjust
+    if (field == "audioType" || field == "videoType") {
+        int originalType = index.data(InfoItemModel::OriginalValueRole).toInt();
+        int modelRow = index.row(); //assume type row does not change
+        InfoItemModel * infoItemModel = (InfoItemModel*)model;
+        infoItemModel->loadFieldsInOrder();
+        model->setData(model->index(modelRow, 0), originalType, InfoItemModel::OriginalValueRole);
+        m_view->fixHeightToContents();
+    }
 }   
 
 void InfoItemDelegate::setView(InfoItemView * view)
