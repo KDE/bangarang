@@ -152,7 +152,12 @@ class InfoItemModel : public QStandardItemModel
          * Clears the current artwork in the artwork field
          */
         void clearArtwork();
-                   
+
+        /**
+         * Loads fields for currently selected items in order
+         */
+        void loadFieldsInOrder();
+
     Q_SIGNALS:
         /**
           * Emitted when information contained in the model might have been changed.

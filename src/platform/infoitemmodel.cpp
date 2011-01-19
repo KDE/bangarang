@@ -191,26 +191,10 @@ void InfoItemModel::loadInfo(const QList<MediaItem> & mediaList)
     m_originalList = mediaList;
     m_fetchedMatches.clear();
     cancelFetching();
-    clear();
     
     if (m_mediaList.count() > 0) {
         Utilities::removeFromImageCache(m_mediaList.at(0));
-        QString type = m_mediaList.at(0).type;
-        QString subType = m_mediaList.at(0).subType();
-
-        //Load field info in order specified
-        QStringList fieldsOrder = m_fieldsOrder.value(subType, m_fieldsOrder["Basic"]);
-        for (int i = 0; i < fieldsOrder.count(); i++) {
-            QString field = fieldsOrder.at(i);
-            if ((Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) &&
-                (field == "url")) {
-                addFieldToValuesModel(i18n("Location"), "album", false); //or the user would see the ugly udi
-            } else {
-                QStringList restrictedFields = m_restrictedFields.value(subType, m_restrictedFields["Basic"]);
-                bool isEditable = !restrictedFields.contains(field);
-                addFieldToValuesModel(m_fieldNames[field],field, isEditable);
-            }
-        }
+        loadFieldsInOrder();
         emit infoChanged(false);
 
         //Upon selection of only one media item, launch Autofetch if NO info
@@ -564,6 +548,27 @@ void InfoItemModel::updateFetchedInfo(int index, MediaItem match)
         selectFetchedMatch(index);
     }
 
+}
+
+void InfoItemModel::loadFieldsInOrder()
+{
+    clear();
+    QString type = m_mediaList.at(0).type;
+    QString subType = m_mediaList.at(0).subType();
+
+    //Load field info in order specified
+    QStringList fieldsOrder = m_fieldsOrder.value(subType, m_fieldsOrder["Basic"]);
+    for (int i = 0; i < fieldsOrder.count(); i++) {
+        QString field = fieldsOrder.at(i);
+        if ((Utilities::isCd(m_mediaList.at(0).url) || Utilities::isDvd(m_mediaList.at(0).url)) &&
+            (field == "url")) {
+            addFieldToValuesModel(i18n("Location"), "album", false); //or the user would see the ugly udi
+        } else {
+            QStringList restrictedFields = m_restrictedFields.value(subType, m_restrictedFields["Basic"]);
+            bool isEditable = !restrictedFields.contains(field);
+            addFieldToValuesModel(m_fieldNames[field],field, isEditable);
+        }
+    }
 }
 
 void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable)
