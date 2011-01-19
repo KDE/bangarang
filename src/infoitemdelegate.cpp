@@ -386,6 +386,10 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     p.setFont(textFont);
                     p.setPen(foregroundColor);
                     p.drawText(QRectF(textRect), text, textOption);
+                } else if (multipleValues) {
+                    p.setFont(textFont);
+                    p.setPen(foregroundColor);
+                    p.drawText(QRectF(textRect), text, textOption);
                 }
             }
         } else {
