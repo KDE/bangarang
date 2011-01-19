@@ -369,10 +369,10 @@ void TVDBInfoFetcher::processSeriesInfoRequest(const KUrl &from, const KUrl to)
         match.artwork = Utilities::defaultArtworkForMediaItem(match);
         match.fields["artworkUrl"] = QString("");
 
-        bool matchedSeason = false;
-        bool matchedEpisode = false;
         for (int i = 0; i < episodes.count(); i++) {
             QDomNodeList nodes = episodes.at(i).childNodes();
+            bool matchedSeason = false;
+            bool matchedEpisode = false;
             for (int j = 0; j < nodes.count(); j++) {
                 QDomElement element = nodes.at(j).toElement();
                 if (element.tagName() == "SeasonNumber" && element.text().toInt() == seasonNumber) {
