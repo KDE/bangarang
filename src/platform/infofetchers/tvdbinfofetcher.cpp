@@ -46,7 +46,7 @@ TVDBInfoFetcher::TVDBInfoFetcher(QObject *parent) :
     //NOTE: The API key below must be used only in Bangarang.  Please do not use this key in other applications.
     //      API keys can be requested from thetvdb.org.
     m_apiKey = "60DD172338AFC0A1";
-    m_seriesSearchAPI = QString("http://www.thetvdb.com/api/GetSeries.php?seriesname=%1");
+    m_seriesSearchAPI = QString("http://www.thetvdb.com/api/GetSeries.php?seriesname=%2&language=%1").arg(lang).arg("%1");
     m_seriesInfoAPI = QString("%3/api/%1/series/%4/all/%2.xml").arg(m_apiKey).arg(lang).arg("%1").arg("%2");
     m_updateRequestAPI = QString("http://www.thetvdb.com/api/Updates.php?type=series&time=%1");
     m_mirrorRequestAPI = QString("http://www.thetvdb.com/api/%1/mirrors.xml").arg(m_apiKey);
