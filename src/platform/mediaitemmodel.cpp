@@ -400,9 +400,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
    if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
-            if (mediaList.count() > 0) {
-                hideLoadingMessage();
-            }
+            hideLoadingMessage();
             loadMediaList(mediaList, false, true);
             m_mediaListProperties = mediaListProperties;
             emit mediaListPropertiesChanged();
