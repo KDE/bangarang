@@ -143,6 +143,8 @@ private:
     BangarangApplication * m_application;
     VideoSize m_videoSize;
     QTimer *m_menuTimer;
+    QString m_audioSearch;
+    QString m_videoSearch;
 
 private slots:
     void on_nowPlayingHolder_resized();
