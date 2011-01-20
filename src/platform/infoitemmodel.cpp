@@ -970,7 +970,9 @@ void InfoItemModel::gotArtworks(QList<QImage> artworks, MediaItem mediaItem)
                 }
             }
             if (!artworkPixmaps.isEmpty()) {
+                disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
                 fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+                connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             }
             break;
         }
