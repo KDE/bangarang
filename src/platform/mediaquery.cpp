@@ -308,9 +308,6 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                         constraint));
     } else if (field == "playCount") {
         MediaQuery::Match match = MediaQuery::Required;
-        if (value.toInt() == 0 || constraint == MediaQuery::LessThan || constraint == MediaQuery::LessThanOrEqual) {
-            match = MediaQuery::Optional;
-        }
         addCondition(mediaVocabulary.hasPlayCount(match,
                                                   value.toInt(),
                                                   constraint));
@@ -330,12 +327,6 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
                                                     constraint));
     } else if (field == "rating") {
         MediaQuery::Match match = MediaQuery::Required;
-        if (value.toInt() == 0 && (constraint == MediaQuery::Equal ||
-                                   constraint == MediaQuery::LessThanOrEqual ||
-                                   constraint == MediaQuery::LessThan ||
-                                   constraint == MediaQuery::GreaterThanOrEqual)) {
-            match = MediaQuery::Optional;
-        }
         addCondition(mediaVocabulary.hasRating(match,
                                                value.toInt(),
                                                constraint));

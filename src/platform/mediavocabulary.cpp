@@ -960,12 +960,23 @@ QString MediaVocabulary::hasPlayCount(MediaQuery::Match match,
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = playCountBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::playCount(), propertyBinding);
-    if (playCount != -1) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, playCount, constraint);
+    bool forceOptional = false;
+    QString filter;
+    if (playCount == 0 && (constraint == MediaQuery::Equal ||
+                           constraint == MediaQuery::LessThanOrEqual ||
+                           constraint == MediaQuery::LessThan ||
+                           constraint == MediaQuery::GreaterThanOrEqual)) {
+        filter = QString("FILTER ((bound(?%1) && %2) || !bound(?%1)) ")
+                     .arg(propertyBinding)
+                     .arg(MediaQuery::filterConstraint(propertyBinding, playCount, constraint));
+        forceOptional = true;
+    } else {
+        filter = QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, playCount, constraint);
     }
-    if (match == MediaQuery::Optional) {
+    if (match == MediaQuery::Optional || forceOptional) {
         statement = MediaQuery::addOptional(statement);
     }
+    statement += filter;
     return statement;
 }
 
@@ -1044,12 +1055,23 @@ QString MediaVocabulary::hasRating(MediaQuery::Match match,
     QString resourceBinding = mediaResourceBinding();
     QString propertyBinding = ratingBinding();
     QString statement = MediaQuery::hasProperty(resourceBinding, MediaVocabulary::rating(), propertyBinding);
-    if (rating != -1) {
-        statement += QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, rating, constraint);
+    bool forceOptional = false;
+    QString filter;
+    if (rating == 0 && (constraint == MediaQuery::Equal ||
+                           constraint == MediaQuery::LessThanOrEqual ||
+                           constraint == MediaQuery::LessThan ||
+                           constraint == MediaQuery::GreaterThanOrEqual)) {
+        filter = QString("FILTER ((bound(?%1) && %2) || !bound(?%1)) ")
+                     .arg(propertyBinding)
+                     .arg(MediaQuery::filterConstraint(propertyBinding, rating, constraint));
+        forceOptional = true;
+    } else {
+        filter = QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, rating, constraint);
     }
-    if (match == MediaQuery::Optional) {
+    if (match == MediaQuery::Optional || forceOptional) {
         statement = MediaQuery::addOptional(statement);
     }
+    statement += filter;
     return statement;
 }
 
