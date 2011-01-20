@@ -453,6 +453,15 @@ void InfoManager::showIndexer()
     //Show indexer for selected local filelistengine items
     bool indexerVisible = false;
     if (m_nepomukInited) {
+        bool isLocalFileList = false;
+        MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
+        if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
+            KUrl viewUrl(viewProperties.engineFilterList().at(1));
+            if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
+                isLocalFileList = true;
+            }
+        }
+
         QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
         MediaSortFilterProxyModel *proxy = (MediaSortFilterProxyModel *) ui->mediaView->model();
         if (selectedRows.count() > 0) {
@@ -469,17 +478,17 @@ void InfoManager::showIndexer()
                         indexerVisible = false;
                         break;
                     }
+                } else if (isLocalFileList && (selectedItem.type == "Audio" || selectedItem.type == "Video")) {
+                    KUrl selectedUrl(selectedItem.url);
+                    if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
+                        indexerVisible = true;
+                    } else {
+                        indexerVisible = false;
+                        break;
+                    }
                 } else {
                     indexerVisible = false;
                     break;
-                }
-            }
-
-            MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
-            if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
-                KUrl viewUrl(viewProperties.engineFilterList().at(1));
-                if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
-                    indexerVisible = true;
                 }
             }
         }
