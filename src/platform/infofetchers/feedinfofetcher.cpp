@@ -34,6 +34,7 @@ FeedInfoFetcher::FeedInfoFetcher(QObject *parent) :
 {
     m_name = i18n("Feed Info");
     m_icon = KIcon("application-rss+xml");
+    m_about = i18n("This fetcher gets information for the feed at the specified location.");
 
     m_downloader = new Downloader(this);
     connect(this, SIGNAL(download(KUrl,KUrl)), m_downloader, SLOT(download(KUrl,KUrl)));
