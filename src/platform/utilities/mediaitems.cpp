@@ -136,10 +136,13 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
     //url = QUrl::fromPercentEncoding(url.url().toUtf8());
 
     if (url.isLocalFile() && (Utilities::isM3u(url.url()) || Utilities::isPls(url.url()))) {
-        mediaItem.artwork = KIcon("view-list-text");
+        mediaItem.artwork = KIcon("audio-x-scpls");
         mediaItem.url = QString("savedlists://%1").arg(url.url());
         mediaItem.title = url.fileName();
+        mediaItem.fields["title"] = url.fileName();
+        mediaItem.subTitle = i18n("Playlist");
         mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = "Basic+Artwork";
         return mediaItem;
     }
 

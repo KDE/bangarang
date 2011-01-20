@@ -198,7 +198,10 @@ void FileListEngine::listingComplete(const KUrl &url)
             mediaItem.artwork = KIcon(fileItem.iconName());
             mediaList.append(mediaItem);
         } else if (fileItem.isFile()) {
-            if (m_mediaListProperties.engineArg() == "audio") {
+            if (Utilities::isM3u(fileItem.url().prettyUrl()) || Utilities::isPls(fileItem.url().prettyUrl())) {
+                mediaItem = Utilities::mediaItemFromUrl(fileItem.url());
+                mediaList.append(mediaItem);
+            } else if (m_mediaListProperties.engineArg() == "audio") {
                 if (Utilities::isAudioMimeType(fileItem.mimeTypePtr())) {
                     mediaItem.url = fileItem.url().prettyUrl();
                     mediaItem.fields["url"] = mediaItem.url;
