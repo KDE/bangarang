@@ -30,7 +30,7 @@ FileNameInfoFetcher::FileNameInfoFetcher(QObject *parent) :
 {
     m_name = i18n("Filename Info");
     m_icon = KIcon("quickopen-file");
-
+    m_about = i18n("This fetcher uses guesses the season and episode number based on a filename pattern. E.g.  2x23 or S02E23 or 2.23");
 
     //Define fetchable fields
     m_fetchableFields["TV Show"] = QStringList() << "season" << "episode";

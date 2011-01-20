@@ -36,7 +36,7 @@ TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
     m_name = i18n("TMDb");
     m_icon = KIcon("bangarang-tmdb");
     m_url = KUrl("http://themoviedb.org");
-    m_about = "Note: This fetcher uses the TMDb API but is not endorsed or certified by TMDb.";
+    m_about = i18n("Note: This fetcher uses the TMDb API but is not endorsed or certified by TMDb.");
 
     QString lang = KGlobal::locale()->language();
     if (lang.size() > 2) {

@@ -38,7 +38,7 @@ LastfmInfoFetcher::LastfmInfoFetcher(QObject *parent) :
     m_name = i18n("Last.fm");
     m_icon = KIcon("bangarang-lastfm");
     m_url = KUrl("http://last.fm");
-    m_about = "Note: This fetcher uses the Last.fm API but is not endorsed or certified by Last.fm.";
+    m_about = i18n("Note: This fetcher uses the Last.fm API but is not endorsed or certified by Last.fm.");
 
     QString lang = KGlobal::locale()->language();
     if (lang.size() > 2) {
