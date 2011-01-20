@@ -381,7 +381,12 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
                     if (!isUrl) {
                         text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideRight, textRect.width());
                     } else {
-                        text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideMiddle, textRect.width());
+                        KUrl url(textList.at(i));
+                        if (!url.isLocalFile()) {
+                            text = QFontMetrics(textFont).elidedText(url.host(), Qt::ElideMiddle, textRect.width());
+                        } else {
+                            text = QFontMetrics(textFont).elidedText(textList.at(i), Qt::ElideMiddle, textRect.width());
+                        }
                     }
                     p.setFont(textFont);
                     p.setPen(foregroundColor);

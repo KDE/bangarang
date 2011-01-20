@@ -620,7 +620,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         //Store drill lri(s)
         setDrill(fieldItem, field, value);
 
-        if (field == "url") {
+        if (field == "url" || field == "relatedTo") {
             fieldItem->setData(value, Qt::ToolTipRole);
         }
     } else {
