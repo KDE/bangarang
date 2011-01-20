@@ -500,9 +500,8 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             loadMediaList(m_audioListsModel, selectedRow);
         }
         ui->audioLists->setFocus();
-        m_videoSearch = ui->Filter->text();
         ui->Filter->setClickMessage(i18n("Search for audio"));
-        ui->Filter->setText(m_audioSearch);
+        ui->Filter->clear();
     } else {
         ui->videoListsStack->setCurrentIndex(0);
         if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
@@ -510,9 +509,8 @@ void MainWindow::on_mediaLists_currentChanged(int i)
             loadMediaList(m_videoListsModel, selectedRow);
         }
         ui->videoLists->setFocus();
-        m_audioSearch = ui->Filter->text();
         ui->Filter->setClickMessage(i18n("Search for video"));
-        ui->Filter->setText(m_videoSearch);
+        ui->Filter->clear();
     }
 }
 
