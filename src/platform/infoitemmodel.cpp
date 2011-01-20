@@ -965,9 +965,13 @@ void InfoItemModel::gotArtworks(QList<QImage> artworks, MediaItem mediaItem)
             //Convert Image list to Pixmap list
             QList<QVariant> artworkPixmaps;
             for (int i = 0; i < artworks.count(); i++) {
-                artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
+                if (!artworks.at(i).isNull()) {
+                    artworkPixmaps.append(QPixmap::fromImage(artworks.at(i)));
+                }
             }
-            fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+            if (!artworkPixmaps.isEmpty()) {
+                fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
+            }
             break;
         }
     }
