@@ -182,8 +182,7 @@ void SemanticsListEngine::run()
                     if (groupByCategoryType.isEmpty()) {
                         Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
-                        int playCount = it.binding(mediaVocabulary.playCountBinding()).literal().toInt();
-                        mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
+                        mediaItem.semanticComment = i18np("played once", "played %1 times", mediaItem.fields["playCount"].toInt());
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
                         int playCount = it.binding(QString("%1_sum").arg(mediaVocabulary.playCountBinding())).literal().toInt();

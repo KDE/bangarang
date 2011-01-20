@@ -218,7 +218,7 @@ void MediaListSettings::readConfigEntryForLRI(const QString &lri)
                     } else {
                         ui->semAFreqComp->setCurrentIndex(2);
                     }
-                    int frequentlyPlayedCount = qMax(1, entry.at(1).toInt());
+                    int frequentlyPlayedCount = qMax(0, entry.at(1).toInt());
                     ui->semAFreq->setValue(frequentlyPlayedCount);
                     ui->semASelectMore->setChecked(true);
                 }
@@ -264,7 +264,7 @@ void MediaListSettings::readConfigEntryForLRI(const QString &lri)
                     } else {
                         ui->semVFreqComp->setCurrentIndex(2);
                     }
-                    int frequentlyPlayedCount = qMax(1, entry.at(1).toInt());
+                    int frequentlyPlayedCount = qMax(0, entry.at(1).toInt());
                     ui->semVFreq->setValue(frequentlyPlayedCount);
                     ui->semVSelectMore->setChecked(true);
                 }
