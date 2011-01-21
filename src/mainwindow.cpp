@@ -617,18 +617,6 @@ void MainWindow::updateSeekTime(qint64 time)
         }
     }
 
-    //Check if phonon hasVideo in case phonon reports hasVideo sometime after state change at playback start
-    if (time < 3000) {
-        if (m_application->playlist()->mediaObject()->hasVideo()) {
-            ui->videoFrame->setVisible(true);
-            if (videoSize() == Mini) {
-                ui->nowPlayingView->showInfo();
-            } else {
-                ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
-            }
-        }
-    }
-
     //Add currently playing item to browsing model if contents is "Recently Played"
     if (time > 12000 && time < 13000) {
         if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
@@ -669,7 +657,7 @@ void MainWindow::mediaStateChanged(Phonon::State newstate, Phonon::State oldstat
             MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
             nowPlayingItemIsVideo = (nowPlayingItem.type == "Video");
         }
-        if (m_application->mediaObject()->hasVideo() || nowPlayingItemIsVideo) {
+        if (nowPlayingItemIsVideo) {
             ui->videoFrame->setVisible(true);
             if (videoSize() == Mini) {
                 ui->nowPlayingView->showInfo();
