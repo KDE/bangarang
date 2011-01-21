@@ -36,6 +36,7 @@
 #include <KConfigGroup>
 #include <kio/netaccess.h>
 #include <Solid/Device>
+#include <Solid/StorageAccess>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
@@ -100,7 +101,7 @@ MediaItem Utilities::getArtistCategoryItem(const QString &artist)
 }
 
 
-MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
+MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
 {
     MediaItem mediaItem;
     if(isDisc(url)) {
@@ -130,10 +131,11 @@ MediaItem Utilities::mediaItemFromUrl(const KUrl& url, bool preferFileMetaData)
         return mediaItem;
     }
 
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
+    if (url.prettyUrl().startsWith("filex:/")) {
+        url = urlForFilex(url);
+    }
 
-    //url.cleanPath();
-    //url = QUrl::fromPercentEncoding(url.url().toUtf8());
+    MediaVocabulary mediaVocabulary = MediaVocabulary();
 
     if (url.isLocalFile() && (Utilities::isM3u(url.url()) || Utilities::isPls(url.url()))) {
         mediaItem.artwork = KIcon("audio-x-scpls");
@@ -335,24 +337,27 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     }
 
     QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
+    KUrl url(res.property(nieUrl).toUrl());
+    if (url.prettyUrl().startsWith("filex:/")) {
+        url = urlForFilex(url);
+    }
 
     //If nepomuk resource type is not recognized try recognition by mimetype
     if (type.isEmpty()) {
-        QString url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
-        if (isAudio(url)) {
+        if (isAudio(url.prettyUrl())) {
             type = "Audio Clip";
         }
-        if (isMusic(url)) {
+        if (isMusic(url.prettyUrl())) {
             type = "Music";
         }
-        if (isVideo(url)){
+        if (isVideo(url.prettyUrl())){
             type = "Video Clip";
         }
     }
 
     MediaItem mediaItem;
-
-    mediaItem.url = KUrl(res.property(nieUrl).toUrl()).prettyUrl();
+    mediaItem.url = url.prettyUrl();
+    mediaItem.exists = !url.prettyUrl().startsWith("filex:/"); //if url is still a filex:/ url mark not exists.
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = res.resourceUri().toString();
     mediaItem.fields["sourceLri"] = sourceLri;
@@ -542,7 +547,11 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
+    if (url.prettyUrl().startsWith("filex:/")) {
+        url = urlForFilex(url);
+    }
     mediaItem.url = url.prettyUrl();
+    mediaItem.exists = !url.prettyUrl().startsWith("filex:/"); //if url is still a filex:/ url mark not exists.
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
     mediaItem.fields["sourceLri"] = sourceLri;
@@ -1428,6 +1437,23 @@ bool Utilities::isTemporaryAudioStream(const MediaItem& item)
     return true;
 }
 
+KUrl Utilities::urlForFilex(KUrl url)
+{
+    Solid::StorageAccess *storage = 0;
+    QString solidQuery = QString::fromLatin1( "[ StorageVolume.usage=='FileSystem' AND StorageVolume.uuid=='%1' ]" )
+                         .arg(url.host().toLower());
+    QList<Solid::Device> devices = Solid::Device::listFromQuery(solidQuery);
+    if (!devices.isEmpty()) {
+        storage = devices.first().as<Solid::StorageAccess>();
+    }
+    QString normalUrl;
+    if (storage && storage->isAccessible()) {
+        normalUrl = QString("%1/%2").arg(storage->filePath()).arg(url.path());
+    } else {
+        normalUrl = url.prettyUrl();
+    }
+    return KUrl(normalUrl);
+}
 
 #endif //UTILITIES_MEDIAITEMS_CPP
 
