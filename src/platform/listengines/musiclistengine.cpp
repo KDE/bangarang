@@ -341,6 +341,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.albumResourceBinding());
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
             bindings.append(mediaVocabulary.musicTrackNumberBinding());
             bindings.append(mediaVocabulary.durationBinding());
@@ -440,6 +441,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.mediaResourceUrlBinding());
             bindings.append(mediaVocabulary.titleBinding());
             bindings.append(mediaVocabulary.musicArtistNameBinding());
+            bindings.append(mediaVocabulary.albumResourceBinding());
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
             bindings.append(mediaVocabulary.musicTrackNumberBinding());
             bindings.append(mediaVocabulary.durationBinding());

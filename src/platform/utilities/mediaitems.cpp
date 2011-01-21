@@ -618,10 +618,19 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             composers = cleanStringList(composers);
             mediaItem.fields["composer"] = composers;
 
-            QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
+            //TODO: For some reason virtuoso SPARQL corrupts string variable non-ascii characters when a filter is specified
+            //WORKAROUND: Prefer album title using album resource for now
+            QString album;
+            Nepomuk::Resource albumRes(it.binding(MediaVocabulary::albumResourceBinding()).uri());
+            if (res.exists()) {
+                album = albumRes.property(mediaVocabulary.musicAlbumName()).toString();
+            } else {
+                album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
+            }
             if (!album.isEmpty()) {
                 mediaItem.fields["album"] = album;
             }
+
             if (it.binding(MediaVocabulary::musicAlbumYearBinding()).isValid()) {
                 QDate yearDate = it.binding(MediaVocabulary::musicAlbumYearBinding()).literal().toDate();
                 if (yearDate.isValid()) {
