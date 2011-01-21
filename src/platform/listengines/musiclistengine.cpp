@@ -170,6 +170,7 @@ void MusicListEngine::run()
             QStringList bindings;
             bindings.append(MediaVocabulary::resourceBindingForCategory("Album"));
             bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+            bindings.append(mediaVocabulary.artistResourceBinding());
             bindings.append(mediaVocabulary.musicArtistNameBinding());
             bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
@@ -192,7 +193,9 @@ void MusicListEngine::run()
                 if (m_stop) {
                     return;
                 }
-                QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
+                //TODO: For some reason virtuoso SPARQL corrupts string variable non-ascii characters when a filter is specified
+                //WORKAROUND: Prefer artist title using artist resource for now
+                QString artist = Nepomuk::Resource(it.binding(mediaVocabulary.artistResourceBinding()).uri()).property(mediaVocabulary.musicArtistName()).toString();
                 QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
                     MediaItem mediaItem;
