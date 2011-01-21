@@ -31,7 +31,7 @@ class MediaItem;
  */
 namespace Utilities {
     MediaItem getArtistCategoryItem(const QString &artist);
-    MediaItem mediaItemFromUrl(const KUrl& url, bool preferFileMetaData = false);
+    MediaItem mediaItemFromUrl(KUrl url, bool preferFileMetaData = false);
     QStringList mediaListUrls(const QList<MediaItem> &mediaList);
     int mediaListDuration(const QList<MediaItem> &mediaList);
     QString mediaListDurationText(const QList<MediaItem> &mediaList);
@@ -49,6 +49,7 @@ namespace Utilities {
     MediaItem makeSubtitle(const MediaItem & mediaItem);
     QStringList getLinksForResource(Nepomuk::Resource &res);
     bool isTemporaryAudioStream(const MediaItem &item);
+    KUrl urlForFilex(KUrl url);
 }
 
 #endif // UTILITIES_MEDIAITEMS_H
