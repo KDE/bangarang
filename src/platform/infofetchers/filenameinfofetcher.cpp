@@ -68,7 +68,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, 
         MediaItem item = mediaList.at(i);
         if (item.type == "Video" && item.fields["videoType"] == "TV Show")
         {
-            QString fileName = item.fields["url"].toString();
+            QString fileName = KUrl(item.fields["url"].toString()).fileName();
             // If the url is empty or poinst to to nepomuk's location,
             // we can't get the filname that way.
             // So we use the title as a fall-back
