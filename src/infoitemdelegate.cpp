@@ -590,12 +590,12 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             listIndex == textList.count()-1) {
             plusIconRect = dataRect.adjusted(dataRect.width()-16, 0, 0, 0);
         }
-        if (hoverRect.contains(m_mousePos)) {
-            if (event->type() != QEvent::MouseMove) {
+        if (hoverRect.contains(m_mousePos) && !m_isEditing) {
+            if (event->type() == QEvent::MouseButtonRelease) {
                 m_isEditing = true;
             }
             if (plusIconRect.contains(m_mousePos)) {
-                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonRelease) {
                     //Editing new value
                     m_stringListIndexEditing = -1;
                     m_rowOfNewValue = index.row();
@@ -605,14 +605,14 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     m_view->fixHeightToContents();
                 }
             } else {
-                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() != QEvent::MouseMove) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonRelease) {
                     //Editing existing value
                     m_stringListIndexEditing = stringListIndexAtMousePos(option, index);
                     m_rowOfNewValue = -1;
                 }
             }
             return QItemDelegate::editorEvent(event, model, option, index);
-        } else if (drillIconRect.contains(m_mousePos)) {
+        } else if (drillIconRect.contains(m_mousePos) && !m_isEditing) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 m_rowOfNewValue = -1;
                 MediaItem drillItem = index.data(InfoItemModel::DrillRole).value<MediaItem>();
