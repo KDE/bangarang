@@ -163,8 +163,16 @@ class Playlist : public QObject
          * playlist model. 
          *
          * @param row row of playlist model
+         * @param emitMediaListChange whether the model/playlist should be notified about the change.
+         * This should only be false if you remove more than one item. For the last this should be true in any case.
          */
-        void removeMediaItemAt(int row);
+        void removeMediaItemAt(int row, bool emitMediaListChange = true);
+
+        /**
+         * Removes a complete list of MediaItems from the playlist.
+         * @param list The list of items to be removed
+         */
+        void removeMediaListItems(const QList<MediaItem> &list);
         
         /**
          * Sets the Media Object the playlist should use
