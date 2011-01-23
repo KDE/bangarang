@@ -136,6 +136,10 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool 
 
 QImage Utilities::getAlbumArtwork(const QString &album, bool ignoreCache)
 {
+    if (album.isEmpty()) {
+        return QImage();
+    }
+
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
     QStringList bindings;
@@ -163,9 +167,13 @@ QImage Utilities::getAlbumArtwork(const QString &album, bool ignoreCache)
 
 QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &type, bool ignoreCache)
 {
-    //Get album artworks associated with genre
     QList<QImage> artworks;
+    if (genre.isEmpty()) {
+        return artworks;
+    }
+
     if (type == "audio" || type == "music") {
+        //Get album artworks associated with genre
         MediaVocabulary mediaVocabulary;
         MediaQuery query;
         QStringList bindings;
@@ -223,8 +231,12 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
 
 QList<QImage> Utilities::getArtistArtworks(const QString &artist, bool ignoreCache)
 {
-    //Get album artworks associated with genre
     QList<QImage> artworks;
+    if (artist.isEmpty()) {
+        return artworks;
+    }
+
+    //Get album artworks associated with artist
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
     QStringList bindings;
@@ -255,9 +267,13 @@ QList<QImage> Utilities::getArtistArtworks(const QString &artist, bool ignoreCac
 
 QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type, bool ignoreCache)
 {
-    //Get album artworks associated with genre
     QList<QImage> artworks;
+    if (tag.isEmpty()) {
+        return artworks;
+    }
+
     if (type == "audio" || type == "music") {
+        //Get album artworks associated with tag
         MediaVocabulary mediaVocabulary;
         MediaQuery query;
         QStringList bindings;
@@ -314,6 +330,10 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type,
 QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ignoreCache)
 {
     QList<QImage> artworks;
+    if (seriesTitle.isEmpty()) {
+        return artworks;
+    }
+
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
     QStringList bindings;
@@ -343,6 +363,10 @@ QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ig
 QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache)
 {
     QList<QImage> artworks;
+    if (actor.isEmpty()) {
+        return artworks;
+    }
+
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
     QStringList bindings;
@@ -372,6 +396,9 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache
 QList<QImage> Utilities::getDirectorArtworks(const QString &director, bool ignoreCache)
 {
     QList<QImage> artworks;
+    if (director.isEmpty()) {
+        return artworks;
+    }
     MediaVocabulary mediaVocabulary;
     MediaQuery query;
     QStringList bindings;
