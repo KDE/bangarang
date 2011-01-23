@@ -970,7 +970,7 @@ QString MediaVocabulary::hasPlayCount(MediaQuery::Match match,
                      .arg(propertyBinding)
                      .arg(MediaQuery::filterConstraint(propertyBinding, playCount, constraint));
         forceOptional = true;
-    } else {
+    } else if (playCount > 0){
         filter = QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, playCount, constraint);
     }
     if (match == MediaQuery::Optional || forceOptional) {
@@ -1065,7 +1065,7 @@ QString MediaVocabulary::hasRating(MediaQuery::Match match,
                      .arg(propertyBinding)
                      .arg(MediaQuery::filterConstraint(propertyBinding, rating, constraint));
         forceOptional = true;
-    } else {
+    } else if (rating > 0){
         filter = QString("FILTER ") + MediaQuery::filterConstraint(propertyBinding, rating, constraint);
     }
     if (match == MediaQuery::Optional || forceOptional) {
