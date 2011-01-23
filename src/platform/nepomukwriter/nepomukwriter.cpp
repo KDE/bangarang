@@ -5,6 +5,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <Soprano/Vocabulary/RDF>
+#include <QDBusInterface>
 
 NepomukWriter::NepomukWriter(QObject *parent) :
     QObject(parent)
@@ -142,6 +143,9 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
                 if (res.hasProperty(mediaVocabulary.created())) {
                     res.removeProperty(mediaVocabulary.created());
                 }
+                if (res.hasProperty(mediaVocabulary.releaseDate())) {
+                    res.removeProperty(mediaVocabulary.releaseDate());
+                }
             } else if ((fields["audioType"] == "Audio Stream") ||
                 (fields["audioType"] == "Audio Clip")) {
             }
@@ -241,6 +245,24 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     if (!resourceUri.isEmpty()) {
         res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
     }
+
+    //If Nepomuk resource doesn't exist for local file, ask Strigi to index file first
+    //TODO: Disabled currently since it does not appear to work.  Investigate for Bangarang 2.1
+    /*if (!res.exists() && KUrl(url).isValid() && KUrl(url).isLocalFile()) {
+        outputMessage(Debug, "ASKING STRIGI TO INDEX FILE:" + url);
+        QDBusInterface strigi(
+                "org.kde.nepomuk.services.nepomukstrigiservice",
+                "/nepomukstrigiservice",
+                "org.kde.nepomuk.Strigi");
+        if (strigi.isValid()) {
+            strigi.call("indexFile", KUrl(url).path());
+        }
+        res = Nepomuk::Resource(QUrl::fromEncoded(url.toUtf8()));
+        outputMessage(Debug, QString("RESOURCE EXISTS:%1").arg(res.exists()));
+    } else {
+        outputMessage(Debug, QString("RESOURCE EXISTS:%1").arg(res.exists()));
+    }*/
+
     if (type == "Category" &&
         fields["categoryType"] != "Audio Feed" &&
         fields["categoryType"] != "Video Feed") {
