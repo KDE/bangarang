@@ -366,8 +366,7 @@ void VideoListEngine::run()
         
         //Retrieve TV Show Episodes
         if (engineArg.toLower() == "episodes") {
-            bool hasSeason = false;
-            
+
             MediaQuery query;
             QStringList bindings;
             bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -428,7 +427,7 @@ void VideoListEngine::run()
             
             if (seriesName == "~") {
                 m_mediaListProperties.name = i18n("Uncategorized TV Shows");
-            } else if (hasSeason) {
+            } else if (season != -1) {
                 m_mediaListProperties.name = i18nc("%1=Name of the series, %2=Number of the Season", "%1 - Season %2", seriesName, season);
             } else {
                 m_mediaListProperties.name = i18nc("%1=Name of the Series", "%1 - Uncategorized Seasons", seriesName);
