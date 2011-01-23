@@ -497,9 +497,8 @@ void InfoItemModel::infoFetcherComplete(InfoFetcher *infoFetcher)
     }
 
     if (!m_itemsToFetch.isEmpty()) {
-        m_fetchingStatus["description"] = i18n("Fetched info for %1 of %2 items...")
-                                          .arg(m_mediaList.count() - m_itemsToFetch.count())
-                                          .arg(m_mediaList.count());
+        //First argument controls the plural
+        m_fetchingStatus["description"] = i18np("Fetched info for %2 of 1 item...", "Fetched info for %2 of %1 items...", m_mediaList.count(), (m_mediaList.count() - m_itemsToFetch.count()));
         emit fetchingStatusUpdated();
 
         //Fetch info for another batch of items
