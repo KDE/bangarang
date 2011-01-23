@@ -61,6 +61,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_fieldsOrder["AudioGenre"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["AudioTag"] = QStringList() << "title";
     m_fieldsOrder["TV Series"] = QStringList() << "artwork" << "title" << "description";
+    m_fieldsOrder["TV Season"] = QStringList() << "artwork" << "title" << "season";
     m_fieldsOrder["VideoGenre"] = QStringList() << "artwork" << "title";
     m_fieldsOrder["Actor"] = QStringList() << "artwork" << "title" << "description" << "relatedTo";
     m_fieldsOrder["Director"] = QStringList() << "artwork" << "title" << "description" << "relatedTo";
@@ -106,6 +107,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_restrictedFields["AudioGenre"] = QStringList() << "title";
     m_restrictedFields["AudioTag"] = QStringList() << "artwork" << "title";
     m_restrictedFields["TV Series"] = QStringList() << "title";
+    m_restrictedFields["TV Season"] = QStringList() << "artwork" << "title" << "season";
     m_restrictedFields["VideoGenre"] = QStringList() << "title";
     m_restrictedFields["Actor"] = QStringList() << "title";
     m_restrictedFields["Director"] = QStringList() << "title";

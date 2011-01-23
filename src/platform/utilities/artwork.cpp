@@ -360,6 +360,40 @@ QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ig
     return artworks;
 }
 
+QList<QImage> Utilities::getTVSeasonArtworks(const QString &seriesTitle, int season, bool ignoreCache)
+{
+    QList<QImage> artworks;
+    if (seriesTitle.isEmpty() || season < 1) {
+        return artworks;
+    }
+
+    MediaVocabulary mediaVocabulary;
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append(mediaVocabulary.mediaResourceBinding());
+    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+    bindings.append(mediaVocabulary.artworkBinding());
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
+    query.addCondition((mediaVocabulary.hasVideoSeason(MediaQuery::Required, season, MediaQuery::Equal)));
+    query.endWhere();
+    query.addLimit(8);
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+
+    while( it.next() ) {
+        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+        if (!artwork.isNull()) {
+            artworks.append(artwork);
+        }
+    }
+
+}
+
 QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache)
 {
     QList<QImage> artworks;

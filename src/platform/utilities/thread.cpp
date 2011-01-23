@@ -39,6 +39,10 @@ void Utilities::Thread::run()
                 artworks = Utilities::getTagArtworks(itemTitle, "video", m_ignoreCache);
             } else if (m_mediaItem.subType() == "TV Series") {
                 artworks = Utilities::getTVSeriesArtworks(itemTitle, m_ignoreCache);
+            } else if (m_mediaItem.subType() == "TV Season") {
+                QString seriesName = m_mediaItem.fields["seriesName"].toString();
+                int season = m_mediaItem.fields["season"].toInt();
+                artworks = Utilities::getTVSeasonArtworks(seriesName, season, m_ignoreCache);
             } else if (m_mediaItem.subType() == "Actor") {
                 artworks = Utilities::getActorArtworks(itemTitle, m_ignoreCache);
             } else if (m_mediaItem.subType() == "Director") {

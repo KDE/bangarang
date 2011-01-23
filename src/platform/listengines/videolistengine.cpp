@@ -245,8 +245,9 @@ void VideoListEngine::run()
                     MediaItem mediaItem;
                     mediaItem.url = QString("video://episodes?||seriesName=~");
                     mediaItem.title = i18n("Uncategorized TV Shows");
+                    mediaItem.fields["title"] = i18n("Uncategorized TV Shows");
                     mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("TV Series");
+                    mediaItem.fields["categoryType"] = QString("Basic+Artwork");
                     mediaItem.nowPlaying = false;
                     mediaItem.artwork = KIcon("video-television");
                     mediaList.append(mediaItem);
@@ -308,6 +309,7 @@ void VideoListEngine::run()
                 mediaItem.title = seriesName;
                 mediaItem.fields["title"] = mediaItem.title;
                 mediaItem.fields["season"] = season;
+                mediaItem.fields["seriesName"] = seriesName;
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 mediaItem.type = QString("Category");
                 mediaItem.fields["categoryType"] = QString("TV Season");
@@ -341,8 +343,11 @@ void VideoListEngine::run()
                 MediaItem mediaItem;
                 mediaItem.url = QString("video://episodes?||season=-1||%1||%2").arg(genreFilter).arg(seriesNameFilter);
                 mediaItem.title = seriesName;
+                mediaItem.fields["title"] = seriesName;
+                mediaItem.fields["seriesName"] = seriesName;
                 mediaItem.subTitle = i18n("Uncategorized seasons");
                 mediaItem.type = QString("Category");
+                mediaItem.fields["categoryType"] = QString("Basic+Artwork");
                 mediaItem.nowPlaying = false;
                 mediaItem.artwork = KIcon("video-television");
                 mediaList.append(mediaItem);

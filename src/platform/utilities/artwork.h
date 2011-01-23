@@ -46,6 +46,7 @@ namespace Utilities {
     QList<QImage> getArtistArtworks(const QString &artist, bool ignoreCache = false);
     QList<QImage> getTagArtworks(const QString &tag, const QString &type, bool ignoreCache = false);
     QList<QImage> getTVSeriesArtworks(const QString &seriesTitle, bool ignoreCache = false);
+    QList<QImage> getTVSeasonArtworks(const QString &seriesTitle, int season, bool ignoreCache = false);
     QList<QImage> getActorArtworks(const QString &actor, bool ignoreCache = false);
     QList<QImage> getDirectorArtworks(const QString &director, bool ignoreCache = false);
     bool compareImage(const QImage &image1, const QImage image2, int strength = 20);
