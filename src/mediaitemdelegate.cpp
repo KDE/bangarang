@@ -168,7 +168,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             QPixmap artwork;
             if (subType == "Artist" || subType == "Album" || subType == "AudioGenre" || subType =="Audio Stream" || subType == "Audio Feed" ||
                 subType == "Movie" || subType == "VideoGenre" || subType == "Actor" || subType == "Director" || subType == "Video Feed" ||
-                subType == "TV Series" || subType == "TV Show") {
+                subType == "TV Series" || subType == "TV Season" || subType == "TV Show") {
                 if (Utilities::artworkIsInCache(mediaItem)) {
                     artwork = Utilities::getArtworkFromMediaItem(mediaItem);
                 } else if (artworkNeededIndex(mediaItem) == -1) {
