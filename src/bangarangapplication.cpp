@@ -135,7 +135,7 @@ void BangarangApplication::setup()
     QList<int> mediaViewSplitterSizes = generalGroup.readEntry("MediaViewSplitterSizes", QList<int>() << 338 << 220);
     m_mainWindow->ui->mediaViewSplitter->setSizes(mediaViewSplitterSizes);
     m_mainWindow->ui->mediaLists->setCurrentIndex(generalGroup.readEntry("mediaListsType", 0));
-    bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", false));
+    bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", true));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
         m_infoManager->toggleInfoView();
     }

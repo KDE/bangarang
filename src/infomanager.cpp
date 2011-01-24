@@ -88,7 +88,6 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(m_infoItemModel, SIGNAL(fetchComplete()), this, SLOT(fetchComplete()));
     connect(ui->fetchedMatches, SIGNAL(currentRowChanged(int)), m_infoItemModel, SLOT(selectFetchedMatch(int)));
 
-    connect(ui->showInfo, SIGNAL(clicked()), this, SLOT(toggleInfoView()));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), this, SLOT(infoChanged(bool)));
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
@@ -96,6 +95,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
+
+    m_infoViewVisible = ui->semanticsHolder->isVisible();
 }
 
 InfoManager::~InfoManager()
@@ -114,12 +115,8 @@ void InfoManager::toggleInfoView()
     if (makeVisible) {
         m_infoViewVisible = true;
         loadSelectedInfo();
-        ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
-        ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
     } else {
         m_infoViewVisible = false;
-        ui->showInfo->setToolTip(i18n("Show Information"));
-        ui->showInfo->setIcon(KIcon("help-about"));
     } 
 }
 
@@ -225,8 +222,6 @@ void InfoManager::showInfoViewForMediaItem(const MediaItem &mediaItem)
     m_parent->switchMainWidget(MainWindow::MainMediaList);
     if (!ui->semanticsHolder->isVisible()) {
         ui->semanticsHolder->setVisible(true);
-        ui->showInfo->setToolTip(i18n("<b>Showing Information</b><br>Click to hide information."));
-        ui->showInfo->setIcon(Utilities::turnIconOff(KIcon("help-about"), QSize(22, 22)));
     }
     
     QList<MediaItem> mediaList;

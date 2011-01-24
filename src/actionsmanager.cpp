@@ -230,8 +230,8 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_othersCollection->addAction("show_now_playing_info", action);
 
     //Show Info View
-    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
-    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(showInfoView()));
+    action = new KAction(KIcon("help-about"), i18n("Show Info View"), m_parent);
+    connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(toggleInfoView()));
     m_othersCollection->addAction("show_info", action);
 
     //Add bookmark
@@ -348,8 +348,16 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     
     //Browsing actions
     if (menuSource == MainWindow::Default || MainWindow::MediaList) {
-        if (ui->mediaView->sourceModel()->containsPlayable()) {
-            menu->addAction(action("toggle_filter"));
+        if (m_application->infoManager()->infoViewVisible()) {
+            action("show_info")->setText(i18n("Hide Info View"));
+        } else {
+            action("show_info")->setText(i18n("Show Info View"));
+        }
+        if (menuSource == MainWindow::Default) {
+            menu->addAction(action("show_info"));
+            if (ui->mediaView->sourceModel()->containsPlayable()) {
+                menu->addAction(action("toggle_filter"));
+            }
         }
     }
     if (selection && isCategory) {
@@ -1066,4 +1074,14 @@ void ActionsManager::addTemporaryAudioStreams()
     if (tempStreams.count() <= 0)
         return;
     m_application->playlist()->playlistModel()->updateSourceInfo(tempStreams, true);
+}
+
+void ActionsManager::toggleInfoView()
+{
+    m_application->infoManager()->toggleInfoView();
+    if (m_application->infoManager()->infoViewVisible()) {
+        action("show_info")->setText(i18n("Hide Info View"));
+    } else {
+        action("show_info")->setText(i18n("Show Info View"));
+    }
 }
