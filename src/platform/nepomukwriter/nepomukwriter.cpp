@@ -386,10 +386,8 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             }
         }
         if (!url.isEmpty()) {
-            if (!res.hasProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"))) {
-                res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"),
-                                QUrl(url));
-            }
+            //the url may has changed (e.g. with audio streams), so update it in any case
+            res.setProperty(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url"), QUrl(url));
         }
         if (fields.contains("title")) {
             QString title = fields["title"].toString();
