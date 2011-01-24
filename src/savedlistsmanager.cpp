@@ -756,7 +756,7 @@ void SavedListsManager::loadPlaylist()
 {
     MediaItem mediaItem;
     mediaItem.type = "Category";
-    mediaItem.title = "Playlist";
+    mediaItem.title = i18n("Playlist");
     mediaItem.url = "savedlists://Playlist-current.m3u";
     m_application->playlist()->addMediaItem(mediaItem);
 }

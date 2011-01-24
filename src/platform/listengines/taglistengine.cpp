@@ -108,7 +108,7 @@ void TagListEngine::run()
                 mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?%1||limit=4||tag=%2").arg(mediaType).arg(tag));
                 mediaList.append(mediaItem);
             }
-            m_mediaListProperties.name = i18n("Tags",engineArg);
+            m_mediaListProperties.name = i18n("Tags");
             m_mediaListProperties.summary = i18np("1 tag", "%1 tags", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
 

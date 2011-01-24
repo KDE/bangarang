@@ -934,7 +934,8 @@ void ActionsManager::addBookmarkSlot()
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
         QString nowPlayingUrl = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
         qint64 time = m_application->playlist()->mediaObject()->currentTime();
-        QString name = QString("Bookmark-%1").arg(m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() + 1);
+        int newBookmarkIndex = m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() + 1;
+        QString name = i18n("Bookmark-%1", newBookmarkIndex);
         m_application->bookmarksManager()->addBookmark(nowPlayingUrl, name, time);
         if (m_application->bookmarksManager()->bookmarks(nowPlayingUrl).count() > 0) {
             ui->seekTime->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);

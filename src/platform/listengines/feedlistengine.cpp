@@ -172,7 +172,7 @@ void FeedListEngine::run()
             MediaItem mediaItem;
             mediaItem.title = i18n("New video feed");
             mediaItem.subTitle = i18n("Edit info to create new video feed");
-            mediaItem.fields["title"] = "Untitled";
+            mediaItem.fields["title"] = i18n("Untitled");
             mediaItem.fields["url"] = QString();
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Video Feed");

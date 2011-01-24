@@ -98,7 +98,7 @@ void AudioStreamListEngine::run()
             mediaItem.title = i18n("New Audio Stream");
             mediaItem.subTitle = i18n("Edit info to create new audio stream");
             mediaItem.artwork = KIcon("text-html");
-            mediaItem.fields["title"] = "Untitled";
+            mediaItem.fields["title"] = i18n("Untitled");
             mediaItem.fields["audioType"] = "Audio Stream";
             mediaItem.fields["isTemplate"] = true;
             mediaList.append(mediaItem);
