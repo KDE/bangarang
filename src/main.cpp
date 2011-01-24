@@ -26,10 +26,10 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "1.90 (2.0 Beta 1)",
-        ki18n("A Media Player"), KAboutData::License_GPL_V2,
+        ki18n("Bangarang"), "1.99 (2.0 Release Candidate)",
+        ki18n("A media player for your KDE desktop"), KAboutData::License_GPL_V3,
         ki18n("Copyright 2011, Andrew Lake"),
-        ki18n("<b>Note:</b> This product uses the TMDb API but is not endorsed or certified by TMDb. Please help improve available information by visiting http://themoviedb.org. <br>"
+        ki18n("<b>Note:</b> This product uses the TMDb API but is not endorsed or certified by TMDb. Please help improve available information by visiting http://themoviedb.org<br>"
               "<b>Note:</b> This product uses the Last.fm API but is not endorsed or certified by Last.fm.  Pleace help improve available information by visiting http://last.fm<br>"
               "<b>Note:</b> This product uses the TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Pleace help improve available information by visiting http://thetvdb.com"),
         "http://bangarangkde.wordpress.org" );
@@ -41,11 +41,6 @@ int main(int argc, char *argv[])
     aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@gmail.com");
     aboutData.addCredit(ki18n("Stefan Burnicki"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Buschmann"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Janusz Lewandowski"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Kristof Bal"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Ryan Kavanagh"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Sebastian Jambor"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Ni Hui"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
