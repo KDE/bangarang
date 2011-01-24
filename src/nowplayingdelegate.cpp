@@ -210,13 +210,13 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     if (!Utilities::isMediaItem(&index))
         return false;
 
-    m_mousePos = ((QMouseEvent *)event)->pos();
+    QPoint mousePos = ((QMouseEvent *)event)->pos();
     m_view->update(index);
     QRect ratingArea = ratingRect(&option.rect);
     if (!m_nepomukInited) {
         return false;
     }
-    if  (!ratingArea.contains(m_mousePos))
+    if  (!ratingArea.contains(mousePos))
     {
         if (s_mouseOver) { //onLeave effect
             s_mouseOver = false;
@@ -232,7 +232,7 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
         return false;
     }
     //else the user clicked, so we have to save the new rating
-    int rating = StarRating::RatingAtPosition(m_mousePos, m_starRatingSize, ratingArea.topLeft());
+    int rating = StarRating::RatingAtPosition(mousePos, m_starRatingSize, ratingArea.topLeft());
     MediaItemModel *cmodel = (MediaItemModel *)index.model();
     QString url = cmodel->mediaItemAt(index.row()).url;
     bool indexerUpdated = false;
