@@ -151,248 +151,8 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     QPixmap reflection = Utilities::reflection(baseReflectionPixmap);
     painter->drawPixmap(option.rect.topLeft() + QPoint(0, 1+height/2), reflection);
 
-    MediaItem mediaItem = model->mediaItemAt(index.row());
-    if (mediaItem.type != "Audio" && mediaItem.type != "Video") {
-        return;
-    }
-
     //Draw additional info
-    //TODO::The code below could probably use a pass to reduce duplication
-    if (!m_showInfo) {
-        return;
-    }
-
-    QFont infoFont = KGlobalSettings::smallestReadableFont();
-    QFontMetrics fm(infoFont);
-    QFont fieldFont = KGlobalSettings::smallestReadableFont();
-    fieldFont.setBold(true);
-    QColor fieldColor = foregroundColor;
-    fieldColor.setAlpha(190);
-    int infoWidth = option.rect.width() - 20;
-    if (m_parent->videoSize() == MainWindow::Mini) {
-        infoWidth = infoWidth - m_parent->ui->videoFrame->width() - 20;
-    }
-    painter->setPen(subTitleColor);
-    painter->setFont(infoFont);
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    if (mediaItem.type == "Audio") {
-        int line = 0;
-
-        QString artists = mediaItem.fields["artist"].toStringList().join(", ");
-        if (!artists.isEmpty()) {
-            artists = fm.elidedText(artists, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString composers = mediaItem.fields["composer"].toStringList().join(", ");
-        if (!composers.isEmpty()) {
-            composers = fm.elidedText(composers, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString album = mediaItem.fields["album"].toString();
-        if (!album.isEmpty()) {
-            album = fm.elidedText(album, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        int trackNumber = mediaItem.fields["trackNumber"].toInt();
-        if (trackNumber > 0) {
-            line++;
-        }
-        int year = mediaItem.fields["year"].toInt();
-        if (year > 0) {
-            line++;
-        }
-        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
-        if (!genres.isEmpty()) {
-            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString description = mediaItem.fields["description"].toString();
-        if (!description.isEmpty()) {
-            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
-            line = line + int((0.5+descRect.height())/fm.lineSpacing());
-        }
-
-        QRect infoRect = option.rect.adjusted(5,
-                                              option.rect.height()-line*(fm.lineSpacing()+3) - 5,
-                                              -option.rect.width() + infoWidth + 5,
-                                              -5);
-        if (infoRect.height() > option.rect.height()/2) {
-            return;
-        }
-        line = 0;
-        if (!artists.isEmpty()) {
-            QString field = i18n("Artist: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, artists);
-            line++;
-        }
-        if (!composers.isEmpty()) {
-            QString field = i18n("Composer: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, composers);
-            line++;
-        }
-        if (!album.isEmpty()) {
-            QString field = i18n("Album: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, album);
-            line++;
-        }
-        if (trackNumber > 0) {
-            QString field = i18n("Track: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(trackNumber));
-            line++;
-        }
-        if (year > 0) {
-            painter->save();
-            QString field = i18n("Year: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
-            line++;
-        }
-        if (!genres.isEmpty()) {
-            QString field = i18n("Genre: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
-            line++;
-        }
-        if (!description.isEmpty()) {
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
-            line++;
-        }
-    }
-    if (mediaItem.type == "Video") {
-        int line = 0;
-        int year = mediaItem.fields["year"].toInt();
-        if (year > 0) {
-            line++;
-        }
-        QString actors = mediaItem.fields["actor"].toStringList().join(", ");
-        if (!actors.isEmpty()) {
-            actors = fm.elidedText(actors, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString directors = mediaItem.fields["director"].toStringList().join(", ");
-        if (!directors.isEmpty()) {
-            directors = fm.elidedText(directors, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString writers = mediaItem.fields["writer"].toStringList().join(", ");
-        if (!writers.isEmpty()) {
-            writers = fm.elidedText(writers, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString producers = mediaItem.fields["producer"].toStringList().join(", ");
-        if (!producers.isEmpty()) {
-            producers = fm.elidedText(producers, Qt::ElideRight, infoWidth);
-            line++;
-        }
-        QString description = mediaItem.fields["description"].toString();
-        if (!description.isEmpty()) {
-            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
-            line = line + int((0.5+descRect.height())/fm.lineSpacing());
-        }
-
-        QRect infoRect = option.rect.adjusted(5,
-                                              option.rect.height()-line*(fm.lineSpacing()+3) - 5,
-                                              -option.rect.width() + infoWidth + 5,
-                                              -5);
-        if (infoRect.height() > option.rect.height()/2) {
-            return;
-        }
-        line = 0;
-        if (year > 0) {
-            QString field = i18n("Year: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
-            line++;
-        }
-        if (!actors.isEmpty()) {
-            QString field = i18n("Actor: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, actors);
-            line++;
-        }
-        if (!directors.isEmpty()) {
-            QString field = i18n("Director: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, directors);
-            line++;
-        }
-        if (!writers.isEmpty()) {
-            QString field = i18n("Writer: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, writers);
-            line++;
-        }
-        if (!producers.isEmpty()) {
-            QString field = i18n("Producer: ");
-            QFontMetrics fm(fieldFont);
-            painter->save();
-            painter->setFont(fieldFont);
-            painter->setPen(fieldColor);
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
-            painter->restore();
-            painter->drawText(infoRect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, producers);
-            line++;
-        }
-        if (!description.isEmpty()) {
-            painter->drawText(infoRect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
-            line++;
-        }
-    }
+    paintInfo(painter, option, index);
     
 }
 
@@ -450,12 +210,13 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     if (!Utilities::isMediaItem(&index))
         return false;
 
-    QPoint mousePos = ((QMouseEvent *)event)->pos();
+    m_mousePos = ((QMouseEvent *)event)->pos();
+    m_view->update(index);
     QRect ratingArea = ratingRect(&option.rect);
     if (!m_nepomukInited) {
         return false;
     }
-    if  (!ratingArea.contains(mousePos))
+    if  (!ratingArea.contains(m_mousePos))
     {
         if (s_mouseOver) { //onLeave effect
             s_mouseOver = false;
@@ -471,7 +232,7 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
         return false;
     }
     //else the user clicked, so we have to save the new rating
-    int rating = StarRating::RatingAtPosition(mousePos, m_starRatingSize, ratingArea.topLeft());
+    int rating = StarRating::RatingAtPosition(m_mousePos, m_starRatingSize, ratingArea.topLeft());
     MediaItemModel *cmodel = (MediaItemModel *)index.model();
     QString url = cmodel->mediaItemAt(index.row()).url;
     bool indexerUpdated = false;
@@ -504,4 +265,288 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
 void NowPlayingDelegate::updateSizeHint()
 {
     emit sizeHintChanged(m_view->model()->index(0,0));
+}
+
+void NowPlayingDelegate::paintInfo(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!m_showInfo) {
+        return;
+    }
+
+    MediaItem mediaItem = ((MediaItemModel *)index.model())->mediaItemAt(index.row());
+    if (mediaItem.type != "Audio" && mediaItem.type != "Video") {
+        return;
+    }
+
+    //Draw additional info
+    //TODO::The code below could probably use a pass to reduce duplication
+    QFont infoFont = KGlobalSettings::smallestReadableFont();
+    QFontMetrics fm(infoFont);
+    QFont fieldFont = KGlobalSettings::smallestReadableFont();
+    fieldFont.setBold(true);
+    QColor foregroundColor = option.palette.color(QPalette::Text);
+    QColor fieldColor = foregroundColor;
+    fieldColor.setAlpha(190);
+    QColor subTitleColor = KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color();
+    painter->setPen(subTitleColor);
+    painter->setFont(infoFont);
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QRect rect = infoRect(option, index);
+
+    if (mediaItem.type == "Audio") {
+        int line = 0;
+        QString artists = mediaItem.fields["artist"].toStringList().join(", ");
+        if (!artists.isEmpty()) {
+            QString field = i18n("Artist: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, artists);
+            line++;
+        }
+        QString composers = mediaItem.fields["composer"].toStringList().join(", ");
+        if (!composers.isEmpty()) {
+            QString field = i18n("Composer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, composers);
+            line++;
+        }
+        QString album = mediaItem.fields["album"].toString();
+        if (!album.isEmpty()) {
+            QString field = i18n("Album: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, album);
+            line++;
+        }
+        int trackNumber = mediaItem.fields["trackNumber"].toInt();
+        if (trackNumber > 0) {
+            QString field = i18n("Track: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(trackNumber));
+            line++;
+        }
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
+            painter->save();
+            QString field = i18n("Year: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
+            line++;
+        }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            QString field = i18n("Genre: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
+            line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
+            line++;
+        }
+    } else if (mediaItem.type == "Video") {
+        int line = 0;
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
+            QString field = i18n("Year: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, QString("%1").arg(year));
+            line++;
+        }
+        QString actors = mediaItem.fields["actor"].toStringList().join(", ");
+        if (!actors.isEmpty()) {
+            QString field = i18n("Actor: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, actors);
+            line++;
+        }
+        QString directors = mediaItem.fields["director"].toStringList().join(", ");
+        if (!directors.isEmpty()) {
+            QString field = i18n("Director: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, directors);
+            line++;
+        }
+        QString writers = mediaItem.fields["writer"].toStringList().join(", ");
+        if (!writers.isEmpty()) {
+            QString field = i18n("Writer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, writers);
+            line++;
+        }
+        QString producers = mediaItem.fields["producer"].toStringList().join(", ");
+        if (!producers.isEmpty()) {
+            QString field = i18n("Producer: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, producers);
+            line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
+            line++;
+        }
+    }
+
+}
+
+QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!m_showInfo) {
+        return QRect();
+    }
+
+    MediaItem mediaItem = ((MediaItemModel *)index.model())->mediaItemAt(index.row());
+    if (mediaItem.type != "Audio" && mediaItem.type != "Video") {
+        return QRect();
+    }
+
+    QRect rect;
+    QFont infoFont = KGlobalSettings::smallestReadableFont();
+    QFontMetrics fm(infoFont);
+    int infoWidth = option.rect.width() - 20;
+    if (m_parent->videoSize() == MainWindow::Mini) {
+        infoWidth = infoWidth - m_parent->ui->videoFrame->width() - 20;
+    }
+
+    if (mediaItem.type == "Audio") {
+        int line = 0;
+
+        QString artists = mediaItem.fields["artist"].toStringList().join(", ");
+        if (!artists.isEmpty()) {
+            artists = fm.elidedText(artists, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString composers = mediaItem.fields["composer"].toStringList().join(", ");
+        if (!composers.isEmpty()) {
+            composers = fm.elidedText(composers, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString album = mediaItem.fields["album"].toString();
+        if (!album.isEmpty()) {
+            album = fm.elidedText(album, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        int trackNumber = mediaItem.fields["trackNumber"].toInt();
+        if (trackNumber > 0) {
+            line++;
+        }
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
+            line++;
+        }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
+            line = line + int((0.5+descRect.height())/fm.lineSpacing());
+        }
+
+        rect = option.rect.adjusted(5,
+                                    option.rect.height()-line*(fm.lineSpacing()+3) - 5,
+                                    -option.rect.width() + infoWidth + 5,
+                                    -5);
+        if (rect.height() > option.rect.height()/2) {
+            rect = QRect();
+        }
+    } else if (mediaItem.type == "Video") {
+        int line = 0;
+        int year = mediaItem.fields["year"].toInt();
+        if (year > 0) {
+            line++;
+        }
+        QString actors = mediaItem.fields["actor"].toStringList().join(", ");
+        if (!actors.isEmpty()) {
+            actors = fm.elidedText(actors, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString directors = mediaItem.fields["director"].toStringList().join(", ");
+        if (!directors.isEmpty()) {
+            directors = fm.elidedText(directors, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString writers = mediaItem.fields["writer"].toStringList().join(", ");
+        if (!writers.isEmpty()) {
+            writers = fm.elidedText(writers, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString producers = mediaItem.fields["producer"].toStringList().join(", ");
+        if (!producers.isEmpty()) {
+            producers = fm.elidedText(producers, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString description = mediaItem.fields["description"].toString();
+        if (!description.isEmpty()) {
+            QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
+            line = line + int((0.5+descRect.height())/fm.lineSpacing());
+        }
+
+        rect = option.rect.adjusted(5,
+                                              option.rect.height()-line*(fm.lineSpacing()+3) - 5,
+                                              -option.rect.width() + infoWidth + 5,
+                                              -5);
+        if (rect.height() > option.rect.height()/2) {
+            rect = QRect();
+        }
+    }
+    return rect;
 }
