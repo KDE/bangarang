@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2011-01-23 21:21-0800\n"
-"PO-Revision-Date: 2011-01-20 15:58+0100\n"
+"PO-Revision-Date: 2011-01-24 19:26+0100\n"
 "Last-Translator: Stefan Burnicki\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
 "Language: de\n"
@@ -138,9 +138,8 @@ msgid "Show information"
 msgstr "Information anzeigen"
 
 #: actionsmanager.cpp:233 actionsmanager.cpp:354 actionsmanager.cpp:1085
-#, fuzzy
 msgid "Show Info View"
-msgstr "Information anzeigen"
+msgstr "Informations-Bereich anzeigen"
 
 #: actionsmanager.cpp:238
 msgid "Add bookmark"
@@ -169,9 +168,8 @@ msgid "Manage info"
 msgstr "Informationen verwalten"
 
 #: actionsmanager.cpp:352 actionsmanager.cpp:1083
-#, fuzzy
 msgid "Hide Info View"
-msgstr "Filter ausblenden"
+msgstr "Informations-Bereich verstecken"
 
 # Very strange translation
 #: actionsmanager.cpp:412
@@ -220,9 +218,9 @@ msgid "Show elapsed time"
 msgstr "Verbleibende Zeit anzeigen"
 
 #: actionsmanager.cpp:946
-#, fuzzy, kde-format
+#, kde-format
 msgid "Bookmark-%1"
-msgstr "Lesezeichen hinzufügen"
+msgstr "Lesezeichen-%1"
 
 #: actionsmanager.cpp:1015 actionsmanager.cpp:1022
 msgid "Update Ontologies"
@@ -386,12 +384,11 @@ msgstr ""
 
 #: main.cpp:30
 msgid "A media player for your KDE desktop"
-msgstr ""
+msgstr "Ein Medienwiedergabe Programm für deinen KDE Desktop"
 
 #: main.cpp:31
-#, fuzzy
 msgid "Copyright 2011, Andrew Lake"
-msgstr "Copyright 2010, Andrew Lake"
+msgstr "Copyright 2011, Andrew Lake"
 
 #: main.cpp:32
 msgid ""
@@ -403,6 +400,18 @@ msgid ""
 "API but is not endorsed or certified by TheTVDB.com.  Pleace help improve "
 "available information by visiting http://thetvdb.com"
 msgstr ""
+"<b>Anmerkung:</b> Dieses Produkt verwendet die TMDb API, wird aber nicht von "
+"TMDb"
+"unterstützt oder zertifiziert. Bitte helfen Sie die verfügbaren Informationen "
+"zu verbessern in dem Sie http://"
+"themoviedb.org besuchen.<br><b>Anmerkung:</b> Dieses Produkt verwendet die "
+"Last.fm API, wird aber nicht von Last.fm "
+"unterstützt oder zertifiziert. Bitte helfen Sie die verfügbaren Informationen "
+"zu verbessern in dem Sie http://last.fm besuchen.<br> "
+"<b>Anmerkung:</b> Dieses Produkt verwendet die TheTVDB.com API, wird aber "
+"nicht von TheTVDB.com"
+"unterstützt oder zertifiziert. Bitte helfen Sie die verfügbaren Informationen "
+"zu verbessern in dem Sie http://thetvdb.com besuchen."
 
 #: main.cpp:41
 msgid "Andrew (Jamboarder) Lake"
@@ -482,14 +491,12 @@ msgid "Playlist"
 msgstr "Wiedergabeliste"
 
 #: mainwindow.cpp:304
-#, fuzzy
 msgid "Audio Search"
-msgstr "Audiostream"
+msgstr "Audio Suche"
 
 #: mainwindow.cpp:311
-#, fuzzy
 msgid "Video Search"
-msgstr "Videoeinstellungen"
+msgstr "Video Suche"
 
 # @TODO feels fishy!!
 #: mainwindow.cpp:391
@@ -1443,11 +1450,11 @@ msgstr[0] "Beziehe Informationen für %1 Element..."
 msgstr[1] "Beziehe Informationen für %1 Elemente..."
 
 #: platform/infoitemmodel.cpp:503
-#, fuzzy, kde-format
+#, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
-msgstr[0] "Informationen für %1 von %2 Elementen bezogen..."
-msgstr[1] "Informationen für %1 von %2 Elementen bezogen..."
+msgstr[0] "Informationen für %2 von 1 Element bezogen..."
+msgstr[1] "Informationen für %2 von %1 Elementen bezogen..."
 
 #: platform/infoitemmodel.cpp:527
 msgid "No Results"
@@ -1641,7 +1648,7 @@ msgstr "DBPedia"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
-msgstr ""
+msgstr "Dieser Dienst bezieht Informationen von DBPedia.org."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1650,6 +1657,7 @@ msgstr "Feed Informationen"
 #: platform/infofetchers/feedinfofetcher.cpp:37
 msgid "This fetcher gets information for the feed at the specified location."
 msgstr ""
+"Dieser Dienst bezieht Informationen für den Feed an dessen festgelegtem Ort."
 
 #: platform/infofetchers/filenameinfofetcher.cpp:31
 msgid "Filename Info"
@@ -1660,32 +1668,35 @@ msgid ""
 "This fetcher uses guesses the season and episode number based on a filename "
 "pattern. E.g.  2x23 or S02E23 or 2.23"
 msgstr ""
+"Dieser Dienst errät Staffel- und Episoden-Nummer basierend auf dem Dateinamen."
+" "
+"Z.B. 2x23 oder S02E23 oder 2.23"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
 msgstr "Last.fm"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:41
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
-"Anmerkung: Dieses Produkt verwendet die TMDb API, ist aber nicht von TMDb "
-"bestätigt oder zertifiziert."
+"Anmerkung: Dieser Bezugsdienst verwendet die Last.fm API, wird aber nicht von "
+"Last.fm "
+"unterstützt oder zertifiziert."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
 msgid "TMDb"
 msgstr "TMDb"
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:39
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
 msgstr ""
-"Anmerkung: Dieses Produkt verwendet die TMDb API, ist aber nicht von TMDb "
-"bestätigt oder zertifiziert."
+"Anmerkung: Dieser Bezugsdienst verwendet die TMDb API, wird aber nicht von "
+"TMDb"
+"unterstützt oder zertifiziert."
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:36
 msgid "TVDB"
