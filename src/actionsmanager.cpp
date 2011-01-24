@@ -763,15 +763,7 @@ void ActionsManager::addAfterNowPlaying()
 void ActionsManager::removeSelectedFromPlaylistSlot()
 {
     QList<MediaItem> mediaList = selectedMediaItems();
-    for (int i = 0; i < mediaList.count(); i++) {
-        if (mediaList.at(i).type == "Audio" ||
-            mediaList.at(i).type == "Video") {
-            int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(mediaList.at(i).url);
-            if (playlistRow != -1) {
-                m_application->playlist()->removeMediaItemAt(playlistRow);
-            }
-        }
-    }
+    m_application->playlist()->removeMediaListItems(mediaList);
 }
 
 void ActionsManager::removePlaylistSelectionFromPlaylistSlot()

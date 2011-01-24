@@ -300,7 +300,7 @@ void Playlist::addMediaItem(const MediaItem &mediaItem)
     m_currentPlaylist->loadSources(mediaList);
 }
 
-void Playlist::removeMediaItemAt(int row)
+void Playlist::removeMediaItemAt(int row, bool emitMediaListChange)
 {
     int foundAt = m_playlistIndices.indexOf(row);
     if (foundAt != -1) {
@@ -315,7 +315,21 @@ void Playlist::removeMediaItemAt(int row)
         m_playlistIndicesHistory.removeAt(foundAt);
         m_playlistUrlHistory.removeAt(foundAt);
     }
-    m_currentPlaylist->removeMediaItemAt(row, true);
+    m_currentPlaylist->removeMediaItemAt(row, emitMediaListChange);
+}
+
+void Playlist::removeMediaListItems(const QList< MediaItem >& list)
+{
+    int count = list.count();
+    for (int i = 0; i < count; i++) {
+        const MediaItem &item = list.at(i);
+        if (Utilities::isMedia(item.type)) {
+            int playlistRow = m_currentPlaylist->rowOfUrl(item.url);
+            if (playlistRow != -1) {
+                removeMediaItemAt(playlistRow, (i == count -1 ) );
+            }
+        }
+    }
 }
 
 void Playlist::insertMediaItemAt(int row, Model model, const MediaItem &mediaItem)
@@ -799,6 +813,8 @@ void Playlist::playlistChanged()
                 playItemAt(0, Playlist::QueueModel);
             }
         }
+    } else { //playlist was cleared
+        stop();
     }
 }
 
