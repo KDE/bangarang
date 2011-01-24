@@ -31,7 +31,7 @@
 static KAboutData aboutData( "bangarangnepomukwriter", 0,
                              KLocalizedString(), "2.0",
                              KLocalizedString(), KAboutData::License_GPL_V3,
-        ki18n("Copyright 2009, Andrew Lake"), KLocalizedString(),
+        ki18n("Copyright 2011, Andrew Lake"), KLocalizedString(),
         "" );
 
 int main(int argc, char *argv[])

@@ -301,14 +301,14 @@ void MainWindow::on_Filter_returnPressed()
         addListToHistory();
         if (ui->mediaLists->currentIndex() == 0) {
             MediaListProperties searchProperties;
-            searchProperties.name = "Audio Search";
+            searchProperties.name = i18n("Audio Search");
             searchProperties.lri = QString("music://search?%1").arg(ui->Filter->text());
             m_application->browsingModel()->clearMediaListData();
             m_application->browsingModel()->setMediaListProperties(searchProperties);
             m_application->browsingModel()->load();
         } else if (ui->mediaLists->currentIndex() == 1) {
             MediaListProperties searchProperties;
-            searchProperties.name = "Video Search";
+            searchProperties.name = i18n("Video Search");
             searchProperties.lri = QString("video://search?%1").arg(ui->Filter->text());
             m_application->browsingModel()->clearMediaListData();
             m_application->browsingModel()->setMediaListProperties(searchProperties);
