@@ -1061,7 +1061,6 @@ void MainWindow::setupIcons()
     ui->playSelected->setIcon(KIcon("media-playback-start"));
     ui->playAll->setIcon(KIcon("media-playback-start"));
     ui->nowPlaying->setIcon(KIcon("tool-animator"));
-    ui->showInfo->setIcon(KIcon("help-about"));
     ui->closeMediaListFilter->setIcon(KIcon("dialog-close"));
     ui->infoIndexSelected->setIcon(KIcon("system-run"));
     ui->showInfoFetcherExpander->setIcon(KIcon("help-about"));

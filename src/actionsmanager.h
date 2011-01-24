@@ -128,5 +128,6 @@ class ActionsManager : public QObject
         void removeBookmark(QAction *bookmarkAction);
         void updateOntologies();
         void addTemporaryAudioStreams();
+        void toggleInfoView();
 };
 #endif //ACTIONSMANAGER_H
