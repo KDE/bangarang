@@ -391,7 +391,7 @@ QList<QImage> Utilities::getTVSeasonArtworks(const QString &seriesTitle, int sea
             artworks.append(artwork);
         }
     }
-
+    return artworks;
 }
 
 QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache)
