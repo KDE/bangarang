@@ -830,7 +830,7 @@ Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QStr
 
 void NepomukWriter::removeUnusedPropertyResources()
 {
-    outputMessage(Message, i18n("Removing unused resources..."));
+    outputMessage(Message, i18n("Identifying unused resources..."));
     MediaVocabulary mediaVocabulary;
     QString resourceBinding = "pres";
     QString playableResourceBinding = "r";
@@ -858,14 +858,14 @@ void NepomukWriter::removeUnusedPropertyResources()
     query.endWhere();
 
     Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
-    outputMessage(Progress, QString("%1").arg(5));
+    outputMessage(Message, i18n("Tidying up unused resources..."));
     while( it.next() ) {
         QUrl propertyResource = it.binding(resourceBinding).uri();
         Nepomuk::Resource resource = Nepomuk::Resource::fromResourceUri(propertyResource);
         QString name = it.binding("name").literal().toString().trimmed();
+        outputMessage(Message, i18n("Tidying up unused resources: %1", name));
         resource.remove();
     }
-    outputMessage(Progress, QString("%1").arg(100));
 
 }
 
