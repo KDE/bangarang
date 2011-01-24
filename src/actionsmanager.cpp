@@ -512,7 +512,7 @@ QMenu *ActionsManager::bookmarksMenu()
         int noChaps = mctrl->availableChapters();
         if (noChaps > 1) {
             for (int i = 0; i < noChaps; i++) {
-                QString title = i18n("Chapter %1").arg(i);
+                QString title = i18n("Chapter %1", i);
                 QAction * ac = m_bookmarksMenu->addAction(KIcon("media-optical-dvd"), title);
                 ac->setData(QString("Chapter:%1").arg(i));
             }
