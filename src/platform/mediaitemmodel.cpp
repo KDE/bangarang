@@ -779,10 +779,10 @@ Qt::DropActions MediaItemModel::supportedDropActions() const
 Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    KUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
+    QString type = data(index, MediaItem::TypeRole).toString();
     if (index.isValid()) {
         useFlags |= Qt::ItemIsDropEnabled;
-        if (url.isLocalFile()) {
+        if (Utilities::isMedia(type)) {
             useFlags |= Qt::ItemIsDragEnabled;
         }
     } else {
