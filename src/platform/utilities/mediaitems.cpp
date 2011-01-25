@@ -1052,14 +1052,16 @@ Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
     return res;
 }
 
-QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocation)
+QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMediaItem)
 {
     QList<MediaItem> mediaList;
+    bool originNotLocal = false;
 
     //Download playlist if it is remote
-    KUrl location = KUrl(savedListLocation);
+    KUrl location = KUrl(savedListMediaItem.url);
     if (!location.isLocalFile() &&
-        (Utilities::isPls(savedListLocation) || Utilities::isM3u(savedListLocation))) {
+        (Utilities::isPls(savedListMediaItem.url) || Utilities::isM3u(savedListMediaItem.url))) {
+        originNotLocal = true;
         QString tmpFile;
         if( KIO::NetAccess::download(location, tmpFile, 0)) {
             location = KUrl(tmpFile);
@@ -1094,38 +1096,53 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const QString &savedListLocat
     if (valid) {
         while (!in.atEnd()) {
             QString line = in.readLine();
-            if ((isM3U) && line.startsWith("#EXTINF:")) {
-                line = line.replace("#EXTINF:","");
-                QStringList durTitle = line.split(",");
+            if ((isM3U)) {
+                bool add = false;
                 QString title;
-                int duration;
-                if (durTitle.count() == 1) {
-                    //No title
-                    duration = 0;
-                    title = durTitle.at(0);
-                } else {
-                    duration = durTitle.at(0).toInt();
-                    title = durTitle.at(1);
+                int duration = 0;
+                QString url;
+                //some internet radios only list mirrors without any #EXTINF.
+                //so if it hasn't #EXTINF check if it was an internet stream, take the mirror and
+                //copy the title of the original item
+                if(line.startsWith("#EXTINF:")) {
+                    add = true;
+                    line = line.replace("#EXTINF:","");
+                    QStringList durTitle = line.split(",");
+                    if (durTitle.count() == 1) {
+                        //No title
+                        duration = 0;
+                        title = durTitle.at(0);
+                    } else {
+                        duration = durTitle.at(0).toInt();
+                        title = durTitle.at(1);
+                    }
+                    url = in.readLine().trimmed();
+                } else if (originNotLocal) {
+                    title = savedListMediaItem.title;
+                    duration = -1;
+                    add = true;
+                    url = line;
                 }
-                QString url = in.readLine().trimmed();
-                MediaItem mediaItem;
-                KUrl itemUrl(url);
-                if (!url.isEmpty()) {
-                    mediaItem = Utilities::mediaItemFromUrl(itemUrl);
-                } else {
-                    continue;
+                if (add) {
+                    MediaItem mediaItem;
+                    KUrl itemUrl(url);
+                    if (!url.isEmpty()) {
+                        mediaItem = Utilities::mediaItemFromUrl(itemUrl);
+                    } else {
+                        continue;
+                    }
+                    if (mediaItem.title == itemUrl.fileName()) {
+                        mediaItem.title = title;
+                    }
+                    if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
+                        mediaItem.duration = Utilities::durationString(duration);
+                        mediaItem.fields["duration"] = duration;
+                    } else if (duration == -1) {
+                        mediaItem.duration = QString();
+                        mediaItem.fields["audioType"] = "Audio Stream";
+                    }
+                    mediaList << mediaItem;
                 }
-                if (mediaItem.title == itemUrl.fileName()) {
-                    mediaItem.title = title;
-                }
-                if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
-                    mediaItem.duration = Utilities::durationString(duration);
-                    mediaItem.fields["duration"] = duration;
-                } else if (duration == -1) {
-                    mediaItem.duration = QString();
-                    mediaItem.fields["audioType"] = "Audio Stream";
-                }
-                mediaList << mediaItem;
             }
             if ((isPLS) && line.startsWith("File")) {
                 QString url = line.mid(line.indexOf("=") + 1).trimmed();

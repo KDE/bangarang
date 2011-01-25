@@ -42,7 +42,7 @@ namespace Utilities {
     MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString(), const QString &sourceLri = QString());
     Nepomuk::Resource mediaResourceFromUrl(KUrl Url);
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
-    QList<MediaItem> mediaListFromSavedList(const QString &savedListLocation);
+    QList<MediaItem> mediaListFromSavedList(const MediaItem &savedListMediaItem);
     MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
