@@ -37,6 +37,7 @@ class BookmarksManager;
 class AudioSettings;
 class MainWindow;
 class BangarangNotifierItem;
+class MprisRootObject;
 
 class BangarangApplication : public KApplication
 {
@@ -60,6 +61,7 @@ class BangarangApplication : public KApplication
         BangarangNotifierItem * statusNotifierItem();
         AudioSettings * audioSettings();
         VideoSettings * videoSettings() { return m_videoSettings; }
+        MprisRootObject * mprisRootObject();
         KLocale * locale() { return m_locale; }
         const KAboutData * aboutData();
         void processCommandLineArgs();
@@ -82,6 +84,7 @@ class BangarangApplication : public KApplication
         BangarangNotifierItem * m_statusNotifierItem;
         AudioSettings * m_audioSettings;
         VideoSettings * m_videoSettings;
+        MprisRootObject * m_mprisRootObject;
         bool m_nepomukInited;
 
     private slots:
