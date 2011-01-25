@@ -22,12 +22,13 @@
 
 #include "platform/playlist.h"
 #include "platform/mediaitemmodel.h"
-#include "platform/utilities/utilities.h"
+#include "platform/utilities/mediaitems.h"
 
 #include <QDBusMetaType>
 #include <KAboutData>
 #include <KApplication>
 #include <KUrl>
+
 
 QDBusArgument& operator<<(QDBusArgument& argument, const MprisStatusStruct& statusStruct)
 {
@@ -70,6 +71,16 @@ const QDBusArgument& operator>>(const QDBusArgument& argument, MprisVersionStruc
 MprisRootObject::MprisRootObject(QObject *parent) : QObject(parent)
 {
     qDBusRegisterMetaType<MprisVersionStruct>();
+
+    m_metaDataFields << QPair<QString, QString>("artist", "artist")
+                     << QPair<QString, QString>("album", "album")
+                     << QPair<QString, QString>("trackNumber", "tracknumber")
+                     << QPair<QString, QString>("duration", "time")
+                     << QPair<QString, QString>("genre", "genre")
+                     << QPair<QString, QString>("rating", "rating")
+                     << QPair<QString, QString>("year", "year")
+                     << QPair<QString, QString>("artworkUrl", "arturl");
+                     // TODO: more metadata
 }
 
 MprisRootObject::~MprisRootObject()
@@ -96,13 +107,13 @@ MprisVersionStruct MprisRootObject::MprisVersion()
 }
 
 MprisPlayerObject::MprisPlayerObject(BangarangApplication *app_)
-: QObject(app_), app(app_)
+: QObject(app_), m_app(app_)
 {
     qDBusRegisterMetaType<MprisStatusStruct>();
-    connect(app->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackChange()));
-    connect(app->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(slotStatusChange()));
-    connect(app->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(slotStatusChange()));
-    connect(app->playlist()->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(slotMediaStateChange(Phonon::State,Phonon::State)));
+    connect(m_app->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackChange()));
+    connect(m_app->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(slotStatusChange()));
+    connect(m_app->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(slotStatusChange()));
+    connect(m_app->playlist()->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(slotMediaStateChange(Phonon::State,Phonon::State)));
 }
 
 MprisPlayerObject::~MprisPlayerObject()
@@ -111,18 +122,18 @@ MprisPlayerObject::~MprisPlayerObject()
 
 void MprisPlayerObject::Next()
 {
-    app->playlist()->playNext();
+    m_app->playlist()->playNext();
 }
 
 void MprisPlayerObject::Prev()
 {
-    app->playlist()->playPrevious();
+    m_app->playlist()->playPrevious();
 }
 
 void MprisPlayerObject::Pause()
 {
-    if (app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
-        app->playlist()->mediaObject()->pause();
+    if (m_app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+        m_app->playlist()->mediaObject()->pause();
     } else {
         /// unpause may start the playlist as well when no media is paused
         Play();
@@ -131,36 +142,36 @@ void MprisPlayerObject::Pause()
 
 void MprisPlayerObject::Stop()
 {
-    app->playlist()->stop();
+    m_app->playlist()->stop();
 }
 
 void MprisPlayerObject::Play()
 {
-    if (app->playlist()->mediaObject()->state() == Phonon::PausedState) {
-        app->playlist()->mediaObject()->play();
-    } else if (app->playlist()->mediaObject()->state() != Phonon::PlayingState) {
-        app->playlist()->start();
+    if (m_app->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        m_app->playlist()->mediaObject()->play();
+    } else if (m_app->playlist()->mediaObject()->state() != Phonon::PlayingState) {
+        m_app->playlist()->start();
     }
 }
 
 void MprisPlayerObject::Repeat(bool repeat)
 {
-    app->playlist()->setRepeatMode(repeat);
+    m_app->playlist()->setRepeatMode(repeat);
 }
 
 MprisStatusStruct MprisPlayerObject::GetStatus()
 {
     MprisStatusStruct statusStruct;
     
-    if (app->playlist()->mediaObject()->state() == Phonon::PausedState) {
+    if (m_app->playlist()->mediaObject()->state() == Phonon::PausedState) {
         statusStruct.state = 1;
-    } else if (app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+    } else if (m_app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
         statusStruct.state = 0;
     } else {
         statusStruct.state = 2;
     }
     
-    if (app->playlist()->shuffleMode()) {
+    if (m_app->playlist()->shuffleMode()) {
         statusStruct.random = 1;
     } else {
         statusStruct.random = 0;
@@ -168,7 +179,7 @@ MprisStatusStruct MprisPlayerObject::GetStatus()
     
     statusStruct.repeatTrack = 0; // FIXME track repeat not implemented yet
     
-    if (app->playlist()->repeatMode()) {
+    if (m_app->playlist()->repeatMode()) {
         statusStruct.repeatPlaylist = 1;
     } else {
         statusStruct.repeatPlaylist = 0;
@@ -179,21 +190,21 @@ MprisStatusStruct MprisPlayerObject::GetStatus()
 
 QVariantMap MprisPlayerObject::GetMetadata()
 {
-    MediaItem item = app->playlist()->nowPlayingModel()->mediaItemAt(0);
+    MediaItem item = m_app->playlist()->nowPlayingModel()->mediaItemAt(0);
     if ( item.type != "Audio" && item.type != "Video" )
         return QVariantMap();
     QVariantMap map;
+    const MprisMetaDataFieldList & mdList = m_app->mprisRootObject()->metaDataFieldList();
     map["location"] = item.url;
     map["title"] = item.title;
-    map["artist"] = item.fields.value("artist");
-    map["album"] = item.fields.value("album");
-    map["tracknumber"] = item.fields.value("trackNumber");
-    map["time"] = item.fields.value("duration");
-    map["genre"] = item.fields.value("genre");
-    map["rating"] = item.fields.value("rating");
-    map["year"] = item.fields.value("year");
-    map["arturl"] = item.fields.value("artworkUrl");
-    return map;// TODO: more metadata
+    for (int i = 0; i < mdList.count(); i++) {
+        const QPair<QString, QString> cur = mdList.at(i);
+        QVariant value = item.fields.value(cur.first);
+        if ( value.isValid() )
+            map[cur.second] = value;
+    }
+
+    return map;
 }
 
 int MprisPlayerObject::GetCaps()
@@ -206,7 +217,7 @@ int MprisPlayerObject::GetCaps()
     (1 << 5) | // CAN_PROVIDE_METADATA
     (1 << 6); // CAN_HAS_TRACKLIST
     
-    if (app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
+    if (m_app->playlist()->mediaObject()->state() == Phonon::PlayingState) {
         capabilities |= (1 << 2); // CAN_PAUSE
     }
     
@@ -215,22 +226,22 @@ int MprisPlayerObject::GetCaps()
 
 void MprisPlayerObject::VolumeSet(int volume)
 {
-    app->audioOutput()->setVolume(qreal(volume)/100);
+    m_app->audioOutput()->setVolume(qreal(volume)/100);
 }
 
 int MprisPlayerObject::VolumeGet()
 {
-    return static_cast<int>(app->audioOutput()->volume()*100);
+    return static_cast<int>(m_app->audioOutput()->volume()*100);
 }
 
 void MprisPlayerObject::PositionSet(int position)
 {
-    app->playlist()->mediaObject()->seek(position);
+    m_app->playlist()->mediaObject()->seek(position);
 }
 
 int MprisPlayerObject::PositionGet()
 {
-    return app->playlist()->mediaObject()->currentTime();
+    return m_app->playlist()->mediaObject()->currentTime();
 }
 
 void MprisPlayerObject::slotTrackChange()
@@ -257,9 +268,9 @@ void MprisPlayerObject::slotMediaStateChange(Phonon::State newstate, Phonon::Sta
 }
 
 MprisTrackListObject::MprisTrackListObject(BangarangApplication *app_)
-: QObject(app_), app(app_)
+: QObject(app_), m_app(app_)
 {
-    connect(app->playlist()->playlistModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackListChange()));
+    connect(m_app->playlist()->playlistModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackListChange()));
 }
 
 MprisTrackListObject::~MprisTrackListObject()
@@ -270,41 +281,40 @@ QVariantMap MprisTrackListObject::GetMetadata(int index)
 {
     if ( index < 0 || index >= GetLength() || GetLength() == 0 )
         return QVariantMap();
-    MediaItem item = app->playlist()->playlistModel()->mediaList().value(index);
+    MediaItem item = m_app->playlist()->playlistModel()->mediaList().value(index);
     if ( item.type != "Audio" && item.type != "Video" )
         return QVariantMap();
     QVariantMap map;
+    const MprisMetaDataFieldList & mdList = m_app->mprisRootObject()->metaDataFieldList();
     map["location"] = item.url;
     map["title"] = item.title;
-    map["artist"] = item.fields.value("artist");
-    map["album"] = item.fields.value("album");
-    map["tracknumber"] = item.fields.value("trackNumber");
-    map["time"] = item.fields.value("duration");
-    map["genre"] = item.fields.value("genre");
-    map["rating"] = item.fields.value("rating");
-    map["year"] = item.fields.value("year");
-//     map["arturl"] = item.fields.value("artworkUrl");
-    return map;// TODO: more metadata
+    for (int i = 0; i < mdList.count(); i++) {
+        const QPair<QString, QString> cur = mdList.at(i);
+        QVariant value = item.fields.value(cur.first);
+        if ( value.isValid() )
+            map[cur.second] = value;
+    }
+    return map;
 }
 
 int MprisTrackListObject::GetCurrentTrack()
 {
-    return app->playlist()->rowOfNowPlaying();
+    return m_app->playlist()->rowOfNowPlaying();
 }
 
 int MprisTrackListObject::GetLength()
 {
-    return app->playlist()->nowPlayingModel()->rowCount();
+    return m_app->playlist()->nowPlayingModel()->rowCount();
 }
 
 int MprisTrackListObject::AddTrack(const QString &url, bool playImmediately)
 {
     MediaItem item = Utilities::mediaItemFromUrl( KUrl( url ) );
-    app->playlist()->addMediaItem( item );
+    m_app->playlist()->addMediaItem( item );
     if (playImmediately) {
-        int playlistIndex = app->playlist()->playlistModel()->rowCount() - 1;
+        int playlistIndex = m_app->playlist()->playlistModel()->rowCount() - 1;
         if (playlistIndex >=0) {
-            app->playlist()->playItemAt(playlistIndex, Playlist::PlaylistModel);
+            m_app->playlist()->playItemAt(playlistIndex, Playlist::PlaylistModel);
         }
     }
     return 0;
@@ -312,17 +322,17 @@ int MprisTrackListObject::AddTrack(const QString &url, bool playImmediately)
 
 void MprisTrackListObject::DelTrack(int index)
 {
-    app->playlist()->removeMediaItemAt(index);
+    m_app->playlist()->removeMediaItemAt(index);
 }
 
 void MprisTrackListObject::SetLoop(bool loop)
 {
-    app->playlist()->setRepeatMode(loop);
+    m_app->playlist()->setRepeatMode(loop);
 }
 
 void MprisTrackListObject::SetRandom(bool random)
 {
-    app->playlist()->setShuffleMode(random);
+    m_app->playlist()->setShuffleMode(random);
 }
 
 void MprisTrackListObject::slotTrackListChange()
