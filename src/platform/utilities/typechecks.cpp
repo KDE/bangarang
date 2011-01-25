@@ -116,8 +116,8 @@ bool Utilities::isVideoMimeType(KMimeType::Ptr type)
 bool Utilities::isM3u(const QString &url)
 {
     KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-
     return (result->is("audio/m3u") ||
+            result->is("application/vnd.apple.mpegurl") ||
             result->is("audio/x-mpegurl"));
 }
 
@@ -194,7 +194,7 @@ QString Utilities::audioMimeFilter()
         }
     }
     supportedList << ambiguousList;
-    supportedList << "audio/m3u" << "audio/x-mpegurl" << "audio/x-scpls"; //add playlist mimetypes
+    supportedList << "audio/m3u" << "audio/x-mpegurl" << "audio/x-scpls" << "application/vnd.apple.url"; //add playlist mimetypes
     return supportedList.join(" ");
     /* This section might be useful if Phonon doesn't report
      * supported mimetypes correctly. For now I'll assume it
