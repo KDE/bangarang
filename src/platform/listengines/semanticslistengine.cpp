@@ -331,7 +331,7 @@ void SemanticsListEngine::run()
                         mediaItem.fields["rating"] = rating;
                     }
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
-                        if ((ignoreZeros && mediaItem.fields["playCount"].toInt() > 0) ||
+                        if ((ignoreZeros && mediaItem.fields["rating"].toInt() > 0) ||
                             !ignoreZeros) {
                             mediaList.append(mediaItem);
                         }
