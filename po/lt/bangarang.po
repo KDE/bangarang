@@ -7,15 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
-"POT-Creation-Date: 2011-01-23 21:21-0800\n"
+"POT-Creation-Date: 2011-01-26 09:20+0200\n"
 "PO-Revision-Date: 2010-09-02 13:49+0200\n"
 "Last-Translator: Vytautas Mickus vmickus@gmail.com>\n"
-"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: lt\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 1.1\n"
 "X-Language: lt_LT\n"
 "X-Source-Language: C\n"
@@ -81,12 +80,12 @@ msgid "Show remaining time"
 msgstr "Rodyti likusį laiką"
 
 #: actionsmanager.cpp:154 actionsmanager.cpp:616 actionsmanager.cpp:642
-#: actionsmanager.cpp:695 mainwindow.cpp:377
+#: actionsmanager.cpp:695 mainwindow.cpp:379
 msgid "Show video settings"
 msgstr "Rodyti video nuostatas"
 
 #: actionsmanager.cpp:160 actionsmanager.cpp:619 actionsmanager.cpp:639
-#: actionsmanager.cpp:696 mainwindow.cpp:378
+#: actionsmanager.cpp:696 mainwindow.cpp:380
 msgid "Show audio settings"
 msgstr "Rodyti audio nuostatas"
 
@@ -136,7 +135,6 @@ msgid "Show information"
 msgstr "Rodyti informaciją"
 
 #: actionsmanager.cpp:233 actionsmanager.cpp:354 actionsmanager.cpp:1085
-#, fuzzy
 msgid "Show Info View"
 msgstr "Rodyti informaciją"
 
@@ -166,9 +164,8 @@ msgid "Manage info"
 msgstr "Tvarkyti informaciją"
 
 #: actionsmanager.cpp:352 actionsmanager.cpp:1083
-#, fuzzy
 msgid "Hide Info View"
-msgstr "Paslėpti filtrą"
+msgstr "Paslėpti informaciją"
 
 #: actionsmanager.cpp:412
 msgid "Play after Now Playing"
@@ -216,9 +213,9 @@ msgid "Show elapsed time"
 msgstr "Rodyti praėjusį laiką"
 
 #: actionsmanager.cpp:946
-#, fuzzy, kde-format
+#, kde-format
 msgid "Bookmark-%1"
-msgstr "Įtraukti žymą"
+msgstr "Žyma-%1"
 
 #: actionsmanager.cpp:1015 actionsmanager.cpp:1022
 msgid "Update Ontologies"
@@ -306,7 +303,7 @@ msgstr ""
 #. i18n: file: mainwindow.ui:17
 #. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
 #: bangarangapplication.cpp:124 bangarangnotifieritem.cpp:11 main.cpp:29
-#: mainwindow.cpp:525 mainwindow.cpp:962 mainwindow.cpp:1104 rc.cpp:5
+#: mainwindow.cpp:527 mainwindow.cpp:964 mainwindow.cpp:1106 rc.cpp:5
 msgid "Bangarang"
 msgstr "Bangarang"
 
@@ -377,23 +374,30 @@ msgstr "Yra daugiau informacijos <br> Paspauskite norėdami pamatyti daugiau..."
 
 #: main.cpp:30
 msgid "A media player for your KDE desktop"
-msgstr ""
+msgstr "Media grotuvas jūsų KDE darbastaliui"
 
 #: main.cpp:31
-#, fuzzy
 msgid "Copyright 2011, Andrew Lake"
 msgstr "Copyright 2010, Andrew Lake"
 
 #: main.cpp:32
 msgid ""
 "<b>Note:</b> This product uses the TMDb API but is not endorsed or certified "
-"by TMDb. Please help improve available information by visiting http://"
-"themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but is not "
-"endorsed or certified by Last.fm.  Pleace help improve available information "
-"by visiting http://last.fm<br><b>Note:</b> This product uses the TheTVDB.com "
-"API but is not endorsed or certified by TheTVDB.com.  Pleace help improve "
-"available information by visiting http://thetvdb.com"
+"by TMDb. Please help improve available information by visiting "
+"http://themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but "
+"is not endorsed or certified by Last.fm.  Pleace help improve available "
+"information by visiting http://last.fm<br><b>Note:</b> This product uses the "
+"TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Pleace "
+"help improve available information by visiting http://thetvdb.com"
 msgstr ""
+"<b> Pastaba: </b> Šis produktas naudoja TMDb API, bet nėra patvirtintas arba "
+"sertifikuotas TMDb. Prašome padėti pagerinti turimą informaciją, apsilankę "
+"http://themoviedb.org <br> <b> Pastaba: </b> Šis produktas naudoja Last.fm "
+"API, bet nėra patvirtintas arba sertifikuotas Last.fm. Prašome jus padėti "
+"pagerinti turimą informaciją, apsilankę http://last.fm <br> <b> Pastaba: "
+"</b> Šis produktas naudoja TheTVDB.com API, bet nėra patvirtintas arba "
+"sertifikuotas TheTVDB.com. Prašome jus padėti pagerinti turimą informaciją, "
+"apsilankę http://thetvdb.com"
 
 #: main.cpp:41
 msgid "Andrew (Jamboarder) Lake"
@@ -423,16 +427,18 @@ msgstr "Ni Hui"
 msgid ""
 "Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
 msgstr ""
-"Pastebėtas klaidas prašome pranešti į: http://code.google.com/p/"
-"bangarangissuetracking/"
+"Pastebėtas klaidas prašome pranešti į: "
+"http://code.google.com/p/bangarangissuetracking/"
 
 #: main.cpp:46
 msgid ""
-"Defects may be reported at <a href='http://code.google.com/p/"
-"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
+"Defects may be reported at <a "
+"href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue "
+"Tracker</a>"
 msgstr ""
-"Pastebėtas klaidas prašome pranešti į: <a href='http://code.google.com/p/"
-"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
+"Pastebėtas klaidas prašome pranešti į: <a "
+"href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue "
+"Tracker</a>"
 
 #: main.cpp:53
 msgid "Play 'URL'"
@@ -467,126 +473,124 @@ msgstr "Taip"
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
 #. i18n: file: mainwindow.ui:5695
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: mainwindow.cpp:281 rc.cpp:263 rc.cpp:269 savedlistsmanager.cpp:759
+#: mainwindow.cpp:283 rc.cpp:263 rc.cpp:269 savedlistsmanager.cpp:759
 #: platform/utilities/mediaitems.cpp:145
 msgid "Playlist"
 msgstr "Grojaraštis"
 
-#: mainwindow.cpp:304
-#, fuzzy
+#: mainwindow.cpp:306
 msgid "Audio Search"
-msgstr "Audio kanalas"
+msgstr "Audio paieška"
 
-#: mainwindow.cpp:311
-#, fuzzy
+#: mainwindow.cpp:313
 msgid "Video Search"
-msgstr "Video nuostatos"
+msgstr "Video paieška"
 
 # @TODO feels fishy!!
-#: mainwindow.cpp:391
+#: mainwindow.cpp:393
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
 msgstr ""
 "<b>Per visą ekraną</b><br>Paspauskite norėdami išjungti viso ekrano rėžimą"
 
-#: mainwindow.cpp:397
+#: mainwindow.cpp:399
 msgid "Show fullscreen"
 msgstr "Rodyti per visą ekraną"
 
-#: mainwindow.cpp:416
+#: mainwindow.cpp:418
 msgid "<b>Paused</b><br>Hold to stop"
 msgstr "<b>Sustabdyta</b>Ilgai paspaudę išjunksite grojimą"
 
 #. i18n: file: mainwindow.ui:260
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: mainwindow.cpp:503 rc.cpp:11
+#: mainwindow.cpp:505 rc.cpp:11
 msgid "Search for audio"
 msgstr "Ieškoti audio"
 
-#: mainwindow.cpp:512
+#: mainwindow.cpp:514
 msgid "Search for video"
 msgstr "Ieškoti video"
 
 #. i18n: file: mainwindow.ui:6715
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:521 rc.cpp:278
+#: mainwindow.cpp:523 rc.cpp:278
 msgid "Clear Playlist"
 msgstr "Išvalyti grojaraštį"
 
-#: mainwindow.cpp:522
+#: mainwindow.cpp:524
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "Ar jūs tikrai norite išvalyti grojaraštį?"
 
 #. i18n: file: mainwindow.ui:2175
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:527 mainwindow.cpp:614 mainwindow.cpp:616 mainwindow.cpp:964
+#: mainwindow.cpp:529 mainwindow.cpp:616 mainwindow.cpp:618 mainwindow.cpp:966
 #: rc.cpp:203
 msgid "Now Playing"
 msgstr "Dabar grojama"
 
-#: mainwindow.cpp:548
+#: mainwindow.cpp:550
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr "<b>Rodomi būsimi</b><br>Paspauskite norėdami matyti grojaraštį"
 
 #. i18n: file: mainwindow.ui:6660
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:551 rc.cpp:272
+#: mainwindow.cpp:553 rc.cpp:272
 msgid "Show Upcoming"
 msgstr "Rodyti būsimus"
 
-#: mainwindow.cpp:670
+#: mainwindow.cpp:672
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
 msgstr ""
 "<b>Grojama</b><br>Paspauskite jei norite sustabdyti<br>Ilgai paspaudę "
 "išjunksite grojimą"
 
-#: mainwindow.cpp:680
+#: mainwindow.cpp:682
 msgid "An error has been encountered during playback"
 msgstr "Grojimo metu įvyko klaida"
 
-#: mainwindow.cpp:734
+#: mainwindow.cpp:736
 msgid "Loading playlist..."
 msgstr "Įkeliamas grojaraštis …"
 
-#: mainwindow.cpp:736
+#: mainwindow.cpp:738
 msgid "Buffering..."
 msgstr "Nuskaitomi duomenys…"
 
-#: mainwindow.cpp:738 platform/mediaitemmodel.cpp:677
+#: mainwindow.cpp:740 platform/mediaitemmodel.cpp:677
 msgid "Loading..."
 msgstr "Įkeliama…"
 
-#: mainwindow.cpp:762
+#: mainwindow.cpp:764
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Nutildyta</b>Paspauskite norėdami atstatyti garsumą"
 
 #. i18n: file: mainwindow.ui:8645
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:766 rc.cpp:438
+#: mainwindow.cpp:768 rc.cpp:438
 msgid "Mute volume"
 msgstr "Nutildyti garsą"
 
-#: mainwindow.cpp:868 platform/infoitemmodel.cpp:514
+#: mainwindow.cpp:870 platform/infoitemmodel.cpp:514
 msgid "Complete"
 msgstr "Baigta"
 
 #. i18n: file: mainwindow.ui:2172
 #. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:965 mainwindow.cpp:1310 rc.cpp:200
+#: mainwindow.cpp:967 mainwindow.cpp:1312 rc.cpp:200
 msgid "View Now Playing"
 msgstr "Rodyti dabar grojamus"
 
-#: mainwindow.cpp:973
+#: mainwindow.cpp:975
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr "<b>Kartojimas įjungtas</b><br>Paspauskite norėdami išjungti kartojimą"
 
 #. i18n: file: mainwindow.ui:6742
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:976 rc.cpp:281
+#: mainwindow.cpp:978 rc.cpp:281
 msgid "Turn on Repeat"
 msgstr "Įjungti kartojimą"
 
 # @TODO feels fishy!!
-#: mainwindow.cpp:983
+#: mainwindow.cpp:985
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr ""
 "<b>Grojimas atsitiktine tvarka įjungtas</b><br>Paspauskite norėdami išjungti "
@@ -594,21 +598,21 @@ msgstr ""
 
 #. i18n: file: mainwindow.ui:6771
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:986 rc.cpp:287
+#: mainwindow.cpp:988 rc.cpp:287
 msgid "Turn on Shuffle"
 msgstr "Įjungti atsitiktinę grojimo tvarką"
 
-#: mainwindow.cpp:1105
+#: mainwindow.cpp:1107
 msgid "Entertainment... Now"
 msgstr "Pramogos... Dabar"
 
-#: mainwindow.cpp:1253
+#: mainwindow.cpp:1255
 msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
 msgstr ""
 "<b> Liko laiko </b> <br> Paspauskite norėdami pamatyti praėjusį laiką bei "
 "žymes"
 
-#: mainwindow.cpp:1255
+#: mainwindow.cpp:1257
 msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
 msgstr ""
 "<b> Praėjęs laikas </b> <br> Spauskite norėdami pamatyti likusį laiką bei "
@@ -618,8 +622,8 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
 #. i18n: file: mainwindow.ui:1773
 #. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
-#: medialistsettings.cpp:91 medialistsettings.cpp:101
-#: medialistsettings.cpp:111 medialistsettings.cpp:121 rc.cpp:71 rc.cpp:164
+#: medialistsettings.cpp:91 medialistsettings.cpp:101 medialistsettings.cpp:111
+#: medialistsettings.cpp:121 rc.cpp:71 rc.cpp:164
 msgid "played"
 msgstr "rodyta"
 
@@ -704,8 +708,8 @@ msgstr[2] "%1 įrašai, %2"
 #: platform/listengines/filelistengine.cpp:233
 #: platform/listengines/savedlistsengine.cpp:170
 #: platform/listengines/taglistengine.cpp:143
-#: platform/listengines/videolistengine.cpp:688
-#: platform/listengines/videolistengine.cpp:763
+#: platform/listengines/videolistengine.cpp:690
+#: platform/listengines/videolistengine.cpp:765
 #, kde-format
 msgid "1 item"
 msgid_plural "%1 items"
@@ -979,8 +983,7 @@ msgstr "Santrauka"
 #. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
 #. i18n: file: mainwindow.ui:8755
 #. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:212 rc.cpp:221 rc.cpp:302 rc.cpp:305 rc.cpp:444 rc.cpp:447
-#: rc.cpp:450
+#: rc.cpp:212 rc.cpp:221 rc.cpp:302 rc.cpp:305 rc.cpp:444 rc.cpp:447 rc.cpp:450
 msgid "..."
 msgstr "…"
 
@@ -1440,7 +1443,7 @@ msgstr[1] "Gaunama informacija %1 įrašams..."
 msgstr[2] "Gaunama informacija %1 įrašams..."
 
 #: platform/infoitemmodel.cpp:503
-#, fuzzy, kde-format
+#, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
 msgstr[0] "Gauta informacija %1 iš %2 įrašų..."
@@ -1451,36 +1454,33 @@ msgstr[2] "Gauta informacija %1 iš %2 įrašų..."
 msgid "No Results"
 msgstr "Jokių rezultatų"
 
-#: platform/infoitemmodel.cpp:1069
-#: platform/listengines/musiclistengine.cpp:123
-#: platform/listengines/musiclistengine.cpp:150
-#: platform/listengines/musiclistengine.cpp:216
-#: platform/listengines/musiclistengine.cpp:238
-#: platform/listengines/musiclistengine.cpp:303
+#: platform/infoitemmodel.cpp:1069 platform/listengines/musiclistengine.cpp:127
+#: platform/listengines/musiclistengine.cpp:162
+#: platform/listengines/musiclistengine.cpp:231
+#: platform/listengines/musiclistengine.cpp:261
+#: platform/listengines/musiclistengine.cpp:326
 #: platform/utilities/mediaitems.cpp:771 platform/utilities/mediaitems.cpp:784
 #: platform/utilities/mediaitems.cpp:887 platform/utilities/mediaitems.cpp:906
 #: platform/utilities/mediaitems.cpp:924
 msgid "Recently Played Songs"
 msgstr "Paskutis grotos dainos"
 
-#: platform/infoitemmodel.cpp:1070
-#: platform/listengines/musiclistengine.cpp:124
-#: platform/listengines/musiclistengine.cpp:151
-#: platform/listengines/musiclistengine.cpp:217
-#: platform/listengines/musiclistengine.cpp:239
-#: platform/listengines/musiclistengine.cpp:304
+#: platform/infoitemmodel.cpp:1070 platform/listengines/musiclistengine.cpp:128
+#: platform/listengines/musiclistengine.cpp:163
+#: platform/listengines/musiclistengine.cpp:232
+#: platform/listengines/musiclistengine.cpp:262
+#: platform/listengines/musiclistengine.cpp:327
 #: platform/utilities/mediaitems.cpp:772 platform/utilities/mediaitems.cpp:785
 #: platform/utilities/mediaitems.cpp:888 platform/utilities/mediaitems.cpp:907
 #: platform/utilities/mediaitems.cpp:925
 msgid "Highest Rated Songs"
 msgstr "Geriausiai įvertintos dainos"
 
-#: platform/infoitemmodel.cpp:1071
-#: platform/listengines/musiclistengine.cpp:125
-#: platform/listengines/musiclistengine.cpp:152
-#: platform/listengines/musiclistengine.cpp:218
-#: platform/listengines/musiclistengine.cpp:240
-#: platform/listengines/musiclistengine.cpp:305
+#: platform/infoitemmodel.cpp:1071 platform/listengines/musiclistengine.cpp:129
+#: platform/listengines/musiclistengine.cpp:164
+#: platform/listengines/musiclistengine.cpp:233
+#: platform/listengines/musiclistengine.cpp:263
+#: platform/listengines/musiclistengine.cpp:328
 #: platform/utilities/mediaitems.cpp:773 platform/utilities/mediaitems.cpp:786
 #: platform/utilities/mediaitems.cpp:889 platform/utilities/mediaitems.cpp:908
 #: platform/utilities/mediaitems.cpp:926
@@ -1488,8 +1488,7 @@ msgid "Frequently Played Songs"
 msgstr "Dažniausiai grotos dainos"
 
 #: platform/infoitemmodel.cpp:1073 platform/infoitemmodel.cpp:1085
-#: platform/infoitemmodel.cpp:1089
-#: platform/listengines/medialistsengine.cpp:62
+#: platform/infoitemmodel.cpp:1089 platform/listengines/medialistsengine.cpp:62
 #: platform/listengines/medialistsengine.cpp:98
 #: platform/listengines/medialistsengine.cpp:108
 #: platform/listengines/medialistsengine.cpp:118
@@ -1498,25 +1497,23 @@ msgstr "Dažniausiai grotos dainos"
 #: platform/listengines/medialistsengine.cpp:151
 #: platform/listengines/medialistsengine.cpp:169
 #: platform/listengines/medialistsengine.cpp:249
-#: platform/listengines/semanticslistengine.cpp:259
+#: platform/listengines/semanticslistengine.cpp:265
 #: platform/listengines/taglistengine.cpp:106
 #: platform/listengines/videolistengine.cpp:220
-#: platform/listengines/videolistengine.cpp:321
-#: platform/listengines/videolistengine.cpp:478
-#: platform/listengines/videolistengine.cpp:536
-#: platform/listengines/videolistengine.cpp:594
+#: platform/listengines/videolistengine.cpp:323
+#: platform/listengines/videolistengine.cpp:480
+#: platform/listengines/videolistengine.cpp:538
+#: platform/listengines/videolistengine.cpp:596
 #: platform/utilities/mediaitems.cpp:803 platform/utilities/mediaitems.cpp:821
 #: platform/utilities/mediaitems.cpp:839 platform/utilities/mediaitems.cpp:936
 #: platform/utilities/mediaitems.cpp:954 platform/utilities/mediaitems.cpp:973
 #: platform/utilities/mediaitems.cpp:982 platform/utilities/mediaitems.cpp:991
-#: platform/utilities/mediaitems.cpp:1000
-#: platform/utilities/mediaitems.cpp:1012
+#: platform/utilities/mediaitems.cpp:1000 platform/utilities/mediaitems.cpp:1012
 msgid "Recently Played"
 msgstr "Vėliausiai grota"
 
 #: platform/infoitemmodel.cpp:1074 platform/infoitemmodel.cpp:1086
-#: platform/infoitemmodel.cpp:1090
-#: platform/listengines/medialistsengine.cpp:72
+#: platform/infoitemmodel.cpp:1090 platform/listengines/medialistsengine.cpp:72
 #: platform/listengines/medialistsengine.cpp:99
 #: platform/listengines/medialistsengine.cpp:109
 #: platform/listengines/medialistsengine.cpp:119
@@ -1532,25 +1529,23 @@ msgstr "Vėliausiai grota"
 #: platform/listengines/medialistsengine.cpp:326
 #: platform/listengines/medialistsengine.cpp:336
 #: platform/listengines/medialistsengine.cpp:353
-#: platform/listengines/semanticslistengine.cpp:329
+#: platform/listengines/semanticslistengine.cpp:340
 #: platform/listengines/taglistengine.cpp:107
 #: platform/listengines/videolistengine.cpp:221
-#: platform/listengines/videolistengine.cpp:322
-#: platform/listengines/videolistengine.cpp:479
-#: platform/listengines/videolistengine.cpp:537
-#: platform/listengines/videolistengine.cpp:595
+#: platform/listengines/videolistengine.cpp:324
+#: platform/listengines/videolistengine.cpp:481
+#: platform/listengines/videolistengine.cpp:539
+#: platform/listengines/videolistengine.cpp:597
 #: platform/utilities/mediaitems.cpp:804 platform/utilities/mediaitems.cpp:822
 #: platform/utilities/mediaitems.cpp:840 platform/utilities/mediaitems.cpp:937
 #: platform/utilities/mediaitems.cpp:955 platform/utilities/mediaitems.cpp:974
 #: platform/utilities/mediaitems.cpp:983 platform/utilities/mediaitems.cpp:992
-#: platform/utilities/mediaitems.cpp:1001
-#: platform/utilities/mediaitems.cpp:1013
+#: platform/utilities/mediaitems.cpp:1001 platform/utilities/mediaitems.cpp:1013
 msgid "Highest Rated"
 msgstr "Aukščiausiai įvertinta"
 
 #: platform/infoitemmodel.cpp:1075 platform/infoitemmodel.cpp:1087
-#: platform/infoitemmodel.cpp:1091
-#: platform/listengines/medialistsengine.cpp:82
+#: platform/infoitemmodel.cpp:1091 platform/listengines/medialistsengine.cpp:82
 #: platform/listengines/medialistsengine.cpp:100
 #: platform/listengines/medialistsengine.cpp:110
 #: platform/listengines/medialistsengine.cpp:120
@@ -1559,19 +1554,18 @@ msgstr "Aukščiausiai įvertinta"
 #: platform/listengines/medialistsengine.cpp:153
 #: platform/listengines/medialistsengine.cpp:171
 #: platform/listengines/medialistsengine.cpp:269
-#: platform/listengines/semanticslistengine.cpp:196
+#: platform/listengines/semanticslistengine.cpp:202
 #: platform/listengines/taglistengine.cpp:108
 #: platform/listengines/videolistengine.cpp:222
-#: platform/listengines/videolistengine.cpp:323
-#: platform/listengines/videolistengine.cpp:480
-#: platform/listengines/videolistengine.cpp:538
-#: platform/listengines/videolistengine.cpp:596
+#: platform/listengines/videolistengine.cpp:325
+#: platform/listengines/videolistengine.cpp:482
+#: platform/listengines/videolistengine.cpp:540
+#: platform/listengines/videolistengine.cpp:598
 #: platform/utilities/mediaitems.cpp:805 platform/utilities/mediaitems.cpp:823
 #: platform/utilities/mediaitems.cpp:841 platform/utilities/mediaitems.cpp:938
 #: platform/utilities/mediaitems.cpp:956 platform/utilities/mediaitems.cpp:975
 #: platform/utilities/mediaitems.cpp:984 platform/utilities/mediaitems.cpp:993
-#: platform/utilities/mediaitems.cpp:1002
-#: platform/utilities/mediaitems.cpp:1014
+#: platform/utilities/mediaitems.cpp:1002 platform/utilities/mediaitems.cpp:1014
 msgid "Frequently Played"
 msgstr "Dažniausiai grota"
 
@@ -1633,7 +1627,7 @@ msgstr ""
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
-msgstr ""
+msgstr "Šis informacijos šaltinis gauna duomenis iš DBPedia.org."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1652,18 +1646,19 @@ msgid ""
 "This fetcher uses guesses the season and episode number based on a filename "
 "pattern. E.g.  2x23 or S02E23 or 2.23"
 msgstr ""
+"Šis informacijos šaltinis sezono ir serijos numerius nuskaito iš failo "
+"pavadinimo, pagal nustatytus šablonus. Pvz.: 2x23 ar S02E23 ar 2.23"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
 msgstr ""
 
 #: platform/infofetchers/lastfminfofetcher.cpp:41
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
-"Pastaba: Šis produktas naudoja TMDb API, bet tai nėra pritarta ir "
+"Pastaba: Šis produktas naudoja Last.fm API, bet tai nėra pritarta ir "
 "sertifikuota paties TMDb."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
@@ -1671,7 +1666,6 @@ msgid "TMDb"
 msgstr ""
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:39
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
@@ -1688,6 +1682,8 @@ msgid ""
 "Note: This fetcher uses theTVDB.com API. Please help improve theTVDB.com "
 "information by clicking the link."
 msgstr ""
+"Pastaba: Naudojamas theTVDB.com informacijos šaltinis. Prašome paspausti "
+"nuorodą ir prisidėti prie theTVDB.com projekto tobulinimo."
 
 #: platform/listengines/audioclipslistengine.cpp:93
 #: platform/listengines/audioclipslistengine.cpp:138
@@ -1774,7 +1770,7 @@ msgstr "Renkama failo informacija (%1 failų)..."
 #: platform/listengines/medialistsengine.cpp:77
 #: platform/listengines/medialistsengine.cpp:87
 #: platform/listengines/medialistsengine.cpp:93
-#: platform/listengines/musiclistengine.cpp:132
+#: platform/listengines/musiclistengine.cpp:144
 msgid "Artists"
 msgstr "Atlikėjai"
 
@@ -1782,7 +1778,7 @@ msgstr "Atlikėjai"
 #: platform/listengines/medialistsengine.cpp:78
 #: platform/listengines/medialistsengine.cpp:88
 #: platform/listengines/medialistsengine.cpp:103
-#: platform/listengines/musiclistengine.cpp:226
+#: platform/listengines/musiclistengine.cpp:249
 msgid "Albums"
 msgstr "Albumai"
 
@@ -1794,13 +1790,13 @@ msgstr "Albumai"
 #: platform/listengines/medialistsengine.cpp:264
 #: platform/listengines/medialistsengine.cpp:274
 #: platform/listengines/medialistsengine.cpp:300
-#: platform/listengines/musiclistengine.cpp:313
-#: platform/listengines/videolistengine.cpp:486
+#: platform/listengines/musiclistengine.cpp:336
+#: platform/listengines/videolistengine.cpp:488
 msgid "Genres"
 msgstr "Žanrai"
 
 #: platform/listengines/medialistsengine.cpp:123
-#: platform/listengines/musiclistengine.cpp:336
+#: platform/listengines/musiclistengine.cpp:359
 msgid "Songs"
 msgstr "Dainos"
 
@@ -1825,7 +1821,7 @@ msgstr "Failai ir katalogai"
 #: platform/listengines/medialistsengine.cpp:265
 #: platform/listengines/medialistsengine.cpp:275
 #: platform/listengines/medialistsengine.cpp:310
-#: platform/listengines/videolistengine.cpp:544
+#: platform/listengines/videolistengine.cpp:546
 msgid "Actors"
 msgstr "Aktoriai"
 
@@ -1833,7 +1829,7 @@ msgstr "Aktoriai"
 #: platform/listengines/medialistsengine.cpp:266
 #: platform/listengines/medialistsengine.cpp:276
 #: platform/listengines/medialistsengine.cpp:320
-#: platform/listengines/videolistengine.cpp:602
+#: platform/listengines/videolistengine.cpp:604
 msgid "Directors"
 msgstr "Režisieriai"
 
@@ -1876,18 +1872,18 @@ msgstr "Video klipai"
 msgid "Video Feeds"
 msgstr "Video kanalai"
 
-#: platform/listengines/musiclistengine.cpp:136
+#: platform/listengines/musiclistengine.cpp:148
 #, kde-format
 msgctxt "%1=Name of Genre"
 msgid "Artists - %1"
 msgstr "Artistas - %1"
 
-#: platform/listengines/musiclistengine.cpp:141
-#: platform/listengines/musiclistengine.cpp:233
+#: platform/listengines/musiclistengine.cpp:153
+#: platform/listengines/musiclistengine.cpp:256
 msgid "All songs"
 msgstr "Visos dainos"
 
-#: platform/listengines/musiclistengine.cpp:156
+#: platform/listengines/musiclistengine.cpp:168
 #, kde-format
 msgid "1 artist"
 msgid_plural "%1 artists"
@@ -1895,18 +1891,18 @@ msgstr[0] "1 atlikėjas"
 msgstr[1] "%1 atlikėjai"
 msgstr[2] "%1 atlikėjų"
 
-#: platform/listengines/musiclistengine.cpp:228
-#: platform/listengines/musiclistengine.cpp:247
+#: platform/listengines/musiclistengine.cpp:251
+#: platform/listengines/musiclistengine.cpp:270
 #, kde-format
 msgid "Albums - %1"
 msgstr "Albumai - %1"
 
-#: platform/listengines/musiclistengine.cpp:252
+#: platform/listengines/musiclistengine.cpp:275
 #, kde-format
 msgid "Albums - %1 - %2"
 msgstr "Albumai - %1 - %2"
 
-#: platform/listengines/musiclistengine.cpp:255
+#: platform/listengines/musiclistengine.cpp:278
 #, kde-format
 msgid "1 album"
 msgid_plural "%1 albums"
@@ -1914,8 +1910,8 @@ msgstr[0] "1 albumas"
 msgstr[1] "%1 albumai"
 msgstr[2] "%1 albumų"
 
-#: platform/listengines/musiclistengine.cpp:314
-#: platform/listengines/videolistengine.cpp:487
+#: platform/listengines/musiclistengine.cpp:337
+#: platform/listengines/videolistengine.cpp:489
 #, kde-format
 msgid "1 genre"
 msgid_plural "%1 genres"
@@ -1923,8 +1919,8 @@ msgstr[0] "1 žanras"
 msgstr[1] "%1 žanrai"
 msgstr[2] "%1 žanrai"
 
-#: platform/listengines/musiclistengine.cpp:429
-#: platform/listengines/musiclistengine.cpp:499
+#: platform/listengines/musiclistengine.cpp:452
+#: platform/listengines/musiclistengine.cpp:522
 #, kde-format
 msgid "1 song"
 msgid_plural "%1 songs"
@@ -1932,8 +1928,8 @@ msgstr[0] "1 daina"
 msgstr[1] "%1 dainų"
 msgstr[2] "%1 dainų"
 
-#: platform/listengines/semanticslistengine.cpp:185
-#: platform/listengines/semanticslistengine.cpp:189
+#: platform/listengines/semanticslistengine.cpp:188
+#: platform/listengines/semanticslistengine.cpp:192
 #, kde-format
 msgid "played once"
 msgid_plural "played %1 times"
@@ -1965,7 +1961,7 @@ msgstr[2] "%1 filmai"
 
 #: platform/listengines/videolistengine.cpp:247
 #: platform/listengines/videolistengine.cpp:248
-#: platform/listengines/videolistengine.cpp:434
+#: platform/listengines/videolistengine.cpp:436
 msgid "Uncategorized TV Shows"
 msgstr "Nesugrupuotos TV laidos"
 
@@ -1977,17 +1973,17 @@ msgstr[0] "1 laida"
 msgstr[1] "%1 laidos"
 msgstr[2] "%1 laidų"
 
-#: platform/listengines/videolistengine.cpp:348
+#: platform/listengines/videolistengine.cpp:350
 msgid "Uncategorized seasons"
 msgstr "Nesugrupuoti sezonai"
 
-#: platform/listengines/videolistengine.cpp:357
+#: platform/listengines/videolistengine.cpp:359
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "Seasons - %1"
 msgstr "Sezonas - %1"
 
-#: platform/listengines/videolistengine.cpp:358
+#: platform/listengines/videolistengine.cpp:360
 #, kde-format
 msgid "1 season"
 msgid_plural "%1 seasons"
@@ -1995,19 +1991,19 @@ msgstr[0] "1 sezonas"
 msgstr[1] "%1 sezonai"
 msgstr[2] "%1 sezonai"
 
-#: platform/listengines/videolistengine.cpp:436
+#: platform/listengines/videolistengine.cpp:438
 #, kde-format
 msgctxt "%1=Name of the series, %2=Number of the Season"
 msgid "%1 - Season %2"
 msgstr "%1 - Sesonas %2"
 
-#: platform/listengines/videolistengine.cpp:438
+#: platform/listengines/videolistengine.cpp:440
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "%1 - Uncategorized Seasons"
 msgstr "%1 - Nesugrupuoti serialai"
 
-#: platform/listengines/videolistengine.cpp:440
+#: platform/listengines/videolistengine.cpp:442
 #, kde-format
 msgid "1 episode"
 msgid_plural "%1 episodes"
@@ -2015,7 +2011,7 @@ msgstr[0] "1 epizodas"
 msgstr[1] "%1 epizodai"
 msgstr[2] "%1 epizodai"
 
-#: platform/listengines/videolistengine.cpp:545
+#: platform/listengines/videolistengine.cpp:547
 #, kde-format
 msgid "1 actor"
 msgid_plural "%1 actors"
@@ -2023,7 +2019,7 @@ msgstr[0] "1 aktorius"
 msgstr[1] "%1 aktoriai"
 msgstr[2] "%1 aktoriai"
 
-#: platform/listengines/videolistengine.cpp:603
+#: platform/listengines/videolistengine.cpp:605
 #, kde-format
 msgid "1 director"
 msgid_plural "%1 directors"
@@ -2137,6 +2133,7 @@ msgstr "Sezonas %1"
 #~ msgid "Info"
 #~ msgstr "Informacija"
 
+#, qt-format
 #~ msgid "<b>Description:</b>%1"
 #~ msgstr "<b>Aprašymas:</b>%1"
 
