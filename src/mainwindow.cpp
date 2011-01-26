@@ -199,6 +199,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->nowPlayingView->resize(ui->nowPlayingHolder->size());
     ui->videoFrame->move(0,0);
     ui->videoFrame->resize(ui->nowPlayingHolder->size());
+    KAcceleratorManager::setNoAccel(ui->showPlaylist);
+    KAcceleratorManager::setNoAccel(ui->showPlaylist_2);
 
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
@@ -279,7 +281,7 @@ void MainWindow::on_nowPlayingHolder_resized()
     } else {
         QFontMetrics fm(ui->showPlaylist_2->font());
         QRect textRect = fm.boundingRect(i18n("Playlist"));
-        int width = textRect.width() + 32;
+        int width = textRect.width() + 36;
         ui->showPlaylist_2->setGeometry(QRect(ui->showPlaylist_2->rect().topLeft(),
                                               QSize(width,
                                                     qMax(24, textRect.height() + 8))));
