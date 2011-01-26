@@ -97,6 +97,7 @@ void MusicListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             int i = 0;
             while( it.next() ) {
@@ -105,26 +106,37 @@ void MusicListEngine::run()
                 }
                 QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
                 if (!artist.isEmpty()) {
-                    MediaItem mediaItem;
-                    mediaItem.url = QString("music://albums?artist=%1||%2||%3").arg(artist, albumFilter, genreFilter);
-                    mediaItem.title = artist;
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("Artist");
-                    mediaItem.nowPlaying = false;
-                    mediaItem.artwork = KIcon("system-users");
-                    mediaItem.fields["title"] = artist;
-                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
-                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
-                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
-                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                    QString lri = QString("music://albums?artist=%1||%2||%3").arg(artist, albumFilter, genreFilter);
+                    if (urls.indexOf(lri) == -1) {
+                        //Create new media item
+                        MediaItem mediaItem;
+                        mediaItem.url = QString("music://albums?artist=%1||%2||%3").arg(artist, albumFilter, genreFilter);
+                        mediaItem.title = artist;
+                        mediaItem.type = QString("Category");
+                        mediaItem.fields["categoryType"] = QString("Artist");
+                        mediaItem.nowPlaying = false;
+                        mediaItem.artwork = KIcon("system-users");
+                        mediaItem.fields["title"] = artist;
+                        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                        mediaItem.fields["description"] = it.binding(mediaVocabulary.musicArtistDescriptionBinding()).literal().toString().trimmed();
+                        mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.musicArtistArtworkBinding()).uri().toString();
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
 
-                    //Provide context info for artist
-                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
-                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
-                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
-                    
-                    mediaList.append(mediaItem);
+                        //Provide context info for artist
+                        mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                        mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                        mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+
+                        mediaList.append(mediaItem);
+                        urls.append(lri);
+                    } else {
+                        //Update multivalue fields for existing media item
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(lri));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(lri), mediaItem);
+                    }
                 }
                 ++i;
             }
@@ -187,6 +199,7 @@ void MusicListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             int i = 0;
             while( it.next() ) {
@@ -198,26 +211,36 @@ void MusicListEngine::run()
                 QString artist = Nepomuk::Resource(it.binding(mediaVocabulary.artistResourceBinding()).uri()).property(mediaVocabulary.musicArtistName()).toString();
                 QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
-                    MediaItem mediaItem;
-                    mediaItem.url = QString("music://songs?album=%1||%2||%3").arg(album, artistFilter, genreFilter);
-                    mediaItem.title = album;
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("Album");
-                    mediaItem.fields["title"] = album;
-                    mediaItem.fields["artist"] = artist;
-                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
-                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                    mediaItem.nowPlaying = false;
-                    mediaItem.artwork = KIcon("media-optical-audio");
-                    mediaItem = Utilities::makeSubtitle(mediaItem);
+                    QString lri = QString("music://songs?album=%1||%2||%3").arg(album, artistFilter, genreFilter);
+                    if (urls.indexOf(lri) == -1) {
+                        MediaItem mediaItem;
+                        mediaItem.url = lri;
+                        mediaItem.title = album;
+                        mediaItem.type = QString("Category");
+                        mediaItem.fields["categoryType"] = QString("Album");
+                        mediaItem.fields["title"] = album;
+                        mediaItem.fields["artist"] = artist;
+                        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaItem.nowPlaying = false;
+                        mediaItem.artwork = KIcon("media-optical-audio");
+                        mediaItem = Utilities::makeSubtitle(mediaItem);
 
-                    //Provide context info for album
-                    mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
-                    mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
-                    mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                        //Provide context info for album
+                        mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                        mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
+                        mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||artist=%1||album=%2||genre=%3").arg(artist).arg(album).arg(genre));
 
-                    mediaList.append(mediaItem);
+                        mediaList.append(mediaItem);
+                        urls.append(lri);
+                    } else {
+                        //Update multivalue fields for existing media item
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(lri));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(lri), mediaItem);
+                    }
                 }
                 ++i;
             }
