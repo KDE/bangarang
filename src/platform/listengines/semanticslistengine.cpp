@@ -106,6 +106,7 @@ void SemanticsListEngine::run()
             mediaList.clear();
             if (mediaType == "audio" || mediaType == "video") {
                 MediaQuery query;
+                bool ignoreZeros = false;
                 if (groupByCategoryType.isEmpty()) {
                     QStringList bindings;
                     bindings.append(mediaVocabulary.mediaResourceBinding());
@@ -121,6 +122,7 @@ void SemanticsListEngine::run()
                     query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
                     if (m_mediaListProperties.filterForField("playCount").isEmpty()) {
                         query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                        ignoreZeros = true;
                     }
                     query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
                     query.endWhere();
@@ -156,6 +158,7 @@ void SemanticsListEngine::run()
                     }
                     if (m_mediaListProperties.filterForField("playCount").isEmpty()) {
                         subQuery.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                        ignoreZeros = true;
                     }
                     QStringList subQueryLRIFilterList = engineFilterList;
                     subQueryLRIFilterList.removeAll(limitFilter);
@@ -169,7 +172,7 @@ void SemanticsListEngine::run()
                     orderByBindings.append(QString("%1_sum").arg(mediaVocabulary.playCountBinding()));
                     order.append(MediaQuery::Descending);
                     query.orderBy(orderByBindings, order);
-                } 
+                }
 
                 Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
                 
@@ -190,7 +193,10 @@ void SemanticsListEngine::run()
                         mediaItem.fields["playCount"] = playCount;
                     }
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
-                        mediaList.append(mediaItem);
+                        if ((ignoreZeros && mediaItem.fields["playCount"].toInt() > 0) ||
+                            !ignoreZeros) {
+                            mediaList.append(mediaItem);
+                        }
                     }
                 }
                 m_mediaListProperties.name = i18n("Frequently Played");
@@ -263,6 +269,7 @@ void SemanticsListEngine::run()
         if (engineArg.toLower() == "highest") {
             mediaList.clear();
             if (!mediaType.isEmpty()) {
+                bool ignoreZeros = false;
                 MediaQuery query;
                 QStringList bindings;
                 if (groupByCategoryType.isEmpty()) {
@@ -289,6 +296,7 @@ void SemanticsListEngine::run()
                 query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
                 if (m_mediaListProperties.filterForField("rating").isEmpty()) {
                     query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 0, MediaQuery::GreaterThan));
+                    ignoreZeros = true;
                 }
                 query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
                 query.endWhere();
@@ -323,7 +331,10 @@ void SemanticsListEngine::run()
                         mediaItem.fields["rating"] = rating;
                     }
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
-                        mediaList.append(mediaItem);
+                        if ((ignoreZeros && mediaItem.fields["playCount"].toInt() > 0) ||
+                            !ignoreZeros) {
+                            mediaList.append(mediaItem);
+                        }
                     }
                 }
                 m_mediaListProperties.name = i18n("Highest Rated");
