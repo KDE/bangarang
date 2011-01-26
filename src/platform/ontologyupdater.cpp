@@ -357,6 +357,63 @@ void OntologyUpdater::start()
     }
 
 
+    //Fix screwed up properties
+    MediaQuery query;
+    QStringList bindings;
+    bindings.append(mediaVocabulary.mediaResourceBinding());
+    bindings.append(mediaVocabulary.ratingBinding());
+    query.select(bindings, MediaQuery::Distinct);
+    query.startWhere();
+    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+    query.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 10, MediaQuery::GreaterThan));
+    query.endWhere();
+    it = m_mainModel->executeQuery(query.query(), Soprano::Query::QueryLanguageSparql);
+    emit infoMessage(i18n("<b>Updating audio types and properties</b><br>0 items updated..."));
+    QApplication::processEvents();
+    i = 0;
+    while( it.next() && !m_stopUpdate) {
+        QApplication::processEvents();
+        i++;
+        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating");
+        if (resource.hasProperty(property)) {
+            int rating = resource.property(property).toInt();
+            if (rating > 10) {
+                resource.removeProperty(property);
+            }
+        }
+        emit infoMessage(i18n("<b>Cleaning up erroneous audio properties</b><br>%1 audio items done...", i));
+        QApplication::processEvents();
+    }
+
+    MediaQuery query1;
+    bindings.clear();
+    bindings.append(mediaVocabulary.mediaResourceBinding());
+    bindings.append(mediaVocabulary.ratingBinding());
+    query1.select(bindings, MediaQuery::Distinct);
+    query1.startWhere();
+    query1.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+    query1.addCondition(mediaVocabulary.hasRating(MediaQuery::Required, 10, MediaQuery::GreaterThan));
+    query1.endWhere();
+    it = m_mainModel->executeQuery(query.query(), Soprano::Query::QueryLanguageSparql);
+    emit infoMessage(i18n("<b>Updating audio types and properties</b><br>0 items updated..."));
+    QApplication::processEvents();
+    i = 0;
+    while( it.next() && !m_stopUpdate) {
+        QApplication::processEvents();
+        i++;
+        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating");
+        if (resource.hasProperty(property)) {
+            int rating = resource.property(property).toInt();
+            if (rating > 10) {
+                resource.removeProperty(property);
+            }
+        }
+        emit infoMessage(i18n("<b>Cleaning up erroneous video properties</b><br>%1 video items done...", i));
+        QApplication::processEvents();
+    }
+
     if (!m_stopUpdate) {
         emit infoMessage(i18n("<b>Update complete.</b>"));
     } else {
