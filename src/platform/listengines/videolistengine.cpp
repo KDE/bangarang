@@ -259,11 +259,13 @@ void VideoListEngine::run()
                 m_mediaListProperties.summary = i18np("1 show", "%1 shows", mediaList.count());
                 m_mediaListProperties.type = QString("Categories");
             } else {
-                engineArg = "episodes";
+                //engineArg = "episodes";
                 if (mediaList.at(0).url == "video://episodes?||seriesName=~") {
                     seriesName = "~";
+                    engineArg = "episodes";
                 } else {
                     seriesName = mediaList.at(0).title;
+                    engineArg = "seasons";
                 }
                 seriesNameFilter = QString("seriesName=%1").arg(seriesName);
                 mediaList.clear();
