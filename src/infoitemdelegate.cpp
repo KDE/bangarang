@@ -788,13 +788,22 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
+        if (!comboBox) {
+            return;
+        }
         model->setData(index, comboBox->currentIndex(), Qt::EditRole);
     } else if (field == "description") {
         QTextEdit * textEdit = qobject_cast<QTextEdit*>(editor);
+        if (!textEdit) {
+            return;
+        }
         model->setData(index, textEdit->toPlainText(), Qt::DisplayRole);
         model->setData(index, textEdit->toPlainText(), Qt::EditRole);
     } else if (index.data(Qt::EditRole).type() == QVariant::StringList){
         KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
+        if (!lineEdit) {
+            return;
+        }
         QStringList textList = index.data(Qt::EditRole).toStringList();
         if (m_stringListIndexEditing == -1 && !lineEdit->text().trimmed().isEmpty()){
             textList.append(lineEdit->text().trimmed());
@@ -809,6 +818,9 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
         model->setData(index, textList, Qt::EditRole);
     } else if (index.data(Qt::EditRole).type() == QVariant::Int) {
         KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
+        if (!lineEdit) {
+            return;
+        }
         if (!lineEdit->text().trimmed().isEmpty()) {
             int value = lineEdit->text().toInt();
             model->setData(index, value, Qt::DisplayRole);
