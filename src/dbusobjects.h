@@ -27,6 +27,8 @@ class BangarangApplication;
 struct MprisStatusStruct;
 struct MprisVersionStruct;
 
+typedef QList< QPair<QString, QString> > MprisMetaDataFieldList;
+
 class MprisRootObject : public QObject
 {
     Q_OBJECT
@@ -35,10 +37,15 @@ class MprisRootObject : public QObject
         explicit MprisRootObject(QObject *parent);
         ~MprisRootObject();
 
+        const MprisMetaDataFieldList &metaDataFieldList() { return m_metaDataFields; }
+
     public Q_SLOTS:
         QString Identity();
         void Quit();
         MprisVersionStruct MprisVersion();
+
+    private:
+        MprisMetaDataFieldList m_metaDataFields;
 };
 
 class MprisPlayerObject : public QObject
@@ -70,7 +77,7 @@ class MprisPlayerObject : public QObject
         void CapsChange(int capabilities);
 
     private:
-        BangarangApplication *app;
+        BangarangApplication *m_app;
 
     private Q_SLOTS:
         void slotTrackChange();
@@ -99,7 +106,7 @@ class MprisTrackListObject : public QObject
         void TrackListChange(int size);
 
     private:
-        BangarangApplication *app;
+        BangarangApplication *m_app;
 
     private Q_SLOTS:
         void slotTrackListChange();

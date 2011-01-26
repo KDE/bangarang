@@ -186,7 +186,7 @@ void Playlist::playItemAt(int row, Model model)
     } else if (subType == "Audio Stream") {
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
-            QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem.url);
+            QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
             for (int i = 0; i < streamList.count(); i++) {
                 m_streamListUrls << streamList.at(i).url;
                 if (i == 0) {

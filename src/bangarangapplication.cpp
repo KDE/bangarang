@@ -150,7 +150,8 @@ void BangarangApplication::setup()
       SLOT(handleNotifierStateRequest(Phonon::State)));
 
     //Setup D-Bus Objects
-    QDBusConnection::sessionBus().registerObject("/", new MprisRootObject(this), QDBusConnection::ExportAllContents);
+    m_mprisRootObject = new MprisRootObject(this);
+    QDBusConnection::sessionBus().registerObject("/", m_mprisRootObject, QDBusConnection::ExportAllContents);
     QDBusConnection::sessionBus().registerObject("/Player", new MprisPlayerObject(this), QDBusConnection::ExportAllContents);
     QDBusConnection::sessionBus().registerObject("/TrackList", new MprisTrackListObject(this), QDBusConnection::ExportAllContents);
     QDBusConnection::sessionBus().registerService("org.mpris.bangarang");
@@ -279,6 +280,11 @@ BangarangNotifierItem * BangarangApplication::statusNotifierItem()
 AudioSettings * BangarangApplication::audioSettings()
 {
     return m_audioSettings;
+}
+
+MprisRootObject* BangarangApplication::mprisRootObject()
+{
+    return m_mprisRootObject;
 }
 
 const KAboutData * BangarangApplication::aboutData()
