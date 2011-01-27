@@ -328,6 +328,8 @@ void VideoListEngine::run()
                 lastSeason = season;
             }
 
+            int totalSeasons = mediaList.count();
+
             /* Check, whether there are TV shows, which have no series entered.
              * If so, add an entry which allows access to those files.
              */
@@ -355,9 +357,9 @@ void VideoListEngine::run()
                 mediaList.append(mediaItem);
             }
 
-            if (mediaList.count() != 1) {
+            if (totalSeasons != 1) {
                 m_mediaListProperties.name = i18nc("%1=Name of the Series", "Seasons - %1", seriesName);
-                m_mediaListProperties.summary = i18np("1 season", "%1 seasons", mediaList.count());
+                m_mediaListProperties.summary = i18np("1 season", "%1 seasons", totalSeasons);
                 m_mediaListProperties.type = QString("Categories");
             } else {
                 engineArg = "episodes";
