@@ -1,6 +1,6 @@
 project(Bangarang)
 
-set(WITHTRANSLATIONS:BOOL YES)
+set(WITHTRANSLATIONS YES)
 
 find_package(KDE4 4.5.0 REQUIRED)
 find_package(Nepomuk REQUIRED)
