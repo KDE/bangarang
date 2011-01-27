@@ -130,6 +130,8 @@ void BangarangApplication::setup()
     QSize windowSize = QSize(generalGroup.readEntry("WindowWidth", 740),
                              generalGroup.readEntry("WindowHeight", 520));
     m_mainWindow->setGeometry(QRect(m_mainWindow->rect().topLeft(), windowSize));
+    QList<int> nowPlayingSplitterSizes = generalGroup.readEntry("NowPlayingSplitterSizes", QList<int>() << 375 << 362 );
+    m_mainWindow->ui->nowPlayingSplitter->setSizes(nowPlayingSplitterSizes);
     QList<int> mediaListSplitterSizes = generalGroup.readEntry("MediaListSplitterSizes", QList<int>() << 170 << 565);
     m_mainWindow->ui->mediaListsSplitter->setSizes(mediaListSplitterSizes);
     QList<int> mediaViewSplitterSizes = generalGroup.readEntry("MediaViewSplitterSizes", QList<int>() << 338 << 220);
@@ -182,6 +184,7 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("Volume", static_cast<int>(m_volume*100));
     generalGroup.writeEntry("WindowWidth", m_mainWindow->width());
     generalGroup.writeEntry("WindowHeight", m_mainWindow->height());
+    generalGroup.writeEntry("NowPlayingSplitterSizes", m_mainWindow->ui->nowPlayingSplitter->sizes());
     generalGroup.writeEntry("MediaListSplitterSizes", m_mainWindow->ui->mediaListsSplitter->sizes());
     generalGroup.writeEntry("MediaViewSplitterSizes", m_mainWindow->ui->mediaViewSplitter->sizes());
     generalGroup.writeEntry("mediaListsType", m_mainWindow->ui->mediaLists->currentIndex());
