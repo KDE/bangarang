@@ -304,6 +304,7 @@ bool AudioSettings::insertAudioEffects(Path* audioPath)
         connectEq();
         return true;
     }
+    m_audioEq = NULL;
     return false;
 }
 
