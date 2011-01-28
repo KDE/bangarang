@@ -53,12 +53,14 @@ void InfoItemView::resizeEvent(QResizeEvent *e)
 
 void InfoItemView::infoDataChangedSlot(const QModelIndex &topleft, const QModelIndex &bottomright)
 {
+    m_infoItemDelegate->resetEditMode();
     fixHeightToContents();
     Q_UNUSED(topleft);
     Q_UNUSED(bottomright);
 }
 void InfoItemView::infoChanged(bool changed)
 {
+    m_infoItemDelegate->resetEditMode();
     fixHeightToContents();
     Q_UNUSED(changed);
 }
