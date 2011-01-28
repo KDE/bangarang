@@ -169,7 +169,7 @@ void MusicListEngine::run()
                 m_mediaListProperties.summary = i18np("1 artist", "%1 artists", totalArtists);
                 m_mediaListProperties.type = QString("Categories");
             } else {
-                engineArg = "songs";
+                engineArg = "albums";
                 artist = mediaList.at(0).title;
                 artistFilter = QString("artist=%1").arg(artist);
                 m_mediaListProperties.category = mediaList.at(0);
@@ -273,7 +273,7 @@ void MusicListEngine::run()
                 if (!artist.isEmpty() && !genre.isEmpty()) {
                     QStringList genreList = genre.split("|OR|");
                     QString singleGenreName = Utilities::genreFromRawTagGenre(genreList.at(0));
-                    m_mediaListProperties.name = i18n("Albums - %1 - %2", album, genre);
+                    m_mediaListProperties.name = i18n("Albums - %1 - %2", artist, singleGenreName);
                 }
                 
                 m_mediaListProperties.summary = i18np("1 album", "%1 albums", totalAlbmus);
