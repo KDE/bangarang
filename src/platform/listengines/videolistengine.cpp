@@ -107,16 +107,26 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (urls.indexOf(mediaItem.url) == -1) {
+                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.append(mediaItem);
+                        urls.append(mediaItem.url);
+                    }
+                } else {
+                    //Update multivalue fields for existing media item
+                    mediaItem = mediaList.at(urls.indexOf(mediaItem.url));
                     relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                     mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                    mediaList.append(mediaItem);
+                    mediaList.replace(urls.indexOf(mediaItem.url), mediaItem);
                 }
                 kDebug() << mediaItem.fields["duration"].toInt();
                 kDebug() << mediaItem.duration;
@@ -195,6 +205,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
@@ -202,26 +213,36 @@ void VideoListEngine::run()
                 }
                 QString seriesName = it.binding(mediaVocabulary.videoSeriesTitleBinding()).literal().toString();
                 if (!seriesName.isEmpty()) {
-                    MediaItem mediaItem;
-                    mediaItem.url = QString("video://seasons?||seriesName=%1||%2").arg(seriesName).arg(genreFilter);
-                    mediaItem.title = seriesName;
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("TV Series");
-                    mediaItem.fields["title"] = seriesName;
-                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoSeriesDescriptionBinding()).literal().toString().trimmed();
-                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoSeriesArtworkBinding()).uri().toString();
-                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
-                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                    mediaItem.nowPlaying = false;
-                    mediaItem.artwork = KIcon("video-television");
-                    
-                    //Provide context info for TV series
-                    mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
-                    mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
-                    mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+                    QString lri = QString("video://seasons?||seriesName=%1||%2").arg(seriesName).arg(genreFilter);
+                    if (urls.indexOf(lri) == -1) {
+                        MediaItem mediaItem;
+                        mediaItem.url = lri;
+                        mediaItem.title = seriesName;
+                        mediaItem.type = QString("Category");
+                        mediaItem.fields["categoryType"] = QString("TV Series");
+                        mediaItem.fields["title"] = seriesName;
+                        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                        mediaItem.fields["description"] = it.binding(mediaVocabulary.videoSeriesDescriptionBinding()).literal().toString().trimmed();
+                        mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoSeriesArtworkBinding()).uri().toString();
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaItem.nowPlaying = false;
+                        mediaItem.artwork = KIcon("video-television");
 
-                    mediaList.append(mediaItem);
+                        //Provide context info for TV series
+                        mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+                        mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+                        mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||%1||seriesName=%2").arg(genreFilter).arg(seriesName));
+
+                        mediaList.append(mediaItem);
+                        urls.append(lri);
+                    } else {
+                        //Update multivalue fields for existing media item
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(lri));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(lri), mediaItem);
+                    }
                 }
             }
 
@@ -516,6 +537,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
@@ -523,25 +545,35 @@ void VideoListEngine::run()
                 }
                 QString actor = it.binding(mediaVocabulary.videoActorBinding()).literal().toString().trimmed();
                 if (!actor.isEmpty()) {
-                    MediaItem mediaItem;
-                    mediaItem.url = QString("video://sources?||actor=%1").arg(actor);
-                    mediaItem.title = actor;
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("Actor");
-                    mediaItem.fields["title"] = actor;
-                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoActorDescriptionBinding()).literal().toString().trimmed();
-                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoActorArtworkBinding()).uri().toString();
-                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
-                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                    mediaItem.nowPlaying = false;
-                    mediaItem.artwork = KIcon("view-media-artist");
+                    QString lri = QString("video://sources?||actor=%1").arg(actor);;
+                    if (urls.indexOf(lri) == -1) {
+                        MediaItem mediaItem;
+                        mediaItem.url = lri;
+                        mediaItem.title = actor;
+                        mediaItem.type = QString("Category");
+                        mediaItem.fields["categoryType"] = QString("Actor");
+                        mediaItem.fields["title"] = actor;
+                        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                        mediaItem.fields["description"] = it.binding(mediaVocabulary.videoActorDescriptionBinding()).literal().toString().trimmed();
+                        mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoActorArtworkBinding()).uri().toString();
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaItem.nowPlaying = false;
+                        mediaItem.artwork = KIcon("view-media-artist");
 
-                    mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||actor=%1").arg(actor));
-                    mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||actor=%1").arg(actor));
-                    mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||actor=%1").arg(actor));
+                        mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||actor=%1").arg(actor));
+                        mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||actor=%1").arg(actor));
+                        mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||actor=%1").arg(actor));
 
-                    mediaList.append(mediaItem);
+                        mediaList.append(mediaItem);
+                        urls.append(lri);
+                    } else {
+                        //Update multivalue fields for existing media item
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(lri));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(lri), mediaItem);
+                    }
                 }
             }
             
@@ -574,6 +606,7 @@ void VideoListEngine::run()
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
             
             //Build media list from results
+            QStringList urls;
             QHash<QString, QStringList> relatedTos;
             while( it.next() ) {
                 if (m_stop) {
@@ -581,25 +614,35 @@ void VideoListEngine::run()
                 }
                 QString director = it.binding(mediaVocabulary.videoDirectorBinding()).literal().toString().trimmed();
                 if (!director.isEmpty()) {
-                    MediaItem mediaItem;
-                    mediaItem.url = QString("video://sources?||director=%1").arg(director);
-                    mediaItem.title = director;
-                    mediaItem.type = QString("Category");
-                    mediaItem.fields["categoryType"] = QString("Director");
-                    mediaItem.fields["title"] = director;
-                    mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
-                    mediaItem.fields["description"] = it.binding(mediaVocabulary.videoDirectorDescriptionBinding()).literal().toString().trimmed();
-                    mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoDirectorArtworkBinding()).uri().toString();
-                    relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
-                    mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
-                    mediaItem.nowPlaying = false;
-                    mediaItem.artwork = KIcon("view-media-artist");
+                    QString lri = QString("video://sources?||director=%1").arg(director);
+                    if (urls.indexOf(lri) == -1) {
+                        MediaItem mediaItem;
+                        mediaItem.url = lri;
+                        mediaItem.title = director;
+                        mediaItem.type = QString("Category");
+                        mediaItem.fields["categoryType"] = QString("Director");
+                        mediaItem.fields["title"] = director;
+                        mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
+                        mediaItem.fields["description"] = it.binding(mediaVocabulary.videoDirectorDescriptionBinding()).literal().toString().trimmed();
+                        mediaItem.fields["artworkUrl"] = it.binding(mediaVocabulary.videoDirectorArtworkBinding()).uri().toString();
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaItem.nowPlaying = false;
+                        mediaItem.artwork = KIcon("view-media-artist");
 
-                    mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||director=%1").arg(director));
-                    mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||director=%1").arg(director));
-                    mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||director=%1").arg(director));
+                        mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||director=%1").arg(director));
+                        mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||director=%1").arg(director));
+                        mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||director=%1").arg(director));
 
-                    mediaList.append(mediaItem);
+                        mediaList.append(mediaItem);
+                        urls.append(lri);
+                    } else {
+                        //Update multivalue fields for existing media item
+                        MediaItem mediaItem = mediaList.at(urls.indexOf(lri));
+                        relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
+                        mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
+                        mediaList.replace(urls.indexOf(lri), mediaItem);
+                    }
                 }
             }
             
