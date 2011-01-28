@@ -53,7 +53,8 @@ class InfoItemDelegate : public QItemDelegate
         void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int rowHeight(int row) const;
         int heightForAllRows();
-            
+        void resetEditMode();
+
     private:
         InfoItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;

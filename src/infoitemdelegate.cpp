@@ -1025,6 +1025,12 @@ QRect InfoItemDelegate::stringListRectAtMousePos(const QStyleOptionViewItem &opt
 
 void InfoItemDelegate::endEditing(QWidget * editor)
 {
+    resetEditMode();
+    Q_UNUSED(editor);
+}
+
+void InfoItemDelegate::resetEditMode()
+{
     m_isEditing = false;
     if (m_rowOfNewValue != -1) {
         InfoItemModel * model = (InfoItemModel *)m_view->model();
@@ -1032,7 +1038,4 @@ void InfoItemDelegate::endEditing(QWidget * editor)
         emit sizeHintChanged(index);
         m_rowOfNewValue = -1;
     }
-    Q_UNUSED(editor);
 }
-
-
