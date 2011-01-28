@@ -757,7 +757,7 @@
                         </spacer>
                        </item>
                        <item>
-                        <widget class="QWidget" name="widget" native="true">
+                        <widget class="QWidget" name="widget_1" native="true">
                          <layout class="QVBoxLayout" name="verticalLayout_52">
                           <property name="spacing">
                            <number>4</number>
