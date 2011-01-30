@@ -22,7 +22,7 @@
 #include <KUrl>
 #include <QtCore>
 #include <QIcon>
-class MediaItem;
+#include "../mediaitemmodel.h"
 
 /*
  * This is a base clase for fetching meta info for a provided media list.
