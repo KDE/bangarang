@@ -295,8 +295,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>147</width>
-                    <height>299</height>
+                    <width>152</width>
+                    <height>367</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -324,7 +324,7 @@
                    <item>
                     <widget class="QStackedWidget" name="audioListsStack">
                      <property name="currentIndex">
-                      <number>3</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="audioListsPage">
                       <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -1260,7 +1260,7 @@
                    <item>
                     <widget class="QStackedWidget" name="videoListsStack">
                      <property name="currentIndex">
-                      <number>3</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="page_4">
                       <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -2828,7 +2828,7 @@
                                 <bool>true</bool>
                                </property>
                                <property name="currentIndex">
-                                <number>0</number>
+                                <number>1</number>
                                </property>
                                <widget class="QWidget" name="infoFetcherExpanderPage1">
                                 <layout class="QVBoxLayout" name="verticalLayout_36">
@@ -8855,13 +8855,9 @@ color: rgb(255, 255, 255);</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>collectionButton</tabstop>
-  <tabstop>fullScreen</tabstop>
-  <tabstop>seekTime</tabstop>
-  <tabstop>volumeIcon</tabstop>
-  <tabstop>mediaPrevious</tabstop>
-  <tabstop>mediaPlayPause</tabstop>
-  <tabstop>mediaNext</tabstop>
+  <tabstop>nowPlayingView</tabstop>
+  <tabstop>showPlaylist_2</tabstop>
+  <tabstop>showMenu_2</tabstop>
   <tabstop>showPlaylist</tabstop>
   <tabstop>showMenu</tabstop>
   <tabstop>showQueue</tabstop>
@@ -8869,23 +8865,66 @@ color: rgb(255, 255, 255);</string>
   <tabstop>repeat</tabstop>
   <tabstop>shuffle</tabstop>
   <tabstop>playlistView</tabstop>
-  <tabstop>Filter</tabstop>
+  <tabstop>closePlaylistFilter</tabstop>
+  <tabstop>playlistFilterProxyLine</tabstop>
+  <tabstop>collectionButton</tabstop>
+  <tabstop>fullScreen</tabstop>
+  <tabstop>seekTime</tabstop>
+  <tabstop>volumeIcon</tabstop>
+  <tabstop>mediaPrevious</tabstop>
+  <tabstop>mediaPlayPause</tabstop>
+  <tabstop>mediaNext</tabstop>
   <tabstop>audioLists</tabstop>
+  <tabstop>addAudioList</tabstop>
+  <tabstop>removeAudioList</tabstop>
+  <tabstop>configureAudioList</tabstop>
+  <tabstop>videoLists</tabstop>
+  <tabstop>addVideoList</tabstop>
+  <tabstop>removeVideoList</tabstop>
+  <tabstop>configureVideoList</tabstop>
+  <tabstop>Filter</tabstop>
+  <tabstop>mediaView</tabstop>
+  <tabstop>closeMediaListFilter</tabstop>
+  <tabstop>showMediaViewMenu</tabstop>
+  <tabstop>infoItemViewHolder</tabstop>
+  <tabstop>infoItemView</tabstop>
+  <tabstop>showInfoFetcherExpander</tabstop>
+  <tabstop>infoFetcherSelector</tabstop>
+  <tabstop>infoFetcherLink</tabstop>
+  <tabstop>infoFetch</tabstop>
+  <tabstop>infoAutoFetch</tabstop>
+  <tabstop>fetchedMatches</tabstop>
+  <tabstop>infoItemSave</tabstop>
+  <tabstop>infoItemCancelEdit</tabstop>
+  <tabstop>infoIndexSelected</tabstop>
+  <tabstop>nowPlaying</tabstop>
   <tabstop>previous</tabstop>
   <tabstop>playAll</tabstop>
   <tabstop>playSelected</tabstop>
-  <tabstop>nowPlaying</tabstop>
-  <tabstop>removeVideoList</tabstop>
-  <tabstop>addVideoList</tabstop>
-  <tabstop>removeAudioList</tabstop>
-  <tabstop>addAudioList</tabstop>
-  <tabstop>configureVideoList</tabstop>
-  <tabstop>configureAudioList</tabstop>
-  <tabstop>aCancelSaveList</tabstop>
-  <tabstop>saveAudioList</tabstop>
-  <tabstop>videoLists</tabstop>
-  <tabstop>aListSourceView</tabstop>
+  <tabstop>cancelEditShortcuts</tabstop>
+  <tabstop>semALimit</tabstop>
+  <tabstop>semASelectMore</tabstop>
+  <tabstop>semATimeComp</tabstop>
+  <tabstop>semATime</tabstop>
+  <tabstop>semARating</tabstop>
+  <tabstop>semARatingComp</tabstop>
+  <tabstop>semAFreq</tabstop>
+  <tabstop>semAFreqComp</tabstop>
+  <tabstop>semAConfigSave</tabstop>
+  <tabstop>aCancelSemConfigure</tabstop>
+  <tabstop>semVLimit</tabstop>
+  <tabstop>semVSelectMore</tabstop>
+  <tabstop>semVTimeComp</tabstop>
+  <tabstop>semVTime</tabstop>
+  <tabstop>semVRating</tabstop>
+  <tabstop>semVRatingComp</tabstop>
+  <tabstop>semVFreq</tabstop>
+  <tabstop>semVFreqComp</tabstop>
+  <tabstop>semVConfigSave</tabstop>
+  <tabstop>vCancelSemConfigure</tabstop>
   <tabstop>aListSourceSelection</tabstop>
+  <tabstop>aCancelSaveList</tabstop>
+  <tabstop>aListSourceView</tabstop>
   <tabstop>aListSourcePlaylist</tabstop>
   <tabstop>aNewListName</tabstop>
   <tabstop>aslsListName</tabstop>
@@ -8897,11 +8936,43 @@ color: rgb(255, 255, 255);</string>
   <tabstop>vNewListName</tabstop>
   <tabstop>saveVideoList</tabstop>
   <tabstop>vCancelSaveList</tabstop>
-  <tabstop>vslsListName</tabstop>
   <tabstop>vslsSave</tabstop>
   <tabstop>vslsCancel</tabstop>
+  <tabstop>saveAudioList</tabstop>
+  <tabstop>playlistNotificationYes</tabstop>
+  <tabstop>playlistNotificationNo</tabstop>
+  <tabstop>closePlaylistNotification</tabstop>
   <tabstop>saveShortcuts</tabstop>
-  <tabstop>cancelEditShortcuts</tabstop>
+  <tabstop>vslsListName</tabstop>
+  <tabstop>audioChannelSelection</tabstop>
+  <tabstop>eqPresets</tabstop>
+  <tabstop>eq1</tabstop>
+  <tabstop>eq2</tabstop>
+  <tabstop>eq3</tabstop>
+  <tabstop>eq4</tabstop>
+  <tabstop>eq5</tabstop>
+  <tabstop>eq6</tabstop>
+  <tabstop>eq7</tabstop>
+  <tabstop>eq8</tabstop>
+  <tabstop>eq9</tabstop>
+  <tabstop>eq10</tabstop>
+  <tabstop>eq11</tabstop>
+  <tabstop>restoreDefaultAudioSettings</tabstop>
+  <tabstop>hideAudioSettings</tabstop>
+  <tabstop>subtitleSelection</tabstop>
+  <tabstop>angleSelection</tabstop>
+  <tabstop>brightnessSlider</tabstop>
+  <tabstop>contrastSlider</tabstop>
+  <tabstop>hueSlider</tabstop>
+  <tabstop>saturationSlider</tabstop>
+  <tabstop>aspectRatioAuto</tabstop>
+  <tabstop>aspectRatioWidget</tabstop>
+  <tabstop>aspectRatio4_3</tabstop>
+  <tabstop>aspectRatio16_9</tabstop>
+  <tabstop>scaleModeFitInView</tabstop>
+  <tabstop>scaleModeScaleAndCrop</tabstop>
+  <tabstop>restoreDefaultVideoSettings</tabstop>
+  <tabstop>hideVideoSettings</tabstop>
  </tabstops>
  <resources/>
  <connections/>
