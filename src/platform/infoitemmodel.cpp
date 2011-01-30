@@ -20,6 +20,7 @@
 #include "mediaitemmodel.h"
 #include "utilities/utilities.h"
 #include "infofetchers/dbpediainfofetcher.h"
+#include "infofetchers/doubaninfofetcher.h"
 #include "infofetchers/feedinfofetcher.h"
 #include "infofetchers/filenameinfofetcher.h"
 #include "infofetchers/lastfminfofetcher.h"
@@ -149,6 +150,14 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     connect(lastfmInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
     connect(lastfmInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(lastfmInfoFetcher);
+
+    DoubanInfoFetcher * doubanInfoFetcher = new DoubanInfoFetcher(this);
+    connect(doubanInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
+    connect(doubanInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
+    connect(doubanInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
+    connect(doubanInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(doubanInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
+    m_infoFetchers.append(doubanInfoFetcher);
 
     /* NOTE: Results returned from DBPedia SPARQL frontend is inconsistent
              InfoFetcher is disabled until this problem is resolved
