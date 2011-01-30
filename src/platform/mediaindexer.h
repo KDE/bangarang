@@ -22,7 +22,7 @@
 #include <QtCore>
 #include <KProcess>
 
-class MediaItem;
+#include "mediaitemmodel.h"
 
 /**
 * MediaIndexer provides a way to asynchronous write to the nepomuk datastore.
