@@ -1,5 +1,5 @@
 /* BANGARANG MEDIA PLAYER
- * Copyright (C) 2010 Ni Hui (shuizhuyuanluo@126.com)
+ * Copyright (C) 2011 Ni Hui (shuizhuyuanluo@126.com)
  * <http://gitorious.org/bangarang>
  *
  * This program is free software: you can redistribute it and/or modify
