@@ -108,7 +108,7 @@ msgstr "Retirer de la liste"
 
 #: actionsmanager.cpp:200
 msgid "Add to \"Audio Streams\""
-msgstr "Ajouter aux « flux audio »"
+msgstr "Ajouter aux « flux audio »"
 
 #: actionsmanager.cpp:205
 msgid "Add to list"
@@ -385,17 +385,17 @@ msgid ""
 "<b>Note :</b> This product uses the TMDb API but is not endorsed or "
 "certified by TMDb. Please help improve available information by visiting "
 "http://themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but "
-"is not endorsed or certified by Last.fm.  Pleace help improve available "
+"is not endorsed or certified by Last.fm.  Please help improve available "
 "information by visiting http://last.fm<br><b>Note:</b> This product uses the "
-"TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Pleace "
+"TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Please "
 "help improve available information by visiting http://thetvdb.com"
 msgstr ""
-"<b>Remarque : </b> ce produit utilise l'API TMBb mais n'est pas certifié ou "
+"<b>Remarque : </b> ce produit utilise l'API TMBb mais n'est pas certifié ou "
 "approuvé par TMDb. S'il vous plaît, aidez à améliorer les données "
-"disponibles en visitant http://themoviedb.org<br><b>Remarque : </b> Ce "
+"disponibles en visitant http://themoviedb.org<br><b>Remarque : </b> Ce "
 "produit utilise l'API Last.fm mais il est ni approuvé, ni certifié par Last."
 "fm. S'il vous plaît, aidez à améliorer les données disponibles en visitant "
-"http://last.fm<br> <b>Remarque : </b> Ce produit utilises l'API TheTVDB.com "
+"http://last.fm<br> <b>Remarque : </b> Ce produit utilises l'API TheTVDB.com "
 "mais il est est ni approuvé, ni certifié par TheTVDB.com. S'il vous plaît, "
 "aidez à améliorer les données disponibles en visitant http://thetvdb.com"
 
@@ -441,7 +441,7 @@ msgstr ""
 
 #: main.cpp:53
 msgid "Play 'URL'"
-msgstr "Lire une « URL »"
+msgstr "Lire une « URL »"
 
 #: main.cpp:54
 msgid "Play DVD Video"
@@ -514,7 +514,7 @@ msgstr "Vider la liste de lecture"
 
 #: mainwindow.cpp:522
 msgid "Are you sure you want to clear the current playlist?"
-msgstr "Voulez-vous vraiment effacer la liste de lecture courante ? "
+msgstr "Voulez-vous vraiment effacer la liste de lecture courante ? "
 
 #. i18n: file: mainwindow.ui:2175
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
@@ -644,43 +644,43 @@ msgstr "Afficher les artistes"
 
 #: nowplayingdelegate.cpp:301
 msgid "Artist: "
-msgstr "Artiste : "
+msgstr "Artiste : "
 
 #: nowplayingdelegate.cpp:313
 msgid "Composer: "
-msgstr "Compositeur : "
+msgstr "Compositeur : "
 
 #: nowplayingdelegate.cpp:325
 msgid "Album: "
-msgstr "Album : "
+msgstr "Album : "
 
 #: nowplayingdelegate.cpp:337
 msgid "Track: "
-msgstr "Piste : "
+msgstr "Piste : "
 
 #: nowplayingdelegate.cpp:350 nowplayingdelegate.cpp:381
 msgid "Year: "
-msgstr "Année : "
+msgstr "Année : "
 
 #: nowplayingdelegate.cpp:362
 msgid "Genre: "
-msgstr "Genre : "
+msgstr "Genre : "
 
 #: nowplayingdelegate.cpp:393
 msgid "Actor: "
-msgstr "Acteur : "
+msgstr "Acteur : "
 
 #: nowplayingdelegate.cpp:405
 msgid "Director: "
-msgstr "Réalisateur : "
+msgstr "Réalisateur : "
 
 #: nowplayingdelegate.cpp:417
 msgid "Writer: "
-msgstr "Scénariste : "
+msgstr "Scénariste : "
 
 #: nowplayingdelegate.cpp:429
 msgid "Producer: "
-msgstr "Producteur : "
+msgstr "Producteur : "
 
 #. i18n: file: mainwindow.ui:6692
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
@@ -992,7 +992,7 @@ msgstr "Filtre"
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
 #: rc.cpp:218
 msgid "Additional information may be available from:"
-msgstr "Des informations supplémentaire sont peut-être disponible depuis : "
+msgstr "Des informations supplémentaire sont peut-être disponible depuis : "
 
 #. i18n: file: mainwindow.ui:2885
 #. i18n: ectx: property (text), widget (QToolButton, infoFetch)
@@ -1098,7 +1098,7 @@ msgstr "Réglages audio"
 #. i18n: ectx: property (text), widget (QLabel, label_20)
 #: rc.cpp:314
 msgid "Audio Channel:"
-msgstr "Canal audio : "
+msgstr "Canal audio : "
 
 #. i18n: file: mainwindow.ui:7266
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
@@ -1204,37 +1204,37 @@ msgstr "Réglages vidéo"
 #. i18n: ectx: property (text), widget (QLabel, label_26)
 #: rc.cpp:365
 msgid "Subtitle:"
-msgstr "Sous-titre : "
+msgstr "Sous-titre : "
 
 #. i18n: file: mainwindow.ui:7888
 #. i18n: ectx: property (text), widget (QLabel, label_25)
 #: rc.cpp:368
 msgid "Angle:"
-msgstr "Angle : "
+msgstr "Angle : "
 
 #. i18n: file: mainwindow.ui:7944
 #. i18n: ectx: property (text), widget (QLabel, label_21)
 #: rc.cpp:371
 msgid "Brightness:"
-msgstr "Luminosité : "
+msgstr "Luminosité : "
 
 #. i18n: file: mainwindow.ui:7991
 #. i18n: ectx: property (text), widget (QLabel, label_22)
 #: rc.cpp:374
 msgid "Contrast:"
-msgstr "Contraste : "
+msgstr "Contraste : "
 
 #. i18n: file: mainwindow.ui:8038
 #. i18n: ectx: property (text), widget (QLabel, label_23)
 #: rc.cpp:377
 msgid "Hue:"
-msgstr "Teinte : "
+msgstr "Teinte : "
 
 #. i18n: file: mainwindow.ui:8085
 #. i18n: ectx: property (text), widget (QLabel, label_24)
 #: rc.cpp:380
 msgid "Saturation:"
-msgstr "Saturation : "
+msgstr "Saturation : "
 
 #. i18n: file: mainwindow.ui:8148
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
@@ -1333,7 +1333,7 @@ msgstr "Retirer"
 #: savedlistsmanager.cpp:179 savedlistsmanager.cpp:217
 #, kde-format
 msgid "Are you sure you want to remove \"%1\"?"
-msgstr "Voulez-vous vraiment retirer « %1 » ? "
+msgstr "Voulez-vous vraiment retirer « %1 » ? "
 
 #: videosettings.cpp:231 videosettings.cpp:250
 msgid "Disable"
@@ -1578,7 +1578,7 @@ msgstr "Débute la mise à jour..."
 #: platform/mediaindexer.cpp:255
 #, kde-format
 msgid "Updated: %1 - %2"
-msgstr "Mis à jour : %1 - %2"
+msgstr "Mis à jour : %1 - %2"
 
 #: platform/mediaindexer.cpp:260
 msgid "Removing info..."
@@ -1664,7 +1664,7 @@ msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
-"Remarque : ce chercheur utilise l'API Last.fm mais il est ni certifié, ni "
+"Remarque : ce chercheur utilise l'API Last.fm mais il est ni certifié, ni "
 "approuvé par Last.fm."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
@@ -1676,7 +1676,7 @@ msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
 msgstr ""
-"Remarque : ce chercheur utilise l'API TMDb mais il est ni certifié, ni "
+"Remarque : ce chercheur utilise l'API TMDb mais il est ni certifié, ni "
 "approuvé par TMDb."
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:36
@@ -1688,7 +1688,7 @@ msgid ""
 "Note: This fetcher uses theTVDB.com API. Please help improve theTVDB.com "
 "information by clicking the link."
 msgstr ""
-"Remarque : ce chercheur utilise l'API theTVDB.com. SVP, aidez à l'améliorer "
+"Remarque : ce chercheur utilise l'API theTVDB.com. SVP, aidez à l'améliorer "
 "l'information sur theTVDB.com en cliquant le lien."
 
 #: platform/listengines/audioclipslistengine.cpp:93
@@ -2165,7 +2165,7 @@ msgstr "Saison %1"
 #~ msgstr "Lancer Script"
 
 #~ msgid "Choose Interpreter:"
-#~ msgstr "Choisissez l'interpréteur : "
+#~ msgstr "Choisissez l'interpréteur : "
 
 #~ msgid "Bangarang - Scripting Console"
 #~ msgstr "Bangarang - Console de Scripting"
@@ -2372,7 +2372,7 @@ msgstr "Saison %1"
 #~ msgstr "Aciver/Désactiver l'affichage du temps restant"
 
 #~ msgid "Toggle fullscreen"
-#~ msgstr "Activer / désactiver le mode plein écran"
+#~ msgstr "Activer / désactiver le mode plein écran"
 
 #~ msgid "Show Scripting Console"
 #~ msgstr "Afficher la console de scripting"
@@ -2404,7 +2404,7 @@ msgstr "Saison %1"
 #~ msgstr "%1"
 
 #~ msgid "Files with Tag '%1'"
-#~ msgstr "Fichiers avec le Tag « %1 »"
+#~ msgstr "Fichiers avec le Tag « %1 »"
 
 #~ msgid "Edit"
 #~ msgstr "Modifier"

@@ -30,8 +30,8 @@ static KAboutData aboutData( "bangarang", 0,
         ki18n("A media player for your KDE desktop"), KAboutData::License_GPL_V3,
         ki18n("Copyright 2011, Andrew Lake"),
         ki18n("<b>Note:</b> This product uses the TMDb API but is not endorsed or certified by TMDb. Please help improve available information by visiting http://themoviedb.org<br>"
-              "<b>Note:</b> This product uses the Last.fm API but is not endorsed or certified by Last.fm.  Pleace help improve available information by visiting http://last.fm<br>"
-              "<b>Note:</b> This product uses the TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Pleace help improve available information by visiting http://thetvdb.com"),
+              "<b>Note:</b> This product uses the Last.fm API but is not endorsed or certified by Last.fm.  Please help improve available information by visiting http://last.fm<br>"
+              "<b>Note:</b> This product uses the TheTVDB.com API but is not endorsed or certified by TheTVDB.com.  Please help improve available information by visiting http://thetvdb.com"),
         "http://bangarangkde.wordpress.org" );
 
 int main(int argc, char *argv[])
