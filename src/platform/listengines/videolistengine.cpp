@@ -676,6 +676,10 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasVideoEpisodeNumber(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDuration(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoProducer(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasVideoWriter(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
