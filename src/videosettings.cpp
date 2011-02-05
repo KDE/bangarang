@@ -367,7 +367,7 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                 KDialog dialog;
                 dialog.setWindowTitle(i18n("Unknown file encoding"));
                 QVBoxLayout layout;
-                layout.addWidget(new QLabel(i18n("Bangarang can't detect subtitle encoding!<br>Please select from the list:")));
+                layout.addWidget(new QLabel(i18n("Bangarang can’t detect the subtitle encoding<br>Please select the right encoding from the list:")));
                 QComboBox langCombo;
 
                 QString codec;
