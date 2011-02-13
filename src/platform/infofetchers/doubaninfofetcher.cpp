@@ -79,6 +79,9 @@ void DoubanInfoFetcher::timeout()
 
 void DoubanInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, bool updateRequiredFields, bool fetchArtwork)
 {
+    Q_UNUSED(maxMatches);
+    Q_UNUSED(updateRequiredFields);
+    Q_UNUSED(fetchArtwork);
     m_mediaList.clear();
     m_requestKeys.clear();
     m_fetchedMatches.clear();
