@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2011-01-23 21:21-0800\n"
-"PO-Revision-Date: 2010-10-03 21:21+0300\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2011-02-01 21:20+0200\n"
+"Last-Translator: Joonas Sarajärvi\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
@@ -58,9 +58,8 @@ msgid "Add to playlist"
 msgstr "Lisää soittolistaan"
 
 #: actionsmanager.cpp:121 actionsmanager.cpp:334
-#, fuzzy
 msgid "Add after Now Playing"
-msgstr "Näytä tällä hetkellä toistettava"
+msgstr "Lisää nyt toistettavan jälkeen"
 
 #: actionsmanager.cpp:126 actionsmanager.cpp:131
 msgid "Remove from playlist"
@@ -94,7 +93,7 @@ msgstr "Koko näyttö"
 
 #: actionsmanager.cpp:179
 msgid "Save selected info"
-msgstr "Talenna valitut tiedot"
+msgstr "Tallenna valitut tiedot"
 
 #: actionsmanager.cpp:184
 msgid "Remove selected info"
@@ -109,9 +108,8 @@ msgid "Remove from list"
 msgstr "Poista listalta"
 
 #: actionsmanager.cpp:200
-#, fuzzy
 msgid "Add to \"Audio Streams\""
-msgstr "Virrat"
+msgstr "Lisää äänivirtoihin"
 
 #: actionsmanager.cpp:205
 msgid "Add to list"
@@ -135,7 +133,6 @@ msgid "Show information"
 msgstr "Näytä tiedot"
 
 #: actionsmanager.cpp:233 actionsmanager.cpp:354 actionsmanager.cpp:1085
-#, fuzzy
 msgid "Show Info View"
 msgstr "Näytä tiedot"
 
@@ -149,42 +146,37 @@ msgstr "Poista kirjanmerkki"
 
 #: actionsmanager.cpp:249 actionsmanager.cpp:620 actionsmanager.cpp:643
 #: actionsmanager.cpp:692
-#, fuzzy
 msgid "Show shortcuts editor"
-msgstr "Oikotiet"
+msgstr "Näytä pikanäppäimet"
 
 #: actionsmanager.cpp:256
 msgid "Update ontologies..."
 msgstr "Päivitä ontologiat..."
 
 #: actionsmanager.cpp:261
-#, fuzzy
 msgid "Hide in system tray"
-msgstr "Piilota suodatin"
+msgstr "Piilota ilmoitusalueelle"
 
 #: actionsmanager.cpp:271
 msgid "Manage info"
 msgstr "Muokkaa tietoja"
 
 #: actionsmanager.cpp:352 actionsmanager.cpp:1083
-#, fuzzy
 msgid "Hide Info View"
-msgstr "Piilota suodatin"
+msgstr "Piilota tiedot"
 
 #: actionsmanager.cpp:412
-#, fuzzy
 msgid "Play after Now Playing"
-msgstr "Näytä tällä hetkellä toistettava"
+msgstr "Toista tällä hetkellä toistettavan jälkeen"
 
 #: actionsmanager.cpp:435 actionsmanager.cpp:476
-#, fuzzy
 msgid "Hide information"
-msgstr "Näytä tiedot"
+msgstr "Piilota tiedot"
 
 #: actionsmanager.cpp:523
 #, kde-format
 msgid "Chapter %1"
-msgstr "Kappale %1"
+msgstr "Luku %1"
 
 #: actionsmanager.cpp:590
 msgid "Show Controls"
@@ -195,7 +187,6 @@ msgid "Hide Controls"
 msgstr "Piilota säätimet"
 
 #: actionsmanager.cpp:608
-#, fuzzy
 msgid "Hide video settings"
 msgstr "Piilota videoasetukset"
 
@@ -205,26 +196,24 @@ msgstr "Piilota ääniasetukset"
 
 #: actionsmanager.cpp:684
 msgid "Hide shortcuts editor"
-msgstr ""
+msgstr "Piilota pikanäppäimet"
 
 #: actionsmanager.cpp:736
 msgid "Restore Volume"
 msgstr "Palauta äänenvoimakkuus"
 
 #: actionsmanager.cpp:883
-#, fuzzy
 msgid "Restore video size"
-msgstr "Palauta äänenvoimakkuus"
+msgstr "Palauta kuvan koko"
 
 #: actionsmanager.cpp:934
-#, fuzzy
 msgid "Show elapsed time"
 msgstr "Näytä kulunut aika"
 
 #: actionsmanager.cpp:946
-#, fuzzy, kde-format
+#, kde-format
 msgid "Bookmark-%1"
-msgstr "Lisää kirjanmerkki"
+msgstr "Lisää %1 kirjanmerkkeihin"
 
 #: actionsmanager.cpp:1015 actionsmanager.cpp:1022
 msgid "Update Ontologies"
@@ -262,7 +251,7 @@ msgstr "Piilota suodatin"
 
 #: audiosettings.cpp:88
 msgid "No effect"
-msgstr "Ei efektiä"
+msgstr "Ei tehostetta"
 
 #: audiosettings.cpp:92
 msgid "Rock"
@@ -282,7 +271,7 @@ msgstr "Live"
 
 #: audiosettings.cpp:108
 msgid "Classical"
-msgstr "Classical"
+msgstr "Klassinen"
 
 #: audiosettings.cpp:112
 msgid "Blockbuster"
@@ -322,7 +311,7 @@ msgstr "Älä näytä tätä viestiä uudelleen"
 
 #: bangarangapplication.cpp:168 bangarangapplication.cpp:170
 msgid "Resume"
-msgstr "Palauta"
+msgstr "Jatka"
 
 #: bangarangapplication.cpp:375 platform/utilities/mediaitems.cpp:1411
 msgid "DVD Video"
@@ -331,7 +320,7 @@ msgstr "DVD Video"
 #: bangarangapplication.cpp:392 platform/listengines/medialistsengine.cpp:193
 #: platform/utilities/mediaitems.cpp:1418
 msgid "Audio CD"
-msgstr "Ääni CD"
+msgstr "Ääni-CD"
 
 #: infoitemdelegate.cpp:128 infoitemdelegate.cpp:671
 msgid "Music"
@@ -344,7 +333,7 @@ msgstr "Äänivirta"
 
 #: infoitemdelegate.cpp:132 infoitemdelegate.cpp:671
 msgid "Audio Clip"
-msgstr "Ääniklippi"
+msgstr "Äänileike"
 
 #: infoitemdelegate.cpp:137 infoitemdelegate.cpp:681
 msgid "Movie"
@@ -356,7 +345,7 @@ msgstr "TV-sarja"
 
 #: infoitemdelegate.cpp:141 infoitemdelegate.cpp:681
 msgid "Video Clip"
-msgstr "Videoklipit"
+msgstr "Videoleike"
 
 #: infoitemdelegate.cpp:155
 msgid "No description"
@@ -368,28 +357,27 @@ msgstr "Useita arvoja"
 
 #: infoitemdelegate.cpp:493
 msgid "Open artwork file"
-msgstr "Avaa kansikuva tiedosto"
+msgstr "Avaa kansikuvatiedosto"
 
 #: infoitemdelegate.cpp:707
 msgid "Press <Tab> to finish editing."
-msgstr ""
+msgstr "Lopeta muokkaaminen painamamalla <Tab>"
 
 #: infomanager.cpp:285
 msgid "Click to hide"
-msgstr ""
+msgstr "Piilota"
 
 #: infomanager.cpp:287
 msgid "Additional information may be available. <br> Click to show more..."
-msgstr ""
+msgstr "Lisätietoa voi olla saatavilla. <br> Näytä lisää..."
 
 #: main.cpp:30
 msgid "A media player for your KDE desktop"
-msgstr ""
+msgstr "Mediatoistin KDE-työpöydälle"
 
 #: main.cpp:31
-#, fuzzy
 msgid "Copyright 2011, Andrew Lake"
-msgstr "Tekijänoikeus 2010, Andrew Lake"
+msgstr "Tekijänoikeus 2011, Andrew Lake"
 
 #: main.cpp:32
 msgid ""
@@ -416,7 +404,7 @@ msgstr "Stefan Burnicki"
 
 #: main.cpp:42 main.cpp:43 main.cpp:44
 msgid "Contributor"
-msgstr "Kehittäjät"
+msgstr "Kehittäjä"
 
 #: main.cpp:43
 msgid "Andreas Marschke"
@@ -424,13 +412,14 @@ msgstr "Andreas Marschke"
 
 #: main.cpp:44
 msgid "Ni Hui"
-msgstr ""
+msgstr "Ni Hui"
 
 #: main.cpp:46
 msgid ""
 "Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
 msgstr ""
-"Virheistä voidaan ilmoittaa http://code.google.com/p/bangarangissuetracking/"
+"Virheistä voidaan ilmoittaa osoitteessa "
+"http://code.google.com/p/bangarangissuetracking/"
 
 # Osa puuttuu
 #: main.cpp:46
@@ -438,8 +427,8 @@ msgid ""
 "Defects may be reported at <a href='http://code.google.com/p/"
 "bangarangissuetracking/'>Bangarang Issue Tracker</a>"
 msgstr ""
-"Virheistä voidaan ilmoittaa  <a href='http://code.google.com/p/"
-"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
+"Virheistä voidaan ilmoittaa  <a href='http://code.google.com/p"
+"/bangarangissuetracking/'>Bangarangin vianseurantajärjestelmässä</a>"
 
 #: main.cpp:53
 msgid "Play 'URL'"
@@ -461,13 +450,13 @@ msgstr "Näytä tarkempi virheraportti "
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
 #: mainwindow.cpp:187 rc.cpp:299
 msgid "No"
-msgstr ""
+msgstr "Ei"
 
 #. i18n: file: mainwindow.ui:6996
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
 #: mainwindow.cpp:188 rc.cpp:296
 msgid "Yes"
-msgstr ""
+msgstr "Kyllä"
 
 #. i18n: file: mainwindow.ui:5155
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
@@ -480,14 +469,12 @@ msgstr "Soittolista"
 
 # Epävarma
 #: mainwindow.cpp:304
-#, fuzzy
 msgid "Audio Search"
-msgstr "Äänivirta"
+msgstr "Musiikki- ja äänihaku"
 
 #: mainwindow.cpp:311
-#, fuzzy
 msgid "Video Search"
-msgstr "Videoasetukset"
+msgstr "Videohaku"
 
 #: mainwindow.cpp:391
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
@@ -495,11 +482,11 @@ msgstr "<b>Koko näyttö</b><br>Poistu kokoruututilasta"
 
 #: mainwindow.cpp:397
 msgid "Show fullscreen"
-msgstr "Koko näyttö"
+msgstr "Kokoruutu"
 
 #: mainwindow.cpp:416
 msgid "<b>Paused</b><br>Hold to stop"
-msgstr "<b>Pysäytetty</b><br>Paina pysäyttääksesi"
+msgstr "<b>Tauotettu</b><br>Pidä pohjassa pysäyttääksesi"
 
 #. i18n: file: mainwindow.ui:260
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
@@ -519,7 +506,7 @@ msgstr "Tyhjennä soittolista"
 
 #: mainwindow.cpp:522
 msgid "Are you sure you want to clear the current playlist?"
-msgstr "Oletko varma, että tahdot tyhjentää nykyisen soittolistan?"
+msgstr "Tahdotko varmasti tyhjentää nykyisen soittolistan?"
 
 #. i18n: file: mainwindow.ui:2175
 #. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
@@ -530,22 +517,23 @@ msgstr "Toistettava"
 
 #: mainwindow.cpp:548
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
-msgstr "<b>Näytetän seuraava</b><br>Näytä soittolista"
+msgstr "<b>Seuraavaksi toistettavat</b><br>Näytä soittolista"
 
 #. i18n: file: mainwindow.ui:6660
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
 #: mainwindow.cpp:551 rc.cpp:272
 msgid "Show Upcoming"
-msgstr "Näytä seuraava"
+msgstr "Näytä seuraavat"
 
 # huono
 #: mainwindow.cpp:670
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
-msgstr "<b>Toistettava</b><br>Pysäytä<br>Paina ja pidä alhaalla pysäyttääksesi"
+msgstr ""
+"<b>Toistetaan</b><br>Tauko napsauttamalla<br>Pysäytä pitämällä pohjassa"
 
 #: mainwindow.cpp:680
 msgid "An error has been encountered during playback"
-msgstr "Virhe on tapahtunut toiston aikana"
+msgstr "Toistettaessa tapahtui virhe"
 
 #: mainwindow.cpp:734
 msgid "Loading playlist..."
@@ -581,23 +569,23 @@ msgstr "Näytä tällä hetkellä toistettava"
 
 #: mainwindow.cpp:973
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
-msgstr "<b>Toisto päällä</b><br>Paina lopettaaksesi toiston"
+msgstr "<b>Kertaustila käytössä</b><br>Peru kertaustila napsauttamalla"
 
 #. i18n: file: mainwindow.ui:6742
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
 #: mainwindow.cpp:976 rc.cpp:281
 msgid "Turn on Repeat"
-msgstr "Toisto päälle"
+msgstr "Kertaustila"
 
 #: mainwindow.cpp:983
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
-msgstr "<b>Satunnainen valinta<b><br>Paina lopettaaksesi satunnaisen valinnan"
+msgstr "<b>Satunnaistoisto<b><br>Peru satunnaistoisto napsauttamalla"
 
 #. i18n: file: mainwindow.ui:6771
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
 #: mainwindow.cpp:986 rc.cpp:287
 msgid "Turn on Shuffle"
-msgstr "Satunnainen valinta"
+msgstr "Satunnaistoisto"
 
 #: mainwindow.cpp:1105
 msgid "Entertainment... Now"
@@ -617,82 +605,68 @@ msgstr "<b>Aikaa kulunut</b><br>Näytä jäljellä oleva aika ja kirjanmerkit"
 #. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
 #: medialistsettings.cpp:91 medialistsettings.cpp:101
 #: medialistsettings.cpp:111 medialistsettings.cpp:121 rc.cpp:71 rc.cpp:164
-#, fuzzy
 msgid "played"
-msgstr "toistettu kerran"
+msgstr "toistettu"
 
 #: medialistsettings.cpp:96 medialistsettings.cpp:116
 msgid "rated"
-msgstr ""
+msgstr "arvosteltu"
 
 #: mediaview.cpp:140
 msgid "Add to playlist/Remove from playlist"
 msgstr "Lisää soittolistaan/Poista soittolistalta"
 
 #: mediaview.cpp:143
-#, fuzzy
 msgid "Show Songs"
-msgstr "Näytä säätimet"
+msgstr "Kappaleet"
 
 #: mediaview.cpp:145
-#, fuzzy
 msgid "Show Albums"
 msgstr "Albumit"
 
 #: mediaview.cpp:147
-#, fuzzy
 msgid "Show Artists"
 msgstr "Artistit"
 
 #: nowplayingdelegate.cpp:301
-#, fuzzy
 msgid "Artist: "
-msgstr "Artisti"
+msgstr "Artisti: "
 
 #: nowplayingdelegate.cpp:313
-#, fuzzy
 msgid "Composer: "
-msgstr "Valmis"
+msgstr "Säveltäjä: "
 
 #: nowplayingdelegate.cpp:325
-#, fuzzy
 msgid "Album: "
-msgstr "Albumi"
+msgstr "Albumi: "
 
 #: nowplayingdelegate.cpp:337
-#, fuzzy
 msgid "Track: "
-msgstr "Kappale"
+msgstr "Kappale: "
 
 #: nowplayingdelegate.cpp:350 nowplayingdelegate.cpp:381
-#, fuzzy
 msgid "Year: "
-msgstr "Vuosi"
+msgstr "Vuosi: "
 
 #: nowplayingdelegate.cpp:362
-#, fuzzy
 msgid "Genre: "
-msgstr "Genre"
+msgstr "Genre: "
 
 #: nowplayingdelegate.cpp:393
-#, fuzzy
 msgid "Actor: "
-msgstr "Näyttelijä"
+msgstr "Näyttelijä: "
 
 #: nowplayingdelegate.cpp:405
-#, fuzzy
 msgid "Director: "
-msgstr "Ohjaaja"
+msgstr "Ohjaaja: "
 
 #: nowplayingdelegate.cpp:417
-#, fuzzy
 msgid "Writer: "
-msgstr "Käsikirjoittaja"
+msgstr "Käsikirjoittaja: "
 
 #: nowplayingdelegate.cpp:429
-#, fuzzy
 msgid "Producer: "
-msgstr "Tuottaja"
+msgstr "Tuottaja: "
 
 #. i18n: file: mainwindow.ui:6692
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
@@ -705,7 +679,7 @@ msgstr "<b>Soittolista</b>"
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
 msgstr[0] "1 kohde, %2"
-msgstr[1] ""
+msgstr[1] "%1 kohdetta, %2"
 
 #: playlistview.cpp:107 platform/mediaitemmodel.cpp:458
 #: platform/mediaitemmodel.cpp:478 platform/listengines/feedlistengine.cpp:295
@@ -820,7 +794,7 @@ msgstr "Tämänhetkinen soittolista"
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
 #: rc.cpp:41 rc.cpp:134
 msgid "New List Name"
-msgstr "Uusi listan nimi"
+msgstr "Uuden listan nimi"
 
 #. i18n: file: mainwindow.ui:552
 #. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
@@ -860,7 +834,7 @@ msgstr "Palaa listoihin"
 #. i18n: ectx: property (text), widget (QLabel, label_11)
 #: rc.cpp:50 rc.cpp:143
 msgid "Saved List Settings"
-msgstr "Tallenna listan asetukset"
+msgstr "Tallennetun listan asetukset"
 
 #. i18n: file: mainwindow.ui:671
 #. i18n: ectx: property (text), widget (QLabel, label_9)
@@ -893,9 +867,8 @@ msgstr "Ohjelma"
 #. i18n: file: mainwindow.ui:1723
 #. i18n: ectx: property (text), widget (QLabel, label_17)
 #: rc.cpp:68 rc.cpp:161
-#, fuzzy
 msgid "items"
-msgstr "1 kohde"
+msgstr "kohdetta"
 
 #. i18n: file: mainwindow.ui:978
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -903,7 +876,7 @@ msgstr "1 kohde"
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:74 rc.cpp:167
 msgid "before"
-msgstr ""
+msgstr "ennen"
 
 #. i18n: file: mainwindow.ui:983
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -911,7 +884,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:77 rc.cpp:170
 msgid "after"
-msgstr ""
+msgstr "jälkeen"
 
 #. i18n: file: mainwindow.ui:1063
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -923,7 +896,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:80 rc.cpp:92 rc.cpp:173 rc.cpp:185
 msgid "or more"
-msgstr ""
+msgstr "vähintään"
 
 #. i18n: file: mainwindow.ui:1068
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -935,7 +908,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:83 rc.cpp:95 rc.cpp:176 rc.cpp:188
 msgid "exactly"
-msgstr ""
+msgstr "täsmälleen"
 
 #. i18n: file: mainwindow.ui:1073
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -947,7 +920,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:86 rc.cpp:98 rc.cpp:179 rc.cpp:191
 msgid "or less"
-msgstr ""
+msgstr "enintään"
 
 #. i18n: file: mainwindow.ui:1149
 #. i18n: ectx: property (text), widget (QLabel, label_14)
@@ -955,7 +928,7 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, label_28)
 #: rc.cpp:89 rc.cpp:182
 msgid "times"
-msgstr ""
+msgstr "kertaa"
 
 #. i18n: file: mainwindow.ui:1251
 #. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
@@ -1006,38 +979,37 @@ msgstr "Suodatin"
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
 #: rc.cpp:218
 msgid "Additional information may be available from:"
-msgstr ""
+msgstr "Lisätietoa voi olla saatavilla"
 
 #. i18n: file: mainwindow.ui:2885
 #. i18n: ectx: property (text), widget (QToolButton, infoFetch)
 #: rc.cpp:224
 msgid "Fetch info and edit changes"
-msgstr ""
+msgstr "Hae tietoa ja editoi muutoksia"
 
 #. i18n: file: mainwindow.ui:2904
 #. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
 #: rc.cpp:227
 msgid "Fetch info and save changes"
-msgstr ""
+msgstr "Hae tietoa ja tallenna muutokset"
 
 #. i18n: file: mainwindow.ui:2924
 #. i18n: ectx: property (text), widget (QLabel, label_27)
 #: rc.cpp:230
 msgid "Matches"
-msgstr ""
+msgstr "Osumat"
 
 #. i18n: file: mainwindow.ui:3010
 #. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
 #: rc.cpp:236
 msgid "Cancel Edit"
-msgstr "Peruuta editointi"
+msgstr "Peruuta muokkaus"
 
 #. i18n: file: mainwindow.ui:3057
 #. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
 #: rc.cpp:239
-#, fuzzy
 msgid "Index Selected"
-msgstr "Toista valittu"
+msgstr "Indeksoi valittu"
 
 #. i18n: file: mainwindow.ui:3126
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
@@ -1078,7 +1050,6 @@ msgstr "Toista valittu"
 #. i18n: file: mainwindow.ui:5106
 #. i18n: ectx: property (text), widget (QLabel, extSubtitle)
 #: rc.cpp:260
-#, fuzzy
 msgid "ExternalSubtitle"
 msgstr "Tekstitykset"
 
@@ -1086,7 +1057,7 @@ msgstr "Tekstitykset"
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
 #: rc.cpp:266
 msgid "Error message"
-msgstr ""
+msgstr "Virheilmoitus"
 
 #. i18n: file: mainwindow.ui:6745
 #. i18n: ectx: property (text), widget (QToolButton, repeat)
@@ -1101,7 +1072,6 @@ msgstr "[ ]"
 #. i18n: file: mainwindow.ui:6983
 #. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
 #: rc.cpp:293
-#, fuzzy
 msgid "Notification"
 msgstr "Ilmoitus"
 
@@ -1114,9 +1084,8 @@ msgstr "Ääniasetukset"
 #. i18n: file: mainwindow.ui:7202
 #. i18n: ectx: property (text), widget (QLabel, label_20)
 #: rc.cpp:314
-#, fuzzy
 msgid "Audio Channel:"
-msgstr "Äänikanavat"
+msgstr "Äänikanava: "
 
 #. i18n: file: mainwindow.ui:7266
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
@@ -1222,48 +1191,42 @@ msgstr "Videoasetukset"
 #. i18n: file: mainwindow.ui:7841
 #. i18n: ectx: property (text), widget (QLabel, label_26)
 #: rc.cpp:365
-#, fuzzy
 msgid "Subtitle:"
-msgstr "Tekstitykset"
+msgstr "Tekstitykset:"
 
 #. i18n: file: mainwindow.ui:7888
 #. i18n: ectx: property (text), widget (QLabel, label_25)
 #: rc.cpp:368
-#, fuzzy
 msgid "Angle:"
-msgstr "Kuvakulma"
+msgstr "Kuvakulma:"
 
 #. i18n: file: mainwindow.ui:7944
 #. i18n: ectx: property (text), widget (QLabel, label_21)
 #: rc.cpp:371
-#, fuzzy
 msgid "Brightness:"
-msgstr "Kirkkaus"
+msgstr "Kirkkaus:"
 
 #. i18n: file: mainwindow.ui:7991
 #. i18n: ectx: property (text), widget (QLabel, label_22)
 #: rc.cpp:374
-#, fuzzy
 msgid "Contrast:"
-msgstr "Kontrasti"
+msgstr "Kontrasti:"
 
 #. i18n: file: mainwindow.ui:8038
 #. i18n: ectx: property (text), widget (QLabel, label_23)
 #: rc.cpp:377
 msgid "Hue:"
-msgstr ""
+msgstr "Sävy"
 
 #. i18n: file: mainwindow.ui:8085
 #. i18n: ectx: property (text), widget (QLabel, label_24)
 #: rc.cpp:380
-#, fuzzy
 msgid "Saturation:"
-msgstr "Kylläisyys"
+msgstr "Kylläisyys:"
 
 #. i18n: file: mainwindow.ui:8148
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
 #: rc.cpp:383
-#, fuzzy
 msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
@@ -1294,9 +1257,8 @@ msgstr "16:9"
 #. i18n: file: mainwindow.ui:8191
 #. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
 #: rc.cpp:398
-#, fuzzy
 msgid "Scaling"
-msgstr "Skaalaus moodi"
+msgstr "Skaalaus"
 
 #. i18n: file: mainwindow.ui:8203
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
@@ -1314,13 +1276,13 @@ msgstr "Skaalaa ja rajaa"
 #. i18n: ectx: property (text), widget (QLabel, label_13)
 #: rc.cpp:413
 msgid "Shortcuts"
-msgstr "Oikotiet"
+msgstr "Pikanäppäimet"
 
 #. i18n: file: mainwindow.ui:8303
 #. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
 #: rc.cpp:416
 msgid "Save Shortcuts"
-msgstr "Tallenan oikotiet"
+msgstr "Tallenna pikanäppäimet"
 
 #. i18n: file: mainwindow.ui:8373
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
@@ -1332,7 +1294,7 @@ msgstr "Näytä medialistat"
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
 #: rc.cpp:428
 msgid "Show full screen"
-msgstr "Näytä koko näyttö"
+msgstr "Kokoruutu"
 
 #. i18n: file: mainwindow.ui:8522
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
@@ -1382,9 +1344,8 @@ msgid "Artist"
 msgstr "Artisti"
 
 #: platform/infoitemmodel.cpp:79
-#, fuzzy
 msgid "Composer"
-msgstr "Valmis"
+msgstr "Säveltäjä"
 
 #: platform/infoitemmodel.cpp:80
 msgid "Album"
@@ -1442,7 +1403,7 @@ msgstr "Jakso"
 
 #: platform/infoitemmodel.cpp:94
 msgid "Links"
-msgstr ""
+msgstr "Linkit"
 
 #: platform/infoitemmodel.cpp:95
 msgid "Play Count"
@@ -1456,20 +1417,19 @@ msgstr "Viimeksi toistetu"
 #, kde-format
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Haetaan tietoa %1 kohteelle"
+msgstr[1] "Haetaan tietoa %1 kohteille"
 
 #: platform/infoitemmodel.cpp:503
 #, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Haettiin yhden kohteen tiedot..."
+msgstr[1] "Haettiin %1 kohteesta %2:n tiedot..."
 
 #: platform/infoitemmodel.cpp:527
-#, fuzzy
 msgid "No Results"
-msgstr "Ei hakutuloksia"
+msgstr "Ei tuloksia"
 
 #: platform/infoitemmodel.cpp:1069
 #: platform/listengines/musiclistengine.cpp:123
@@ -1566,7 +1526,7 @@ msgstr "Viimeaikoina toistetut"
 #: platform/utilities/mediaitems.cpp:1001
 #: platform/utilities/mediaitems.cpp:1013
 msgid "Highest Rated"
-msgstr "Parhaiten arvostettu"
+msgstr "Parhaiten arvosteltu"
 
 #: platform/infoitemmodel.cpp:1075 platform/infoitemmodel.cpp:1087
 #: platform/infoitemmodel.cpp:1091
@@ -1596,27 +1556,25 @@ msgid "Frequently Played"
 msgstr "Useasti toistetut"
 
 #: platform/infoitemmodel.cpp:1106
-#, fuzzy
 msgid "Fetch Canceled"
-msgstr "Peruuta"
+msgstr "Nouto peruutettu"
 
 #: platform/mediaindexer.cpp:87 platform/mediaindexer.cpp:122
 msgid "Starting update..."
-msgstr ""
+msgstr "Käynnistetään päivitys..."
 
 #: platform/mediaindexer.cpp:255
 #, kde-format
 msgid "Updated: %1 - %2"
-msgstr ""
+msgstr "Päivitetty: %1 - %2"
 
 #: platform/mediaindexer.cpp:260
 msgid "Removing info..."
-msgstr ""
+msgstr "Poistetaan tietoja..."
 
 #: platform/mediaitemmodel.cpp:455 platform/mediaitemmodel.cpp:475
-#, fuzzy
 msgid "Multiple"
-msgstr "Useita %1"
+msgstr "Useita"
 
 #: platform/mediaitemmodel.cpp:456 platform/mediaitemmodel.cpp:476
 #, kde-format
@@ -1630,7 +1588,8 @@ msgstr "Ei hakutuloksia"
 #: platform/ontologyupdater.cpp:87 platform/ontologyupdater.cpp:200
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
 msgstr ""
-"<b>Päivitetään äänityyppejä ja asetuksia</b><br>0 kohdetta päivitettiin..."
+"<b>Päivitetään äänityyppejä ja asetuksia</b>"
+"<br>0 kohdetta päivitettiin..."
 
 #: platform/ontologyupdater.cpp:174
 #, kde-format
@@ -1658,56 +1617,60 @@ msgstr "DBPedia"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
-msgstr ""
+msgstr "Tämä hakija etsii tietoa osoitteesta DBPedia.org"
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
-#, fuzzy
 msgid "Feed Info"
-msgstr "Tiedo"
+msgstr "Syötteen tiedot"
 
 #: platform/infofetchers/feedinfofetcher.cpp:37
 msgid "This fetcher gets information for the feed at the specified location."
-msgstr ""
+msgstr "Tämä hakija etsii tietoa syötteelle määritellystä paikasta"
 
 #: platform/infofetchers/filenameinfofetcher.cpp:31
 msgid "Filename Info"
-msgstr ""
+msgstr "Tiedostonimen tiedot"
 
 #: platform/infofetchers/filenameinfofetcher.cpp:33
 msgid ""
 "This fetcher uses guesses the season and episode number based on a filename "
 "pattern. E.g.  2x23 or S02E23 or 2.23"
 msgstr ""
+"Tämä hakija arvaa tuotantokauden ja "
+"jakson numeron tiedostonimen perusteella."
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
-msgstr ""
+msgstr "Last.fm"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:41
 msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
-msgstr ""
+msgstr "Huom: Tämä hakija käyttää Last.fm -palvelun tarjoamaa "
+"rajapintaa, mutta se ei virallisti ole Last.fm:n tukema."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
 msgid "TMDb"
-msgstr ""
+msgstr "TMDb."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:39
 msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
-msgstr ""
+msgstr "Huom: Tämä hakija käyttää TMDb -palvelun tarjoamaa "
+"rajapintaa, mutta se ei virallisti ole TMDb:n tukema."
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:36
 msgid "TVDB"
-msgstr ""
+msgstr "TVDB"
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:39
 msgid ""
 "Note: This fetcher uses theTVDB.com API. Please help improve theTVDB.com "
 "information by clicking the link."
-msgstr ""
+msgstr "Tämä hakija käyttää theTVDB:n rajapintaa. "
+"Tietoja theTVDB:n kehittämisestä saat napsauttamalla linkkiä."
 
 #: platform/listengines/audioclipslistengine.cpp:93
 #: platform/listengines/audioclipslistengine.cpp:138
@@ -1755,54 +1718,52 @@ msgstr "DVD Video - %1 nimikettä"
 
 #: platform/listengines/feedlistengine.cpp:111
 msgid "New audio feed"
-msgstr "Uusi äänilähde"
+msgstr "Uusi syöte"
 
 #: platform/listengines/feedlistengine.cpp:112
 msgid "Edit info to create new audio feed"
-msgstr "Luo uusi äänilähde muokkaamalla tietoja"
+msgstr "Luo uusi syöte muokkaamalla tietoja"
 
 #: platform/listengines/feedlistengine.cpp:122
 #: platform/listengines/feedlistengine.cpp:184
 #, kde-format
 msgid "1 feed"
 msgid_plural "%1 feeds"
-msgstr[0] "1 lähde"
-msgstr[1] "%1 lähdettä"
+msgstr[0] "1 syöte"
+msgstr[1] "%1 syötettä"
 
 #: platform/listengines/feedlistengine.cpp:173
 msgid "New video feed"
-msgstr "Uusi videolähde"
+msgstr "Uusi syöte"
 
 #: platform/listengines/feedlistengine.cpp:174
 msgid "Edit info to create new video feed"
-msgstr "Luo uusi videolähde muokkaamalla tietoja"
+msgstr "Luo uusi syöte muokkaamalla tietoja"
 
 #: platform/listengines/filelistengine.cpp:70
 msgid "Collecting file info..."
-msgstr ""
+msgstr "Tutkitaan tiedostoa..."
 
 #: platform/listengines/filelistengine.cpp:317
 #, kde-format
 msgid "Collecting file info (%1 files)..."
-msgstr ""
+msgstr "Tutkitaan %1 tiedostoa..."
 
 #: platform/listengines/medialistsengine.cpp:67
 #: platform/listengines/medialistsengine.cpp:77
 #: platform/listengines/medialistsengine.cpp:87
 #: platform/listengines/medialistsengine.cpp:93
 #: platform/listengines/musiclistengine.cpp:132
-#, fuzzy
 msgid "Artists"
-msgstr "Artisti"
+msgstr "Artistit"
 
 #: platform/listengines/medialistsengine.cpp:68
 #: platform/listengines/medialistsengine.cpp:78
 #: platform/listengines/medialistsengine.cpp:88
 #: platform/listengines/medialistsengine.cpp:103
 #: platform/listengines/musiclistengine.cpp:226
-#, fuzzy
 msgid "Albums"
-msgstr "Albumi"
+msgstr "Albumit"
 
 #: platform/listengines/medialistsengine.cpp:69
 #: platform/listengines/medialistsengine.cpp:79
@@ -1824,7 +1785,7 @@ msgstr "Kappaleet"
 
 #: platform/listengines/medialistsengine.cpp:134
 msgid "Clips"
-msgstr "Pätkiä"
+msgstr "Leikkeet"
 
 #: platform/listengines/medialistsengine.cpp:145
 msgid "Audio Streams"
@@ -1832,7 +1793,7 @@ msgstr "Virrat"
 
 #: platform/listengines/medialistsengine.cpp:156
 msgid "Audio Feeds"
-msgstr "Äänivirrat"
+msgstr "Syötteet"
 
 #: platform/listengines/medialistsengine.cpp:176
 #: platform/listengines/medialistsengine.cpp:359
@@ -1867,9 +1828,8 @@ msgstr "Elokuvat"
 #: platform/listengines/medialistsengine.cpp:325
 #: platform/listengines/medialistsengine.cpp:335
 #: platform/listengines/medialistsengine.cpp:352
-#, fuzzy
 msgid "Recently Watched"
-msgstr "Viimeaikoina katsotut klipit"
+msgstr "Viimeaikoina katsotut"
 
 #: platform/listengines/medialistsengine.cpp:287
 #: platform/listengines/medialistsengine.cpp:297
@@ -1878,9 +1838,8 @@ msgstr "Viimeaikoina katsotut klipit"
 #: platform/listengines/medialistsengine.cpp:327
 #: platform/listengines/medialistsengine.cpp:337
 #: platform/listengines/medialistsengine.cpp:354
-#, fuzzy
 msgid "Frequently Watched"
-msgstr "Usein katsotut klipit"
+msgstr "Usein katsotut"
 
 #: platform/listengines/medialistsengine.cpp:290
 #: platform/listengines/videolistengine.cpp:258
@@ -1890,11 +1849,11 @@ msgstr "TV-sarjat"
 #: platform/listengines/medialistsengine.cpp:330
 #: platform/listengines/videolistengine.cpp:169
 msgid "Video Clips"
-msgstr "Videoklipit"
+msgstr "Videoleikkeet"
 
 #: platform/listengines/medialistsengine.cpp:340
 msgid "Video Feeds"
-msgstr "Videolähteet"
+msgstr "Syötteet"
 
 #: platform/listengines/musiclistengine.cpp:136
 #, kde-format
@@ -1950,11 +1909,11 @@ msgstr[1] "%1 kappaletta"
 
 #: platform/listengines/semanticslistengine.cpp:185
 #: platform/listengines/semanticslistengine.cpp:189
-#, fuzzy, kde-format
+#, kde-format
 msgid "played once"
 msgid_plural "played %1 times"
 msgstr[0] "toistettu kerran"
-msgstr[1] "toistettu kerran"
+msgstr[1] "toistettu %1 kertaa"
 
 #: platform/listengines/taglistengine.cpp:112
 #, kde-format
@@ -2007,10 +1966,10 @@ msgstr[0] "1 tuotantokausi"
 msgstr[1] "%1 tuotantokautta"
 
 #: platform/listengines/videolistengine.cpp:436
-#, fuzzy, kde-format
+#, kde-format
 msgctxt "%1=Name of the series, %2=Number of the Season"
 msgid "%1 - Season %2"
-msgstr "%1 - Tuotantokausi 2%"
+msgstr "%1 - %2. Tuotantokausi"
 
 #: platform/listengines/videolistengine.cpp:438
 #, kde-format
@@ -2019,11 +1978,11 @@ msgid "%1 - Uncategorized Seasons"
 msgstr "%1 - Luokittelemattomia tuotantokausia"
 
 #: platform/listengines/videolistengine.cpp:440
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 episode"
 msgid_plural "%1 episodes"
-msgstr[0] "Jakso"
-msgstr[1] "Jakso"
+msgstr[0] "1 jakso"
+msgstr[1] "%1 jaksoa"
 
 #: platform/listengines/videolistengine.cpp:545
 #, kde-format
@@ -2033,11 +1992,11 @@ msgstr[0] "1 näyttelijä"
 msgstr[1] "%1 näyttelijää"
 
 #: platform/listengines/videolistengine.cpp:603
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 director"
 msgid_plural "%1 directors"
 msgstr[0] "1 ohjaaja"
-msgstr[1] "1% ohjaajia"
+msgstr[1] "1% ohjaajaa"
 
 #: platform/utilities/artwork.cpp:535
 msgid "folder"
@@ -2047,47 +2006,47 @@ msgstr "kansio"
 #, kde-format
 msgid "a year ago"
 msgid_plural "%1 years ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "vuosi sitten"
+msgstr[1] "%1 vuotta sitten"
 
 #: platform/utilities/general.cpp:392
 #, kde-format
 msgid "a month ago"
 msgid_plural "%1 months ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "kuukausi sitten"
+msgstr[1] "%1 kuukautta sitten"
 
 #: platform/utilities/general.cpp:394
 #, kde-format
 msgid "a week ago"
 msgid_plural "%1 weeks ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "viikko sitten "
+msgstr[1] "%1 viikkoa sitten"
 
 #: platform/utilities/general.cpp:396
 #, kde-format
 msgid "a day ago"
 msgid_plural "%1 days ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "vuorokausi sitten"
+msgstr[1] "%1 päivää sitten"
 
 #: platform/utilities/general.cpp:398
 #, kde-format
 msgid "an hour ago"
 msgid_plural "%1 hours ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "tunti sitten"
+msgstr[1] "%1 tuntia sitten"
 
 #: platform/utilities/general.cpp:400
 #, kde-format
 msgid "a minute ago"
 msgid_plural "%1 minutes ago"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "minuutti sitten"
+msgstr[1] "%1 minuuttia sitten"
 
 #: platform/utilities/general.cpp:402
 msgid "a few seconds ago"
-msgstr ""
+msgstr "muutama sekunti sitten"
 
 #: platform/utilities/mediaitems.cpp:114
 #, kde-format
@@ -2095,19 +2054,18 @@ msgid "Title %1"
 msgstr "Nimike %1"
 
 #: platform/utilities/mediaitems.cpp:116
-#, fuzzy
 msgid "Full Disc"
-msgstr "Koko näyttö"
+msgstr "Täysi levy"
 
 #: platform/utilities/mediaitems.cpp:1391
-#, fuzzy, kde-format
+#, kde-format
 msgid "Season %1"
 msgstr "Tuotantokausi %1"
 
 #: platform/utilities/mediaitems.cpp:1399
-#, fuzzy, kde-format
+#, kde-format
 msgid "Episode %1"
-msgstr "Jakso"
+msgstr "Jakso %1"
 
 #: platform/utilities/mediaitems.cpp:1405
 #, kde-format
