@@ -1,22 +1,22 @@
 # This is the czech translation of bangarang.
 # Copyright (C) 2009 bangarang-project
 # This file is distributed under the same license as the PACKAGE package.
-# Oskar Hollmann <oskarhollmann@gmail.com>, 2010.
 #
-#, fuzzy
+# Oskar Hollmann <oskarhollmann@gmail.com>, 2010, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
 "POT-Creation-Date: 2011-01-23 21:21-0800\n"
-"PO-Revision-Date: 2010-01-16 01:10+0100\n"
+"PO-Revision-Date: 2011-02-02 10:39+0100\n"
 "Last-Translator: Oskar Hollmann <oskarhollmann@gmail.com>\n"
-"Language-Team: \n"
+"Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: actionsmanager.cpp:62
 msgid "Quit"
@@ -24,16 +24,15 @@ msgstr "Zavřít"
 
 #: actionsmanager.cpp:68
 msgid "Play/Pause"
-msgstr ""
+msgstr "Přehrát/Pozastavit"
 
 #: actionsmanager.cpp:76
-#, fuzzy
 msgid "Play"
-msgstr "Přehrát vše"
+msgstr "Přehrát"
 
 #: actionsmanager.cpp:81
 msgid "Pause"
-msgstr ""
+msgstr "Pozastavit"
 
 #: actionsmanager.cpp:86
 msgid "Play next"
@@ -45,7 +44,7 @@ msgstr "Přehrát předchozí"
 
 #: actionsmanager.cpp:100 actionsmanager.cpp:739
 msgid "Mute"
-msgstr ""
+msgstr "Ztlumit"
 
 #: actionsmanager.cpp:106
 msgid "Play all"
@@ -60,9 +59,8 @@ msgid "Add to playlist"
 msgstr "Přidat do seznamu stop"
 
 #: actionsmanager.cpp:121 actionsmanager.cpp:334
-#, fuzzy
 msgid "Add after Now Playing"
-msgstr "Procházet právě přehrávané"
+msgstr "Přidat za právě přehrávané"
 
 #: actionsmanager.cpp:126 actionsmanager.cpp:131
 msgid "Remove from playlist"
@@ -73,35 +71,30 @@ msgid "Hide controls"
 msgstr "Skrýt ovládání"
 
 #: actionsmanager.cpp:143 actionsmanager.cpp:1055 actionsmanager.cpp:1060
-#, fuzzy
 msgid "Show filter"
-msgstr "Zobrazit položky"
+msgstr "Zobrazit filtr"
 
 #: actionsmanager.cpp:149 actionsmanager.cpp:936
 msgid "Show remaining time"
-msgstr ""
+msgstr "Zobrazit zbývající čas"
 
 #: actionsmanager.cpp:154 actionsmanager.cpp:616 actionsmanager.cpp:642
 #: actionsmanager.cpp:695 mainwindow.cpp:377
-#, fuzzy
 msgid "Show video settings"
 msgstr "Zobrazit nastavení videa"
 
 #: actionsmanager.cpp:160 actionsmanager.cpp:619 actionsmanager.cpp:639
 #: actionsmanager.cpp:696 mainwindow.cpp:378
-#, fuzzy
 msgid "Show audio settings"
-msgstr "Zobrazit nastavení videa"
+msgstr "Zobrazit nastavení zvuku"
 
 #: actionsmanager.cpp:166
-#, fuzzy
 msgid "Fullscreen"
 msgstr "Celá obrazovka"
 
 #: actionsmanager.cpp:179
-#, fuzzy
 msgid "Save selected info"
-msgstr "Odstranit vybrané informace"
+msgstr "Uložit vybrané informace"
 
 #: actionsmanager.cpp:184
 msgid "Remove selected info"
@@ -116,9 +109,8 @@ msgid "Remove from list"
 msgstr "Odebrat ze seznamu"
 
 #: actionsmanager.cpp:200
-#, fuzzy
 msgid "Add to \"Audio Streams\""
-msgstr "Zvukové proudy"
+msgstr "Přidat ke zvukovým proudům"
 
 #: actionsmanager.cpp:205
 msgid "Add to list"
@@ -138,110 +130,95 @@ msgstr "Zobrazit položky"
 
 #: actionsmanager.cpp:228 actionsmanager.cpp:432 actionsmanager.cpp:473
 #: actionsmanager.cpp:887
-#, fuzzy
 msgid "Show information"
-msgstr "Informace"
+msgstr "Zobrazit Informace"
 
 #: actionsmanager.cpp:233 actionsmanager.cpp:354 actionsmanager.cpp:1085
-#, fuzzy
 msgid "Show Info View"
-msgstr "Informace"
+msgstr "Zobrazit Informace"
 
 #: actionsmanager.cpp:238
 msgid "Add bookmark"
-msgstr ""
+msgstr "Přidat záložku"
 
 #: actionsmanager.cpp:245
-#, fuzzy
 msgid "Remove bookmarks"
-msgstr "Odebrat ze seznamu"
+msgstr "Odebrat záložky"
 
 #: actionsmanager.cpp:249 actionsmanager.cpp:620 actionsmanager.cpp:643
 #: actionsmanager.cpp:692
-#, fuzzy
 msgid "Show shortcuts editor"
-msgstr "Uložit zkratky"
+msgstr "Klávesové zkratky"
 
 #: actionsmanager.cpp:256
-#, fuzzy
 msgid "Update ontologies..."
-msgstr "Aktualizace..."
+msgstr "Aktualizace sbírky..."
 
 #: actionsmanager.cpp:261
-#, fuzzy
 msgid "Hide in system tray"
-msgstr "Video soubory"
+msgstr "Skrýt v panelu"
 
 #: actionsmanager.cpp:271
 msgid "Manage info"
-msgstr ""
+msgstr "Upravit informace"
 
 #: actionsmanager.cpp:352 actionsmanager.cpp:1083
-#, fuzzy
 msgid "Hide Info View"
-msgstr "Video soubory"
+msgstr "Skrýt informace"
 
 #: actionsmanager.cpp:412
-#, fuzzy
 msgid "Play after Now Playing"
-msgstr "Procházet právě přehrávané"
+msgstr "Přehrát po právě přehrávaném"
 
 #: actionsmanager.cpp:435 actionsmanager.cpp:476
-#, fuzzy
 msgid "Hide information"
-msgstr "Informace"
+msgstr "Skrýt informace"
 
 #: actionsmanager.cpp:523
 #, kde-format
 msgid "Chapter %1"
-msgstr ""
+msgstr "Kapitola%1 "
 
 #: actionsmanager.cpp:590
-#, fuzzy
 msgid "Show Controls"
-msgstr "Zobrazit podrobnosti"
+msgstr "Zobrazit ovládání"
 
 #: actionsmanager.cpp:594
-#, fuzzy
 msgid "Hide Controls"
-msgstr "Skrýt ovládání"
+msgstr "Skrýt ovládání "
 
 #: actionsmanager.cpp:608
-#, fuzzy
 msgid "Hide video settings"
 msgstr "Skrýt nastavení videa"
 
 #: actionsmanager.cpp:631
-#, fuzzy
 msgid "Hide audio settings"
-msgstr "Skrýt nastavení videa"
+msgstr "Skrýt nastavení zvuku"
 
 #: actionsmanager.cpp:684
 msgid "Hide shortcuts editor"
-msgstr ""
+msgstr "Skrýt klávesové zkratky"
 
 #: actionsmanager.cpp:736
-#, fuzzy
 msgid "Restore Volume"
-msgstr "Ztlumit"
+msgstr "Obnovit zvuk"
 
 #: actionsmanager.cpp:883
-#, fuzzy
 msgid "Restore video size"
-msgstr "Ztlumit"
+msgstr "Obnovit velikost videa"
 
 #: actionsmanager.cpp:934
 msgid "Show elapsed time"
-msgstr ""
+msgstr "Zobrazit uplynulý čas"
 
 #: actionsmanager.cpp:946
 #, kde-format
 msgid "Bookmark-%1"
-msgstr ""
+msgstr "Záložka-%1"
 
 #: actionsmanager.cpp:1015 actionsmanager.cpp:1022
 msgid "Update Ontologies"
-msgstr ""
+msgstr "Aktualizovat sbírku"
 
 #. i18n: file: mainwindow.ui:8310
 #. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
@@ -256,62 +233,63 @@ msgid ""
 "necessary if you recently upgraded Bangarang or your KDE software "
 "compilation. <br><br>This may take several minutes."
 msgstr ""
+"Aktualizace sbírky zajišťuje, že informace o mediích jsou uloženy ve formě, "
+"která je nejlépe dostupná ostatním aplikacím.  Aktualizovat sbírku je potřeba "
+"pouze pokud jste nedávno přešli na novou verzi Bangarangu nebo KDE.<br><br>"
+"Toto může trvat několik minut."
 
 #: actionsmanager.cpp:1026
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 #: actionsmanager.cpp:1029
-#, fuzzy
 msgid "Close"
-msgstr "Klipy"
+msgstr "Zavřít"
 
 #: actionsmanager.cpp:1053 actionsmanager.cpp:1058
-#, fuzzy
 msgid "Hide filter"
-msgstr "Video soubory"
+msgstr "Skrýt filtr"
 
 #: audiosettings.cpp:88
 msgid "No effect"
-msgstr ""
+msgstr "Žádný efekt"
 
 #: audiosettings.cpp:92
 msgid "Rock"
-msgstr ""
+msgstr "Rock"
 
 #: audiosettings.cpp:96
 msgid "Reggae"
-msgstr ""
+msgstr "Reggae"
 
 #: audiosettings.cpp:100
-#, fuzzy
 msgid "Dance"
-msgstr "Zrušit"
+msgstr "Dance"
 
 #: audiosettings.cpp:104
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: audiosettings.cpp:108
 msgid "Classical"
-msgstr ""
+msgstr "Klasika"
 
 #: audiosettings.cpp:112
 msgid "Blockbuster"
-msgstr ""
+msgstr "Senzace"
 
 #: audiosettings.cpp:116
 msgid "Documentary"
-msgstr ""
+msgstr "Dokumentární"
 
 #: audiosettings.cpp:120
 msgid "Drama"
-msgstr ""
+msgstr "Drama"
 
 #: audiosettings.cpp:124 audiosettings.cpp:149 audiosettings.cpp:166
 #: audiosettings.cpp:185 audiosettings.cpp:216
 msgid "Manual"
-msgstr ""
+msgstr "Manuálně"
 
 #: bangarangapplication.cpp:124
 msgid ""
@@ -330,11 +308,11 @@ msgstr "Bangarang"
 
 #: bangarangapplication.cpp:124
 msgid "Don't show this message again"
-msgstr "Tuto zprávu již nezobrazovat"
+msgstr "Tuto zprávu již nezobrazovat."
 
 #: bangarangapplication.cpp:168 bangarangapplication.cpp:170
 msgid "Resume"
-msgstr ""
+msgstr "Pokračovat"
 
 #: bangarangapplication.cpp:375 platform/utilities/mediaitems.cpp:1411
 msgid "DVD Video"
@@ -347,16 +325,15 @@ msgstr "Hudební CD"
 
 #: infoitemdelegate.cpp:128 infoitemdelegate.cpp:671
 msgid "Music"
-msgstr ""
+msgstr "Hudba"
 
 #: infoitemdelegate.cpp:130 infoitemdelegate.cpp:671
-#, fuzzy
 msgid "Audio Stream"
-msgstr "Zvukové proudy"
+msgstr "Zvukový proud"
 
 #: infoitemdelegate.cpp:132 infoitemdelegate.cpp:671
 msgid "Audio Clip"
-msgstr "Zvukový klip"
+msgstr "Hudební klip"
 
 #: infoitemdelegate.cpp:137 infoitemdelegate.cpp:681
 #, fuzzy
@@ -374,35 +351,32 @@ msgid "Video Clip"
 msgstr "Video klipy"
 
 #: infoitemdelegate.cpp:155
-#, fuzzy
 msgid "No description"
-msgstr "Popis"
+msgstr "Žádný popis"
 
 #: infoitemdelegate.cpp:164
-#, fuzzy
 msgid "Multiple Values"
-msgstr "Vícenásobné %1"
+msgstr "Více položek"
 
 #: infoitemdelegate.cpp:493
-#, fuzzy
 msgid "Open artwork file"
-msgstr "Otevřít zvukové soubory"
+msgstr "Otevřít soubor s obalem"
 
 #: infoitemdelegate.cpp:707
 msgid "Press <Tab> to finish editing."
-msgstr ""
+msgstr "Stiskněte <Tab> pro ukončení editace."
 
 #: infomanager.cpp:285
 msgid "Click to hide"
-msgstr ""
+msgstr "Kliknutím skryjte."
 
 #: infomanager.cpp:287
 msgid "Additional information may be available. <br> Click to show more..."
-msgstr ""
+msgstr "Možná jsou dostupné další informace <br> Kliknutím zobrazte..."
 
 #: main.cpp:30
 msgid "A media player for your KDE desktop"
-msgstr ""
+msgstr "Přehrávač multimédií pro KDE."
 
 #: main.cpp:31
 #, fuzzy
@@ -414,11 +388,20 @@ msgid ""
 "<b>Note:</b> This product uses the TMDb API but is not endorsed or certified "
 "by TMDb. Please help improve available information by visiting http://"
 "themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but is not "
-"endorsed or certified by Last.fm.  Please help improve available information "
+"endorsed or certified by Last.fm.  Pleace help improve available information "
 "by visiting http://last.fm<br><b>Note:</b> This product uses the TheTVDB.com "
-"API but is not endorsed or certified by TheTVDB.com.  Please help improve "
+"API but is not endorsed or certified by TheTVDB.com.  Pleace help improve "
 "available information by visiting http://thetvdb.com"
 msgstr ""
+"<b>Poznámka:</b> Tento produkt používá TMDb API, ale není schválen ani "
+"certifikován TMDb. Prosím, pomozte vylepšit dostupné informace na stránce "
+"http://themoviedb.org<br>"
+"<b>Poznámka:</b> Tento produkt používá Last.fm API, ale není schválen ani "
+"certifikován Last.fm.  Prosím, pomozte vylepšit dostupné informace na stránce "
+"http://last.fm<br> "
+"<b>Note:</b> Tento produkt používá TheTVDB.com, ale není schválen ani "
+"certifikován  TheTVDB.com.  Prosím, pomozte vylepšit dostupné informace na "
+"stránce http://thetvdb.com"
 
 #: main.cpp:41
 msgid "Andrew (Jamboarder) Lake"
@@ -430,7 +413,7 @@ msgstr "Tvůrce"
 
 #: main.cpp:42
 msgid "Stefan Burnicki"
-msgstr ""
+msgstr "Stefan Burnicki"
 
 #: main.cpp:42 main.cpp:43 main.cpp:44
 msgid "Contributor"
@@ -442,14 +425,13 @@ msgstr "Andreas Marschke"
 
 #: main.cpp:44
 msgid "Ni Hui"
-msgstr ""
+msgstr "Ni Hui"
 
 #: main.cpp:46
-#, fuzzy
 msgid ""
 "Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
 msgstr ""
-"Chyby můžou být nahlášeny na <a href='http://code.google.com/p/"
+"Chyby mohou být nahlášeny na <a href='http://code.google.com/p/"
 "bangarangissuetracking/'>Bangarang Issue Tracker</a>"
 
 #: main.cpp:46
@@ -457,7 +439,7 @@ msgid ""
 "Defects may be reported at <a href='http://code.google.com/p/"
 "bangarangissuetracking/'>Bangarang Issue Tracker</a>"
 msgstr ""
-"Chyby můžou být nahlášeny na <a href='http://code.google.com/p/"
+"Chyby mohou být nahlášeny na <a href='http://code.google.com/p/"
 "bangarangissuetracking/'>Bangarang Issue Tracker</a>"
 
 #: main.cpp:53
@@ -474,19 +456,19 @@ msgstr "Přehrát hudební CD"
 
 #: main.cpp:56
 msgid "Show Additional Debug Output"
-msgstr "Ukázat dodatečný debugovací výstup"
+msgstr "Zobrazit dodatečný debugovací výstup"
 
 #. i18n: file: mainwindow.ui:7006
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
 #: mainwindow.cpp:187 rc.cpp:299
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #. i18n: file: mainwindow.ui:6996
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
 #: mainwindow.cpp:188 rc.cpp:296
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #. i18n: file: mainwindow.ui:5155
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
@@ -498,14 +480,12 @@ msgid "Playlist"
 msgstr "Seznam stop"
 
 #: mainwindow.cpp:304
-#, fuzzy
 msgid "Audio Search"
-msgstr "Zvukové proudy"
+msgstr "Hledat audio"
 
 #: mainwindow.cpp:311
-#, fuzzy
 msgid "Video Search"
-msgstr "Nastavení videa"
+msgstr "Hledat video"
 
 #: mainwindow.cpp:391
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
@@ -517,7 +497,7 @@ msgstr "Celá obrazovka"
 
 #: mainwindow.cpp:416
 msgid "<b>Paused</b><br>Hold to stop"
-msgstr "<b>Pozastaveno</b><br>Podržením tlačítka zastavíte"
+msgstr "<b>Pozastaveno</b><br>Podržením tlačítka zastavte"
 
 #. i18n: file: mainwindow.ui:260
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
@@ -533,7 +513,7 @@ msgstr "Hledat video"
 #. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
 #: mainwindow.cpp:521 rc.cpp:278
 msgid "Clear Playlist"
-msgstr "Vymazat seznam stop"
+msgstr "Smazat seznam stop"
 
 #: mainwindow.cpp:522
 msgid "Are you sure you want to clear the current playlist?"
@@ -548,7 +528,7 @@ msgstr "Přehrává se"
 
 #: mainwindow.cpp:548
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
-msgstr "<b>Zobrazit následující</b><br>Click to show playlist"
+msgstr "<b>Zobrazit následující</b><br>Kliknutím zobrazte seznam stop"
 
 #. i18n: file: mainwindow.ui:6660
 #. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
@@ -563,7 +543,7 @@ msgstr ""
 
 #: mainwindow.cpp:680
 msgid "An error has been encountered during playback"
-msgstr "Během přehrávání se vykytla chyba"
+msgstr "Během přehrávání se vyskytla chyba"
 
 #: mainwindow.cpp:734
 msgid "Loading playlist..."
@@ -579,7 +559,7 @@ msgstr "Načítání..."
 
 #: mainwindow.cpp:762
 msgid "<b>Muted</b><br>Click to restore volume"
-msgstr "<b>Ztlumeno</b><br>Zrušit kliknutím"
+msgstr "<b>Ztlumeno</b><br>Kliknutím zrušit"
 
 #. i18n: file: mainwindow.ui:8645
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
@@ -599,17 +579,17 @@ msgstr "Procházet právě přehrávané"
 
 #: mainwindow.cpp:973
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
-msgstr "<b>Opakovat</b><br>Kliknutím vypnete opakování"
+msgstr "<b>Opakovat</b><br>Kliknutím vypnout opakování"
 
 #. i18n: file: mainwindow.ui:6742
 #. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
 #: mainwindow.cpp:976 rc.cpp:281
 msgid "Turn on Repeat"
-msgstr "Vypnout opakování"
+msgstr "Zapnout opakování"
 
 #: mainwindow.cpp:983
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
-msgstr "<b>Náhodné přehrávání</b><br>Kliknutím vypnete náhodné přehrávání"
+msgstr "<b>Náhodné přehrávání</b><br>Kliknutím vypnout náhodné přehrávání"
 
 #. i18n: file: mainwindow.ui:6771
 #. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
@@ -622,14 +602,12 @@ msgid "Entertainment... Now"
 msgstr "Zábava... Právě teď."
 
 #: mainwindow.cpp:1253
-#, fuzzy
 msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
-msgstr "<b>Zbývající čas</b><br>Zobrazit uplynulý čas"
+msgstr "<b>Zbývající čas</b><br>Zobrazit uplynulý čas a záložky"
 
 #: mainwindow.cpp:1255
-#, fuzzy
 msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
-msgstr "<b>Uplynulý čas</b><br>Zobrazit zbývající čas"
+msgstr "<b>Uplynulý čas</b><br>Zobrazit zbývající čas a záložky"
 
 #. i18n: file: mainwindow.ui:909
 #. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
@@ -637,82 +615,68 @@ msgstr "<b>Uplynulý čas</b><br>Zobrazit zbývající čas"
 #. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
 #: medialistsettings.cpp:91 medialistsettings.cpp:101
 #: medialistsettings.cpp:111 medialistsettings.cpp:121 rc.cpp:71 rc.cpp:164
-#, fuzzy
 msgid "played"
-msgstr "Přehrát další"
+msgstr "přehráno"
 
 #: medialistsettings.cpp:96 medialistsettings.cpp:116
 msgid "rated"
-msgstr ""
+msgstr "ohodnoceno"
 
 #: mediaview.cpp:140
 msgid "Add to playlist/Remove from playlist"
 msgstr "Přidat/Odebrat ze seznamu"
 
 #: mediaview.cpp:143
-#, fuzzy
 msgid "Show Songs"
-msgstr "Zobrazit podrobnosti"
+msgstr "Zobrazit skladby"
 
 #: mediaview.cpp:145
-#, fuzzy
 msgid "Show Albums"
-msgstr "Alba"
+msgstr "Zobrazit alba"
 
 #: mediaview.cpp:147
-#, fuzzy
 msgid "Show Artists"
-msgstr "Umělci"
+msgstr "Zobrazit umělce"
 
 #: nowplayingdelegate.cpp:301
-#, fuzzy
 msgid "Artist: "
-msgstr "Umělec"
+msgstr "Umělec: "
 
 #: nowplayingdelegate.cpp:313
-#, fuzzy
 msgid "Composer: "
-msgstr "Dokončeno"
+msgstr "Skladatel: "
 
 #: nowplayingdelegate.cpp:325
-#, fuzzy
 msgid "Album: "
-msgstr "Album"
+msgstr "Album: "
 
 #: nowplayingdelegate.cpp:337
-#, fuzzy
 msgid "Track: "
-msgstr "Skladba %1"
+msgstr "Skladba: "
 
 #: nowplayingdelegate.cpp:350 nowplayingdelegate.cpp:381
-#, fuzzy
 msgid "Year: "
-msgstr "Rok"
+msgstr "Rok: "
 
 #: nowplayingdelegate.cpp:362
-#, fuzzy
 msgid "Genre: "
-msgstr "Žánr"
+msgstr "Žánr: "
 
 #: nowplayingdelegate.cpp:393
-#, fuzzy
 msgid "Actor: "
-msgstr "Herec"
+msgstr "Herec: "
 
 #: nowplayingdelegate.cpp:405
-#, fuzzy
 msgid "Director: "
-msgstr "Režisér"
+msgstr "Režisér: "
 
 #: nowplayingdelegate.cpp:417
-#, fuzzy
 msgid "Writer: "
-msgstr "Scénárista"
+msgstr "Scénárista: "
 
 #: nowplayingdelegate.cpp:429
-#, fuzzy
 msgid "Producer: "
-msgstr "Producent"
+msgstr "Producent: "
 
 #. i18n: file: mainwindow.ui:6692
 #. i18n: ectx: property (text), widget (QLabel, playlistName)
@@ -724,9 +688,9 @@ msgstr "<b>Seznam stop</b>"
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
-msgstr[0] "1 položka"
-msgstr[1] "%1 položky"
-msgstr[2] "%1 položek"
+msgstr[0] "1 položka, %2"
+msgstr[1] "%1 položky, %2"
+msgstr[2] "%1 položek, %2"
 
 #: playlistview.cpp:107 platform/mediaitemmodel.cpp:458
 #: platform/mediaitemmodel.cpp:478 platform/listengines/feedlistengine.cpp:295
@@ -907,18 +871,16 @@ msgstr "Název seznamu"
 #. i18n: file: mainwindow.ui:1700
 #. i18n: ectx: property (text), widget (QLabel, label_16)
 #: rc.cpp:65 rc.cpp:158
-#, fuzzy
 msgid "Show"
-msgstr "Seriály"
+msgstr "Seriál"
 
 #. i18n: file: mainwindow.ui:853
 #. i18n: ectx: property (text), widget (QLabel, label_32)
 #. i18n: file: mainwindow.ui:1723
 #. i18n: ectx: property (text), widget (QLabel, label_17)
 #: rc.cpp:68 rc.cpp:161
-#, fuzzy
 msgid "items"
-msgstr "1 položka"
+msgstr "položky"
 
 #. i18n: file: mainwindow.ui:978
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -926,7 +888,7 @@ msgstr "1 položka"
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:74 rc.cpp:167
 msgid "before"
-msgstr ""
+msgstr "před"
 
 #. i18n: file: mainwindow.ui:983
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -934,7 +896,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:77 rc.cpp:170
 msgid "after"
-msgstr ""
+msgstr "potom"
 
 #. i18n: file: mainwindow.ui:1063
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -946,7 +908,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:80 rc.cpp:92 rc.cpp:173 rc.cpp:185
 msgid "or more"
-msgstr ""
+msgstr "nebo více"
 
 #. i18n: file: mainwindow.ui:1068
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -958,7 +920,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:83 rc.cpp:95 rc.cpp:176 rc.cpp:188
 msgid "exactly"
-msgstr ""
+msgstr "přesně"
 
 #. i18n: file: mainwindow.ui:1073
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -970,7 +932,7 @@ msgstr ""
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
 #: rc.cpp:86 rc.cpp:98 rc.cpp:179 rc.cpp:191
 msgid "or less"
-msgstr ""
+msgstr "nebo méně"
 
 #. i18n: file: mainwindow.ui:1149
 #. i18n: ectx: property (text), widget (QLabel, label_14)
@@ -978,7 +940,7 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QLabel, label_28)
 #: rc.cpp:89 rc.cpp:182
 msgid "times"
-msgstr ""
+msgstr "krát"
 
 #. i18n: file: mainwindow.ui:1251
 #. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
@@ -1022,47 +984,44 @@ msgstr "..."
 #. i18n: file: mainwindow.ui:7114
 #. i18n: ectx: property (text), widget (QLabel, label_18)
 #: rc.cpp:215 rc.cpp:308
-#, fuzzy
 msgid "Filter"
-msgstr "Přizpůsobit oknu"
+msgstr "Filtr"
 
 #. i18n: file: mainwindow.ui:2844
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
 #: rc.cpp:218
 msgid "Additional information may be available from:"
-msgstr ""
+msgstr "Další informace mohou být dostupné na:"
 
 #. i18n: file: mainwindow.ui:2885
 #. i18n: ectx: property (text), widget (QToolButton, infoFetch)
 #: rc.cpp:224
 msgid "Fetch info and edit changes"
-msgstr ""
+msgstr "Stáhnout informace a upravit změny"
 
 #. i18n: file: mainwindow.ui:2904
 #. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
 #: rc.cpp:227
 msgid "Fetch info and save changes"
-msgstr ""
+msgstr "Stáhnout informace a uložit změny"
 
 #. i18n: file: mainwindow.ui:2924
 #. i18n: ectx: property (text), widget (QLabel, label_27)
 #: rc.cpp:230
 msgid "Matches"
-msgstr ""
+msgstr "Shoduje se"
 
 #. i18n: file: mainwindow.ui:3010
 #. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
 #: rc.cpp:236
-#, fuzzy
 msgid "Cancel Edit"
-msgstr "Zrušit"
+msgstr "Zrušit změny"
 
 #. i18n: file: mainwindow.ui:3057
 #. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
 #: rc.cpp:239
-#, fuzzy
 msgid "Index Selected"
-msgstr "Přehrát vybrané"
+msgstr "Indexovat vybrané"
 
 #. i18n: file: mainwindow.ui:3126
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
@@ -1104,13 +1063,13 @@ msgstr "Přehrát vybrané"
 #. i18n: ectx: property (text), widget (QLabel, extSubtitle)
 #: rc.cpp:260
 msgid "ExternalSubtitle"
-msgstr ""
+msgstr "Externí titulky"
 
 #. i18n: file: mainwindow.ui:5219
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
 #: rc.cpp:266
 msgid "Error message"
-msgstr ""
+msgstr "Chybová zpráva"
 
 #. i18n: file: mainwindow.ui:6745
 #. i18n: ectx: property (text), widget (QToolButton, repeat)
@@ -1125,41 +1084,38 @@ msgstr "[ ]"
 #. i18n: file: mainwindow.ui:6983
 #. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
 #: rc.cpp:293
-#, fuzzy
 msgid "Notification"
-msgstr "Text upozornění"
+msgstr "Upozornění"
 
 #. i18n: file: mainwindow.ui:7153
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: rc.cpp:311
-#, fuzzy
 msgid "Audio Settings"
-msgstr "Nastavení videa"
+msgstr "Nastavení zvuku"
 
 #. i18n: file: mainwindow.ui:7202
 #. i18n: ectx: property (text), widget (QLabel, label_20)
 #: rc.cpp:314
-#, fuzzy
 msgid "Audio Channel:"
-msgstr "Zvukový klip"
+msgstr "Zvukový kanál:"
 
 #. i18n: file: mainwindow.ui:7266
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
 #: rc.cpp:317
 msgid "Equalizer"
-msgstr ""
+msgstr "Ekvalizér"
 
 #. i18n: file: mainwindow.ui:7284
 #. i18n: ectx: property (text), widget (QLabel, label_12)
 #: rc.cpp:320
 msgid "Presets"
-msgstr ""
+msgstr "Přednastavení"
 
 #. i18n: file: mainwindow.ui:7347
 #. i18n: ectx: property (text), widget (QLabel, eq1Label)
 #: rc.cpp:323
 msgid "Pre"
-msgstr ""
+msgstr "Před"
 
 #. i18n: file: mainwindow.ui:7385
 #. i18n: ectx: property (text), widget (QLabel, eq2Label)
@@ -1247,45 +1203,41 @@ msgstr "Nastavení videa"
 #. i18n: ectx: property (text), widget (QLabel, label_26)
 #: rc.cpp:365
 msgid "Subtitle:"
-msgstr ""
+msgstr "Titulky:"
 
 #. i18n: file: mainwindow.ui:7888
 #. i18n: ectx: property (text), widget (QLabel, label_25)
 #: rc.cpp:368
 msgid "Angle:"
-msgstr ""
+msgstr "Úhel:"
 
 #. i18n: file: mainwindow.ui:7944
 #. i18n: ectx: property (text), widget (QLabel, label_21)
 #: rc.cpp:371
-#, fuzzy
 msgid "Brightness:"
-msgstr "Jas"
+msgstr "Jas:"
 
 #. i18n: file: mainwindow.ui:7991
 #. i18n: ectx: property (text), widget (QLabel, label_22)
 #: rc.cpp:374
-#, fuzzy
 msgid "Contrast:"
-msgstr "Kontrast"
+msgstr "Kontrast:"
 
 #. i18n: file: mainwindow.ui:8038
 #. i18n: ectx: property (text), widget (QLabel, label_23)
 #: rc.cpp:377
 msgid "Hue:"
-msgstr ""
+msgstr "Odstín:"
 
 #. i18n: file: mainwindow.ui:8085
 #. i18n: ectx: property (text), widget (QLabel, label_24)
 #: rc.cpp:380
-#, fuzzy
 msgid "Saturation:"
-msgstr "Nasycení"
+msgstr "Nasycení:"
 
 #. i18n: file: mainwindow.ui:8148
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
 #: rc.cpp:383
-#, fuzzy
 msgid "Aspect Ratio"
 msgstr "Poměr stran"
 
@@ -1316,7 +1268,6 @@ msgstr ""
 #. i18n: file: mainwindow.ui:8191
 #. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
 #: rc.cpp:398
-#, fuzzy
 msgid "Scaling"
 msgstr "Změna měřítka"
 
@@ -1335,9 +1286,8 @@ msgstr "Oříznout"
 #. i18n: file: mainwindow.ui:8287
 #. i18n: ectx: property (text), widget (QLabel, label_13)
 #: rc.cpp:413
-#, fuzzy
 msgid "Shortcuts"
-msgstr "Uložit zkratky"
+msgstr "Zkratky"
 
 #. i18n: file: mainwindow.ui:8303
 #. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
@@ -1372,23 +1322,21 @@ msgstr "Hlasitost"
 #: savedlistsmanager.cpp:83 savedlistsmanager.cpp:99
 #: platform/listengines/audiostreamlistengine.cpp:101
 #: platform/listengines/feedlistengine.cpp:175
-#, fuzzy
 msgid "Untitled"
-msgstr "Název"
+msgstr "Bez názvu"
 
 #: savedlistsmanager.cpp:177 savedlistsmanager.cpp:215
-#, fuzzy
 msgid "Remove"
-msgstr "Odstranit seznam"
+msgstr "Odstranit"
 
 #: savedlistsmanager.cpp:179 savedlistsmanager.cpp:217
-#, fuzzy, kde-format
+#, kde-format
 msgid "Are you sure you want to remove \"%1\"?"
-msgstr "Jste si jisti, že chcete smazat současný seznam stop?"
+msgstr "Jste si jisti, že chcete smazat \"%1\"?"
 
 #: videosettings.cpp:231 videosettings.cpp:250
 msgid "Disable"
-msgstr ""
+msgstr "Vypnout"
 
 #: platform/infoitemmodel.cpp:75 platform/infoitemmodel.cpp:86
 msgid "Type"
@@ -1407,18 +1355,16 @@ msgid "Artist"
 msgstr "Umělec"
 
 #: platform/infoitemmodel.cpp:79
-#, fuzzy
 msgid "Composer"
-msgstr "Dokončeno"
+msgstr "Skladatel"
 
 #: platform/infoitemmodel.cpp:80
 msgid "Album"
 msgstr "Album"
 
 #: platform/infoitemmodel.cpp:81
-#, fuzzy
 msgid "Track"
-msgstr "Skladba %1"
+msgstr "Skladba"
 
 #: platform/infoitemmodel.cpp:82
 msgid "Year"
@@ -1432,7 +1378,7 @@ msgstr "Žánr"
 #: platform/listengines/medialistsengine.cpp:347
 #: platform/listengines/taglistengine.cpp:111
 msgid "Tags"
-msgstr ""
+msgstr "Štítky"
 
 #: platform/infoitemmodel.cpp:85 platform/infoitemmodel.cpp:566
 msgid "Location"
@@ -1455,9 +1401,8 @@ msgid "Producer"
 msgstr "Producent"
 
 #: platform/infoitemmodel.cpp:91
-#, fuzzy
 msgid "Series"
-msgstr "Název seriálu"
+msgstr "Seriál"
 
 #: platform/infoitemmodel.cpp:92
 msgid "Season"
@@ -1469,12 +1414,11 @@ msgstr "Epizoda"
 
 #: platform/infoitemmodel.cpp:94
 msgid "Links"
-msgstr ""
+msgstr "Odkazy"
 
 #: platform/infoitemmodel.cpp:95
-#, fuzzy
 msgid "Play Count"
-msgstr "Přehrát další"
+msgstr "Počet přehrání"
 
 #: platform/infoitemmodel.cpp:96
 #, fuzzy
@@ -1485,17 +1429,17 @@ msgstr "Nedávno hrané"
 #, kde-format
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Stahuji informace o %1 položce..."
+msgstr[1] "Stahuji informace o %1 položkách..."
+msgstr[2] "Stahuji informace o %1 položce..."
 
 #: platform/infoitemmodel.cpp:503
 #, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Staženy informace o %1 položce..."
+msgstr[1] "Staženy informace o %1 položkách..."
+msgstr[2] "Staženy informace o %1 položkách..."
 
 #: platform/infoitemmodel.cpp:527
 #, fuzzy
@@ -1511,9 +1455,8 @@ msgstr "Žádné výsledky"
 #: platform/utilities/mediaitems.cpp:771 platform/utilities/mediaitems.cpp:784
 #: platform/utilities/mediaitems.cpp:887 platform/utilities/mediaitems.cpp:906
 #: platform/utilities/mediaitems.cpp:924
-#, fuzzy
 msgid "Recently Played Songs"
-msgstr "Nedávno hrané"
+msgstr "Nedávno hrané skladby"
 
 #: platform/infoitemmodel.cpp:1070
 #: platform/listengines/musiclistengine.cpp:124
@@ -1524,9 +1467,8 @@ msgstr "Nedávno hrané"
 #: platform/utilities/mediaitems.cpp:772 platform/utilities/mediaitems.cpp:785
 #: platform/utilities/mediaitems.cpp:888 platform/utilities/mediaitems.cpp:907
 #: platform/utilities/mediaitems.cpp:925
-#, fuzzy
 msgid "Highest Rated Songs"
-msgstr "Nejlepší hodnocení"
+msgstr "Nejlépe hodnocené skladby"
 
 #: platform/infoitemmodel.cpp:1071
 #: platform/listengines/musiclistengine.cpp:125
@@ -1537,9 +1479,8 @@ msgstr "Nejlepší hodnocení"
 #: platform/utilities/mediaitems.cpp:773 platform/utilities/mediaitems.cpp:786
 #: platform/utilities/mediaitems.cpp:889 platform/utilities/mediaitems.cpp:908
 #: platform/utilities/mediaitems.cpp:926
-#, fuzzy
 msgid "Frequently Played Songs"
-msgstr "Často hrané"
+msgstr "Často hrané skladby"
 
 #: platform/infoitemmodel.cpp:1073 platform/infoitemmodel.cpp:1085
 #: platform/infoitemmodel.cpp:1089
@@ -1600,7 +1541,7 @@ msgstr "Nedávno hrané"
 #: platform/utilities/mediaitems.cpp:1001
 #: platform/utilities/mediaitems.cpp:1013
 msgid "Highest Rated"
-msgstr "Nejlepší hodnocení"
+msgstr "Nejlépe hodnocené"
 
 #: platform/infoitemmodel.cpp:1075 platform/infoitemmodel.cpp:1087
 #: platform/infoitemmodel.cpp:1091
@@ -1630,27 +1571,25 @@ msgid "Frequently Played"
 msgstr "Často hrané"
 
 #: platform/infoitemmodel.cpp:1106
-#, fuzzy
 msgid "Fetch Canceled"
-msgstr "Zrušit"
+msgstr "Stahování zrušeno"
 
 #: platform/mediaindexer.cpp:87 platform/mediaindexer.cpp:122
 msgid "Starting update..."
-msgstr ""
+msgstr "Začínám aktualizaci..."
 
 #: platform/mediaindexer.cpp:255
 #, kde-format
 msgid "Updated: %1 - %2"
-msgstr ""
+msgstr "Aktualizuji: %1 - %2"
 
 #: platform/mediaindexer.cpp:260
 msgid "Removing info..."
-msgstr ""
+msgstr "Odstraňuji informaci..."
 
 #: platform/mediaitemmodel.cpp:455 platform/mediaitemmodel.cpp:475
-#, fuzzy
 msgid "Multiple"
-msgstr "Vícenásobné %1"
+msgstr "Více položek"
 
 #: platform/mediaitemmodel.cpp:456 platform/mediaitemmodel.cpp:476
 #, kde-format
@@ -1663,25 +1602,25 @@ msgstr "Žádné výsledky"
 
 #: platform/ontologyupdater.cpp:87 platform/ontologyupdater.cpp:200
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
-msgstr ""
+msgstr "<b>Aktualizuji audio soubory</b><br>0 položek aktualizováno..."
 
 #: platform/ontologyupdater.cpp:174
 #, kde-format
 msgid "<b>Updating audio types and properties</b><br>%1 audio items done..."
-msgstr ""
+msgstr "<b>Aktualizuji audio soubory</b><br>%1 položek aktualizováno..."
 
 #: platform/ontologyupdater.cpp:355
 #, kde-format
 msgid "<b>Updating video types and properties</b><br>%1 video items done..."
-msgstr ""
+msgstr "<b>Aktualizuji audio soubory</b><br>%1 položek aktualizováno..."
 
 #: platform/ontologyupdater.cpp:361
 msgid "<b>Update complete.</b>"
-msgstr ""
+msgstr "<b>Aktualizace dokončena.</b>"
 
 #: platform/ontologyupdater.cpp:363
 msgid "<b>Update stopped.</b>"
-msgstr ""
+msgstr "<b>Aktualizace přerušena.</b>"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:35
 msgid "DBPedia"
@@ -1689,26 +1628,27 @@ msgstr ""
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
-msgstr ""
+msgstr "Zde lze stáhnout informace z DBPedia.org."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
-#, fuzzy
 msgid "Feed Info"
-msgstr "Podrobnosti"
+msgstr "Podrobnosti o kanálu"
 
 #: platform/infofetchers/feedinfofetcher.cpp:37
 msgid "This fetcher gets information for the feed at the specified location."
-msgstr ""
+msgstr "Zde lze stáhnout informace o kanálu na určené adrese."
 
 #: platform/infofetchers/filenameinfofetcher.cpp:31
 msgid "Filename Info"
-msgstr ""
+msgstr "Podrobnosti o souboru"
 
 #: platform/infofetchers/filenameinfofetcher.cpp:33
 msgid ""
 "This fetcher uses guesses the season and episode number based on a filename "
 "pattern. E.g.  2x23 or S02E23 or 2.23"
 msgstr ""
+"Zde lze uhádnout sezónu a číslo epizody podle vzoru na základě jména souboru. "
+"Např. 2x23, S02E23 nebo 2.23."
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
@@ -1719,6 +1659,8 @@ msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
+"Poznámka: Tento nástroj na stahování informací používá Last.fm API, ale není "
+"schválen ani certifikován Last.fm."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
 msgid "TMDb"
@@ -1729,6 +1671,8 @@ msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
 msgstr ""
+"Poznámka: Tento nástroj na stahování informací používá TMDb API, ale není "
+"schválen ani certifikován TMDb API."
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:36
 msgid "TVDB"
@@ -1739,6 +1683,8 @@ msgid ""
 "Note: This fetcher uses theTVDB.com API. Please help improve theTVDB.com "
 "information by clicking the link."
 msgstr ""
+"Poznámka: Tento nástroj na stahování informací používá  theTVDB.com API. "
+"Prosím, pomozte vylepšit informace na theTVDB.com kliknutím na odkaz."
 
 #: platform/listengines/audioclipslistengine.cpp:93
 #: platform/listengines/audioclipslistengine.cpp:138
@@ -1764,9 +1710,8 @@ msgid "New Audio Stream"
 msgstr "Nový zvukový proud"
 
 #: platform/listengines/audiostreamlistengine.cpp:99
-#, fuzzy
 msgid "Edit info to create new audio stream"
-msgstr "Vytvořit nový zvukový proud"
+msgstr "Zadat údaje pro vytvoření nového zvukového proudu"
 
 #: platform/listengines/cdlistengine.cpp:88
 #, fuzzy, kde-format
@@ -1789,14 +1734,12 @@ msgid "DVD Video - %1 Titles"
 msgstr "Video DVD - %1 tituly"
 
 #: platform/listengines/feedlistengine.cpp:111
-#, fuzzy
 msgid "New audio feed"
-msgstr "Nový zvukový proud"
+msgstr "Nový zvukový kanál"
 
 #: platform/listengines/feedlistengine.cpp:112
-#, fuzzy
 msgid "Edit info to create new audio feed"
-msgstr "Vytvořit nový zvukový proud"
+msgstr "Zadat údaje pro vytvoření nového zvukového kanálu"
 
 #: platform/listengines/feedlistengine.cpp:122
 #: platform/listengines/feedlistengine.cpp:184
@@ -1808,41 +1751,37 @@ msgstr[1] "%1 žánry"
 msgstr[2] "%1 žánrů"
 
 #: platform/listengines/feedlistengine.cpp:173
-#, fuzzy
 msgid "New video feed"
-msgstr "Otevřít video soubory"
+msgstr "Nový video kanál"
 
 #: platform/listengines/feedlistengine.cpp:174
-#, fuzzy
 msgid "Edit info to create new video feed"
-msgstr "Vytvořit nový zvukový proud"
+msgstr "Zadat údaje pro vytvoření nového video kanálu"
 
 #: platform/listengines/filelistengine.cpp:70
 msgid "Collecting file info..."
-msgstr ""
+msgstr "Načítám informace o souboru..."
 
 #: platform/listengines/filelistengine.cpp:317
 #, kde-format
 msgid "Collecting file info (%1 files)..."
-msgstr ""
+msgstr "Načítám informace (%1 souborů)..."
 
 #: platform/listengines/medialistsengine.cpp:67
 #: platform/listengines/medialistsengine.cpp:77
 #: platform/listengines/medialistsengine.cpp:87
 #: platform/listengines/medialistsengine.cpp:93
 #: platform/listengines/musiclistengine.cpp:132
-#, fuzzy
 msgid "Artists"
-msgstr "Umělec"
+msgstr "Umělci"
 
 #: platform/listengines/medialistsengine.cpp:68
 #: platform/listengines/medialistsengine.cpp:78
 #: platform/listengines/medialistsengine.cpp:88
 #: platform/listengines/medialistsengine.cpp:103
 #: platform/listengines/musiclistengine.cpp:226
-#, fuzzy
 msgid "Albums"
-msgstr "Album"
+msgstr "Alba"
 
 #: platform/listengines/medialistsengine.cpp:69
 #: platform/listengines/medialistsengine.cpp:79
@@ -1871,9 +1810,8 @@ msgid "Audio Streams"
 msgstr "Zvukové proudy"
 
 #: platform/listengines/medialistsengine.cpp:156
-#, fuzzy
 msgid "Audio Feeds"
-msgstr "Zvukové soubory"
+msgstr "Zvukové kanály"
 
 #: platform/listengines/medialistsengine.cpp:176
 #: platform/listengines/medialistsengine.cpp:359
@@ -1885,18 +1823,16 @@ msgstr "Soubory a adresáře"
 #: platform/listengines/medialistsengine.cpp:275
 #: platform/listengines/medialistsengine.cpp:310
 #: platform/listengines/videolistengine.cpp:544
-#, fuzzy
 msgid "Actors"
-msgstr "Herec"
+msgstr "Herci"
 
 #: platform/listengines/medialistsengine.cpp:256
 #: platform/listengines/medialistsengine.cpp:266
 #: platform/listengines/medialistsengine.cpp:276
 #: platform/listengines/medialistsengine.cpp:320
 #: platform/listengines/videolistengine.cpp:602
-#, fuzzy
 msgid "Directors"
-msgstr "Režisér"
+msgstr "Režiséři"
 
 #: platform/listengines/medialistsengine.cpp:280
 #: platform/listengines/videolistengine.cpp:125
@@ -1910,9 +1846,8 @@ msgstr "Filmy"
 #: platform/listengines/medialistsengine.cpp:325
 #: platform/listengines/medialistsengine.cpp:335
 #: platform/listengines/medialistsengine.cpp:352
-#, fuzzy
 msgid "Recently Watched"
-msgstr "Nedávno hrané"
+msgstr "Nedávno sledované"
 
 #: platform/listengines/medialistsengine.cpp:287
 #: platform/listengines/medialistsengine.cpp:297
@@ -1921,9 +1856,8 @@ msgstr "Nedávno hrané"
 #: platform/listengines/medialistsengine.cpp:327
 #: platform/listengines/medialistsengine.cpp:337
 #: platform/listengines/medialistsengine.cpp:354
-#, fuzzy
 msgid "Frequently Watched"
-msgstr "Často hrané"
+msgstr "Často sledované"
 
 #: platform/listengines/medialistsengine.cpp:290
 #: platform/listengines/videolistengine.cpp:258
@@ -1936,9 +1870,8 @@ msgid "Video Clips"
 msgstr "Video klipy"
 
 #: platform/listengines/medialistsengine.cpp:340
-#, fuzzy
 msgid "Video Feeds"
-msgstr "Video soubory"
+msgstr "Video kanály"
 
 #: platform/listengines/musiclistengine.cpp:136
 #, fuzzy, kde-format
@@ -1948,9 +1881,8 @@ msgstr "Umělci - %1"
 
 #: platform/listengines/musiclistengine.cpp:141
 #: platform/listengines/musiclistengine.cpp:233
-#, fuzzy
 msgid "All songs"
-msgstr "1 skladba"
+msgstr "Všechny skladby"
 
 #: platform/listengines/musiclistengine.cpp:156
 #, kde-format
@@ -1999,12 +1931,12 @@ msgstr[2] "%1 skladeb"
 
 #: platform/listengines/semanticslistengine.cpp:185
 #: platform/listengines/semanticslistengine.cpp:189
-#, fuzzy, kde-format
+#, kde-format
 msgid "played once"
 msgid_plural "played %1 times"
-msgstr[0] "Přehrát další"
-msgstr[1] "Přehrát další"
-msgstr[2] "Přehrát další"
+msgstr[0] "přehráno jednou"
+msgstr[1] "přehráno %1-krát"
+msgstr[2] "přehráno %1-krát"
 
 #: platform/listengines/taglistengine.cpp:112
 #, fuzzy, kde-format
@@ -2032,15 +1964,15 @@ msgstr[2] "%1 filmů"
 #: platform/listengines/videolistengine.cpp:248
 #: platform/listengines/videolistengine.cpp:434
 msgid "Uncategorized TV Shows"
-msgstr "Nesetříděné TV pořady"
+msgstr "Nesetříděné seriály"
 
 #: platform/listengines/videolistengine.cpp:259
 #, kde-format
 msgid "1 show"
 msgid_plural "%1 shows"
-msgstr[0] "1 pořad"
-msgstr[1] "%1 pořady"
-msgstr[2] "%1 pořadů"
+msgstr[0] "1 seriál"
+msgstr[1] "%1 seriály"
+msgstr[2] "%1 seriálu"
 
 #: platform/listengines/videolistengine.cpp:348
 msgid "Uncategorized seasons"
@@ -2067,90 +1999,90 @@ msgid "%1 - Season %2"
 msgstr "%1 - Série %2"
 
 #: platform/listengines/videolistengine.cpp:438
-#, fuzzy, kde-format
+#, kde-format
 msgctxt "%1=Name of the Series"
 msgid "%1 - Uncategorized Seasons"
-msgstr "%1 - Neseztříděné série"
+msgstr "%1 - Nesetříděné série"
 
 #: platform/listengines/videolistengine.cpp:440
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 episode"
 msgid_plural "%1 episodes"
-msgstr[0] "Epizoda"
-msgstr[1] "Epizoda"
-msgstr[2] "Epizoda"
+msgstr[0] "1 epizoda"
+msgstr[1] "%1 epizody"
+msgstr[2] "%1 epizod"
 
 #: platform/listengines/videolistengine.cpp:545
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 actor"
 msgid_plural "%1 actors"
-msgstr[0] "Herec"
-msgstr[1] "Herec"
-msgstr[2] "Herec"
+msgstr[0] "1 herec"
+msgstr[1] "%1 herci"
+msgstr[2] "%1 herců"
 
 #: platform/listengines/videolistengine.cpp:603
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 director"
 msgid_plural "%1 directors"
-msgstr[0] "Režisér"
-msgstr[1] "Režisér"
-msgstr[2] "Režisér"
+msgstr[0] "1 režisér"
+msgstr[1] "%1 režiséři"
+msgstr[2] "%1 režisérů"
 
 #: platform/utilities/artwork.cpp:535
 msgid "folder"
-msgstr ""
+msgstr "adresář"
 
 #: platform/utilities/general.cpp:390
 #, kde-format
 msgid "a year ago"
 msgid_plural "%1 years ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "před rokem"
+msgstr[1] "před %1 lety"
+msgstr[2] "před %1 lety"
 
 #: platform/utilities/general.cpp:392
 #, kde-format
 msgid "a month ago"
 msgid_plural "%1 months ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "před měsícem"
+msgstr[1] "před %1 měsíci"
+msgstr[2] "před %1 měsíci"
 
 #: platform/utilities/general.cpp:394
 #, kde-format
 msgid "a week ago"
 msgid_plural "%1 weeks ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "před týdnem"
+msgstr[1] "před %1 týdny"
+msgstr[2] "před %1 týdny"
 
 #: platform/utilities/general.cpp:396
 #, kde-format
 msgid "a day ago"
 msgid_plural "%1 days ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "včera"
+msgstr[1] "před %1 dny"
+msgstr[2] "před %1 dny"
 
 #: platform/utilities/general.cpp:398
 #, kde-format
 msgid "an hour ago"
 msgid_plural "%1 hours ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "před hodinou"
+msgstr[1] "před %1 hodinami"
+msgstr[2] "před %1 hodinami"
 
 #: platform/utilities/general.cpp:400
 #, kde-format
 msgid "a minute ago"
 msgid_plural "%1 minutes ago"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "před minutou"
+msgstr[1] "před %1 minutami"
+msgstr[2] "před %1 minutami"
 
 #: platform/utilities/general.cpp:402
 msgid "a few seconds ago"
-msgstr ""
+msgstr "před několika sekundami"
 
 #: platform/utilities/mediaitems.cpp:114
 #, kde-format
@@ -2158,9 +2090,8 @@ msgid "Title %1"
 msgstr "Titul %1"
 
 #: platform/utilities/mediaitems.cpp:116
-#, fuzzy
 msgid "Full Disc"
-msgstr "Celá obrazovka"
+msgstr "Celý disk"
 
 #: platform/utilities/mediaitems.cpp:1391
 #, fuzzy, kde-format
