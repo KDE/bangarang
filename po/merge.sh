@@ -4,6 +4,7 @@
 msgmerge -U cs/bangarang.po bangarang.pot
 msgmerge -U da/bangarang.po bangarang.pot
 msgmerge -U de/bangarang.po bangarang.pot
+msgmerge -U el/bangarang.po bangarang.pot
 msgmerge -U es/bangarang.po bangarang.pot
 msgmerge -U fi/bangarang.po bangarang.pot
 msgmerge -U fr/bangarang.po bangarang.pot

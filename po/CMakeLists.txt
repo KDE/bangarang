@@ -1,6 +1,7 @@
 add_subdirectory( cs )
 add_subdirectory( da )
 add_subdirectory( de )
+add_subdirectory( el )
 add_subdirectory( es )
 add_subdirectory( fi )
 add_subdirectory( fr )
