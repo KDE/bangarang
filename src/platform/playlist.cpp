@@ -37,6 +37,7 @@
 #include <actionsmanager.h>
 #include <Solid/Device>
 #include <Solid/Block>
+#include <Solid/PowerManagement>
 
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
@@ -60,6 +61,7 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     m_notificationRestrictions = 0;
     m_filterProxyModel = new MediaSortFilterProxyModel();
     m_playbackInfoChecks = 0;
+    m_powerManagementCookie = -1;
     
     setMediaObject(mediaObject);
 
@@ -652,22 +654,21 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     //NOTE: In KDE 4.6, below is not the correct way to disable power saving.
     //TODO: Update to use new Solid power status api in KDE 4.6 and later.
     bool isKDE46OrGreater = false;
-    if ((KDE::versionMinor() >= 5) && (KDE::versionRelease() >= 90)) {
+    if ((KDE::versionMinor() >= 6)) {
         isKDE46OrGreater = true;
     }
     
-    QDBusInterface iface(
-    		"org.kde.kded",
-    		"/modules/powerdevil",
-    		"org.kde.PowerDevil");
-
-    //NOTE:PowerDevil does not expose the profile() method over dbus which would allow
-    //     determining the current profile and setting to last profile.
     if ((newstate == Phonon::PlayingState || newstate == Phonon::PausedState)
         && oldstate != Phonon::PlayingState
                 && oldstate != Phonon::PausedState) {
 
-        if (!isKDE46OrGreater) {
+        if (isKDE46OrGreater) {
+            m_powerManagementCookie = Solid::PowerManagement::beginSuppressingScreenPowerManagement(i18n("Video Playback"));
+        } else {
+            QDBusInterface iface(
+                        "org.kde.kded",
+                        "/modules/powerdevil",
+                        "org.kde.PowerDevil");
             iface.call("setProfile", "Presentation");
         }
         //Disable screensaver
@@ -676,13 +677,18 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
 
     } else if (newstate == Phonon::StoppedState &&
                (oldstate == Phonon::PlayingState || oldstate == Phonon::PausedState)){
-        /* There is no way to reset the profile to the last used one.
-         * We therefore set the profile always to performance and let the
-         * refreshStatus call handle the case when the computer runs on battery.
-         */
-        //iface.call("setProfile", "Performance");
-        if (!isKDE46OrGreater) {
+        if (isKDE46OrGreater) {
+            Solid::PowerManagement::stopSuppressingScreenPowerManagement(m_powerManagementCookie);
+        } else {
+            QDBusInterface iface(
+                        "org.kde.kded",
+                        "/modules/powerdevil",
+                        "org.kde.PowerDevil");
             iface.call("refreshStatus");
+        }
+        if (m_notificationRestrictions) {
+            delete m_notificationRestrictions;
+            m_notificationRestrictions = 0;
         }
     }
 }
