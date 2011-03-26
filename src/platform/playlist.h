@@ -305,6 +305,7 @@ class Playlist : public QObject
         KNotificationRestrictions * m_notificationRestrictions;
         QList<QString> m_streamListUrls;
         QString m_currentUrl;
+        int m_powerManagementCookie;
         
     private slots:
         void currentSourceChanged(const Phonon::MediaSource & newSource);
