@@ -35,6 +35,8 @@
 #include <KStandardDirs>
 #include <QApplication>
 #include <QPainter>
+#include <QMimeData>
+#include <QFile>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
@@ -912,6 +914,8 @@ bool InfoItemModel::getArtwork(QStandardItem *fieldItem, QString artworkUrlOverr
                 m_utilThread->getArtworksFromMediaItem(mediaItem, ignoreCache);
             }
         } else {
+            //TODO: If Music mediaItems have embedded artwork, this will always return the embedded artwork instead of
+            //      specified artworkUrl. FIX in Utilities.
             QPixmap artwork = Utilities::getArtworkFromMediaItem(mediaItem, ignoreCache);
             if (!artwork.isNull()) {
                 fieldItem->setData(QIcon(artwork), Qt::DecorationRole);
@@ -1119,3 +1123,78 @@ void InfoItemModel::cancelFetching()
         emit fetchComplete();
     }
 }
+
+Qt::DropActions InfoItemModel::supportedDropActions() const
+{
+    return Qt::MoveAction | Qt::CopyAction;
+}
+
+QStringList InfoItemModel::mimeTypes() const
+{
+    QStringList types;
+    types << "text/uri-list" << "image";
+    return types;
+}
+
+Qt::ItemFlags InfoItemModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    QString field = data(index, InfoItemModel::FieldRole).toString();
+    if (index.isValid() && field == "artwork") {
+        useFlags |= Qt::ItemIsDropEnabled;
+    }
+    return useFlags;
+}
+
+bool InfoItemModel::dropMimeData(const QMimeData *mimeData,
+                                     Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    if (parent.column() > 0) {
+        return false;
+    }
+
+    if (parent.row() < 0 || parent.row() >= this->rowCount()) {
+        return false;
+    }
+
+    if (action == Qt::IgnoreAction) {
+        return true;
+    }
+
+    if (!(mimeData->hasUrls() ||
+          mimeData->hasImage())) {
+        return false;
+    }
+
+    QString field = data(index(parent.row(), 0), InfoItemModel::FieldRole).toString();
+    if (field != "artwork") {
+        return false;
+    }
+
+    if (mimeData->hasUrls()) {
+        QList<QUrl> urls = mimeData->urls();
+        if (!urls.isEmpty()) {
+            KUrl url(urls.at(0));
+            if (url.isLocalFile()) {
+                setData(index(parent.row(), 0), url.prettyUrl(), Qt::EditRole);
+                setData(index(parent.row(), 0), false, InfoItemModel::MultipleValuesRole);
+                return true;
+            }
+        }
+    }
+    if (mimeData->hasImage()) {
+        QImage image = qvariant_cast<QImage>(mimeData->imageData());
+        QString thumbnailFilename = QString("bangarang/thumbnails/Dropped-%1.png")
+                                      .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmss"));
+        KUrl thumbnailUrl = KUrl(KStandardDirs::locateLocal("data", thumbnailFilename, true));
+        image.save(thumbnailUrl.path(),"PNG");
+        setData(index(parent.row(), 0), thumbnailUrl.prettyUrl(), Qt::EditRole);
+        setData(index(parent.row(), 0), false, InfoItemModel::MultipleValuesRole);
+        return true;
+    }
+    return false;
+    Q_UNUSED(parent);
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+}
+

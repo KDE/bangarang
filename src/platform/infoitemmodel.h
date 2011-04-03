@@ -134,6 +134,10 @@ class InfoItemModel : public QStandardItemModel
           */
         QList<MediaItem> fetchedMatches();
 
+        Qt::DropActions supportedDropActions() const;
+        Qt::ItemFlags flags(const QModelIndex &index) const;
+        bool dropMimeData(const QMimeData *mimeData, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+        QStringList mimeTypes() const;
         QHash<QString, QVariant> fetchingStatus();
 
     public slots:
@@ -157,6 +161,7 @@ class InfoItemModel : public QStandardItemModel
          * Loads fields for currently selected items in order
          */
         void loadFieldsInOrder();
+
 
     Q_SIGNALS:
         /**

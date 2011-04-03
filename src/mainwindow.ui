@@ -295,8 +295,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>146</width>
+                    <height>299</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -1243,8 +1243,8 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>152</width>
-                    <height>367</height>
+                    <width>154</width>
+                    <height>369</height>
                    </rect>
                   </property>
                   <attribute name="label">
@@ -2584,7 +2584,7 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>205</width>
+                            <width>203</width>
                             <height>216</height>
                            </rect>
                           </property>
@@ -2615,6 +2615,9 @@
                              <property name="mouseTracking">
                               <bool>true</bool>
                              </property>
+                             <property name="acceptDrops">
+                              <bool>true</bool>
+                             </property>
                              <property name="frameShape">
                               <enum>QFrame::NoFrame</enum>
                              </property>
@@ -2629,6 +2632,21 @@
                              </property>
                              <property name="editTriggers">
                               <set>QAbstractItemView::CurrentChanged|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+                             </property>
+                             <property name="showDropIndicator" stdset="0">
+                              <bool>true</bool>
+                             </property>
+                             <property name="dragEnabled">
+                              <bool>true</bool>
+                             </property>
+                             <property name="dragDropOverwriteMode">
+                              <bool>true</bool>
+                             </property>
+                             <property name="dragDropMode">
+                              <enum>QAbstractItemView::DragDrop</enum>
+                             </property>
+                             <property name="defaultDropAction">
+                              <enum>Qt::IgnoreAction</enum>
                              </property>
                              <property name="selectionMode">
                               <enum>QAbstractItemView::SingleSelection</enum>
