@@ -490,6 +490,12 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             } else {
                 //Get artwork url from user
                 QString artworkUrl = index.data(Qt::EditRole).toString();
+                if (artworkUrl.isEmpty()) {
+                    InfoItemModel *model = (InfoItemModel *)index.model();
+                    if (model->mediaList().count() > 0) {
+                        artworkUrl = KUrl(model->mediaList().at(0).url).directory();
+                    }
+                }
                 KUrl newUrl = KFileDialog::getImageOpenUrl(KUrl(artworkUrl), application->mainWindow(), i18n("Open artwork file"));
                 if (newUrl.isValid()) {
                     model->setData(index, newUrl.url(), Qt::EditRole);
