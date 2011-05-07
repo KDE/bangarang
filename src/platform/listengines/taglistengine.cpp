@@ -83,6 +83,9 @@ void TagListEngine::run()
             query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required)); 
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
+            QStringList orderByBindings;
+            orderByBindings.append(mediaVocabulary.tagBinding());
+            query.orderBy(orderByBindings);
             Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
 
             //Build media list from results
@@ -108,6 +111,7 @@ void TagListEngine::run()
                 mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?%1||limit=4||tag=%2").arg(mediaType).arg(tag));
                 mediaList.append(mediaItem);
             }
+            mediaList = Utilities::sortMediaList(mediaList);
             m_mediaListProperties.name = i18n("Tags");
             m_mediaListProperties.summary = i18np("1 tag", "%1 tags", mediaList.count());
             m_mediaListProperties.type = QString("Categories");
@@ -140,6 +144,7 @@ void TagListEngine::run()
                     mediaList.append(mediaItem);
                 }
             }
+            mediaList = Utilities::sortMediaList(mediaList);
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             m_mediaListProperties.type = QString("Sources");
         }

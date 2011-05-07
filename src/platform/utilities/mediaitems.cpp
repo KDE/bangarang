@@ -1356,7 +1356,7 @@ QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
     QList<MediaItem> sortedList;
     QMap<QString, int> sortedIndices;
     for (int i = 0; i < mediaList.count(); i++) {
-        sortedIndices[mediaList.at(i).title] = i;
+        sortedIndices[mediaList.at(i).title.toLower()] = i;
     }
     QMapIterator<QString, int> it(sortedIndices);
     while (it.hasNext()) {
