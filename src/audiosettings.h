@@ -75,7 +75,6 @@ class AudioSettings : public QObject
         QList<QList<int> > m_eqPresets;
         QList<QSlider *> m_uiEqs;
         void updateManualEqPresets();
-        const int m_eqCount;
         
     private slots:
         void eqChanged(int v);

@@ -33,7 +33,7 @@
 
 using namespace Phonon;
 
-AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent), m_eqCount(11)
+AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent)
 {
     /*Set up basics */
     m_application = (BangarangApplication *) KApplication::kApplication();
@@ -57,7 +57,7 @@ AudioSettings::AudioSettings(MainWindow * parent) : QObject(parent), m_eqCount(1
     ui->eq11Label->setFont(KGlobalSettings::smallestReadableFont());
     
     m_uiEqs << ui->eq1 << ui->eq2 << ui->eq3 << ui->eq4 << ui->eq5 << ui->eq6 << ui->eq7 << ui->eq8 << ui->eq9 << ui->eq10 << ui->eq11;
-    for (int i = 0; i < m_eqCount; i++) {
+    for (int i = 0; i < 11; i++) {
         m_uiEqs.at(i)->setProperty("EQ_NO", i);
     }
 
@@ -137,7 +137,7 @@ void AudioSettings::reconnectAudioPath(Path* audioPath)
     }
 
     //be sure the values are still set
-    for (int i = 0; i < m_eqCount; i++ ) {
+    for (int i = 0; i < m_audioEq->parameters().count(); i++ ) {
         m_audioEq->setParameterValue(m_audioEq->parameters()[i], m_uiEqs.at(i)->value());
     }
 }
@@ -197,14 +197,12 @@ void AudioSettings::updateManualEqPresets()
 
 void AudioSettings::setEq(const QList<int> &preset)
 {
-    if (m_audioEq == NULL)
+    if (m_audioEq == NULL) {
         return;
-    if (preset.count() != m_eqCount)
-        return;
+    }
     disconnectEq();
-    QList<EffectParameter> params = m_audioEq->parameters();
-    for (int i = 0; i < m_eqCount; i++ ) {
-        m_audioEq->setParameterValue(params[i], preset.at(i));
+    for (int i = 0; i < m_audioEq->parameters().count(); i++ ) {
+        m_audioEq->setParameterValue(m_audioEq->parameters().at(i), preset.at(i));
         m_uiEqs.at(i)->setValue(preset.at(i));
     }
 
@@ -225,8 +223,9 @@ void AudioSettings::restoreDefaults()
 void AudioSettings::eqChanged(int v)
 {
     QVariant var = sender()->property("EQ_NO");
-    if (!var.isValid())
+    if (!var.isValid() || var.toInt() >= m_audioEq->parameters().count()) {
         return;
+    }
     m_audioEq->setParameterValue(m_audioEq->parameters()[var.toInt()], v); 
     updateManualEqPresets();
 }
