@@ -26,7 +26,7 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "2.0",
+        ki18n("Bangarang"), "2.0.1",
         ki18n("A media player for your KDE desktop"), KAboutData::License_GPL_V3,
         ki18n("Copyright 2011, Andrew Lake"),
         ki18n("<b>Note:</b> This product uses the TMDb API but is not endorsed or certified by TMDb. Please help improve available information by visiting http://themoviedb.org<br>"
