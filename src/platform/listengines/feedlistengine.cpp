@@ -246,7 +246,7 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
             mediaItem.url = contentElement.attribute("url");
             mediaItem.fields["url"] = mediaItem.url;
-            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").trimmed());
+            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").toLower().trimmed());
             if (!type.isNull()) {
                 if (Utilities::isAudioMimeType(type)) {
                     isAudio = true;
