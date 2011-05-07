@@ -481,7 +481,8 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
     }
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
-        if (event->type() == QEvent::MouseButtonRelease) {
+        bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable();
+        if (event->type() == QEvent::MouseButtonRelease && isEditable) {
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(m_mousePos)) {
                 //Clear set artwork
