@@ -118,7 +118,9 @@ bool Utilities::isVideoMimeType(KMimeType::Ptr type)
             type->is("video/x-ms-wmv") ||
             type->is("video/x-wmv") ||
             type->is("video/x-flv") ||
-            type->is("video/x-matroska"));
+            type->is("video/x-matroska")) ||
+            type->is("video/3gpp") ||
+            type->is("video/3gpp2");
 }
 
 bool Utilities::isM3u(const QString &url)

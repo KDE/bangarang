@@ -214,7 +214,12 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
         QFile file(to.path());
         QDomDocument feedDoc("feed");
         feedDoc.setContent(&file);
-        
+
+        //Determine if RSS or Atom based feed
+        bool isRSS = (feedDoc.elementsByTagName("rss").count() > 0);
+        bool isAtom = (feedDoc.elementsByTagName("feed").count() > 0);
+        QString itemTagName = isRSS ? "item" : (isAtom ? "entry" : QString());
+
         //Specify tag preference order
         QStringList titleTagPref;
         titleTagPref << "media:title" << "title";
@@ -222,16 +227,38 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
         descriptionTagPref << "media:description" << "itunes:summary" << "description";
         QStringList contentTagPref;
         contentTagPref << "media:content" << "enclosure";
-        
+        QStringList releaseDateTagPref = QStringList() << "pubDate" << "published";
         
         //Iterate through item nodes of the XML document
-        QDomNodeList items = feedDoc.elementsByTagName("item");
+        QDomNodeList items = feedDoc.elementsByTagName(itemTagName);
         for (int i = 0; i < items.count(); i++) {
             MediaItem mediaItem;
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
             bool isAudio = false;
             bool isVideo = false;
             QDomNodeList itemNodes = items.at(i).childNodes();
+            QDomElement releaseDateElement = getPreferredTag(itemNodes, releaseDateTagPref);
+            mediaItem.fields["releaseDate"] = releaseDateElement.text();
+            mediaItem.semanticComment = releaseDateElement.text();
+            QList<QDomElement> relatedTos = getPreferredTags(itemNodes, QStringList("link"));
+            for (int j = 0; j < relatedTos.count(); j++) {
+                QDomElement relatedTo = relatedTos.at(j);
+                if (!relatedTo.hasAttribute("rel") ||
+                    (relatedTo.hasAttribute("rel") && relatedTo.attribute("rel").toLower() == "alternate")) {
+                    if (relatedTo.hasAttribute("href")) {
+                        mediaItem.fields["relatedTo"] = QStringList(relatedTo.attribute("href"));
+                    } else {
+                        mediaItem.fields["relatedTo"] = QStringList(relatedTo.text());
+                    }
+                }
+            }
+            //Only use media:group nodes in Atom feeds
+            if (isAtom) {
+                QDomElement mediaGroup = getPreferredTag(itemNodes, QStringList("media:group"));
+                if (!mediaGroup.isNull()) {
+                    itemNodes = mediaGroup.childNodes();
+                }
+            }
             QDomElement titleElement = getPreferredTag(itemNodes, titleTagPref);
             mediaItem.title = titleElement.text();
             mediaItem.fields["title"] = titleElement.text();
@@ -240,31 +267,34 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
                 !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
                 mediaItem.fields["description"] = descriptionElement.text();
             }
-            QDomElement releaseDateElement = getPreferredTag(itemNodes, QStringList("pubDate"));
-            mediaItem.fields["releaseDate"] = releaseDateElement.text();
-            mediaItem.semanticComment = releaseDateElement.text();
-            QDomElement contentElement = getPreferredTag(itemNodes, contentTagPref);
-            mediaItem.url = contentElement.attribute("url");
-            mediaItem.fields["url"] = mediaItem.url;
-            KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").toLower().trimmed());
-            if (!type.isNull()) {
-                if (Utilities::isAudioMimeType(type)) {
-                    isAudio = true;
-                    mediaItem.type = "Audio";
-                    mediaItem.fields["audioType"] = "Audio Clip";
-                    mediaItem.artwork = KIcon("audio-x-generic");
-                } else if (Utilities::isVideoMimeType(type)) {
-                    isVideo = true;
-                    mediaItem.type = "Video";
-                    mediaItem.fields["videoType"] = "Video Clip";
-                    mediaItem.artwork = KIcon("video-x-generic");
+            QList<QDomElement> contentElements = getPreferredTags(itemNodes, contentTagPref);
+            for (int j = 0; j < contentElements.count(); j++) {
+                QDomElement contentElement = contentElements.at(j);
+                if (contentElement.tagName() == "media:content") {
+                    int duration = contentElement.attribute("duration").toInt();
+                    if (duration != 0 ) {
+                        mediaItem.duration = Utilities::durationString(duration);
+                        mediaItem.fields["duration"] = duration;
+                    }
                 }
-            }
-            if (contentElement.tagName() == "media:content") {
-                int duration = contentElement.attribute("duration").toInt();
-                if (duration != 0 ) {
-                    mediaItem.duration = Utilities::durationString(duration);
-                    mediaItem.fields["duration"] = duration;
+                KMimeType::Ptr type = KMimeType::mimeType(contentElement.attribute("type").toLower().trimmed());
+                if (!type.isNull()) {
+                    if (Utilities::isAudioMimeType(type)) {
+                        isAudio = true;
+                        mediaItem.url = contentElement.attribute("url");
+                        mediaItem.fields["url"] = mediaItem.url;
+                        mediaItem.type = "Audio";
+                        mediaItem.fields["audioType"] = "Audio Clip";
+                        mediaItem.artwork = KIcon("audio-x-generic");
+                    }
+                    if (Utilities::isVideoMimeType(type)) {
+                        isVideo = true;
+                        mediaItem.url = contentElement.attribute("url");
+                        mediaItem.fields["url"] = mediaItem.url;
+                        mediaItem.type = "Video";
+                        mediaItem.fields["videoType"] = "Video Clip";
+                        mediaItem.artwork = KIcon("video-x-generic");
+                    }
                 }
             }
             if (mediaItem.duration.isEmpty()) {
@@ -282,10 +312,10 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             QDomElement thumbnailElement = getPreferredTag(itemNodes, QStringList("media:thumbnail"));
             
             mediaItem = Utilities::makeSubtitle(mediaItem);
-            if (mediaItem.type == "Audio" && m_mediaListProperties.engineArg() == "audio") {
+            if (isAudio && m_mediaListProperties.engineArg() == "audio") {
                 m_mediaList.append(mediaItem);
                 m_artworkUrlList.append(KUrl(thumbnailElement.attribute("url")));
-            } else if (mediaItem.type == "Video" && m_mediaListProperties.engineArg() == "video") {
+            } else if (isVideo && m_mediaListProperties.engineArg() == "video") {
                 m_mediaList.append(mediaItem);
                 m_artworkUrlList.append(KUrl(thumbnailElement.attribute("url")));
             }
@@ -351,4 +381,26 @@ QDomElement FeedListEngine::getPreferredTag(const QDomNodeList &itemNodes, const
         }
     }
     return preferredElement;
+}
+
+QList<QDomElement> FeedListEngine::getPreferredTags(const QDomNodeList &itemNodes, const QStringList &tagPref)
+{
+    QList<QDomElement> preferredElements;
+    bool foundPreferred = false;
+    for (int i = 0; i < tagPref.count(); i++) {
+        QString tag = tagPref.at(i);
+        for (int j = 0; j < itemNodes.count(); j++) {
+            if (itemNodes.at(j).isElement()) {
+                QDomElement itemElement = itemNodes.at(j).toElement();
+                if (itemElement.tagName() == tag) {
+                    preferredElements.append(itemElement);
+                    foundPreferred = true;
+                }
+            }
+        }
+        if (foundPreferred) {
+            break;
+        }
+    }
+    return preferredElements;
 }

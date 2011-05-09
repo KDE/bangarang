@@ -52,6 +52,7 @@ class FeedListEngine : public NepomukListEngine
         bool m_fetchingThumbnails;
 
         QDomElement getPreferredTag(const QDomNodeList &itemNodes, const QStringList &tagPref);
+        QList<QDomElement> getPreferredTags(const QDomNodeList &itemNodes, const QStringList &tagPref);
         
     private slots:
         void downloadComplete(const KUrl &from, const KUrl &to);

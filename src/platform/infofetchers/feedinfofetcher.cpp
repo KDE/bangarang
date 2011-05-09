@@ -115,9 +115,18 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
         //Iterate through item nodes of the XML document
         bool mediaItemUpdated = false;
         KUrl thumbnailUrl;
-        QDomNodeList channels = feedDoc.elementsByTagName("channel");
-        for (int i = 0; i < channels.count(); i++) {
-            QDomNodeList nodes = channels.at(i).childNodes();
+
+        //Determine if RSS or Atom based feed
+        bool isRSS = (feedDoc.elementsByTagName("rss").count() > 0);
+        bool isAtom = (feedDoc.elementsByTagName("feed").count() > 0);
+        if (!isRSS && !isAtom) {
+            return;
+        }
+        QString feedTagName = isRSS ? "channel" : (isAtom ? "feed": QString());
+
+        QDomNodeList feeds = feedDoc.elementsByTagName(feedTagName);
+        for (int i = 0; i < feeds.count(); i++) {
+            QDomNodeList nodes = feeds.at(i).childNodes();
             for (int j = 0; j < nodes.count(); j++) {
                 if (nodes.at(j).isElement()) {
                     QDomElement element = nodes.at(j).toElement();
@@ -125,12 +134,16 @@ void FeedInfoFetcher::gotFeedInfo(const KUrl &from, const KUrl &to)
                         mediaItem.title = element.text();
                         mediaItem.fields["title"] = mediaItem.title;
                         mediaItemUpdated = true;
-                    } else if (element.tagName() == "description") {
+                    } else if (element.tagName() == "description" || element.tagName() == "subtitle") {
                         mediaItem.fields["description"] = element.text();
                         mediaItemUpdated = true;
                     } else if (element.tagName() == "itunes:image") {
                         if (thumbnailUrl.isEmpty() && m_updateArtwork) {
                             thumbnailUrl = KUrl(element.attribute("href"));
+                        }
+                    } else if (element.tagName() == "logo") {
+                        if (thumbnailUrl.isEmpty() && m_updateArtwork) {
+                            thumbnailUrl = KUrl(element.text().trimmed());
                         }
                     } else if (element.tagName() == "image") {
                         QDomNodeList imageNodes = nodes.at(j).childNodes();
