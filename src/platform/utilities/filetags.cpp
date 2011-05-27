@@ -717,7 +717,7 @@ QHash<int, QString> Utilities::tagGenreDictionary()
     genreDictionary[64] = "Native American";
     genreDictionary[65] = "Cabaret";
     genreDictionary[66] = "New Wave";
-    genreDictionary[67] = "Psychadelic";
+    genreDictionary[67] = "Psychedelic";
     genreDictionary[68] = "Rave";
     genreDictionary[69] = "Showtunes";
     genreDictionary[70] = "Trailer";
