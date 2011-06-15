@@ -12,6 +12,7 @@ msgmerge -U it/bangarang.po bangarang.pot
 msgmerge -U lt/bangarang.po bangarang.pot
 msgmerge -U nl/bangarang.po bangarang.pot
 msgmerge -U pl/bangarang.po bangarang.pot
+msgmerge -U pt/bangarang.po bangarang.pot
 msgmerge -U pt_BR/bangarang.po bangarang.pot
 msgmerge -U uk/bangarang.po bangarang.pot
 msgmerge -U zh_CN/bangarang.po bangarang.pot
