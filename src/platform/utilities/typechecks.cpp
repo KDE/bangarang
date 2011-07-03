@@ -26,9 +26,12 @@
 
 bool Utilities::isMusic(const QString &url)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-
-    return isMusicMimeType(result);
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        return isMusicMimeType(result);
+    } else {
+        return false;
+    }
 }
 
 bool Utilities::isMusicMimeType(KMimeType::Ptr type)
@@ -53,8 +56,12 @@ bool Utilities::isMusicMimeType(KMimeType::Ptr type)
 
 bool Utilities::isAudio(const QString &url)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-    return isAudioMimeType(result);
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        return isAudioMimeType(result);
+    } else {
+        return false;
+    }
 }
 
 bool Utilities::isAudioMimeType(KMimeType::Ptr type)
@@ -88,17 +95,19 @@ bool Utilities::isAudioMimeType(KMimeType::Ptr type)
 
 bool Utilities::isVideo(const QString &url)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-
-    //NOTE: Special handling for .wma extensions
-    //It turns out that wma files may pass the "video/x-ms-asf" mimetype test.
-    //Per Microsoft KB284094, the only way to distinguish between audio-only
-    //and audio+video content is to look at the file extenstion.
-    if (result->is("video/x-ms-asf") && KUrl(url).fileName().endsWith(".wma")) {
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        //NOTE: Special handling for .wma extensions
+        //It turns out that wma files may pass the "video/x-ms-asf" mimetype test.
+        //Per Microsoft KB284094, the only way to distinguish between audio-only
+        //and audio+video content is to look at the file extenstion.
+        if (result->is("video/x-ms-asf") && KUrl(url).fileName().endsWith(".wma")) {
+            return false;
+        }
+        return isVideoMimeType(result);
+    } else {
         return false;
     }
-
-    return isVideoMimeType(result);
 }
 
 bool Utilities::isVideoMimeType(KMimeType::Ptr type)
@@ -125,17 +134,24 @@ bool Utilities::isVideoMimeType(KMimeType::Ptr type)
 
 bool Utilities::isM3u(const QString &url)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-    return (result->is("audio/m3u") ||
-            result->is("application/vnd.apple.mpegurl") ||
-            result->is("audio/x-mpegurl"));
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        return (result->is("audio/m3u") ||
+                result->is("application/vnd.apple.mpegurl") ||
+                result->is("audio/x-mpegurl"));
+    } else {
+        return false;
+    }
 }
 
 bool Utilities::isPls(const QString &url)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-
-    return result->is("audio/x-scpls");
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        return result->is("audio/x-scpls");
+    } else {
+        return false;
+    }
 }
 
 bool Utilities::isDvd(const KUrl& url)
