@@ -136,7 +136,12 @@ void BangarangApplication::setup()
     m_mainWindow->ui->mediaListsSplitter->setSizes(mediaListSplitterSizes);
     QList<int> mediaViewSplitterSizes = generalGroup.readEntry("MediaViewSplitterSizes", QList<int>() << 338 << 220);
     m_mainWindow->ui->mediaViewSplitter->setSizes(mediaViewSplitterSizes);
-    m_mainWindow->ui->mediaLists->setCurrentIndex(generalGroup.readEntry("mediaListsType", 0));
+    int defaultMediaList = generalGroup.readEntry("mediaListsType", 0);
+    if (defaultMediaList == 0) {
+        m_mainWindow->showMediaList(MainWindow::AudioList);
+    } else {
+        m_mainWindow->showMediaList(MainWindow::VideoList);
+    }
     bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", true));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
         m_infoManager->toggleInfoView();
@@ -187,7 +192,7 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("NowPlayingSplitterSizes", m_mainWindow->ui->nowPlayingSplitter->sizes());
     generalGroup.writeEntry("MediaListSplitterSizes", m_mainWindow->ui->mediaListsSplitter->sizes());
     generalGroup.writeEntry("MediaViewSplitterSizes", m_mainWindow->ui->mediaViewSplitter->sizes());
-    generalGroup.writeEntry("mediaListsType", m_mainWindow->ui->mediaLists->currentIndex());
+    generalGroup.writeEntry("mediaListsType", (int)m_mainWindow->currentMediaListSelection());
     m_audioSettings->saveAudioSettings(&generalGroup);
     m_videoSettings->saveVideoSettings(&generalGroup);
     config.sync();

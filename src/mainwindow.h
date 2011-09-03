@@ -20,6 +20,8 @@
 #define MAINWINDOW_H
 
 #include "platform/bangarangvideowidget.h"
+#include "audiolistsstack.h"
+#include "videolistsstack.h"
 #include <KIcon>
 #include <KAboutData>
 #include <KHelpMenu>
@@ -80,6 +82,7 @@ public:
     
     enum ContextMenuSource{Default = 0, MediaList = 1, InfoBox = 2, Playlist = 3};
     enum MainWidget{ MainMediaList = 0, MainNowPlaying = 1 };
+    enum MediaListSelection{ AudioList = 0, VideoList = 1 };
     enum VideoSize{Normal = 0, Mini = 1 };
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -92,16 +95,21 @@ public:
     VideoSize videoSize();
     void switchMainWidget(MainWidget which);
     MainWidget currentMainWidget();
+    void showMediaList(MediaListSelection listSelection);
+    MediaListSelection currentMediaListSelection();
     QFrame *currentFilterFrame();
     KFilterProxySearchLine* currentFilterProxyLine();
     bool newPlaylistNotification(QString text, QObject* receiver = NULL, const char* slot = NULL);
     
     Ui::MainWindowClass *ui;
+    AudioListsStack *m_audioListsStack;
+    VideoListsStack *m_videoListsStack;
     MediaItemModel * m_audioListsModel;
     MediaItemModel * m_videoListsModel;
     QList< QList<MediaItem> > m_mediaListHistory;
     QList<MediaListProperties> m_mediaListPropertiesHistory;
-    
+    MediaListSettings *m_mediaListSettings;
+
     
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
@@ -138,17 +146,17 @@ private:
     bool playWhenPlaylistChanges;
     bool m_showRemainingTime;
     KAction *playPause;    
-    MediaListSettings *m_mediaListSettings;
     VideoSettings * m_videoSettings;
     BangarangApplication * m_application;
     VideoSize m_videoSize;
     QTimer *m_menuTimer;
+    MediaListSelection m_mediaListSelection;
 
 private slots:
+    void on_audioListSelect_clicked();
+    void on_videoListSelect_clicked();
     void on_nowPlayingHolder_resized();
     void on_nowPlaying_clicked();
-    void on_configureAudioList_clicked();
-    void on_configureVideoList_clicked();
     void on_collectionButton_clicked();
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
