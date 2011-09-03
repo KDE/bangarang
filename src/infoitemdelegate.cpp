@@ -1046,3 +1046,7 @@ void InfoItemDelegate::resetEditMode()
         m_rowOfNewValue = -1;
     }
 }
+
+void InfoItemDelegate::enableTouch() {
+
+}

@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     options.add("play-dvd", ki18n( "Play DVD Video" ));
     options.add("play-cd", ki18n( "Play CD Music" ));
     options.add("debug", ki18n( "Show Additional Debug Output" ));
+    options.add("touch", ki18n("Enable touch mode for interface"));
     KCmdLineArgs::addCmdLineOptions( options );
 
     BangarangApplication application;

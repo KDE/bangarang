@@ -132,4 +132,7 @@ Playlist::Model PlaylistView::toggleModel()
     return m_currentModel;
 }
 
-
+void PlaylistView::enableTouch()
+{
+    m_playlistItemDelegate->enableTouch();
+}

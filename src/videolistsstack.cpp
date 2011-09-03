@@ -18,6 +18,15 @@ VideoListsStack::~VideoListsStack()
     delete ui;
 }
 
+void VideoListsStack::enableTouch() {
+    ui->addVideoList->setMinimumSize(32, 32);
+    ui->removeVideoList->setMinimumSize(32, 32);
+    ui->configureVideoList->setMinimumSize(32, 32);
+    ui->videoLists->setIconSize(QSize(32, 32));
+    ui->videoLists->setGridSize(QSize(0,32));
+}
+
+
 void VideoListsStack::on_configureVideoList_clicked()
 {
     if (ui->videoLists->selectionModel()->selectedIndexes().count() > 0) {

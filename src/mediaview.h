@@ -46,6 +46,7 @@ class MediaView : public QTreeView
         void setSourceModel(QAbstractItemModel * mediaItemModel);
         MediaItemModel *sourceModel() { return m_mediaItemModel; }
         QSortFilterProxyModel *filterProxyModel() { return (QSortFilterProxyModel *) m_proxyModel; }
+        void enableTouch();
 
     protected:
         void contextMenuEvent(QContextMenuEvent * event);

@@ -69,6 +69,7 @@ class MediaItemDelegate : public QItemDelegate
         bool suppressSemanticComment();
         QRect ratingRect(const QRect *rect) const;
         QRect addRmPlaylistRect(const QRect *rect) const;
+        void enableTouch();
 
     protected:
         MediaItemModel *mediaItemModelFromIndex(const QModelIndex* index) const;

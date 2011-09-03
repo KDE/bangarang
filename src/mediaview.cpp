@@ -156,3 +156,8 @@ bool MediaView::viewportEvent(QEvent* event)
     }
     return QTreeView::viewportEvent(event);
 }
+
+void MediaView::enableTouch()
+{
+    m_mediaItemDelegate->enableTouch();
+}

@@ -381,6 +381,7 @@ void BangarangApplication::processCommandLineArgs()
     bool itemLoaded = false;
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     if (args->count() > 0) {
+        kDebug() << "TOUCH:" << args->isSet("touch");
         for(int i = 0; i < args->count(); i++) {
             if (args->isSet("play-dvd")) {
                 //Play DVD
@@ -411,6 +412,9 @@ void BangarangApplication::processCommandLineArgs()
                     break;
                 }
                 break;
+            } else if (args->isSet("touch")) {
+                //Adjust interface to be more touch friendly
+                mainWindow()->enableTouch();
             } else {
                 //Play Url
                 KUrl cmdLineKUrl = args->url(i);

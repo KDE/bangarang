@@ -18,6 +18,14 @@ AudioListsStack::~AudioListsStack()
     delete ui;
 }
 
+void AudioListsStack::enableTouch() {
+    ui->addAudioList->setMinimumSize(32, 32);
+    ui->removeAudioList->setMinimumSize(32, 32);
+    ui->configureAudioList->setMinimumSize(32, 32);
+    ui->audioLists->setIconSize(QSize(32, 32));
+    ui->audioLists->setGridSize(QSize(0,32));
+}
+
 void AudioListsStack::on_configureAudioList_clicked()
 {
     if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0) {
