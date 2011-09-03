@@ -54,6 +54,7 @@ class InfoItemDelegate : public QItemDelegate
         int rowHeight(int row) const;
         int heightForAllRows();
         void resetEditMode();
+        void enableTouch();
 
     private:
         InfoItemView * m_view;

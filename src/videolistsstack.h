@@ -18,6 +18,7 @@ class VideoListsStack : public QWidget
 public:
     explicit VideoListsStack(QWidget *parent = 0);
     ~VideoListsStack();
+    void enableTouch();
 
     Ui::VideoListsStack *ui;
 

@@ -614,3 +614,7 @@ void MediaItemDelegate::gotArtwork(const QImage &artwork, const MediaItem &media
 
 }
 
+void MediaItemDelegate::enableTouch()
+{
+
+}

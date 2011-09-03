@@ -100,6 +100,7 @@ public:
     QFrame *currentFilterFrame();
     KFilterProxySearchLine* currentFilterProxyLine();
     bool newPlaylistNotification(QString text, QObject* receiver = NULL, const char* slot = NULL);
+    void enableTouch();
     
     Ui::MainWindowClass *ui;
     AudioListsStack *m_audioListsStack;

@@ -1495,3 +1495,14 @@ bool MainWindow::newPlaylistNotification(QString text, QObject *receiver, const 
         connect(this, SIGNAL(playlistNotificationResult(bool)), receiver, slot);
     return true;
 }
+
+void MainWindow::enableTouch() {
+    kDebug() << "ENABLING TOUCH";
+    ui->showMediaViewMenu->setMinimumSize(32, 32);
+    ui->audioListSelect->setMinimumSize(32, 32);
+    ui->videoListSelect->setMinimumSize(32, 32);
+    m_audioListsStack->enableTouch();
+    m_videoListsStack->enableTouch();
+    //ui->mediaView->enableTouch();
+    //ui->playlistView->enableTouch();
+}

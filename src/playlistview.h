@@ -36,6 +36,7 @@ class PlaylistView : public QListView
         Playlist::Model toggleModel();
         Playlist::Model currentModelType() { return m_currentModel; }
         void setupActions();
+        void enableTouch();
         
     protected:
         void contextMenuEvent (QContextMenuEvent * event);

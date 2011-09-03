@@ -69,7 +69,7 @@ set(BangarangSources
     platform/utilities/typechecks.cpp
 )
 
-kde4_add_ui_files(BangarangSources mainwindow.ui ui/audiolistsstack.ui ui/videolistsstack.ui)
+kde4_add_ui_files(BangarangSources ui/mainwindow.ui ui/audiolistsstack.ui ui/videolistsstack.ui)
 
 kde4_add_executable(bangarang ${BangarangSources})
 

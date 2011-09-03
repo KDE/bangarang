@@ -18,6 +18,7 @@ class AudioListsStack : public QWidget
 public:
     explicit AudioListsStack(QWidget *parent = 0);
     ~AudioListsStack();
+    void enableTouch();
     Ui::AudioListsStack *ui;
 
 private:
