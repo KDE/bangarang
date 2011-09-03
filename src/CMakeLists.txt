@@ -2,6 +2,7 @@ add_subdirectory(platform/nepomukwriter)
 
 set(BangarangSources
     actionsmanager.cpp
+    audiolistsstack.cpp
     audiosettings.cpp
     bangarangapplication.cpp
     bangarangnotifieritem.cpp
@@ -23,6 +24,7 @@ set(BangarangSources
     savedlistsmanager.cpp
     sensiblewidgets.cpp
     starrating.cpp
+    videolistsstack.cpp
     videosettings.cpp
     platform/bangarangvideowidget.cpp
     platform/dbpediaquery.cpp
@@ -67,7 +69,7 @@ set(BangarangSources
     platform/utilities/typechecks.cpp
 )
 
-kde4_add_ui_files(BangarangSources mainwindow.ui)
+kde4_add_ui_files(BangarangSources mainwindow.ui ui/audiolistsstack.ui ui/videolistsstack.ui)
 
 kde4_add_executable(bangarang ${BangarangSources})
 
