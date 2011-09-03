@@ -1139,6 +1139,9 @@ QStringList InfoItemModel::mimeTypes() const
 Qt::ItemFlags InfoItemModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (this->itemFromIndex(index)->isEditable()) {
+        useFlags |= Qt::ItemIsEditable;
+    }
     QString field = data(index, InfoItemModel::FieldRole).toString();
     if (index.isValid() && field == "artwork") {
         useFlags |= Qt::ItemIsDropEnabled;
