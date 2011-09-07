@@ -20,6 +20,7 @@
 #include "bangarangnotifieritem.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "medialistsmanager.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -78,6 +79,9 @@ void BangarangApplication::setup()
     
     //Set up main window
     m_mainWindow = new MainWindow();
+
+    //Setup Media Lists Manager
+    m_mediaListsManager = new MediaListsManager(m_mainWindow);
     
     //Setup Info Manager
     m_infoManager = new InfoManager(m_mainWindow);
@@ -138,9 +142,9 @@ void BangarangApplication::setup()
     m_mainWindow->ui->mediaViewSplitter->setSizes(mediaViewSplitterSizes);
     int defaultMediaList = generalGroup.readEntry("mediaListsType", 0);
     if (defaultMediaList == 0) {
-        m_mainWindow->showMediaList(MainWindow::AudioList);
+        m_mediaListsManager->showMediaList(MediaListsManager::AudioList);
     } else {
-        m_mainWindow->showMediaList(MainWindow::VideoList);
+        m_mediaListsManager->showMediaList(MediaListsManager::VideoList);
     }
     bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", true));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
@@ -192,7 +196,7 @@ BangarangApplication::~BangarangApplication()
     generalGroup.writeEntry("NowPlayingSplitterSizes", m_mainWindow->ui->nowPlayingSplitter->sizes());
     generalGroup.writeEntry("MediaListSplitterSizes", m_mainWindow->ui->mediaListsSplitter->sizes());
     generalGroup.writeEntry("MediaViewSplitterSizes", m_mainWindow->ui->mediaViewSplitter->sizes());
-    generalGroup.writeEntry("mediaListsType", (int)m_mainWindow->currentMediaListSelection());
+    generalGroup.writeEntry("mediaListsType", (int)m_mediaListsManager->currentMediaListSelection());
     m_audioSettings->saveAudioSettings(&generalGroup);
     m_videoSettings->saveVideoSettings(&generalGroup);
     config.sync();
@@ -258,6 +262,11 @@ MediaItemModel * BangarangApplication::browsingModel()
 MediaListCache * BangarangApplication::sharedMediaListCache()
 {
     return m_sharedMediaListCache;
+}
+
+MediaListsManager* BangarangApplication::mediaListsManager()
+{
+    return m_mediaListsManager;
 }
 
 InfoManager * BangarangApplication::infoManager()

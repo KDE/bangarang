@@ -17,6 +17,8 @@
 */
 
 #include "medialistsettings.h"
+#include "bangarangapplication.h"
+#include "medialistsmanager.h"
 #include "ratingdelegate.h"
 #include "platform/utilities/utilities.h"
 #include "mainwindow.h"
@@ -29,28 +31,29 @@
 
 MediaListSettings::MediaListSettings(MainWindow * parent) : QObject(parent)
 {
+    m_application = (BangarangApplication*)KApplication::kApplication();
     m_parent = parent;
     ui = m_parent->ui;
-    m_parent->m_audioListsStack->ui->semATimeHolder->setVisible(false);
-    m_parent->m_audioListsStack->ui->semARatingHolder->setVisible(false);
-    m_parent->m_audioListsStack->ui->semAFreqHolder->setVisible(false);
-    m_parent->m_videoListsStack->ui->semVTimeHolder->setVisible(false);
-    m_parent->m_videoListsStack->ui->semVRatingHolder->setVisible(false);
-    m_parent->m_videoListsStack->ui->semVFreqHolder->setVisible(false);
+    m_parent->audioListsStack()->ui->semATimeHolder->setVisible(false);
+    m_parent->audioListsStack()->ui->semARatingHolder->setVisible(false);
+    m_parent->audioListsStack()->ui->semAFreqHolder->setVisible(false);
+    m_parent->videoListsStack()->ui->semVTimeHolder->setVisible(false);
+    m_parent->videoListsStack()->ui->semVRatingHolder->setVisible(false);
+    m_parent->videoListsStack()->ui->semVFreqHolder->setVisible(false);
     for (int i = 10; i >= 0; i--) {
-        m_parent->m_audioListsStack->ui->semARating->addItem(QIcon(), QString(), i);
+        m_parent->audioListsStack()->ui->semARating->addItem(QIcon(), QString(), i);
     }
     for (int i = 10; i >= 0; i--) {
-        m_parent->m_videoListsStack->ui->semVRating->addItem(QIcon(), QString(), i);
+        m_parent->videoListsStack()->ui->semVRating->addItem(QIcon(), QString(), i);
     }
-    connect(m_parent->m_audioListsStack->ui->aCancelSemConfigure, SIGNAL(clicked()), this, SLOT(hideMediaListSettings()));
-    connect(m_parent->m_videoListsStack->ui->vCancelSemConfigure, SIGNAL(clicked()), this, SLOT(hideMediaListSettings()));
-    connect(m_parent->m_audioListsStack->ui->semAConfigSave, SIGNAL(clicked()), this, SLOT(saveMediaListSettings()));
-    connect(m_parent->m_videoListsStack->ui->semVConfigSave, SIGNAL(clicked()), this, SLOT(saveMediaListSettings()));
-    connect(m_parent->m_audioListsStack->ui->semASelectMore, SIGNAL(toggled(bool)), this, SLOT(moreSelected(bool)));
-    connect(m_parent->m_videoListsStack->ui->semVSelectMore, SIGNAL(toggled(bool)), this, SLOT(moreSelected(bool)));
-    m_parent->m_audioListsStack->ui->semATime->setDateTime(QDateTime::currentDateTime());
-    m_parent->m_videoListsStack->ui->semVTime->setDateTime(QDateTime::currentDateTime());
+    connect(m_parent->audioListsStack()->ui->aCancelSemConfigure, SIGNAL(clicked()), this, SLOT(hideMediaListSettings()));
+    connect(m_parent->videoListsStack()->ui->vCancelSemConfigure, SIGNAL(clicked()), this, SLOT(hideMediaListSettings()));
+    connect(m_parent->audioListsStack()->ui->semAConfigSave, SIGNAL(clicked()), this, SLOT(saveMediaListSettings()));
+    connect(m_parent->videoListsStack()->ui->semVConfigSave, SIGNAL(clicked()), this, SLOT(saveMediaListSettings()));
+    connect(m_parent->audioListsStack()->ui->semASelectMore, SIGNAL(toggled(bool)), this, SLOT(moreSelected(bool)));
+    connect(m_parent->videoListsStack()->ui->semVSelectMore, SIGNAL(toggled(bool)), this, SLOT(moreSelected(bool)));
+    m_parent->audioListsStack()->ui->semATime->setDateTime(QDateTime::currentDateTime());
+    m_parent->videoListsStack()->ui->semVTime->setDateTime(QDateTime::currentDateTime());
 }
 
 MediaListSettings::~MediaListSettings()
@@ -60,19 +63,19 @@ MediaListSettings::~MediaListSettings()
 void MediaListSettings::showMediaListSettings()
 {
     moreSelected(false);
-    if (m_parent->currentMediaListSelection() == MainWindow::AudioList) {
-        if (m_parent->m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().count() > 0) {
-            int selectedRow = m_parent->m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-            MediaItem selectedItem = m_parent->m_audioListsModel->mediaItemAt(selectedRow);
-            m_parent->m_audioListsStack->ui->aConfigureSemListTitle->setText(selectedItem.title);
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+        if (m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().count() > 0) {
+            int selectedRow = m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+            MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
+            m_parent->audioListsStack()->ui->aConfigureSemListTitle->setText(selectedItem.title);
             showMediaListSettingsForLri(selectedItem.url);
             readConfigEntryForLRI(selectedItem.url);
         }
     } else {
-        if (m_parent->m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().count() > 0) {
-            int selectedRow = m_parent->m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-            MediaItem selectedItem = m_parent->m_videoListsModel->mediaItemAt(selectedRow);
-            m_parent->m_videoListsStack->ui->vConfigureSemListTitle->setText(selectedItem.title);
+        if (m_parent->videoListsStack()->ui->videoLists->selectionModel()->selectedIndexes().count() > 0) {
+            int selectedRow = m_parent->videoListsStack()->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+            MediaItem selectedItem = m_application->mediaListsManager()->videoListsModel()->mediaItemAt(selectedRow);
+            m_parent->videoListsStack()->ui->vConfigureSemListTitle->setText(selectedItem.title);
             showMediaListSettingsForLri(selectedItem.url);
             readConfigEntryForLRI(selectedItem.url);
         }
@@ -81,44 +84,44 @@ void MediaListSettings::showMediaListSettings()
 
 void MediaListSettings::showMediaListSettingsForLri(const QString &lri)
 {
-    if (m_parent->currentMediaListSelection() == MainWindow::AudioList) {
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
         if (lri.startsWith("semantics://")) {
-            m_parent->m_audioListsStack->ui->audioListsStack->setCurrentIndex(3);
+            m_parent->audioListsStack()->ui->audioListsStack->setCurrentIndex(3);
             if (lri.startsWith("semantics://recent")) {
-                m_parent->m_audioListsStack->ui->semATimeHolder->show();
-                m_parent->m_audioListsStack->ui->semARatingHolder->hide();
-                m_parent->m_audioListsStack->ui->semAFreqHolder->hide();
-                m_parent->m_audioListsStack->ui->semAMoreVerb->setText(i18n("played"));
+                m_parent->audioListsStack()->ui->semATimeHolder->show();
+                m_parent->audioListsStack()->ui->semARatingHolder->hide();
+                m_parent->audioListsStack()->ui->semAFreqHolder->hide();
+                m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("played"));
             } else if (lri.startsWith("semantics://highest")) {
-                m_parent->m_audioListsStack->ui->semATimeHolder->hide();
-                m_parent->m_audioListsStack->ui->semARatingHolder->show();
-                m_parent->m_audioListsStack->ui->semAFreqHolder->hide();
-                m_parent->m_audioListsStack->ui->semAMoreVerb->setText(i18n("rated"));
+                m_parent->audioListsStack()->ui->semATimeHolder->hide();
+                m_parent->audioListsStack()->ui->semARatingHolder->show();
+                m_parent->audioListsStack()->ui->semAFreqHolder->hide();
+                m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("rated"));
             } else if (lri.startsWith("semantics://frequent")) {
-                m_parent->m_audioListsStack->ui->semATimeHolder->hide();
-                m_parent->m_audioListsStack->ui->semARatingHolder->hide();
-                m_parent->m_audioListsStack->ui->semAFreqHolder->show();
-                m_parent->m_audioListsStack->ui->semAMoreVerb->setText(i18n("played"));
+                m_parent->audioListsStack()->ui->semATimeHolder->hide();
+                m_parent->audioListsStack()->ui->semARatingHolder->hide();
+                m_parent->audioListsStack()->ui->semAFreqHolder->show();
+                m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("played"));
             }
         }
     } else {
         if (lri.startsWith("semantics://")) {
-            m_parent->m_videoListsStack->ui->videoListsStack->setCurrentIndex(3);
+            m_parent->videoListsStack()->ui->videoListsStack->setCurrentIndex(3);
             if (lri.startsWith("semantics://recent")) {
-                m_parent->m_videoListsStack->ui->semVTimeHolder->show();
-                m_parent->m_videoListsStack->ui->semVRatingHolder->hide();
-                m_parent->m_videoListsStack->ui->semVFreqHolder->hide();
-                m_parent->m_videoListsStack->ui->semVMoreVerb->setText(i18n("played"));
+                m_parent->videoListsStack()->ui->semVTimeHolder->show();
+                m_parent->videoListsStack()->ui->semVRatingHolder->hide();
+                m_parent->videoListsStack()->ui->semVFreqHolder->hide();
+                m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("played"));
             } else if (lri.startsWith("semantics://highest")) {
-                m_parent->m_videoListsStack->ui->semVTimeHolder->hide();
-                m_parent->m_videoListsStack->ui->semVRatingHolder->show();
-                m_parent->m_videoListsStack->ui->semVFreqHolder->hide();
-                m_parent->m_videoListsStack->ui->semVMoreVerb->setText(i18n("rated"));
+                m_parent->videoListsStack()->ui->semVTimeHolder->hide();
+                m_parent->videoListsStack()->ui->semVRatingHolder->show();
+                m_parent->videoListsStack()->ui->semVFreqHolder->hide();
+                m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("rated"));
             } else if (lri.startsWith("semantics://frequent")) {
-                m_parent->m_videoListsStack->ui->semVTimeHolder->hide();
-                m_parent->m_videoListsStack->ui->semVRatingHolder->hide();
-                m_parent->m_videoListsStack->ui->semVFreqHolder->show();
-                m_parent->m_videoListsStack->ui->semVMoreVerb->setText(i18n("played"));
+                m_parent->videoListsStack()->ui->semVTimeHolder->hide();
+                m_parent->videoListsStack()->ui->semVRatingHolder->hide();
+                m_parent->videoListsStack()->ui->semVFreqHolder->show();
+                m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("played"));
             }
         }
     }
@@ -126,27 +129,27 @@ void MediaListSettings::showMediaListSettingsForLri(const QString &lri)
 
 void MediaListSettings::hideMediaListSettings()
 {
-    if (m_parent->currentMediaListSelection() == MainWindow::AudioList) {
-        m_parent->m_audioListsStack->ui->audioListsStack->setCurrentIndex(0);
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+        m_parent->audioListsStack()->ui->audioListsStack->setCurrentIndex(0);
     } else {
-        m_parent->m_videoListsStack->ui->videoListsStack->setCurrentIndex(0);
+        m_parent->videoListsStack()->ui->videoListsStack->setCurrentIndex(0);
     }
 }
 
 void MediaListSettings::saveMediaListSettings()
 {
-    if (m_parent->currentMediaListSelection() == MainWindow::AudioList) {
-        int selectedRow = m_parent->m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-        MediaItem selectedItem = m_parent->m_audioListsModel->mediaItemAt(selectedRow);
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+        int selectedRow = m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
         writeConfigEntryForLRI(selectedItem.url);
-        m_parent->m_audioListsModel->reload();
-        m_parent->m_audioListsStack->ui->audioListsStack->setCurrentIndex(0);
+        m_application->mediaListsManager()->audioListsModel()->reload();
+        m_parent->audioListsStack()->ui->audioListsStack->setCurrentIndex(0);
     } else {
-        int selectedRow = m_parent->m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-        MediaItem selectedItem = m_parent->m_videoListsModel->mediaItemAt(selectedRow);
+        int selectedRow = m_parent->videoListsStack()->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
+        MediaItem selectedItem = m_application->mediaListsManager()->videoListsModel()->mediaItemAt(selectedRow);
         writeConfigEntryForLRI(selectedItem.url);
-        m_parent->m_videoListsModel->reload();
-        m_parent->m_videoListsStack->ui->videoListsStack->setCurrentIndex(0);
+        m_application->mediaListsManager()->videoListsModel()->reload();
+        m_parent->videoListsStack()->ui->videoListsStack->setCurrentIndex(0);
     }
 }
 
@@ -182,45 +185,45 @@ void MediaListSettings::readConfigEntryForLRI(const QString &lri)
         KConfig config;
         KConfigGroup generalGroup( &config, "General" );
         int limit = generalGroup.readEntry(configEntry.at(0), 20);
-        m_parent->m_audioListsStack->ui->semALimit->setValue(limit);
-        m_parent->m_audioListsStack->ui->semASelectMore->setChecked(false);
+        m_parent->audioListsStack()->ui->semALimit->setValue(limit);
+        m_parent->audioListsStack()->ui->semASelectMore->setChecked(false);
         if (configEntry.count() > 1) {
             if (generalGroup.hasKey(configEntry.at(1))) {
                 QStringList entry = generalGroup.readEntry(configEntry.at(1), QStringList());
                 if (!entry.isEmpty() && configEntry.at(1) == "RecentAudioPlayed") {
                     if (entry.at(0) == "<") {
-                        m_parent->m_audioListsStack->ui->semATimeComp->setCurrentIndex(0);
+                        m_parent->audioListsStack()->ui->semATimeComp->setCurrentIndex(0);
                     } else {
-                        m_parent->m_audioListsStack->ui->semATimeComp->setCurrentIndex(1);
+                        m_parent->audioListsStack()->ui->semATimeComp->setCurrentIndex(1);
                     }
                     QDateTime recentDateTime = QDateTime::fromString(entry.at(1), "yyyyMMddHHmmss");
-                    m_parent->m_audioListsStack->ui->semATime->setDateTime(recentDateTime);
-                    m_parent->m_audioListsStack->ui->semASelectMore->setChecked(true);
+                    m_parent->audioListsStack()->ui->semATime->setDateTime(recentDateTime);
+                    m_parent->audioListsStack()->ui->semASelectMore->setChecked(true);
                 } else if (!entry.isEmpty() && configEntry.at(1) == "HighestAudioRated") {
                     if (entry.at(0) == ">=") {
-                        m_parent->m_audioListsStack->ui->semARatingComp->setCurrentIndex(0);
+                        m_parent->audioListsStack()->ui->semARatingComp->setCurrentIndex(0);
                     } else if (entry.at(0) == "=") {
-                        m_parent->m_audioListsStack->ui->semARatingComp->setCurrentIndex(1);
+                        m_parent->audioListsStack()->ui->semARatingComp->setCurrentIndex(1);
                     } else {
-                        m_parent->m_audioListsStack->ui->semARatingComp->setCurrentIndex(2);
+                        m_parent->audioListsStack()->ui->semARatingComp->setCurrentIndex(2);
                     }
                     int ratingIndex = 10 - (entry.at(1).toInt());
-                    if (ratingIndex < 0 || ratingIndex >= m_parent->m_audioListsStack->ui->semARating->count()) {
+                    if (ratingIndex < 0 || ratingIndex >= m_parent->audioListsStack()->ui->semARating->count()) {
                         ratingIndex = 0;
                     }
-                    m_parent->m_audioListsStack->ui->semARating->setCurrentIndex(ratingIndex);
-                    m_parent->m_audioListsStack->ui->semASelectMore->setChecked(true);
+                    m_parent->audioListsStack()->ui->semARating->setCurrentIndex(ratingIndex);
+                    m_parent->audioListsStack()->ui->semASelectMore->setChecked(true);
                 } else if (!entry.isEmpty() && configEntry.at(1) == "FrequentAudioPlayed") {
                     if (entry.at(0) == ">=") {
-                        m_parent->m_audioListsStack->ui->semAFreqComp->setCurrentIndex(0);
+                        m_parent->audioListsStack()->ui->semAFreqComp->setCurrentIndex(0);
                     } else if (entry.at(0) == "=") {
-                        m_parent->m_audioListsStack->ui->semAFreqComp->setCurrentIndex(1);
+                        m_parent->audioListsStack()->ui->semAFreqComp->setCurrentIndex(1);
                     } else {
-                        m_parent->m_audioListsStack->ui->semAFreqComp->setCurrentIndex(2);
+                        m_parent->audioListsStack()->ui->semAFreqComp->setCurrentIndex(2);
                     }
                     int frequentlyPlayedCount = qMax(0, entry.at(1).toInt());
-                    m_parent->m_audioListsStack->ui->semAFreq->setValue(frequentlyPlayedCount);
-                    m_parent->m_audioListsStack->ui->semASelectMore->setChecked(true);
+                    m_parent->audioListsStack()->ui->semAFreq->setValue(frequentlyPlayedCount);
+                    m_parent->audioListsStack()->ui->semASelectMore->setChecked(true);
                 }
             }
         }
@@ -228,45 +231,45 @@ void MediaListSettings::readConfigEntryForLRI(const QString &lri)
         KConfig config;
         KConfigGroup generalGroup( &config, "General" );
         int limit = generalGroup.readEntry(configEntry.at(0), 20);
-        m_parent->m_videoListsStack->ui->semVLimit->setValue(limit);
-        m_parent->m_videoListsStack->ui->semVSelectMore->setChecked(false);
+        m_parent->videoListsStack()->ui->semVLimit->setValue(limit);
+        m_parent->videoListsStack()->ui->semVSelectMore->setChecked(false);
         if (configEntry.count() > 1) {
             if (generalGroup.hasKey(configEntry.at(1))) {
                 QStringList entry = generalGroup.readEntry(configEntry.at(1), QStringList());
                 if (!entry.isEmpty() && configEntry.at(1) == "RecentVideoPlayed") {
                     if (entry.at(0) == "<") {
-                        m_parent->m_videoListsStack->ui->semVTimeComp->setCurrentIndex(0);
+                        m_parent->videoListsStack()->ui->semVTimeComp->setCurrentIndex(0);
                     } else {
-                        m_parent->m_videoListsStack->ui->semVTimeComp->setCurrentIndex(1);
+                        m_parent->videoListsStack()->ui->semVTimeComp->setCurrentIndex(1);
                     }
                     QDateTime recentDateTime = QDateTime::fromString(entry.at(1), "yyyyMMddHHmmss");
-                    m_parent->m_videoListsStack->ui->semVTime->setDateTime(recentDateTime);
-                    m_parent->m_videoListsStack->ui->semVSelectMore->setChecked(true);
+                    m_parent->videoListsStack()->ui->semVTime->setDateTime(recentDateTime);
+                    m_parent->videoListsStack()->ui->semVSelectMore->setChecked(true);
                 } else if (!entry.isEmpty() && configEntry.at(1) == "HighestVideoRated") {
                     if (entry.at(0) == ">=") {
-                        m_parent->m_videoListsStack->ui->semVRatingComp->setCurrentIndex(0);
+                        m_parent->videoListsStack()->ui->semVRatingComp->setCurrentIndex(0);
                     } else if (entry.at(0) == "=") {
-                        m_parent->m_videoListsStack->ui->semVRatingComp->setCurrentIndex(1);
+                        m_parent->videoListsStack()->ui->semVRatingComp->setCurrentIndex(1);
                     } else {
-                        m_parent->m_videoListsStack->ui->semVRatingComp->setCurrentIndex(2);
+                        m_parent->videoListsStack()->ui->semVRatingComp->setCurrentIndex(2);
                     }
                     int ratingIndex = 10 - (entry.at(1).toInt());
-                    if (ratingIndex < 0 || ratingIndex >= m_parent->m_videoListsStack->ui->semVRating->count()) {
+                    if (ratingIndex < 0 || ratingIndex >= m_parent->videoListsStack()->ui->semVRating->count()) {
                         ratingIndex = 0;
                     }
-                    m_parent->m_videoListsStack->ui->semVRating->setCurrentIndex(ratingIndex);
-                    m_parent->m_videoListsStack->ui->semVSelectMore->setChecked(true);
+                    m_parent->videoListsStack()->ui->semVRating->setCurrentIndex(ratingIndex);
+                    m_parent->videoListsStack()->ui->semVSelectMore->setChecked(true);
                 } else if (!entry.isEmpty() && configEntry.at(1) == "FrequentVideoPlayed") {
                     if (entry.at(0) == ">=") {
-                        m_parent->m_videoListsStack->ui->semVFreqComp->setCurrentIndex(0);
+                        m_parent->videoListsStack()->ui->semVFreqComp->setCurrentIndex(0);
                     } else if (entry.at(0) == "=") {
-                        m_parent->m_videoListsStack->ui->semVFreqComp->setCurrentIndex(1);
+                        m_parent->videoListsStack()->ui->semVFreqComp->setCurrentIndex(1);
                     } else {
-                        m_parent->m_videoListsStack->ui->semVFreqComp->setCurrentIndex(2);
+                        m_parent->videoListsStack()->ui->semVFreqComp->setCurrentIndex(2);
                     }
                     int frequentlyPlayedCount = qMax(0, entry.at(1).toInt());
-                    m_parent->m_videoListsStack->ui->semVFreq->setValue(frequentlyPlayedCount);
-                    m_parent->m_videoListsStack->ui->semVSelectMore->setChecked(true);
+                    m_parent->videoListsStack()->ui->semVFreq->setValue(frequentlyPlayedCount);
+                    m_parent->videoListsStack()->ui->semVSelectMore->setChecked(true);
                 }
             }
         }
@@ -279,39 +282,39 @@ void MediaListSettings::writeConfigEntryForLRI(const QString &lri)
     if (!configEntry.isEmpty() && configEntry.at(0).contains("Audio")) {
         KConfig config;
         KConfigGroup generalGroup( &config, "General" );
-        int limit = m_parent->m_audioListsStack->ui->semALimit->value();
+        int limit = m_parent->audioListsStack()->ui->semALimit->value();
         generalGroup.writeEntry(configEntry.at(0), limit);
-        if (m_parent->m_audioListsStack->ui->semASelectMore->isChecked() && configEntry.count() > 1) {
+        if (m_parent->audioListsStack()->ui->semASelectMore->isChecked() && configEntry.count() > 1) {
             if (configEntry.at(1) == "RecentAudioPlayed") {
                 QStringList entry;
-                if (m_parent->m_audioListsStack->ui->semATimeComp->currentIndex() == 0) {
+                if (m_parent->audioListsStack()->ui->semATimeComp->currentIndex() == 0) {
                     entry.append("<");
                 } else {
                     entry.append(">");
                 }
-                entry.append(m_parent->m_audioListsStack->ui->semATime->dateTime().toString("yyyyMMddHHmmss"));
+                entry.append(m_parent->audioListsStack()->ui->semATime->dateTime().toString("yyyyMMddHHmmss"));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             } else if (configEntry.at(1) == "HighestAudioRated") {
                 QStringList entry;
-                if (m_parent->m_audioListsStack->ui->semARatingComp->currentIndex() == 0) {
+                if (m_parent->audioListsStack()->ui->semARatingComp->currentIndex() == 0) {
                     entry.append(">=");
-                } else if (m_parent->m_audioListsStack->ui->semARatingComp->currentIndex() == 1) {
+                } else if (m_parent->audioListsStack()->ui->semARatingComp->currentIndex() == 1) {
                     entry.append("=");
                 } else {
                     entry.append("<=");
                 }
-                entry.append(QString("%1").arg(10 - m_parent->m_audioListsStack->ui->semARating->currentIndex()));
+                entry.append(QString("%1").arg(10 - m_parent->audioListsStack()->ui->semARating->currentIndex()));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             } else if (configEntry.at(1) == "FrequentAudioPlayed") {
                 QStringList entry;
-                if (m_parent->m_audioListsStack->ui->semAFreqComp->currentIndex() == 0) {
+                if (m_parent->audioListsStack()->ui->semAFreqComp->currentIndex() == 0) {
                     entry.append(">=");
-                } else if (m_parent->m_audioListsStack->ui->semAFreqComp->currentIndex() == 1) {
+                } else if (m_parent->audioListsStack()->ui->semAFreqComp->currentIndex() == 1) {
                     entry.append("=");
                 } else {
                     entry.append("<=");
                 }
-                entry.append(QString("%1").arg(m_parent->m_audioListsStack->ui->semAFreq->value()));
+                entry.append(QString("%1").arg(m_parent->audioListsStack()->ui->semAFreq->value()));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             }
         } else if (configEntry.count() > 1) {
@@ -321,39 +324,39 @@ void MediaListSettings::writeConfigEntryForLRI(const QString &lri)
     } else if (!configEntry.isEmpty() && configEntry.at(0).contains("Video")) {
         KConfig config;
         KConfigGroup generalGroup( &config, "General" );
-        int limit = m_parent->m_videoListsStack->ui->semVLimit->value();
+        int limit = m_parent->videoListsStack()->ui->semVLimit->value();
         generalGroup.writeEntry(configEntry.at(0), limit);
-        if (m_parent->m_videoListsStack->ui->semVSelectMore->isChecked() && configEntry.count() > 1) {
+        if (m_parent->videoListsStack()->ui->semVSelectMore->isChecked() && configEntry.count() > 1) {
             if (configEntry.at(1) == "RecentVideoPlayed") {
                 QStringList entry;
-                if (m_parent->m_videoListsStack->ui->semVTimeComp->currentIndex() == 0) {
+                if (m_parent->videoListsStack()->ui->semVTimeComp->currentIndex() == 0) {
                     entry.append("<");
                 } else {
                     entry.append(">");
                 }
-                entry.append(m_parent->m_videoListsStack->ui->semVTime->dateTime().toString("yyyyMMddHHmmss"));
+                entry.append(m_parent->videoListsStack()->ui->semVTime->dateTime().toString("yyyyMMddHHmmss"));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             } else if (configEntry.at(1) == "HighestVideoRated") {
                 QStringList entry;
-                if (m_parent->m_videoListsStack->ui->semVRatingComp->currentIndex() == 0) {
+                if (m_parent->videoListsStack()->ui->semVRatingComp->currentIndex() == 0) {
                     entry.append(">=");
-                } else if (m_parent->m_videoListsStack->ui->semVRatingComp->currentIndex() == 1) {
+                } else if (m_parent->videoListsStack()->ui->semVRatingComp->currentIndex() == 1) {
                     entry.append("=");
                 } else {
                     entry.append("<=");
                 }
-                entry.append(QString("%1").arg(10 - m_parent->m_videoListsStack->ui->semVRating->currentIndex()));
+                entry.append(QString("%1").arg(10 - m_parent->videoListsStack()->ui->semVRating->currentIndex()));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             } else if (configEntry.at(1) == "FrequentVideoPlayed") {
                 QStringList entry;
-                if (m_parent->m_videoListsStack->ui->semVFreqComp->currentIndex() == 0) {
+                if (m_parent->videoListsStack()->ui->semVFreqComp->currentIndex() == 0) {
                     entry.append(">=");
-                } else if (m_parent->m_videoListsStack->ui->semVFreqComp->currentIndex() == 1) {
+                } else if (m_parent->videoListsStack()->ui->semVFreqComp->currentIndex() == 1) {
                     entry.append("=");
                 } else {
                     entry.append("<=");
                 }
-                entry.append(QString("%1").arg(m_parent->m_videoListsStack->ui->semVFreq->value()));
+                entry.append(QString("%1").arg(m_parent->videoListsStack()->ui->semVFreq->value()));
                 generalGroup.writeEntry(configEntry.at(1), entry);
             }
         } else if (configEntry.count() > 1) {
@@ -365,20 +368,20 @@ void MediaListSettings::writeConfigEntryForLRI(const QString &lri)
 
 void MediaListSettings::moreSelected(bool checked)
 {
-    if (m_parent->currentMediaListSelection() == MainWindow::AudioList) {
-        m_parent->m_audioListsStack->ui->semATimeComp->setEnabled(checked);
-        m_parent->m_audioListsStack->ui->semATime->setEnabled(checked);
-        m_parent->m_audioListsStack->ui->semARatingComp->setEnabled(checked);
-        m_parent->m_audioListsStack->ui->semARating->setEnabled(checked);
-        m_parent->m_audioListsStack->ui->semAFreqComp->setEnabled(checked);
-        m_parent->m_audioListsStack->ui->semAFreq->setEnabled(checked);
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+        m_parent->audioListsStack()->ui->semATimeComp->setEnabled(checked);
+        m_parent->audioListsStack()->ui->semATime->setEnabled(checked);
+        m_parent->audioListsStack()->ui->semARatingComp->setEnabled(checked);
+        m_parent->audioListsStack()->ui->semARating->setEnabled(checked);
+        m_parent->audioListsStack()->ui->semAFreqComp->setEnabled(checked);
+        m_parent->audioListsStack()->ui->semAFreq->setEnabled(checked);
     } else {
-        m_parent->m_videoListsStack->ui->semVTimeComp->setEnabled(checked);
-        m_parent->m_videoListsStack->ui->semVTime->setEnabled(checked);
-        m_parent->m_videoListsStack->ui->semVRatingComp->setEnabled(checked);
-        m_parent->m_videoListsStack->ui->semVRating->setEnabled(checked);
-        m_parent->m_videoListsStack->ui->semVFreqComp->setEnabled(checked);
-        m_parent->m_videoListsStack->ui->semVFreq->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVTimeComp->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVTime->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVRatingComp->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVRating->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVFreqComp->setEnabled(checked);
+        m_parent->videoListsStack()->ui->semVFreq->setEnabled(checked);
     }
 }
 

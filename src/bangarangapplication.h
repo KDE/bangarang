@@ -30,6 +30,7 @@ class MediaListProperties;
 class MediaItemModel;
 class MediaListCache;
 class Playlist;
+class MediaListsManager;
 class InfoManager;
 class SavedListsManager;
 class ActionsManager;
@@ -54,6 +55,7 @@ class BangarangApplication : public KApplication
         Playlist * playlist();
         MediaItemModel * browsingModel();
         MediaListCache * sharedMediaListCache();
+        MediaListsManager* mediaListsManager();
         InfoManager * infoManager();
         SavedListsManager * savedListsManager();
         ActionsManager * actionsManager();
@@ -77,6 +79,7 @@ class BangarangApplication : public KApplication
         Playlist * m_playlist;
         MediaItemModel * m_browsingModel;
         MediaListCache * m_sharedMediaListCache;
+        MediaListsManager* m_mediaListsManager;
         InfoManager * m_infoManager;
         SavedListsManager * m_savedListsManager;
         ActionsManager * m_actionsManager;

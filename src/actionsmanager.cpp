@@ -26,6 +26,7 @@
 #include "platform/playlist.h"
 #include "platform/ontologyupdater.h"
 #include "platform/infofetchers/infofetcher.h"
+#include "medialistsmanager.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -858,7 +859,7 @@ void ActionsManager::addToSavedVideoList(QAction *addAction)
 
 void ActionsManager::loadSelectedSources()
 {
-    m_parent->addListToHistory();
+    m_application->mediaListsManager()->addListToHistory();
     QList<MediaItem> mediaList;
     if (m_contextMenuSource == MainWindow::InfoBox) {
         mediaList = m_application->infoManager()->selectedInfoBoxMediaItems();
