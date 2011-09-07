@@ -22,6 +22,7 @@
 #include "ui_mainwindow.h"
 #include "sensiblewidgets.h"
 #include "bangarangapplication.h"
+#include "medialistsmanager.h"
 #include "starrating.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/infoitemmodel.h"
@@ -634,7 +635,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     mediaListProperties.lri = drillItem.url;
                     mediaListProperties.name = drillItem.title;
                     mediaListProperties.category = drillItem;
-                    application->mainWindow()->addListToHistory();
+                    application->mediaListsManager()->addListToHistory();
                     application->browsingModel()->clearMediaListData();
                     application->browsingModel()->setMediaListProperties(mediaListProperties);
                     application->browsingModel()->load();

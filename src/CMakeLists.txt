@@ -12,6 +12,7 @@ set(BangarangSources
     main.cpp
     mediaitemdelegate.cpp
     medialistsettings.cpp
+    medialistsmanager.cpp
     mediaview.cpp
     nowplayingdelegate.cpp
     nowplayingview.cpp

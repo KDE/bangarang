@@ -30,6 +30,7 @@ namespace Ui
 class MainWindow;
 class MediaItem;
 class MediaItemModel;
+class BangarangApplication;
 
 /*
  * This class provides a user interface for saving and removing media lists
@@ -49,6 +50,7 @@ class MediaListSettings : public QObject
         void saveMediaListSettings();
         
     private:
+        BangarangApplication* m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         void showMediaListSettingsForLri(const QString &lri);

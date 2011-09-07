@@ -25,6 +25,7 @@
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
 #include "platform/bangarangvideowidget.h"
+#include "medialistsmanager.h"
 #include "infomanager.h"
 #include "savedlistsmanager.h"
 #include "bookmarksmanager.h"
@@ -135,42 +136,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     connectPhononWidgets();
     
-    //Set up Audio lists view 
-    MediaListProperties audioListsProperties;
-    audioListsProperties.lri = "medialists://audio";
-    m_audioListsModel = new MediaItemModel(this);
-    m_audioListsModel->setMediaListProperties(audioListsProperties);
-    m_audioListsStack->ui->audioLists->setModel(m_audioListsModel);
-    connect(m_audioListsStack->ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
-    connect(m_audioListsModel, SIGNAL(mediaListChanged()), this, SLOT(audioListsChanged()));
-    m_audioListsModel->load();
-    
-    //Set up Video lists view 
-    MediaListProperties videoListsProperties;
-    videoListsProperties.lri = "medialists://video";
-    m_videoListsModel = new MediaItemModel(this);
-    m_videoListsModel->setMediaListProperties(videoListsProperties);
-    m_videoListsStack->ui->videoLists->setModel(m_videoListsModel);
-    connect(m_videoListsStack->ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
-    connect(m_videoListsModel, SIGNAL(mediaListChanged()), this, SLOT(videoListsChanged()));
-    m_videoListsModel->load();
-    
-    //Set up media list view
-    ui->mediaView->setMainWindow(this);
-    ui->mediaListFilterProxyLine->lineEdit()->setClickMessage(QString());
-    ui->mediaListFilterProxyLine->setProxy(ui->mediaView->filterProxyModel());
-    ui->mediaListFilter->setVisible(false);
-    ui->mediaView->setSourceModel(m_application->browsingModel());
-    connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
-    connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(mediaListLoading()));
-    connect(m_application->browsingModel(), SIGNAL(loadingStateChanged(bool)), this, SLOT(mediaListLoadingStateChanged(bool)));
-    connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
-    
-    connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
-    connect((MediaItemDelegate *)ui->mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
-    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
-    
     //Set up Browsing Model status notifications
     ui->notificationWidget->setVisible(false);
     connect(m_application->browsingModel(), SIGNAL(statusUpdated()), this, SLOT(browsingModelStatusUpdated()));
@@ -229,9 +194,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_stopPressed = false;
     m_loadingProgress = 0;
     
-    //Set default media list selection
-    showMediaList(AudioList);
-    
     //Install event filter for hiding widgets in Now Playing view
     ui->nowPlayingView->setMouseTracking(true);
     m_videoWidget->setMouseTracking(true);
@@ -254,37 +216,79 @@ void MainWindow::completeSetup()
     ui->playlistView->setupActions();
 }
 
+/*---------------
+  -- Accessors --
+  ---------------*/
+AudioListsStack *MainWindow::audioListsStack() {
+    return m_audioListsStack;
+}
+
+VideoListsStack *MainWindow::videoListsStack() {
+    return m_videoListsStack;
+}
+
+MediaListSettings *MainWindow::mediaListSettings()
+{
+    return m_mediaListSettings;
+}
+
+Phonon::VideoWidget * MainWindow::videoWidget()
+{
+    return m_videoWidget;
+}
+
+bool MainWindow::showingRemainingTime()
+{
+    return m_showRemainingTime;
+}
+
+void MainWindow::setShowRemainingTime(bool showRemainingTime)
+{
+    m_showRemainingTime = showRemainingTime;
+    if (m_showRemainingTime) {
+        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
+    } else {
+        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
+    }
+}
+
+
+MainWindow::VideoSize MainWindow::videoSize()
+{
+    return m_videoSize;
+}
+
+void MainWindow::setVideoSize(VideoSize size)
+{
+    m_videoSize = size;
+    if (m_videoSize == Normal) {
+        ui->nowPlayingView->hideInfo();
+        QPoint topLeft = ui->videoFrame->mapToParent(ui->videoFrame->rect().topLeft());
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
+        animation->setDuration(500);
+        animation->setStartValue(QRect(topLeft, ui->videoFrame->size()));
+        animation->setEndValue(ui->nowPlayingHolder->rect());
+        animation->setEasingCurve(QEasingCurve::InOutQuad);
+        animation->start();
+    } else {
+        int width = qMax(200, ui->nowPlayingHolder->width()/3);
+        int height = qMax(150, width*3/4);
+        int left = ui->nowPlayingHolder->width() - width - 20;
+        int top = ui->nowPlayingHolder->height() - height - 20;
+        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
+        connect(animation, SIGNAL(finished()), ui->nowPlayingView, SLOT(showInfo()));
+        animation->setDuration(500);
+        animation->setStartValue(ui->videoFrame->rect());
+        animation->setEndValue(QRect(left, top, width, height));
+        animation->setEasingCurve(QEasingCurve::InOutQuad);
+        animation->start();
+    }
+}
+
+
 /*---------------------
  -- UI widget slots  --
  ----------------------*/
-void MainWindow::on_audioListSelect_clicked()
-{
-    showMediaList(AudioList);
-    m_audioListsStack->ui->audioListsStack->setCurrentIndex(0);
-    if (m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
-        int selectedRow = m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-        loadMediaList(m_audioListsModel, selectedRow);
-    }
-    m_audioListsStack->ui->audioLists->setFocus();
-    ui->Filter->setClickMessage(i18n("Search for audio"));
-    ui->Filter->clear();
-
-}
-
-void MainWindow::on_videoListSelect_clicked()
-{
-    showMediaList(VideoList);
-    m_videoListsStack->ui->videoListsStack->setCurrentIndex(0);
-    if (m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
-        int selectedRow = m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-        loadMediaList(m_videoListsModel, selectedRow);
-    }
-    m_videoListsStack->ui->videoLists->setFocus();
-    ui->Filter->setClickMessage(i18n("Search for video"));
-    ui->Filter->clear();
-
-}
-
 void MainWindow::on_nowPlayingHolder_resized()
 {
     ui->nowPlayingView->move(0,0);
@@ -324,31 +328,6 @@ void MainWindow::on_nowPlayingHolder_resized()
         ui->floatingMenuHolder->setVisible(true);
         ui->floatingMenuHolder->raise();
         m_menuTimer->start();
-    }
-}
-
-void MainWindow::on_Filter_returnPressed()
-{
-    ui->mediaView->setFocus();
-    m_audioListsStack->ui->audioLists->selectionModel()->clearSelection();
-    if (!ui->Filter->text().isEmpty()) {
-        addListToHistory();
-        if (m_mediaListSelection == AudioList) {
-            MediaListProperties searchProperties;
-            searchProperties.name = i18n("Audio Search");
-            searchProperties.lri = QString("music://search?%1").arg(ui->Filter->text());
-            m_application->browsingModel()->clearMediaListData();
-            m_application->browsingModel()->setMediaListProperties(searchProperties);
-            m_application->browsingModel()->load();
-          } else if (m_mediaListSelection == VideoList) {
-            MediaListProperties searchProperties;
-            searchProperties.name = i18n("Video Search");
-            searchProperties.lri = QString("video://search?%1").arg(ui->Filter->text());
-            m_application->browsingModel()->clearMediaListData();
-            m_application->browsingModel()->setMediaListProperties(searchProperties);
-            m_application->browsingModel()->load();
-        }
-        ui->mediaViewHolder->setCurrentIndex(0);
     }
 }
 
@@ -458,28 +437,6 @@ void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
     ui->playlistView->selectionModel()->clear();
 }
 
-void MainWindow::on_previous_clicked()
-{
-    if (ui->mediaViewHolder->currentIndex() == 0) {//Load media list from history
-        m_application->browsingModel()->clearMediaListData();
-        m_application->browsingModel()->setMediaListProperties(m_mediaListPropertiesHistory.last());
-        m_application->browsingModel()->loadMediaList(m_mediaListHistory.last(), true);
-        QApplication::processEvents(); // Allows view to get updated before scrollbar is set
-        ui->mediaView->verticalScrollBar()->setValue(m_mediaListScrollHistory.last());
-        
-        //Clean up history and update previous button
-        m_mediaListHistory.removeLast();
-        m_mediaListPropertiesHistory.removeLast();
-        m_mediaListScrollHistory.removeLast();
-        if (m_mediaListPropertiesHistory.count() > 0) {
-            ui->previous->setVisible(true);
-            ui->previous->setText(m_mediaListPropertiesHistory.last().name);
-        } else {
-            ui->previous->setVisible(false);
-        }
-    }
-}
-
 void MainWindow::on_playAll_clicked()
 {
     m_application->actionsManager()->action("play_all")->trigger();
@@ -489,31 +446,6 @@ void MainWindow::on_playSelected_clicked()
 {
     m_application->actionsManager()->setContextMenuSource(MainWindow::Default);
     m_application->actionsManager()->action("play_selected")->trigger();
-}
-
-void MainWindow::on_mediaLists_currentChanged(int i)
-{
-    int selectedRow = -1;
-    MediaListProperties currentProperties;
-    if (i == 0) {
-        m_audioListsStack->ui->audioListsStack->setCurrentIndex(0);
-        if (m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
-            selectedRow = m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-            loadMediaList(m_audioListsModel, selectedRow);
-        }
-        m_audioListsStack->ui->audioLists->setFocus();
-        ui->Filter->setClickMessage(i18n("Search for audio"));
-        ui->Filter->clear();
-    } else {
-        m_videoListsStack->ui->videoListsStack->setCurrentIndex(0);
-        if (m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().count() > 0){
-            selectedRow = m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes().at(0).row();
-            loadMediaList(m_videoListsModel, selectedRow);
-        }
-        m_videoListsStack->ui->videoLists->setFocus();
-        ui->Filter->setClickMessage(i18n("Search for video"));
-        ui->Filter->clear();
-    }
 }
 
 void MainWindow::on_clearPlaylist_clicked()
@@ -582,11 +514,6 @@ void MainWindow::on_showMediaViewMenu_clicked()
 }
 
 void MainWindow::on_closePlaylistFilter_clicked()
-{
-  m_application->actionsManager()->action("toggle_filter")->trigger();
-}
-
-void MainWindow::on_closeMediaListFilter_clicked()
 {
   m_application->actionsManager()->action("toggle_filter")->trigger();
 }
@@ -784,73 +711,6 @@ void MainWindow::connectPhononWidgets()
 /*---------------------------
   -- SLOTS for media lists --
   ---------------------------*/
-void MainWindow::mediaListChanged()
-{
-    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
-    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
-    
-    if ((m_application->browsingModel()->rowCount() > 0) && (ui->mediaViewHolder->currentIndex() ==0)) {
-        MediaItem firstListItem = m_application->browsingModel()->mediaItemAt(0);
-        QString listItemType = firstListItem.type;
-        if ((listItemType == "Audio") || (listItemType == "Video") || (listItemType == "Category")) {
-            if (!firstListItem.fields["isTemplate"].toBool()) {
-                ui->playAll->setVisible(true);
-            }
-        /*} else if (listItemType == "Category") {
-            ui->playAll->setVisible(true);
-        } else if ((listItemType == "Action") || (listItemType == "Message")) {*/
-        } else {
-            ui->playAll->setVisible(false);
-        }
-        ui->playSelected->setVisible(false);
-    }
-}
-
-void MainWindow::mediaListPropertiesChanged()
-{
-    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
-    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
-}
-
-void MainWindow::mediaListLoadingStateChanged(bool loading)
-{
-    if (loading) {
-        if (!ui->loadingIndicator->isVisible()) {
-            ui->loadingIndicator->show();
-            showMediaListLoading();
-        }
-    } else {
-        ui->loadingIndicator->hide();
-    }
-}
-
-void MainWindow::showMediaListLoading()
-{
-    if (ui->loadingIndicator->isVisible()) {
-        m_loadingProgress++;
-        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
-            m_loadingProgress = 0;
-        }
-        QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
-        QPixmap pixmap = KIcon(iconName).pixmap(16, 16);
-        ui->loadingIndicator->setPixmap(pixmap);
-        QTimer::singleShot(100, this, SLOT(showMediaListLoading()));
-    }
-}
-
-void MainWindow::mediaListCategoryActivated(QModelIndex index)
-{
-    addListToHistory();
-    m_application->browsingModel()->categoryActivated(index);
-}
-
-void MainWindow::mediaListActionActivated(QModelIndex index)
-{
-    addListToHistory();
-    m_application->browsingModel()->actionActivated(index);
-}
-
-
 void MainWindow::delayedNotificationHide()
 {
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
@@ -875,86 +735,6 @@ void MainWindow::browsingModelStatusUpdated()
         ui->notificationProgress->setVisible(true);
     } else {
         ui->notificationProgress->setVisible(false);
-    }
-}
-
-void MainWindow::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
-{
-    if (selected.indexes().count() > 0) {
-        int firstRow = selected.indexes().at(0).row();
-        MediaItem firstSelectedItem = m_application->browsingModel()->mediaItemAt(firstRow);
-        QString itemType = firstSelectedItem.type;
-        if ((itemType == "Audio") || (itemType == "Video") || (itemType == "Category")) {
-            if (firstSelectedItem.fields.contains("isTemplate") &&
-                firstSelectedItem.fields["isTemplate"].toBool()) {
-                ui->playSelected->setVisible(false);
-            } else {
-                ui->playSelected->setVisible(true);
-            }
-            ui->playAll->setVisible(false);
-        } else {
-            ui->playSelected->setVisible(false);
-            ui->playAll->setVisible(false);
-        }
-    } else {
-        MediaItem firstListItem = m_application->browsingModel()->mediaItemAt(0);
-        QString itemType = firstListItem.type;
-        if ((itemType == "Audio") || (itemType == "Video") || (itemType == "Category")) {
-            if (firstListItem.fields.contains("isTemplate") &&
-                firstListItem.fields["isTemplate"].toBool()) {
-                ui->playAll->setVisible(false);
-            } else {
-                ui->playAll->setVisible(true);
-            }
-            ui->playSelected->setVisible(false);
-        } else {
-            ui->playSelected->setVisible(false);
-            ui->playAll->setVisible(false);
-        }
-    }
-    Q_UNUSED(selected);
-    Q_UNUSED(deselected);
-}
-
-void MainWindow::audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
-{
-    if ((m_mediaListSelection == AudioList) &&
-        (currentMainWidget() == MainMediaList) &&
-        (selected.indexes().count() > 0)) {
-        //Load selected media list
-        MediaListProperties currentProperties;
-        int selectedRow = selected.indexes().at(0).row();
-        loadMediaList(m_audioListsModel, selectedRow);
-    }
-    Q_UNUSED(deselected);
-}    
-
-void MainWindow::audioListsChanged()
-{
-    QModelIndex index = m_audioListsModel->index(0, 0);
-    if (index.isValid()) {
-        m_audioListsStack->ui->audioLists->selectionModel()->select( index, QItemSelectionModel::Select );
-    }
-}
-
-void MainWindow::videoListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
-{
-    if ((m_mediaListSelection == VideoList) &&
-        (currentMainWidget() == MainMediaList) &&
-        (selected.indexes().count() > 0)) {
-        //Load selected media list
-        MediaListProperties currentProperties;
-        int selectedRow = selected.indexes().at(0).row();
-        loadMediaList(m_videoListsModel, selectedRow);
-    }
-    Q_UNUSED(deselected);
-}    
-
-void MainWindow::videoListsChanged()
-{
-    QModelIndex index = m_videoListsModel->index(0, 0);
-    if (index.isValid()) {
-        m_videoListsStack->ui->videoLists->selectionModel()->select( index, QItemSelectionModel::Select );
     }
 }
 
@@ -991,52 +771,9 @@ void MainWindow::shuffleModeChanged(bool shuffle)
 }
 
 
-void MainWindow::hidePlayButtons()
-{
-    ui->playSelected->setVisible(false);
-    ui->playAll->setVisible(false);
-}
-
-void MainWindow::updateListHeader()
-{
-    ui->listTitle->setText(m_application->browsingModel()->mediaListProperties().name);
-    ui->listSummary->setText(m_application->browsingModel()->mediaListProperties().summary);
-}
-
-
 /*----------------------
   -- Helper functions --
   ----------------------*/
-void MainWindow::addListToHistory()
-{
-    //Add medialList to history
-    QList<MediaItem> mediaList = m_application->browsingModel()->mediaList();
-    m_mediaListHistory.append(mediaList);
-    m_mediaListPropertiesHistory << m_application->browsingModel()->mediaListProperties();
-    m_mediaListScrollHistory << ui->mediaView->verticalScrollBar()->value();
-    QString previousButtonText(m_application->browsingModel()->mediaListProperties().name);
-    ui->previous->setText(previousButtonText);
-    ui->previous->setVisible(true);
-}
-
-KIcon MainWindow::addItemsIcon()
-{
-    QPixmap pixmap(16,16);
-    pixmap.fill(Qt::transparent);
-    QPainter p(&pixmap);
-    QPen pen = p.pen();
-    QColor color = KColorScheme(QPalette::Active).foreground().color();
-    color.setAlpha(200);
-    pen.setColor(color);
-    pen.setCapStyle(Qt::RoundCap);
-    pen.setWidth(3);
-    p.setPen(pen);
-    p.drawLine(4,8,12,8);
-    p.drawLine(8,4,8,12);
-    p.end();
-    return KIcon(pixmap);
-}
-
 void MainWindow::setupIcons()
 {
     //Main Window Icon
@@ -1176,12 +913,12 @@ void MainWindow::deviceAdded(const QString &udi)
         const Solid::OpticalDisc *disc = deviceAdded.as<const Solid::OpticalDisc> ();
         if ( disc != NULL ) {
             if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-                m_audioListsModel->clearMediaListData();
-                m_audioListsModel->load();
+                m_application->mediaListsManager()->audioListsModel()->clearMediaListData();
+                m_application->mediaListsManager()->audioListsModel()->load();
                 updateCachedDevicesList();
             } else if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-                m_videoListsModel->clearMediaListData();
-                m_videoListsModel->load();
+                m_application->mediaListsManager()->videoListsModel()->clearMediaListData();
+                m_application->mediaListsManager()->videoListsModel()->load();
                 updateCachedDevicesList();
             }
         }
@@ -1193,13 +930,13 @@ void MainWindow::deviceRemoved(const QString &udi)
     //Check type of device that was removed
     //and reload media lists if necessary
     if (m_devicesAdded.indexOf(QString("CD:%1").arg(udi)) != -1) {
-        m_audioListsModel->clearMediaListData();
-        m_audioListsModel->load();
+        m_application->mediaListsManager()->audioListsModel()->clearMediaListData();
+        m_application->mediaListsManager()->audioListsModel()->load();
         updateCachedDevicesList();
     }
     if (m_devicesAdded.indexOf(QString("DVD:%1").arg(udi)) != -1) {
-        m_videoListsModel->clearMediaListData();
-        m_videoListsModel->load();
+        m_application->mediaListsManager()->videoListsModel()->clearMediaListData();
+        m_application->mediaListsManager()->videoListsModel()->load();
         updateCachedDevicesList();
     }
 }
@@ -1236,58 +973,6 @@ void MainWindow::skipBackward(int i)
 {
   if (m_application->mediaObject()->isSeekable())
     m_application->mediaObject()->seek(m_application->mediaObject()->currentTime() + qint64(i)*100);
-}
-
-Phonon::VideoWidget * MainWindow::videoWidget()
-{
-  return m_videoWidget;
-}
-
-bool MainWindow::showingRemainingTime()
-{
-    return m_showRemainingTime;
-}
-
-void MainWindow::setShowRemainingTime(bool showRemainingTime)
-{
-    m_showRemainingTime = showRemainingTime;
-    if (m_showRemainingTime) {
-        ui->seekTime->setToolTip(i18n("<b>Time remaining</b><br>Click to show elapsed time and bookmarks"));
-    } else {
-        ui->seekTime->setToolTip(i18n("<b>Time elapsed</b><br>Click to show remaining time and bookmarks"));
-    }
-}
-
-void MainWindow::setVideoSize(VideoSize size)
-{
-    m_videoSize = size;
-    if (m_videoSize == Normal) {
-        ui->nowPlayingView->hideInfo();
-        QPoint topLeft = ui->videoFrame->mapToParent(ui->videoFrame->rect().topLeft());
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
-        animation->setDuration(500);
-        animation->setStartValue(QRect(topLeft, ui->videoFrame->size()));
-        animation->setEndValue(ui->nowPlayingHolder->rect());
-        animation->setEasingCurve(QEasingCurve::InOutQuad);
-        animation->start();
-    } else {
-        int width = qMax(200, ui->nowPlayingHolder->width()/3);
-        int height = qMax(150, width*3/4);
-        int left = ui->nowPlayingHolder->width() - width - 20;
-        int top = ui->nowPlayingHolder->height() - height - 20;
-        QPropertyAnimation *animation = new QPropertyAnimation(ui->videoFrame, "geometry");
-        connect(animation, SIGNAL(finished()), ui->nowPlayingView, SLOT(showInfo()));
-        animation->setDuration(500);
-        animation->setStartValue(ui->videoFrame->rect());
-        animation->setEndValue(QRect(left, top, width, height));
-        animation->setEasingCurve(QEasingCurve::InOutQuad);
-        animation->start();
-    }
-}
-
-MainWindow::VideoSize MainWindow::videoSize()
-{
-    return m_videoSize;
 }
 
 void MainWindow::nowPlayingChanged()
@@ -1362,22 +1047,12 @@ void MainWindow::switchMainWidget(MainWindow::MainWidget which)
     m_application->actionsManager()->updateToggleFilterText();
 
     //If no media list has been loaded yet, then load the selected one.
-    if (which == MainMediaList) {
-        if (m_application->browsingModel()->mediaListProperties().lri.isEmpty()) {
-            if (m_mediaListSelection == AudioList) {
-                QModelIndexList selected = m_audioListsStack->ui->audioLists->selectionModel()->selectedIndexes();
-                if (selected.count() > 0) {
-                    int selectedRow = selected.at(0).row();
-                    loadMediaList(m_audioListsModel, selectedRow);
-                }
-            } else {
-                QModelIndexList selected = m_videoListsStack->ui->videoLists->selectionModel()->selectedIndexes();
-                if (selected.count() > 0) {
-                    int selectedRow = selected.at(0).row();
-                    loadMediaList(m_videoListsModel, selectedRow);
-                }
-            }
-        }
+    if (which == MainMediaList &&
+        m_application->browsingModel()->mediaListProperties().lri.isEmpty() &&
+        m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+        m_application->mediaListsManager()->selectAudioList();
+    } else {
+        m_application->mediaListsManager()->selectVideoList();
     }
 }
 
@@ -1386,79 +1061,11 @@ MainWindow::MainWidget MainWindow::currentMainWidget()
     return (MainWidget) ui->stackedWidget->currentIndex();
 }
 
-void MainWindow::showMediaList(MediaListSelection listSelection)
-{
-    if (listSelection == AudioList) {
-        ui->videoListsStackHolder->layout()->removeWidget(m_videoListsStack);
-        ui->videoListsStackHolder->hide();
-        ui->videoListsSelectHolder->show();
-        ui->videoListLabel->hide();
-        ui->audioListsStackHolder->layout()->addWidget(m_audioListsStack);
-        ui->audioListsStackHolder->show();
-        ui->audioListsSelectHolder->hide();
-        ui->audioListLabel->show();
-    } else if (listSelection == VideoList) {
-        ui->audioListsStackHolder->layout()->removeWidget(m_audioListsStack);
-        ui->audioListsStackHolder->hide();
-        ui->audioListsSelectHolder->show();
-        ui->audioListLabel->hide();
-        ui->videoListsStackHolder->layout()->addWidget(m_videoListsStack);
-        ui->videoListsStackHolder->show();
-        ui->videoListsSelectHolder->hide();
-        ui->videoListLabel->show();
-    }
-    m_mediaListSelection = listSelection;
-}
-
-MainWindow::MediaListSelection MainWindow::currentMediaListSelection()
-{
-    return m_mediaListSelection;
-}
-
-
-void MainWindow::mediaListLoading()
-{
-    if (ui->mediaListFilter->isVisible())
-        ui->mediaListFilterProxyLine->lineEdit()->clear();
-    hidePlayButtons();
-}
-
 void MainWindow::playlistLoading()
 {
     if (ui->playlistFilter->isVisible())
         ui->playlistFilterProxyLine->lineEdit()->clear();
     showLoading();
-}
-
-void MainWindow::loadMediaList(MediaItemModel *listsModel, int row)
-{
-    MediaListProperties currentProperties;
-    MediaItem selectedItem = listsModel->mediaItemAt(row);
-    currentProperties.name = selectedItem.title;
-    currentProperties.lri = selectedItem.url;
-    currentProperties.category = selectedItem;
-    if (m_application->browsingModel()->mediaListProperties().lri != currentProperties.lri) {
-        m_application->browsingModel()->clearMediaListData();
-        m_application->browsingModel()->setMediaListProperties(currentProperties);
-        m_application->browsingModel()->load();
-        m_mediaListHistory.clear();
-        m_mediaListPropertiesHistory.clear();
-        ui->previous->setVisible(false);
-        ui->mediaViewHolder->setCurrentIndex(0);
-    }
-    
-    //Update InfoManager Context
-    m_application->infoManager()->setContext(selectedItem);
-    
-    //Determine if selected list is configurable
-    bool isAudioList = (listsModel->mediaListProperties().lri == "medialists://audio");
-    bool isVideoList = (listsModel->mediaListProperties().lri == "medialists://video");
-    bool selectedIsConfigurable = selectedItem.fields["isConfigurable"].toBool();
-    if (isAudioList) {
-        m_audioListsStack->ui->configureAudioList->setVisible(selectedIsConfigurable);
-    } else if (isVideoList) {
-        m_videoListsStack->ui->configureVideoList->setVisible(selectedIsConfigurable);
-    }
 }
 
 void MainWindow::on_closePlaylistNotification_clicked()
