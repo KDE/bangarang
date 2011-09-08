@@ -27,6 +27,7 @@
 #include "audiosettings.h"
 #include "videosettings.h"
 #include "dbusobjects.h"
+#include "platform/devicemanager.h"
 #include "platform/mediaitemmodel.h"
 #include "platform/medialistcache.h"
 #include "platform/playlist.h"
@@ -50,6 +51,7 @@ void BangarangApplication::setup()
     qRegisterMetaType<MediaListProperties>("MediaListProperties");
     qRegisterMetaType<QList<MediaItem> >("QList<MediaItem>");
     qRegisterMetaType<QList<QImage> >("QList<QImage>");
+
     
     //setup locale
     m_locale = new KLocale( aboutData()->appName() );
@@ -59,7 +61,6 @@ void BangarangApplication::setup()
     m_mediaObject->setTickInterval(500);
     m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this); // default to music category;
     connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
-
 
     
     //Set up playlist
@@ -75,6 +76,9 @@ void BangarangApplication::setup()
     
     // Set up system tray icon
     m_statusNotifierItem = new BangarangNotifierItem(this);
+
+    //Start device manager (Singleton will create and start it)
+    DeviceManager::instance();
     
     //Set up main window
     m_mainWindow = new MainWindow();
@@ -394,22 +398,19 @@ void BangarangApplication::processCommandLineArgs()
                 break;
             } else if (args->isSet("play-cd")) {
                 //Play CD
-                kDebug() << "playing CD";
-                QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::Audio);
-                foreach (QString udi, udis) {
-                    Solid::Device device = Solid::Device( udi );
-                    if ( !device.isValid() ) {
-                        continue;
-                    }
-                    MediaItem mediaItem;
-                    mediaItem.type = "Category";
-                    mediaItem.title = i18n("Audio CD");
-                    mediaItem.fields["title"] = mediaItem.title;
-                    mediaItem.url = QString( "cdaudio://%1" ).arg(udi);
-                    mediaList << mediaItem;
-                    itemLoaded = true;
+                QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
+                if ( cds.isEmpty() ) {
+                    kDebug() << "no CD found";
                     break;
                 }
+                kDebug() << "playing CD";
+                MediaItem mediaItem;
+                mediaItem.type = "Category";
+                mediaItem.title = i18n("Audio CD");
+                mediaItem.fields["title"] = mediaItem.title;
+                mediaItem.url = QString( "cdaudio://%1" ).arg(cds.at(0).udi());
+                mediaList << mediaItem;
+                itemLoaded = true;
                 break;
             } else {
                 //Play Url

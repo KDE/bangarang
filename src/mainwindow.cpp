@@ -52,10 +52,6 @@
 #include <kio/netaccess.h>
 #include <kio/copyjob.h>
 #include <kio/job.h>
-#include <Solid/Device>
-#include <Solid/DeviceInterface>
-#include <Solid/OpticalDisc>
-#include <Solid/DeviceNotifier>
 #include <Nepomuk/ResourceManager>
 #include <QVBoxLayout>
 #include <QStackedLayout>
@@ -73,13 +69,13 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
-    
+
     ui->setupUi(this);
     m_audioListsStack = new AudioListsStack(0);
     m_videoListsStack = new VideoListsStack(0);
     KAcceleratorManager::setNoAccel(ui->audioListSelect);
     KAcceleratorManager::setNoAccel(ui->videoListSelect);
-
+    
     //Set up menu hiding timer
     m_menuTimer = new QTimer(this);
     m_menuTimer->setInterval(3000);
@@ -105,11 +101,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     if (!m_nepomukInited) {
         ui->Filter->setVisible(false);
     }
-    
-    //Set up device notifier
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )), this, SLOT(deviceAdded(const QString & )));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString & )), this, SLOT(deviceRemoved(const QString & )));
 
+    //Set up device notifier
+    connect(DeviceManager::instance(), SIGNAL(deviceListChanged(DeviceManager::RelatedType)),
+            this, SLOT(updateDeviceList(DeviceManager::RelatedType)));
+    
     //Set up media object
     m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
@@ -122,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     layout->setContentsMargins(0,0,0,0);
     ui->videoFrame->setLayout(layout);
     ui->videoFrame->setFrameShape(QFrame::NoFrame);
-
+    
     //Set up volume and seek slider
     ui->volumeSlider->setMuteVisible( false );
     ui->seekSlider->setIconVisible(false);
@@ -181,7 +177,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_application->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(shuffleModeChanged(bool)));
     connect(m_application->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(repeatModeChanged(bool)));
     
-    
     //Set up playlist view
     ui->playlistView->setMainWindow(this);
     ui->playlistFilterProxyLine->lineEdit()->setClickMessage(QString());
@@ -191,7 +186,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->playlistNotificationNo->setText(i18n("No"));
     ui->playlistNotificationYes->setText(i18n("Yes"));
     playWhenPlaylistChanges = false;
-
+    
     //Setup Now Playing view
     ui->nowPlayingView->setMainWindow( this );
     updateCustomColors();
@@ -205,7 +200,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoFrame->resize(ui->nowPlayingHolder->size());
     KAcceleratorManager::setNoAccel(ui->showPlaylist);
     KAcceleratorManager::setNoAccel(ui->showPlaylist_2);
-
+    
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
     
@@ -224,10 +219,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->collectionButton->setFocus();
     updateSeekTime(0);
     showApplicationBanner();
-    updateCachedDevicesList();
     m_pausePressed = false;
     m_stopPressed = false;
     m_loadingProgress = 0;
+    
     
     //Set default media list selection
     showMediaList(AudioList);
@@ -237,10 +232,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_videoWidget->setMouseTracking(true);
     ui->nowPlayingView->viewport()->installEventFilter(this);
     m_videoWidget->installEventFilter(this);
+    
 
     // Set up cursor hiding and context menu for videos.
     m_videoWidget->setFocusPolicy(Qt::ClickFocus);
     KCursor::setAutoHideCursor(m_videoWidget, true);
+    
 }
 
 MainWindow::~MainWindow()
@@ -1112,22 +1109,6 @@ void MainWindow::showApplicationBanner()
     ui->videoFrame->setVisible(false);
 }
 
-void MainWindow::updateCachedDevicesList()
-{
-    m_devicesAdded.clear();
-    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString())) {
-        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
-        if (disc == NULL)
-            continue;
-        if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-            m_devicesAdded << QString("CD:%1").arg(device.udi());
-        }
-        if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-            m_devicesAdded << QString("DVD:%1").arg(device.udi());
-        }
-    }
-}
-
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (isFullScreen() &&
@@ -1167,42 +1148,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 /*-------------------------
 -- Device Notifier Slots --
 ---------------------------*/
-void MainWindow::deviceAdded(const QString &udi)
-{
-    //Check type of device that was added
-    //and reload media lists if necessary
-    Solid::Device deviceAdded(udi);
-    if (deviceAdded.isDeviceInterface(Solid::DeviceInterface::OpticalDisc)) {
-        const Solid::OpticalDisc *disc = deviceAdded.as<const Solid::OpticalDisc> ();
-        if ( disc != NULL ) {
-            if (disc->availableContent() & Solid::OpticalDisc::Audio) {
-                m_audioListsModel->clearMediaListData();
-                m_audioListsModel->load();
-                updateCachedDevicesList();
-            } else if (disc->availableContent() & Solid::OpticalDisc::VideoDvd) {
-                m_videoListsModel->clearMediaListData();
-                m_videoListsModel->load();
-                updateCachedDevicesList();
-            }
-        }
-    }
-}
-
-void MainWindow::deviceRemoved(const QString &udi)
-{
-    //Check type of device that was removed
-    //and reload media lists if necessary
-    if (m_devicesAdded.indexOf(QString("CD:%1").arg(udi)) != -1) {
-        m_audioListsModel->clearMediaListData();
-        m_audioListsModel->load();
-        updateCachedDevicesList();
-    }
-    if (m_devicesAdded.indexOf(QString("DVD:%1").arg(udi)) != -1) {
-        m_videoListsModel->clearMediaListData();
-        m_videoListsModel->load();
-        updateCachedDevicesList();
-    }
-}
 
 void MainWindow::updateCustomColors()
 {
@@ -1494,4 +1439,15 @@ bool MainWindow::newPlaylistNotification(QString text, QObject *receiver, const 
     if (question)
         connect(this, SIGNAL(playlistNotificationResult(bool)), receiver, slot);
     return true;
+}
+
+void MainWindow::updateDeviceList(DeviceManager::RelatedType type)
+{
+    if ( type == DeviceManager::AudioType || type == DeviceManager::AllTypes ) {
+        m_audioListsModel->clearMediaListData();
+        m_audioListsModel->load();
+    } else if ( type == DeviceManager::VideoType || type == DeviceManager::AllTypes ) {
+        m_videoListsModel->clearMediaListData();
+        m_videoListsModel->load();
+    }
 }
