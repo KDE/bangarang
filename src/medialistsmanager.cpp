@@ -83,6 +83,10 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     KLineEdit* searchField = m_application->mainWindow()->ui->Filter;
     connect(searchField, SIGNAL(returnPressed()), this, SLOT(loadSearch()));
 
+    //Set up device notifier
+    connect(DeviceManager::instance(), SIGNAL(deviceListChanged(DeviceManager::RelatedType)),
+            this, SLOT(updateDeviceList(DeviceManager::RelatedType)));
+
     //Set default media list selection
     showMediaList(AudioList);
 
@@ -434,4 +438,15 @@ MediaItemModel* MediaListsManager::audioListsModel()
 MediaItemModel* MediaListsManager::videoListsModel()
 {
     return m_videoListsModel;
+}
+
+void MediaListsManager::updateDeviceList(DeviceManager::RelatedType type) {
+    if ( type == DeviceManager::AudioType || type == DeviceManager::AllTypes ) {
+        m_audioListsModel->clearMediaListData();
+        m_audioListsModel->load();
+    }
+    if ( type == DeviceManager::VideoType || type == DeviceManager::AllTypes ) {
+        m_videoListsModel->clearMediaListData();
+        m_videoListsModel->load();
+    }
 }

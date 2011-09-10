@@ -20,7 +20,6 @@
 #define MAINWINDOW_H
 
 #include "platform/bangarangvideowidget.h"
-#include "platform/devicemanager.h"
 #include "audiolistsstack.h"
 #include "videolistsstack.h"
 #include <KIcon>
@@ -176,7 +175,6 @@ private slots:
     void updateCustomColors();
     void skipForward(int i);
     void skipBackward(int i);  
-    void updateDeviceList(DeviceManager::RelatedType type);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
