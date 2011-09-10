@@ -357,37 +357,47 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
     if (subtitleUrl.isLocalFile()) {
         QFile file(subtitleUrl.path());
         if (file.open(QFile::ReadOnly)) {
+
+            QByteArray encodingName;
+
+            KEncodingProber prober(KEncodingProber::Universal);
+            if (prober.feed(file.readAll()) == KEncodingProber::FoundIt)
+                encodingName = prober.encoding().toLower();
+            else {
+                KDialog dialog;
+                dialog.setWindowTitle(i18n("Unknown file encoding"));
+                QVBoxLayout layout;
+                layout.addWidget(new QLabel(i18n("Bangarang can’t detect the subtitle encoding<br>Please select the right encoding from the list:")));
+                QComboBox langCombo;
+
+                QString codec;
+                QStringList list;
+                foreach (codec, QTextCodec::availableCodecs())
+                    list.append(codec);
+                list.sort();
+                langCombo.addItems(list);
+                QString defaultCodec = QTextCodec::codecForLocale()->name();
+                langCombo.setCurrentIndex(list.lastIndexOf(defaultCodec));
+
+                layout.addWidget(langCombo);
+                dialog.mainWidget()->setLayout(layout);
+
+                if (dialog.exec() == KDialog::Accepted)
+                    encodingName = langCombo.currentText().toAscii();
+                else {
+                    file.close();
+                    return;
+                }
+            }
+
+            file.seek(0);
             QTextStream in(&file);
+            in.setCodec(QTextCodec::codecForName(encodingName));
             bool lastLineWasTime = false;
             kDebug() << "Loading subtitles...";
-            QString encodingTest;
-            QByteArray encodingName;
+
              while (!in.atEnd()) {
                  QString line = in.readLine().trimmed();
-                 //Collect enough data to attempt to perform encoding check
-                 if (encodingName.isEmpty() && encodingTest.length() > 200) {
-                     KEncodingProber prober(KEncodingProber::Universal);
-                     KEncodingProber::ProberState result = prober.feed(encodingTest.toAscii());
-                     if (result != KEncodingProber::NotMe) {
-                         if (prober.confidence() > 0.5 ) {
-                             encodingName = prober.encoding().toLower();
-                         } else if ((prober.confidence() <= 0.3 || encodingName != "utf-8")
-                             && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
-                             encodingName = QTextCodec::codecForLocale()->name().toLower();
-                         }
-                         if (!encodingName.isEmpty()) {
-                             for (int i = 0; i < m_extSubtitles.count(); i++) {
-                                 QString encSubtitle = m_extSubtitles.at(i);
-                                 encSubtitle = QTextCodec::codecForName(encodingName)->toUnicode(encSubtitle.toAscii());
-                                 kDebug() << encSubtitle;
-                                 m_extSubtitles.replace(i, encSubtitle);
-                             }
-                         }
-                     }
-                 }
-                 if (!encodingName.isEmpty()) {
-                     line = QTextCodec::codecForName(encodingName)->toUnicode(line.toAscii());
-                 }
                  if (line.contains("-->")) {
                      QStringList times = line.split("-->");
                      if (times.count() != 2) {
@@ -413,9 +423,6 @@ void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
                          }
                      }
                      m_extSubtitles.append(subtitle.trimmed());
-                     if (encodingName.isEmpty()) {
-                         encodingTest.append(subtitle);
-                     }
 
                      lastLineWasTime = false;
                  }
