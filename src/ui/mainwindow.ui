@@ -27,7 +27,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -955,7 +955,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>220</width>
-                            <height>293</height>
+                            <height>297</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_64">
@@ -4564,7 +4564,7 @@ color: rgb(255, 255, 255);</string>
                      <bool>true</bool>
                     </property>
                     <property name="currentIndex">
-                     <number>0</number>
+                     <number>2</number>
                     </property>
                     <widget class="QWidget" name="playlistHolderPage1">
                      <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -6300,6 +6300,22 @@ color: rgb(255, 255, 255);</string>
                        </widget>
                       </item>
                       <item>
+                       <widget class="QLabel" name="subtitleInfoText">
+                        <property name="font">
+                         <font>
+                          <weight>75</weight>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Can't detect subtitle encoding, please choose:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QComboBox" name="subtitleEncodingSelection"/>
+                      </item>
+                      <item>
                        <spacer name="verticalSpacer_18">
                         <property name="orientation">
                          <enum>Qt::Vertical</enum>
@@ -7183,6 +7199,16 @@ color: rgb(255, 255, 255);</string>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>Phonon::SeekSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/seekslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Phonon::VolumeSlider</class>
+   <extends>QWidget</extends>
+   <header location="global">phonon/volumeslider.h</header>
+  </customwidget>
+  <customwidget>
    <class>KFilterProxySearchLine</class>
    <extends>QWidget</extends>
    <header>kfilterproxysearchline.h</header>
@@ -7196,16 +7222,6 @@ color: rgb(255, 255, 255);</string>
    <class>KShortcutsEditor</class>
    <extends>QWidget</extends>
    <header>kshortcutseditor.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Phonon::SeekSlider</class>
-   <extends>QWidget</extends>
-   <header location="global">phonon/seekslider.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Phonon::VolumeSlider</class>
-   <extends>QWidget</extends>
-   <header location="global">phonon/volumeslider.h</header>
   </customwidget>
   <customwidget>
    <class>SToolButton</class>

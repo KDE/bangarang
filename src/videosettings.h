@@ -100,6 +100,7 @@ private:
     BangarangApplication * m_application;
     MediaController * m_mediaController;
     VideoWidget *m_videoWidget;
+    KUrl m_extSubtitleUrl;
     QStringList m_extSubtitleTimes;
     QStringList m_extSubtitles;
     QStringList m_extSubtitleFiles;
@@ -110,6 +111,7 @@ private slots:
     void updateAngles(int no);
     void updateSubtitles();
     void showExternalSubtitles(qint64 time);
+    void subtitleEncodingChanged(const QString &encoding);
 
 };
 
