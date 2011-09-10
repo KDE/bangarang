@@ -32,16 +32,27 @@ using namespace Phonon;
 
 VideoSettings::VideoSettings(MainWindow *parent, VideoWidget *widget) : QObject( parent )
 {
-  //member vars
-  m_application = (BangarangApplication *) KApplication::kApplication();
-  m_mediaController = NULL;
-  ui = parent->ui;
-  m_videoWidget = widget;
-  
-  ui->angleSelectionHolder->setEnabled(false);
-  ui->subtitleSelectionHolder->setEnabled(false);
-  
-  setupConnections();
+    //member vars
+    m_application = (BangarangApplication *) KApplication::kApplication();
+    m_mediaController = NULL;
+    ui = parent->ui;
+    m_videoWidget = widget;
+
+    ui->angleSelectionHolder->setEnabled(false);
+    ui->subtitleSelectionHolder->setEnabled(false);
+
+
+    //Setup encoding combo box
+    QStringList list;
+    foreach (QString codec, QTextCodec::availableCodecs())
+    list.append(codec);
+    list.sort();
+    ui->subtitleEncodingSelection->addItems(list);
+    ui->subtitleInfoText->hide();
+    ui->subtitleEncodingSelection->hide();
+    
+    //setup connections
+    setupConnections();
 }
 
 void VideoSettings::setupConnections()
@@ -64,6 +75,8 @@ void VideoSettings::setupConnections()
  
   connect(ui->restoreDefaultVideoSettings, SIGNAL(clicked()), this, SLOT(restoreDefaults()));
   connect(ui->hideVideoSettings, SIGNAL(clicked()), m_application->actionsManager()->action("show_video_settings"), SLOT(trigger()));
+
+  connect(ui->subtitleEncodingSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(subtitleEncodingChanged(QString)));
 
   connect(m_application->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(updateSubtitles()));
 }
@@ -173,6 +186,8 @@ void VideoSettings::setAngle(int idx)
 
 void VideoSettings::setSubtitle(int idx)
 {
+    ui->subtitleInfoText->hide();
+    ui->subtitleEncodingSelection->hide();
     if ( idx < 0 )
         return;
     int sidx = ui->subtitleSelection->itemData(idx).toInt();
@@ -352,85 +367,87 @@ QStringList VideoSettings::findSubtitleFiles(const KUrl &url)
 
 void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
 {
-    m_extSubtitleTimes.clear();
-    m_extSubtitles.clear();
+    QString encodingName = QString();
+    bool emitted = false;
+    kDebug() << "Checking external subtitles...";
+
+    m_extSubtitleUrl = subtitleUrl;
+    
     if (subtitleUrl.isLocalFile()) {
         QFile file(subtitleUrl.path());
         if (file.open(QFile::ReadOnly)) {
-
-            QByteArray encodingName;
-
             KEncodingProber prober(KEncodingProber::Universal);
-            if (prober.feed(file.readAll()) == KEncodingProber::FoundIt)
+            if (prober.feed(file.readAll()) == KEncodingProber::FoundIt) {
                 encodingName = prober.encoding().toLower();
-            else {
-                KDialog dialog;
-                dialog.setWindowTitle(i18n("Unknown file encoding"));
-                QVBoxLayout layout;
-                layout.addWidget(new QLabel(i18n("Bangarang can’t detect the subtitle encoding<br>Please select the right encoding from the list:")));
-                QComboBox langCombo;
-
-                QString codec;
-                QStringList list;
-                foreach (codec, QTextCodec::availableCodecs())
-                    list.append(codec);
-                list.sort();
-                langCombo.addItems(list);
+            } else {
+                kDebug() << "Unknown encoding, choosing default...";
+                ui->subtitleInfoText->show();
+                ui->subtitleEncodingSelection->show();
                 QString defaultCodec = QTextCodec::codecForLocale()->name();
-                langCombo.setCurrentIndex(list.lastIndexOf(defaultCodec));
-
-                layout.addWidget(langCombo);
-                dialog.mainWidget()->setLayout(layout);
-
-                if (dialog.exec() == KDialog::Accepted)
-                    encodingName = langCombo.currentText().toAscii();
-                else {
-                    file.close();
-                    return;
+                int idx = ui->subtitleEncodingSelection->findText(defaultCodec);
+                if ( idx != ui->subtitleEncodingSelection->currentIndex() ) {
+                    ui->subtitleEncodingSelection->setCurrentIndex(idx);
+                    emitted = true;
                 }
             }
 
+        }
+    }
+    if ( !emitted ) {
+        subtitleEncodingChanged(encodingName);
+    }
+}
+
+void VideoSettings::subtitleEncodingChanged(const QString& encoding)
+{
+    m_extSubtitleTimes.clear();
+    m_extSubtitles.clear();
+    
+    if (m_extSubtitleUrl.isLocalFile()) {
+        QFile file(m_extSubtitleUrl.path());
+        if (file.open(QFile::ReadOnly)) {
             file.seek(0);
             QTextStream in(&file);
-            in.setCodec(QTextCodec::codecForName(encodingName));
+            in.setCodec(QTextCodec::codecForName(encoding.toAscii()));
             bool lastLineWasTime = false;
             kDebug() << "Loading subtitles...";
 
-             while (!in.atEnd()) {
-                 QString line = in.readLine().trimmed();
-                 if (line.contains("-->")) {
-                     QStringList times = line.split("-->");
-                     if (times.count() != 2) {
-                         break;
-                     }
-                     QTime startTime = QTime::fromString(times.at(0).trimmed(), "hh:mm:ss,zzz");
-                     QTime endTime = QTime::fromString(times.at(1).trimmed(), "hh:mm:ss,zzz");
-                     if (!startTime.isValid() || !endTime.isValid()) {
-                         break;
-                     }
-                     int start = QTime(0,0,0,0).msecsTo(startTime);
-                     int end = QTime(0,0,0,0).msecsTo(endTime);
-                     m_extSubtitleTimes.append(QString("%1,%2").arg(start).arg(end));
-                     lastLineWasTime = true;
-                 } else if (lastLineWasTime) {
-                     QString subtitle = line;
-                     while (!in.atEnd() && !line.isEmpty()) {
-                         line = in.readLine().trimmed();
-                         if (subtitle.contains("<i>") || line.contains("<i>") || line.contains("</i>")) {
-                             subtitle.append(QString("<br>%1").arg(line));
-                         } else {
-                             subtitle.append(QString("\n%1").arg(line));
-                         }
-                     }
-                     m_extSubtitles.append(subtitle.trimmed());
+            while (!in.atEnd()) {
+                QString line = in.readLine().trimmed();
+                if (line.contains("-->")) {
+                    QStringList times = line.split("-->");
+                    if (times.count() != 2) {
+                        break;
+                    }
+                    QTime startTime = QTime::fromString(times.at(0).trimmed(), "hh:mm:ss,zzz");
+                    QTime endTime = QTime::fromString(times.at(1).trimmed(), "hh:mm:ss,zzz");
+                    if (!startTime.isValid() || !endTime.isValid()) {
+                        break;
+                    }
+                    int start = QTime(0,0,0,0).msecsTo(startTime);
+                    int end = QTime(0,0,0,0).msecsTo(endTime);
+                    m_extSubtitleTimes.append(QString("%1,%2").arg(start).arg(end));
+                    lastLineWasTime = true;
+                } else if (lastLineWasTime) {
+                    QString subtitle = line;
+                    while (!in.atEnd() && !line.isEmpty()) {
+                        line = in.readLine().trimmed();
+                        if (subtitle.contains("<i>") || line.contains("<i>") || line.contains("</i>")) {
+                            subtitle.append(QString("<br>%1").arg(line));
+                        } else {
+                            subtitle.append(QString("\n%1").arg(line));
+                        }
+                    }
+                    m_extSubtitles.append(subtitle.trimmed());
 
-                     lastLineWasTime = false;
-                 }
+                    lastLineWasTime = false;
+                }
+            }
 
-             }
             kDebug() << "Finished loading subtitles....";
         }
     }
+    
     if (!m_extSubtitleTimes.isEmpty()) {
         connect(m_application->playlist()->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(showExternalSubtitles(qint64)));
         m_application->playlist()->mediaObject()->setTickInterval(100);
@@ -483,5 +500,6 @@ void VideoSettings::showExternalSubtitles(qint64 time)
         ui->extSubtitle->hide();
     }
 }
+
 
 #include "moc_videosettings.cpp"
