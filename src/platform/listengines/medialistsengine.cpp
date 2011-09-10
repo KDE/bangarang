@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "../devicemanager.h"
 #include "../mediaitemmodel.h"
 #include "medialistsengine.h"
 #include "listenginefactory.h"
@@ -35,6 +36,7 @@
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
 #include <Nepomuk/ResourceManager>
+
 
 MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
@@ -182,17 +184,14 @@ void MediaListsEngine::run()
         mediaList << mediaItem;
         
         //Show Audio CDs if present
-        QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::Audio);
-        foreach (QString udi, udis) {
+        QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
+        foreach (Solid::Device cd, cds) {
             if (m_stop) {
                 return;
             }
-            Solid::Device device = Solid::Device( udi );
-            if ( !device.isValid() )
-                continue;
             mediaItem.title = i18n("Audio CD");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = QString( "cdaudio://%1" ).arg(udi);
+            mediaItem.url = QString( "cdaudio://%1" ).arg(cd.udi());
             mediaItem.artwork = KIcon("media-optical-audio");
             mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
@@ -364,21 +363,18 @@ void MediaListsEngine::run()
         mediaItem.fields["isConfigurable"] = false;
         mediaList << mediaItem;
         
-        QStringList udis = Utilities::availableDiscUdis(Solid::OpticalDisc::VideoDvd);
-        foreach (QString udi, udis) {
+        QList<Solid::Device> dvds = DeviceManager::instance()->deviceList(DeviceManager::VideoType);
+        foreach (Solid::Device dvd, dvds) {
             if (m_stop) {
                 return;
             }
-            Solid::Device device = Solid::Device( udi );
-            if ( !device.isValid() )
-                continue;
-            const Solid::OpticalDisc* disc = Solid::Device(udi).as<const Solid::OpticalDisc>();
+            const Solid::OpticalDisc* disc = dvd.as<const Solid::OpticalDisc>();
             if ( disc == NULL )
                 continue;
             QString label = disc->label();
             mediaItem.title = label;
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = QString( "dvdvideo://%1" ).arg(udi);
+            mediaItem.url = QString( "dvdvideo://%1" ).arg(dvd.udi());
             mediaItem.artwork = KIcon("media-optical-dvd");
             mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;

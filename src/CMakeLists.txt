@@ -29,6 +29,7 @@ set(BangarangSources
     videosettings.cpp
     platform/bangarangvideowidget.cpp
     platform/dbpediaquery.cpp
+    platform/devicemanager.cpp
     platform/downloader.cpp
     platform/infoitemmodel.cpp
     platform/mediaitemmodel.cpp
