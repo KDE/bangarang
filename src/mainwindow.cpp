@@ -103,10 +103,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         ui->Filter->setVisible(false);
     }
 
-    //Set up device notifier
-    connect(DeviceManager::instance(), SIGNAL(deviceListChanged(DeviceManager::RelatedType)),
-            this, SLOT(updateDeviceList(DeviceManager::RelatedType)));
-    
     //Set up media object
     m_videoWidget =  new BangarangVideoWidget(ui->videoFrame);
     connect(m_videoWidget,SIGNAL(skipForward(int)),this, SLOT(skipForward(int)));
@@ -1056,17 +1052,4 @@ void MainWindow::enableTouch() {
     m_videoListsStack->enableTouch();
     //ui->mediaView->enableTouch();
     //ui->playlistView->enableTouch();
-}
-
-void MainWindow::updateDeviceList(DeviceManager::RelatedType type) {
-    if ( type == DeviceManager::AudioType || type == DeviceManager::AllTypes ) {
-        MediaItemModel *m = m_application->mediaListsManager()->audioListsModel();
-        m->clearMediaListData();
-        m->load();
-    }
-    if ( type == DeviceManager::VideoType || type == DeviceManager::AllTypes ) {
-        MediaItemModel *m = m_application->mediaListsManager()->videoListsModel();
-        m->clearMediaListData();
-        m->load();
-    }
 }

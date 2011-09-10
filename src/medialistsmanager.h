@@ -19,6 +19,7 @@
 #ifndef MEDIALISTSMANAGER_H
 #define MEDIALISTSMANAGER_H
 
+#include "platform/devicemanager.h"
 #include <QObject>
 #include <QItemSelection>
 
@@ -80,6 +81,7 @@ private slots:
     void mediaListCategoryActivated(QModelIndex index);
     void mediaListActionActivated(QModelIndex index);
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
+    void updateDeviceList(DeviceManager::RelatedType type);
 
 };
 
