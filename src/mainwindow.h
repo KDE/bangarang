@@ -20,6 +20,7 @@
 #define MAINWINDOW_H
 
 #include "platform/bangarangvideowidget.h"
+#include "platform/devicemanager.h"
 #include "audiolistsstack.h"
 #include "videolistsstack.h"
 #include <KIcon>
@@ -115,7 +116,6 @@ signals:
 private:
     void setupIcons();
     void showApplicationBanner();
-    void updateCachedDevicesList();
     void setupActions();
     
     Phonon::VideoPlayer *m_player;
@@ -126,7 +126,6 @@ private:
     QDateTime m_lastMouseMoveTime;
     bool m_pausePressed;
     bool m_stopPressed;
-    QList<QString> m_devicesAdded;
     int m_loadingProgress;
     bool m_nepomukInited;
     bool playWhenPlaylistChanges;
@@ -171,16 +170,15 @@ private slots:
     void playlistFinished();
     void repeatModeChanged(bool repeat);
     void shuffleModeChanged(bool shuffle);
-    void deviceAdded(const QString &udi);
-    void deviceRemoved(const QString &udi);
     void showLoading();
     void playlistLoading();
     void browsingModelStatusUpdated();
     void updateCustomColors();
     void skipForward(int i);
-    void skipBackward(int i);
-    
- protected:
+    void skipBackward(int i);  
+    void updateDeviceList(DeviceManager::RelatedType type);
+
+protected:
     bool eventFilter(QObject *obj, QEvent *event);
     
 };

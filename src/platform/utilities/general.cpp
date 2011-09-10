@@ -269,18 +269,6 @@ QString Utilities::deviceName(QString udi, Phonon::MediaObject *mobj)
         return QString();
 }
 
-QStringList Utilities::availableDiscUdis(Solid::OpticalDisc::ContentType type)
-{
-    QStringList udis;
-    foreach (Solid::Device device, Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString()))
-    {
-        const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc>();
-        if (disc != NULL && disc->availableContent() & type)
-            udis << device.udi();
-    }
-    return udis;
-}
-
 bool Utilities::nepomukInited()
 {
     bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();

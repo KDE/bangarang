@@ -62,7 +62,6 @@ namespace Utilities {
     QString deviceNameFromUrl(const KUrl &url);
     int invalidTitle();
     QString deviceName( QString udi, Phonon::MediaObject *mobj = NULL );
-    QStringList availableDiscUdis(Solid::OpticalDisc::ContentType type);
     bool nepomukInited();
     QStringList cleanStringList(QStringList stringList);
     QString removeRangesFromString(const QString& str, QString begin, QString end);
