@@ -313,9 +313,9 @@ void MainWindow::on_nowPlayingHolder_resized()
         ui->showPlaylist_2->setGeometry(QRect(ui->showPlaylist_2->rect().topLeft(),
                                               QSize(width,
                                                     qMax(24, textRect.height() + 8))));
-        int left = ui->nowPlayingHolder->width() - (width + 24);
+        int left = ui->nowPlayingHolder->width() - (width + qMax(24, textRect.height() + 8));
         ui->floatingMenuHolder->setGeometry(QRect(QPoint(left, 0),
-                                                  QSize(width + 24,
+                                                  QSize(width + qMax(24, textRect.height() + 8),
                                                         qMax(24, textRect.height() + 8))));
         ui->floatingMenuHolder->setVisible(true);
         ui->floatingMenuHolder->raise();
@@ -987,9 +987,13 @@ void MainWindow::switchMainWidget(MainWindow::MainWidget which)
     m_application->actionsManager()->updateToggleFilterText();
 
     //If no media list has been loaded yet, then load the selected one.
-    if (which == MainMediaList &&
-        m_application->browsingModel()->mediaListProperties().lri.isEmpty() &&
-        m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
+    if (which != MainMediaList) {
+        return;
+    }
+    if (!m_application->browsingModel()->mediaListProperties().lri.isEmpty()) {
+        return;
+    }
+    if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
         m_application->mediaListsManager()->selectAudioList();
     } else {
         m_application->mediaListsManager()->selectVideoList();
@@ -1045,11 +1049,40 @@ bool MainWindow::newPlaylistNotification(QString text, QObject *receiver, const 
 
 void MainWindow::enableTouch() {
     kDebug() << "ENABLING TOUCH";
-    ui->showMediaViewMenu->setMinimumSize(32, 32);
-    ui->audioListSelect->setMinimumSize(32, 32);
-    ui->videoListSelect->setMinimumSize(32, 32);
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
+    ui->showMediaViewMenu->setMinimumSize(tTouchable, tTouchable);
+    ui->audioListSelect->setMinimumSize(tTouchable, tTouchable);
+    ui->videoListSelect->setMinimumSize(tTouchable, tTouchable);
     m_audioListsStack->enableTouch();
     m_videoListsStack->enableTouch();
-    //ui->mediaView->enableTouch();
-    //ui->playlistView->enableTouch();
+    ui->Filter->setMinimumHeight(tTouchable);
+    ui->closeMediaListFilter->setMinimumSize(tTouchable, tTouchable);
+    ui->mediaListFilterProxyLine->setMinimumHeight(tTouchable);
+    ui->mediaView->enableTouch();
+    ui->mediaView->setDragEnabled(false);
+    ui->showInfoFetcherExpander->setMinimumSize(tTouchable, tTouchable);
+    ui->showInfoFetcherExpander->setIconSize(QSize(tVisual, tVisual));
+    ui->infoItemView->enableTouch();
+    m_application->infoManager()->enableTouch();
+    ui->playlistView->enableTouch();
+    ui->closePlaylistFilter->setMinimumSize(tTouchable, tTouchable);
+    ui->playlistFilterProxyLine->setMinimumHeight(tTouchable);
+    ui->nowPlayingView->enableTouch();
+    ui->fullScreen->setMinimumSize(tTouchable, tTouchable);
+    ui->fullScreen->setIconSize(QSize(tVisual, tVisual));
+    ui->seekTime->setMinimumHeight(tTouchable);
+    ui->volumeIcon->setMinimumSize(tTouchable, tTouchable);
+    ui->volumeIcon->setIconSize(QSize(tVisual, tVisual));
+    ui->mediaPrevious->setMinimumSize(tTouchable, tTouchable);
+    ui->mediaNext->setMinimumSize(tTouchable, tTouchable);
+    ui->clearPlaylist->setMinimumSize(tTouchable, tTouchable);
+    ui->shuffle->setMinimumSize(tTouchable, tTouchable);
+    ui->repeat->setMinimumSize(tTouchable, tTouchable);
+    ui->showQueue->setMinimumSize(tTouchable, tTouchable);
+    ui->showPlaylist->setMinimumHeight(tTouchable);
+    ui->showPlaylist_2->setMinimumHeight(tTouchable);
+    ui->showMenu->setMinimumSize(tTouchable, tTouchable);
+    ui->showMenu_2->setMinimumSize(tTouchable, tTouchable);
+    ui->floatingMenuHolder->setMinimumSize(tTouchable, tTouchable);
 }

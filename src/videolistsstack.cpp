@@ -20,11 +20,16 @@ VideoListsStack::~VideoListsStack()
 }
 
 void VideoListsStack::enableTouch() {
-    ui->addVideoList->setMinimumSize(32, 32);
-    ui->removeVideoList->setMinimumSize(32, 32);
-    ui->configureVideoList->setMinimumSize(32, 32);
-    ui->videoLists->setIconSize(QSize(32, 32));
-    ui->videoLists->setGridSize(QSize(0,32));
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
+    ui->addVideoList->setMinimumSize(tTouchable, tTouchable);
+    ui->addVideoList->setIconSize(QSize(tVisual, tVisual));
+    ui->removeVideoList->setMinimumSize(tTouchable, tTouchable);
+    ui->removeVideoList->setIconSize(QSize(tVisual, tVisual));
+    ui->configureVideoList->setMinimumSize(tTouchable, tTouchable);
+    ui->configureVideoList->setIconSize(QSize(tVisual, tVisual));
+    ui->videoLists->setIconSize(QSize(tTouchable, tTouchable));
+    ui->videoLists->setGridSize(QSize(0,tTouchable));
 }
 
 

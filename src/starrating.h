@@ -32,7 +32,7 @@
 class StarRating {
 
     public:
-        enum Size { Small = 8, Medium = 12, Big = 16 };
+        enum Size { Small = 8, Medium = 12, Big = 16, Huge = 22 };
         enum MinMax{ InvalidRating = -1, MinRating = 0, MaxRating = 10 };
 
         static const int Margin = 1;

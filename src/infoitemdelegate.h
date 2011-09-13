@@ -69,6 +69,7 @@ class InfoItemDelegate : public QItemDelegate
         QIcon m_drillIconHighlight;
         int m_padding;
         bool m_isEditing;
+        int m_starRatingSize;
         QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;

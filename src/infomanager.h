@@ -49,6 +49,7 @@ class InfoManager : public QObject
         ~InfoManager();
         const QList<MediaItem> selectedInfoBoxMediaItems();
         bool infoViewVisible();
+        void enableTouch();
         
     public slots:
         void toggleInfoView();
@@ -82,6 +83,7 @@ class InfoManager : public QObject
         QTimer *m_selectionTimer;
         bool m_infoViewVisible;
         InfoFetcher *m_currentInfoFetcher;
+        bool m_enableTouch;
         
     private slots:
         void cancelItemEdit();

@@ -158,3 +158,9 @@ void InfoBox::categoryActivated(QModelIndex index)
     application->browsingModel()->setMediaListProperties(mediaListProperties);
     application->browsingModel()->load();
 }
+
+void InfoBox::enableTouch()
+{
+    m_mediaView->enableTouch();
+    m_title->setFont(KGlobalSettings::generalFont());
+}

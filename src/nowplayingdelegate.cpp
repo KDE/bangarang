@@ -550,3 +550,8 @@ QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QMo
     }
     return rect;
 }
+
+void NowPlayingDelegate::enableTouch()
+{
+    m_starRatingSize = StarRating::Huge;
+}

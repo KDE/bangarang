@@ -20,11 +20,16 @@ AudioListsStack::~AudioListsStack()
 }
 
 void AudioListsStack::enableTouch() {
-    ui->addAudioList->setMinimumSize(32, 32);
-    ui->removeAudioList->setMinimumSize(32, 32);
-    ui->configureAudioList->setMinimumSize(32, 32);
-    ui->audioLists->setIconSize(QSize(32, 32));
-    ui->audioLists->setGridSize(QSize(0,32));
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
+    ui->addAudioList->setMinimumSize(tTouchable, tTouchable);
+    ui->addAudioList->setIconSize(QSize(tVisual, tVisual));
+    ui->removeAudioList->setMinimumSize(tTouchable, tTouchable);
+    ui->removeAudioList->setIconSize(QSize(tVisual, tVisual));
+    ui->configureAudioList->setMinimumSize(tTouchable, tTouchable);
+    ui->configureAudioList->setIconSize(QSize(tVisual, tVisual));
+    ui->audioLists->setIconSize(QSize(tTouchable, tTouchable));
+    ui->audioLists->setGridSize(QSize(0, tTouchable + 2));
 }
 
 void AudioListsStack::on_configureAudioList_clicked()

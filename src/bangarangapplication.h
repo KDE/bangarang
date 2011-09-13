@@ -45,6 +45,8 @@ class BangarangApplication : public KApplication
   Q_OBJECT
   
     public:
+        static const int TOUCH_TOUCHABLE_METRIC = 32;
+        static const int TOUCH_VISUAL_METRIC = 22;
         ~BangarangApplication();
         void setup();
         MainWindow * mainWindow();

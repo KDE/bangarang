@@ -31,6 +31,7 @@ public:
     explicit InfoItemView(QWidget *parent = 0);
     void resizeEvent(QResizeEvent *e);
     void fixHeightToContents();
+    void enableTouch();
 
 signals:
     void updateSizeHints(QModelIndex index);
