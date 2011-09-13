@@ -80,3 +80,8 @@ void NowPlayingView::hideInfo()
     }
 }
 
+void NowPlayingView::enableTouch()
+{
+    m_nowPlayingDelegate->enableTouch();
+}
+

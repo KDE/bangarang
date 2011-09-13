@@ -67,6 +67,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 
     m_isEditing = false;
 
+    m_starRatingSize = StarRating::Big;
+
     m_drillIcon = KIcon("bangarang-category-browse");
     QImage drillIconHighlightImage = KIcon("bangarang-category-browse").pixmap(16+m_padding,16+m_padding).toImage();
     KIconEffect::toGamma(drillIconHighlightImage, 0.5);
@@ -261,7 +263,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     } else if (isRating) {
         //Paint rating
         int rating = index.data(Qt::DisplayRole).toInt();
-        StarRating starRating = StarRating(rating, StarRating::Big);
+        StarRating starRating = StarRating(rating, m_starRatingSize);
         starRating.setRating(rating);
         QSize ratingSize = starRating.sizeHint();
         int ratingLeft = dataRect.left() + (dataRect.width()-ratingSize.width())/2;
@@ -883,7 +885,7 @@ int InfoItemDelegate::rowHeight(int row) const
     if (field == "artwork") {
         height = 128 + 10 + 2*m_padding ; //10 pixel to accomodate rotated artwork
     } else if (field == "rating") {
-        height = StarRating::SizeHint(StarRating::Big).height() + 2 *m_padding;
+        height = StarRating::SizeHint(m_starRatingSize).height() + 2 *m_padding;
     } else {
         QString text = index.data(Qt::DisplayRole).toString();
         if (fieldType == QVariant::StringList) {
@@ -1049,5 +1051,5 @@ void InfoItemDelegate::resetEditMode()
 }
 
 void InfoItemDelegate::enableTouch() {
-
+    m_starRatingSize = StarRating::Huge;
 }

@@ -50,6 +50,7 @@ class NowPlayingDelegate : public QItemDelegate
         void updateSizeHint();
         void setShowInfo(bool showInfo);
         bool showingInfo();
+        void enableTouch();
 
     protected:
         QRect ratingRect(const QRect *rect) const;

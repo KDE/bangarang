@@ -56,6 +56,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     ui = m_parent->ui;
 
     m_nepomukInited = Utilities::nepomukInited();
+    m_enableTouch = false;
     
     m_infoItemModel = (InfoItemModel *)ui->infoItemView->model();
     m_infoItemModel->setSourceModel(m_application->browsingModel());
@@ -420,6 +421,9 @@ void InfoManager::loadSelectedInfo()
                 InfoBox *infoBox = new InfoBox;
                 infoBox->setMainWindow(m_parent);
                 infoBox->setInfo(title, lri);
+                if (m_enableTouch) {
+                    infoBox->enableTouch();
+                }
                 QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
                 infoBoxHolderLayout->addWidget(infoBox);
                 connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
@@ -667,4 +671,9 @@ void InfoManager::openInfoFetcherLink()
     if (m_currentInfoFetcher->url().isValid()) {
         QDesktopServices::openUrl(m_currentInfoFetcher->url());
     }
+}
+
+void InfoManager::enableTouch()
+{
+    m_enableTouch = true;
 }

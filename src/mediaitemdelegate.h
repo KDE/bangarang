@@ -99,6 +99,12 @@ class MediaItemDelegate : public QItemDelegate
         Utilities::Thread * m_utilThread;
         QList<MediaItem> *m_itemsThatNeedArtwork;
         bool m_suppressSemanticComment;
+        int m_minRowHeight;
+        int m_defaultIconSize;
+        int m_heightPadding;
+        int m_playlistIconSize;
+        int m_categoryIconSize;
+        QFont m_miniModeFont;
 
         int artworkNeededIndex(const MediaItem &mediaItem) const;
 

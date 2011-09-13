@@ -65,3 +65,8 @@ void InfoItemView::infoChanged(bool changed)
     Q_UNUSED(changed);
 }
 
+void InfoItemView::enableTouch()
+{
+    m_infoItemDelegate->enableTouch();
+}
+

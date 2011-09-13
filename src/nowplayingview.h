@@ -40,6 +40,7 @@ class NowPlayingView : public QTreeView
         NowPlayingView(QWidget * parent = 0);
         ~NowPlayingView();
         void setMainWindow(MainWindow * mainWindow);
+        void enableTouch();
 
     public Q_SLOTS:
         void tidyHeader();

@@ -41,6 +41,7 @@ class InfoBox : public QWidget
         MediaView * mediaView();
         void setInfo(const QString &title, const QString & lri);
         void setTitle(const QString &title);
+        void enableTouch();
         
     private:
         MediaView * m_mediaView;
