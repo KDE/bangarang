@@ -1074,6 +1074,8 @@ void MainWindow::enableTouch() {
     ui->seekTime->setMinimumHeight(tTouchable);
     ui->volumeIcon->setMinimumSize(tTouchable, tTouchable);
     ui->volumeIcon->setIconSize(QSize(tVisual, tVisual));
+    ui->volumeSlider->setMaximumWidth(110);
+    ui->volumeSlider->setMinimumWidth(110);
     ui->mediaPrevious->setMinimumSize(tTouchable, tTouchable);
     ui->mediaNext->setMinimumSize(tTouchable, tTouchable);
     ui->clearPlaylist->setMinimumSize(tTouchable, tTouchable);
