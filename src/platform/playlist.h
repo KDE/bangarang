@@ -30,7 +30,6 @@ class MediaItem;
 class MediaIndexer;
 class MediaSortFilterProxyModel;
 class QSortFilterProxyModel;
-class BangarangApplication;
 
 
 
@@ -273,7 +272,6 @@ class Playlist : public QObject
         
         
     private:
-        BangarangApplication *m_application;
         QObject * m_parent;
         MediaItemModel * m_currentPlaylist;
         MediaItemModel * m_nowPlaying;

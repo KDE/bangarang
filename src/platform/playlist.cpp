@@ -21,8 +21,8 @@
 #include "utilities/utilities.h"
 #include "mediavocabulary.h"
 #include "mediaindexer.h"
-#include "bangarangapplication.h"
 #include <time.h>
+#include <KApplication>
 #include <KUrl>
 #include <KIcon>
 #include <KDebug>
@@ -34,7 +34,6 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <QDBusInterface>
-#include <actionsmanager.h>
 #include <Solid/Device>
 #include <Solid/Block>
 #include <Solid/PowerManagement>
@@ -42,7 +41,6 @@
 
 Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObject(parent) 
 {
-    m_application = (BangarangApplication *)KApplication::kApplication();
     m_parent = parent;
     m_mediaController = NULL;
     m_currentPlaylist = new MediaItemModel(this);
