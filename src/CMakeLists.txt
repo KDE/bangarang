@@ -1,33 +1,33 @@
 add_subdirectory(platform/nepomukwriter)
 
 set(BangarangSources
-    actionsmanager.cpp
-    audiolistsstack.cpp
-    audiosettings.cpp
-    bangarangapplication.cpp
-    bangarangnotifieritem.cpp
-    bookmarksmanager.cpp
-    dbusobjects.cpp
-    mainwindow.cpp
-    main.cpp
-    mediaitemdelegate.cpp
-    medialistsettings.cpp
-    medialistsmanager.cpp
-    mediaview.cpp
-    nowplayingdelegate.cpp
-    nowplayingview.cpp
-    playlistview.cpp
-    infobox.cpp
-    infomanager.cpp
-    infoitemdelegate.cpp
-    infoitemview.cpp
-    ratingdelegate.cpp
-    savedlistsmanager.cpp
-    sensiblewidgets.cpp
-    starrating.cpp
-    videolistsstack.cpp
-    videosettings.cpp
-    platform/bangarangvideowidget.cpp
+    app/main.cpp
+    app/common/actionsmanager.cpp
+    app/common/bangarangapplication.cpp
+    app/common/bangarangnotifieritem.cpp
+    app/common/dbusobjects.cpp
+    app/common/mainwindow.cpp
+    app/common/mediaitemdelegate.cpp
+    app/common/mediaview.cpp
+    app/common/ratingdelegate.cpp
+    app/common/sensiblewidgets.cpp
+    app/common/starrating.cpp
+    app/medialists/audiolistsstack.cpp
+    app/medialists/medialistsettings.cpp
+    app/medialists/medialistsmanager.cpp
+    app/medialists/infobox.cpp
+    app/medialists/infomanager.cpp
+    app/medialists/infoitemdelegate.cpp
+    app/medialists/infoitemview.cpp
+    app/medialists/savedlistsmanager.cpp
+    app/medialists/videolistsstack.cpp
+    app/nowplaying/audiosettings.cpp
+    app/nowplaying/bangarangvideowidget.cpp
+    app/nowplaying/bookmarksmanager.cpp
+    app/nowplaying/nowplayingdelegate.cpp
+    app/nowplaying/nowplayingview.cpp
+    app/nowplaying/playlistview.cpp
+    app/nowplaying/videosettings.cpp
     platform/dbpediaquery.cpp
     platform/devicemanager.cpp
     platform/downloader.cpp
@@ -71,7 +71,7 @@ set(BangarangSources
     platform/utilities/typechecks.cpp
 )
 
-kde4_add_ui_files(BangarangSources ui/mainwindow.ui ui/audiolistsstack.ui ui/videolistsstack.ui)
+kde4_add_ui_files(BangarangSources app/ui/mainwindow.ui app/ui/audiolistsstack.ui app/ui/videolistsstack.ui)
 
 kde4_add_executable(bangarang ${BangarangSources})
 
