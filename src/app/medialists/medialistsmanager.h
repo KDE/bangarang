@@ -66,7 +66,6 @@ private:
     int m_loadingProgress;
 
     void hidePlayButtons();
-    void showMediaListLoading();
 
 private slots:
     void audioListsSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
@@ -82,6 +81,7 @@ private slots:
     void mediaListActionActivated(QModelIndex index);
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
     void updateDeviceList(DeviceManager::RelatedType type);
+    void showMediaListLoading();
 
 };
 
