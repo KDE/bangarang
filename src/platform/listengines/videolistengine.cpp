@@ -86,6 +86,8 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -96,6 +98,8 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
@@ -151,6 +155,8 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideo(MediaQuery::Required));
@@ -158,6 +164,8 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.titleBinding());
@@ -410,6 +418,8 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
@@ -422,6 +432,8 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             if (seriesName == "~") {
                 query.startFilter();
@@ -666,6 +678,8 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -683,6 +697,8 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), searchTerm, MediaQuery::Contains);
@@ -757,6 +773,8 @@ void VideoListEngine::run()
             bindings.append(mediaVocabulary.releaseDateBinding());
             bindings.append(mediaVocabulary.videoAudienceRatingBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -772,6 +790,8 @@ void VideoListEngine::run()
             query.addCondition(mediaVocabulary.hasReleaseDate(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasVideoAudienceRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();

@@ -377,6 +377,7 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
             bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             bindings.append(mediaVocabulary.relatedToBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -392,6 +393,7 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRelatedTo(mediaVocabulary.mediaResourceBinding(), MediaQuery::Optional));
             query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
             query.endWhere();
@@ -476,6 +478,8 @@ void MusicListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
             query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
@@ -487,6 +491,8 @@ void MusicListEngine::run()
             query.addCondition(mediaVocabulary.hasMusicAlbumYear(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.startFilter();
             query.addFilterConstraint(mediaVocabulary.titleBinding(), engineFilter, MediaQuery::Contains);
             query.addFilterOr();
