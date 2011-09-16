@@ -46,6 +46,7 @@
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
+    int artworkSize = 164;
     QPixmap pixmap = QPixmap();
     if (!ignoreCache && artworkIsInCache(mediaItem)) {
         QImage image = findArtworkInCache(mediaItem);
@@ -66,10 +67,10 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool igno
         if (!artworkUrl.isEmpty()) {
             QPixmap rawPixmap= QPixmap(KUrl(artworkUrl).path());
             if (!rawPixmap.isNull()) {
-                //Always scale height to 128
-                qreal widthScale = 128.0/rawPixmap.height();
+                //Always scale height to artwork size
+                qreal widthScale = (qreal)artworkSize/rawPixmap.height();
                 int width = rawPixmap.width()*widthScale;
-                pixmap = rawPixmap.scaled(width,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                pixmap = rawPixmap.scaled(width, artworkSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
         }
 
@@ -78,10 +79,10 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool igno
             if (!artworkUrl.isEmpty()) {
                 QPixmap rawPixmap= QPixmap(artworkUrl);
                 if (!rawPixmap.isNull()) {
-                    //Always scale height to 128
-                    qreal widthScale = 128.0/rawPixmap.height();
+                    //Always scale height to artwork size
+                    qreal widthScale = (qreal)artworkSize/rawPixmap.height();
                     int width = rawPixmap.width()*widthScale;
-                    pixmap = rawPixmap.scaled(width,128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    pixmap = rawPixmap.scaled(width, artworkSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 }
             }
         }
@@ -94,6 +95,7 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool igno
 
 QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
 {
+    int artworkSize = 164;
     QImage image = QImage();
     if (!ignoreCache && artworkIsInCache(mediaItem)) {
         image = findArtworkInCache(mediaItem);
@@ -110,20 +112,20 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool 
         if (!artworkUrl.isEmpty()) {
             QImage rawImage= QImage(KUrl(artworkUrl).path());
             if (!rawImage.isNull()) {
-                //Always scale height to 128
-                qreal widthScale = 128.0/rawImage.height();
+                //Always scale height to artwork size
+                qreal widthScale = (qreal)artworkSize/rawImage.height();
                 int width = rawImage.width()*widthScale;
-                image = rawImage.scaled(width, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                image = rawImage.scaled(width, artworkSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
         } else {
             artworkUrl = Utilities::getArtworkUrlFromExternalImage(mediaItem.url, mediaItem.fields["album"].toString());
             if (!artworkUrl.isEmpty()) {
                 QImage rawImage = QImage(artworkUrl);
                 if (!rawImage.isNull()) {
-                    //Always scale height to 128
-                    qreal widthScale = 128.0/rawImage.height();
+                    //Always scale height to artwork size
+                    qreal widthScale = (qreal)artworkSize/rawImage.height();
                     int width = rawImage.width()*widthScale;
-                    image = rawImage.scaled(width, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                    image = rawImage.scaled(width, artworkSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 }
             }
         }

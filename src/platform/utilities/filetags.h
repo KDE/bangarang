@@ -36,8 +36,8 @@
  * used throughout bangarang.
  */
 namespace Utilities {
-    QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(128,128));
-    QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(128,128));
+    QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(164, 164));
+    QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(164, 164));
     QString tagType(const QString &url);
     MediaItem getAllInfoFromTag(const QString &url, MediaItem templateItem = MediaItem());
     QString getArtistFromTag(const QString &url);

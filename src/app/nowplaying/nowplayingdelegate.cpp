@@ -55,6 +55,7 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     m_textInner = m_iconSize + 2 * m_padding;
     m_starRatingSize = StarRating::Big;
     m_showInfo = false;
+    m_infoFont = KGlobalSettings::smallestReadableFont();
 
     m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
@@ -280,9 +281,9 @@ void NowPlayingDelegate::paintInfo(QPainter *painter, const QStyleOptionViewItem
 
     //Draw additional info
     //TODO::The code below could probably use a pass to reduce duplication
-    QFont infoFont = KGlobalSettings::smallestReadableFont();
+    QFont infoFont = m_infoFont;
     QFontMetrics fm(infoFont);
-    QFont fieldFont = KGlobalSettings::smallestReadableFont();
+    QFont fieldFont = m_infoFont;
     fieldFont.setBold(true);
     QColor foregroundColor = option.palette.color(QPalette::Text);
     QColor fieldColor = foregroundColor;
@@ -346,7 +347,6 @@ void NowPlayingDelegate::paintInfo(QPainter *painter, const QStyleOptionViewItem
         }
         int year = mediaItem.fields["year"].toInt();
         if (year > 0) {
-            painter->save();
             QString field = i18n("Year: ");
             QFontMetrics fm(fieldFont);
             painter->save();
@@ -457,7 +457,7 @@ QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QMo
     }
 
     QRect rect;
-    QFont infoFont = KGlobalSettings::smallestReadableFont();
+    QFont infoFont = m_infoFont;
     QFontMetrics fm(infoFont);
     int infoWidth = option.rect.width() - 20;
     if (m_parent->videoSize() == MainWindow::Mini) {
@@ -554,4 +554,7 @@ QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QMo
 void NowPlayingDelegate::enableTouch()
 {
     m_starRatingSize = StarRating::Huge;
+    m_iconSize = 164;
+    m_textInner = m_iconSize + 2 * m_padding;
+    m_infoFont = KGlobalSettings::generalFont();
 }

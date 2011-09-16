@@ -67,6 +67,7 @@ class NowPlayingDelegate : public QItemDelegate
         QAbstractItemView *m_view;
         MediaIndexer * m_mediaIndexer;
         bool m_showInfo;
+        QFont m_infoFont;
 
         void paintInfo(QPainter *painter, const QStyleOptionViewItem &option,
                        const QModelIndex &index) const;
