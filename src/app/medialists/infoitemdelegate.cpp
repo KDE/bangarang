@@ -106,7 +106,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (!index.data(Qt::DisplayRole).isNull()) {
         if (index.data(Qt::DisplayRole).type() == QVariant::DateTime) {
             KDateTime dateTime(index.data(Qt::DisplayRole).toDateTime());
-            text = dateTime.toLocalZone().toString("%l:%M%P %a %b %d %Y");
+            text = KGlobal::locale()->formatDateTime(dateTime.toLocalZone(), KLocale::FancyLongDate);
         } else {
             text  = index.data(Qt::DisplayRole).toString();
         }
