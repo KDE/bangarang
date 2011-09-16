@@ -64,6 +64,8 @@ void AudioClipsListEngine::run()
             bindings.append(mediaVocabulary.ratingBinding());
             bindings.append(mediaVocabulary.descriptionBinding());
             bindings.append(mediaVocabulary.artworkBinding());
+            bindings.append(mediaVocabulary.playCountBinding());
+            bindings.append(mediaVocabulary.lastPlayedBinding());
             //bindings.append(mediaVocabulary.genreBinding());
             query.select(bindings, MediaQuery::Distinct);
             query.startWhere();
@@ -72,6 +74,8 @@ void AudioClipsListEngine::run()
             query.addCondition(mediaVocabulary.hasRating(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasDescription(MediaQuery::Optional));
             query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasPlayCount(MediaQuery::Optional));
+            query.addCondition(mediaVocabulary.hasLastPlayed(MediaQuery::Optional));
             query.endWhere();
             QStringList orderByBindings;
             orderByBindings.append(mediaVocabulary.titleBinding());
