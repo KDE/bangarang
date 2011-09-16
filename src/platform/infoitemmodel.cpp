@@ -40,6 +40,7 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <taglib/id3v2tag.h>
+#include <KDateTime>
 
 InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
@@ -632,7 +633,11 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         //Store drill lri(s)
         setDrill(fieldItem, field, value);
 
-        if (field == "url" || field == "relatedTo") {
+        if (field == "url" || field == "relatedTo" || field == "lastPlayed") {
+            if (value.type() == QVariant::DateTime) {
+                KDateTime dateTime(value.toDateTime());
+                value = QVariant(KGlobal::locale()->formatDateTime(dateTime.toLocalZone(), KLocale::FancyLongDate));
+            }
             fieldItem->setData(value, Qt::ToolTipRole);
         }
     } else {
