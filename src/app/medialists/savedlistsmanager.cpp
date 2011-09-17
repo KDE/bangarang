@@ -29,6 +29,7 @@
 
 #include <KStandardDirs>
 #include <KMessageBox>
+#include <KFileDialog>
 #include <KDebug>
 #include <QFile>
 #include <Nepomuk/ResourceManager>
@@ -59,6 +60,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_parent->videoListsStack()->ui->vslsCancel, SIGNAL(clicked()), this, SLOT(returnToVideoList()));
     connect(m_parent->audioListsStack()->ui->aslsSave, SIGNAL(clicked()), this, SLOT(saveAudioListSettings()));
     connect(m_parent->videoListsStack()->ui->vslsSave, SIGNAL(clicked()), this, SLOT(saveVideoListSettings()));
+    connect(m_parent->audioListsStack()->ui->aslsExport, SIGNAL(clicked()), this, SLOT(exportAudioList()));
+    connect(m_parent->videoListsStack()->ui->vslsExport, SIGNAL(clicked()), this, SLOT(exportVideoList()));
     connect(m_parent->audioListsStack()->ui->aslsListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->videoListsStack()->ui->vslsListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->audioListsStack()->ui->aslsListName, SIGNAL(returnPressed()), this, SLOT(saveAudioListSettings()));
@@ -726,6 +729,120 @@ void SavedListsManager::saveVideoListSettings()
         m_parent->videoListsStack()->ui->videoLists->selectionModel()->select(selectedIndexes.at(0), QItemSelectionModel::Select);
     }
     returnToVideoList();
+}
+
+void SavedListsManager::exportAudioList()
+{
+    //Get list name
+    QString listName;
+    QModelIndexList selectedIndexes = m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes();
+    int audioListsRow = selectedIndexes.at(0).row();
+    if (selectedIndexes.count() > 0) {
+        listName = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(audioListsRow).title;
+    }
+    
+    //Read index file to locate and rename saved list name
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
+    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    QTextStream in(&indexFile);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        QStringList nameUrl = line.split(":::");
+        if (nameUrl.count() >= 3) {
+            QString type = nameUrl.at(0).trimmed();
+            QString name = nameUrl.at(1).trimmed();
+            QString lri = nameUrl.at(2).trimmed();
+            if (type == "Audio") {
+                QString indexEntry = line;
+                if (name == listName) {
+                    if (lri.startsWith("savedlists://")) {
+                        QString filename = name.replace(" ", "");
+                        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
+                        exportPlaylist(file);
+                    }
+                }
+            }
+        }
+    }
+    indexFile.close();
+}
+
+void SavedListsManager::exportVideoList()
+{
+    //Get list name
+    QString listName;
+    QModelIndexList selectedIndexes = m_parent->videoListsStack()->ui->videoLists->selectionModel()->selectedIndexes();
+    int videoListsRow = selectedIndexes.at(0).row();
+    if (selectedIndexes.count() > 0) {
+        listName = m_application->mediaListsManager()->videoListsModel()->mediaItemAt(videoListsRow).title;
+    }
+    
+    //Read index file to locate and rename saved list name
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
+    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    QTextStream in(&indexFile);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        QStringList nameUrl = line.split(":::");
+        if (nameUrl.count() >= 3) {
+            QString type = nameUrl.at(0).trimmed();
+            QString name = nameUrl.at(1).trimmed();
+            QString lri = nameUrl.at(2).trimmed();
+            if (type == "Video") {
+                QString indexEntry = line;
+                if (name == listName) {
+                    if (lri.startsWith("savedlists://")) {
+                        QString filename = name.replace(" ", "");
+                        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
+                        exportPlaylist(file);
+                    }
+                }
+            }
+        }
+    }
+    indexFile.close();
+}
+
+void SavedListsManager::exportPlaylist(QFile &file)
+{
+    QString saveAs = KFileDialog::getSaveFileName(KUrl(), "*.m3u");
+    QFile saveTo;
+    bool ready = false;
+    while (!ready) {
+        if (!saveAs.isEmpty()) {
+            saveTo.setFileName(saveAs);
+            if (saveTo.exists()) {
+                const QString message = i18n("<p>The file <filename>%1</filename> already exists.</p>"
+                                             "<p>Do you want to overwrite it?</p>", saveTo.fileName());
+                const int answer = KMessageBox::warningYesNoCancel( m_parent, message);
+                if (answer == KMessageBox::Yes) {
+                    saveTo.remove();
+                    file.copy(saveAs);
+                    ready = true;
+                }
+                else if (answer == KMessageBox::No) {
+                    saveAs = KFileDialog::getSaveFileName(KUrl(), "*.m3u"); 
+                }
+                // Cancel
+                else {
+                    ready = true; 
+                }
+            }
+            // File doesn't exist yet, no problem
+            else {
+                file.copy(saveAs);
+                ready = true;
+            }
+        }
+        // No filename selected, just return
+        else {
+            ready = true;
+        }
+    }
 }
 
 QString SavedListsManager::savedListLriName(const QString &lri)
