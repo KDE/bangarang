@@ -17,6 +17,7 @@
 */
 
 #include "infomanager.h"
+#include "medialistsmanager.h"
 #include "../common/bangarangapplication.h"
 #include "infoitemdelegate.h"
 #include "infobox.h"
@@ -656,7 +657,7 @@ void InfoManager::fetchingStatusUpdated()
         QString notificationText = fm.elidedText(description, Qt::ElideRight, ui->notificationText->width());
         ui->notificationText->setText(notificationText);
     } else {
-        m_application->mainWindow()->delayedNotificationHide();
+        m_application->mediaListsManager()->delayedNotificationHide();
     }
     if (progress >= 0 && progress <= 100) {
         ui->notificationProgress->setValue(progress);

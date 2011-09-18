@@ -107,7 +107,6 @@ public:
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
     void setShowRemainingTime(bool showRemainingTime);
-    void delayedNotificationHide();
 
 signals:
     void playlistNotificationResult(bool confirmed);
@@ -145,8 +144,6 @@ private slots:
     void on_mediaPlayPause_pressed();
     void on_mediaPlayPause_held();
     void on_mediaPlayPause_released();
-    void on_playAll_clicked();
-    void on_playSelected_clicked();
     void on_showPlaylist_clicked();
     void on_showPlaylist_2_clicked();
     void on_clearPlaylist_clicked();
@@ -171,7 +168,6 @@ private slots:
     void shuffleModeChanged(bool shuffle);
     void showLoading();
     void playlistLoading();
-    void browsingModelStatusUpdated();
     void updateCustomColors();
     void skipForward(int i);
     void skipBackward(int i);  
