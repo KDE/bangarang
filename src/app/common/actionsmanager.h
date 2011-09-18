@@ -129,5 +129,6 @@ class ActionsManager : public QObject
         void updateOntologies();
         void addTemporaryAudioStreams();
         void toggleInfoView();
+        void selectAll();
 };
 #endif //ACTIONSMANAGER_H

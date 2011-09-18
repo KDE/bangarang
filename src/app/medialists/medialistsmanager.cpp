@@ -208,8 +208,9 @@ void MediaListsManager::mediaListActionActivated(QModelIndex index)
 void MediaListsManager::mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected )
 {
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
-    if (selected.indexes().count() > 0) {
-        int firstRow = selected.indexes().at(0).row();
+    QModelIndexList selectedIndexes = ui->mediaView->selectionModel()->selectedIndexes(); // use this instead of selected which works better after a selectAll
+    if (selectedIndexes.count() > 0) {
+        int firstRow = selectedIndexes.at(0).row();
         MediaItem firstSelectedItem = m_application->browsingModel()->mediaItemAt(firstRow);
         QString itemType = firstSelectedItem.type;
         if ((itemType == "Audio") || (itemType == "Video") || (itemType == "Category")) {

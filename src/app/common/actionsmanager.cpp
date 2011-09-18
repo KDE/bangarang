@@ -192,6 +192,13 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(mediaViewRefresh()));
     m_shortcutsCollection->addAction("reload", action);
 
+    //Select all items
+    action = new KAction(KIcon("edit-select-all"), i18n("Select All"), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_A);
+    connect(action, SIGNAL(triggered()), this, SLOT(selectAll()));
+    m_parent->addAction(action);
+    m_othersCollection->addAction("select_all", action);
+
     //Remove selected from playlist
     action = new KAction(i18n("Remove from list"), this);
     connect(action, SIGNAL(triggered()), m_application->savedListsManager(), SLOT(removeSelected()));
@@ -1084,5 +1091,14 @@ void ActionsManager::toggleInfoView()
         action("show_info")->setText(i18n("Hide Info View"));
     } else {
         action("show_info")->setText(i18n("Show Info View"));
+    }
+}
+
+void ActionsManager::selectAll()
+{
+    if (ui->mediaView->hasFocus()) {
+        ui->mediaView->selectAll();
+    } else if (ui->playlistView->hasFocus()) {
+        ui->playlistView->selectAll();
     }
 }
