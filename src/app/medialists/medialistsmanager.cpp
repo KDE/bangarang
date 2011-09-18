@@ -79,6 +79,13 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     ui->mediaListFilter->setVisible(false);
     connect(ui->closeMediaListFilter, SIGNAL(clicked()), this, SLOT(closeMediaListFilter()));
 
+    //Set up play select/all buttons
+    connect(ui->playAll, SIGNAL(clicked()), this, SLOT(playAll()));
+    connect(ui->playSelected, SIGNAL(clicked()), this, SLOT(playSelected()));
+
+    //Setup browsing model status notifications
+    connect(m_application->browsingModel(), SIGNAL(statusUpdated()), this, SLOT(browsingModelStatusUpdated()));
+
     //Set up search
     KLineEdit* searchField = m_application->mainWindow()->ui->Filter;
     connect(searchField, SIGNAL(returnPressed()), this, SLOT(loadSearch()));
@@ -450,4 +457,44 @@ void MediaListsManager::updateDeviceList(DeviceManager::RelatedType type) {
         m_videoListsModel->clearMediaListData();
         m_videoListsModel->load();
     }
+}
+
+void MediaListsManager::playSelected()
+{
+    m_application->actionsManager()->setContextMenuSource(MainWindow::Default);
+    m_application->actionsManager()->action("play_selected")->trigger();
+}
+
+void MediaListsManager::playAll()
+{
+    m_application->actionsManager()->action("play_all")->trigger();
+}
+
+void MediaListsManager::browsingModelStatusUpdated()
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    QHash<QString, QVariant> status = m_application->browsingModel()->status();
+    QString description = status["description"].toString();
+    int progress = status["progress"].toInt();
+    if (!description.isEmpty()) {
+        ui->notificationWidget->setVisible(true);
+        QFontMetrics fm(ui->notificationText->font());
+        QString notificationText = fm.elidedText(description, Qt::ElideRight, ui->notificationText->width());
+        ui->notificationText->setText(notificationText);
+    } else {
+        ui->notificationText->setText(i18n("Complete"));
+        delayedNotificationHide();
+    }
+    if (progress >= 0 && progress <= 100) {
+        ui->notificationProgress->setValue(progress);
+        ui->notificationProgress->setVisible(true);
+    } else {
+        ui->notificationProgress->setVisible(false);
+    }
+}
+
+void MediaListsManager::delayedNotificationHide()
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
 }

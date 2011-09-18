@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->loadingIndicator->setVisible(false);
     ui->extSubtitle->setVisible(false);
     ui->playbackMessage->setVisible(false);
+    ui->notificationWidget->setVisible(false);
 
     //Initialize Nepomuk
     m_nepomukInited = Utilities::nepomukInited();
@@ -127,10 +128,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(m_application->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
     connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
     connectPhononWidgets();
-    
-    //Set up Browsing Model status notifications
-    ui->notificationWidget->setVisible(false);
-    connect(m_application->browsingModel(), SIGNAL(statusUpdated()), this, SLOT(browsingModelStatusUpdated()));
     
     //Set up playlist
     connect(m_application->playlist(), SIGNAL(playlistFinished()), this, SLOT(playlistFinished()));
@@ -429,17 +426,6 @@ void MainWindow::on_playlistView_doubleClicked(const QModelIndex & index)
     ui->playlistView->selectionModel()->clear();
 }
 
-void MainWindow::on_playAll_clicked()
-{
-    m_application->actionsManager()->action("play_all")->trigger();
-}
-
-void MainWindow::on_playSelected_clicked()
-{
-    m_application->actionsManager()->setContextMenuSource(MainWindow::Default);
-    m_application->actionsManager()->action("play_selected")->trigger();
-}
-
 void MainWindow::on_clearPlaylist_clicked()
 {
     ui->clearPlaylist->setIcon(KIcon("bangarang-clearplaylist"));
@@ -703,33 +689,6 @@ void MainWindow::connectPhononWidgets()
 /*---------------------------
   -- SLOTS for media lists --
   ---------------------------*/
-void MainWindow::delayedNotificationHide()
-{
-    QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
-}
-
-void MainWindow::browsingModelStatusUpdated()
-{
-    QHash<QString, QVariant> status = m_application->browsingModel()->status();
-    QString description = status["description"].toString();
-    int progress = status["progress"].toInt();
-    if (!description.isEmpty()) {
-        ui->notificationWidget->setVisible(true);
-        QFontMetrics fm(ui->notificationText->font());
-        QString notificationText = fm.elidedText(description, Qt::ElideRight, ui->notificationText->width());
-        ui->notificationText->setText(notificationText);
-    } else {
-        ui->notificationText->setText(i18n("Complete"));
-        delayedNotificationHide();
-    }
-    if (progress >= 0 && progress <= 100) {
-        ui->notificationProgress->setValue(progress);
-        ui->notificationProgress->setVisible(true);
-    } else {
-        ui->notificationProgress->setVisible(false);
-    }
-}
-
 void MainWindow::playlistFinished()
 {
     showApplicationBanner();

@@ -54,6 +54,7 @@ public slots:
     void selectVideoList();
     void loadSearch();
     void closeMediaListFilter();
+    void delayedNotificationHide();
 
 private:
     BangarangApplication* m_application;
@@ -82,6 +83,9 @@ private slots:
     void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
     void updateDeviceList(DeviceManager::RelatedType type);
     void showMediaListLoading();
+    void playSelected();
+    void playAll();
+    void browsingModelStatusUpdated();
 
 };
 
