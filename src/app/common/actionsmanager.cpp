@@ -33,6 +33,7 @@
 #include "../nowplaying/videosettings.h"
 #include "../nowplaying/audiosettings.h"
 #include "../nowplaying/nowplayingdelegate.h"
+#include "../nowplaying/nowplayingmanager.h"
 
 #include <KStandardDirs>
 #include <KMessageBox>
@@ -937,8 +938,8 @@ void ActionsManager::setContextMenuSource(MainWindow::ContextMenuSource menuSour
 
 void ActionsManager::toggleShowRemainingTimeSlot()
 {
-    m_parent->setShowRemainingTime(!m_parent->showingRemainingTime());
-    if (m_parent->showingRemainingTime()) {
+    m_application->nowPlayingManager()->setShowRemainingTime(!m_application->nowPlayingManager()->showingRemainingTime());
+    if (m_application->nowPlayingManager()->showingRemainingTime()) {
         action("toggle_show_remaining_time")->setText(i18n("Show elapsed time"));
     } else {
         action("toggle_show_remaining_time")->setText(i18n("Show remaining time"));

@@ -35,6 +35,7 @@ class InfoManager;
 class SavedListsManager;
 class ActionsManager;
 class BookmarksManager;
+class NowPlayingManager;
 class AudioSettings;
 class MainWindow;
 class BangarangNotifierItem;
@@ -61,6 +62,7 @@ class BangarangApplication : public KApplication
         InfoManager * infoManager();
         SavedListsManager * savedListsManager();
         ActionsManager * actionsManager();
+        NowPlayingManager* nowPlayingManager();
         BookmarksManager * bookmarksManager();
         BangarangNotifierItem * statusNotifierItem();
         AudioSettings * audioSettings();
@@ -84,6 +86,7 @@ class BangarangApplication : public KApplication
         MediaListsManager* m_mediaListsManager;
         InfoManager * m_infoManager;
         SavedListsManager * m_savedListsManager;
+        NowPlayingManager* m_nowPlayingManager;
         ActionsManager * m_actionsManager;
         BookmarksManager * m_bookmarksManager;
         BangarangNotifierItem * m_statusNotifierItem;

@@ -34,6 +34,7 @@ namespace Ui
 class MainWindow;
 class BangarangApplication;
 class VideoSettings;
+class MediaItem;
 
 /*
  * This class creates and manages all actions for bangarang. 

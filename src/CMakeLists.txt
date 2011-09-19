@@ -25,6 +25,7 @@ set(BangarangSources
     app/nowplaying/bangarangvideowidget.cpp
     app/nowplaying/bookmarksmanager.cpp
     app/nowplaying/nowplayingdelegate.cpp
+    app/nowplaying/nowplayingmanager.cpp
     app/nowplaying/nowplayingview.cpp
     app/nowplaying/playlistview.cpp
     app/nowplaying/videosettings.cpp
