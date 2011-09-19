@@ -30,6 +30,7 @@
 #include <KStandardDirs>
 #include <KMessageBox>
 #include <KFileDialog>
+#include <KIO/NetAccess>
 #include <KDebug>
 #include <QFile>
 #include <Nepomuk/ResourceManager>
@@ -354,6 +355,12 @@ void SavedListsManager::showAudioSavedListSettings()
     for(int i = 0; i < selectedIndexes.count(); i++) {
         int row = selectedIndexes.at(i).row();
         m_parent->audioListsStack()->ui->aslsListName->setText(m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row).title);
+        // We can only export a playlist when we have a .m3u file
+        if (QString(m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row).url).contains("semantics://")) {
+            m_parent->audioListsStack()->ui->aslsExport->setEnabled(false);
+        } else {
+            m_parent->audioListsStack()->ui->aslsExport->setEnabled(true);
+        }
     }
     m_parent->audioListsStack()->ui->aslsListName->setFocus();
 }
@@ -365,6 +372,12 @@ void SavedListsManager::showVideoSavedListSettings()
     for(int i = 0; i < selectedIndexes.count(); i++) {
         int row = selectedIndexes.at(i).row();
         m_parent->videoListsStack()->ui->vslsListName->setText(m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).title);
+        // We can only export a playlist when we have a .m3u file
+        if (QString(m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).url).contains("semantics://")) {
+            m_parent->videoListsStack()->ui->vslsExport->setEnabled(false);
+        } else {
+            m_parent->videoListsStack()->ui->vslsExport->setEnabled(true);
+        }
     }
     m_parent->videoListsStack()->ui->vslsListName->setFocus();
 }
@@ -759,8 +772,8 @@ void SavedListsManager::exportAudioList()
                 if (name == listName) {
                     if (lri.startsWith("savedlists://")) {
                         QString filename = name.replace(" ", "");
-                        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-                        exportPlaylist(file);
+                        KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
+                        exportPlaylist(fileUrl);
                     }
                 }
             }
@@ -797,8 +810,8 @@ void SavedListsManager::exportVideoList()
                 if (name == listName) {
                     if (lri.startsWith("savedlists://")) {
                         QString filename = name.replace(" ", "");
-                        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-                        exportPlaylist(file);
+                        KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
+                        exportPlaylist(fileUrl);
                     }
                 }
             }
@@ -807,39 +820,30 @@ void SavedListsManager::exportVideoList()
     indexFile.close();
 }
 
-void SavedListsManager::exportPlaylist(QFile &file)
+void SavedListsManager::exportPlaylist(KUrl &saveFrom)
 {
-    QString saveAs = KFileDialog::getSaveFileName(KUrl(), "*.m3u");
-    QFile saveTo;
+    KUrl saveAs = KFileDialog::getSaveUrl(KUrl(), i18n("*.m3u|M3U files (*.m3u)"));
     bool ready = false;
     while (!ready) {
         if (!saveAs.isEmpty()) {
-            saveTo.setFileName(saveAs);
-            if (saveTo.exists()) {
+            if (KIO::NetAccess::exists(saveAs, KIO::NetAccess::DestinationSide, m_parent)) {
                 const QString message = i18n("<p>The file <filename>%1</filename> already exists.</p>"
-                                             "<p>Do you want to overwrite it?</p>", saveTo.fileName());
-                const int answer = KMessageBox::warningYesNoCancel( m_parent, message);
+                                             "<p>Do you want to overwrite it?</p>", saveAs.fileName());
+                const int answer = KMessageBox::warningYesNoCancel(m_parent, message);
                 if (answer == KMessageBox::Yes) {
-                    saveTo.remove();
-                    file.copy(saveAs);
+                    KIO::NetAccess::del(saveAs, m_parent);
+                    KIO::NetAccess::file_copy(saveFrom, saveAs, m_parent);
                     ready = true;
-                }
-                else if (answer == KMessageBox::No) {
-                    saveAs = KFileDialog::getSaveFileName(KUrl(), "*.m3u"); 
-                }
-                // Cancel
-                else {
+                } else if (answer == KMessageBox::No) {
+                    saveAs = KFileDialog::getSaveUrl(KUrl(), i18n("*.m3u|M3U files (*.m3u)"));
+                } else { // Cancel
                     ready = true; 
                 }
-            }
-            // File doesn't exist yet, no problem
-            else {
-                file.copy(saveAs);
+            } else { // File doesn't exist yet, no problem
+                KIO::NetAccess::file_copy(saveFrom, saveAs, m_parent);
                 ready = true;
             }
-        }
-        // No filename selected, just return
-        else {
+        } else { // No filename selected, just return
             ready = true;
         }
     }
