@@ -22,7 +22,7 @@
 #include <QObject>
 #include <QItemSelection>
 #include <QStringList>
-#include <QFile>
+#include <KUrl>
 
 namespace Ui
 {
@@ -78,7 +78,7 @@ class SavedListsManager : public QObject
         QStringList m_savedVideoLists;
         void updateSavedListsIndex();
         bool m_nepomukInited;
-	void exportPlaylist(QFile &file);
+        void exportPlaylist(KUrl &saveFrom);
         
     private slots:
         void enableValidSave(QString newText = QString());
