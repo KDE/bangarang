@@ -24,6 +24,7 @@
 #include "../../platform/playlist.h"
 #include "../common/mainwindow.h"
 
+class MediaItemDelegate;
 
 class PlaylistView : public QListView
 {

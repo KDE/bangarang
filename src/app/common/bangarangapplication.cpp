@@ -23,6 +23,7 @@
 #include "../medialists/medialistsmanager.h"
 #include "../medialists/infomanager.h"
 #include "../medialists/savedlistsmanager.h"
+#include "../nowplaying/nowplayingmanager.h"
 #include "../nowplaying/bookmarksmanager.h"
 #include "actionsmanager.h"
 #include "../nowplaying/audiosettings.h"
@@ -92,9 +93,12 @@ void BangarangApplication::setup()
 
     //Setup Saved Lists Manager
     m_savedListsManager = new SavedListsManager(m_mainWindow);
-    
+
     //Setup Actions Manager
     m_actionsManager = new ActionsManager(m_mainWindow);
+
+    //Setup Now Playing Manager
+    m_nowPlayingManager = new NowPlayingManager(m_mainWindow);
 
     //Setup Bookmarks Manager
     m_bookmarksManager = new BookmarksManager(m_mainWindow);
@@ -288,6 +292,11 @@ ActionsManager * BangarangApplication::actionsManager()
     return m_actionsManager;
 }
 
+NowPlayingManager* BangarangApplication::nowPlayingManager()
+{
+    return m_nowPlayingManager;
+}
+
 BookmarksManager * BangarangApplication::bookmarksManager()
 {
     return m_bookmarksManager;
@@ -381,7 +390,7 @@ void BangarangApplication::nowPlayingChanged()
         m_audioOutput->setVolume(m_volume);
         m_audioSettings->reconnectAudioPath(&m_audioPath);
         connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
-        m_mainWindow->connectPhononWidgets();
+        //m_nowPlayingManager->connectPhononWidgets();
     }
 
 }

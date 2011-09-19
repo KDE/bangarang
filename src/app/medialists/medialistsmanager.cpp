@@ -24,6 +24,8 @@
 #include "infomanager.h"
 #include "../common/actionsmanager.h"
 #include "../../platform/mediaitemmodel.h"
+#include "../../platform/utilities/artwork.h"
+#include "../../platform/utilities/general.h"
 
 #include <QScrollBar>
 
@@ -72,6 +74,8 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     connect((MediaItemDelegate *)mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
     connect(mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(ui->previous, SIGNAL(clicked()), this, SLOT(loadPreviousList()));
+    connect(m_application->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
+    connect(m_application->mainWindow(), SIGNAL(switchedMainWidget(MainWindow::MainWidget)), this, SLOT(defaultListLoad(MainWindow::MainWidget)));
 
     //Setup media list filter
     ui->mediaListFilterProxyLine->lineEdit()->setClickMessage(QString());
@@ -497,4 +501,65 @@ void MediaListsManager::delayedNotificationHide()
 {
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     QTimer::singleShot(3000, ui->notificationWidget, SLOT(hide()));
+}
+
+void MediaListsManager::updateSeekTime(qint64 time)
+{
+    //Add currently playing item to browsing model if contents is "Recently Played"
+    if (time > 12000 && time < 13000) {
+        if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
+            return;
+        }
+        MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
+        MediaListProperties mediaListProperties = m_application->browsingModel()->mediaListProperties();
+        if (!mediaListProperties.lri.startsWith(QString("semantics://recent?%1").arg(nowPlayingItem.type.toLower()))) {
+            return;
+        }
+        QStringList filterList = mediaListProperties.engineFilterList();
+        int filterIndex = -1;
+        for (int i = 0; i < filterList.count(); i++) {
+            if (filterList.at(i).startsWith("lastPlayed")) {
+                filterIndex = i;
+                break;
+            }
+        }
+        if (filterIndex >= 0) {
+            if (mediaListProperties.filterOperator(filterList.at(filterIndex)) != ">") {
+                return;
+            }
+        }
+        nowPlayingItem.artwork = Utilities::defaultArtworkForMediaItem(nowPlayingItem);
+        nowPlayingItem.semanticComment = Utilities::wordsForTimeSince(nowPlayingItem.fields["lastPlayed"].toDateTime());
+        m_application->browsingModel()->insertMediaItemAt(0, nowPlayingItem);
+    }
+ }
+
+void MediaListsManager::nowPlayingChanged()
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+
+    //Update Media List view
+    int startRow = ui->mediaView->indexAt(ui->mediaView->rect().topLeft()).row();
+    int endRow = ui->mediaView->indexAt(ui->mediaView->rect().bottomRight()).row();
+    if (endRow == -1) {
+        endRow = startRow + ui->mediaView->model()->rowCount();
+    }
+    for  (int i = startRow; i <= endRow; i++) {
+        ui->mediaView->update(ui->mediaView->model()->index(i, 0));
+    }
+}
+
+void MediaListsManager::defaultListLoad(MainWindow::MainWidget which)
+{
+    if (which != MainWindow::MainMediaList) {
+        return;
+    }
+    if (!m_application->browsingModel()->mediaListProperties().lri.isEmpty()) {
+        return;
+    }
+    if (m_mediaListSelection == MediaListsManager::AudioList) {
+        selectAudioList();
+    } else {
+        selectVideoList();
+    }
 }

@@ -20,6 +20,7 @@
 #define MEDIALISTSMANAGER_H
 
 #include "../../platform/devicemanager.h"
+#include "../common/mainwindow.h"
 #include <QObject>
 #include <QItemSelection>
 
@@ -86,7 +87,9 @@ private slots:
     void playSelected();
     void playAll();
     void browsingModelStatusUpdated();
-
+    void updateSeekTime(qint64 time);
+    void nowPlayingChanged();
+    void defaultListLoad(MainWindow::MainWidget which);
 };
 
 #endif // MEDIALISTSMANAGER_H
