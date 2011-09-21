@@ -362,6 +362,7 @@ void MainWindow::setupIcons()
     m_audioListsStack->ui->configureAudioList->setIcon(KIcon("configure"));
     m_audioListsStack->ui->saveAudioList->setIcon(KIcon("document-save"));
     m_audioListsStack->ui->aslsSave->setIcon(KIcon("document-save"));
+    m_audioListsStack->ui->aslsExport->setIcon(KIcon("document-export"));
     m_audioListsStack->ui->semAConfigSave->setIcon(KIcon("document-save"));
     
     //Video List Icons
@@ -370,6 +371,7 @@ void MainWindow::setupIcons()
     m_videoListsStack->ui->configureVideoList->setIcon(KIcon("configure"));
     m_videoListsStack->ui->saveVideoList->setIcon(KIcon("document-save"));
     m_videoListsStack->ui->vslsSave->setIcon(KIcon("document-save"));
+    m_videoListsStack->ui->vslsExport->setIcon(KIcon("document-export"));
     m_videoListsStack->ui->semVConfigSave->setIcon(KIcon("document-save"));
     
     //Media View Icons
