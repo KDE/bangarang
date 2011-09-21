@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
 "issues\n"
-"POT-Creation-Date: 2011-09-13 22:08-0700\n"
+"POT-Creation-Date: 2011-09-20 17:57+0200\n"
 "PO-Revision-Date: 2010-04-07 21:43+0200\n"
 "Last-Translator: Martin Schlander <mschlander@opensuse.org>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -28,11 +28,736 @@ msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr "mschlander@opensuse.org"
 
-#: app/main.cpp:29 app/common/bangarangapplication.cpp:132
+#. i18n: file: app/ui/audiolistsstack.ui:14
+#. i18n: ectx: property (windowTitle), widget (QWidget, AudioListsStack)
+#. i18n: file: app/ui/videolistsstack.ui:14
+#. i18n: ectx: property (windowTitle), widget (QWidget, VideoListsStack)
+#: rc.cpp:5 rc.cpp:374
+msgid "Form"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:70
+#. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
+#. i18n: file: app/ui/videolistsstack.ui:73
+#. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
+#: rc.cpp:8 rc.cpp:377
+msgid "Add list"
+msgstr "Tilføj liste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:87
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
+#. i18n: file: app/ui/videolistsstack.ui:90
+#. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
+#: rc.cpp:11 rc.cpp:380
+msgid "Remove list"
+msgstr "Fjern liste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:117
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
+#. i18n: file: app/ui/videolistsstack.ui:120
+#. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
+#: rc.cpp:14 rc.cpp:383
+msgid "Settings"
+msgstr "Indstillinger"
+
+#. i18n: file: app/ui/audiolistsstack.ui:166
+#. i18n: ectx: property (text), widget (QLabel, label_5)
+#. i18n: file: app/ui/videolistsstack.ui:169
+#. i18n: ectx: property (text), widget (QLabel, label_7)
+#: rc.cpp:17 rc.cpp:386
+msgid "Add List"
+msgstr "Tilføj liste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:183
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#. i18n: file: app/ui/videolistsstack.ui:186
+#. i18n: ectx: property (text), widget (QLabel, label_6)
+#: rc.cpp:20 rc.cpp:389
+msgid "Source"
+msgstr "Kilde"
+
+#. i18n: file: app/ui/audiolistsstack.ui:205
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
+#. i18n: file: app/ui/videolistsstack.ui:212
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
+#: rc.cpp:23 rc.cpp:395
+msgid "Current View"
+msgstr "Aktuel visning"
+
+#. i18n: file: app/ui/audiolistsstack.ui:212
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
+#. i18n: file: app/ui/videolistsstack.ui:205
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
+#: rc.cpp:26 rc.cpp:392
+msgid "Current Selection"
+msgstr "Aktuel markering"
+
+#. i18n: file: app/ui/audiolistsstack.ui:219
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
+#. i18n: file: app/ui/videolistsstack.ui:219
+#. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
+#: rc.cpp:29 rc.cpp:398
+msgid "Current Playlist"
+msgstr "Aktuel spilleliste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:229
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
+#. i18n: file: app/ui/videolistsstack.ui:229
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
+#: rc.cpp:32 rc.cpp:401
+msgid "New List Name"
+msgstr "Navn på ny liste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:251
+#. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
+#. i18n: file: app/ui/audiolistsstack.ui:395
+#. i18n: ectx: property (text), widget (QPushButton, aslsSave)
+#. i18n: file: app/ui/audiolistsstack.ui:895
+#. i18n: ectx: property (text), widget (QPushButton, semAConfigSave)
+#. i18n: file: app/ui/mainwindow.ui:1382
+#. i18n: ectx: property (text), widget (QToolButton, infoItemSave)
+#. i18n: file: app/ui/videolistsstack.ui:248
+#. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
+#. i18n: file: app/ui/videolistsstack.ui:368
+#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
+#. i18n: file: app/ui/videolistsstack.ui:842
+#. i18n: ectx: property (text), widget (QPushButton, semVConfigSave)
+#: rc.cpp:35 rc.cpp:47 rc.cpp:92 rc.cpp:152 rc.cpp:404 rc.cpp:416 rc.cpp:461
+msgid "Save"
+msgstr "Gem"
+
+#. i18n: file: app/ui/audiolistsstack.ui:305
+#. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
+#. i18n: file: app/ui/audiolistsstack.ui:425
+#. i18n: ectx: property (text), widget (QToolButton, aslsCancel)
+#. i18n: file: app/ui/audiolistsstack.ui:921
+#. i18n: ectx: property (text), widget (QToolButton, aCancelSemConfigure)
+#. i18n: file: app/ui/videolistsstack.ui:398
+#. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
+#. i18n: file: app/ui/videolistsstack.ui:868
+#. i18n: ectx: property (text), widget (QToolButton, vCancelSemConfigure)
+#: rc.cpp:38 rc.cpp:50 rc.cpp:95 rc.cpp:419 rc.cpp:464
+msgid "Return to Lists"
+msgstr "Returnér til lister"
+
+#. i18n: file: app/ui/audiolistsstack.ui:344
+#. i18n: ectx: property (text), widget (QLabel, label_8)
+#. i18n: file: app/ui/videolistsstack.ui:317
+#. i18n: ectx: property (text), widget (QLabel, label_11)
+#: rc.cpp:41 rc.cpp:410
+msgid "Saved List Settings"
+msgstr "Gemte listeindstillinger"
+
+#. i18n: file: app/ui/audiolistsstack.ui:370
+#. i18n: ectx: property (text), widget (QLabel, label_9)
+#. i18n: file: app/ui/videolistsstack.ui:343
+#. i18n: ectx: property (text), widget (QLabel, label_10)
+#: rc.cpp:44 rc.cpp:413
+msgid "Name"
+msgstr "Navn"
+
+#. i18n: file: app/ui/audiolistsstack.ui:470
+#. i18n: ectx: property (text), widget (QLabel, aConfigureSemListTitle)
+#. i18n: file: app/ui/mainwindow.ui:653
+#. i18n: ectx: property (text), widget (QLabel, listTitle)
+#. i18n: file: app/ui/videolistsstack.ui:443
+#. i18n: ectx: property (text), widget (QLabel, vConfigureSemListTitle)
+#: rc.cpp:53 rc.cpp:125 rc.cpp:422
+msgid "List Title"
+msgstr "Listetitel"
+
+#. i18n: file: app/ui/audiolistsstack.ui:526
+#. i18n: ectx: property (text), widget (QLabel, label_15)
+#. i18n: file: app/ui/videolistsstack.ui:469
+#. i18n: ectx: property (text), widget (QLabel, label_16)
+#: rc.cpp:56 rc.cpp:425
+#, fuzzy
+msgid "Show"
+msgstr "Tv-program"
+
+#. i18n: file: app/ui/audiolistsstack.ui:552
+#. i18n: ectx: property (text), widget (QLabel, label_32)
+#. i18n: file: app/ui/videolistsstack.ui:492
+#. i18n: ectx: property (text), widget (QLabel, label_17)
+#: rc.cpp:59 rc.cpp:428
+#, fuzzy
+msgid "items"
+msgstr "1 element"
+
+#. i18n: file: app/ui/audiolistsstack.ui:608
+#. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
+#. i18n: file: app/ui/videolistsstack.ui:542
+#. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
+#: rc.cpp:62 rc.cpp:431 app/medialists/medialistsettings.cpp:94
+#: app/medialists/medialistsettings.cpp:104
+#: app/medialists/medialistsettings.cpp:114
+#: app/medialists/medialistsettings.cpp:124
+#, fuzzy
+msgid "played"
+msgstr "Afspil næste"
+
+#. i18n: file: app/ui/audiolistsstack.ui:677
+#. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
+#. i18n: file: app/ui/videolistsstack.ui:611
+#. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
+#: rc.cpp:65 rc.cpp:434
+msgid "before"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:682
+#. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
+#. i18n: file: app/ui/videolistsstack.ui:616
+#. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
+#: rc.cpp:68 rc.cpp:437
+msgid "after"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:762
+#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
+#. i18n: file: app/ui/audiolistsstack.ui:865
+#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
+#. i18n: file: app/ui/videolistsstack.ui:709
+#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
+#. i18n: file: app/ui/videolistsstack.ui:812
+#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
+#: rc.cpp:71 rc.cpp:83 rc.cpp:440 rc.cpp:452
+msgid "or more"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:767
+#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
+#. i18n: file: app/ui/audiolistsstack.ui:870
+#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
+#. i18n: file: app/ui/videolistsstack.ui:714
+#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
+#. i18n: file: app/ui/videolistsstack.ui:817
+#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
+#: rc.cpp:74 rc.cpp:86 rc.cpp:443 rc.cpp:455
+msgid "exactly"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:772
+#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
+#. i18n: file: app/ui/audiolistsstack.ui:875
+#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
+#. i18n: file: app/ui/videolistsstack.ui:719
+#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
+#. i18n: file: app/ui/videolistsstack.ui:822
+#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
+#: rc.cpp:77 rc.cpp:89 rc.cpp:446 rc.cpp:458
+msgid "or less"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:848
+#. i18n: ectx: property (text), widget (QLabel, label_14)
+#. i18n: file: app/ui/videolistsstack.ui:795
+#. i18n: ectx: property (text), widget (QLabel, label_28)
+#: rc.cpp:80 rc.cpp:449
+msgid "times"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:17
+#. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
+#: rc.cpp:98 app/main.cpp:29 app/common/bangarangapplication.cpp:132
 #: app/common/bangarangnotifieritem.cpp:11 app/common/mainwindow.cpp:451
 #: app/common/mainwindow.cpp:736 app/common/mainwindow.cpp:835
 msgid "Bangarang"
 msgstr "Bangarang"
+
+#. i18n: file: app/ui/mainwindow.ui:156
+#. i18n: ectx: property (text), widget (QLabel, label)
+#. i18n: file: app/ui/mainwindow.ui:6790
+#. i18n: ectx: property (text), widget (QToolButton, collectionButton)
+#: rc.cpp:101 rc.cpp:347
+msgid "Media Lists"
+msgstr "Medielister"
+
+#. i18n: file: app/ui/mainwindow.ui:260
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
+#: rc.cpp:104 app/medialists/medialistsmanager.cpp:353
+msgid "Search for audio"
+msgstr "Søg efter lyd"
+
+#. i18n: file: app/ui/mainwindow.ui:303
+#. i18n: ectx: property (text), widget (QLabel, audioListLabel)
+#. i18n: file: app/ui/mainwindow.ui:337
+#. i18n: ectx: property (text), widget (QToolButton, audioListSelect)
+#: rc.cpp:107 rc.cpp:110
+msgid "Audio"
+msgstr "Lyd"
+
+#. i18n: file: app/ui/mainwindow.ui:415
+#. i18n: ectx: property (text), widget (QLabel, videoListLabel)
+#. i18n: file: app/ui/mainwindow.ui:449
+#. i18n: ectx: property (text), widget (QToolButton, videoListSelect)
+#: rc.cpp:113 rc.cpp:116
+msgid "Video"
+msgstr "Video"
+
+#. i18n: file: app/ui/mainwindow.ui:542
+#. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
+#: rc.cpp:119 app/common/mainwindow.cpp:739 app/common/mainwindow.cpp:937
+msgid "View Now Playing"
+msgstr "Vis afspiller nu"
+
+#. i18n: file: app/ui/mainwindow.ui:545
+#. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
+#: rc.cpp:122 app/common/mainwindow.cpp:453 app/common/mainwindow.cpp:535
+#: app/common/mainwindow.cpp:537 app/common/mainwindow.cpp:738
+msgid "Now Playing"
+msgstr "Afspiller nu"
+
+#. i18n: file: app/ui/mainwindow.ui:691
+#. i18n: ectx: property (text), widget (QLabel, listSummary)
+#: rc.cpp:128
+msgid "Summary"
+msgstr "Oversigt"
+
+#. i18n: file: app/ui/mainwindow.ui:831
+#. i18n: ectx: property (text), widget (QToolButton, closeMediaListFilter)
+#. i18n: file: app/ui/mainwindow.ui:1254
+#. i18n: ectx: property (text), widget (QToolButton, infoFetcherLink)
+#. i18n: file: app/ui/mainwindow.ui:5411
+#. i18n: ectx: property (text), widget (QToolButton, closePlaylistNotification)
+#. i18n: file: app/ui/mainwindow.ui:5498
+#. i18n: ectx: property (text), widget (QToolButton, closePlaylistFilter)
+#. i18n: file: app/ui/mainwindow.ui:7120
+#. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
+#. i18n: file: app/ui/mainwindow.ui:7149
+#. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
+#. i18n: file: app/ui/mainwindow.ui:7169
+#. i18n: ectx: property (text), widget (QToolButton, mediaNext)
+#: rc.cpp:131 rc.cpp:140 rc.cpp:221 rc.cpp:224 rc.cpp:365 rc.cpp:368
+#: rc.cpp:371
+msgid "..."
+msgstr "..."
+
+#. i18n: file: app/ui/mainwindow.ui:845
+#. i18n: ectx: property (text), widget (QLabel, label_19)
+#. i18n: file: app/ui/mainwindow.ui:5512
+#. i18n: ectx: property (text), widget (QLabel, label_18)
+#: rc.cpp:134 rc.cpp:227
+#, fuzzy
+msgid "Filter"
+msgstr "Tilpas"
+
+#. i18n: file: app/ui/mainwindow.ui:1232
+#. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
+#: rc.cpp:137
+msgid "Additional information may be available from:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:1273
+#. i18n: ectx: property (text), widget (QToolButton, infoFetch)
+#: rc.cpp:143
+msgid "Fetch info and edit changes"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:1292
+#. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
+#: rc.cpp:146
+msgid "Fetch info and save changes"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:1312
+#. i18n: ectx: property (text), widget (QLabel, label_27)
+#: rc.cpp:149
+msgid "Matches"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:1398
+#. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
+#: rc.cpp:155
+msgid "Cancel Edit"
+msgstr "Annullér redigering"
+
+#. i18n: file: app/ui/mainwindow.ui:1445
+#. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
+#: rc.cpp:158
+#, fuzzy
+msgid "Index Selected"
+msgstr "Afspil markerede"
+
+#. i18n: file: app/ui/mainwindow.ui:1514
+#. i18n: ectx: property (text), widget (QLabel, notificationText)
+#: rc.cpp:161
+msgid "Notification Text"
+msgstr "Bekendtgørelsestekst"
+
+#. i18n: file: app/ui/mainwindow.ui:1594
+#. i18n: ectx: property (text), widget (QToolButton, previous)
+#: rc.cpp:164
+msgid "Previous"
+msgstr "Forrige"
+
+#. i18n: file: app/ui/mainwindow.ui:1635
+#. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
+#: rc.cpp:167
+msgid "Play all media in list"
+msgstr "Afspil alle medier i listen"
+
+#. i18n: file: app/ui/mainwindow.ui:1641
+#. i18n: ectx: property (text), widget (QPushButton, playAll)
+#: rc.cpp:170
+msgid "Play All"
+msgstr "Afspil alle"
+
+#. i18n: file: app/ui/mainwindow.ui:1664
+#. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
+#: rc.cpp:173
+msgid "Play selected media in list"
+msgstr "Afspil markerede medier i listen"
+
+#. i18n: file: app/ui/mainwindow.ui:1667
+#. i18n: ectx: property (text), widget (QPushButton, playSelected)
+#: rc.cpp:176
+msgid "Play Selected"
+msgstr "Afspil markerede"
+
+#. i18n: file: app/ui/mainwindow.ui:3494
+#. i18n: ectx: property (text), widget (QLabel, extSubtitle)
+#: rc.cpp:179
+msgid "ExternalSubtitle"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:3543
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
+#. i18n: file: app/ui/mainwindow.ui:4093
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
+#: rc.cpp:182 rc.cpp:188 app/common/mainwindow.cpp:311
+#: app/medialists/savedlistsmanager.cpp:760
+#: platform/utilities/mediaitems.cpp:145
+msgid "Playlist"
+msgstr "Spilleliste"
+
+#. i18n: file: app/ui/mainwindow.ui:3607
+#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
+#: rc.cpp:185
+msgid "Error message"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5058
+#. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
+#: rc.cpp:191 app/common/mainwindow.cpp:477
+msgid "Show Upcoming"
+msgstr "Vis kommende"
+
+#. i18n: file: app/ui/mainwindow.ui:5090
+#. i18n: ectx: property (text), widget (QLabel, playlistName)
+#: rc.cpp:194 app/nowplaying/playlistview.cpp:101
+msgid "<b>Playlist</b>"
+msgstr "<b>Spilleliste</b>"
+
+#. i18n: file: app/ui/mainwindow.ui:5113
+#. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
+#: rc.cpp:197 app/common/mainwindow.cpp:447
+msgid "Clear Playlist"
+msgstr "Ryd spilleliste"
+
+#. i18n: file: app/ui/mainwindow.ui:5140
+#. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
+#: rc.cpp:200 app/common/mainwindow.cpp:750
+msgid "Turn on Repeat"
+msgstr "Slå gentag til"
+
+#. i18n: file: app/ui/mainwindow.ui:5143
+#. i18n: ectx: property (text), widget (QToolButton, repeat)
+#. i18n: file: app/ui/mainwindow.ui:5172
+#. i18n: ectx: property (text), widget (QToolButton, shuffle)
+#. i18n: file: app/ui/mainwindow.ui:6834
+#. i18n: ectx: property (text), widget (SToolButton, fullScreen)
+#: rc.cpp:203 rc.cpp:209 rc.cpp:353
+msgid "[ ]"
+msgstr "[ ]"
+
+#. i18n: file: app/ui/mainwindow.ui:5169
+#. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
+#: rc.cpp:206 app/common/mainwindow.cpp:760
+msgid "Turn on Shuffle"
+msgstr "Slå tilfældig til"
+
+#. i18n: file: app/ui/mainwindow.ui:5381
+#. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
+#: rc.cpp:212
+#, fuzzy
+msgid "Notification"
+msgstr "Bekendtgørelsestekst"
+
+#. i18n: file: app/ui/mainwindow.ui:5394
+#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
+#: rc.cpp:215 app/common/mainwindow.cpp:148
+msgid "Yes"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5404
+#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
+#: rc.cpp:218 app/common/mainwindow.cpp:147
+msgid "No"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5551
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: rc.cpp:230
+#, fuzzy
+msgid "Audio Settings"
+msgstr "Videoindstillinger"
+
+#. i18n: file: app/ui/mainwindow.ui:5600
+#. i18n: ectx: property (text), widget (QLabel, label_20)
+#: rc.cpp:233
+#, fuzzy
+msgid "Audio Channel:"
+msgstr "Lydklip"
+
+#. i18n: file: app/ui/mainwindow.ui:5664
+#. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
+#: rc.cpp:236
+msgid "Equalizer"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5682
+#. i18n: ectx: property (text), widget (QLabel, label_12)
+#: rc.cpp:239
+msgid "Presets"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5745
+#. i18n: ectx: property (text), widget (QLabel, eq1Label)
+#: rc.cpp:242
+msgid "Pre"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5783
+#. i18n: ectx: property (text), widget (QLabel, eq2Label)
+#: rc.cpp:245
+msgid "60"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5821
+#. i18n: ectx: property (text), widget (QLabel, eq3Label)
+#: rc.cpp:248
+msgid "170"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5859
+#. i18n: ectx: property (text), widget (QLabel, eq4Label)
+#: rc.cpp:251
+msgid "310"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5897
+#. i18n: ectx: property (text), widget (QLabel, eq5Label)
+#: rc.cpp:254
+msgid "600"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5935
+#. i18n: ectx: property (text), widget (QLabel, eq6Label)
+#: rc.cpp:257
+msgid "1k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:5973
+#. i18n: ectx: property (text), widget (QLabel, eq7Label)
+#: rc.cpp:260
+msgid "3k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6011
+#. i18n: ectx: property (text), widget (QLabel, eq8Label)
+#: rc.cpp:263
+msgid "6k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6049
+#. i18n: ectx: property (text), widget (QLabel, eq9Label)
+#: rc.cpp:266
+msgid "12k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6087
+#. i18n: ectx: property (text), widget (QLabel, eq10Label)
+#: rc.cpp:269
+msgid "14k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6125
+#. i18n: ectx: property (text), widget (QLabel, eq11Label)
+#: rc.cpp:272
+msgid "16k"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6163
+#. i18n: ectx: property (text), widget (QPushButton, restoreDefaultAudioSettings)
+#. i18n: file: app/ui/mainwindow.ui:6662
+#. i18n: ectx: property (text), widget (QPushButton, restoreDefaultVideoSettings)
+#: rc.cpp:275 rc.cpp:329
+msgid "Restore Defaults"
+msgstr "Gendan standardindstillinger"
+
+#. i18n: file: app/ui/mainwindow.ui:6170
+#. i18n: ectx: property (text), widget (QPushButton, hideAudioSettings)
+#. i18n: file: app/ui/mainwindow.ui:6669
+#. i18n: ectx: property (text), widget (QPushButton, hideVideoSettings)
+#: rc.cpp:278 rc.cpp:332
+msgid "Hide"
+msgstr "Skjul"
+
+#. i18n: file: app/ui/mainwindow.ui:6199
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: rc.cpp:281
+msgid "Video Settings"
+msgstr "Videoindstillinger"
+
+#. i18n: file: app/ui/mainwindow.ui:6239
+#. i18n: ectx: property (text), widget (QLabel, label_26)
+#: rc.cpp:284
+msgid "Subtitle:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6286
+#. i18n: ectx: property (text), widget (QLabel, label_25)
+#: rc.cpp:287
+msgid "Angle:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6311
+#. i18n: ectx: property (text), widget (QLabel, subtitleInfoText)
+#: rc.cpp:290
+msgid "Can't detect subtitle encoding, please choose:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6358
+#. i18n: ectx: property (text), widget (QLabel, label_21)
+#: rc.cpp:293
+#, fuzzy
+msgid "Brightness:"
+msgstr "Lysstyrke"
+
+#. i18n: file: app/ui/mainwindow.ui:6405
+#. i18n: ectx: property (text), widget (QLabel, label_22)
+#: rc.cpp:296
+#, fuzzy
+msgid "Contrast:"
+msgstr "Kontrast"
+
+#. i18n: file: app/ui/mainwindow.ui:6452
+#. i18n: ectx: property (text), widget (QLabel, label_23)
+#: rc.cpp:299
+msgid "Hue:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6499
+#. i18n: ectx: property (text), widget (QLabel, label_24)
+#: rc.cpp:302
+#, fuzzy
+msgid "Saturation:"
+msgstr "Mætning"
+
+#. i18n: file: app/ui/mainwindow.ui:6562
+#. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
+#: rc.cpp:305
+#, fuzzy
+msgid "Aspect Ratio"
+msgstr "Indstilling af aspektforhold"
+
+#. i18n: file: app/ui/mainwindow.ui:6574
+#. i18n: ectx: property (text), widget (QRadioButton, aspectRatioAuto)
+#: rc.cpp:308
+msgid "Automatic"
+msgstr "Automatisk"
+
+#. i18n: file: app/ui/mainwindow.ui:6581
+#. i18n: ectx: property (text), widget (QRadioButton, aspectRatioWidget)
+#: rc.cpp:311
+msgid "Fit"
+msgstr "Tilpas"
+
+#. i18n: file: app/ui/mainwindow.ui:6588
+#. i18n: ectx: property (text), widget (QRadioButton, aspectRatio4_3)
+#: rc.cpp:314
+msgid "4:3"
+msgstr "4:3"
+
+#. i18n: file: app/ui/mainwindow.ui:6595
+#. i18n: ectx: property (text), widget (QRadioButton, aspectRatio16_9)
+#: rc.cpp:317
+msgid "16:9"
+msgstr "16:9"
+
+#. i18n: file: app/ui/mainwindow.ui:6605
+#. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
+#: rc.cpp:320
+#, fuzzy
+msgid "Scaling"
+msgstr "Skaleringstilstand"
+
+#. i18n: file: app/ui/mainwindow.ui:6617
+#. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
+#: rc.cpp:323
+msgid "Scale to fit"
+msgstr "Skalér til at passe"
+
+#. i18n: file: app/ui/mainwindow.ui:6624
+#. i18n: ectx: property (text), widget (QRadioButton, scaleModeScaleAndCrop)
+#: rc.cpp:326
+msgid "Scale and crop"
+msgstr "Skalér og beskær"
+
+#. i18n: file: app/ui/mainwindow.ui:6701
+#. i18n: ectx: property (text), widget (QLabel, label_13)
+#: rc.cpp:335
+#, fuzzy
+msgid "Shortcuts"
+msgstr "Gem genveje"
+
+#. i18n: file: app/ui/mainwindow.ui:6717
+#. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
+#: rc.cpp:338
+msgid "Save Shortcuts"
+msgstr "Gem genveje"
+
+#. i18n: file: app/ui/mainwindow.ui:6724
+#. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
+#: rc.cpp:341 app/common/actionsmanager.cpp:1018
+msgid "Cancel"
+msgstr "Annullér"
+
+#. i18n: file: app/ui/mainwindow.ui:6787
+#. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
+#: rc.cpp:344
+msgid "View Media Lists"
+msgstr "Vis medielister"
+
+#. i18n: file: app/ui/mainwindow.ui:6831
+#. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
+#: rc.cpp:350
+msgid "Show full screen"
+msgstr "Vis fuldskærm"
+
+#. i18n: file: app/ui/mainwindow.ui:6936
+#. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
+#: rc.cpp:356
+msgid "<b>Time elapsed</b><br>Click to show remaining time"
+msgstr "<b>Forløbet tid</b><br>Klik for at vise tilbageværende tid"
+
+#. i18n: file: app/ui/mainwindow.ui:7059
+#. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
+#: rc.cpp:359 app/common/mainwindow.cpp:687
+msgid "Mute volume"
+msgstr "Sæt på lydløs"
+
+#. i18n: file: app/ui/mainwindow.ui:7097
+#. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
+#: rc.cpp:362
+msgid "Volume"
+msgstr "Lydstyrke"
+
+#. i18n: file: app/ui/videolistsstack.ui:281
+#. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
+#: rc.cpp:407
+msgid "Return To Lists"
+msgstr "Returnér til lister"
 
 #: app/main.cpp:30
 msgid "A media player for your KDE desktop"
@@ -341,10 +1066,6 @@ msgstr ""
 msgid "Update Ontologies"
 msgstr ""
 
-#: app/common/actionsmanager.cpp:1018
-msgid "Cancel"
-msgstr "Annullér"
-
 #: app/common/actionsmanager.cpp:1019
 msgid ""
 "Updating ontologies ensures that media information is stored in a way that "
@@ -395,14 +1116,6 @@ msgstr "Dvd-video"
 msgid "Audio CD"
 msgstr "Lyd-cd"
 
-#: app/common/mainwindow.cpp:147
-msgid "No"
-msgstr ""
-
-#: app/common/mainwindow.cpp:148
-msgid "Yes"
-msgstr ""
-
 #: app/common/mainwindow.cpp:241
 #, fuzzy
 msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
@@ -412,11 +1125,6 @@ msgstr "<b>Tilbageværende tid</b><br>Klik for at vise forløbet tid"
 #, fuzzy
 msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
 msgstr "<b>Forløbet tid</b><br>Klik for at vise tilbageværende tid"
-
-#: app/common/mainwindow.cpp:311 app/medialists/savedlistsmanager.cpp:760
-#: platform/utilities/mediaitems.cpp:145
-msgid "Playlist"
-msgstr "Spilleliste"
 
 #: app/common/mainwindow.cpp:364
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
@@ -430,26 +1138,13 @@ msgstr "Vis fuldskærm"
 msgid "<b>Paused</b><br>Hold to stop"
 msgstr "<b>Pause</b><br>Hold inde for at stoppe"
 
-#: app/common/mainwindow.cpp:447
-msgid "Clear Playlist"
-msgstr "Ryd spilleliste"
-
 #: app/common/mainwindow.cpp:448
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "Vil du virkelig rydde den aktuelle spilleliste?"
 
-#: app/common/mainwindow.cpp:453 app/common/mainwindow.cpp:535
-#: app/common/mainwindow.cpp:537 app/common/mainwindow.cpp:738
-msgid "Now Playing"
-msgstr "Afspiller nu"
-
 #: app/common/mainwindow.cpp:474
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr "<b>Viser kommende</b><br>Klik for at vise spilleliste"
-
-#: app/common/mainwindow.cpp:477
-msgid "Show Upcoming"
-msgstr "Vis kommende"
 
 #: app/common/mainwindow.cpp:591
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
@@ -475,33 +1170,17 @@ msgstr "Indlæser..."
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>Lydløs</b><br>Klik for at genskabe lydstyrke"
 
-#: app/common/mainwindow.cpp:687
-msgid "Mute volume"
-msgstr "Sæt på lydløs"
-
-#: app/common/mainwindow.cpp:722 platform/infoitemmodel.cpp:525
+#: app/common/mainwindow.cpp:722 platform/infoitemmodel.cpp:526
 msgid "Complete"
 msgstr "Gennemført"
-
-#: app/common/mainwindow.cpp:739 app/common/mainwindow.cpp:937
-msgid "View Now Playing"
-msgstr "Vis afspiller nu"
 
 #: app/common/mainwindow.cpp:747
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr "<b>Gentag til</b><br>Klik for at slå gentag fra"
 
-#: app/common/mainwindow.cpp:750
-msgid "Turn on Repeat"
-msgstr "Slå gentag til"
-
 #: app/common/mainwindow.cpp:757
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr "<b>Tilfældig til</b><br>Klik for at slå tilfældig fra"
-
-#: app/common/mainwindow.cpp:760
-msgid "Turn on Shuffle"
-msgstr "Slå tilfældig til"
 
 #: app/common/mainwindow.cpp:836
 msgid "Entertainment... Now"
@@ -583,22 +1262,10 @@ msgstr ""
 msgid "Additional information may be available. <br> Click to show more..."
 msgstr ""
 
-#: app/medialists/medialistsettings.cpp:94
-#: app/medialists/medialistsettings.cpp:104
-#: app/medialists/medialistsettings.cpp:114
-#: app/medialists/medialistsettings.cpp:124
-#, fuzzy
-msgid "played"
-msgstr "Afspil næste"
-
 #: app/medialists/medialistsettings.cpp:99
 #: app/medialists/medialistsettings.cpp:119
 msgid "rated"
 msgstr ""
-
-#: app/medialists/medialistsmanager.cpp:353
-msgid "Search for audio"
-msgstr "Søg efter lyd"
 
 #: app/medialists/medialistsmanager.cpp:369
 msgid "Search for video"
@@ -677,22 +1344,22 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#: app/nowplaying/nowplayingdelegate.cpp:301
+#: app/nowplaying/nowplayingdelegate.cpp:302
 #, fuzzy
 msgid "Artist: "
 msgstr "Kunstner"
 
-#: app/nowplaying/nowplayingdelegate.cpp:313
+#: app/nowplaying/nowplayingdelegate.cpp:314
 #, fuzzy
 msgid "Composer: "
 msgstr "Gennemført"
 
-#: app/nowplaying/nowplayingdelegate.cpp:325
+#: app/nowplaying/nowplayingdelegate.cpp:326
 #, fuzzy
 msgid "Album: "
 msgstr "Album"
 
-#: app/nowplaying/nowplayingdelegate.cpp:337
+#: app/nowplaying/nowplayingdelegate.cpp:338
 #, fuzzy
 msgid "Track: "
 msgstr "Spor %1"
@@ -728,10 +1395,6 @@ msgstr "Forfatter"
 msgid "Producer: "
 msgstr "Producent"
 
-#: app/nowplaying/playlistview.cpp:101
-msgid "<b>Playlist</b>"
-msgstr "<b>Spilleliste</b>"
-
 #: app/nowplaying/playlistview.cpp:105
 #, kde-format
 msgid "1 item, %2"
@@ -746,8 +1409,8 @@ msgstr[1] "%1 elementer, %2"
 #: platform/listengines/filelistengine.cpp:233
 #: platform/listengines/savedlistsengine.cpp:170
 #: platform/listengines/taglistengine.cpp:148
-#: platform/listengines/videolistengine.cpp:739
-#: platform/listengines/videolistengine.cpp:814
+#: platform/listengines/videolistengine.cpp:755
+#: platform/listengines/videolistengine.cpp:834
 #, kde-format
 msgid "1 item"
 msgid_plural "%1 items"
@@ -762,117 +1425,117 @@ msgstr "<b>Spilleliste</b> (kommende)"
 msgid "Disable"
 msgstr ""
 
-#: platform/infoitemmodel.cpp:78 platform/infoitemmodel.cpp:89
+#: platform/infoitemmodel.cpp:79 platform/infoitemmodel.cpp:90
 msgid "Type"
 msgstr "Type"
 
-#: platform/infoitemmodel.cpp:79
+#: platform/infoitemmodel.cpp:80
 msgid "Artwork"
 msgstr "Grafik"
 
-#: platform/infoitemmodel.cpp:80
+#: platform/infoitemmodel.cpp:81
 msgid "Title"
 msgstr "Titel"
 
-#: platform/infoitemmodel.cpp:81
+#: platform/infoitemmodel.cpp:82
 msgid "Artist"
 msgstr "Kunstner"
 
-#: platform/infoitemmodel.cpp:82
+#: platform/infoitemmodel.cpp:83
 #, fuzzy
 msgid "Composer"
 msgstr "Gennemført"
 
-#: platform/infoitemmodel.cpp:83
+#: platform/infoitemmodel.cpp:84
 msgid "Album"
 msgstr "Album"
 
-#: platform/infoitemmodel.cpp:84
+#: platform/infoitemmodel.cpp:85
 #, fuzzy
 msgid "Track"
 msgstr "Spor %1"
 
-#: platform/infoitemmodel.cpp:85
+#: platform/infoitemmodel.cpp:86
 msgid "Year"
 msgstr "År"
 
-#: platform/infoitemmodel.cpp:86
+#: platform/infoitemmodel.cpp:87
 msgid "Genre"
 msgstr "Genre"
 
-#: platform/infoitemmodel.cpp:87 platform/listengines/medialistsengine.cpp:165
+#: platform/infoitemmodel.cpp:88 platform/listengines/medialistsengine.cpp:165
 #: platform/listengines/medialistsengine.cpp:346
 #: platform/listengines/taglistengine.cpp:115
 msgid "Tags"
 msgstr ""
 
-#: platform/infoitemmodel.cpp:88 platform/infoitemmodel.cpp:577
+#: platform/infoitemmodel.cpp:89 platform/infoitemmodel.cpp:578
 msgid "Location"
 msgstr "Placering"
 
-#: platform/infoitemmodel.cpp:90
+#: platform/infoitemmodel.cpp:91
 msgid "Actor"
 msgstr "Skuespille"
 
-#: platform/infoitemmodel.cpp:91
+#: platform/infoitemmodel.cpp:92
 msgid "Director"
 msgstr "Instruktør"
 
-#: platform/infoitemmodel.cpp:92
+#: platform/infoitemmodel.cpp:93
 msgid "Writer"
 msgstr "Forfatter"
 
-#: platform/infoitemmodel.cpp:93
+#: platform/infoitemmodel.cpp:94
 msgid "Producer"
 msgstr "Producent"
 
-#: platform/infoitemmodel.cpp:94
+#: platform/infoitemmodel.cpp:95
 #, fuzzy
 msgid "Series"
 msgstr "Serienavn"
 
-#: platform/infoitemmodel.cpp:95
+#: platform/infoitemmodel.cpp:96
 msgid "Season"
 msgstr "Sæson"
 
-#: platform/infoitemmodel.cpp:96
+#: platform/infoitemmodel.cpp:97
 msgid "Episode"
 msgstr "Afsnit"
 
-#: platform/infoitemmodel.cpp:97
+#: platform/infoitemmodel.cpp:98
 msgid "Links"
 msgstr ""
 
-#: platform/infoitemmodel.cpp:98
+#: platform/infoitemmodel.cpp:99
 #, fuzzy
 msgid "Play Count"
 msgstr "Afspil næste"
 
-#: platform/infoitemmodel.cpp:99
+#: platform/infoitemmodel.cpp:100
 #, fuzzy
 msgid "Last Played"
 msgstr "%1 - senest afspillet: %2"
 
-#: platform/infoitemmodel.cpp:346 platform/infoitemmodel.cpp:357
+#: platform/infoitemmodel.cpp:347 platform/infoitemmodel.cpp:358
 #, kde-format
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: platform/infoitemmodel.cpp:514
+#: platform/infoitemmodel.cpp:515
 #, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: platform/infoitemmodel.cpp:538
+#: platform/infoitemmodel.cpp:539
 #, fuzzy
 msgid "No Results"
 msgstr "Ingen resultater"
 
-#: platform/infoitemmodel.cpp:1082
+#: platform/infoitemmodel.cpp:1087
 #: platform/listengines/musiclistengine.cpp:127
 #: platform/listengines/musiclistengine.cpp:163
 #: platform/listengines/musiclistengine.cpp:232
@@ -885,7 +1548,7 @@ msgstr "Ingen resultater"
 msgid "Recently Played Songs"
 msgstr "Nyligt afspillet"
 
-#: platform/infoitemmodel.cpp:1083
+#: platform/infoitemmodel.cpp:1088
 #: platform/listengines/musiclistengine.cpp:128
 #: platform/listengines/musiclistengine.cpp:164
 #: platform/listengines/musiclistengine.cpp:233
@@ -898,7 +1561,7 @@ msgstr "Nyligt afspillet"
 msgid "Highest Rated Songs"
 msgstr "Højest vurderet"
 
-#: platform/infoitemmodel.cpp:1084
+#: platform/infoitemmodel.cpp:1089
 #: platform/listengines/musiclistengine.cpp:129
 #: platform/listengines/musiclistengine.cpp:165
 #: platform/listengines/musiclistengine.cpp:234
@@ -911,8 +1574,8 @@ msgstr "Højest vurderet"
 msgid "Frequently Played Songs"
 msgstr "Hyppigt afspillet"
 
-#: platform/infoitemmodel.cpp:1086 platform/infoitemmodel.cpp:1098
-#: platform/infoitemmodel.cpp:1102
+#: platform/infoitemmodel.cpp:1091 platform/infoitemmodel.cpp:1103
+#: platform/infoitemmodel.cpp:1107
 #: platform/listengines/medialistsengine.cpp:64
 #: platform/listengines/medialistsengine.cpp:100
 #: platform/listengines/medialistsengine.cpp:110
@@ -924,11 +1587,11 @@ msgstr "Hyppigt afspillet"
 #: platform/listengines/medialistsengine.cpp:248
 #: platform/listengines/semanticslistengine.cpp:265
 #: platform/listengines/taglistengine.cpp:109
-#: platform/listengines/videolistengine.cpp:233
-#: platform/listengines/videolistengine.cpp:344
-#: platform/listengines/videolistengine.cpp:503
-#: platform/listengines/videolistengine.cpp:564
-#: platform/listengines/videolistengine.cpp:633
+#: platform/listengines/videolistengine.cpp:241
+#: platform/listengines/videolistengine.cpp:352
+#: platform/listengines/videolistengine.cpp:515
+#: platform/listengines/videolistengine.cpp:576
+#: platform/listengines/videolistengine.cpp:645
 #: platform/utilities/mediaitems.cpp:803 platform/utilities/mediaitems.cpp:821
 #: platform/utilities/mediaitems.cpp:839 platform/utilities/mediaitems.cpp:936
 #: platform/utilities/mediaitems.cpp:954 platform/utilities/mediaitems.cpp:973
@@ -938,8 +1601,8 @@ msgstr "Hyppigt afspillet"
 msgid "Recently Played"
 msgstr "Nyligt afspillet"
 
-#: platform/infoitemmodel.cpp:1087 platform/infoitemmodel.cpp:1099
-#: platform/infoitemmodel.cpp:1103
+#: platform/infoitemmodel.cpp:1092 platform/infoitemmodel.cpp:1104
+#: platform/infoitemmodel.cpp:1108
 #: platform/listengines/medialistsengine.cpp:74
 #: platform/listengines/medialistsengine.cpp:101
 #: platform/listengines/medialistsengine.cpp:111
@@ -958,11 +1621,11 @@ msgstr "Nyligt afspillet"
 #: platform/listengines/medialistsengine.cpp:352
 #: platform/listengines/semanticslistengine.cpp:340
 #: platform/listengines/taglistengine.cpp:110
-#: platform/listengines/videolistengine.cpp:234
-#: platform/listengines/videolistengine.cpp:345
-#: platform/listengines/videolistengine.cpp:504
-#: platform/listengines/videolistengine.cpp:565
-#: platform/listengines/videolistengine.cpp:634
+#: platform/listengines/videolistengine.cpp:242
+#: platform/listengines/videolistengine.cpp:353
+#: platform/listengines/videolistengine.cpp:516
+#: platform/listengines/videolistengine.cpp:577
+#: platform/listengines/videolistengine.cpp:646
 #: platform/utilities/mediaitems.cpp:804 platform/utilities/mediaitems.cpp:822
 #: platform/utilities/mediaitems.cpp:840 platform/utilities/mediaitems.cpp:937
 #: platform/utilities/mediaitems.cpp:955 platform/utilities/mediaitems.cpp:974
@@ -972,8 +1635,8 @@ msgstr "Nyligt afspillet"
 msgid "Highest Rated"
 msgstr "Højest vurderet"
 
-#: platform/infoitemmodel.cpp:1088 platform/infoitemmodel.cpp:1100
-#: platform/infoitemmodel.cpp:1104
+#: platform/infoitemmodel.cpp:1093 platform/infoitemmodel.cpp:1105
+#: platform/infoitemmodel.cpp:1109
 #: platform/listengines/medialistsengine.cpp:84
 #: platform/listengines/medialistsengine.cpp:102
 #: platform/listengines/medialistsengine.cpp:112
@@ -985,11 +1648,11 @@ msgstr "Højest vurderet"
 #: platform/listengines/medialistsengine.cpp:268
 #: platform/listengines/semanticslistengine.cpp:202
 #: platform/listengines/taglistengine.cpp:111
-#: platform/listengines/videolistengine.cpp:235
-#: platform/listengines/videolistengine.cpp:346
-#: platform/listengines/videolistengine.cpp:505
-#: platform/listengines/videolistengine.cpp:566
-#: platform/listengines/videolistengine.cpp:635
+#: platform/listengines/videolistengine.cpp:243
+#: platform/listengines/videolistengine.cpp:354
+#: platform/listengines/videolistengine.cpp:517
+#: platform/listengines/videolistengine.cpp:578
+#: platform/listengines/videolistengine.cpp:647
 #: platform/utilities/mediaitems.cpp:805 platform/utilities/mediaitems.cpp:823
 #: platform/utilities/mediaitems.cpp:841 platform/utilities/mediaitems.cpp:938
 #: platform/utilities/mediaitems.cpp:956 platform/utilities/mediaitems.cpp:975
@@ -999,7 +1662,7 @@ msgstr "Højest vurderet"
 msgid "Frequently Played"
 msgstr "Hyppigt afspillet"
 
-#: platform/infoitemmodel.cpp:1119
+#: platform/infoitemmodel.cpp:1124
 #, fuzzy
 msgid "Fetch Canceled"
 msgstr "Annullér"
@@ -1136,9 +1799,9 @@ msgid ""
 "information by clicking the link."
 msgstr ""
 
-#: platform/listengines/audioclipslistengine.cpp:93
-#: platform/listengines/audioclipslistengine.cpp:138
-#: platform/listengines/videolistengine.cpp:180
+#: platform/listengines/audioclipslistengine.cpp:97
+#: platform/listengines/audioclipslistengine.cpp:142
+#: platform/listengines/videolistengine.cpp:188
 #, kde-format
 msgid "1 clip"
 msgid_plural "%1 clips"
@@ -1245,7 +1908,7 @@ msgstr "Album"
 #: platform/listengines/medialistsengine.cpp:273
 #: platform/listengines/medialistsengine.cpp:299
 #: platform/listengines/musiclistengine.cpp:337
-#: platform/listengines/videolistengine.cpp:511
+#: platform/listengines/videolistengine.cpp:523
 msgid "Genres"
 msgstr "Genrer"
 
@@ -1276,7 +1939,7 @@ msgstr "Filer og mapper"
 #: platform/listengines/medialistsengine.cpp:264
 #: platform/listengines/medialistsengine.cpp:274
 #: platform/listengines/medialistsengine.cpp:309
-#: platform/listengines/videolistengine.cpp:580
+#: platform/listengines/videolistengine.cpp:592
 #, fuzzy
 msgid "Actors"
 msgstr "Skuespille"
@@ -1285,13 +1948,13 @@ msgstr "Skuespille"
 #: platform/listengines/medialistsengine.cpp:265
 #: platform/listengines/medialistsengine.cpp:275
 #: platform/listengines/medialistsengine.cpp:319
-#: platform/listengines/videolistengine.cpp:649
+#: platform/listengines/videolistengine.cpp:661
 #, fuzzy
 msgid "Directors"
 msgstr "Instruktør"
 
 #: platform/listengines/medialistsengine.cpp:279
-#: platform/listengines/videolistengine.cpp:135
+#: platform/listengines/videolistengine.cpp:139
 msgid "Movies"
 msgstr "Film"
 
@@ -1318,12 +1981,12 @@ msgid "Frequently Watched"
 msgstr "Hyppigt afspillet"
 
 #: platform/listengines/medialistsengine.cpp:289
-#: platform/listengines/videolistengine.cpp:279
+#: platform/listengines/videolistengine.cpp:287
 msgid "TV Shows"
 msgstr "Tv-programmer"
 
 #: platform/listengines/medialistsengine.cpp:329
-#: platform/listengines/videolistengine.cpp:179
+#: platform/listengines/videolistengine.cpp:187
 msgid "Video Clips"
 msgstr "Videoklip"
 
@@ -1370,15 +2033,15 @@ msgstr[0] "1 album"
 msgstr[1] "%1 albummer"
 
 #: platform/listengines/musiclistengine.cpp:338
-#: platform/listengines/videolistengine.cpp:512
+#: platform/listengines/videolistengine.cpp:524
 #, kde-format
 msgid "1 genre"
 msgid_plural "%1 genres"
 msgstr[0] "1 genre"
 msgstr[1] "%1 genrer"
 
-#: platform/listengines/musiclistengine.cpp:453
-#: platform/listengines/musiclistengine.cpp:523
+#: platform/listengines/musiclistengine.cpp:455
+#: platform/listengines/musiclistengine.cpp:529
 #, kde-format
 msgid "1 song"
 msgid_plural "%1 songs"
@@ -1400,83 +2063,83 @@ msgid_plural "%1 tags"
 msgstr[0] "1 spor"
 msgstr[1] "%1 spor"
 
-#: platform/listengines/videolistengine.cpp:137
+#: platform/listengines/videolistengine.cpp:141
 #, kde-format
 msgctxt "%1=Genre of the movie"
 msgid "Movies - %1"
 msgstr "Film - %1"
 
-#: platform/listengines/videolistengine.cpp:139
+#: platform/listengines/videolistengine.cpp:143
 #, kde-format
 msgid "1 movie"
 msgid_plural "%1 movies"
 msgstr[0] "1 film"
 msgstr[1] "%1 film"
 
-#: platform/listengines/videolistengine.cpp:268
-#: platform/listengines/videolistengine.cpp:269
-#: platform/listengines/videolistengine.cpp:459
+#: platform/listengines/videolistengine.cpp:276
+#: platform/listengines/videolistengine.cpp:277
+#: platform/listengines/videolistengine.cpp:471
 msgid "Uncategorized TV Shows"
 msgstr "Ikke-kategoriserede tv-programmer"
 
-#: platform/listengines/videolistengine.cpp:280
+#: platform/listengines/videolistengine.cpp:288
 #, kde-format
 msgid "1 show"
 msgid_plural "%1 shows"
 msgstr[0] "1 program"
 msgstr[1] "%1 programmer"
 
-#: platform/listengines/videolistengine.cpp:373
+#: platform/listengines/videolistengine.cpp:381
 msgid "Uncategorized seasons"
 msgstr "Ikke-kategoriserede sæsoner"
 
-#: platform/listengines/videolistengine.cpp:382
+#: platform/listengines/videolistengine.cpp:390
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "Seasons - %1"
 msgstr "Sæsoner - %1"
 
-#: platform/listengines/videolistengine.cpp:383
+#: platform/listengines/videolistengine.cpp:391
 #, kde-format
 msgid "1 season"
 msgid_plural "%1 seasons"
 msgstr[0] "1 sæson"
 msgstr[1] "%1 sæsoner"
 
-#: platform/listengines/videolistengine.cpp:461
+#: platform/listengines/videolistengine.cpp:473
 #, kde-format
 msgctxt "%1=Name of the series, %2=Number of the Season"
 msgid "%1 - Season %2"
 msgstr "%1 - sæson %2"
 
-#: platform/listengines/videolistengine.cpp:463
+#: platform/listengines/videolistengine.cpp:475
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "%1 - Uncategorized Seasons"
 msgstr "%1 - Ikke-kategoriserede sæsoner"
 
-#: platform/listengines/videolistengine.cpp:465
+#: platform/listengines/videolistengine.cpp:477
 #, fuzzy, kde-format
 msgid "1 episode"
 msgid_plural "%1 episodes"
 msgstr[0] "Afsnit"
 msgstr[1] "Afsnit"
 
-#: platform/listengines/videolistengine.cpp:581
+#: platform/listengines/videolistengine.cpp:593
 #, fuzzy, kde-format
 msgid "1 actor"
 msgid_plural "%1 actors"
 msgstr[0] "Skuespille"
 msgstr[1] "Skuespille"
 
-#: platform/listengines/videolistengine.cpp:650
+#: platform/listengines/videolistengine.cpp:662
 #, fuzzy, kde-format
 msgid "1 director"
 msgid_plural "%1 directors"
 msgstr[0] "Instruktør"
 msgstr[1] "Instruktør"
 
-#: platform/utilities/artwork.cpp:535
+#: platform/utilities/artwork.cpp:537
 msgid "folder"
 msgstr ""
 
@@ -1551,184 +2214,6 @@ msgstr "Afsnit"
 msgctxt "%1=Number of the Season"
 msgid "Season %1"
 msgstr "Sæson %1"
-
-#~ msgid "Media Lists"
-#~ msgstr "Medielister"
-
-#~ msgid "Audio"
-#~ msgstr "Lyd"
-
-#~ msgid "Add list"
-#~ msgstr "Tilføj liste"
-
-#~ msgid "Remove list"
-#~ msgstr "Fjern liste"
-
-#~ msgid "Settings"
-#~ msgstr "Indstillinger"
-
-#~ msgid "Add List"
-#~ msgstr "Tilføj liste"
-
-#~ msgid "Source"
-#~ msgstr "Kilde"
-
-#~ msgid "Current View"
-#~ msgstr "Aktuel visning"
-
-#~ msgid "Current Selection"
-#~ msgstr "Aktuel markering"
-
-#~ msgid "Current Playlist"
-#~ msgstr "Aktuel spilleliste"
-
-#~ msgid "New List Name"
-#~ msgstr "Navn på ny liste"
-
-#~ msgid "Save"
-#~ msgstr "Gem"
-
-#~ msgid "Return to Lists"
-#~ msgstr "Returnér til lister"
-
-#~ msgid "Saved List Settings"
-#~ msgstr "Gemte listeindstillinger"
-
-#~ msgid "Name"
-#~ msgstr "Navn"
-
-#~ msgid "List Title"
-#~ msgstr "Listetitel"
-
-#, fuzzy
-#~ msgid "Show"
-#~ msgstr "Tv-program"
-
-#, fuzzy
-#~ msgid "items"
-#~ msgstr "1 element"
-
-#~ msgid "Video"
-#~ msgstr "Video"
-
-#~ msgid "Return To Lists"
-#~ msgstr "Returnér til lister"
-
-#~ msgid "Summary"
-#~ msgstr "Oversigt"
-
-#~ msgid "..."
-#~ msgstr "..."
-
-#, fuzzy
-#~ msgid "Filter"
-#~ msgstr "Tilpas"
-
-#~ msgid "Cancel Edit"
-#~ msgstr "Annullér redigering"
-
-#, fuzzy
-#~ msgid "Index Selected"
-#~ msgstr "Afspil markerede"
-
-#~ msgid "Notification Text"
-#~ msgstr "Bekendtgørelsestekst"
-
-#~ msgid "Previous"
-#~ msgstr "Forrige"
-
-#~ msgid "Play all media in list"
-#~ msgstr "Afspil alle medier i listen"
-
-#~ msgid "Play All"
-#~ msgstr "Afspil alle"
-
-#~ msgid "Play selected media in list"
-#~ msgstr "Afspil markerede medier i listen"
-
-#~ msgid "Play Selected"
-#~ msgstr "Afspil markerede"
-
-#~ msgid "[ ]"
-#~ msgstr "[ ]"
-
-#, fuzzy
-#~ msgid "Notification"
-#~ msgstr "Bekendtgørelsestekst"
-
-#, fuzzy
-#~ msgid "Audio Settings"
-#~ msgstr "Videoindstillinger"
-
-#, fuzzy
-#~ msgid "Audio Channel:"
-#~ msgstr "Lydklip"
-
-#~ msgid "Restore Defaults"
-#~ msgstr "Gendan standardindstillinger"
-
-#~ msgid "Hide"
-#~ msgstr "Skjul"
-
-#~ msgid "Video Settings"
-#~ msgstr "Videoindstillinger"
-
-#, fuzzy
-#~ msgid "Brightness:"
-#~ msgstr "Lysstyrke"
-
-#, fuzzy
-#~ msgid "Contrast:"
-#~ msgstr "Kontrast"
-
-#, fuzzy
-#~ msgid "Saturation:"
-#~ msgstr "Mætning"
-
-#, fuzzy
-#~ msgid "Aspect Ratio"
-#~ msgstr "Indstilling af aspektforhold"
-
-#~ msgid "Automatic"
-#~ msgstr "Automatisk"
-
-#~ msgid "Fit"
-#~ msgstr "Tilpas"
-
-#~ msgid "4:3"
-#~ msgstr "4:3"
-
-#~ msgid "16:9"
-#~ msgstr "16:9"
-
-#, fuzzy
-#~ msgid "Scaling"
-#~ msgstr "Skaleringstilstand"
-
-#~ msgid "Scale to fit"
-#~ msgstr "Skalér til at passe"
-
-#~ msgid "Scale and crop"
-#~ msgstr "Skalér og beskær"
-
-#, fuzzy
-#~ msgid "Shortcuts"
-#~ msgstr "Gem genveje"
-
-#~ msgid "Save Shortcuts"
-#~ msgstr "Gem genveje"
-
-#~ msgid "View Media Lists"
-#~ msgstr "Vis medielister"
-
-#~ msgid "Show full screen"
-#~ msgstr "Vis fuldskærm"
-
-#~ msgid "<b>Time elapsed</b><br>Click to show remaining time"
-#~ msgstr "<b>Forløbet tid</b><br>Klik for at vise tilbageværende tid"
-
-#~ msgid "Volume"
-#~ msgstr "Lydstyrke"
 
 #, fuzzy
 #~ msgid "<b>Showing Information</b><br>Click to hide information."
