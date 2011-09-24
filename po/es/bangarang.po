@@ -177,16 +177,15 @@ msgstr "Título de Lista"
 #. i18n: ectx: property (text), widget (QLabel, label_16)
 #: rc.cpp:56 rc.cpp:425
 msgid "Show"
-msgstr "Show"
+msgstr "Mostrar"
 
 #. i18n: file: app/ui/audiolistsstack.ui:552
 #. i18n: ectx: property (text), widget (QLabel, label_32)
 #. i18n: file: app/ui/videolistsstack.ui:492
 #. i18n: ectx: property (text), widget (QLabel, label_17)
 #: rc.cpp:59 rc.cpp:428
-#, fuzzy
 msgid "items"
-msgstr "Mostrar items"
+msgstr "ítemes"
 
 #. i18n: file: app/ui/audiolistsstack.ui:608
 #. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
@@ -197,7 +196,7 @@ msgstr "Mostrar items"
 #: app/medialists/medialistsettings.cpp:114
 #: app/medialists/medialistsettings.cpp:124
 msgid "played"
-msgstr "reproducido"
+msgstr "reproducidos"
 
 #. i18n: file: app/ui/audiolistsstack.ui:677
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -205,7 +204,7 @@ msgstr "reproducido"
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:65 rc.cpp:434
 msgid "before"
-msgstr "antes"
+msgstr "antes del"
 
 #. i18n: file: app/ui/audiolistsstack.ui:682
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
@@ -213,7 +212,7 @@ msgstr "antes"
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
 #: rc.cpp:68 rc.cpp:437
 msgid "after"
-msgstr "después"
+msgstr "después del"
 
 #. i18n: file: app/ui/audiolistsstack.ui:762
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
@@ -377,7 +376,7 @@ msgstr "Cancelar edición"
 #. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
 #: rc.cpp:158
 msgid "Index Selected"
-msgstr "Indexar seleccionado"
+msgstr "Indizar seleccionado"
 
 #. i18n: file: app/ui/mainwindow.ui:1514
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
@@ -419,7 +418,7 @@ msgstr "Reproducir"
 #. i18n: ectx: property (text), widget (QLabel, extSubtitle)
 #: rc.cpp:179
 msgid "ExternalSubtitle"
-msgstr "Subtítulos"
+msgstr "Subtítulo"
 
 #. i18n: file: app/ui/mainwindow.ui:3543
 #. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
@@ -493,7 +492,7 @@ msgstr "Sí"
 #. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
 #: rc.cpp:218 app/common/mainwindow.cpp:147
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #. i18n: file: app/ui/mainwindow.ui:5551
 #. i18n: ectx: property (text), widget (QLabel, label_2)
@@ -522,9 +521,8 @@ msgstr "Ecualizaciones"
 #. i18n: file: app/ui/mainwindow.ui:5745
 #. i18n: ectx: property (text), widget (QLabel, eq1Label)
 #: rc.cpp:242
-#, fuzzy
 msgid "Pre"
-msgstr "Ecualizaciones"
+msgstr "Pre"
 
 #. i18n: file: app/ui/mainwindow.ui:5783
 #. i18n: ectx: property (text), widget (QLabel, eq2Label)
@@ -624,7 +622,7 @@ msgstr "Ángulo:"
 #. i18n: ectx: property (text), widget (QLabel, subtitleInfoText)
 #: rc.cpp:290
 msgid "Can't detect subtitle encoding, please choose:"
-msgstr ""
+msgstr "No se puede detectar la codificación del subtítulo. Por favor, escoja:"
 
 #. i18n: file: app/ui/mainwindow.ui:6358
 #. i18n: ectx: property (text), widget (QLabel, label_21)
@@ -732,7 +730,7 @@ msgstr "Pantalla completa"
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
 #: rc.cpp:356
 msgid "<b>Time elapsed</b><br>Click to show remaining time"
-msgstr "<b>Tiempo Transcurrido</b><br>Haga clic para mostrar tiempo restante"
+msgstr "<b>Tiempo transcurrido</b><br>Haga clic para mostrar tiempo restante"
 
 #. i18n: file: app/ui/mainwindow.ui:7059
 #. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
@@ -772,12 +770,12 @@ msgid ""
 msgstr ""
 "<b>Nota:</b> Este producto usa la interfaz TMDb pero no está auspiciado o "
 "certificado por TMDb. Por favor, mejore la información disponible visitando "
-"http://themoviedb.org<br><b>Nota:</b> Este producto usa la interfaz last.FM "
-"pero no está auspiciado o certificado por last.FM. Por favor, mejore la "
+"http://themoviedb.org<br><b>Nota:</b> Este producto usa la interfaz Last.fm "
+"pero no está auspiciado o certificado por Last.fm. Por favor, mejore la "
 "información disponible visitando http://last.fm<br><b>Nota:</b> Este "
 "producto usa la interfaz TheTVDB.com, pero no está auspiciado o certificado "
 "por TheTVDB.com. Por favor, mejore la información disponible visitando "
-"http://thetvdb.com"
+"http://thetvdb.com ."
 
 #: app/main.cpp:41
 msgid "Andrew (Jamboarder) Lake"
@@ -836,7 +834,7 @@ msgstr "Mostrar información de depuración"
 
 #: app/main.cpp:57
 msgid "Enable touch mode for interface"
-msgstr ""
+msgstr "Activar modo para pantalla táctil"
 
 #: app/common/actionsmanager.cpp:63
 msgid "Quit"
@@ -1052,7 +1050,7 @@ msgid ""
 "compilation. <br><br>This may take several minutes."
 msgstr ""
 "Al actualizar las ontologías, se asegura de que la información sobre sus "
-"canciones y videos es almacenada de una forma que la vuelve accesible a "
+"canciones y videos sea almacenada de una forma que la vuelve accesible a "
 "otros programas del escritorio. Esto sólo es necesario si ha actualizado "
 "recientemente Bangarang o su compilación de software KDE. <br><br>El proceso "
 "puede tomar varios minutos."
@@ -1074,13 +1072,13 @@ msgid ""
 "Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
 "library, rating and play count functions will be unavailable."
 msgstr ""
-"Bangarang no tiene acceso a la base de datos del Escritorio Semántico "
+"Bangarang no puede acceder al sistema centralizado de base de datos "
 "Nepomuk. La libreria de medios, sus valoraciones y el conteo de "
 "reproducciones no estarán disponibles."
 
 #: app/common/bangarangapplication.cpp:132
 msgid "Don't show this message again"
-msgstr "No mostrar este mensaje otra vez"
+msgstr "No volver a mostrar este mensaje"
 
 #: app/common/bangarangapplication.cpp:184
 #: app/common/bangarangapplication.cpp:186
@@ -1147,7 +1145,7 @@ msgstr "Cargando lista de reproducción..."
 
 #: app/common/mainwindow.cpp:657
 msgid "Buffering..."
-msgstr "Buffering..."
+msgstr "Precargando..."
 
 #: app/common/mainwindow.cpp:659 platform/mediaitemmodel.cpp:677
 msgid "Loading..."
@@ -1369,8 +1367,8 @@ msgstr "Productor: "
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 ítem, %2"
+msgstr[1] "%1 ítemes, %2"
 
 #: app/nowplaying/playlistview.cpp:107 platform/mediaitemmodel.cpp:458
 #: platform/mediaitemmodel.cpp:478 platform/listengines/feedlistengine.cpp:325
@@ -1384,8 +1382,8 @@ msgstr[1] ""
 #, kde-format
 msgid "1 item"
 msgid_plural "%1 items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 ítem"
+msgstr[1] "%1 ítemes"
 
 #: app/nowplaying/playlistview.cpp:113
 msgid "<b>Playlist</b> (Upcoming)"
@@ -1471,7 +1469,7 @@ msgstr "Episodio"
 
 #: platform/infoitemmodel.cpp:98
 msgid "Links"
-msgstr ""
+msgstr "Hipervínculos"
 
 #: platform/infoitemmodel.cpp:99
 msgid "Play Count"
@@ -1486,14 +1484,14 @@ msgstr "Último reproducido"
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
 msgstr[0] "Obteniendo información para %1 item..."
-msgstr[1] "Obteniendo información para %1 items..."
+msgstr[1] "Obteniendo información para %1 ítemes..."
 
 #: platform/infoitemmodel.cpp:515
 #, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
 msgstr[0] "Información obtenida para %2 de 1 item..."
-msgstr[1] "Información obtenida para %2 de %1 items..."
+msgstr[1] "Información obtenida para %2 de %1 ítemes..."
 
 #: platform/infoitemmodel.cpp:539
 msgid "No Results"
@@ -1657,35 +1655,35 @@ msgstr "No hubo resultados"
 #: platform/ontologyupdater.cpp:371 platform/ontologyupdater.cpp:399
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
 msgstr ""
-"<b>Actualizando tipos de audio y propiedades</b><br>0 items actualizados..."
+"<b>Actualizando tipos de audio y propiedades</b><br>0 ítemes actualizados..."
 
 #: platform/ontologyupdater.cpp:174
 #, kde-format
 msgid "<b>Updating audio types and properties</b><br>%1 audio items done..."
 msgstr ""
-"<b>Actualizando tipos de audio y propiedades</b><br>%1 items de audio "
-"realizados...."
+"<b>Actualizando tipos de audio y propiedades</b><br>%1 ítemes de audio "
+"listos...."
 
 #: platform/ontologyupdater.cpp:355
 #, kde-format
 msgid "<b>Updating video types and properties</b><br>%1 video items done..."
 msgstr ""
-"<b>Actualizando tipos de video y propiedades</b><br>%1 items de video "
-"actualizados..."
+"<b>Actualizando tipos de video y propiedades</b><br>%1 ítemes de video "
+"listos..."
 
 #: platform/ontologyupdater.cpp:385
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous audio properties</b><br>%1 audio items done..."
 msgstr ""
-"<b>Actualizando tipos de audio y propiedades</b><br>%1 items de audio "
-"realizados...."
+"<b>Actualizando tipos de audio y propiedades</b><br>%1 ítemes de audio "
+"listos..."
 
 #: platform/ontologyupdater.cpp:413
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous video properties</b><br>%1 video items done..."
 msgstr ""
-"<b>Actualizando tipos de video y propiedades</b><br>%1 items de video "
-"actualizados..."
+"<b>Actualizando tipos de video y propiedades</b><br>%1 itemes de video "
+"listos..."
 
 #: platform/ontologyupdater.cpp:418
 msgid "<b>Update complete.</b>"
@@ -1696,9 +1694,8 @@ msgid "<b>Update stopped.</b>"
 msgstr "<b>Actualización detenida</b>"
 
 #: platform/playlist.cpp:664
-#, fuzzy
 msgid "Video Playback"
-msgstr "Búsqueda de video"
+msgstr "Reproducción de video"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:35
 msgid "DBPedia"
@@ -1710,16 +1707,15 @@ msgstr "Obtiene información de DBPedia.org."
 
 #: platform/infofetchers/doubaninfofetcher.cpp:34
 msgid "Douban"
-msgstr ""
+msgstr "Douban"
 
 #: platform/infofetchers/doubaninfofetcher.cpp:37
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Douban API but is not endorsed or certified by "
 "Douban."
 msgstr ""
-"Nota: Este programa usa la interfaz TMDb pero no está auspiciado o "
-"certificado por TMDb."
+"Nota: Este programa usa la interfaz Douban pero no está auspiciado o "
+"certificado por Douban."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1743,15 +1739,15 @@ msgstr ""
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
-msgstr "last.FM"
+msgstr "Last.fm"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:41
 msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
-"Nota: Este programa usa la interfaz last.FM pero no está auspiciado o "
-"certificado por last.FM."
+"Nota: Este programa usa la interfaz Last.fm pero no está auspiciado o "
+"certificado por Last.fm."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
 msgid "TMDb"
@@ -2177,278 +2173,3 @@ msgstr "Episodio %1"
 msgctxt "%1=Number of the Season"
 msgid "Season %1"
 msgstr "Temporada %1"
-
-#~ msgid "<b>Showing Information</b><br>Click to hide information."
-#~ msgstr ""
-#~ "<b>Mostrando información</b><br>Haga clic para ocultar la información"
-
-#~ msgid "A Media Player"
-#~ msgstr "Un reproductor de medios"
-
-#~ msgid "Info"
-#~ msgstr "Info"
-
-#~ msgid "<b>Description:</b>%1"
-#~ msgstr "Descripción:"
-
-#~ msgid "Show video Settings"
-#~ msgstr "Mostrar preferencias de video"
-
-#~ msgid "Show audio Settings"
-#~ msgstr "Mostrar preferencias de audio"
-
-#~ msgid "Last played: %1"
-#~ msgstr "Última reproducción: %1"
-
-#~ msgid "Playback message"
-#~ msgstr "Mensaje de reproducción"
-
-#~ msgid "Not Playing"
-#~ msgstr "No se está reproduciendo"
-
-#~ msgid "Show Video Settings"
-#~ msgstr "Mostrar Preferencias de video"
-
-#~ msgid "Show Audio Settings"
-#~ msgstr "Mostrar Preferencias de audio"
-
-#~ msgid "results"
-#~ msgstr "resultados"
-
-#~ msgid "Run Script"
-#~ msgstr "Correr Script"
-
-#~ msgid "Choose Interpreter:"
-#~ msgstr "Seleccionar Intérprete"
-
-#~ msgid "Bangarang - Scripting Console"
-#~ msgstr "Bangarang - Consola de Secuencia de Comandos"
-
-#~ msgid ""
-#~ "BANGARANG MEDIA PLAYER\n"
-#~ "Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)\n"
-#~ "<http://gitorious.org/bangarang>"
-#~ msgstr ""
-#~ "REPRODUCTOR MULTIMEDIA BANGARANG\n"
-#~ "Todos los derechos liberados bajo Licencia Pública GNU V3\n"
-#~ "Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)\n"
-#~ "<http://gitorious.org/bangarang>"
-
-#~ msgid "DVD Menu"
-#~ msgstr "Menú DVD"
-
-#~ msgid "Angles"
-#~ msgstr "Ángulos"
-
-#~ msgid "Chapters"
-#~ msgstr "Capítulos"
-
-#~ msgid "Titles"
-#~ msgstr "Títulos"
-
-#~ msgid "Audio Channels"
-#~ msgstr "Canales de audio"
-
-#~ msgid "Subtitles"
-#~ msgstr "Subtítulos"
-
-#~ msgid "episodeNumber"
-#~ msgstr "episodio"
-
-#~ msgid "Configure shortcuts..."
-#~ msgstr "Configurar atajos de teclado..."
-
-#~ msgid "Lookup info using %1"
-#~ msgstr "Buscar info usando %1"
-
-#~ msgid "Show Remaining Time"
-#~ msgstr "Mostrar Tiempo restante"
-
-#~ msgid "Enter url"
-#~ msgstr "Ingrese URL"
-
-#~ msgid "Tags are separated with \";\""
-#~ msgstr "Etiquetas son separadas por \";\""
-
-#~ msgid "Updating..."
-#~ msgstr "Actualizando..."
-
-#~ msgid "Updated info for <i>%1, %2</i>"
-#~ msgstr "Actualizada la información para <i>%1, %2</i>"
-
-#~ msgid "Removed info for <i>%1</i>"
-#~ msgstr "Eliminada la información de <i>%1</i>"
-
-#~ msgid "Hue"
-#~ msgstr "Matiz"
-
-#~ msgid "Track %1"
-#~ msgstr "Pista %1"
-
-#~ msgctxt "%1=Title of DVD"
-#~ msgid "DVD Video - %1"
-#~ msgstr "DVD de video - %1"
-
-#~ msgid "Indexer"
-#~ msgstr "Indizador"
-
-#~ msgid "Index audio file(s)"
-#~ msgstr "Indexar archivo(s) de audio"
-
-#~ msgid "Index folder containing audio file(s)"
-#~ msgstr "Indexar directorios conteniendo archivo(s) de audio"
-
-#~ msgid "Index video file(s)"
-#~ msgstr "Indexar archivo(s) de video"
-
-#~ msgid "Index folder containing video file(s)"
-#~ msgstr "Indexar directorio conteniendo archivo(s) de video"
-
-#~ msgid "Audio Files"
-#~ msgstr "Archivos de audio"
-
-#~ msgid "Video Files"
-#~ msgstr "Archivos de video"
-
-#~ msgid "Image"
-#~ msgstr "Imagen"
-
-#~ msgid "Double-click to edit"
-#~ msgstr "Doble clic para editar"
-
-#~ msgid "Recently Played Artists"
-#~ msgstr "Últimos artistas escuchados"
-
-#~ msgid "Highest Rated Artists"
-#~ msgstr "Artistas mejor calificados"
-
-#~ msgid "Frequently Played Artists"
-#~ msgstr "Artistas más escuchados"
-
-#~ msgid "Recently Played Albums"
-#~ msgstr "Últimos álbumes escuchados"
-
-#~ msgid "Highest Rated Albums"
-#~ msgstr "Álbumes mejor calificados"
-
-#~ msgid "Frequently Played Albums"
-#~ msgstr "Álbumes más escuchados"
-
-#~ msgid "Recently Played Genres"
-#~ msgstr "Últimos géneros escuchados"
-
-#~ msgid "Highest Rated Genres"
-#~ msgstr "Géneros mejor calificados"
-
-#~ msgid "Frequently Played Genres"
-#~ msgstr "Géneros más escuchados"
-
-#~ msgid "Recently Played Clips"
-#~ msgstr "Últimos clips escuchados"
-
-#~ msgid "Highest Rated Clips"
-#~ msgstr "Clips mejor calificados"
-
-#~ msgid "Frequently Played Clips"
-#~ msgstr "Clips más escuchados"
-
-#~ msgid "Recently Played Streams"
-#~ msgstr "Últimos flujos escuchados"
-
-#~ msgid "Highest Rated Streams"
-#~ msgstr "Flujos mejor calificados"
-
-#~ msgid "Frequently Played Streams"
-#~ msgstr "Flujos más escuchados"
-
-#~ msgid "Recently Played Tags"
-#~ msgstr "Últimas etiquetas reproducidas"
-
-#~ msgid "Highest Rated Tags"
-#~ msgstr "Etiquetas mejor calificadas"
-
-#~ msgid "Frequently Played Tag"
-#~ msgstr "Etiquetas más reproducidas"
-
-#~ msgid "Recently Watched Movies"
-#~ msgstr "Últimas películas vistas"
-
-#~ msgid "Highest Rated Movies"
-#~ msgstr "Películas mejor calificadas"
-
-#~ msgid "Frequently Watched Movies"
-#~ msgstr "Películas más vistas"
-
-#~ msgid "Recently Watched TV Shows"
-#~ msgstr "Últimos shows de TV vistos"
-
-#~ msgid "Highest Rated TV Shows"
-#~ msgstr "Shows de TV mejor calificados"
-
-#~ msgid "Frequently Watched TV Shows"
-#~ msgstr "Shows de TV más vistos"
-
-#~ msgid "Recently Watched Genres"
-#~ msgstr "Últimos géneros vistos"
-
-#~ msgid "Frequently Watched Genres"
-#~ msgstr "Géneros más vistos"
-
-#~ msgid "Recently Watched Actors"
-#~ msgstr "Últimos actores vistos"
-
-#~ msgid "Highest Rated Actors"
-#~ msgstr "Actores mejor calificados"
-
-#~ msgid "Frequently Watched Actors"
-#~ msgstr "Actores más vistos"
-
-#~ msgid "Recently Watched Directors"
-#~ msgstr "Últimos directores vistos"
-
-#~ msgid "Highest Rated Directors"
-#~ msgstr "Directores mejor calificados"
-
-#~ msgid "Frequently Watched Directors"
-#~ msgstr "Directores más vistos"
-
-#~ msgid "  All songs"
-#~ msgstr "Todas las canciones"
-
-#~ msgid ""
-#~ "<b>Updating audio types and properties</b><br><i>0 items updated...</i>"
-#~ msgstr ""
-#~ "<b>Actualizando tipos de audio y propiedades</b><br><i>0 items "
-#~ "actualizados...</i>"
-
-#~ msgid "Toggle fullscreen"
-#~ msgstr "Pantalla completa"
-
-#~ msgid "Edit"
-#~ msgstr "Editar"
-
-#~ msgid "Saving..."
-#~ msgstr "Guardando..."
-
-#~ msgid "Track Number"
-#~ msgstr "Número de pista"
-
-#~ msgid "Sort"
-#~ msgstr "Ordenar"
-
-#~ msgid "Untitled Audio Stream"
-#~ msgstr "Flujo de audio sin título"
-
-#~ msgid "Select this item, click Info then Edit to enter audio stream info"
-#~ msgstr ""
-#~ "Seleccione este item, haga clic en Info y edite para ingresar información "
-#~ "para el flujo de audio"
-
-#~ msgid "Open image file(s)"
-#~ msgstr "Abrir archivo(s) de imagen"
-
-#~ msgid "Open folder containing image file(s)"
-#~ msgstr "Abrir directorios con archivo(s) de imagen"
-
-#~ msgid "%1 - Played %2 times"
-#~ msgstr "%1 - Reproducido %2 veces"
