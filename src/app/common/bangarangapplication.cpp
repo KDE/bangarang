@@ -402,49 +402,47 @@ void BangarangApplication::processCommandLineArgs()
     QList<MediaItem> mediaList;
     bool itemLoaded = false;
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() > 0) {
-        kDebug() << "TOUCH:" << args->isSet("touch");
+
+    if (args->isSet("touch")) {
+        //Adjust interface to be more touch friendly
+        mainWindow()->enableTouch();
+    }
+    kDebug() << "TOUCH:" << args->isSet("touch");
+
+    if (args->isSet("play-dvd")) {
+        //Play DVD
+        kDebug() << "playing DVD";
+        MediaItem mediaItem;
+        mediaItem.title = i18n("DVD Video");
+        mediaItem.url = "dvdvideo://";
+        mediaItem.type = "Category";
+        mediaList << mediaItem;
+        itemLoaded = true;
+    } else if (args->isSet("play-cd")) {
+        //Play CD
+        QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
+        if ( cds.isEmpty() ) {
+            kDebug() << "no CD found";
+        }
+        kDebug() << "playing CD";
+        MediaItem mediaItem;
+        mediaItem.type = "Category";
+        mediaItem.title = i18n("Audio CD");
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.url = QString( "cdaudio://%1" ).arg(cds.at(0).udi());
+        mediaList << mediaItem;
+        itemLoaded = true;
+    } else {
+        //Play Url(s)
         for(int i = 0; i < args->count(); i++) {
-            if (args->isSet("play-dvd")) {
-                //Play DVD
-                kDebug() << "playing DVD";
-                MediaItem mediaItem;
-                mediaItem.title = i18n("DVD Video");
-                mediaItem.url = "dvdvideo://";
-                mediaItem.type = "Category";
-                mediaList << mediaItem;
-                itemLoaded = true;
-                break;
-            } else if (args->isSet("play-cd")) {
-                //Play CD
-                QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
-                if ( cds.isEmpty() ) {
-                    kDebug() << "no CD found";
-                    break;
-                }
-                kDebug() << "playing CD";
-                MediaItem mediaItem;
-                mediaItem.type = "Category";
-                mediaItem.title = i18n("Audio CD");
-                mediaItem.fields["title"] = mediaItem.title;
-                mediaItem.url = QString( "cdaudio://%1" ).arg(cds.at(0).udi());
-                mediaList << mediaItem;
-                itemLoaded = true;
-                break;
-            } else if (args->isSet("touch")) {
-                //Adjust interface to be more touch friendly
-                mainWindow()->enableTouch();
-            } else {
-                //Play Url
-                KUrl cmdLineKUrl = args->url(i);
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
-                mediaList << mediaItem;
-                itemLoaded = true;
-            }
+            KUrl cmdLineKUrl = args->url(i);
+            MediaItem mediaItem = Utilities::mediaItemFromUrl(cmdLineKUrl);
+            mediaList << mediaItem;
+            itemLoaded = true;
         }
-        if (mediaList.count() > 0) {
-            m_playlist->playMediaList(mediaList);
-        }
+    }
+    if (mediaList.count() > 0) {
+        m_playlist->playMediaList(mediaList);
     }
     if (!itemLoaded) {
         m_savedListsManager->loadPlaylist();
