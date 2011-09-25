@@ -69,6 +69,7 @@ class MediaItemDelegate : public QItemDelegate
         bool suppressSemanticComment();
         QRect ratingRect(const QRect *rect) const;
         QRect addRmPlaylistRect(const QRect *rect) const;
+        QRect categoryIconRect(const QRect* rect) const;
         void enableTouch();
 
     protected:
@@ -92,7 +93,6 @@ class MediaItemDelegate : public QItemDelegate
         MediaIndexer * m_mediaIndexer;
         MediaItemDelegate::RenderMode m_renderMode;
         int m_starRatingSize;
-        int m_durRatingSpacer;
         int m_padding;
         int m_iconSize;
         int m_textInner;
@@ -104,9 +104,11 @@ class MediaItemDelegate : public QItemDelegate
         int m_heightPadding;
         int m_playlistIconSize;
         int m_categoryIconSize;
+        int m_actionIconPadding;
         QFont m_miniModeFont;
 
         int artworkNeededIndex(const MediaItem &mediaItem) const;
+        int duratingSpacer(const QRect *rect) const;
 
     Q_SIGNALS:
         void categoryActivated(QModelIndex index);

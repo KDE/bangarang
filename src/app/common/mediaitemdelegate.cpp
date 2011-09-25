@@ -61,11 +61,13 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     m_starRatingSize = StarRating::Small;
     m_miniModeFont = KGlobalSettings::smallestReadableFont();
     setRenderMode(NormalMode);
+    m_actionIconPadding = m_padding;
     m_showPlaying = KIcon("media-playback-start");
     m_showInPlaylist = KIcon("dialog-ok-apply");
     m_categoryActionIcon = KIcon("bangarang-category-browse");
     QImage image = KIcon("dialog-ok-apply").pixmap(32,32).toImage();
     KIconEffect::toGray(image, 1.0);
+    KIconEffect::semiTransparent(image);
     QPixmap pixmap(32, 32);
     pixmap.fill(Qt::transparent);
     QPainter pp(&pixmap);
@@ -102,6 +104,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     const int top = option.rect.top();
     const int width = option.rect.width();
     const int height = option.rect.height();
+    const int currentDuratingSpacer = duratingSpacer(&option.rect);
 
     QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected))?
     option.palette.color(QPalette::HighlightedText):option.palette.color(QPalette::Text);
@@ -210,7 +213,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
     int vAlign = (hasSubTitle && m_renderMode == NormalMode) ? Qt::AlignTop : Qt::AlignVCenter;
     int hAlign = (isAction || isMessage) ? Qt::AlignCenter : Qt::AlignLeft;
-    int textWidth = width - textInner - m_padding - m_durRatingSpacer;
+    int textWidth = width - textInner - m_padding - currentDuratingSpacer;
     int boxHeight = height - m_heightPadding;
     int boxTop = top + (height - boxHeight)/2;
     if (isAction || isMessage) {
@@ -260,8 +263,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     if (isMediaItem && (m_renderMode == NormalMode || m_renderMode == MiniMode)) {
         QString duration = index.data(MediaItem::DurationRole).toString();
         p.setPen(subColor);
-        p.drawText(left + width - m_durRatingSpacer,
-                    boxTop+1, m_durRatingSpacer - m_iconSize, boxHeight, //icon size = add to / remove from playlist icon
+        p.drawText(left + width - currentDuratingSpacer,
+                    boxTop+1, currentDuratingSpacer - addRmPlaylistRect(&option.rect).width(), boxHeight, //icon size = add to / remove from playlist icon
                     Qt::AlignBottom | Qt::AlignRight, duration);
     }
     
@@ -288,8 +291,8 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         !index.data(MediaItem::PlayCountRole).isNull() &&
         (!option.state.testFlag(QStyle::State_MouseOver) || !isCategory)) {
         QString playCountText = QString("%1").arg(index.data(MediaItem::PlayCountRole).toInt());
-        p.drawText(left + width - m_durRatingSpacer,
-                    boxTop+1, m_durRatingSpacer - 1, boxHeight,
+        p.drawText(left + width - currentDuratingSpacer,
+                    boxTop+1, currentDuratingSpacer - 1, boxHeight,
                     Qt::AlignVCenter| Qt::AlignRight, playCountText);
     }
         
@@ -312,14 +315,14 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             }
         }
         int topOffset = (height - m_playlistIconSize) / 2;
-        int leftOffset = width - m_playlistIconSize - m_padding;
+        int leftOffset = addRmPlaylistRect(&option.rect).left() - left + m_actionIconPadding;
         icon.paint(&p, left + leftOffset, top + topOffset, m_playlistIconSize, m_playlistIconSize, Qt::AlignCenter, QIcon::Normal);
     } else if (isCategory && hasUrl &&
                (m_renderMode == NormalMode ||
                 (m_renderMode != NormalMode && option.state.testFlag(QStyle::State_MouseOver)))) {
         //Paint Category Icon
         int topOffset = (height - m_categoryIconSize) / 2;
-        int leftOffset = width - m_categoryIconSize - m_padding;
+        int leftOffset = categoryIconRect(&option.rect).left() - left + m_actionIconPadding;
         m_categoryActionIcon.paint(&p, left + leftOffset, top + topOffset, m_categoryIconSize, m_categoryIconSize, Qt::AlignLeft, QIcon::Normal);
     }
         
@@ -508,14 +511,6 @@ void MediaItemDelegate::setRenderMode(RenderMode mode)
     }
     m_textInner = m_iconSize == 0 ? m_padding : m_iconSize + 2 * m_padding;
 
-    if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
-        m_durRatingSpacer = StarRating::SizeHint(m_starRatingSize).width() + m_iconSize; //m_iconSize for the add to /remove from playlist icon
-    } else if (m_renderMode == MiniPlayCountMode) {
-        m_durRatingSpacer = 20;
-    } else {
-        m_durRatingSpacer = 0;
-    }
-
     if (m_renderMode != NormalMode) {
         m_categoryIconSize = 18;
     }
@@ -524,17 +519,41 @@ void MediaItemDelegate::setRenderMode(RenderMode mode)
 QRect MediaItemDelegate::ratingRect(const QRect *rect) const
 {
     QSize sz = StarRating::SizeHint(m_starRatingSize);
-    QPoint p = QPoint(rect->left() + rect->width() - m_durRatingSpacer,
+    QPoint p = QPoint(rect->left() + rect->width() - duratingSpacer(rect),
                       rect->top() + m_padding);
     return QRect(p, sz);
+}
+
+int MediaItemDelegate::duratingSpacer(const QRect *rect) const
+{
+    if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
+        return StarRating::SizeHint(m_starRatingSize).width() + addRmPlaylistRect(rect).width();
+    } else if (m_renderMode == MiniPlayCountMode) {
+        return 20;
+    } else {
+        return 0;
+    }
 }
 
 QRect MediaItemDelegate::addRmPlaylistRect(const QRect* rect) const
 {
     if (m_renderMode == NormalMode) {
-        QPoint p = QPoint(rect->left() + rect->width() - m_iconSize,
+        QPoint p = QPoint(rect->left() + rect->width() - m_playlistIconSize - 2 * m_actionIconPadding,
                           rect->top() + m_padding);
-        return QRect(p, QSize(m_iconSize, m_iconSize));
+        return QRect(p, QSize(m_playlistIconSize + 2 * m_actionIconPadding, rect->height()));
+    } else {
+        QPoint p = QPoint(rect->left() + rect->width() - 18,
+                          rect->top() + m_padding);
+        return QRect(p, QSize(18, 18));
+    }
+}
+
+QRect MediaItemDelegate::categoryIconRect(const QRect* rect) const
+{
+    if (m_renderMode == NormalMode) {
+        QPoint p = QPoint(rect->left() + rect->width() - m_categoryIconSize - 2 * m_actionIconPadding,
+                          rect->top() + m_padding);
+        return QRect(p, QSize(m_categoryIconSize + 2 * m_actionIconPadding, rect->height()));
     } else {
         QPoint p = QPoint(rect->left() + rect->width() - 18,
                           rect->top() + m_padding);
@@ -630,4 +649,5 @@ void MediaItemDelegate::enableTouch()
     m_categoryIconSize = 22;
     m_miniModeFont = KGlobalSettings::generalFont();
     setRenderMode(m_renderMode);
+    m_actionIconPadding = 10;
 }
