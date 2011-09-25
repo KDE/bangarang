@@ -151,13 +151,7 @@ void SavedListsManager::saveVideoList()
 {
     if (m_parent->videoListsStack()->ui->vListSourceSelection->isChecked()) {
         //Get selected media items and save
-        QList<MediaItem> mediaList = m_application->infoManager()->selectedInfoBoxMediaItems();
-        if (mediaList.count() == 0) {
-            QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
-            for (int i = 0 ; i < selectedRows.count() ; ++i) {
-                mediaList.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
-            }
-        }
+        QList<MediaItem> mediaList = m_application->actionsManager()->selectedMediaItems();
         saveMediaList(mediaList, m_parent->videoListsStack()->ui->vNewListName->text(), QString("Video"));
     } else if (m_parent->videoListsStack()->ui->vListSourceView->isChecked()) {
         saveView(m_parent->videoListsStack()->ui->vNewListName->text(), QString("Video"));
@@ -586,7 +580,9 @@ void SavedListsManager::removeSelected()
         //Rebuild mediaList without selected items
         for (int i = 0; i < m_application->browsingModel()->rowCount(); i++) {
             QModelIndex index = m_application->browsingModel()->index(i, 0);
-            if (!ui->mediaView->selectionModel()->isSelected(index)) {
+            QSortFilterProxyModel * proxy = ui->mediaView->filterProxyModel();
+            QModelIndex proxyIndex = proxy->mapFromSource(index);
+            if (!ui->mediaView->selectionModel()->isSelected(proxyIndex)) {
                 mediaList.append(m_application->browsingModel()->mediaItemAt(i));
             } else {
                 rowsToRemove.append(i);
