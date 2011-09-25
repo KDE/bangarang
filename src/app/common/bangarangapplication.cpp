@@ -113,6 +113,7 @@ void BangarangApplication::setup()
     
     //Complete Setup
     m_mainWindow->completeSetup();
+    m_touchIsEnabled = false;
 
     //Create media paths
     m_audioPath = Phonon::createPath(m_mediaObject, m_audioOutput);
@@ -406,6 +407,7 @@ void BangarangApplication::processCommandLineArgs()
     if (args->isSet("touch")) {
         //Adjust interface to be more touch friendly
         mainWindow()->enableTouch();
+        m_touchIsEnabled = true;
     }
     kDebug() << "TOUCH:" << args->isSet("touch");
 
@@ -447,4 +449,9 @@ void BangarangApplication::processCommandLineArgs()
     if (!itemLoaded) {
         m_savedListsManager->loadPlaylist();
     }
+}
+
+bool BangarangApplication::isTouchEnabled()
+{
+    return m_touchIsEnabled;
 }
