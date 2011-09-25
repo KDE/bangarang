@@ -71,6 +71,7 @@ class BangarangApplication : public KApplication
         KLocale * locale() { return m_locale; }
         const KAboutData * aboutData();
         void processCommandLineArgs();
+        bool isTouchEnabled();
         
     private:
         MainWindow * m_mainWindow;
@@ -94,6 +95,7 @@ class BangarangApplication : public KApplication
         VideoSettings * m_videoSettings;
         MprisRootObject * m_mprisRootObject;
         bool m_nepomukInited;
+        bool m_touchIsEnabled;
 
     private slots:
         void handleNotifierStateRequest(Phonon::State state);
