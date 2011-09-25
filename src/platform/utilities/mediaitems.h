@@ -50,6 +50,7 @@ namespace Utilities {
     QStringList getLinksForResource(Nepomuk::Resource &res);
     bool isTemporaryAudioStream(const MediaItem &item);
     KUrl urlForFilex(KUrl url);
+    KUrl decodedUrl(QUrl url);
 }
 
 #endif // UTILITIES_MEDIAITEMS_H

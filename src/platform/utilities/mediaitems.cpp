@@ -43,6 +43,7 @@
 #include <Soprano/Vocabulary/XMLSchema>
 #include <Soprano/Model>
 #include <Nepomuk/Resource>
+#include <Nepomuk/File>
 #include <Nepomuk/Variant>
 #include <Nepomuk/ResourceManager>
 #include <Nepomuk/Tag>
@@ -338,6 +339,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
 
     QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
     KUrl url(res.property(nieUrl).toUrl());
+    url = decodedUrl(url).prettyUrl();
     if (url.prettyUrl().startsWith("filex:/")) {
         url = urlForFilex(url);
     }
@@ -547,6 +549,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
+    url = decodedUrl(url);
     if (url.prettyUrl().startsWith("filex:/")) {
         url = urlForFilex(url);
     }
@@ -1479,6 +1482,14 @@ KUrl Utilities::urlForFilex(KUrl url)
         normalUrl = url.prettyUrl();
     }
     return KUrl(normalUrl);
+}
+
+KUrl Utilities::decodedUrl(QUrl rawUrl)
+{
+    //NOTE: This undoes two layers of percent encoding.  This means that locations that
+    //      actually have "%[0-9]" in the path may be incorrectly changed.
+    QString rawUrlString = QUrl::fromPercentEncoding(rawUrl.toString().toUtf8());
+    return KUrl(rawUrlString);
 }
 
 #endif //UTILITIES_MEDIAITEMS_CPP
