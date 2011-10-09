@@ -246,7 +246,9 @@ void InfoManager::removeSelectedItemsInfo()
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            selectedItems.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
+            QSortFilterProxyModel* proxyModel = ui->mediaView->filterProxyModel();
+            QModelIndex sourceIndex = proxyModel->mapToSource(selectedRows.at(i));
+            selectedItems.append(m_application->browsingModel()->mediaItemAt(sourceIndex.row()));
         }
     }
     if (selectedItems.count() > 0) {
@@ -261,7 +263,9 @@ void InfoManager::addSelectedItemsInfo()
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            selectedItems.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
+            QSortFilterProxyModel* proxyModel = ui->mediaView->filterProxyModel();
+            QModelIndex sourceIndex = proxyModel->mapToSource(selectedRows.at(i));
+            selectedItems.append(m_application->browsingModel()->mediaItemAt(sourceIndex.row()));
        }
     }
     if (selectedItems.count() > 0) {
