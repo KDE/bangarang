@@ -874,7 +874,9 @@ void ActionsManager::loadSelectedSources()
     } else {
         QModelIndexList selectedRows = ui->mediaView->selectionModel()->selectedRows();
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
-            mediaList.append(m_application->browsingModel()->mediaItemAt(selectedRows.at(i).row()));
+            QSortFilterProxyModel* proxyModel = ui->mediaView->filterProxyModel();
+            QModelIndex sourceIndex = proxyModel->mapToSource(selectedRows.at(i));
+            mediaList.append(m_application->browsingModel()->mediaItemAt(sourceIndex.row()));
         }
     }
     m_application->browsingModel()->clearMediaListData();
