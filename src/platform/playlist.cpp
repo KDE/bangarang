@@ -586,6 +586,7 @@ void Playlist::titleChanged(int newTitle) //connected to MediaController::titleC
 void Playlist::confirmPlaylistFinished() //connected to MediaObject::finished()
 {
     if (m_state == Playlist::Finished) {
+        m_mediaObject->stop();
         //Refresh playlist model to ensure views get updated
         int row = -1;
         if (m_nowPlaying->rowCount() > 0) {
