@@ -296,7 +296,7 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
             dvdNotFound = true;
             Q_UNUSED(dvd);
         }
-        KUrl url = KUrl(url_string);
+        KUrl url = KUrl(QUrl::toPercentEncoding(url_string).data());
         if (dvdNotFound ||
             (url.isValid() && url.isLocalFile() && !QFile(url.path()).exists()) ||
             url_string.startsWith("trash:/")
