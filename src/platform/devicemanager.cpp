@@ -123,8 +123,10 @@ void DeviceManager::deviceRemoved(const QString &udi)
 {
     //remove the device from the list
     m_deviceMutex->lock();
-    if (m_devices.find(udi) == m_devices.end())
+    if (m_devices.find(udi) == m_devices.end()) {
+        m_deviceMutex->unlock();
         return;
+    }
     RelatedType relT = m_devices.value(udi).second;
     m_devices.remove(udi);
     m_deviceMutex->unlock();
