@@ -21,6 +21,7 @@
 #include "../common/mediaitemdelegate.h"
 #include "../common/actionsmanager.h"
 #include "../common/bangarangapplication.h"
+#include "../common/flickcharm.h"
 #include "../../platform/utilities/utilities.h"
 #include "ui_mainwindow.h"
 
@@ -34,6 +35,7 @@ PlaylistView::PlaylistView(QWidget* parent): QListView(parent)
     m_playlistModel = m_playlist->playlistModel();
     setModel(m_playlist->filterProxyModel());
     setSourceModel(m_playlistModel);
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     
     connect(m_playlistModel, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
     connect(m_playlistModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(playlistChanged()));
@@ -134,5 +136,8 @@ Playlist::Model PlaylistView::toggleModel()
 
 void PlaylistView::enableTouch()
 {
+    FlickCharm *charm = new FlickCharm(this);
+    charm->activateOn(this);
+    this->setDragEnabled(false);
     m_playlistItemDelegate->enableTouch();
 }

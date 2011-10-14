@@ -1,5 +1,6 @@
 #include "../common/bangarangapplication.h"
 #include "../common/mainwindow.h"
+#include "../common/flickcharm.h"
 #include "medialistsmanager.h"
 #include "savedlistsmanager.h"
 #include "medialistsettings.h"
@@ -12,6 +13,7 @@ AudioListsStack::AudioListsStack(QWidget *parent) :
 {
     ui->setupUi(this);
     m_application = (BangarangApplication *)KApplication::kApplication();
+    ui->audioLists->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 AudioListsStack::~AudioListsStack()
@@ -30,6 +32,8 @@ void AudioListsStack::enableTouch() {
     ui->configureAudioList->setIconSize(QSize(tVisual, tVisual));
     ui->audioLists->setIconSize(QSize(tTouchable, tTouchable));
     ui->audioLists->setGridSize(QSize(0, tTouchable + 2));
+    FlickCharm* charm = new FlickCharm(this);
+    charm->activateOn(ui->audioLists);
 }
 
 void AudioListsStack::on_configureAudioList_clicked()
