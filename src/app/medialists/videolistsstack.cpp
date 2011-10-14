@@ -1,5 +1,6 @@
 #include "../common/bangarangapplication.h"
 #include "../common/mainwindow.h"
+#include "../common/flickcharm.h"
 #include "medialistsmanager.h"
 #include "savedlistsmanager.h"
 #include "medialistsettings.h"
@@ -12,6 +13,7 @@ VideoListsStack::VideoListsStack(QWidget *parent) :
 {
     ui->setupUi(this);
     m_application = (BangarangApplication *)KApplication::kApplication();
+    ui->videoLists->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 VideoListsStack::~VideoListsStack()
@@ -30,6 +32,8 @@ void VideoListsStack::enableTouch() {
     ui->configureVideoList->setIconSize(QSize(tVisual, tVisual));
     ui->videoLists->setIconSize(QSize(tTouchable, tTouchable));
     ui->videoLists->setGridSize(QSize(0,tTouchable));
+    FlickCharm* charm = new FlickCharm(this);
+    charm->activateOn(ui->videoLists);
 }
 
 

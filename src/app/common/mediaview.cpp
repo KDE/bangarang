@@ -20,6 +20,7 @@
 #include "bangarangapplication.h"
 #include "mainwindow.h"
 #include "actionsmanager.h"
+#include "flickcharm.h"
 #include "../../platform/mediaitemmodel.h"
 #include "../../platform/utilities/utilities.h"
 #include <KIcon>
@@ -42,6 +43,7 @@ MediaView::MediaView(QWidget * parent):QTreeView (parent)
     setFrameShape(QFrame::NoFrame);
     setFrameShadow(QFrame::Plain);
     setAlternatingRowColors(true);
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 MediaView::~MediaView() 
@@ -159,5 +161,8 @@ bool MediaView::viewportEvent(QEvent* event)
 
 void MediaView::enableTouch()
 {
+    FlickCharm *charm = new FlickCharm(this);
+    charm->activateOn(this);
+    this->setDragEnabled(false);
     m_mediaItemDelegate->enableTouch();
 }

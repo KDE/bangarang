@@ -6,6 +6,7 @@ set(BangarangSources
     app/common/bangarangapplication.cpp
     app/common/bangarangnotifieritem.cpp
     app/common/dbusobjects.cpp
+    app/common/flickcharm.cpp
     app/common/mainwindow.cpp
     app/common/mediaitemdelegate.cpp
     app/common/mediaview.cpp
