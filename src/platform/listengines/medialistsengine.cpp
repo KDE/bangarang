@@ -174,7 +174,7 @@ void MediaListsEngine::run()
             mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
-        
+
         mediaItem.title = i18n("Files and Folders");
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://audio?browseFolder";
@@ -183,6 +183,9 @@ void MediaListsEngine::run()
         mediaItem.fields["isConfigurable"] = false;
         mediaList << mediaItem;
         
+        // Show remote media servers
+        mediaList.append(loadServerList("audio"));
+
         //Show Audio CDs if present
         QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
         foreach (Solid::Device cd, cds) {
@@ -507,3 +510,52 @@ QString MediaListsEngine::semanticsLriForFrequent(const QString &type)
     }
     return lri;
 }
+
+QList<MediaItem> MediaListsEngine::loadServerList(QString type)
+{
+    //Load ampache server list
+    QList<MediaItem> mediaList;
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+
+    if (!indexFile.exists()) {
+        return mediaList;
+    }
+    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return mediaList;
+    }
+
+    QTextStream in(&indexFile);
+    while (!in.atEnd()) {
+        if (m_stop) {
+            return mediaList;
+        }
+        QString line = in.readLine();
+        QStringList nameUrl = line.split(":::");
+        if (nameUrl.count() >= 6) {
+            MediaItem mediaItem;
+            if (nameUrl.at(0).toLower() == type.toLower()) {
+                mediaItem.type = "Category";
+                mediaItem.artwork = KIcon("repository");
+                mediaItem.title = nameUrl.at(1).trimmed();
+                mediaItem.fields["title"] = mediaItem.title;
+                QString server = nameUrl.at(2).trimmed();
+                QString userName = nameUrl.at(3).trimmed();
+                QString key = nameUrl.at(4).trimmed();
+                int pwdLength = nameUrl.at(5).trimmed().toInt();
+                mediaItem.url = QString("ampache://%1?server=%2||username=%3||key=%4||request=root")
+                                       .arg(type)
+                                       .arg(server)
+                                       .arg(userName)
+                                       .arg(key);
+                mediaItem.fields["server"] = server;
+                mediaItem.fields["username"] = userName;
+                mediaItem.fields["key"] = key;
+                mediaItem.fields["pwdLength"] = pwdLength;
+                mediaItem.fields["isConfigurable"] = true;
+                mediaList << mediaItem;
+            }
+        }
+    }
+    return mediaList;
+}
+

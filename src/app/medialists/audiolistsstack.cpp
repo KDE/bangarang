@@ -41,7 +41,8 @@ void AudioListsStack::on_configureAudioList_clicked()
     if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0) {
         int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
-        if (selectedItem.url.startsWith("savedlists://")) {
+        if (selectedItem.url.startsWith("savedlists://") ||
+            selectedItem.url.startsWith("ampache://")) {
             m_application->savedListsManager()->showAudioSavedListSettings();
         } else if (selectedItem.url.startsWith("semantics://recent") ||
             selectedItem.url.startsWith("semantics://frequent") ||

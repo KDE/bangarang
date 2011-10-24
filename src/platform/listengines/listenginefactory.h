@@ -43,7 +43,8 @@ enum EngineType {
     EngineTypeCache,
     EngineTypeAudioClips,
     EngineTypeTag,
-    EngineTypeFeeds
+    EngineTypeFeeds,
+    EngineTypeAmpache
 };
 
 typedef QPair<EngineType, QString> EngineDescription;

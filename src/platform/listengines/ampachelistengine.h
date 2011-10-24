@@ -16,40 +16,46 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MEDIALISTSENGINE_H
-#define MEDIALISTSENGINE_H
+#ifndef AMPACHELISTENGINE_H
+#define AMPACHELISTENGINE_H
 
 #include "nepomuklistengine.h"
 #include <QtCore>
 #include <QDir>
 #include <KUrl>
+#include <kjob.h>
+#include <kio/copyjob.h>
+#include <QDomDocument>
+#include <QDomNodeList>
 
 class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 class MediaIndexer;
 
-/**
-* This ListEngine retrieves a convenient list of "Category" MediaItems.
-* e.g. Albums, Highest Rated, Movies, Audio CD, etc.
-* List Resource Identifiers handled are:
-*   medialists://audio
-*   medialists://video
-*/
-class MediaListsEngine : public NepomukListEngine
+
+class AmpacheListEngine : public NepomukListEngine
 {
     Q_OBJECT
-    
-    public:
-        MediaListsEngine(ListEngineFactory *parent);
-        ~MediaListsEngine();
-        void run();
-        
-    private:
-        bool m_loadWhenReady;
-        QString semanticsLriForRecent(const QString &type);
-        QString semanticsLriForHighest(const QString &type);
-        QString semanticsLriForFrequent(const QString &type);
-        QList<MediaItem> loadServerList(QString type);
+
+public:
+    AmpacheListEngine(ListEngineFactory* parent);
+    ~AmpacheListEngine();
+    void run();
+
+private:
+    QString m_serverPath;
+    QList<MediaItem> m_mediaList;
+    QList<KUrl> m_artworkUrlList;
+    bool m_fetchingThumbnails;
+    QString m_token;
+    QHash<QString, QString> m_pendingRequest;
+
+    void sendHandshake(const QString server, const QString username, const QString key);
+
+private slots:
+    void downloadComplete(const KUrl &from, const KUrl &to);
+
 };
-#endif // MEDIALISTSENGINE_H
+
+#endif // AMPACHELISTENGINE_H

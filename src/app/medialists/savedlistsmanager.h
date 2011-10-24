@@ -66,6 +66,7 @@ class SavedListsManager : public QObject
         void loadPlaylist();
         void showAudioSavedListSettings();
         void showVideoSavedListSettings();
+        void toggleAmpacheDataAdd(bool);
         
     private:
         BangarangApplication * m_application;
@@ -78,8 +79,11 @@ class SavedListsManager : public QObject
         QStringList m_savedVideoLists;
         void updateSavedListsIndex();
         bool m_nepomukInited;
+        bool m_ampachePasswordEdited;
         void exportPlaylist(KUrl &saveFrom);
-        
+        void saveAmpacheData(const QString type, const QString oldName, const QString newName, const QString server, const QString userName, const QString password);
+        void removeAmpacheData(const QString type, const QString name);
+
     private slots:
         void enableValidSave(QString newText = QString());
         void selectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
@@ -92,6 +96,7 @@ class SavedListsManager : public QObject
         void exportAudioList();
         void exportVideoList();
         void loadSavedListsIndex();
+        void ampachePasswordEdited(QString text);
 
 };
 #endif //SAVEDLISTSMANAGER_H
