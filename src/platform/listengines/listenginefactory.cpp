@@ -32,6 +32,7 @@
 #include "audioclipslistengine.h"
 #include "taglistengine.h"
 #include "feedlistengine.h"
+#include "ampachelistengine.h"
 #include <KDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
@@ -49,7 +50,8 @@ ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
               << EngineDescription(EngineTypeCache, "cache://")
               << EngineDescription(EngineTypeAudioClips, "audioclips://")
               << EngineDescription(EngineTypeTag, "tag://")
-              << EngineDescription(EngineTypeFeeds, "feeds://");
+              << EngineDescription(EngineTypeFeeds, "feeds://")
+              << EngineDescription(EngineTypeAmpache, "ampache://");
     m_downloader = new Downloader(this);
 }
 
@@ -112,6 +114,10 @@ ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemMode
 
         case EngineTypeFeeds:
             eng = new FeedListEngine(this);
+            break;
+
+        case EngineTypeAmpache:
+            eng = new AmpacheListEngine(this);
             break;
 
         default:

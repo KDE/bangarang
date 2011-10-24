@@ -20,6 +20,7 @@
 #define UTILITIES_GENERAL_CPP
 
 #include "general.h"
+#include "sha256.h"
 #include "../mediaitemmodel.h"
 #include "../mediavocabulary.h"
 #include "../mediaquery.h"
@@ -429,6 +430,26 @@ QString Utilities::durationString(int seconds)
     return displayTime;
 }
 
+QString Utilities::sha256Of( QString in )
+{
+    // Copied from Amarok /src/services/ampache/AmpacheAccountLogin.cpp
+    unsigned char digest[ SHA512_DIGEST_SIZE];
+    unsigned char* toHash = (unsigned char*)in.toUtf8().data();
+
+    sha256( toHash , qstrlen( ( char* )toHash ), digest );
+
+    // this part copied from main() in sha256.cpp
+    unsigned char output[2 * SHA512_DIGEST_SIZE + 1];
+    int i;
+
+    output[2 * SHA256_DIGEST_SIZE ] = '\0';
+
+    for (i = 0; i < SHA256_DIGEST_SIZE ; i++) {
+        sprintf((char *) output + 2*i, "%02x", digest[i]);
+    }
+
+    return QString::fromAscii( (const char*)output );
+}
 #endif //UTILITIES_GENERAL_CPP
 
 

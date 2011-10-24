@@ -23,7 +23,7 @@
    <item>
     <widget class="QStackedWidget" name="videoListsStack">
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="videoListsPage">
       <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -387,7 +387,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="exportSavedListLabel">
          <property name="text">
           <string>You can export this list to a file if you want to use it in other applications</string>
          </property>
@@ -398,9 +398,6 @@
        </item>
        <item>
         <widget class="QPushButton" name="vslsExport">
-         <property name="text">
-          <string>Export to file...</string>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -412,6 +409,9 @@
            <width>0</width>
            <height>28</height>
           </size>
+         </property>
+         <property name="text">
+          <string>Export to file...</string>
          </property>
         </widget>
        </item>
@@ -935,7 +935,7 @@
   <customwidget>
    <class>SRatingCombo</class>
    <extends>QComboBox</extends>
-   <header location="global">app/common/sensiblewidgets.h</header>
+   <header>app/common/sensiblewidgets.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

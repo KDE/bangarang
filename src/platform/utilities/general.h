@@ -70,5 +70,6 @@ namespace Utilities {
     QString capitalize(const QString & text);
     QHash<QString, QStringList> multiValueAppend(QHash<QString, QStringList> multiValues, QString key, QString newValue);
     QString durationString(int seconds);
+    QString sha256Of(QString in);
 }
 #endif //UTILITIES_GENERAL_H

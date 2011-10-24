@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>329</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QStackedWidget" name="audioListsStack">
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="audioListsPage">
       <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -186,10 +186,7 @@
           </item>
           <item>
            <widget class="QWidget" name="widget_6" native="true">
-            <layout class="QVBoxLayout" name="verticalLayout_21">
-             <property name="spacing">
-              <number>-1</number>
-             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -197,7 +194,7 @@
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>10</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QRadioButton" name="aListSourceView">
@@ -220,6 +217,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QRadioButton" name="aListSourceAmpache">
+               <property name="text">
+                <string>ownCloud/ampache</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -231,6 +235,36 @@
             <property name="showClearButton" stdset="0">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="ampacheDataAdd" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="KLineEdit" name="ampacheServerAdd">
+               <property name="clickMessage">
+                <string>Server</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="KLineEdit" name="ampacheUserNameAdd">
+               <property name="clickMessage">
+                <string>User Name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="KLineEdit" name="ampachePasswordAdd">
+               <property name="clickMessage">
+                <string>Password</string>
+               </property>
+               <property name="passwordMode">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -357,7 +391,7 @@
        </item>
        <item>
         <widget class="QWidget" name="widget_8" native="true">
-         <layout class="QVBoxLayout" name="verticalLayout_32">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -373,6 +407,36 @@
           </item>
           <item>
            <widget class="KLineEdit" name="aslsListName"/>
+          </item>
+          <item>
+           <widget class="QWidget" name="ampacheData" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="KLineEdit" name="ampacheServer">
+               <property name="clickMessage">
+                <string>Server</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="KLineEdit" name="ampacheUserName">
+               <property name="clickMessage">
+                <string>User Name</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="KLineEdit" name="ampachePassword">
+               <property name="clickMessage">
+                <string>Password</string>
+               </property>
+               <property name="passwordMode">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -414,7 +478,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="exportSavedListLabel">
          <property name="text">
           <string>You can export this list to a file if you want to use it in other applications</string>
          </property>
@@ -425,9 +489,6 @@
        </item>
        <item>
         <widget class="QPushButton" name="aslsExport">
-         <property name="text">
-          <string>Export to file...</string>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -439,6 +500,9 @@
            <width>0</width>
            <height>28</height>
           </size>
+         </property>
+         <property name="text">
+          <string>Export to file...</string>
          </property>
         </widget>
        </item>

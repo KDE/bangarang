@@ -24,6 +24,7 @@
 #include "infomanager.h"
 #include "../common/actionsmanager.h"
 #include "ui_mainwindow.h"
+#include "ui_audiolistsstack.h"
 #include "../../platform/mediaitemmodel.h"
 #include "../../platform/playlist.h"
 
@@ -43,6 +44,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     
     m_parent->audioListsStack()->ui->aListSourceSelection->setEnabled(false);
     m_parent->videoListsStack()->ui->vListSourceSelection->setEnabled(false);
+    m_parent->audioListsStack()->ui->ampacheDataAdd->hide();
+    m_parent->audioListsStack()->ui->ampacheData->hide();
     loadSavedListsIndex();
     
     connect(m_parent->audioListsStack()->ui->addAudioList, SIGNAL(clicked()), this, SLOT(showAudioListSave()));
@@ -53,6 +56,9 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_parent->videoListsStack()->ui->saveVideoList, SIGNAL(clicked()), this, SLOT(saveVideoList()));
     connect(m_parent->audioListsStack()->ui->aNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->videoListsStack()->ui->vNewListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(m_parent->audioListsStack()->ui->ampacheServerAdd, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(m_parent->audioListsStack()->ui->ampacheUserNameAdd, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(m_parent->audioListsStack()->ui->ampachePasswordAdd, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->audioListsStack()->ui->aNewListName, SIGNAL(returnPressed()), this, SLOT(saveAudioList()));
     connect(m_parent->videoListsStack()->ui->vNewListName, SIGNAL(returnPressed()), this, SLOT(saveVideoList()));
     connect(m_parent->audioListsStack()->ui->removeAudioList, SIGNAL(clicked()), this, SLOT(removeAudioList()));
@@ -67,7 +73,11 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_parent->videoListsStack()->ui->vslsListName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->audioListsStack()->ui->aslsListName, SIGNAL(returnPressed()), this, SLOT(saveAudioListSettings()));
     connect(m_parent->videoListsStack()->ui->vslsListName, SIGNAL(returnPressed()), this, SLOT(saveVideoListSettings()));
-    
+    connect(m_parent->audioListsStack()->ui->aListSourceAmpache, SIGNAL(toggled(bool)), this, SLOT(toggleAmpacheDataAdd(bool)));
+    connect(m_parent->audioListsStack()->ui->ampacheServer, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(m_parent->audioListsStack()->ui->ampacheUserName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
+    connect(m_parent->audioListsStack()->ui->ampachePassword, SIGNAL(textEdited(QString)), this, SLOT(ampachePasswordEdited(QString)));
+
     connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(selectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_parent->audioListsStack()->ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
     connect(m_parent->videoListsStack()->ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
@@ -130,6 +140,10 @@ void SavedListsManager::returnToVideoList()
 
 void SavedListsManager::saveAudioList()
 {
+    if (!m_parent->audioListsStack()->ui->saveAudioList->isEnabled()) {
+        return;
+    }
+
     if (m_parent->audioListsStack()->ui->aListSourceSelection->isChecked()) {
         //Get selected media items and save
         QList<MediaItem> mediaList = m_application->actionsManager()->selectedMediaItems();
@@ -139,6 +153,12 @@ void SavedListsManager::saveAudioList()
     } else if (m_parent->audioListsStack()->ui->aListSourcePlaylist->isChecked()) {
         QList<MediaItem> mediaList = m_application->playlist()->playlistModel()->mediaList();
         saveMediaList(mediaList, m_parent->audioListsStack()->ui->aNewListName->text(), QString("Audio"));
+    } else if (m_parent->audioListsStack()->ui->aListSourceAmpache->isChecked()) {
+        QString name = m_parent->audioListsStack()->ui->aNewListName->text();
+        QString server = m_parent->audioListsStack()->ui->ampacheServerAdd->text();
+        QString userName = m_parent->audioListsStack()->ui->ampacheUserNameAdd->text();
+        QString password = m_parent->audioListsStack()->ui->ampachePasswordAdd->text();
+        saveAmpacheData("Audio", QString(), name, server, userName, password);
     }
     MediaListProperties audioListsProperties = m_application->mediaListsManager()->audioListsModel()->mediaListProperties();
     m_application->mediaListsManager()->audioListsModel()->clearMediaListData();
@@ -170,7 +190,10 @@ void SavedListsManager::removeAudioList()
 {
     if (m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().count() > 0){
         int selectedRow = m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
-        QString name = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow).title;
+        MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
+        QString name = selectedItem.title;
+        bool isSavedList = selectedItem.url.startsWith("savedlists://");
+        bool isAmpacheServer = selectedItem.url.startsWith("ampache://");
         
         KGuiItem removeSavedList;
         removeSavedList.setText(i18n("Remove"));
@@ -178,28 +201,34 @@ void SavedListsManager::removeAudioList()
         QString message = i18n("Are you sure you want to remove \"%1\"?", name);
         
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
-            //Remove M3U file
-            QString filename = name;
-            filename = filename.replace(" ", "");
-            QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Audio-%1.m3u").arg(filename), false));
-            
-            QString savedListEntry = QString("Audio:::%1")
-                                        .arg(name);
-            QList<int> rowsToRemove;
-            for (int i = 0; i < m_savedAudioLists.count(); i++) {
-                if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
-                    rowsToRemove << i;
+            if (isSavedList) {
+                //Remove M3U file
+                QString filename = name;
+                filename = filename.replace(" ", "");
+                QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Audio-%1.m3u").arg(filename), false));
+
+                QString savedListEntry = QString("Audio:::%1")
+                        .arg(name);
+                QList<int> rowsToRemove;
+                for (int i = 0; i < m_savedAudioLists.count(); i++) {
+                    if (m_savedAudioLists.at(i).startsWith(savedListEntry)) {
+                        rowsToRemove << i;
+                    }
                 }
+                for (int i = 0; i < rowsToRemove.count(); i++) {
+                    m_savedAudioLists.removeAt(rowsToRemove.at(i));
+                }
+                updateSavedListsIndex();
+                MediaListProperties audioListsProperties = m_application->mediaListsManager()->audioListsModel()->mediaListProperties();
+                m_application->mediaListsManager()->audioListsModel()->clearMediaListData();
+                m_application->mediaListsManager()->audioListsModel()->setMediaListProperties(audioListsProperties);
+                m_application->mediaListsManager()->audioListsModel()->load();
+                emit savedListsChanged();
             }
-            for (int i = 0; i < rowsToRemove.count(); i++) {
-                m_savedAudioLists.removeAt(rowsToRemove.at(i));
+            if (isAmpacheServer) {
+                removeAmpacheData("Audio", name);
+                m_application->mediaListsManager()->audioListsModel()->reload();
             }
-            updateSavedListsIndex();
-            MediaListProperties audioListsProperties = m_application->mediaListsManager()->audioListsModel()->mediaListProperties();
-            m_application->mediaListsManager()->audioListsModel()->clearMediaListData();
-            m_application->mediaListsManager()->audioListsModel()->setMediaListProperties(audioListsProperties);
-            m_application->mediaListsManager()->audioListsModel()->load();
-            emit savedListsChanged();
         }
     }
 }
@@ -245,20 +274,42 @@ void SavedListsManager::removeVideoList()
 void SavedListsManager::enableValidSave(QString newText)
 {
     m_parent->audioListsStack()->ui->saveAudioList->setEnabled(true);
-    if (!m_parent->audioListsStack()->ui->aNewListName->text().isEmpty()) {
+    if (!m_parent->audioListsStack()->ui->aNewListName->text().isEmpty() &&
+        !m_parent->audioListsStack()->ui->ampacheDataAdd->isVisible()) {
         m_parent->audioListsStack()->ui->saveAudioList->setEnabled(true);
     } else {
-        m_parent->audioListsStack()->ui->saveAudioList->setEnabled(false);
+        if (!m_parent->audioListsStack()->ui->ampacheDataAdd->isVisible()) {
+            m_parent->audioListsStack()->ui->saveAudioList->setEnabled(false);
+        } else {
+            if (m_parent->audioListsStack()->ui->ampacheServerAdd->text().isEmpty() ||
+                m_parent->audioListsStack()->ui->ampacheUserNameAdd->text().isEmpty() ||
+                m_parent->audioListsStack()->ui->ampachePasswordAdd->text().isEmpty()) {
+                m_parent->audioListsStack()->ui->saveAudioList->setEnabled(false);
+            } else {
+                m_parent->audioListsStack()->ui->saveAudioList->setEnabled(true);
+            }
+        }
     }
     if (!m_parent->videoListsStack()->ui->vNewListName->text().isEmpty()) {
         m_parent->videoListsStack()->ui->saveVideoList->setEnabled(true);
     } else {
         m_parent->videoListsStack()->ui->saveVideoList->setEnabled(false);
     } 
-    if (!m_parent->audioListsStack()->ui->aslsListName->text().isEmpty()) {
+    if (!m_parent->audioListsStack()->ui->aslsListName->text().isEmpty() &&
+        !m_parent->audioListsStack()->ui->ampacheData->isVisible()) {
         m_parent->audioListsStack()->ui->aslsSave->setEnabled(true);
     } else {
-        m_parent->audioListsStack()->ui->aslsSave->setEnabled(false);
+        if (!m_parent->audioListsStack()->ui->ampacheData->isVisible()) {
+            m_parent->audioListsStack()->ui->aslsSave->setEnabled(false);
+        } else {
+            if (m_parent->audioListsStack()->ui->ampacheServer->text().isEmpty() ||
+                m_parent->audioListsStack()->ui->ampacheUserName->text().isEmpty() ||
+                m_parent->audioListsStack()->ui->ampachePassword->text().isEmpty()) {
+                m_parent->audioListsStack()->ui->aslsSave->setEnabled(false);
+            } else {
+                m_parent->audioListsStack()->ui->aslsSave->setEnabled(true);
+            }
+        }
     } 
     if (!m_parent->videoListsStack()->ui->vslsListName->text().isEmpty()) {
         m_parent->videoListsStack()->ui->vslsSave->setEnabled(true);
@@ -272,7 +323,8 @@ void SavedListsManager::audioListsSelectionChanged(const QItemSelection & select
 {
     if (selected.indexes().count() > 0) {
         bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
-        if (isSavedList) {
+        bool isAmpacheServer = selected.indexes().at(0).data(MediaItem::UrlRole).toString().startsWith("ampache://");
+        if (isSavedList || isAmpacheServer) {
             m_parent->audioListsStack()->ui->removeAudioList->setEnabled(true);
         } else {
             m_parent->audioListsStack()->ui->removeAudioList->setEnabled(false);
@@ -350,10 +402,25 @@ void SavedListsManager::showAudioSavedListSettings()
         int row = selectedIndexes.at(i).row();
         m_parent->audioListsStack()->ui->aslsListName->setText(m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row).title);
         // We can only export a playlist when we have a .m3u file
-        if (QString(m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row).url).contains("semantics://")) {
-            m_parent->audioListsStack()->ui->aslsExport->setEnabled(false);
+        MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row);
+        if (selectedItem.url.startsWith("savedlists://")) {
+            m_parent->audioListsStack()->ui->aslsExport->show();
+            m_parent->audioListsStack()->ui->exportSavedListLabel->show();
+            m_parent->audioListsStack()->ui->ampacheData->hide();
         } else {
-            m_parent->audioListsStack()->ui->aslsExport->setEnabled(true);
+            m_parent->audioListsStack()->ui->aslsExport->hide();
+            m_parent->audioListsStack()->ui->exportSavedListLabel->hide();
+            if (selectedItem.url.startsWith("ampache://")) {
+                m_ampachePasswordEdited = false;
+                m_parent->audioListsStack()->ui->ampacheData->show();
+                QString server = selectedItem.fields["server"].toString();
+                m_parent->audioListsStack()->ui->ampacheServer->setText(server);
+                QString userName = selectedItem.fields["username"].toString();
+                m_parent->audioListsStack()->ui->ampacheUserName->setText(userName);
+                QString password = QString().fill('*',selectedItem.fields["pwdLength"].toInt());
+                m_parent->audioListsStack()->ui->ampachePassword->setText(password);
+                //enableValidSave();
+            }
         }
     }
     m_parent->audioListsStack()->ui->aslsListName->setFocus();
@@ -367,10 +434,13 @@ void SavedListsManager::showVideoSavedListSettings()
         int row = selectedIndexes.at(i).row();
         m_parent->videoListsStack()->ui->vslsListName->setText(m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).title);
         // We can only export a playlist when we have a .m3u file
-        if (QString(m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).url).contains("semantics://")) {
-            m_parent->videoListsStack()->ui->vslsExport->setEnabled(false);
+        QString selectedLri = m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).url;
+        if (selectedLri.startsWith("savedlists://")) {
+            m_parent->videoListsStack()->ui->vslsExport->show();
+            m_parent->videoListsStack()->ui->exportSavedListLabel->show();
         } else {
-            m_parent->videoListsStack()->ui->vslsExport->setEnabled(true);
+            m_parent->videoListsStack()->ui->vslsExport->hide();
+            m_parent->videoListsStack()->ui->exportSavedListLabel->hide();
         }
     }
     m_parent->videoListsStack()->ui->vslsListName->setFocus();
@@ -611,59 +681,90 @@ void SavedListsManager::saveAudioListSettings()
         oldName = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(audioListsRow).title;
         mediaItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(audioListsRow);
     }
-    
-    //Read index file to locate and rename saved list name
-    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
-    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return;
+
+    if (mediaItem.url.startsWith("ampache://")) {
+        QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
+        QString server = m_parent->audioListsStack()->ui->ampacheServer->text();
+        QString userName = m_parent->audioListsStack()->ui->ampacheUserName->text();
+        QString password = m_parent->audioListsStack()->ui->ampachePassword->text();
+        saveAmpacheData("Audio", oldName, newName, server, userName, password);
+
+        //Update Audio ListView
+        mediaItem.title = newName;
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.fields["server"] = server;
+        mediaItem.fields["username"] = userName;
+        QString key = mediaItem.fields["key"].toString();
+        if (m_ampachePasswordEdited) {
+            key = Utilities::sha256Of(password);
+            mediaItem.fields["key"] = key;
+            mediaItem.fields["pwdLength"] = password.length();
+        }
+        mediaItem.url = QString("ampache://%1?server=%2||username=%3||key=%4||request=root")
+                               .arg("audio")
+                               .arg(server)
+                               .arg(userName)
+                               .arg(key);
+        m_application->mediaListsManager()->audioListsModel()->replaceMediaItemAt(audioListsRow, mediaItem);
+        //m_application->browsingModel()->loadLRI(mediaItem.url);
+        ui->listTitle->setText(newName);
+        m_ampachePasswordEdited = false;
     }
-    m_savedAudioLists.clear();
-    QTextStream in(&indexFile);
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        QStringList nameUrl = line.split(":::");
-        if (nameUrl.count() >= 3) {
-            QString type = nameUrl.at(0).trimmed();
-            QString name = nameUrl.at(1).trimmed();
-            QString lri = nameUrl.at(2).trimmed();
-            if (type == "Audio") {
-                QString indexEntry = line;
-                if (name == oldName) {
-                    QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
-                    if (lri.startsWith("savedlists://")) {
-                        //rename file
-                        QString filename = name.replace(" ", "");
-                        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-                        QString newFilename = QString(newName).replace(" ", "");
-                        QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(newFilename), true));
-                        QString renamedFileName = file.fileName();
-                        renamedFileName.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
-                        file.rename(renamedFileName);
-                        lri.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
+    
+    if (mediaItem.url.startsWith("savedlists://")) {
+        //Read index file to locate and rename saved list name
+        QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
+        if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            return;
+        }
+        m_savedAudioLists.clear();
+        QTextStream in(&indexFile);
+        while (!in.atEnd()) {
+            QString line = in.readLine().trimmed();
+            QStringList nameUrl = line.split(":::");
+            if (nameUrl.count() >= 3) {
+                QString type = nameUrl.at(0).trimmed();
+                QString name = nameUrl.at(1).trimmed();
+                QString lri = nameUrl.at(2).trimmed();
+                if (type == "Audio") {
+                    QString indexEntry = line;
+                    if (name == oldName) {
+                        QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
+                        if (lri.startsWith("savedlists://")) {
+                            //rename file
+                            QString filename = name.replace(" ", "");
+                            QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
+                            QString newFilename = QString(newName).replace(" ", "");
+                            QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(newFilename), true));
+                            QString renamedFileName = file.fileName();
+                            renamedFileName.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
+                            file.rename(renamedFileName);
+                            lri.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
+                        }
+
+                        //Update Audio ListView
+                        mediaItem.title = newName;
+                        mediaItem.url = lri;
+                        m_application->mediaListsManager()->audioListsModel()->replaceMediaItemAt(audioListsRow, mediaItem);
+                        ui->listTitle->setText(newName);
+
+                        //create new index entry for index file
+                        indexEntry = QString("%1:::%2:::%3")
+                                .arg(type)
+                                .arg(newName)
+                                .arg(lri);
                     }
-                    
-                    //Update Audio ListView
-                    mediaItem.title = newName;
-                    mediaItem.url = lri;
-                    m_application->mediaListsManager()->audioListsModel()->replaceMediaItemAt(audioListsRow, mediaItem);
-                    ui->listTitle->setText(newName);
-                    
-                    //create new index entry for index file
-                    indexEntry = QString("%1:::%2:::%3")
-                        .arg(type)
-                        .arg(newName)
-                        .arg(lri);
+                    m_savedAudioLists.append(indexEntry);
                 }
-                m_savedAudioLists.append(indexEntry);
             }
         }
+        indexFile.close();
+
+        //Update index file
+        updateSavedListsIndex();
+
+        emit savedListsChanged();
     }
-    indexFile.close();
-    
-    //Update index file
-    updateSavedListsIndex();
-    
-    emit savedListsChanged();
     if (selectedIndexes.count() > 0) {
         m_parent->audioListsStack()->ui->audioLists->selectionModel()->select(selectedIndexes.at(0), QItemSelectionModel::Select);
     }
@@ -877,4 +978,114 @@ void SavedListsManager::loadPlaylist()
     mediaItem.title = i18n("Playlist");
     mediaItem.url = "savedlists://Playlist-current.m3u";
     m_application->playlist()->addMediaItem(mediaItem);
+}
+
+void SavedListsManager::toggleAmpacheDataAdd(bool checked)
+{
+    m_parent->audioListsStack()->ui->ampacheDataAdd->setVisible(checked);
+    enableValidSave();
+}
+
+void SavedListsManager::saveAmpacheData(const QString type, const QString oldName, const QString newName, const QString server, const QString userName, const QString password)
+{
+    //create new index entry for index file
+    QString key = Utilities::sha256Of(password);
+    QString newEntry = QString("%1:::%2:::%3:::%4:::%5:::%6")
+                         .arg(type)
+                         .arg(newName)
+                         .arg(server)
+                         .arg(userName)
+                         .arg(key)
+                         .arg(password.length());
+
+    //Read index file to locate and rename saved list name
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    QStringList serverLines;
+    QTextStream in(&indexFile);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        QStringList serverData = line.split(":::");
+        if (serverData.count() >= 6) {
+            QString indexEntry = line;
+            QString curType = serverData.at(0).trimmed();
+            QString name = serverData.at(1).trimmed();
+            if (!m_ampachePasswordEdited) {
+                key = serverData.at(4).trimmed();
+            }
+
+            if (curType.toLower() == type.toLower()) {
+                if (name == oldName) {
+                    newEntry = QString("%1:::%2:::%3:::%4:::%5:::%6")
+                                         .arg(type)
+                                         .arg(newName)
+                                         .arg(server)
+                                         .arg(userName)
+                                         .arg(key)
+                                         .arg(password.length());
+                    indexEntry = newEntry;
+                }
+            }
+            serverLines.append(indexEntry);
+        }
+    }
+    indexFile.close();
+    if (serverLines.isEmpty()) {
+        serverLines.append(newEntry);
+    }
+
+    QFile::remove(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+    if (!indexFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+    QTextStream outIndex(&indexFile);
+    for (int i = 0; i < serverLines.count(); i++) {
+        outIndex << serverLines.at(i) << "\r\n";
+    }
+    indexFile.close();
+}
+
+void SavedListsManager::ampachePasswordEdited(QString text)
+{
+    if (!m_ampachePasswordEdited) {
+        m_parent->audioListsStack()->ui->ampachePassword->clear();
+        m_ampachePasswordEdited = true;
+    }
+    enableValidSave(text);
+}
+
+void SavedListsManager::removeAmpacheData(const QString type, const QString name)
+{
+    //Read index file to locate and rename saved list name
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+    QStringList serverLines;
+    QTextStream in(&indexFile);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        QStringList serverData = line.split(":::");
+        if (serverData.count() >= 6) {
+            QString indexEntry = line;
+            QString curType = serverData.at(0).trimmed();
+            QString curName = serverData.at(1).trimmed();
+            if (!(curType.toLower() == type.toLower() && (curName == name))) {
+                serverLines.append(indexEntry);
+            }
+        }
+    }
+    indexFile.close();
+
+    QFile::remove(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+    if (!indexFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return;
+    }
+    QTextStream outIndex(&indexFile);
+    for (int i = 0; i < serverLines.count(); i++) {
+        outIndex << serverLines.at(i) << "\r\n";
+    }
+    indexFile.close();
 }

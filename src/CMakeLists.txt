@@ -49,6 +49,7 @@ set(BangarangSources
     platform/infofetchers/lastfminfofetcher.cpp
     platform/infofetchers/tmdbinfofetcher.cpp
     platform/infofetchers/tvdbinfofetcher.cpp
+    platform/listengines/ampachelistengine.cpp
     platform/listengines/audioclipslistengine.cpp
     platform/listengines/audiostreamlistengine.cpp
     platform/listengines/cachelistengine.cpp
@@ -69,6 +70,7 @@ set(BangarangSources
     platform/utilities/filetags.cpp
     platform/utilities/general.cpp
     platform/utilities/mediaitems.cpp
+    platform/utilities/sha256.cpp
     platform/utilities/thread.cpp
     platform/utilities/typechecks.cpp
 )
