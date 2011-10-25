@@ -999,39 +999,38 @@ void SavedListsManager::saveAmpacheData(const QString type, const QString oldNam
                          .arg(password.length());
 
     //Read index file to locate and rename saved list name
-    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
-    if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return;
-    }
     QStringList serverLines;
-    QTextStream in(&indexFile);
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        QStringList serverData = line.split(":::");
-        if (serverData.count() >= 6) {
-            QString indexEntry = line;
-            QString curType = serverData.at(0).trimmed();
-            QString name = serverData.at(1).trimmed();
-            if (!m_ampachePasswordEdited) {
-                key = serverData.at(4).trimmed();
-            }
-
-            if (curType.toLower() == type.toLower()) {
-                if (name == oldName) {
-                    newEntry = QString("%1:::%2:::%3:::%4:::%5:::%6")
-                                         .arg(type)
-                                         .arg(newName)
-                                         .arg(server)
-                                         .arg(userName)
-                                         .arg(key)
-                                         .arg(password.length());
-                    indexEntry = newEntry;
+    QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/ampacheservers", false));
+    if (indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&indexFile);
+        while (!in.atEnd()) {
+            QString line = in.readLine().trimmed();
+            QStringList serverData = line.split(":::");
+            if (serverData.count() >= 6) {
+                QString indexEntry = line;
+                QString curType = serverData.at(0).trimmed();
+                QString name = serverData.at(1).trimmed();
+                if (!m_ampachePasswordEdited) {
+                    key = serverData.at(4).trimmed();
                 }
+
+                if (curType.toLower() == type.toLower()) {
+                    if (name == oldName) {
+                        newEntry = QString("%1:::%2:::%3:::%4:::%5:::%6")
+                                .arg(type)
+                                .arg(newName)
+                                .arg(server)
+                                .arg(userName)
+                                .arg(key)
+                                .arg(password.length());
+                        indexEntry = newEntry;
+                    }
+                }
+                serverLines.append(indexEntry);
             }
-            serverLines.append(indexEntry);
         }
+        indexFile.close();
     }
-    indexFile.close();
     if (serverLines.isEmpty()) {
         serverLines.append(newEntry);
     }
