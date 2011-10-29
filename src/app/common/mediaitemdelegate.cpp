@@ -93,7 +93,10 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 {
     QStyleOptionViewItemV4 opt(option);
     QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);    
+    if (!(m_application->isTouchEnabled() &&
+         (option.state.testFlag(QStyle::State_MouseOver) && !option.state.testFlag(QStyle::State_Selected)))) {
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
+    }
     
     if (index.column() != 0)
         return;
@@ -302,13 +305,13 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         int playlistRow = m_application->playlist()->playlistModel()->rowOfUrl(index.data(MediaItem::UrlRole).value<QString>());
         QIcon icon;
         if (playlistRow != -1) {
-            if (option.state.testFlag(QStyle::State_MouseOver)) { 
+            if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
                 icon = m_removeFromPlaylist;
             } else {
                 icon = m_showInPlaylist;
             }
         } else {
-            if (option.state.testFlag(QStyle::State_MouseOver)) {
+            if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
                 icon = m_showNotInPlaylist;
             } else {
                 icon = KIcon();
