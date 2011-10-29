@@ -70,6 +70,10 @@ void FlickCharm::activateOn(QWidget *widget)
 
         viewport->installEventFilter(this);
         scrollArea->installEventFilter(this);
+        QList<QWidget*> vpChildren = viewport->findChildren<QWidget*>();
+        for (int j = 0; j < vpChildren.count(); j++) {
+            vpChildren.at(j)->installEventFilter(this);
+        }
 
         d->flickData.remove(viewport);
         d->flickData[viewport] = new FlickData;
@@ -145,7 +149,31 @@ bool FlickCharm::eventFilter(QObject *object, QEvent *event)
     if (!mouseEvent || mouseEvent->modifiers() != Qt::NoModifier)
         return false;
 
-    QWidget *viewport = dynamic_cast<QWidget*>(object);
+    bool isInArea = false;
+    QWidget* viewport = 0;
+    QWidget* widget = dynamic_cast<QWidget*>(object);
+    QWidget* widgetParent = dynamic_cast<QWidget*>(object->parent());
+    for (int i = 0; i < d->flickData.keys().count(); i++) {
+        viewport = d->flickData.keys().at(i);
+        if (widget == viewport || widgetParent == viewport) {
+            isInArea = true;
+            break;
+        }
+        QList<QWidget*> children = viewport->findChildren<QWidget*>();
+        for (int j = 0; j < children.count(); j++) {
+            if (widget == children.at(j) || widgetParent == children.at(j)) {
+                isInArea = true;
+                break;
+            }
+        }
+        if (isInArea) {
+            break;
+        }
+    }
+    if (!isInArea) {
+        return false;
+    }
+
     FlickData *data = d->flickData.value(viewport);
     if (!viewport || !data || data->ignored.removeAll(event))
         return false;
@@ -158,7 +186,7 @@ bool FlickCharm::eventFilter(QObject *object, QEvent *event)
             if (mouseEvent->buttons() == Qt::LeftButton) {
                 consumed = true;
                 data->state = FlickData::Pressed;
-                data->pressPos = mouseEvent->pos();
+                data->pressPos = viewport->mapFromGlobal(mouseEvent->globalPos());
                 data->offset = scrollOffset(data->widget);
             }
         break;
@@ -190,7 +218,7 @@ bool FlickCharm::eventFilter(QObject *object, QEvent *event)
     case FlickData::ManualScroll:
         if (mouseEvent->type() == QEvent::MouseMove) {
             consumed = true;
-            QPoint delta = mouseEvent->pos() - data->pressPos;
+            QPoint delta = viewport->mapFromGlobal(mouseEvent->globalPos()) - data->pressPos;
             setScrollOffset(data->widget, data->offset - delta);
         }
         if (mouseEvent->type() == QEvent::MouseButtonRelease) {
@@ -204,7 +232,7 @@ bool FlickCharm::eventFilter(QObject *object, QEvent *event)
             consumed = true;
             data->state = FlickData::Stop;
             data->speed = QPoint(0, 0);
-            data->pressPos = mouseEvent->pos();
+            data->pressPos = viewport->mapFromGlobal(mouseEvent->globalPos());
             data->offset = scrollOffset(data->widget);
         }
         if (mouseEvent->type() == QEvent::MouseButtonRelease) {
