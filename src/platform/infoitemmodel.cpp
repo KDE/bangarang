@@ -438,6 +438,9 @@ void InfoItemModel::selectFetchedMatch(int index)
 
 void InfoItemModel::setRating(int rating)
 {
+    if (rating < 0 || rating > 10) {
+        return;
+    }
     for (int i = 0; i < m_mediaList.count(); i++) {
         MediaItem mediaItem = m_mediaList.at(i);
         mediaItem.fields["rating"] = rating;
