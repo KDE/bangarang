@@ -57,6 +57,8 @@
 
 InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
+    m_application = (BangarangApplication *)KApplication::kApplication();
+
     m_nepomukInited = Utilities::nepomukInited();
 
     m_stringListIndexEditing = -1;
@@ -112,7 +114,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
-    bool isEditable = model->itemFromIndex(index)->isEditable();
+    bool isEditable = model->itemFromIndex(index)->isEditable() && !m_application->isTouchEnabled();
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
     bool isArtwork = (field == "artwork");
     bool isRating = (field == "rating");
@@ -441,7 +443,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
 
             //Draw link icon
-            if (isUrl && option.state.testFlag(QStyle::State_MouseOver)) {
+            if (isUrl && option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
                 KUrl url(index.data().toString());
                 if (url.isValid() &&
                     (field == "relatedTo" ||
@@ -484,7 +486,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
     }
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
-        bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable();
+        bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable() && !m_application->isTouchEnabled();
         if (event->type() == QEvent::MouseButtonRelease && isEditable) {
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(m_mousePos)) {
@@ -550,11 +552,12 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             if (url.isValid() && url.isLocalFile()) {
                 QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
                 hoverRect.adjust(0, 0, -16 - m_padding, 0);
-                if (linkIconRect.contains(m_mousePos)) {
+                if (linkIconRect.contains(m_mousePos) ||
+                    (m_application->isTouchEnabled() && hoverRect.contains(m_mousePos))) {
                     QDesktopServices::openUrl(url);
                 }
             }
-            if (hoverRect.contains(m_mousePos)) {
+            if (hoverRect.contains(m_mousePos) && !m_application->isTouchEnabled()) {
                 return QItemDelegate::editorEvent(event, model, option, index);
             }
         }
@@ -600,7 +603,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             listIndex == textList.count()-1) {
             plusIconRect = dataRect.adjusted(dataRect.width()-16, 0, 0, 0);
         }
-        if (hoverRect.contains(m_mousePos) && !m_isEditing) {
+        if (hoverRect.contains(m_mousePos) && !m_isEditing && !m_application->isTouchEnabled()) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 m_isEditing = true;
             }
@@ -622,7 +625,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                 }
             }
             return QItemDelegate::editorEvent(event, model, option, index);
-        } else if (drillIconRect.contains(m_mousePos) && !m_isEditing) {
+        } else if (drillIconRect.contains(m_mousePos) && !m_isEditing && !m_application->isTouchEnabled()) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 m_rowOfNewValue = -1;
                 MediaItem drillItem = index.data(InfoItemModel::DrillRole).value<MediaItem>();
@@ -646,7 +649,8 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             } else {
                 return true;
             }
-        } else if (linkIconRect.contains(m_mousePos)) {
+        } else if (linkIconRect.contains(m_mousePos) |
+                   (linkIconExists && hoverRect.contains(m_mousePos) && m_application->isTouchEnabled())) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 KUrl url;
                 if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
