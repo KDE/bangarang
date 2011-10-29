@@ -29,6 +29,7 @@
 class MainWindow;
 class MediaIndexer;
 class InfoItemView;
+class BangarangApplication;
 
 /*
  * This Item Delegate is responsible for painting items in a 
@@ -70,6 +71,7 @@ class InfoItemDelegate : public QItemDelegate
         int m_padding;
         bool m_isEditing;
         int m_starRatingSize;
+        BangarangApplication* m_application;
         QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
