@@ -139,7 +139,7 @@ void NowPlayingDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         int rating = index.data(MediaItem::RatingRole).isValid() ?
             index.data(MediaItem::RatingRole).toInt() : 0;
         StarRating r = StarRating(rating, m_starRatingSize, ratingRect(&option.rect).topLeft());
-        if (option.state.testFlag(QStyle::State_MouseOver))
+        if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled())
             r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
         r.paint(&p);
     }
@@ -204,7 +204,7 @@ bool NowPlayingDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
 {
     static bool s_mouseOver = false;
     Q_UNUSED(model);
-    if (event->type() != QEvent::MouseButtonPress && event->type() != QEvent::MouseMove)
+    if (event->type() != QEvent::MouseButtonRelease && event->type() != QEvent::MouseMove)
         return false;
     if (index.column() != 0)
         return false;
