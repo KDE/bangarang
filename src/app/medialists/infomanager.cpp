@@ -22,6 +22,7 @@
 #include "infoitemdelegate.h"
 #include "infobox.h"
 #include "../common/mainwindow.h"
+#include "../common/flickcharm.h"
 #include "ui_mainwindow.h"
 #include "../common/mediaitemdelegate.h"
 #include "../../platform/mediaitemmodel.h"
@@ -680,5 +681,12 @@ void InfoManager::openInfoFetcherLink()
 
 void InfoManager::enableTouch()
 {
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
+    ui->showInfoFetcherExpander->setMinimumSize(tTouchable, tTouchable);
+    ui->showInfoFetcherExpander->setIconSize(QSize(tVisual, tVisual));
+    ui->infoItemView->enableTouch();
+    FlickCharm *charm = new FlickCharm(ui->infoItemViewHolder);
+    charm->activateOn(ui->infoItemViewHolder);
     m_enableTouch = true;
 }
