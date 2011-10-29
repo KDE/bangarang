@@ -512,9 +512,6 @@ void MainWindow::enableTouch() {
     ui->closeMediaListFilter->setMinimumSize(tTouchable, tTouchable);
     ui->mediaListFilterProxyLine->setMinimumHeight(tTouchable);
     ui->mediaView->enableTouch();
-    ui->showInfoFetcherExpander->setMinimumSize(tTouchable, tTouchable);
-    ui->showInfoFetcherExpander->setIconSize(QSize(tVisual, tVisual));
-    ui->infoItemView->enableTouch();
     m_application->infoManager()->enableTouch();
     ui->playlistView->enableTouch();
     ui->closePlaylistFilter->setMinimumSize(tTouchable, tTouchable);
