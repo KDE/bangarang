@@ -283,8 +283,9 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                             index.data(MediaItem::RatingRole).toInt() : 0;
             QPoint topLeft = ratingRect(&option.rect).topLeft();
             StarRating r = StarRating(rating, m_starRatingSize, topLeft);
-            if (option.state.testFlag(QStyle::State_MouseOver))
+            if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
                 r.setHoverAtPosition(m_view->mapFromGlobal(QCursor::pos()));
+            }
             r.paint(&p);
         }
     }
@@ -427,10 +428,10 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         }
         //check for rating region
         QRect curArea = ratingRect(&option.rect);
-        if (curArea.contains(mousePos)) {
+        if (curArea.contains(mousePos) && !m_application->isTouchEnabled()) {
             //check for events/if it's useful
             if (!m_nepomukInited ||
-                (eventType != QEvent::MouseButtonPress && eventType != QEvent::MouseMove) ||
+                (eventType != QEvent::MouseButtonRelease && eventType != QEvent::MouseMove) ||
                 (m_renderMode != NormalMode && m_renderMode != MiniRatingMode)
             ) {
                 goto no_special_event;

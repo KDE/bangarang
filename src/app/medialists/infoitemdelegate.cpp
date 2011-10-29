@@ -272,7 +272,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         int ratingTop = dataRect.top() + (dataRect.height() - ratingSize.height())/2;
         QRect ratingRect = QRect(QPoint(ratingLeft, ratingTop), ratingSize);
         starRating.setPoint(ratingRect.topLeft());
-        if (option.state.testFlag(QStyle::State_MouseOver)) {
+        if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
             starRating.setHoverAtPosition(m_mousePos);
         }
         starRating.paint(&p);
@@ -512,14 +512,14 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         }
         return true;
     } else if (field == "rating") {
-        if (event->type() == QEvent::MouseButtonPress) {
+        if (event->type() == QEvent::MouseButtonRelease) {
             //Determine rating set a mouse position
             QRect dataRect = fieldDataRect(option, index);
-            QSize ratingSize = StarRating::SizeHint(StarRating::Big);
+            QSize ratingSize = StarRating::SizeHint(m_starRatingSize);
             int ratingLeft = dataRect.left() + (dataRect.width()-ratingSize.width())/2;
             int ratingTop = dataRect.top() + (dataRect.height() - ratingSize.height())/2;
             QRect ratingRect = QRect(QPoint(ratingLeft, ratingTop), ratingSize);
-            int rating = StarRating::RatingAtPosition(m_mousePos, StarRating::Big, ratingRect.topLeft());
+            int rating = StarRating::RatingAtPosition(m_mousePos, m_starRatingSize, ratingRect.topLeft());
 
             //Set rating
             InfoItemModel *model = (InfoItemModel *)index.model();
