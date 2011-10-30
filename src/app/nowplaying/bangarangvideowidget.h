@@ -73,6 +73,7 @@ class BangarangVideoWidget : public Phonon::VideoWidget
         
  protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *);
     
  Q_SIGNALS:
     void skipForward(int i);

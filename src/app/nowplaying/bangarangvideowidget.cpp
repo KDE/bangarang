@@ -61,7 +61,7 @@ BangarangVideoWidget::wheelEvent(QWheelEvent *event)
 void
 BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
 {
-  if(event->button() == Qt::LeftButton){
+  if(event->button() == Qt::LeftButton && !m_application->isTouchEnabled()){
     if (m_fullscreen) {
       emit fullscreenChanged(false);
       setIsFullscreen(false);
@@ -72,6 +72,14 @@ BangarangVideoWidget::mouseDoubleClickEvent (QMouseEvent *event)
     }
   }
 }
+
+void BangarangVideoWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (m_application->isTouchEnabled()) {
+        m_application->actionsManager()->action("toggle_controls")->trigger();
+    }
+    Q_UNUSED(event);
+}
+
 void
 BangarangVideoWidget::setIsFullscreen(bool isFullscreen)
 { 
