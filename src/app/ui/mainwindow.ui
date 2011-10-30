@@ -954,8 +954,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>220</width>
-                            <height>293</height>
+                            <width>207</width>
+                            <height>216</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_64">
@@ -3611,16 +3611,6 @@ color: rgb(255, 255, 255);</string>
                   </property>
                   <property name="margin">
                    <number>2</number>
-                  </property>
-                 </widget>
-                 <widget class="QWidget" name="nowPlayingViewQMLHolder" native="true">
-                  <property name="geometry">
-                   <rect>
-                    <x>30</x>
-                    <y>20</y>
-                    <width>120</width>
-                    <height>80</height>
-                   </rect>
                   </property>
                  </widget>
                 </widget>
