@@ -60,47 +60,6 @@ QString InfoFetcher::about()
     return m_about;
 }
 
-void InfoFetcher::setValue(const QString &field, const QVariant &value)
-{
-    for (int i = 0; i < m_mediaList.count(); i++) {
-        MediaItem mediaItem = m_mediaList.at(i);
-        mediaItem.fields[field] = value;
-        if (field == "title") {
-            mediaItem.title = value.toString();
-        }
-        if (field == "artist" || field == "album") {
-            QString artist;
-            QString album;
-            if (field == "artist") {
-                artist = value.toString();
-                album = mediaItem.fields["album"].toString();
-            } else {
-                artist = mediaItem.fields["artist"].toString();
-                album = value.toString();
-            }
-        }
-        if (field == "seriesName" || field == "season" || field == "episodeNumber") {
-            QString seriesName;
-            int season = 0;
-            int episodeNumber = 0;
-            if (field == "seriesName") {
-                seriesName = value.toString();
-                season = mediaItem.fields["season"].toInt();
-                episodeNumber = mediaItem.fields["episodeNumber"].toInt();
-            } else if (field == "season") {
-                seriesName = mediaItem.fields["seriesName"].toString();
-                season = value.toInt();;
-                episodeNumber = mediaItem.fields["episodeNumber"].toInt();
-            } else {
-                seriesName = mediaItem.fields["seriesName"].toString();
-                season = mediaItem.fields["season"].toInt();
-                episodeNumber = value.toInt();
-            }
-        }
-        mediaItem = Utilities::makeSubtitle(mediaItem);
-    }
-}
-
 bool InfoFetcher::hasMultipleValues(const QString &field)
 {
     QVariant value;

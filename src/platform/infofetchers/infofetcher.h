@@ -79,7 +79,6 @@ class InfoFetcher : public QObject
         QTimer *m_timer;
         int m_timeoutLength;
 
-        void setValue(const QString &field, const QVariant &value);
         bool hasMultipleValues(const QString &field);
         QVariant commonValue(const QString &field);
         QStringList valueList(const QString &field);

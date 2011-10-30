@@ -325,18 +325,7 @@ void InfoManager::loadSelectedInfo()
     m_selectedInfoBoxMediaItems.clear();
     emit infoBoxSelectionChanged(m_selectedInfoBoxMediaItems);
 
-    //Determine type of items in mediaview
-    bool mediaViewHasMedia = false;
-    if (m_application->browsingModel()->rowCount()>0) {
-        if (m_application->browsingModel()->mediaItemAt(0).type == "Audio" || m_application->browsingModel()->mediaItemAt(0).type == "Video") {
-            mediaViewHasMedia = true;
-        } else {
-            mediaViewHasMedia = false;
-        }
-    }
-    
     //Determine Information context
-    bool selected = true;
     m_context.clear();
     if (selectedRows.count() > 0) {
         //If items are selected then the context is the selected items
@@ -350,7 +339,6 @@ void InfoManager::loadSelectedInfo()
     } else if (m_application->browsingModel()->rowCount()>0) {
         //If nothing is selected then the information context is 
         //the category selected to produce the list of media in the mediaview
-        selected = false;
         m_context.append(m_application->browsingModel()->mediaListProperties().category);
     } else {
         return;
@@ -359,16 +347,6 @@ void InfoManager::loadSelectedInfo()
     //Show/Hide indexer
     showIndexer();
     
-    //Determine type of context data
-    bool contextIsMedia = false;
-    if (m_context.at(0).type == "Audio" || m_context.at(0).type == "Video") {
-        contextIsMedia = true;
-    }
-    bool contextIsCategory = false;
-    if (m_context.at(0).type == "Category") {
-        contextIsCategory = true;
-    }
-
     //Load contextual data into info model and info boxes
     if (!(m_context.count() == 1 &&
           m_infoItemModel->mediaList().count() == 1 &&
