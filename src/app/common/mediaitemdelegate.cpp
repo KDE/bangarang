@@ -323,7 +323,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         icon.paint(&p, left + leftOffset, top + topOffset, m_playlistIconSize, m_playlistIconSize, Qt::AlignCenter, QIcon::Normal);
     } else if (isCategory && hasUrl &&
                (m_renderMode == NormalMode ||
-                (m_renderMode != NormalMode && option.state.testFlag(QStyle::State_MouseOver)))) {
+                (m_renderMode != NormalMode && option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()))) {
         //Paint Category Icon
         int topOffset = (height - m_categoryIconSize) / 2;
         int leftOffset = categoryIconRect(&option.rect).left() - left + m_actionIconPadding;
@@ -417,7 +417,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         QRect curArea = addRmPlaylistRect(&option.rect);
         //doubleclick on the item or click on the "add to/remove from playlist" area
         if ((eventType == QEvent::MouseButtonDblClick) ||
-            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos))
+            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos) && !m_application->isTouchEnabled())
             ) {
                 emit categoryActivated(index);
                 return true;
