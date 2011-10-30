@@ -314,6 +314,14 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         } else {
             if (option.state.testFlag(QStyle::State_MouseOver) && !m_application->isTouchEnabled()) {
                 icon = m_showNotInPlaylist;
+            } else if (m_application->isTouchEnabled()) {
+                QPixmap cboxpixmap(32, 32);
+                cboxpixmap.fill(Qt::transparent);
+                QPainter pp(&cboxpixmap);
+                pp.setPen(Qt::gray);
+                pp.drawRoundedRect(5, 5, 22, 22, 4.0, 4.0);
+                pp.end();
+                icon = QIcon(cboxpixmap);
             } else {
                 icon = KIcon();
             }
