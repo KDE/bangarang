@@ -542,4 +542,6 @@ void MainWindow::enableTouch() {
     ui->showMenu->setMinimumSize(tTouchable, tTouchable);
     ui->showMenu_2->setMinimumSize(tTouchable, tTouchable);
     ui->floatingMenuHolder->setMinimumSize(tTouchable, tTouchable);
+    ui->widgetSet->setPalette(ui->contextStackHolder->palette());
+    ui->widgetSet->setAutoFillBackground(true);
 }
