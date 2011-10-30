@@ -503,6 +503,12 @@ void MainWindow::enableTouch() {
     kDebug() << "ENABLING TOUCH";
     int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
     int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
+    ui->widgetSet->setMinimumHeight(48);
+    ui->widgetSet->setMaximumHeight(48);
+    ui->mediaListWidgetSet->setMinimumHeight(48);
+    ui->mediaListWidgetSet->setMaximumHeight(48);
+    ui->mediaListWidgetSet1->setMinimumHeight(48);
+    ui->mediaListWidgetSet1->setMaximumHeight(48);
     ui->showMediaViewMenu->setMinimumSize(tTouchable, tTouchable);
     ui->audioListSelect->setMinimumSize(tTouchable, tTouchable);
     ui->videoListSelect->setMinimumSize(tTouchable, tTouchable);
@@ -526,6 +532,7 @@ void MainWindow::enableTouch() {
     ui->volumeSlider->setMinimumWidth(110);
     ui->mediaPrevious->setMinimumSize(tTouchable, tTouchable);
     ui->mediaNext->setMinimumSize(tTouchable, tTouchable);
+    ui->mediaPlayPause->setMinimumSize(46, 46);
     ui->clearPlaylist->setMinimumSize(tTouchable, tTouchable);
     ui->shuffle->setMinimumSize(tTouchable, tTouchable);
     ui->repeat->setMinimumSize(tTouchable, tTouchable);
