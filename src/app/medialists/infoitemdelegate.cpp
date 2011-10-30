@@ -674,6 +674,10 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
 
 QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
+    if (m_application->isTouchEnabled()) {
+        return 0;
+    }
+
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
     if (field == "artwork" || field == "rating") {
@@ -751,6 +755,9 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
 
 void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & index) const
 {
+    if (m_application->isTouchEnabled()) {
+        return;
+    }
 
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant::Type type = index.data(Qt::EditRole).type();
@@ -786,6 +793,10 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
 
 void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    if (m_application->isTouchEnabled()) {
+        return;
+    }
+
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect editorRect = stringListRectAtMousePos(option, index);
@@ -799,6 +810,10 @@ void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
 void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
 {
+    if (m_application->isTouchEnabled()) {
+        return;
+    }
+
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
