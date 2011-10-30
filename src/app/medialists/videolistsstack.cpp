@@ -34,6 +34,23 @@ void VideoListsStack::enableTouch() {
     ui->videoLists->setGridSize(QSize(0,tTouchable));
     FlickCharm* charm = new FlickCharm(this);
     charm->activateOn(ui->videoLists);
+    ui->vNewListName->setMinimumHeight(tTouchable);
+    ui->saveVideoList->setMinimumHeight(tTouchable);
+    ui->vCancelSaveList->setMinimumHeight(tTouchable);
+    ui->vslsListName->setMinimumHeight(tTouchable);
+    ui->vslsSave->setMinimumHeight(tTouchable);
+    ui->exportSavedListLabel->hide();
+    ui->vslsExport->hide();
+    ui->vslsCancel->setMinimumHeight(tTouchable);
+    ui->semVLimit->setMinimumHeight(tTouchable);
+    ui->semVTimeComp->setMinimumHeight(tTouchable);
+    ui->semVTime->setMinimumHeight(tTouchable);
+    ui->semVRating->setMinimumHeight(tTouchable);
+    ui->semVRatingComp->setMinimumHeight(tTouchable);
+    ui->semVFreq->setMinimumHeight(tTouchable);
+    ui->semVFreqComp->setMinimumHeight(tTouchable);
+    ui->semVConfigSave->setMinimumHeight(tTouchable);
+    ui->vCancelSemConfigure->setMinimumHeight(tTouchable);
 }
 
 

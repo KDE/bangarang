@@ -317,3 +317,12 @@ void AudioSettings::disconnectAudioChannelCombo()
 {
     disconnect(ui->audioChannelSelection, SIGNAL(currentIndexChanged(int)), this, SLOT(setAudioChannel(int)));
 }
+
+void AudioSettings::enableTouch()
+{
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    ui->audioChannelSelection->setMinimumHeight(tTouchable);
+    ui->eqPresets->setMinimumHeight(tTouchable);
+    ui->restoreDefaultAudioSettings->setMinimumHeight(tTouchable);
+    ui->hideAudioSettings->setMinimumHeight(tTouchable);
+}

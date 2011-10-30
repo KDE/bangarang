@@ -405,9 +405,11 @@ void BangarangApplication::processCommandLineArgs()
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     if (args->isSet("touch")) {
+        m_touchIsEnabled = true;
         //Adjust interface to be more touch friendly
         mainWindow()->enableTouch();
-        m_touchIsEnabled = true;
+        audioSettings()->enableTouch();
+        videoSettings()->enableTouch();
     }
     kDebug() << "TOUCH:" << args->isSet("touch");
 

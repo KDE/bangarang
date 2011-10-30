@@ -34,6 +34,23 @@ void AudioListsStack::enableTouch() {
     ui->audioLists->setGridSize(QSize(0, tTouchable + 2));
     FlickCharm* charm = new FlickCharm(this);
     charm->activateOn(ui->audioLists);
+    ui->aNewListName->setMinimumHeight(tTouchable);
+    ui->saveAudioList->setMinimumHeight(tTouchable);
+    ui->aCancelSaveList->setMinimumHeight(tTouchable);
+    ui->aslsListName->setMinimumHeight(tTouchable);
+    ui->aslsSave->setMinimumHeight(tTouchable);
+    ui->exportSavedListLabel->hide();
+    ui->aslsExport->hide();
+    ui->aslsCancel->setMinimumHeight(tTouchable);
+    ui->semALimit->setMinimumHeight(tTouchable);
+    ui->semATimeComp->setMinimumHeight(tTouchable);
+    ui->semATime->setMinimumHeight(tTouchable);
+    ui->semARating->setMinimumHeight(tTouchable);
+    ui->semARatingComp->setMinimumHeight(tTouchable);
+    ui->semAFreq->setMinimumHeight(tTouchable);
+    ui->semAFreqComp->setMinimumHeight(tTouchable);
+    ui->semAConfigSave->setMinimumHeight(tTouchable);
+    ui->aCancelSemConfigure->setMinimumHeight(tTouchable);
 }
 
 void AudioListsStack::on_configureAudioList_clicked()

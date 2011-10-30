@@ -53,6 +53,7 @@ class AudioSettings : public QObject
         void restoreAudioSettings(KConfigGroup *configGroup);
         void connectEq();
         void disconnectEq();
+        void enableTouch();
         
     public slots:
         void loadPreset(const QString &presetName);

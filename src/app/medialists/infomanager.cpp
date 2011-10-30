@@ -685,6 +685,15 @@ void InfoManager::enableTouch()
     int tVisual = BangarangApplication::TOUCH_VISUAL_METRIC;
     ui->showInfoFetcherExpander->setMinimumSize(tTouchable, tTouchable);
     ui->showInfoFetcherExpander->setIconSize(QSize(tVisual, tVisual));
+    ui->infoFetcherHolder->setMaximumHeight(160);
+    ui->infoFetcherSelector->setMinimumHeight(tTouchable);
+    ui->infoFetcherLink->setMinimumSize(tTouchable, tTouchable);
+    ui->infoFetcherLink->setIconSize(QSize(tVisual, tVisual));
+    ui->infoFetch->setMinimumHeight(tTouchable);
+    ui->infoAutoFetch->setMinimumHeight(tTouchable);
+    ui->infoItemSave->setMinimumHeight(tTouchable);
+    ui->infoItemCancelEdit->setMinimumHeight(tTouchable);
+    ui->infoIndexSelected->setMinimumHeight(tTouchable);
     ui->infoItemView->enableTouch();
     FlickCharm *charm = new FlickCharm(ui->infoItemViewHolder);
     charm->activateOn(ui->infoItemViewHolder);
