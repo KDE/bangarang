@@ -954,8 +954,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>207</width>
-                            <height>216</height>
+                            <width>220</width>
+                            <height>293</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_64">
@@ -4554,7 +4554,7 @@ color: rgb(255, 255, 255);</string>
                      <bool>true</bool>
                     </property>
                     <property name="currentIndex">
-                     <number>2</number>
+                     <number>1</number>
                     </property>
                     <widget class="QWidget" name="playlistHolderPage1">
                      <layout class="QVBoxLayout" name="verticalLayout_13">

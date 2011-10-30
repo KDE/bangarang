@@ -499,7 +499,9 @@ KMenu *ActionsManager::nowPlayingMenu()
     }
     m_nowPlayingMenu->addAction(action("show_video_settings"));
     m_nowPlayingMenu->addAction(action("show_audio_settings"));
-    m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
+    if (!m_application->isTouchEnabled()) {
+        m_nowPlayingMenu->addAction(action("show_shortcuts_editor"));
+    }
     m_nowPlayingMenu->addSeparator();
     m_nowPlayingMenu->addAction(helpMenu->action(KHelpMenu::menuAboutApp));
     return m_nowPlayingMenu;

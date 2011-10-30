@@ -501,5 +501,15 @@ void VideoSettings::showExternalSubtitles(qint64 time)
     }
 }
 
+void VideoSettings::enableTouch()
+{
+    int tTouchable = BangarangApplication::TOUCH_TOUCHABLE_METRIC;
+    ui->subtitleSelection->setMinimumHeight(tTouchable);
+    ui->angleSelection->setMinimumHeight(tTouchable);
+    ui->subtitleEncodingSelection->setMinimumHeight(tTouchable);
+    ui->restoreDefaultVideoSettings->setMinimumHeight(tTouchable);
+    ui->hideVideoSettings->setMinimumHeight(tTouchable);
+}
+
 
 #include "moc_videosettings.cpp"

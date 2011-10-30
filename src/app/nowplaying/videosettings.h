@@ -66,6 +66,7 @@ public:
     
     void restoreVideoSettings(KConfigGroup* config);
     void saveVideoSettings(KConfigGroup* config);
+    void enableTouch();
     
 public slots: //it should also be possible to use them as normal functions
     void setBrightness(int ch);
