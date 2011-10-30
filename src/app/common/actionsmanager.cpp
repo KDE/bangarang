@@ -315,7 +315,6 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
     bool isMedia = false;
     bool isFeed = false;
     bool isCategory = false;
-    bool isBrowsingFiles = false;
     bool isInPlaylist = false;
     QList<MediaItem> selectedItems = selectedMediaItems();
     if (selectedItems.count() > 0) {
@@ -324,7 +323,6 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
         isMedia = Utilities::isMedia(type);
         isCategory = Utilities::isCategory(type);
         isFeed = Utilities::isFeed(selectedItems.at(0).fields["categoryType"].toString());
-        isBrowsingFiles  = m_application->browsingModel()->mediaListProperties().lri.startsWith("files://");
         for (int i = 0; i < selectedItems.count(); i++) {
             if (m_application->playlist()->isInPlaylist(selectedItems.at(i))) {
                 isInPlaylist = true;
