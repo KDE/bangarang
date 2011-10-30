@@ -164,8 +164,11 @@ void NowPlayingManager::mediaPlayPauseReleased()
         if ((!m_pausePressed) && (m_application->mediaObject()->state() == Phonon::PausedState)) {
             m_application->mediaObject()->play();
         } else if ((m_application->mediaObject()->state() == Phonon::StoppedState) || (m_application->mediaObject()->state() == Phonon::LoadingState)) {
-            if (ui->playlistView->model()->rowCount() > 0) {
+            if (ui->playlistView->model()->rowCount() > 0 && ui->playlistView->selectionModel()->selectedIndexes().count() == 0) {
                 m_application->playlist()->start();
+            } else if (ui->playlistView->model()->rowCount() > 0 && ui->playlistView->selectionModel()->selectedIndexes().count() > 0) {
+                QModelIndex index = ui->playlistView->selectionModel()->selectedIndexes().at(0);
+                playPlaylistItem(index);
             }
         }
     }
