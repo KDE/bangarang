@@ -417,8 +417,8 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         QRect curArea = addRmPlaylistRect(&option.rect);
         //doubleclick on the item or click on the "add to/remove from playlist" area
         if ((eventType == QEvent::MouseButtonDblClick) ||
-            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos) && !m_application->isTouchEnabled())
-            ) {
+            (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos) &&
+             (m_renderMode == NormalMode || (m_renderMode != NormalMode && !m_application->isTouchEnabled())))) {
                 emit categoryActivated(index);
                 return true;
         }
