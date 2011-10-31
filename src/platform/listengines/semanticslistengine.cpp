@@ -283,8 +283,8 @@ void SemanticsListEngine::run()
                     if (!groupByResourceBinding.isEmpty()) {
                         bindings.append(groupByResourceBinding);
                     }
-                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::CountAverage));
-                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::Average));
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::Sum));
+                    bindings.append(MediaQuery::aggregateBinding(mediaVocabulary.ratingBinding(), MediaQuery::Count));
                 } 
                 query.select(bindings, MediaQuery::Distinct);
                 query.startWhere();
@@ -308,7 +308,7 @@ void SemanticsListEngine::run()
                     orderByBindings.append(mediaVocabulary.playCountBinding());
                     order.append(MediaQuery::Descending);
                 } else {
-                    orderByBindings.append(QString("%1_countavg").arg(mediaVocabulary.ratingBinding()));
+                    orderByBindings.append(QString("%1_sum").arg(mediaVocabulary.ratingBinding()));
                     order.append(MediaQuery::Descending);
                     order.append(MediaQuery::Descending);
                 }
@@ -327,7 +327,9 @@ void SemanticsListEngine::run()
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
-                        int rating = it.binding(QString("%1_avg").arg(mediaVocabulary.ratingBinding())).literal().toInt();
+                        int sum = it.binding(QString("%1_sum").arg(mediaVocabulary.ratingBinding())).literal().toInt();
+                        int count = it.binding(QString("%1_count").arg(mediaVocabulary.ratingBinding())).literal().toInt();
+                        int rating = sum/count;
                         mediaItem.fields["rating"] = rating;
                     }
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
