@@ -84,17 +84,17 @@ class MediaQuery {
         
         static QString aggregateBinding(QString binding, Aggregate agg) {
             if (agg == Sum) {
-                return QString("SUM(?%1) as ?%1_sum ").arg(binding);
+                return QString("SUM(?%1*1) as ?%1_sum ").arg(binding);
             } else if (agg == Count) {
                 return QString("COUNT(?%1) as ?%1_count ").arg(binding);
             } else if (agg == Average) {
-                return QString("AVG(?%1) as ?%1_avg ").arg(binding);
+                return QString("AVG(?%1*1) as ?%1_avg ").arg(binding);
             } else if (agg == Min) {
                 return QString("MIN(?%1) as ?%1_min ").arg(binding);
             } else if (agg == Max) {
                 return QString("MAX(?%1) as ?%1_max ").arg(binding);
             } else if (agg == CountAverage) {
-                return QString("(AVG(?%1)*COUNT(?%1)) as ?%1_countavg ").arg(binding);
+                return QString("(AVG(?%1*1)*COUNT(?%1)) as ?%1_countavg ").arg(binding);
             } else {
                 return QString("dummy");
             }
