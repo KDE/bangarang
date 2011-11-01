@@ -67,6 +67,7 @@ void SemanticsListEngine::run()
     QString groupByCategoryType;
     QString groupByField;
     QString limitFilter;
+    int originalGenreLimit = 0;
     if (engineFilterList.count() != 0) {
         mediaType = engineFilterList.at(0);
         if (engineFilterList.filter("groupBy=").count() != 0) {
@@ -98,6 +99,14 @@ void SemanticsListEngine::run()
         }
         if (engineFilterList.filter("limit=").count() !=0) {
             limitFilter = engineFilterList.filter("limit=").at(0);
+            if (groupByField == "genre") {
+                originalGenreLimit = m_mediaListProperties.filterValue(limitFilter).trimmed().toInt();
+                int originalFilterIndex = engineFilterList.indexOf(limitFilter);
+                limitFilter = QString("%1%2%3").arg(m_mediaListProperties.filterField(limitFilter))
+                                               .arg(m_mediaListProperties.filterOperator(limitFilter))
+                                               .arg(m_mediaListProperties.filterValue(limitFilter).trimmed().toInt()*3);
+                engineFilterList.replace(originalFilterIndex, limitFilter);
+            }
         }
     }
     
@@ -195,7 +204,11 @@ void SemanticsListEngine::run()
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
                         if ((ignoreZeros && mediaItem.fields["playCount"].toInt() > 0) ||
                             !ignoreZeros) {
-                            mediaList.append(mediaItem);
+                            if (groupByCategoryType == "AudioGenre") {
+                                addUniqueGenreGroup("playCount", mediaItem, &mediaList, originalGenreLimit);
+                            } else {
+                                mediaList.append(mediaItem);
+                            }
                         }
                     }
                 }
@@ -259,7 +272,11 @@ void SemanticsListEngine::run()
                     }
                     mediaItem.semanticComment = Utilities::wordsForTimeSince(mediaItem.fields["lastPlayed"].toDateTime());
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
-                        mediaList.append(mediaItem);
+                        if (groupByCategoryType == "AudioGenre") {
+                            addUniqueGenreGroup("lastPlayed", mediaItem, &mediaList, originalGenreLimit);
+                        } else {
+                            mediaList.append(mediaItem);
+                        }
                     }
                 }
                 m_mediaListProperties.name = i18n("Recently Played");
@@ -335,7 +352,11 @@ void SemanticsListEngine::run()
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
                         if ((ignoreZeros && mediaItem.fields["rating"].toInt() > 0) ||
                             !ignoreZeros) {
-                            mediaList.append(mediaItem);
+                            if (groupByCategoryType == "AudioGenre") {
+                                addUniqueGenreGroup("rating", mediaItem, &mediaList, originalGenreLimit);
+                            } else {
+                                mediaList.append(mediaItem);
+                            }
                         }
                     }
                 }
@@ -367,4 +388,42 @@ void SemanticsListEngine::run()
     
     m_requestSignature = QString();
     m_subRequestSignature = QString();
+}
+
+void SemanticsListEngine::addUniqueGenreGroup(QString field, MediaItem mediaItem, QList<MediaItem>* mediaList, int limit)
+{
+    //Resolve and merge raw genres
+    QString resolvedGenre = Utilities::genreFromRawTagGenre(mediaItem.title);
+    bool genreExists = false;
+    for (int i = 0; i < mediaList->count(); i++) {
+        if (Utilities::genreFromRawTagGenre(mediaList->at(i).title) == resolvedGenre) {
+            genreExists = true;
+            mediaItem.title = resolvedGenre;
+            mediaItem.fields["title"] = mediaItem.title;
+            if (field == "rating") {
+                int oldRating = mediaList->at(i).fields["rating"].toInt();
+                int currentRating = mediaItem.fields["rating"].toInt();
+                if (currentRating < oldRating) {
+                    mediaItem.fields["rating"] = oldRating;
+                }
+            } else if (field == "lastPlayed") {
+                QDateTime oldLastPlayed = mediaList->at(i).fields["lastPlayed"].toDateTime();
+                QDateTime currentLastPlayed = mediaItem.fields["lastPlayed"].toDateTime();
+                if (currentLastPlayed < oldLastPlayed) {
+                    mediaItem.fields["lastPlayed"] = oldLastPlayed;
+                    mediaItem.semanticComment = Utilities::wordsForTimeSince(mediaItem.fields["lastPlayed"].toDateTime());
+                }
+            } else if (field == "playCount") {
+                int oldPlayCount = mediaList->at(i).fields["playCount"].toInt();
+                int newPlayCount = oldPlayCount + mediaItem.fields["playCount"].toInt();
+                mediaItem.semanticComment = i18np("played once", "played %1 times", newPlayCount);
+                mediaItem.fields["playCount"] = newPlayCount;
+            }
+            mediaList->replace(i, mediaItem);
+            break;
+        }
+    }
+    if (!genreExists && mediaList->count() < limit) {
+        mediaList->append(mediaItem);
+    }
 }
