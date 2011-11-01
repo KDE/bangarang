@@ -29,7 +29,7 @@
 #include <QToolTip>
 #include <KDebug>
 
-MediaView::MediaView(QWidget * parent):QTreeView (parent) 
+MediaView::MediaView(QWidget * parent):QTreeView (parent)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
     m_proxyModel = new MediaSortFilterProxyModel();
