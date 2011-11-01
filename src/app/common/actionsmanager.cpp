@@ -592,7 +592,7 @@ void ActionsManager::fullScreenToggle()
 void ActionsManager::toggleControls()
 {
     QAction *toggle = action("toggle_controls");
-    if ((!m_parent->isFullScreen()) && (m_parent->currentMainWidget() == MainWindow::MainNowPlaying)) {
+    if ((!m_parent->isFullScreen() || m_application->isTouchEnabled()) && (m_parent->currentMainWidget() == MainWindow::MainNowPlaying)) {
         if (m_controlsVisible) {
             ui->widgetSet->setVisible(false);
             toggle->setIcon(KIcon("layer-visible-on"));

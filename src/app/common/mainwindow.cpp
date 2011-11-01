@@ -417,6 +417,7 @@ void MainWindow::setupActions()
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (isFullScreen() &&
+        !m_application->isTouchEnabled() &&
         currentMainWidget() == MainNowPlaying &&
         event->type() == QEvent::MouseMove) {
 
