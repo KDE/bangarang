@@ -47,6 +47,9 @@ class SemanticsListEngine : public NepomukListEngine
         SemanticsListEngine(ListEngineFactory *parent);
         ~SemanticsListEngine();
         void run();
+
+    private:
+        void addUniqueGenreGroup(QString field, MediaItem mediaItem, QList<MediaItem>* mediaList, int limit);
 };
 
 #endif // SEMANTICSLISTENGINE_H
