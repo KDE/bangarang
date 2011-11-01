@@ -13,6 +13,7 @@ set(BangarangSources
     app/common/ratingdelegate.cpp
     app/common/sensiblewidgets.cpp
     app/common/starrating.cpp
+    app/common/artworkpainter.cpp
     app/medialists/audiolistsstack.cpp
     app/medialists/medialistsettings.cpp
     app/medialists/medialistsmanager.cpp

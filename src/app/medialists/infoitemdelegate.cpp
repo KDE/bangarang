@@ -24,6 +24,7 @@
 #include "../common/bangarangapplication.h"
 #include "medialistsmanager.h"
 #include "../common/starrating.h"
+#include "../common/artworkpainter.h"
 #include "../../platform/mediaitemmodel.h"
 #include "../../platform/infoitemmodel.h"
 #include "../../platform/utilities/utilities.h"
@@ -53,7 +54,6 @@
 #include <QTextEdit>
 #include <QSpinBox>
 #include <QComboBox>
-#include <math.h>
 
 InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -75,14 +75,6 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
     QImage drillIconHighlightImage = KIcon("bangarang-category-browse").pixmap(16+m_padding,16+m_padding).toImage();
     KIconEffect::toGamma(drillIconHighlightImage, 0.5);
     m_drillIconHighlight = QIcon(QPixmap::fromImage(drillIconHighlightImage));
-
-    for (int i = 0; i < 19; i++) {
-        if (i%2) {
-            m_artworkRotations.append(10);
-        } else {
-            m_artworkRotations.append(-10);
-        }
-    }
 
     connect(this, SIGNAL(closeEditor(QWidget*)), this, SLOT(endEditing(QWidget*)));
 }
@@ -211,45 +203,12 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             p.restore();
         }
         QList<QVariant> artworkList = index.data(InfoItemModel::ArtworkListRole).toList();
+        ArtworkPainter artworkPainter;
         if (artworkList.count() == 0) {
             QIcon artwork = index.data(Qt::DecorationRole).value<QIcon>();
-            artwork.paint(&p, dataRect, Qt::AlignCenter, QIcon::Normal);
+            artworkPainter.paint(&p, dataRect, artwork.pixmap(128, 128));
         } else {
-            p.save();
-            int artworkSize  = 100;
-            if (artworkList.count() == 1) {
-                artworkSize = 128;
-            }
-            int spacing = (dataRect.width() - artworkSize - 30)/artworkList.count();
-            int aTop = dataRect.top() + (dataRect.height()-artworkSize)/2;
-            int startx = dataRect.left() + (dataRect.width()/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
-            p.translate(startx, aTop);
-            for (int i = artworkList.count()-1; i >= 0; i--) {
-                qreal rot = m_artworkRotations.at(i);
-                if (artworkList.count() == 1) {
-                    rot = 0;
-                }
-                double rotRad = (3.14159/180)*rot;
-                qreal r = (sqrt(2.0*artworkSize*artworkSize))/2.0;
-                int transX = (artworkSize/2) - r*cos(rotRad +(3.14159/4));
-                int transY = r*sin(rotRad + (3.14159/4)) - (artworkSize/2);
-                p.rotate(rot);
-                p.translate(transX, -transY);
-                QPixmap artwork = artworkList.at(i).value<QPixmap>().scaledToHeight(artworkSize);
-                int ARxOffset = (artworkSize - artwork.width())/2;
-                p.fillRect(ARxOffset, 0, artwork.width(), artwork.height(), Qt::white);
-                p.drawPixmap(ARxOffset, 0, artwork.width(), artwork.height(), artwork);
-                if (artworkList.count() > 1) {
-                    QColor outlineColor = QColor(Qt::black);
-                    outlineColor.setAlphaF(0.7);
-                    p.setPen(outlineColor);
-                    p.drawRect(ARxOffset, 0, artwork.width(), artwork.height());
-                }
-                p.translate(-transX, transY);
-                p.rotate(-rot);
-                p.translate(-spacing, 0);
-            }
-            p.restore();
+            artworkPainter.paint(&p, dataRect, artworkList);
         }
 
         if (isEditable &&
