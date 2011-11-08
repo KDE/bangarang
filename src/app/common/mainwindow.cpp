@@ -232,8 +232,10 @@ void MainWindow::on_nowPlayingHolder_resized()
     ui->extSubtitle->move((ui->nowPlayingHolder->width() - ui->extSubtitle->width())/2,
                           ui->nowPlayingHolder->geometry().bottom() - 20 - ui->extSubtitle->height());
 
-    if (m_videoSize == Normal) {
+    if (m_videoSize == Normal && !this->isFullScreen()) {
         ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
+    } else if (m_videoSize == Normal && this->isFullScreen()) {
+        ui->videoFrame->setGeometry(QRect(QPoint(0, 0), QSize(ui->nowPlayingHolder->width(), this->height())));
     } else {
         int width = qMax(200, ui->nowPlayingHolder->width()/3);
         int height = qMax(150, width*3/4);
