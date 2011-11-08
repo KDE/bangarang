@@ -867,6 +867,13 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
                 QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
                 insertRow(insertionRow, rowItems);
                 insertionRow = insertionRow + 1;
+            } else if (Utilities::isFSDirectory(url)) {
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                if (mediaItem.type == "Category") {
+                    QList<MediaItem> mediaList;
+                    mediaList.append(mediaItem);
+                    loadSources(mediaList); // no insertion - always add to end.
+                }
             }
         }
     }
