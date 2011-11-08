@@ -150,7 +150,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     pixmap.fill(Qt::transparent);
     QPainter p(&pixmap);
     p.translate(-option.rect.topLeft());
-    
+
     //Paint background for currently playing item
     bool isPlaying = false;
     if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {

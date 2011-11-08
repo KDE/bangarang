@@ -50,7 +50,7 @@ class MediaView : public QTreeView
 
     protected:
         void contextMenuEvent(QContextMenuEvent * event);
-        bool viewportEvent(QEvent * event); 
+        bool viewportEvent(QEvent * event);
         
     private:
         BangarangApplication * m_application;

@@ -77,6 +77,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->extSubtitle->setVisible(false);
     ui->playbackMessage->setVisible(false);
     ui->notificationWidget->setVisible(false);
+    ui->videoListsStackHolder->hide();
+    ui->videoListsSelectHolder->show();
+    ui->videoListLabel->hide();
+    ui->audioListsStackHolder->layout()->addWidget(m_audioListsStack);
+    ui->audioListsStackHolder->show();
+    ui->audioListsSelectHolder->hide();
+    ui->audioListLabel->show();
 
     //Initialize Nepomuk
     m_nepomukInited = Utilities::nepomukInited();
@@ -161,6 +168,7 @@ void MainWindow::completeSetup()
 {
     setupActions();
     ui->playlistView->setupActions();
+    resetTabOrder();
 }
 
 /*---------------
@@ -553,3 +561,14 @@ void MainWindow::enableTouch() {
     ui->widgetSet->setPalette(ui->contextStackHolder->palette());
     ui->widgetSet->setAutoFillBackground(true);
 }
+
+void MainWindow::resetTabOrder()
+{
+    //Set Tab Order for Media Lists view
+    QWidget* visibleList = m_audioListsStack->ui->audioLists;
+    if (ui->videoListsStackHolder->isVisible()) {
+        visibleList = m_videoListsStack->ui->videoLists;
+    }
+    setTabOrder(visibleList, ui->mediaView);
+}
+

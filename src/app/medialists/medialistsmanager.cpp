@@ -424,6 +424,8 @@ void MediaListsManager::showMediaList(MediaListSelection listSelection)
         ui->audioListsStackHolder->show();
         ui->audioListsSelectHolder->hide();
         ui->audioListLabel->show();
+        m_application->mainWindow()->resetTabOrder();
+        m_application->mainWindow()->audioListsStack()->ui->audioLists->setFocus();
     } else if (listSelection == VideoList) {
         ui->audioListsStackHolder->layout()->removeWidget(m_application->mainWindow()->audioListsStack());
         ui->audioListsStackHolder->hide();
@@ -433,6 +435,8 @@ void MediaListsManager::showMediaList(MediaListSelection listSelection)
         ui->videoListsStackHolder->show();
         ui->videoListsSelectHolder->hide();
         ui->videoListLabel->show();
+        m_application->mainWindow()->resetTabOrder();
+        m_application->mainWindow()->videoListsStack()->ui->videoLists->setFocus();
     }
     m_mediaListSelection = listSelection;
 }

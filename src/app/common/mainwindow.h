@@ -77,6 +77,7 @@ public:
     QFrame *currentFilterFrame();
     KFilterProxySearchLine* currentFilterProxyLine();
     void enableTouch();
+    void resetTabOrder();
 
     Ui::MainWindowClass *ui;
 
