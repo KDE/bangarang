@@ -299,12 +299,16 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
 {
     if (fullScreen) {
         showFullScreen();
+        ui->widgetSet->setPalette(ui->contextStackHolder->palette());
+        ui->widgetSet->setAutoFillBackground(true);
         ui->fullScreen->setIcon(KIcon("view-restore"));
         ui->fullScreen->setToolTip(i18n("<b>Fullscreen</b><br>Click to exit fullscreen"));
         ui->fullScreen->setChecked(true);
         ui->widgetSet->setVisible(false);
     } else {
         showNormal();
+        ui->widgetSet->setPalette(this->palette());
+        ui->widgetSet->setAutoFillBackground(false);
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
         ui->fullScreen->setToolTip(i18n("Show fullscreen"));
         ui->fullScreen->setChecked(false);
