@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QStackedWidget" name="videoListsStack">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="videoListsPage">
       <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -69,6 +69,9 @@
           </property>
           <item>
            <widget class="QToolButton" name="addVideoList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add list</string>
             </property>
@@ -86,6 +89,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="removeVideoList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Remove list</string>
             </property>
@@ -116,6 +122,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="configureVideoList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Settings</string>
             </property>
@@ -277,6 +286,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="text">
           <string>Return To Lists</string>
          </property>
@@ -435,6 +447,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>Return to Lists</string>
@@ -905,6 +920,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>Return to Lists</string>

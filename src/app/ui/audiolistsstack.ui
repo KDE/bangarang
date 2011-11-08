@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>329</height>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QStackedWidget" name="audioListsStack">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="audioListsPage">
       <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -35,6 +35,9 @@
        </property>
        <item>
         <widget class="QListView" name="audioLists">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
@@ -66,6 +69,9 @@
           </property>
           <item>
            <widget class="QToolButton" name="addAudioList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add list</string>
             </property>
@@ -83,6 +89,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="removeAudioList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Remove list</string>
             </property>
@@ -113,6 +122,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="configureAudioList">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Settings</string>
             </property>
@@ -345,6 +357,9 @@ p, li { white-space: pre-wrap; }
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text">
              <string>Return to Lists</string>
             </property>
@@ -546,6 +561,9 @@ p, li { white-space: pre-wrap; }
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>Return to Lists</string>
@@ -1042,6 +1060,9 @@ p, li { white-space: pre-wrap; }
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
          </property>
          <property name="text">
           <string>Return to Lists</string>
