@@ -169,6 +169,16 @@ bool Utilities::isDisc(const KUrl& url)
     return (isDvd(url) || isCd(url));
 }
 
+bool Utilities::isFSDirectory(const QString& url)
+{
+    if (!url.isEmpty()) {
+        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        return result->is("inode/directory");
+    } else {
+        return false;
+    }
+}
+
 bool Utilities::isMediaItem(const QModelIndex *index)
 {
     QString type = index->data(MediaItem::TypeRole).toString();

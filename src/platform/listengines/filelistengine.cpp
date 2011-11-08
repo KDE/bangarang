@@ -201,32 +201,35 @@ void FileListEngine::listingComplete(const KUrl &url)
             if (Utilities::isM3u(fileItem.url().prettyUrl()) || Utilities::isPls(fileItem.url().prettyUrl())) {
                 mediaItem = Utilities::mediaItemFromUrl(fileItem.url());
                 mediaList.append(mediaItem);
-            } else if (m_mediaListProperties.engineArg() == "audio") {
-                if (Utilities::isAudioMimeType(fileItem.mimeTypePtr())) {
-                    mediaItem.url = fileItem.url().prettyUrl();
-                    mediaItem.fields["url"] = mediaItem.url;
-                    mediaItem.type = "Audio";
-                    if (Utilities::isMusicMimeType((fileItem.mimeTypePtr()))) {
-                        mediaItem.fields["audioType"] = "Music";
-                    } else {
-                        mediaItem.fields["audioType"] = "Audio Clip";
+            } else {
+                if (m_mediaListProperties.engineArg() == "audio" || m_mediaListProperties.engineArg() == "media") {
+                    if (Utilities::isAudioMimeType(fileItem.mimeTypePtr())) {
+                        mediaItem.url = fileItem.url().prettyUrl();
+                        mediaItem.fields["url"] = mediaItem.url;
+                        mediaItem.type = "Audio";
+                        if (Utilities::isMusicMimeType((fileItem.mimeTypePtr()))) {
+                            mediaItem.fields["audioType"] = "Music";
+                        } else {
+                            mediaItem.fields["audioType"] = "Audio Clip";
+                        }
+                        mediaItem.title = fileItem.text();
+                        mediaItem.fields["title"] = mediaItem.title;
+                        mediaItem.artwork = KIcon(fileItem.iconName());
+                        mediaList.append(mediaItem);
                     }
-                    mediaItem.title = fileItem.text();
-                    mediaItem.fields["title"] = mediaItem.title;
-                    mediaItem.artwork = KIcon(fileItem.iconName());
-                    mediaList.append(mediaItem);
                 }
-            } else if (m_mediaListProperties.engineArg() == "video") {
-                if (Utilities::isVideoMimeType(fileItem.mimeTypePtr())) {
-                    mediaItem.url = fileItem.url().prettyUrl();
-                    mediaItem.fields["url"] = mediaItem.url;
-                    mediaItem.type = "Video";
-                    mediaItem.fields["videoType"] = "Video Clip";
-                    mediaItem.title = fileItem.text();
-                    mediaItem.fields["title"] = mediaItem.title;
-                    mediaItem.artwork = KIcon("video-x-generic");
-                    mediaList.append(mediaItem);
-                }
+                if (m_mediaListProperties.engineArg() == "video" || m_mediaListProperties.engineArg() == "media") {
+                    if (Utilities::isVideoMimeType(fileItem.mimeTypePtr())) {
+                        mediaItem.url = fileItem.url().prettyUrl();
+                        mediaItem.fields["url"] = mediaItem.url;
+                        mediaItem.type = "Video";
+                        mediaItem.fields["videoType"] = "Video Clip";
+                        mediaItem.title = fileItem.text();
+                        mediaItem.fields["title"] = mediaItem.title;
+                        mediaItem.artwork = KIcon("video-x-generic");
+                        mediaList.append(mediaItem);
+                    }
+               }
             }
         }
     }
@@ -276,6 +279,9 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                     } else if (categoryProperties.engineArg() == "video") {
                         mimeFilter = Utilities::videoMimeFilter();
                         type = "video";
+                    } else if (categoryProperties.engineArg() == "media") {
+                        mimeFilter = Utilities::audioMimeFilter() + Utilities::videoMimeFilter();
+                        type = "media";
                     }
                     QFileInfoList fileList = crawlDir(QDir(directoryUrl.path()), categoryProperties.engineArg());
                     for (int j = 0; j < fileList.count(); ++j) {
@@ -305,6 +311,23 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                                 mediaItem.type = "Video";
                                 mediaItem.fields["videoType"] = "Video Clip";
                                 mediaItem.artwork = KIcon("video-x-generic");
+                                crawledList.append(mediaItem);
+                            } else if (categoryProperties.engineArg() == "media") {
+                                if (Utilities::isAudio(mediaItem.url)) {
+                                    mediaItem.type = "Audio";
+                                    mediaItem.fields["audioType"] = "Audio Clip";
+                                    mediaItem.artwork = KIcon("audio-x-wav");
+                                }
+                                if (Utilities::isMusic(mediaItem.url)) {
+                                    mediaItem.type = "Audio";
+                                    mediaItem.fields["audioType"] = "Music";
+                                    mediaItem.artwork = KIcon("audio-mpeg");
+                                }
+                                if (Utilities::isVideo(mediaItem.url)) {
+                                    mediaItem.type = "Video";
+                                    mediaItem.fields["videoType"] = "Video Clip";
+                                    mediaItem.artwork = KIcon("video-x-generic");
+                                }
                                 crawledList.append(mediaItem);
                             }
                         } else {
@@ -350,6 +373,11 @@ QFileInfoList FileListEngine::crawlDir(const QDir &dir, QString engineArg)
             }
         } else if (engineArg == "video") {
             if (Utilities::isVideo(fileList.at(i).absoluteFilePath())) {
+                addToList = true;
+            }
+        } else if (engineArg == "media") {
+            if (Utilities::isAudio(fileList.at(i).absoluteFilePath()) ||
+                Utilities::isVideo(fileList.at(i).absoluteFilePath())) {
                 addToList = true;
             }
         }

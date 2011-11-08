@@ -47,6 +47,7 @@ namespace Utilities {
     bool isAction(const QString& type);
     bool isFeed(const QString& categoryType);
     bool isAudioStream(const QString& audioType);
+    bool isFSDirectory(const QString& url);
     QString audioMimeFilter();
     QString videoMimeFilter();
     QString deviceTypeFromUrl(const KUrl &url);

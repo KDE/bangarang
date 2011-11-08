@@ -149,6 +149,16 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
         return mediaItem;
     }
 
+    if (url.isLocalFile() && Utilities::isFSDirectory(url.url())) {
+        mediaItem.artwork = KIcon("folder");
+        mediaItem.url = QString("files://media?browseFolder||%1").arg(url.prettyUrl());
+        mediaItem.title = url.directory();
+        mediaItem.fields["title"] = mediaItem.title;
+        mediaItem.type = "Category";
+        mediaItem.fields["categoryType"] = "Basic+Artwork";
+        return mediaItem;
+    }
+
     mediaItem.url = url.prettyUrl();
     mediaItem.title = url.fileName();
     mediaItem.fields["url"] = mediaItem.url;
