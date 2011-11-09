@@ -31,6 +31,7 @@
 #include "../../platform/utilities/general.h"
 
 #include <KMessageBox>
+#include <KMenu>
 
 
 NowPlayingManager::NowPlayingManager(MainWindow* parent) :
@@ -504,6 +505,10 @@ void NowPlayingManager::skipBackward(int i)
 
 void NowPlayingManager::clearPlaylist()
 {
+    if (m_application->mainWindow()->currentMainWidget() != MainWindow::MainNowPlaying) {
+        return;
+    }
+
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     ui->clearPlaylist->setIcon(KIcon("bangarang-clearplaylist"));
     KGuiItem clearPlaylist;
@@ -521,4 +526,41 @@ void NowPlayingManager::clearPlaylist()
 void NowPlayingManager::closePlaylistFilter()
 {
     m_application->actionsManager()->action("toggle_filter")->trigger();
+}
+
+void NowPlayingManager::showMenu()
+{
+    m_application->mainWindow()->stopMenuTimer();
+    KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
+
+    QPoint menuLocation;
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    if (ui->contextStackHolder->isVisible()) {
+        menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    } else {
+        menuLocation = ui->showMenu_2->mapToGlobal(QPoint(0,ui->showMenu->height()));
+    }
+    menu->popup(menuLocation);
+}
+
+void NowPlayingManager::togglePlaylist()
+{
+    if (m_application->mainWindow()->currentMainWidget() != MainWindow::MainNowPlaying) {
+        return;
+    }
+
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    if (ui->contextStackHolder->isVisible() && ui->contextStack->currentIndex() == 0) {
+        ui->contextStackHolder->setVisible(false);
+    } else {
+        ui->contextStack->setCurrentIndex(0);
+        ui->contextStackHolder->setVisible(true);
+        QFrame *filter = m_application->mainWindow()->currentFilterFrame();
+        KFilterProxySearchLine *line = m_application->mainWindow()->currentFilterProxyLine();
+        if (filter->isVisible() && line->lineEdit()->text().isEmpty()) {
+            m_application->actionsManager()->action("toggle_filter")->trigger();
+        }
+    }
+    m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video settings"));
+    m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio settings"));
 }

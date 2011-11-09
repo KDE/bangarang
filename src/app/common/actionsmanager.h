@@ -66,6 +66,7 @@ class ActionsManager : public QObject
         QMenu * bookmarksMenu();
         QMenu * infoMenu();
         void updateToggleFilterText();
+        void addShortcuts();
 
         bool m_controlsVisible;
         
@@ -131,5 +132,8 @@ class ActionsManager : public QObject
         void addTemporaryAudioStreams();
         void toggleInfoView();
         void selectAll();
+        void handleAltS();
+        void handleAltLeft();
+        void handleCtrlM();
 };
 #endif //ACTIONSMANAGER_H

@@ -22,6 +22,7 @@
 #include "actionsmanager.h"
 #include "ui_mainwindow.h"
 #include "../nowplaying/bangarangvideowidget.h"
+#include "../nowplaying/nowplayingmanager.h"
 #include "../medialists/medialistsmanager.h"
 #include "../medialists/infomanager.h"
 #include "../medialists/medialistsettings.h"
@@ -337,28 +338,17 @@ void MainWindow::on_seekTime_clicked()
 
 void MainWindow::on_showMenu_clicked()
 {
-    m_menuTimer->stop();
-    KMenu * menu = m_application->actionsManager()->nowPlayingMenu();
-
-    QPoint menuLocation;
-    if (ui->contextStackHolder->isVisible()) {
-        menuLocation = ui->showMenu->mapToGlobal(QPoint(0,ui->showMenu->height()));
-    } else {
-        menuLocation = ui->showMenu_2->mapToGlobal(QPoint(0,ui->showMenu->height()));
-    }
-    menu->popup(menuLocation);
+    m_application->nowPlayingManager()->showMenu();
 }
 
 void MainWindow::on_showMenu_2_clicked()
 {
-    on_showMenu_clicked();
+    m_application->nowPlayingManager()->showMenu();
 }
 
 void MainWindow::on_showMediaViewMenu_clicked()
 {
-    QMenu * menu = m_application->actionsManager()->mediaViewMenu(true);
-    QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
-    menu->exec(menuLocation);
+    m_application->mediaListsManager()->showMenu();
 }
 
 
@@ -572,3 +562,16 @@ void MainWindow::resetTabOrder()
     setTabOrder(visibleList, ui->mediaView);
 }
 
+void MainWindow::toggleMainWidget()
+{
+    if (currentMainWidget() == MainMediaList) {
+        switchMainWidget(MainNowPlaying);
+    } else {
+        switchMainWidget(MainMediaList);
+    }
+}
+
+void MainWindow::stopMenuTimer()
+{
+    m_menuTimer->stop();
+}
