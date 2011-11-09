@@ -48,10 +48,14 @@ class MediaView : public QTreeView
         QSortFilterProxyModel *filterProxyModel() { return (QSortFilterProxyModel *) m_proxyModel; }
         void enableTouch();
 
+    Q_SIGNALS:
+        void categoryActivated(QModelIndex index);
+
     protected:
         void contextMenuEvent(QContextMenuEvent * event);
         bool viewportEvent(QEvent * event);
-        
+        void keyPressEvent(QKeyEvent *event);
+
     private:
         BangarangApplication * m_application;
         MediaItemModel * m_mediaItemModel;

@@ -28,6 +28,7 @@ namespace Ui
 }
 class MainWindow;
 class MediaItem;
+class BangarangApplication;
 
 /*
  * This class provides a user interface for adding and removing mediaItem bookmarks
@@ -50,9 +51,11 @@ class BookmarksManager : public QObject
         void removeBookmark(const QString &url, const QString &bookmark);
         void removeBookmarks(const QString &url);
         void renameBookmark(const QString &url, const QString &oldName, const QString &newName);
+        void showBookmarksMenu();
         void showAddBookmarkDialog();
         
     private:
+        BangarangApplication* m_application;
         MainWindow *m_parent; 
         Ui::MainWindowClass *ui;
         bool m_nepomukInited;

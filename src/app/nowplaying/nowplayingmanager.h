@@ -42,12 +42,18 @@ public:
     void setShowRemainingTime(bool show);
     bool showingRemainingTime();
     bool newPlaylistNotification(QString text, QObject* receiver = NULL, const char* slot = NULL);
-    void showApplicationBanner();
 
 signals:
     void playlistNotificationResult(bool confirmed);
 
 public slots:
+    void showApplicationBanner();
+    void showMenu();
+    void togglePlaylist();
+    void clearPlaylist();
+    void toggleShuffle();
+    void toggleRepeat();
+    void toggleQueue();
 
 private:
     BangarangApplication* m_application;
@@ -62,10 +68,6 @@ private slots:
     void mediaPlayPauseHeld();
     void mediaPlayPauseReleased();
     void playPlaylistItem(const QModelIndex & index);
-    void clearPlaylist();
-    void toggleShuffle();
-    void toggleRepeat();
-    void toggleQueue();
     void updateSeekTime(qint64 time);
     void mediaStateChanged(Phonon::State newstate, Phonon::State oldstate);
     void showLoading();

@@ -19,6 +19,7 @@
 #include "bookmarksmanager.h"
 #include "../../platform/utilities/utilities.h"
 #include "../common/mainwindow.h"
+#include "../common/bangarangapplication.h"
 #include "../common/actionsmanager.h"
 #include "ui_mainwindow.h"
 #include "../../platform/mediaitemmodel.h"
@@ -33,6 +34,7 @@ BookmarksManager::BookmarksManager(MainWindow * parent) : QObject(parent)
 {
     m_parent = parent;
     ui = m_parent->ui;
+    m_application = (BangarangApplication*)KApplication::kApplication();
 }
 
 BookmarksManager::~BookmarksManager()
@@ -228,5 +230,13 @@ void BookmarksManager::writeBookmarkFileIndex(QStringList fileIndex)
             bmout << fileIndex.at(i) << "\r\n";
         }
         bookmarkIndex.close();
+    }
+}
+
+void BookmarksManager::showBookmarksMenu()
+{
+    if (m_application->mainWindow()->currentMainWidget() == MainWindow::MainNowPlaying) {
+        QPoint menuLocation = ui->seekTime->mapToGlobal(QPoint(0,ui->showMenu->height()));
+        m_application->actionsManager()->bookmarksMenu()->popup(menuLocation);
     }
 }

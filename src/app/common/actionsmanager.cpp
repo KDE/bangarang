@@ -68,7 +68,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Play/Pause Action
     action = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
-    action->setShortcut(Qt::Key_Space);
     connect(action, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
     m_shortcutsCollection->addAction("play_pause", action);
     //globals only work after adding them to the action manager
@@ -86,21 +85,18 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Play Next
     action = new KAction(KIcon("media-skip-forward"), i18n("Play next"), this);
-    action->setShortcut(Qt::Key_Right);
     connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playNext()));
     m_shortcutsCollection->addAction("play_next", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_F));
 
     //Play Previous
     action = new KAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
-    action->setShortcut(Qt::Key_Left);
     connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
     m_shortcutsCollection->addAction("play_previous", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
 
     //Mute
     action = new KAction(KIcon("dialog-cancel"), i18n("Mute"), this);
-    action->setShortcut(Qt::Key_M);
     connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
     m_shortcutsCollection->addAction("mute", action);
 
@@ -885,6 +881,10 @@ void ActionsManager::loadSelectedSources()
 
 void ActionsManager::showInfoForNowPlaying()
 {
+    if (m_application->mainWindow()->currentMainWidget() != MainWindow::MainNowPlaying) {
+        return;
+    }
+
     if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
         return;
     }
@@ -1104,4 +1104,139 @@ void ActionsManager::selectAll()
     } else if (ui->playlistView->hasFocus()) {
         ui->playlistView->selectAll();
     }
+}
+
+void ActionsManager::handleAltS()
+{
+    if (m_application->mainWindow()->currentMainWidget() == MainWindow::MainMediaList) {
+        ui->Filter->setFocus();
+    } else {
+        m_application->nowPlayingManager()->toggleShuffle();
+    }
+}
+
+void ActionsManager::handleAltLeft()
+{
+    if (m_application->mainWindow()->currentMainWidget() == MainWindow::MainMediaList) {
+        m_application->mediaListsManager()->loadPreviousList();
+    } else {
+        m_application->mediaObject()->seek(-5000);
+    }
+}
+
+void ActionsManager::handleCtrlM()
+{
+    if (m_application->mainWindow()->currentMainWidget() == MainWindow::MainMediaList) {
+        m_application->mediaListsManager()->showMenu();
+    } else {
+        m_application->nowPlayingManager()->showMenu();
+    }
+}
+
+void ActionsManager::addShortcuts()
+{
+    //Show Audio Lists Action
+    KAction *action = new KAction(i18n("Show Audio Lists"), this);
+    action->setShortcut(Qt::ALT + Qt::Key_A);
+    connect(action, SIGNAL(triggered()), m_application->mediaListsManager(), SLOT(selectAudioList()));
+    ui->collectionPage->addAction(action);
+
+    //Show Video Lists Action
+    action = new KAction(i18n("Show Video Lists"), this);
+    action->setShortcut(Qt::ALT + Qt::Key_V);
+    connect(action, SIGNAL(triggered()), m_application->mediaListsManager(), SLOT(selectVideoList()));
+    ui->collectionPage->addAction(action);
+
+    //Search/Shuffle Action
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_S);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleAltS()));
+    m_application->mainWindow()->addAction(action);
+
+    //Open Previous List/ Seek backward action
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_Left);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleAltLeft()));
+    m_application->mainWindow()->addAction(action);
+
+    //Open menu
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_M);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleCtrlM()));
+    m_application->mainWindow()->addAction(action);
+
+    //Show Media Lists/Now Playing
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_N);
+    connect(action, SIGNAL(triggered()), m_application->mainWindow(), SLOT(toggleMainWidget()));
+    m_application->mainWindow()->addAction(action);
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_M);
+    connect(action, SIGNAL(triggered()), m_application->mainWindow(), SLOT(toggleMainWidget()));
+    m_application->mainWindow()->addAction(action);
+
+    //Show Time/Bookmark menu
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_T);
+    connect(action, SIGNAL(triggered()), m_application->bookmarksManager(), SLOT(showBookmarksMenu()));
+    ui->nowPlayingPage->addAction(action);
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_B);
+    connect(action, SIGNAL(triggered()), m_application->bookmarksManager(), SLOT(showBookmarksMenu()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Show/Hide playlist
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_P);
+    connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(togglePlaylist()));
+    ui->nowPlayingPage->addAction(action);
+
+    //View upcoming
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_U);
+    connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(toggleQueue()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Clear Playlist
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_C);
+    connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(clearPlaylist()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Toggle Repeat
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::ALT + Qt::Key_R);
+    connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(toggleRepeat()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Show Now Playing Info
+    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
+    action->setShortcut(Qt::ALT + Qt::Key_I);
+    connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Play/Pause Action
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::Key_Space);
+    connect(action, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Play Next
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::Key_Right);
+    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playNext()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Play Previous
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::Key_Left);
+    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
+    ui->nowPlayingPage->addAction(action);
+
+    //Mute
+    action = new KAction(QString(), this);
+    action->setShortcut(Qt::Key_M);
+    connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
+    ui->nowPlayingPage->addAction(action);
+
 }

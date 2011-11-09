@@ -175,6 +175,8 @@ void BangarangApplication::setup()
     QDBusConnection::sessionBus().registerObject("/Player", new MprisPlayerObject(this), QDBusConnection::ExportAllContents);
     QDBusConnection::sessionBus().registerObject("/TrackList", new MprisTrackListObject(this), QDBusConnection::ExportAllContents);
     QDBusConnection::sessionBus().registerService("org.mpris.bangarang");
+
+    m_actionsManager->addShortcuts();
 }
 
 BangarangApplication::~BangarangApplication()

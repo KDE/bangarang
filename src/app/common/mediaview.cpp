@@ -57,6 +57,7 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
     setItemDelegate(m_mediaItemDelegate);
     m_mediaItemDelegate->setView(this);
     setDragEnabled(true);
+    connect(this, SIGNAL(categoryActivated(QModelIndex)), m_mediaItemDelegate, SIGNAL(categoryActivated(QModelIndex)));
 }
 
 void MediaView::setMode(MediaItemDelegate::RenderMode mode)
@@ -165,4 +166,16 @@ void MediaView::enableTouch()
     charm->activateOn(this);
     this->setDragEnabled(false);
     m_mediaItemDelegate->enableTouch();
+}
+
+void MediaView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Right) {
+        QModelIndexList selectedRows = selectionModel()->selectedRows();
+        if (selectedRows.count() > 0) {
+            QModelIndex sourceIndex = filterProxyModel()->mapToSource(selectedRows.at(0));
+            emit categoryActivated(sourceIndex);
+        }
+    }
+    QTreeView::keyPressEvent(event);
 }

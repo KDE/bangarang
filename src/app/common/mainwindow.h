@@ -78,6 +78,7 @@ public:
     KFilterProxySearchLine* currentFilterProxyLine();
     void enableTouch();
     void resetTabOrder();
+    void stopMenuTimer();
 
     Ui::MainWindowClass *ui;
 
@@ -86,6 +87,7 @@ signals:
     
 public slots:
     void on_fullScreen_toggled(bool fullScreen);
+    void toggleMainWidget();
 
 private:
     void setupIcons();
@@ -115,7 +117,6 @@ private slots:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
-    
 };
 
 #endif // MAINWINDOW_H

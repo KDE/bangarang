@@ -28,6 +28,7 @@
 #include "../../platform/utilities/general.h"
 
 #include <QScrollBar>
+#include <KDebug>
 
 MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
 {
@@ -296,6 +297,9 @@ void MediaListsManager::loadMediaList(MediaItemModel *listsModel, int row)
 
 void MediaListsManager::loadPreviousList()
 {
+    if (m_mediaListHistory.isEmpty()) {
+        return;
+    }
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     m_application->browsingModel()->clearMediaListData();
     m_application->browsingModel()->setMediaListProperties(m_mediaListPropertiesHistory.last());
@@ -566,4 +570,12 @@ void MediaListsManager::defaultListLoad(MainWindow::MainWidget which)
     } else {
         selectVideoList();
     }
+}
+
+void MediaListsManager::showMenu()
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    QMenu * menu = m_application->actionsManager()->mediaViewMenu(true);
+    QPoint menuLocation = ui->showMediaViewMenu->mapToGlobal(QPoint(0,ui->showMediaViewMenu->height()));
+    menu->exec(menuLocation);
 }

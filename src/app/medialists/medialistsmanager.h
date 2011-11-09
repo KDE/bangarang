@@ -48,6 +48,7 @@ public:
     MediaListSelection currentMediaListSelection();
     MediaItemModel* audioListsModel();
     MediaItemModel* videoListsModel();
+    void showMenu();
 
 public slots:
     void loadPreviousList();
