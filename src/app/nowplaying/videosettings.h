@@ -35,7 +35,7 @@ class BangarangApplication;
 
 namespace Ui {
    class MainWindowClass;
-};
+}
 
 /**
  * This class provides Settings for the VideoWidget 
