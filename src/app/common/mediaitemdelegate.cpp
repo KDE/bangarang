@@ -548,7 +548,7 @@ int MediaItemDelegate::duratingSpacer(const QRect *rect) const
     if (m_renderMode == NormalMode || m_renderMode == MiniRatingMode || m_renderMode == MiniMode) {
         return StarRating::SizeHint(m_starRatingSize).width() + addRmPlaylistRect(rect).width();
     } else if (m_renderMode == MiniPlayCountMode) {
-        return 20;
+        return 35;
     } else {
         return 0;
     }
