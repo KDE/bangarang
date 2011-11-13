@@ -248,7 +248,10 @@ void NowPlayingManager::updateSeekTime(qint64 time)
     if (nowPlayingModel->rowCount() > 0) {
         if (nowPlayingModel->mediaItemAt(0).type != "Application Banner") {
             QString title = nowPlayingModel->mediaItemAt(0).title;
-            ui->nowPlaying->setText(i18n("Now Playing") + QString(" (")+ displayTime + QString(")\n") + title);
+            QFontMetrics fm(ui->nowPlaying->font());
+            title = fm.elidedText(title, Qt::ElideRight, ui->nowPlaying->width() - 30 - 3*4);
+            QString nowPlayingText = i18n("Now Playing") + QString(" (")+ displayTime + QString(")\n") + title;
+            ui->nowPlaying->setText(nowPlayingText);
         } else {
             ui->nowPlaying->setText(i18n("Now Playing"));
         }
