@@ -831,7 +831,14 @@ void ActionsManager::playSelectedSlot()
 void ActionsManager::playAllSlot()
 {
     //Play all media items in the media list view
-    m_application->playlist()->playMediaList(m_application->browsingModel()->mediaList());
+    QList<MediaItem> mediaList;
+    for (int i = 0; i < ui->mediaView->model()->rowCount(); ++i) {
+        QModelIndex proxyIndex = ui->mediaView->model()->index(i, 0);
+        QModelIndex index = ui->mediaView->filterProxyModel()->mapToSource(proxyIndex);
+        mediaList.append(m_application->browsingModel()->mediaItemAt(index.row()));
+    }
+
+    m_application->playlist()->playMediaList(mediaList);
 
     // Show Now Playing page
     m_parent->switchMainWidget(MainWindow::MainNowPlaying);
