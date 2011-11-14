@@ -39,6 +39,7 @@ public:
     explicit NowPlayingManager(MainWindow* parent);
 
     void connectPhononWidgets();
+    void disconnectPhononWidgets();
     void setShowRemainingTime(bool show);
     bool showingRemainingTime();
     bool newPlaylistNotification(QString text, QObject* receiver = NULL, const char* slot = NULL);

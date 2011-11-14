@@ -32,6 +32,7 @@
 
 #include <KMessageBox>
 #include <KMenu>
+#include <KDebug>
 
 
 NowPlayingManager::NowPlayingManager(MainWindow* parent) :
@@ -91,7 +92,14 @@ void NowPlayingManager::connectPhononWidgets()
     ui->seekSlider->setMediaObject(m_application->mediaObject());
     connect(ui->volumeIcon, SIGNAL(toggled(bool)), m_application->audioOutput(), SLOT(setMuted(bool)));
     connect(m_application->audioOutput(), SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
-    updateMuteStatus(false);
+    updateMuteStatus(m_application->audioOutput()->isMuted());
+}
+
+void NowPlayingManager::disconnectPhononWidgets()
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    disconnect(ui->volumeIcon, SIGNAL(toggled(bool)), m_application->audioOutput(), SLOT(setMuted(bool)));
+    disconnect(m_application->audioOutput(), SIGNAL(mutedChanged(bool)), this, SLOT(updateMuteStatus(bool)));
 }
 
 void NowPlayingManager::setShowRemainingTime(bool showRemainingTime)
@@ -318,8 +326,6 @@ void NowPlayingManager::mediaStateChanged(Phonon::State newstate, Phonon::State 
         } else {
             m_application->playlist()->stop();
         }
-        ui->volumeSlider->setAudioOutput(m_application->audioOutput());
-        ui->volumeIcon->setChecked(false);
     }
 
     if (newstate == Phonon::PausedState)

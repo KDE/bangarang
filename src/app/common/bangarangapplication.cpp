@@ -247,6 +247,7 @@ Phonon::MediaObject * BangarangApplication::mediaObject()
 Phonon::MediaObject * BangarangApplication::newMediaObject()
 {
     Phonon::MediaObject * oldMediaObject = m_mediaObject;
+    m_nowPlayingManager->disconnectPhononWidgets();
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setTickInterval(500);
     m_playlist->setMediaObject(m_mediaObject);
@@ -255,6 +256,7 @@ Phonon::MediaObject * BangarangApplication::newMediaObject()
     m_videoPath.reconnect(m_mediaObject, m_mainWindow->videoWidget());
     m_audioPath.reconnect(m_mediaObject, m_audioOutput);
     m_audioOutput->setVolume(m_volume);
+    m_nowPlayingManager->connectPhononWidgets();
 
     delete oldMediaObject;
     return m_mediaObject;
@@ -376,11 +378,13 @@ void BangarangApplication::nowPlayingChanged()
     bool changed = false;
     m_volume = m_audioOutput->volume();
     if (type == "Audio" && m_audioOutput->category() != Phonon::MusicCategory) {
+        m_nowPlayingManager->disconnectPhononWidgets();
         m_audioPath.disconnect();
         delete m_audioOutput;
         m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this);
         changed = true;
     } else if (type == "Video" && m_audioOutput->category() != Phonon::VideoCategory) {
+        m_nowPlayingManager->disconnectPhononWidgets();
         m_audioPath.disconnect();
         delete m_audioOutput;
         m_audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
@@ -393,7 +397,7 @@ void BangarangApplication::nowPlayingChanged()
         m_audioOutput->setVolume(m_volume);
         m_audioSettings->reconnectAudioPath(&m_audioPath);
         connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
-        //m_nowPlayingManager->connectPhononWidgets();
+        m_nowPlayingManager->connectPhononWidgets();
     }
 
 }
