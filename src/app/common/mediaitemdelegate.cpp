@@ -424,12 +424,6 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         }
         QRect curArea = addRmPlaylistRect(&option.rect);
         //doubleclick on the item or click on the "add to/remove from playlist" area
-        kDebug() << event->type();
-        if (eventType == QEvent::KeyPress) {
-            kDebug() << "Key PRESS!!!!";
-            kDebug() << ((QKeyEvent*) event)->key();
-            kDebug() << Qt::Key_Right;
-        }
         if ((eventType == QEvent::KeyPress && ((QKeyEvent *)event)->key() == Qt::Key_Right) ||
             (eventType == QEvent::MouseButtonDblClick) ||
             (eventType == QEvent::MouseButtonPress && curArea.contains(mousePos) &&
