@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
 "issues\n"
 "POT-Creation-Date: 2011-09-20 17:57+0200\n"
-"PO-Revision-Date: 2011-01-18 22:46+0100\n"
+"PO-Revision-Date: 2011-11-08 22:06+0100\n"
 "Last-Translator: \n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.1\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "t3ddy"
+msgstr "Giovanni Tedaldi"
 
 #: rc.cpp:2
 msgctxt "EMAIL OF TRANSLATORS"
@@ -34,7 +34,7 @@ msgstr "t3ddy1988@gmail.com"
 #. i18n: ectx: property (windowTitle), widget (QWidget, VideoListsStack)
 #: rc.cpp:5 rc.cpp:374
 msgid "Form"
-msgstr ""
+msgstr "Form"
 
 #. i18n: file: app/ui/audiolistsstack.ui:70
 #. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
@@ -598,9 +598,8 @@ msgstr "Nascondi"
 #. i18n: file: app/ui/mainwindow.ui:6199
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: rc.cpp:281
-#, fuzzy
 msgid "Video Settings"
-msgstr "Mostra Impostazioni Video"
+msgstr "Impostazioni Video"
 
 #. i18n: file: app/ui/mainwindow.ui:6239
 #. i18n: ectx: property (text), widget (QLabel, label_26)
@@ -619,6 +618,7 @@ msgstr "Angoli:"
 #: rc.cpp:290
 msgid "Can't detect subtitle encoding, please choose:"
 msgstr ""
+"Impossibile determinare la codifica dei sottotitoli, per favore scegli:"
 
 #. i18n: file: app/ui/mainwindow.ui:6358
 #. i18n: ectx: property (text), widget (QLabel, label_21)
@@ -748,12 +748,11 @@ msgstr "Ritorna Alle Liste"
 
 #: app/main.cpp:30
 msgid "A media player for your KDE desktop"
-msgstr ""
+msgstr "Un lettore multimediale per il tuo desktop KDE"
 
 #: app/main.cpp:31
-#, fuzzy
 msgid "Copyright 2011, Andrew Lake"
-msgstr "Copyright 2010, Andrew Lake"
+msgstr "Copyright 2011, Andrew Lake"
 
 #: app/main.cpp:32
 msgid ""
@@ -765,6 +764,19 @@ msgid ""
 "API but is not endorsed or certified by TheTVDB.com.  Please help improve "
 "available information by visiting http://thetvdb.com"
 msgstr ""
+"<b>Nota:</b> Questo prodotto usa le API di TMDb, ma non è approvato o "
+"certificato "
+"da TMDb. Per favore aiuta a migliorare le informazioni disponibili visitando "
+"http://"
+"themoviedb.org<br><b>Nota:</b> Questo prodotto usa le API di Last.fm, ma non "
+"è "
+"approvato o certificato da Last.fm.  Per favore aiuta a migliorare le "
+"informazioni disponibili "
+"visitando http://last.fm<br><b>Nota:</b> Questo prodotto usa le API di "
+"TheTVDB.com "
+"ma non è approvato o certificato da TheTVDB.com.  Per favore aiuta a "
+"migliorare le"
+"informazioni disponibili visitando http://thetvdb.com"
 
 #: app/main.cpp:41
 msgid "Andrew (Jamboarder) Lake"
@@ -823,7 +835,7 @@ msgstr "Mostra Output di Debug Aggiuntivo"
 
 #: app/main.cpp:57
 msgid "Enable touch mode for interface"
-msgstr ""
+msgstr "Abilita la modalità touch per l'interfaccia"
 
 #: app/common/actionsmanager.cpp:63
 msgid "Quit"
@@ -945,7 +957,6 @@ msgstr "Mostra Informazioni"
 
 #: app/common/actionsmanager.cpp:234 app/common/actionsmanager.cpp:355
 #: app/common/actionsmanager.cpp:1086
-#, fuzzy
 msgid "Show Info View"
 msgstr "Mostra Informazioni"
 
@@ -975,9 +986,8 @@ msgid "Manage info"
 msgstr "Gestisci info"
 
 #: app/common/actionsmanager.cpp:353 app/common/actionsmanager.cpp:1084
-#, fuzzy
 msgid "Hide Info View"
-msgstr "Nascondi filtro"
+msgstr "Nascondi Informazioni"
 
 #: app/common/actionsmanager.cpp:413
 msgid "Play after Now Playing"
@@ -1025,9 +1035,9 @@ msgid "Show elapsed time"
 msgstr "Mostra tempo trascorso"
 
 #: app/common/actionsmanager.cpp:947
-#, fuzzy, kde-format
+#, kde-format
 msgid "Bookmark-%1"
-msgstr "Aggiungi segnalibro"
+msgstr "Segnalibro-%1"
 
 #: app/common/actionsmanager.cpp:1016 app/common/actionsmanager.cpp:1023
 msgid "Update Ontologies"
@@ -1240,14 +1250,12 @@ msgid "Search for video"
 msgstr "Ricerca per il video"
 
 #: app/medialists/medialistsmanager.cpp:386
-#, fuzzy
 msgid "Audio Search"
-msgstr "Stream Audio"
+msgstr "Ricerca Audio"
 
 #: app/medialists/medialistsmanager.cpp:393
-#, fuzzy
 msgid "Video Search"
-msgstr "Impostazioni Video"
+msgstr "Ricerca Video"
 
 #: app/medialists/savedlistsmanager.cpp:84
 #: app/medialists/savedlistsmanager.cpp:100
@@ -1474,11 +1482,11 @@ msgstr[0] "Recupero info per %1 elemento..."
 msgstr[1] "Recupero info per %1 elementi..."
 
 #: platform/infoitemmodel.cpp:515
-#, fuzzy, kde-format
+#, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
-msgstr[0] "Recupera info per %1 di %2 elementi..."
-msgstr[1] "Recupera info per %1 di %2 elementi..."
+msgstr[0] "Recuperate info per %1 di %2 elementi..."
+msgstr[1] "Recuperate info per %1 di %2 elementi..."
 
 #: platform/infoitemmodel.cpp:539
 msgid "No Results"
@@ -1657,16 +1665,16 @@ msgstr ""
 "<b>Aggiornando tipi video e proprietà</b><br><i>%1 elementi video fatti...</i"
 
 #: platform/ontologyupdater.cpp:385
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous audio properties</b><br>%1 audio items done..."
 msgstr ""
-"<b>Aggiornando tipi audio e proprietà</b><br><i>%1 elementi audio fatti...</i"
+"<b>Pulizia proprietà audio errate</b><br><i>%1 elementi audio fatti...</i"
 
 #: platform/ontologyupdater.cpp:413
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous video properties</b><br>%1 video items done..."
 msgstr ""
-"<b>Aggiornando tipi video e proprietà</b><br><i>%1 elementi video fatti...</i"
+"<b>Pulizia proprietà video errate</b><br><i>%1 elementi video fatti...</i"
 
 #: platform/ontologyupdater.cpp:418
 msgid "<b>Update complete.</b>"
@@ -1677,9 +1685,8 @@ msgid "<b>Update stopped.</b>"
 msgstr "<b>Aggiornamento interrotto.</b>"
 
 #: platform/playlist.cpp:664
-#, fuzzy
 msgid "Video Playback"
-msgstr "Mostra In Riproduzione"
+msgstr "Riproduzione Video"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:35
 msgid "DBPedia"
@@ -1687,20 +1694,19 @@ msgstr "DBPedia"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
-msgstr ""
+msgstr "Questo fetcher ottiene informazioni da DBPedia.org."
 
 #: platform/infofetchers/doubaninfofetcher.cpp:34
 msgid "Douban"
-msgstr ""
+msgstr "Douban"
 
 #: platform/infofetchers/doubaninfofetcher.cpp:37
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Douban API but is not endorsed or certified by "
 "Douban."
 msgstr ""
-"Nota: Questo prodotto usa le API di TMDb, ma non è approvato o certificato "
-"da TMDb."
+"Nota: Questo fetcher usa le API di Douban, ma non è approvato o certificato "
+"da Douban."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1709,6 +1715,7 @@ msgstr "Feed Info"
 #: platform/infofetchers/feedinfofetcher.cpp:37
 msgid "This fetcher gets information for the feed at the specified location."
 msgstr ""
+"Questo fetcher ottiene le informazioni per il feed alla posizione specificata."
 
 #: platform/infofetchers/filenameinfofetcher.cpp:31
 msgid "Filename Info"
@@ -1719,31 +1726,32 @@ msgid ""
 "This fetcher uses guesses the season and episode number based on a filename "
 "pattern. E.g.  2x23 or S02E23 or 2.23"
 msgstr ""
+"Questo fetcher indovina il numero di stagione e puntata sulla base di un "
+"pattern nel nome del file. "
+"Es.  2x23 o S02E23 o 2.23"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:38
 msgid "Last.fm"
 msgstr "Last.fm"
 
 #: platform/infofetchers/lastfminfofetcher.cpp:41
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Last.fm API but is not endorsed or certified by "
 "Last.fm."
 msgstr ""
-"Nota: Questo prodotto usa le API di TMDb, ma non è approvato o certificato "
-"da TMDb."
+"Nota: Questo fetcher usa le API di Last.fm, ma non è approvato o certificato "
+"da Last.fm."
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:36
 msgid "TMDb"
 msgstr "TMDb"
 
 #: platform/infofetchers/tmdbinfofetcher.cpp:39
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the TMDb API but is not endorsed or certified by "
 "TMDb."
 msgstr ""
-"Nota: Questo prodotto usa le API di TMDb, ma non è approvato o certificato "
+"Nota: Questo fetcher usa le API di TMDb, ma non è approvato o certificato "
 "da TMDb."
 
 #: platform/infofetchers/tvdbinfofetcher.cpp:36
@@ -1755,7 +1763,7 @@ msgid ""
 "Note: This fetcher uses theTVDB.com API. Please help improve theTVDB.com "
 "information by clicking the link."
 msgstr ""
-"Nota: Questo programma usa le API di theTVDB.com. Aiuta a migliorare le "
+"Nota: Questo fetcher usa le API di theTVDB.com. Aiuta a migliorare le "
 "informazioni di theTVDB.com cliccando il link."
 
 #: platform/listengines/audioclipslistengine.cpp:97
