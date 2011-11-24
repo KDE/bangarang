@@ -201,6 +201,12 @@ class InfoItemModel : public QStandardItemModel
         QList<MediaItem> m_fetchedMatches;
         int m_selectedFetchedMatch;
         Utilities::Thread * m_utilThread;
+        MediaItemModel * m_artistListModel;
+        MediaItemModel * m_albumListModel;
+        MediaItemModel * m_audioGenreListModel;
+        MediaItemModel * m_actorListModel;
+        MediaItemModel * m_directorListModel;
+        MediaItemModel * m_videoGenreListModel;
         void fetchBatch(InfoFetcher *infoFetcher, int maxMatches, bool updateRequiredFields, bool updateArtwork);
         QHash<QString, QVariant> m_fetchingStatus;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);

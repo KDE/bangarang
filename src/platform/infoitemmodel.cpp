@@ -129,6 +129,20 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_drillLris["Actor"] = "video://sources?||actor=%1";
     m_drillLris["Director"] = "video://sources?||director=%1";
 
+    //Set up drop lists data
+    m_artistListModel = new MediaItemModel(this);
+    m_artistListModel->loadLRI("music://artists");
+    m_albumListModel = new MediaItemModel(this);
+    m_albumListModel->loadLRI("music://albums");
+    m_audioGenreListModel = new MediaItemModel(this);
+    m_audioGenreListModel->loadLRI("music://genres");
+    m_actorListModel = new MediaItemModel(this);
+    m_actorListModel->loadLRI("video://actors");
+    m_directorListModel = new MediaItemModel(this);
+    m_directorListModel->loadLRI("video://directors");
+    m_videoGenreListModel = new MediaItemModel(this);
+    m_videoGenreListModel->loadLRI("video://genres");
+
     //Set up InfoFetchers
     TMDBInfoFetcher * tmdbInfoFetcher = new TMDBInfoFetcher(this);
     connect(tmdbInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
@@ -632,6 +646,7 @@ void InfoItemModel::addFieldToValuesModel(const QString &fieldTitle, const QStri
         fieldItem->setData(value, Qt::DisplayRole);
         fieldItem->setData(value, Qt::EditRole);
         fieldItem->setData(value, InfoItemModel::OriginalValueRole); //stores copy of original data
+        fieldItem->setData(valueList(field), InfoItemModel::ValueListRole);
 
         //Store drill lri(s)
         setDrill(fieldItem, field, value);
@@ -706,16 +721,35 @@ QVariant InfoItemModel::commonValue(const QString &field)
 
 QStringList InfoItemModel::valueList(const QString &field)
 {
-    QStringList value;
-    value << QString();
-    for (int i = 0; i < m_mediaList.count(); i++) {
-        if (m_mediaList.at(i).fields.contains(field)) {
-            if (value.indexOf(m_mediaList.at(i).fields.value(field).toString()) == -1) {
-                value << m_mediaList.at(i).fields.value(field).toString();
+    QStringList values;
+    MediaItemModel * listModel = 0;
+    if (field == "artist") {
+        listModel = m_artistListModel;
+    } else if (field == "album") {
+        listModel = m_albumListModel;
+    } else if (field == "genre") {
+        if (m_mediaList.count() > 0) {
+            if (m_mediaList.at(0).type == "Audio") {
+                listModel = m_audioGenreListModel;
+            } else if (m_mediaList.at(0).type == "Video") {
+                listModel = m_videoGenreListModel;
             }
         }
+    } else if (field == "actor") {
+        listModel = m_actorListModel;
+    } else if (field == "director") {
+        listModel = m_directorListModel;
     }
-    return value;   
+    if (listModel) {
+        for (int i = 0; i < listModel->rowCount(); i++) {
+            MediaItem listItem = listModel->mediaItemAt(i);
+            if (listItem.type == "Message") {
+                continue;
+            }
+            values.append(listItem.title);
+        }
+    }
+    return values;
 }
 
 bool InfoItemModel::isEmpty(const QString &field)
