@@ -185,6 +185,39 @@ void MediaIndexer::updateRating(const QString & resourceUri, int rating)
     }
 }
 
+void MediaIndexer::updateRating(const QList<MediaItem> &mediaList, int rating)
+{
+    if (!m_nepomukInited) {
+        return;
+    }
+    if (m_writer->state() == QProcess::Starting || m_state == Running) {
+        return;
+    }
+
+    QString filename = QString("bangarang/%1.jb")
+    .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
+    QString path = KStandardDirs::locateLocal("data", filename, true);
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+    QTextStream out(&file);
+
+    bool validUpdate = false;
+    for (int i = 0; i < mediaList.count(); i++) {
+        QString resourceUri = mediaList.at(i).fields["resourceUri"].toString();
+        if (!resourceUri.isEmpty() && (rating >= 0) && (rating <= 10)) {
+            out << "[" << resourceUri << "]\n";
+            out << "rating = " << rating << "\n";
+            out << "\n" << "\n";
+            validUpdate = true;
+        }
+    }
+    if (validUpdate) {
+        emit startWriter(QStringList(path));
+    }
+}
+
 void MediaIndexer::writeRemoveInfo(MediaItem mediaItem, QTextStream &out)
 {
     out << "[" << mediaItem.fields["resourceUri"].toString()  << "]\n";;
