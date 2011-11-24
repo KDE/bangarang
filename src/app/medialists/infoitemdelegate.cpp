@@ -567,7 +567,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                 m_isEditing = true;
             }
             if (plusIconRect.contains(m_mousePos)) {
-                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonRelease) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonPress) {
                     //Editing new value
                     m_stringListIndexEditing = -1;
                     m_rowOfNewValue = index.row();
@@ -577,7 +577,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                     m_view->fixHeightToContents();
                 }
             } else {
-                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonRelease) {
+                if (index.data(Qt::DisplayRole).type() == QVariant::StringList && event->type() == QEvent::MouseButtonPress) {
                     //Editing existing value
                     m_stringListIndexEditing = stringListIndexAtMousePos(option, index);
                     m_rowOfNewValue = -1;
