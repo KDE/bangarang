@@ -671,10 +671,22 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             return lineEdit;
         }
     } else if (value.type() == QVariant::StringList) {
-        KLineEdit *lineEdit = new KLineEdit(parent);
-        lineEdit->setFont(KGlobalSettings::smallestReadableFont());
-        lineEdit->setAutoFillBackground(true);
-        return lineEdit;
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        if (valueList.count() == 0) {
+            KLineEdit *lineEdit = new KLineEdit(parent);
+            lineEdit->setFont(KGlobalSettings::smallestReadableFont());
+            lineEdit->setAutoFillBackground(true);
+            return lineEdit;
+        } else {
+            SComboBox *comboBox = new SComboBox(parent);
+            for (int i = 0; i < valueList.count(); i++) {
+                comboBox->addItem(valueList.at(i), valueList.at(i));
+            }
+            comboBox->setEditable(true);
+            comboBox->setFont(KGlobalSettings::smallestReadableFont());
+            comboBox->setAutoFillBackground(true);
+            return comboBox;
+        }
     } else if (value.type() == QVariant::String) {
         if (field == "description") {
             QTextEdit *textEdit = new QTextEdit(parent);
@@ -721,17 +733,40 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant::Type type = index.data(Qt::EditRole).type();
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
+    if (type == QVariant::String) {
+        if (multipleValues) {
+            return;
+        }
+        QString text = index.data(Qt::EditRole).toString();
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        if (valueList.isEmpty()) {
+            KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
+            lineEdit->setText(text);
+        } else {
+            SComboBox *comboBox = qobject_cast<SComboBox*>(editor);
+            comboBox->lineEdit()->setText(text);
+        }
+        return;
+    }
     if (type == QVariant::StringList) {
-        KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
-        if (multipleValues)
-	    return;
-	QStringList textList = index.data(Qt::EditRole).toStringList();
-	if (m_stringListIndexEditing != -1 && m_stringListIndexEditing < textList.count()) {
-	    QString text = textList.at(m_stringListIndexEditing);
-	    lineEdit->setText(textList.at(m_stringListIndexEditing));
-	}
-	return;
-    } 
+        if (multipleValues) {
+            return;
+        }
+        QString text;
+        QStringList textList = index.data(Qt::EditRole).toStringList();
+        if (m_stringListIndexEditing != -1 && m_stringListIndexEditing < textList.count()) {
+            text = textList.at(m_stringListIndexEditing);
+        }
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        if (valueList.isEmpty()) {
+            KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
+            lineEdit->setText(text);
+        } else {
+            SComboBox *comboBox = qobject_cast<SComboBox*>(editor);
+            comboBox->lineEdit()->setText(text);
+        }
+        return;
+    }
     if (index.data(Qt::EditRole).type() == QVariant::Int) {
 	if (multipleValues)
 	    return;
@@ -787,17 +822,46 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
         }
         model->setData(index, textEdit->toPlainText(), Qt::DisplayRole);
         model->setData(index, textEdit->toPlainText(), Qt::EditRole);
+    } else if (index.data(Qt::EditRole).type() == QVariant::String){
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        QString text;
+        if (valueList.isEmpty()) {
+            KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
+            if (!lineEdit) {
+                return;
+            }
+            text = lineEdit->text().trimmed();
+        } else {
+            SComboBox * comboBox = qobject_cast<SComboBox*>(editor);
+            if (!comboBox) {
+                return;
+            }
+            text = comboBox->lineEdit()->text().trimmed();
+        }
+        model->setData(index, text, Qt::DisplayRole);
+        model->setData(index, text, Qt::EditRole);
     } else if (index.data(Qt::EditRole).type() == QVariant::StringList){
-        KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
-        if (!lineEdit) {
-            return;
+        QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
+        QString text;
+        if (valueList.isEmpty()) {
+            KLineEdit * lineEdit = qobject_cast<KLineEdit*>(editor);
+            if (!lineEdit) {
+                return;
+            }
+            text = lineEdit->text().trimmed();
+        } else {
+            SComboBox * comboBox = qobject_cast<SComboBox*>(editor);
+            if (!comboBox) {
+                return;
+            }
+            text = comboBox->lineEdit()->text().trimmed();
         }
         QStringList textList = index.data(Qt::EditRole).toStringList();
-        if (m_stringListIndexEditing == -1 && !lineEdit->text().trimmed().isEmpty()){
-            textList.append(lineEdit->text().trimmed());
-        } else if (m_stringListIndexEditing >= 0 && !lineEdit->text().trimmed().isEmpty()) {
-            textList.replace(m_stringListIndexEditing, lineEdit->text().trimmed());
-        } else if (m_stringListIndexEditing >= 0 && lineEdit->text().trimmed().isEmpty()) {
+        if (m_stringListIndexEditing == -1 && !text.isEmpty()){
+            textList.append(text);
+        } else if (m_stringListIndexEditing >= 0 && !text.isEmpty()) {
+            textList.replace(m_stringListIndexEditing, text);
+        } else if (m_stringListIndexEditing >= 0 && text.isEmpty()) {
             textList.removeAt(m_stringListIndexEditing);
         } else {
             return;
