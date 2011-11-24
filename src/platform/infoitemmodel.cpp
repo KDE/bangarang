@@ -446,7 +446,6 @@ void InfoItemModel::setRating(int rating)
         MediaItem mediaItem = m_mediaList.at(i);
         mediaItem.fields["rating"] = rating;
         m_mediaList.replace(i, mediaItem);
-//        m_indexer->updateRating(mediaItem.fields["resourceUri"].toString(), rating);
     }
     m_originalList = m_mediaList;
     for (int i = 0 ; i < rowCount(); i++) {
