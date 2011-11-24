@@ -93,7 +93,15 @@ class MediaIndexer : public QObject
          * @param rating Rating: and integer between 0 and 10
          */
         void updateRating(const QString &resourceUri, int rating);
-        
+
+        /**
+         * Update the rating of the specified urls.
+         *
+         * @param List of MediaItems whose rating should be updated
+         * @param rating Rating: and integer between 0 and 10
+         */
+        void updateRating(const QList<MediaItem> &mediaList, int rating);
+
         State state();
         
     Q_SIGNALS:
