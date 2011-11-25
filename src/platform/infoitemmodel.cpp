@@ -866,9 +866,9 @@ void InfoItemModel::updateMediaList()
 
 void InfoItemModel::itemChanged(QStandardItem *changedItem)
 {
+    QString field = changedItem->data(InfoItemModel::FieldRole).toString();
     if (changedItem->data(Qt::EditRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
         m_modified = true;
-        QString field = changedItem->data(InfoItemModel::FieldRole).toString();
         if (field == "artwork") {
             disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
@@ -895,7 +895,11 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
             setDrill(changedItem, field, value);
             connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
         }
-        updateMediaList();
+
+        //Since the data has changed then make sure the multipleValues flag is set to false
+        disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        changedItem->setData(false, InfoItemModel::MultipleValuesRole);
+        connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
     } else {
         m_modified = false;
         for (int row = 0; row < rowCount(); row++) {
@@ -908,6 +912,19 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
             }
         }
     }
+
+    updateMediaList();
+
+    //For type changes load all the fields for the new type
+    if (field == "audioType" || field == "videoType") {
+        int originalType = changedItem->data(InfoItemModel::OriginalValueRole).toInt();
+        int row = changedItem->row();
+        loadFieldsInOrder();
+        disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        setData(index(row, 0), originalType, InfoItemModel::OriginalValueRole);
+        connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+    }
+
     emit infoChanged(m_modified);
     
 }
