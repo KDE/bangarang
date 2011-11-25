@@ -85,6 +85,7 @@ void NepomukListEngine::connectIndexer()
     connect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItemByResource(QString)));
     connect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
     connect(m_mediaIndexer, SIGNAL(finished()), model(), SLOT(updateRefresh()));
+    connect(m_mediaIndexer, SIGNAL(allFinished()), model(), SIGNAL(updateSourceInfoFinished()));
     connect(m_mediaIndexer, SIGNAL(allFinished()), this, SLOT(indexerFinished()));
 }
 
@@ -94,6 +95,7 @@ void NepomukListEngine::disconnectIndexer()
     disconnect(m_mediaIndexer, SIGNAL(urlInfoRemoved(QString)), model(), SLOT(removeMediaItem(QString)));
     disconnect(m_mediaIndexer, SIGNAL(sourceInfoUpdated(MediaItem)), model(), SLOT(updateMediaItem(MediaItem)));
     disconnect(m_mediaIndexer, SIGNAL(finished()), model(), SLOT(updateRefresh()));
+    disconnect(m_mediaIndexer, SIGNAL(allFinished()), model(), SIGNAL(updateSourceInfoFinished()));
     disconnect(m_mediaIndexer, SIGNAL(allFinished()), this, SLOT(indexerFinished()));
 }
 

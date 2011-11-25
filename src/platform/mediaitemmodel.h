@@ -665,6 +665,11 @@ class MediaItemModel : public QStandardItemModel
          * Emitted only when changed independent of media list load.
          */
         void mediaListPropertiesChanged();
+
+        /**
+         * Emmitted when updateSourceInfo is finished.
+         */
+        void updateSourceInfoFinished();
         
     public Q_SLOTS:
         /**

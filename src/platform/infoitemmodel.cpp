@@ -130,18 +130,16 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_drillLris["Director"] = "video://sources?||director=%1";
 
     //Set up drop lists data
-    m_artistListModel = new MediaItemModel(this);
-    m_artistListModel->loadLRI("music://artists");
-    m_albumListModel = new MediaItemModel(this);
-    m_albumListModel->loadLRI("music://albums");
-    m_audioGenreListModel = new MediaItemModel(this);
-    m_audioGenreListModel->loadLRI("music://genres");
-    m_actorListModel = new MediaItemModel(this);
-    m_actorListModel->loadLRI("video://actors");
-    m_directorListModel = new MediaItemModel(this);
-    m_directorListModel->loadLRI("video://directors");
-    m_videoGenreListModel = new MediaItemModel(this);
-    m_videoGenreListModel->loadLRI("video://genres");
+    m_valueListLris["artist"] = "music://artists";
+    m_valueListLris["album"] = "music://albums";
+    m_valueListLris["audioGenre"] = "music://genres";
+    m_valueListLris["seriesName"] = "video://tvshows";
+    m_valueListLris["actor"] = "video://actors";
+    m_valueListLris["director"] = "video://directors";
+    m_valueListLris["videoGenre"] = "video://genres";
+    m_valueListLoader = new MediaItemModel(this);
+    connect(m_valueListLoader, SIGNAL(mediaListChanged()), this, SLOT(loadNextValueList()));
+    m_valueListLoader->loadLRI("music://artists");
 
     //Set up InfoFetchers
     TMDBInfoFetcher * tmdbInfoFetcher = new TMDBInfoFetcher(this);
@@ -283,7 +281,13 @@ QList<MediaItem> InfoItemModel::mediaList()
 
 void InfoItemModel::setSourceModel(MediaItemModel * sourceModel)
 {
+    if (m_sourceModel) {
+        disconnect(m_sourceModel, SIGNAL(updateSourceInfoFinished()), this, SLOT(reloadValueLists()));
+    }
     m_sourceModel = sourceModel;
+    if (m_sourceModel) {
+        connect(m_sourceModel, SIGNAL(updateSourceInfoFinished()), this, SLOT(reloadValueLists()));
+    }
 }
 
 QHash<QString, QVariant> InfoItemModel::fetchingStatus()
@@ -705,13 +709,20 @@ bool InfoItemModel::hasMultipleValues(const QString &field)
 
 QVariant InfoItemModel::commonValue(const QString &field)
 {
-    QVariant value;
+    QVariant value = QVariant(QString());
     for (int i = 0; i < m_mediaList.count(); i++) {
         if (m_mediaList.at(i).fields.contains(field)) {
             if (value.isNull()) {
                 value = m_mediaList.at(i).fields.value(field);
             } else if (m_mediaList.at(i).fields.value(field) != value) {
-                value = QVariant();
+                QVariant::Type type = m_mediaList.at(i).fields.value(field).type();
+                if (type == QVariant::String) {
+                    value = QVariant(QString());
+                } else if (type == QVariant::StringList) {
+                    value = QVariant(QStringList());
+                } else {
+                    value = QVariant(QString());
+                }
                 break;
             }
         }
@@ -722,33 +733,21 @@ QVariant InfoItemModel::commonValue(const QString &field)
 QStringList InfoItemModel::valueList(const QString &field)
 {
     QStringList values;
-    MediaItemModel * listModel = 0;
-    if (field == "artist") {
-        listModel = m_artistListModel;
-    } else if (field == "album") {
-        listModel = m_albumListModel;
-    } else if (field == "genre") {
+    QString lookupField = field;
+    if (lookupField == "genre") {
         if (m_mediaList.count() > 0) {
             if (m_mediaList.at(0).type == "Audio") {
-                listModel = m_audioGenreListModel;
+                lookupField= "audioGenre";
             } else if (m_mediaList.at(0).type == "Video") {
-                listModel = m_videoGenreListModel;
+                lookupField = "videoGenre";
             }
         }
-    } else if (field == "actor") {
-        listModel = m_actorListModel;
-    } else if (field == "director") {
-        listModel = m_directorListModel;
     }
-    if (listModel) {
-        for (int i = 0; i < listModel->rowCount(); i++) {
-            MediaItem listItem = listModel->mediaItemAt(i);
-            if (listItem.type == "Message") {
-                continue;
-            }
-            values.append(listItem.title);
-        }
+
+    if (m_valueLists.contains(lookupField)) {
+        values = m_valueLists.value(lookupField);
     }
+
     return values;
 }
 
@@ -1241,5 +1240,38 @@ bool InfoItemModel::dropMimeData(const QMimeData *mimeData,
     Q_UNUSED(parent);
     Q_UNUSED(row);
     Q_UNUSED(column);
+}
+
+void InfoItemModel::loadNextValueList()
+{
+    QString lri = m_valueListLoader->mediaListProperties().lri;
+    QString field = m_valueListLris.key(lri);
+    if (field.isEmpty()) {
+        return;
+    }
+    QStringList valueList;
+    for (int i = 0; i < m_valueListLoader->rowCount(); i++) {
+        valueList.append(m_valueListLoader->mediaItemAt(i).title);
+    }
+    if (!valueList.isEmpty()) {
+        m_valueLists[field] = valueList;
+    }
+    m_loadedValueLists.append(field);
+    QStringList allLoadableFields = m_valueListLris.keys();
+    for (int i = 0; i < allLoadableFields.count(); i++) {
+        QString loadableField = allLoadableFields.at(i);
+        if (!m_loadedValueLists.contains(loadableField)) {
+            QString lri = m_valueListLris.value(loadableField);
+            m_valueListLoader->loadLRI(lri);
+            break;
+        }
+    }
+}
+
+void InfoItemModel::reloadValueLists()
+{
+    m_loadedValueLists.clear();
+    QString lri = m_valueListLris.values().at(0);
+    m_valueListLoader->loadLRI(lri);
 }
 
