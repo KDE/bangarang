@@ -369,6 +369,18 @@ void NowPlayingDelegate::paintInfo(QPainter *painter, const QStyleOptionViewItem
             painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
             line++;
         }
+        QString tags = mediaItem.fields["tags"].toStringList().join(", ");
+        if (!tags.isEmpty()) {
+            QString field = i18n("Tags: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, tags);
+            line++;
+        }
         QString description = mediaItem.fields["description"].toString();
         if (!description.isEmpty()) {
             painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
@@ -436,6 +448,30 @@ void NowPlayingDelegate::paintInfo(QPainter *painter, const QStyleOptionViewItem
             painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, producers);
             line++;
         }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            QString field = i18n("Genre: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, genres);
+            line++;
+        }
+        QString tags = mediaItem.fields["tags"].toStringList().join(", ");
+        if (!tags.isEmpty()) {
+            QString field = i18n("Tags: ");
+            QFontMetrics fm(fieldFont);
+            painter->save();
+            painter->setFont(fieldFont);
+            painter->setPen(fieldColor);
+            painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, field);
+            painter->restore();
+            painter->drawText(rect.adjusted(fm.width(field), line*(fm.lineSpacing()+3), 0, 0), Qt::TextSingleLine, tags);
+            line++;
+        }
         QString description = mediaItem.fields["description"].toString();
         if (!description.isEmpty()) {
             painter->drawText(rect.adjusted(0, line*(fm.lineSpacing()+3), 0, 0), Qt::TextWordWrap, description);
@@ -495,6 +531,11 @@ QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QMo
             genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
             line++;
         }
+        QString tags = mediaItem.fields["tags"].toStringList().join(", ");
+        if (!tags.isEmpty()) {
+            tags = fm.elidedText(tags, Qt::ElideRight, infoWidth);
+            line++;
+        }
         QString description = mediaItem.fields["description"].toString();
         if (!description.isEmpty()) {
             QRect descRect = fm.boundingRect(0, 0, infoWidth, fm.lineSpacing(), Qt::TextWordWrap, description);
@@ -532,6 +573,16 @@ QRect NowPlayingDelegate::infoRect(const QStyleOptionViewItem &option, const QMo
         QString producers = mediaItem.fields["producer"].toStringList().join(", ");
         if (!producers.isEmpty()) {
             producers = fm.elidedText(producers, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString genres = mediaItem.fields["genre"].toStringList().join(", ");
+        if (!genres.isEmpty()) {
+            genres = fm.elidedText(genres, Qt::ElideRight, infoWidth);
+            line++;
+        }
+        QString tags = mediaItem.fields["tags"].toStringList().join(", ");
+        if (!tags.isEmpty()) {
+            tags = fm.elidedText(tags, Qt::ElideRight, infoWidth);
             line++;
         }
         QString description = mediaItem.fields["description"].toString();
