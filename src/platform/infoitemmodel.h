@@ -201,12 +201,10 @@ class InfoItemModel : public QStandardItemModel
         QList<MediaItem> m_fetchedMatches;
         int m_selectedFetchedMatch;
         Utilities::Thread * m_utilThread;
-        MediaItemModel * m_artistListModel;
-        MediaItemModel * m_albumListModel;
-        MediaItemModel * m_audioGenreListModel;
-        MediaItemModel * m_actorListModel;
-        MediaItemModel * m_directorListModel;
-        MediaItemModel * m_videoGenreListModel;
+        MediaItemModel * m_valueListLoader;
+        QHash<QString, QString> m_valueListLris;
+        QStringList m_loadedValueLists;
+        QHash<QString, QStringList> m_valueLists;
         void fetchBatch(InfoFetcher *infoFetcher, int maxMatches, bool updateRequiredFields, bool updateArtwork);
         QHash<QString, QVariant> m_fetchingStatus;
         void addFieldToValuesModel(const QString &fieldTitle, const QString &field, bool isEditable = false);
@@ -230,6 +228,8 @@ class InfoItemModel : public QStandardItemModel
         void noResults(InfoFetcher *infoFetcher);
         void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
         void cancelFetching();
+        void loadNextValueList();
+        void reloadValueLists();
 };
 
 #endif // INFOITEMDELEGATE_H
