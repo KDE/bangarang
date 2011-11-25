@@ -137,6 +137,8 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_valueListLris["actor"] = "video://actors";
     m_valueListLris["director"] = "video://directors";
     m_valueListLris["videoGenre"] = "video://genres";
+    m_valueListLris["audioTags"] = "tag://audiotags";
+    m_valueListLris["videoTags"] = "tag://videotags";
     m_valueListLoader = new MediaItemModel(this);
     connect(m_valueListLoader, SIGNAL(mediaListChanged()), this, SLOT(loadNextValueList()));
     m_valueListLoader->loadLRI("music://artists");
@@ -734,13 +736,24 @@ QStringList InfoItemModel::valueList(const QString &field)
 {
     QStringList values;
     QString lookupField = field;
+    QString type;
+    if (m_mediaList.count() > 0) {
+        type = m_mediaList.at(0).type;
+    }
+
     if (lookupField == "genre") {
-        if (m_mediaList.count() > 0) {
-            if (m_mediaList.at(0).type == "Audio") {
-                lookupField= "audioGenre";
-            } else if (m_mediaList.at(0).type == "Video") {
-                lookupField = "videoGenre";
-            }
+        if (type == "Audio") {
+            lookupField= "audioGenre";
+        } else if (type == "Video") {
+            lookupField = "videoGenre";
+        }
+    } else if (lookupField == "composer") {
+        lookupField = "artist";
+    } else if (lookupField == "tags") {
+        if (type == "Audio") {
+            lookupField= "audioTags";
+        } else if (type == "Video") {
+            lookupField = "videoTags";
         }
     }
 
