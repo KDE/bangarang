@@ -313,7 +313,7 @@ void MusicListEngine::run()
                 QString genre = it.binding(mediaVocabulary.genreBinding()).literal().toString().trimmed();
                 if (!genre.isEmpty()) {
                     MediaItem mediaItem;
-                    mediaItem.url = QString("music://artists?genre=%1||%2||%3").arg(genre, artistFilter, albumFilter);
+                    mediaItem.url = QString("music://albums?genre=%1||%2||%3").arg(genre, artistFilter, albumFilter);
                     mediaItem.title = genre;
                     mediaItem.type = QString("Category");
                     mediaItem.fields["categoryType"] = QString("AudioGenre");
