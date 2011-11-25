@@ -203,6 +203,7 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     m_infoFetchers.append(fileNameInfoFetcher);
 
     m_selectedFetchedMatch = -1;
+    m_sourceModel = 0;
 
     //Setup indexer
     m_indexer = new MediaIndexer(this);
