@@ -57,6 +57,9 @@ class InfoItemDelegate : public QItemDelegate
         void resetEditMode();
         void enableTouch();
 
+    protected:
+        bool eventFilter(QObject * editor, QEvent * event);
+
     private:
         InfoItemView * m_view;
         QAbstractItemView::SelectionMode m_defaultViewSelectionMode;
@@ -71,6 +74,7 @@ class InfoItemDelegate : public QItemDelegate
         bool m_isEditing;
         int m_starRatingSize;
         BangarangApplication* m_application;
+        bool  m_typeChanged;
         QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -80,6 +84,7 @@ class InfoItemDelegate : public QItemDelegate
 
     private Q_SLOTS:
         void endEditing(QWidget * editor);
+        void typeChanged(int i);
 };
 
 #endif // INFOITEMDELEGATE_H

@@ -69,6 +69,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 
     m_isEditing = false;
 
+    m_typeChanged = false;
+
     m_starRatingSize = StarRating::Big;
 
     m_drillIcon = KIcon("bangarang-category-browse");
@@ -652,6 +654,7 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             comboBox->setEditable(false);
             comboBox->setCurrentIndex(value.toInt());
             comboBox->setAutoFillBackground(true);
+            connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(typeChanged(int)));
             return comboBox;
         } else if (field == "videoType") {
             QStringList list;
@@ -662,6 +665,7 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             comboBox->setEditable(false);
             comboBox->setCurrentIndex(value.toInt());
             comboBox->setAutoFillBackground(true);
+            connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(typeChanged(int)));
             return comboBox;
         } else {
             KLineEdit *lineEdit = new KLineEdit(parent);
@@ -885,20 +889,6 @@ void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model
         QItemDelegate::setModelData(editor, model, index);
     }
     
-    //If the data has changed then make sure the multipleValues flag is set to false
-    if (index.data(Qt::EditRole) != index.data(InfoItemModel::OriginalValueRole)) {
-        model->setData(index, false, InfoItemModel::MultipleValuesRole); 
-    }
-
-    //If the type has changed then make sure to tell model to reload fields and view to adjust
-    if (field == "audioType" || field == "videoType") {
-        int originalType = index.data(InfoItemModel::OriginalValueRole).toInt();
-        int modelRow = index.row(); //assume type row does not change
-        InfoItemModel * infoItemModel = (InfoItemModel*)model;
-        infoItemModel->loadFieldsInOrder();
-        model->setData(model->index(modelRow, 0), originalType, InfoItemModel::OriginalValueRole);
-        m_view->fixHeightToContents();
-    }
 }   
 
 void InfoItemDelegate::setView(InfoItemView * view)
@@ -1094,4 +1084,21 @@ void InfoItemDelegate::resetEditMode()
 
 void InfoItemDelegate::enableTouch() {
     m_starRatingSize = StarRating::Huge;
+}
+
+void InfoItemDelegate::typeChanged(int i)
+{
+    m_typeChanged = true;
+    Q_UNUSED(i);
+}
+
+bool InfoItemDelegate::eventFilter(QObject *editor, QEvent *event)
+{
+    if (m_typeChanged) {
+        m_typeChanged = false;
+        QKeyEvent *enterEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+        return QItemDelegate::eventFilter(editor, enterEvent);
+    } else {
+        return QItemDelegate::eventFilter(editor, event);
+    }
 }
