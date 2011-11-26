@@ -364,6 +364,51 @@ void SemanticsListEngine::run()
                 m_mediaListProperties.type = QString("Sources");
             }
         }
+        if (engineArg.toLower() == "recentlyadded") {
+            mediaList.clear();
+            if (!mediaType.isEmpty()) {
+                MediaQuery query;
+                QStringList bindings;
+                bindings.append(mediaVocabulary.mediaResourceBinding());
+                bindings.append("added");
+                query.select(bindings, MediaQuery::Distinct);
+                query.startWhere();
+                query.addCondition("graph ?g { ");
+                if (mediaType == "audio") {
+                    query.addCondition(mediaVocabulary.hasTypeAnyAudio(MediaQuery::Required));
+                } else if (mediaType == "video") {
+                    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+                }
+                query.addLRIFilterConditions(engineFilterList, mediaVocabulary);
+                query.addCondition("} ");
+                query.addCondition("?g nao:created ?added . ");
+                query.endWhere();
+                QStringList orderByBindings;
+                QList<MediaQuery::Order> order;
+                orderByBindings.append("added");
+                order.append(MediaQuery::Descending);
+                query.orderBy(orderByBindings, order);
+
+                Soprano::QueryResultIterator it = query.executeSelect(m_mainModel);
+
+                //Build media list from results
+                while( it.next() ) {
+                    if (m_stop) {
+                        return;
+                    }
+                    MediaItem mediaItem;
+                    QDateTime added = it.binding("added").literal().toDateTime();
+                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                    mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
+                    mediaItem.semanticComment = i18n("added %1").arg(Utilities::wordsForTimeSince(added));
+                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                        mediaList.append(mediaItem);
+                    }
+                }
+                m_mediaListProperties.name = i18n("Recently Added");
+                m_mediaListProperties.type = QString("Sources");
+            }
+        }
     }
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);

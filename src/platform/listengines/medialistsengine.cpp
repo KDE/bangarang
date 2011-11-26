@@ -91,7 +91,14 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Genres"), "semantics://frequent?audio||limit=4||groupBy=genre");
             mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
-            
+            mediaItem.title = i18n("Recently Added");
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.url = "semantics://recentlyadded?audio||limit=20";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaItem.fields["isConfigurable"] = false;
+            mediaItem.clearContexts();
+            mediaList << mediaItem;
+
             mediaItem.title = i18n("Artists");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "music://artists";
@@ -278,7 +285,14 @@ void MediaListsEngine::run()
             mediaItem.addContext(i18n("Directors"), "semantics://frequent?video||limit=4||groupBy=director");
             mediaItem.fields["isConfigurable"] = true;
             mediaList << mediaItem;
-            
+            mediaItem.title = i18n("Recently Added");
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.url = "semantics://recentlyadded?video||limit=20";
+            mediaItem.artwork = KIcon("chronometer");
+            mediaItem.fields["isConfigurable"] = false;
+            mediaItem.clearContexts();
+            mediaList << mediaItem;
+
             mediaItem.title = i18n("Movies");
             mediaItem.fields["title"] = mediaItem.title;
             mediaItem.url = "video://movies";
