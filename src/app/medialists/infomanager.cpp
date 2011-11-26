@@ -112,6 +112,9 @@ InfoManager::~InfoManager()
 //---------------------
 void InfoManager::toggleInfoView()
 {
+    if (m_application->mainWindow()->currentMainWidget() != MainWindow::MainMediaList) {
+        return;
+    }
     bool makeVisible = !m_infoViewVisible;
     ui->semanticsHolder->setVisible(makeVisible);
     

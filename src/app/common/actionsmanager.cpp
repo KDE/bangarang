@@ -236,7 +236,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Show Info View
     action = new KAction(KIcon("help-about"), i18n("Show Info View"), m_parent);
+    action->setShortcut(Qt::CTRL + Qt::Key_I);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(toggleInfoView()));
+    m_parent->addAction(action);
     m_othersCollection->addAction("show_info", action);
 
     //Add bookmark
