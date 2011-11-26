@@ -26,7 +26,7 @@
 #include <KAboutData>
 
 static KAboutData aboutData( "bangarang", 0,
-        ki18n("Bangarang"), "2.0",
+        ki18n("Bangarang"), "2.1 beta",
         ki18n("A media player for your KDE desktop"), KAboutData::License_GPL_V3,
         ki18n("Copyright 2011, Andrew Lake"),
         ki18n("<b>Note:</b> This product uses the TMDb API but is not endorsed or certified by TMDb. Please help improve available information by visiting http://themoviedb.org<br>"
@@ -40,8 +40,7 @@ int main(int argc, char *argv[])
     aboutData.setOrganizationDomain( "mpris.org" ); //for DBus
     aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@gmail.com");
     aboutData.addCredit(ki18n("Stefan Burnicki"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Andreas Marschke"), ki18n("Contributor"));
-    aboutData.addCredit(ki18n("Ni Hui"), ki18n("Contributor"));
+    aboutData.addCredit(ki18n("Elias Probst"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
     aboutData.setHomepage("http://gitorious.org/bangarang");
