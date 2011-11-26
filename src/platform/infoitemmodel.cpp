@@ -1211,6 +1211,11 @@ QStringList InfoItemModel::mimeTypes() const
 Qt::ItemFlags InfoItemModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+    QStandardItem *item = this->itemFromIndex(index);
+    if (!item) {
+        return useFlags;
+    }
     if (this->itemFromIndex(index)->isEditable()) {
         useFlags |= Qt::ItemIsEditable;
     }
