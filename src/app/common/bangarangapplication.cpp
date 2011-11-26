@@ -157,7 +157,7 @@ void BangarangApplication::setup()
     }
     bool infoViewVisible = (generalGroup.readEntry("InfoViewVisible", true));
     if (m_infoManager->infoViewVisible() != infoViewVisible) {
-        m_infoManager->toggleInfoView();
+        m_infoManager->toggleInfoView(true);
     }
     m_playlist->setShuffleMode(generalGroup.readEntry("Shuffle", false));
     m_playlist->setRepeatMode(generalGroup.readEntry("Repeat", false));

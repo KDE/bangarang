@@ -52,7 +52,7 @@ class InfoManager : public QObject
         void enableTouch();
         
     public slots:
-        void toggleInfoView();
+        void toggleInfoView(bool force = false);
         void showInfoView();
         void hideInfoView();
         void mediaSelectionChanged (const QItemSelection & selected, const QItemSelection & deselected);
