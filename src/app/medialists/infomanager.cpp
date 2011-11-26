@@ -110,9 +110,10 @@ InfoManager::~InfoManager()
 //---------------------
 //-- UI Widget Slots --
 //---------------------
-void InfoManager::toggleInfoView()
+void InfoManager::toggleInfoView(bool force)
 {
-    if (m_application->mainWindow()->currentMainWidget() != MainWindow::MainMediaList) {
+    if ((m_application->mainWindow()->currentMainWidget() != MainWindow::MainMediaList) &&
+        !force) {
         return;
     }
     bool makeVisible = !m_infoViewVisible;
