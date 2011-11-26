@@ -93,9 +93,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Added");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://recentlyadded?audio||limit=20";
+            mediaItem.url = semanticsLriForRecentlyAdded("Audio");
             mediaItem.artwork = KIcon("chronometer");
-            mediaItem.fields["isConfigurable"] = false;
+            mediaItem.fields["isConfigurable"] = true;
             mediaItem.clearContexts();
             mediaList << mediaItem;
 
@@ -287,9 +287,9 @@ void MediaListsEngine::run()
             mediaList << mediaItem;
             mediaItem.title = i18n("Recently Added");
             mediaItem.fields["title"] = mediaItem.title;
-            mediaItem.url = "semantics://recentlyadded?video||limit=20";
+            mediaItem.url = semanticsLriForRecentlyAdded("Video");
             mediaItem.artwork = KIcon("chronometer");
-            mediaItem.fields["isConfigurable"] = false;
+            mediaItem.fields["isConfigurable"] = true;
             mediaItem.clearContexts();
             mediaList << mediaItem;
 
@@ -521,6 +521,21 @@ QString MediaListsEngine::semanticsLriForFrequent(const QString &type)
             int playCount = entry.at(1).toInt();
             lri.append(QString("||playCount%1%2").arg(comp).arg(playCount));
         }
+    }
+    return lri;
+}
+
+QString MediaListsEngine::semanticsLriForRecentlyAdded(const QString &type)
+{
+    QString lri;
+    KConfig config;
+    KConfigGroup generalGroup( &config, "General" );
+    if (type == "Audio") {
+        int limit = generalGroup.readEntry("RecentlyAddedAudioLimit", 20);
+        lri = QString("semantics://recentlyadded?audio||limit=%1").arg(limit);
+    } else {
+        int limit = generalGroup.readEntry("RecentlyAddedVideoLimit", 20);
+        lri = QString("semantics://recentlyadded?video||limit=%1").arg(limit);
     }
     return lri;
 }

@@ -87,41 +87,59 @@ void MediaListSettings::showMediaListSettingsForLri(const QString &lri)
     if (m_application->mediaListsManager()->currentMediaListSelection() == MediaListsManager::AudioList) {
         if (lri.startsWith("semantics://")) {
             m_parent->audioListsStack()->ui->audioListsStack->setCurrentIndex(3);
-            if (lri.startsWith("semantics://recent")) {
+            if (lri.startsWith("semantics://recent?")) {
                 m_parent->audioListsStack()->ui->semATimeHolder->show();
                 m_parent->audioListsStack()->ui->semARatingHolder->hide();
                 m_parent->audioListsStack()->ui->semAFreqHolder->hide();
                 m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("played"));
-            } else if (lri.startsWith("semantics://highest")) {
+                m_parent->audioListsStack()->ui->semASelectMore->show();
+            } else if (lri.startsWith("semantics://highest?")) {
                 m_parent->audioListsStack()->ui->semATimeHolder->hide();
                 m_parent->audioListsStack()->ui->semARatingHolder->show();
                 m_parent->audioListsStack()->ui->semAFreqHolder->hide();
                 m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("rated"));
-            } else if (lri.startsWith("semantics://frequent")) {
+                m_parent->audioListsStack()->ui->semASelectMore->show();
+            } else if (lri.startsWith("semantics://frequent?")) {
                 m_parent->audioListsStack()->ui->semATimeHolder->hide();
                 m_parent->audioListsStack()->ui->semARatingHolder->hide();
                 m_parent->audioListsStack()->ui->semAFreqHolder->show();
                 m_parent->audioListsStack()->ui->semAMoreVerb->setText(i18n("played"));
+                m_parent->audioListsStack()->ui->semASelectMore->show();
+            } else if (lri.startsWith("semantics://recentlyadded?")) {
+                m_parent->audioListsStack()->ui->semATimeHolder->hide();
+                m_parent->audioListsStack()->ui->semARatingHolder->hide();
+                m_parent->audioListsStack()->ui->semAFreqHolder->hide();
+                m_parent->audioListsStack()->ui->semAMoreVerb->hide();
+                m_parent->audioListsStack()->ui->semASelectMore->hide();
             }
         }
     } else {
         if (lri.startsWith("semantics://")) {
             m_parent->videoListsStack()->ui->videoListsStack->setCurrentIndex(3);
-            if (lri.startsWith("semantics://recent")) {
+            if (lri.startsWith("semantics://recent?")) {
                 m_parent->videoListsStack()->ui->semVTimeHolder->show();
                 m_parent->videoListsStack()->ui->semVRatingHolder->hide();
                 m_parent->videoListsStack()->ui->semVFreqHolder->hide();
                 m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("played"));
-            } else if (lri.startsWith("semantics://highest")) {
+                m_parent->videoListsStack()->ui->semVSelectMore->show();
+            } else if (lri.startsWith("semantics://highest?")) {
                 m_parent->videoListsStack()->ui->semVTimeHolder->hide();
                 m_parent->videoListsStack()->ui->semVRatingHolder->show();
                 m_parent->videoListsStack()->ui->semVFreqHolder->hide();
                 m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("rated"));
-            } else if (lri.startsWith("semantics://frequent")) {
+                m_parent->videoListsStack()->ui->semVSelectMore->show();
+            } else if (lri.startsWith("semantics://frequent?")) {
                 m_parent->videoListsStack()->ui->semVTimeHolder->hide();
                 m_parent->videoListsStack()->ui->semVRatingHolder->hide();
                 m_parent->videoListsStack()->ui->semVFreqHolder->show();
                 m_parent->videoListsStack()->ui->semVMoreVerb->setText(i18n("played"));
+                m_parent->videoListsStack()->ui->semVSelectMore->show();
+            } else if (lri.startsWith("semantics://recentlyadded?")) {
+                m_parent->videoListsStack()->ui->semVTimeHolder->hide();
+                m_parent->videoListsStack()->ui->semVRatingHolder->hide();
+                m_parent->videoListsStack()->ui->semVFreqHolder->hide();
+                m_parent->videoListsStack()->ui->semVMoreVerb->hide();
+                m_parent->videoListsStack()->ui->semVSelectMore->hide();
             }
         }
     }
@@ -165,6 +183,9 @@ QStringList MediaListSettings::configEntryForLRI(const QString &lri)
     } else if (lri.startsWith("semantics://highest?audio")) {
         configEntry.append("HighestAudioLimit");
         configEntry.append("HighestAudioRated");
+    } else if (lri.startsWith("semantics://recentlyadded?audio")) {
+        configEntry.append("RecentlyAddedAudioLimit");
+        configEntry.append("RecentlyAddedAudioRated");
     } else if (lri.startsWith("semantics://recent?video")) {
         configEntry.append("RecentVideoLimit");
         configEntry.append("RecentVideoPlayed");
@@ -174,6 +195,9 @@ QStringList MediaListSettings::configEntryForLRI(const QString &lri)
     } else if (lri.startsWith("semantics://highest?video")) {
         configEntry.append("HighestVideoLimit");
         configEntry.append("HighestVideoRated");
+    } else if (lri.startsWith("semantics://recentlyadded?video")) {
+        configEntry.append("RecentlyAddedVideoLimit");
+        configEntry.append("RecentlyAddedVideoRated");
     }
     return configEntry;
 }

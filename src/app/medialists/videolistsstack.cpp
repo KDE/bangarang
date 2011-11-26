@@ -63,7 +63,8 @@ void VideoListsStack::on_configureVideoList_clicked()
             m_application->savedListsManager()->showVideoSavedListSettings();
         } else if (selectedItem.url.startsWith("semantics://recent") ||
             selectedItem.url.startsWith("semantics://frequent") ||
-            selectedItem.url.startsWith("semantics://highest")) {
+            selectedItem.url.startsWith("semantics://highest") ||
+            selectedItem.url.startsWith("semantics://recentlyadded")) {
             m_application->mainWindow()->mediaListSettings()->showMediaListSettings();
         }
     }

@@ -63,7 +63,8 @@ void AudioListsStack::on_configureAudioList_clicked()
             m_application->savedListsManager()->showAudioSavedListSettings();
         } else if (selectedItem.url.startsWith("semantics://recent") ||
             selectedItem.url.startsWith("semantics://frequent") ||
-            selectedItem.url.startsWith("semantics://highest")) {
+            selectedItem.url.startsWith("semantics://highest") ||
+            selectedItem.url.startsWith("semantics://recentlyadded")) {
             m_application->mainWindow()->mediaListSettings()->showMediaListSettings();
         }
     }

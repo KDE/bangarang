@@ -50,6 +50,7 @@ class MediaListsEngine : public NepomukListEngine
         QString semanticsLriForRecent(const QString &type);
         QString semanticsLriForHighest(const QString &type);
         QString semanticsLriForFrequent(const QString &type);
+        QString semanticsLriForRecentlyAdded(const QString &type);
         QList<MediaItem> loadServerList(QString type);
 };
 #endif // MEDIALISTSENGINE_H
