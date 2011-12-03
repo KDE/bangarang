@@ -24,6 +24,7 @@
 #include <QDir>
 #include <KUrl>
 #include <phonon/mediaobject.h>
+#include <phonon/mediacontroller.h>
 
 class MediaItem;
 class MediaListProperties;
@@ -45,7 +46,8 @@ class DVDListEngine : public ListEngine
         void run();
         
     private:
-         Phonon::MediaObject *m_mediaObject;
+        Phonon::MediaObject *m_mediaObject;
+        Phonon::MediaController *m_mediaController;
         bool m_loadWhenReady;
     
     private slots:

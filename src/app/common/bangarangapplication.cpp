@@ -421,10 +421,15 @@ void BangarangApplication::processCommandLineArgs()
 
     if (args->isSet("play-dvd")) {
         //Play DVD
+        QList<Solid::Device> dvds = DeviceManager::instance()->deviceList(DeviceManager::VideoType);
+        if ( dvds.isEmpty() ) {
+            kDebug() << "no DVD found";
+        }
         kDebug() << "playing DVD";
         MediaItem mediaItem;
         mediaItem.title = i18n("DVD Video");
-        mediaItem.url = "dvdvideo://";
+        mediaItem.fields["title"];
+        mediaItem.url = QString("dvdvideo://%1" ).arg(dvds.at(0).udi());
         mediaItem.type = "Category";
         mediaList << mediaItem;
         itemLoaded = true;
