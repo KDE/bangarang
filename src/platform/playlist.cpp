@@ -560,10 +560,12 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
 void Playlist::currentSourceChanged(const Phonon::MediaSource & newSource) //connected to MediaObject::currentSourceChanged
 {
     //Update currentUrl and check next mediaItem to decide how to setAutoplayTitles
-    if (newSource.type() == Phonon::MediaSource::Disc && m_queue->rowCount() > 1) {
-        if (Utilities::isDisc(m_queue->mediaItemAt(1).url)) {
-            m_currentUrl = m_queue->mediaItemAt(1).url;
-            m_mediaController->setAutoplayTitles((m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1));
+    if (newSource.type() == Phonon::MediaSource::Disc) {
+        if (m_queue->rowCount() > 1) {
+            if (Utilities::isDisc(m_queue->mediaItemAt(1).url)) {
+                m_currentUrl = m_queue->mediaItemAt(1).url;
+                m_mediaController->setAutoplayTitles((m_queue->mediaItemAt(1).fields["trackNumber"].toInt() == m_mediaController->currentTitle() + 1));
+            }
         }
     } else {
         m_currentUrl = newSource.url().toString();
@@ -855,7 +857,7 @@ void Playlist::updateNowPlaying()
             }
         }
     }
-    
+
     //Update Now Playing model
     if (queueRow != -1) {
         MediaItem nowPlayingItem = m_queue->mediaItemAt(queueRow);

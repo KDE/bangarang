@@ -55,8 +55,7 @@ void DVDListEngine::run()
     QString udi = m_mediaListProperties.engineArg();
     Solid::Device device = Solid::Device( udi );
     const Solid::Block* block = device.as<const Solid::Block>();
-    
-    QList<MediaItem> mediaList;
+
     if (!block->isValid())
         return;
     QString dev_str = block->device();
@@ -64,34 +63,38 @@ void DVDListEngine::run()
         m_mediaObject->setCurrentSource(Phonon::MediaSource(Phonon::Dvd, dev_str));
         m_loadWhenReady = true;
     }
-    if (m_mediaObject->state() != Phonon::StoppedState)
-        return;
-    QString discTitle = Utilities::deviceName(udi, m_mediaObject);
-    Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
-    int trackCount = mediaController->availableTitles();
-    //int duration;
-    for (int i = 1; i <= trackCount; i++) {
-        if (m_stop) {
-            return;
-        }
-        KUrl url = Utilities::deviceUrl("dvd", udi, discTitle, "Video", i);
-        MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
-        if (discTitle.isEmpty())
-            mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);
-        mediaList << mediaItem;
-    }
-    delete mediaController;
-
-    emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
-    m_loadWhenReady = false;
 }
 
 void DVDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
+    QString udi = m_mediaListProperties.engineArg();
     if ((oldState == Phonon::LoadingState) && m_loadWhenReady) {
-        start();
+        QString discTitle = Utilities::deviceName(udi, m_mediaObject);
+        Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
+        int trackCount = mediaController->availableTitles();
+        QList<MediaItem> mediaList;
+        if (trackCount == 0) {
+            KUrl url = Utilities::deviceUrl("dvd", udi, discTitle, "Video", -1);
+            MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
+            mediaList << mediaItem;
+        } else {
+            for (int i = 1; i <= trackCount; i++) {
+                if (m_stop) {
+                    return;
+                }
+                KUrl url = Utilities::deviceUrl("dvd", udi, discTitle, "Video", i);
+                MediaItem mediaItem = Utilities::mediaItemFromUrl(url);
+                if (discTitle.isEmpty())
+                    mediaItem.subTitle = i18nc("%1=Total number of tracks on the DVD", "DVD Video - %1 Titles", trackCount);
+                mediaList << mediaItem;
+            }
+        }
+        delete mediaController;
+
+        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
+        m_requestSignature = QString();
+        m_subRequestSignature = QString();
+        m_loadWhenReady = false;
     }
     Q_UNUSED(newState);
 }
