@@ -44,6 +44,14 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     
     m_parent->audioListsStack()->ui->aListSourceSelection->setEnabled(false);
     m_parent->videoListsStack()->ui->vListSourceSelection->setEnabled(false);
+    m_parent->audioListsStack()->ui->ampacheServerAdd->setToolTip(i18n("Enter full server path.<br/>"
+                                                                       "<i>For example,<br/>"
+                                                                       "- ownCloud, enter \"http://[host]/owncloud/apps/media\"<br/>"
+                                                                       "- Ampache, enter \"http://[host]/ampache\"</i>"));
+    m_parent->audioListsStack()->ui->ampacheServer->setToolTip(i18n("Enter full server path.<br/>"
+                                                          "<i>For example,<br/>"
+                                                          "- ownCloud, enter \"http://[host]/owncloud/apps/media\"<br/>"
+                                                          "- Ampache, enter \"http://[host]/ampache\"</i>"));
     m_parent->audioListsStack()->ui->ampacheDataAdd->hide();
     m_parent->audioListsStack()->ui->ampacheData->hide();
     loadSavedListsIndex();
