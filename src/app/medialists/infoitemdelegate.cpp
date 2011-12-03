@@ -698,6 +698,8 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
             textEdit->setFont(KGlobalSettings::smallestReadableFont());
             textEdit->setAutoFillBackground(true);
             textEdit->setToolTip(i18n("Press <Tab> to finish editing."));
+            textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             return textEdit;
         }
         QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
@@ -744,8 +746,13 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
         QString text = index.data(Qt::EditRole).toString();
         QStringList valueList = index.data(InfoItemModel::ValueListRole).toStringList();
         if (valueList.isEmpty()) {
-            KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
-            lineEdit->setText(text);
+            if (field == "description") {
+                QTextEdit *textEdit = qobject_cast<QTextEdit*>(editor);
+                textEdit->setText(text);
+            } else {
+                KLineEdit *lineEdit = qobject_cast<KLineEdit*>(editor);
+                lineEdit->setText(text);
+            }
         } else {
             SComboBox *comboBox = qobject_cast<SComboBox*>(editor);
             comboBox->lineEdit()->setText(text);
