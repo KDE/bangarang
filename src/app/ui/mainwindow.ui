@@ -980,7 +980,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>220</width>
-                            <height>289</height>
+                            <height>291</height>
                            </rect>
                           </property>
                           <layout class="QVBoxLayout" name="verticalLayout_64">
@@ -1011,7 +1011,7 @@
                               <bool>true</bool>
                              </property>
                              <property name="focusPolicy">
-                              <enum>Qt::NoFocus</enum>
+                              <enum>Qt::ClickFocus</enum>
                              </property>
                              <property name="acceptDrops">
                               <bool>true</bool>
