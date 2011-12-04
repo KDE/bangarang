@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
 "issues\n"
 "POT-Creation-Date: 2011-12-03 21:21-0800\n"
-"PO-Revision-Date: 2011-01-24 09:27+0200\n"
+"PO-Revision-Date: 2011-12-04 19:13+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -35,7 +35,7 @@ msgstr "yurchor@ukr.net"
 #. i18n: ectx: property (windowTitle), widget (QWidget, VideoListsStack)
 #: rc.cpp:5 rc.cpp:401
 msgid "Form"
-msgstr ""
+msgstr "Форма"
 
 #. i18n: file: app/ui/audiolistsstack.ui:76
 #. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
@@ -105,7 +105,7 @@ msgstr "Поточний список відтворення"
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceAmpache)
 #: rc.cpp:32
 msgid "ownCloud/Ampache"
-msgstr ""
+msgstr "ownCloud/Ampache"
 
 #. i18n: file: app/ui/audiolistsstack.ui:245
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
@@ -121,16 +121,15 @@ msgstr "Назва нового списку"
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheServer)
 #: rc.cpp:38 rc.cpp:59
 msgid "Server"
-msgstr ""
+msgstr "Сервер"
 
 #. i18n: file: app/ui/audiolistsstack.ui:265
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserNameAdd)
 #. i18n: file: app/ui/audiolistsstack.ui:439
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserName)
 #: rc.cpp:41 rc.cpp:62
-#, fuzzy
 msgid "User Name"
-msgstr "Назва"
+msgstr "Ім'я користувача"
 
 #. i18n: file: app/ui/audiolistsstack.ui:272
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePasswordAdd)
@@ -138,7 +137,7 @@ msgstr "Назва"
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePassword)
 #: rc.cpp:44 rc.cpp:65
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #. i18n: file: app/ui/audiolistsstack.ui:297
 #. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
@@ -197,6 +196,8 @@ msgid ""
 "You can export this list to a file if you want to use it in other "
 "applications"
 msgstr ""
+"Ви можете експортувати цей список до файла, якщо ви плануєте скористатися ним "
+"у інших програмах."
 
 #. i18n: file: app/ui/audiolistsstack.ui:520
 #. i18n: ectx: property (text), widget (QPushButton, aslsExport)
@@ -204,7 +205,7 @@ msgstr ""
 #. i18n: ectx: property (text), widget (QPushButton, vslsExport)
 #: rc.cpp:74 rc.cpp:449
 msgid "Export to file..."
-msgstr ""
+msgstr "Експортувати до файла…"
 
 #. i18n: file: app/ui/audiolistsstack.ui:594
 #. i18n: ectx: property (text), widget (QLabel, aConfigureSemListTitle)
@@ -672,7 +673,7 @@ msgstr "Кут:"
 #. i18n: ectx: property (text), widget (QLabel, subtitleInfoText)
 #: rc.cpp:317
 msgid "Can't detect subtitle encoding, please choose:"
-msgstr ""
+msgstr "Не вдалося визначити кодування субтитрів, вкажіть його:"
 
 #. i18n: file: app/ui/mainwindow.ui:6452
 #. i18n: ectx: property (text), widget (QLabel, label_21)
@@ -846,7 +847,7 @@ msgstr "Учасник розробки"
 
 #: app/main.cpp:43
 msgid "Elias Probst"
-msgstr ""
+msgstr "Elias Probst"
 
 #: app/main.cpp:45
 msgid ""
@@ -881,7 +882,7 @@ msgstr "Показувати додаткові діагностичні дан�
 
 #: app/main.cpp:56
 msgid "Enable touch mode for interface"
-msgstr ""
+msgstr "Увімкнути режим сенсорного інтерфейсу"
 
 #: app/common/actionsmanager.cpp:64
 msgid "Quit"
@@ -974,7 +975,7 @@ msgstr "Оновити"
 
 #: app/common/actionsmanager.cpp:193
 msgid "Select All"
-msgstr ""
+msgstr "Вибрати все"
 
 #: app/common/actionsmanager.cpp:200
 msgid "Remove from list"
@@ -1120,14 +1121,12 @@ msgid "Hide filter"
 msgstr "Приховати фільтр"
 
 #: app/common/actionsmanager.cpp:1148
-#, fuzzy
 msgid "Show Audio Lists"
-msgstr "Показувати параметри звуку"
+msgstr "Показувати списки аудіо"
 
 #: app/common/actionsmanager.cpp:1154
-#, fuzzy
 msgid "Show Video Lists"
-msgstr "Показувати параметри відео"
+msgstr "Показувати списки відео"
 
 #: app/common/bangarangapplication.cpp:137
 msgid ""
@@ -1266,6 +1265,11 @@ msgid ""
 "[host]/owncloud/apps/media\"<br/>- Ampache, enter \"http://[host]/ampache\"</"
 "i>"
 msgstr ""
+"Вкажіть шлях до сервера повністю.<br/><i>Приклади:<br/>- ownCloud, вкажіть "
+"\"http://"
+"[вузол]/owncloud/apps/media\"<br/>- Ampache, вкажіть "
+"\"http://[вузол]/ampache\"</"
+"i>"
 
 #: app/medialists/savedlistsmanager.cpp:106
 #: app/medialists/savedlistsmanager.cpp:122
@@ -1288,7 +1292,7 @@ msgstr "Ви справді бажаєте вилучити «%1»?"
 #: app/medialists/savedlistsmanager.cpp:930
 #: app/medialists/savedlistsmanager.cpp:943
 msgid "*.m3u|M3U files (*.m3u)"
-msgstr ""
+msgstr "*.m3u|файли M3U (*.m3u)"
 
 #: app/medialists/savedlistsmanager.cpp:935
 #, kde-format
@@ -1296,6 +1300,8 @@ msgid ""
 "<p>The file <filename>%1</filename> already exists.</p><p>Do you want to "
 "overwrite it?</p>"
 msgstr ""
+"<p>Файл з назвою <filename>%1</filename> вже існує.</p><p>Бажаєте його "
+"перезаписати?</p>"
 
 #: app/nowplaying/audiosettings.cpp:88
 msgid "No effect"
@@ -1367,9 +1373,8 @@ msgstr "Жанр: "
 
 #: app/nowplaying/nowplayingdelegate.cpp:374
 #: app/nowplaying/nowplayingdelegate.cpp:465
-#, fuzzy
 msgid "Tags: "
-msgstr "Мітки"
+msgstr "Мітки: "
 
 #: app/nowplaying/nowplayingdelegate.cpp:405
 msgid "Actor: "
@@ -1774,17 +1779,17 @@ msgstr ""
 "відеооб’єктів…"
 
 #: platform/ontologyupdater.cpp:385
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous audio properties</b><br>%1 audio items done..."
 msgstr ""
-"<b>Оновлення типів звукових даних та властивостей</b><br>Оновлено дані %1 "
-"звукових об’єктів…"
+"<b>Спорожнення помилкових параметрів відтворення звуку.</b><br>Оновлено дані %"
+"1 об’єктів…"
 
 #: platform/ontologyupdater.cpp:413
-#, fuzzy, kde-format
+#, kde-format
 msgid "<b>Cleaning up erroneous video properties</b><br>%1 video items done..."
 msgstr ""
-"<b>Оновлення типів відеоданих та властивостей</b><br>Оновлено дані %1 "
+"<b>Спорожнення помилкових параметрів відео.</b><br>Оновлено дані %1 "
 "відеооб’єктів…"
 
 #: platform/ontologyupdater.cpp:418
@@ -1796,9 +1801,8 @@ msgid "<b>Update stopped.</b>"
 msgstr "<b>Оновлення зупинено.</b>"
 
 #: platform/playlist.cpp:671
-#, fuzzy
 msgid "Video Playback"
-msgstr "Пошук відеоданих"
+msgstr "Відтворення відео"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:35
 msgid "DBPedia"
@@ -1810,16 +1814,15 @@ msgstr "Цей інструмент отримує дані з DBPedia.org."
 
 #: platform/infofetchers/doubaninfofetcher.cpp:34
 msgid "Douban"
-msgstr ""
+msgstr "Douban"
 
 #: platform/infofetchers/doubaninfofetcher.cpp:37
-#, fuzzy
 msgid ""
 "Note: This fetcher uses the Douban API but is not endorsed or certified by "
 "Douban."
 msgstr ""
-"Зауваження: цей інструмент використовує програмний інтерфейс TMDb, але його "
-"не схвалено і не сертифіковано TMDb."
+"Зауваження: цей інструмент використовує програмний інтерфейс Douban, але його "
+"не схвалено і не сертифіковано Douban."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1911,9 +1914,8 @@ msgid "Genres"
 msgstr "Жанри"
 
 #: platform/listengines/ampachelistengine.cpp:161
-#, fuzzy
 msgid "Playlists"
-msgstr "Список відтворення"
+msgstr "Списки композицій"
 
 #: platform/listengines/ampachelistengine.cpp:194
 #: platform/listengines/musiclistengine.cpp:169
@@ -1947,13 +1949,13 @@ msgstr[2] "%1 жанрів"
 msgstr[3] "1 жанр"
 
 #: platform/listengines/ampachelistengine.cpp:274
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 playlist"
 msgid_plural "%1 playlists"
-msgstr[0] "Список відтворення"
-msgstr[1] "Список відтворення"
-msgstr[2] "Список відтворення"
-msgstr[3] "Список відтворення"
+msgstr[0] "%1 список композицій"
+msgstr[1] "%1 списки композицій"
+msgstr[2] "%1 списків композицій"
+msgstr[3] "1 список композицій"
 
 #: platform/listengines/ampachelistengine.cpp:317
 #: platform/listengines/musiclistengine.cpp:455
@@ -2017,13 +2019,13 @@ msgid "DVD Video - %1 Titles"
 msgstr "Відео-DVD — %1 записів"
 
 #: platform/listengines/dvdlistengine.cpp:97
-#, fuzzy, kde-format
+#, kde-format
 msgid "1 title"
 msgid_plural "%1 titles"
-msgstr[0] "Без назви"
-msgstr[1] "Без назви"
-msgstr[2] "Без назви"
-msgstr[3] "Без назви"
+msgstr[0] "%1 об’єкт"
+msgstr[1] "%1 об’єкти"
+msgstr[2] "%1 об’єктів"
+msgstr[3] "%1 об’єкт"
 
 #: platform/listengines/feedlistengine.cpp:111
 msgid "New audio feed"
@@ -2063,9 +2065,8 @@ msgstr "Збирання даних щодо файлів (%1 файлів)…"
 #: platform/listengines/medialistsengine.cpp:94
 #: platform/listengines/medialistsengine.cpp:288
 #: platform/listengines/semanticslistengine.cpp:408
-#, fuzzy
 msgid "Recently Added"
-msgstr "Нещодавні"
+msgstr "Нещодавно додані"
 
 #: platform/listengines/medialistsengine.cpp:132
 #: platform/listengines/musiclistengine.cpp:360
@@ -2181,7 +2182,7 @@ msgstr[3] "відтворені один раз"
 #, kde-format
 msgctxt "for example, added 3 days ago"
 msgid "added %1"
-msgstr ""
+msgstr "додані %1"
 
 #: platform/listengines/taglistengine.cpp:116
 #, kde-format
