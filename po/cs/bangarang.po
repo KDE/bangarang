@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
 "issues\n"
-"POT-Creation-Date: 2011-12-03 13:29+0100\n"
+"POT-Creation-Date: 2011-12-03 21:21-0800\n"
 "PO-Revision-Date: 2011-02-02 10:39+0100\n"
 "Last-Translator: Oskar Hollmann <oskarhollmann@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -1145,12 +1145,12 @@ msgstr "Tuto zprávu již nezobrazovat."
 msgid "Resume"
 msgstr "Pokračovat"
 
-#: app/common/bangarangapplication.cpp:426
+#: app/common/bangarangapplication.cpp:430
 #: platform/utilities/mediaitems.cpp:1441
 msgid "DVD Video"
 msgstr "Video DVD"
 
-#: app/common/bangarangapplication.cpp:440
+#: app/common/bangarangapplication.cpp:445
 #: platform/listengines/medialistsengine.cpp:202
 #: platform/utilities/mediaitems.cpp:1448
 msgid "Audio CD"
@@ -1776,7 +1776,7 @@ msgstr "<b>Aktualizace dokončena.</b>"
 msgid "<b>Update stopped.</b>"
 msgstr "<b>Aktualizace přerušena.</b>"
 
-#: platform/playlist.cpp:665
+#: platform/playlist.cpp:671
 #, fuzzy
 msgid "Video Playback"
 msgstr "Hledat video"
@@ -1982,11 +1982,19 @@ msgstr[0] "1 skladba"
 msgstr[1] "%1 skladby"
 msgstr[2] "%1 skladeb"
 
-#: platform/listengines/dvdlistengine.cpp:80
+#: platform/listengines/dvdlistengine.cpp:91
 #, fuzzy, kde-format
 msgctxt "%1=Total number of tracks on the DVD"
 msgid "DVD Video - %1 Titles"
 msgstr "Video DVD - %1 tituly"
+
+#: platform/listengines/dvdlistengine.cpp:97
+#, fuzzy, kde-format
+msgid "1 title"
+msgid_plural "%1 titles"
+msgstr[0] "Bez názvu"
+msgstr[1] "Bez názvu"
+msgstr[2] "Bez názvu"
 
 #: platform/listengines/feedlistengine.cpp:111
 msgid "New audio feed"
