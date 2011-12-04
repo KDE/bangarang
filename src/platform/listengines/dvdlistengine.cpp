@@ -56,8 +56,11 @@ void DVDListEngine::run()
     Solid::Device device = Solid::Device( udi );
     const Solid::Block* block = device.as<const Solid::Block>();
 
-    if (!block->isValid())
+    QList<MediaItem> mediaList;
+    if (!block->isValid()) {
+        emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
         return;
+    }
     QString dev_str = block->device();
     if (!m_loadWhenReady) {
         m_mediaObject->setCurrentSource(Phonon::MediaSource(Phonon::Dvd, dev_str));
@@ -67,8 +70,8 @@ void DVDListEngine::run()
 
 void DVDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
-    QString udi = m_mediaListProperties.engineArg();
     if ((oldState == Phonon::LoadingState) && m_loadWhenReady) {
+        QString udi = m_mediaListProperties.engineArg();
         QString discTitle = Utilities::deviceName(udi, m_mediaObject);
         Phonon::MediaController *mediaController = new Phonon::MediaController(m_mediaObject);
         int trackCount = mediaController->availableTitles();
@@ -91,6 +94,7 @@ void DVDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
         }
         delete mediaController;
 
+        m_mediaListProperties.summary = i18np("1 title", "%1 titles", mediaList.count());
         emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
         m_requestSignature = QString();
         m_subRequestSignature = QString();
