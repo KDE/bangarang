@@ -5,8 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: code.google.com/p/bangarangissuetracking/issues/list\n"
-"POT-Creation-Date: 2011-01-23 21:21-0800\n"
+"Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
+"issues\n"
+"POT-Creation-Date: 2011-12-03 21:21-0800\n"
 "PO-Revision-Date: 2011-11-27 20:19+0100\n"
 "Last-Translator: Lutring Márk <lutring.mark@gmail.com>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
@@ -16,704 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 1.2\n"
-
-#: actionsmanager.cpp:62
-msgid "Quit"
-msgstr "Kilépés"
-
-#: actionsmanager.cpp:68
-msgid "Play/Pause"
-msgstr "Lejátszás/Szünet"
-
-#: actionsmanager.cpp:76
-msgid "Play"
-msgstr "Lejátszás"
-
-#: actionsmanager.cpp:81
-msgid "Pause"
-msgstr "Szünet"
-
-#: actionsmanager.cpp:86
-msgid "Play next"
-msgstr "Következő lejátszása"
-
-#: actionsmanager.cpp:93
-msgid "Play previous"
-msgstr "Előző lejátszása"
-
-#: actionsmanager.cpp:100 actionsmanager.cpp:739
-msgid "Mute"
-msgstr "Némítás"
-
-#: actionsmanager.cpp:106
-msgid "Play all"
-msgstr "Mind lejátszása"
-
-#: actionsmanager.cpp:111
-msgid "Play selected"
-msgstr "Kiválasztott lejátszása"
-
-#: actionsmanager.cpp:116
-msgid "Add to playlist"
-msgstr "Hozzáadás a lejátszólistához"
-
-#: actionsmanager.cpp:121 actionsmanager.cpp:334
-msgid "Add after Now Playing"
-msgstr "Hozzáadás a most játszott után"
-
-#: actionsmanager.cpp:126 actionsmanager.cpp:131
-msgid "Remove from playlist"
-msgstr "Eltávolítás a lejátszólistából"
-
-#: actionsmanager.cpp:137
-msgid "Hide controls"
-msgstr "Irányítás elrejtése"
-
-#: actionsmanager.cpp:143 actionsmanager.cpp:1055 actionsmanager.cpp:1060
-msgid "Show filter"
-msgstr "Szűrő megjelenítése"
-
-#: actionsmanager.cpp:149 actionsmanager.cpp:936
-msgid "Show remaining time"
-msgstr "Hátralévő idő megjelenítése"
-
-#: actionsmanager.cpp:154 actionsmanager.cpp:616 actionsmanager.cpp:642
-#: actionsmanager.cpp:695 mainwindow.cpp:377
-msgid "Show video settings"
-msgstr "Videó beállítások megjelenítése"
-
-#: actionsmanager.cpp:160 actionsmanager.cpp:619 actionsmanager.cpp:639
-#: actionsmanager.cpp:696 mainwindow.cpp:378
-msgid "Show audio settings"
-msgstr "Hang beállítások megjelenítése"
-
-#: actionsmanager.cpp:166
-msgid "Fullscreen"
-msgstr "Teljes képernyő"
-
-#: actionsmanager.cpp:179
-msgid "Save selected info"
-msgstr "Kiválasztott információ mentése"
-
-#: actionsmanager.cpp:184
-msgid "Remove selected info"
-msgstr "Kiválasztott információ törlése"
-
-#: actionsmanager.cpp:189
-msgid "Refresh"
-msgstr "Frissítés"
-
-#: actionsmanager.cpp:195
-msgid "Remove from list"
-msgstr "Eltávolítás a listáról"
-
-#: actionsmanager.cpp:200
-msgid "Add to \"Audio Streams\""
-msgstr "Hozzáadás a „Hang adatfolyam” -hoz"
-
-#: actionsmanager.cpp:205
-msgid "Add to list"
-msgstr "Hozzáadás a listához"
-
-#: actionsmanager.cpp:209
-msgid "Add to list "
-msgstr "Hozzáadás a listához"
-
-#: actionsmanager.cpp:213 actionsmanager.cpp:218
-msgid "New list"
-msgstr "Új lista"
-
-#: actionsmanager.cpp:223
-msgid "Show items"
-msgstr "Elemek megjelenítése"
-
-#: actionsmanager.cpp:228 actionsmanager.cpp:432 actionsmanager.cpp:473
-#: actionsmanager.cpp:887
-msgid "Show information"
-msgstr "Információ megjelenítése"
-
-#: actionsmanager.cpp:233 actionsmanager.cpp:354 actionsmanager.cpp:1085
-msgid "Show Info View"
-msgstr "Információs nézet megjelenítése"
-
-#: actionsmanager.cpp:238
-msgid "Add bookmark"
-msgstr "Könyvjelző hozzáadása"
-
-#: actionsmanager.cpp:245
-msgid "Remove bookmarks"
-msgstr "Könyvjelző eltávolítása"
-
-#: actionsmanager.cpp:249 actionsmanager.cpp:620 actionsmanager.cpp:643
-#: actionsmanager.cpp:692
-msgid "Show shortcuts editor"
-msgstr "Gyorsbillentyű szerkesztő megjelenítése"
-
-#: actionsmanager.cpp:256
-msgid "Update ontologies..."
-msgstr "Ontológiák frissítése..."
-
-#: actionsmanager.cpp:261
-msgid "Hide in system tray"
-msgstr "Elrejtés a tálcára"
-
-#: actionsmanager.cpp:271
-msgid "Manage info"
-msgstr "Információk szerkesztése"
-
-#: actionsmanager.cpp:352 actionsmanager.cpp:1083
-msgid "Hide Info View"
-msgstr "Információs nézet elrejtése"
-
-#: actionsmanager.cpp:412
-msgid "Play after Now Playing"
-msgstr "Lejátszás a jelenleg játszott után"
-
-#: actionsmanager.cpp:435 actionsmanager.cpp:476
-msgid "Hide information"
-msgstr "Információ elrejtése"
-
-#: actionsmanager.cpp:523
-#, kde-format
-msgid "Chapter %1"
-msgstr "%1. fejezet"
-
-#: actionsmanager.cpp:590
-msgid "Show Controls"
-msgstr "Irányítás megjelenítése"
-
-#: actionsmanager.cpp:594
-msgid "Hide Controls"
-msgstr "Irányítás elrejtése"
-
-#: actionsmanager.cpp:608
-msgid "Hide video settings"
-msgstr "Videó beállítások elrejtése"
-
-#: actionsmanager.cpp:631
-msgid "Hide audio settings"
-msgstr "Hang beállítások elrejtése"
-
-#: actionsmanager.cpp:684
-msgid "Hide shortcuts editor"
-msgstr "Gyorsbillentyű szerkesztő elrejtése"
-
-#: actionsmanager.cpp:736
-msgid "Restore Volume"
-msgstr "Hangerő visszaállítása"
-
-#: actionsmanager.cpp:883
-msgid "Restore video size"
-msgstr "Videó méretének visszaállítása"
-
-#: actionsmanager.cpp:934
-msgid "Show elapsed time"
-msgstr "Hátralévő idő megjelenítése"
-
-#: actionsmanager.cpp:946
-#, kde-format
-msgid "Bookmark-%1"
-msgstr "Könyvjelző-%1"
-
-#: actionsmanager.cpp:1015 actionsmanager.cpp:1022
-msgid "Update Ontologies"
-msgstr "Ontológiák frissítése."
-
-#. i18n: file: mainwindow.ui:8310
-#. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: actionsmanager.cpp:1017 rc.cpp:419
-msgid "Cancel"
-msgstr "Mégsem"
-
-#: actionsmanager.cpp:1018
-msgid ""
-"Updating ontologies ensures that media information is stored in a way that "
-"makes it most accessible to other desktop applications.  This is only "
-"necessary if you recently upgraded Bangarang or your KDE software "
-"compilation. <br><br>This may take several minutes."
-msgstr ""
-"Ontológiák frissítése biztosítja, hogy a média információk oly módon vannak "
-"eltárolva, hogy elérhető válnak más asztali alkalmazások számára is.\n"
-"Ez csak akkor fontos, ha most frissítette a Bangarangot vagy a KDE SC-t<br><"
-"br> Ez eltarthat pár percig."
-
-#: actionsmanager.cpp:1026
-msgid "Stop"
-msgstr "Megállítás"
-
-#: actionsmanager.cpp:1029
-msgid "Close"
-msgstr "Bezárás"
-
-#: actionsmanager.cpp:1053 actionsmanager.cpp:1058
-msgid "Hide filter"
-msgstr "Szűrő elrejtése"
-
-#: audiosettings.cpp:88
-msgid "No effect"
-msgstr "Nincs effekt"
-
-#: audiosettings.cpp:92
-msgid "Rock"
-msgstr "Rock"
-
-#: audiosettings.cpp:96
-msgid "Reggae"
-msgstr "Reggae"
-
-#: audiosettings.cpp:100
-msgid "Dance"
-msgstr "Dance"
-
-#: audiosettings.cpp:104
-msgid "Live"
-msgstr "Élő"
-
-#: audiosettings.cpp:108
-msgid "Classical"
-msgstr "Klasszikus"
-
-#: audiosettings.cpp:112
-msgid "Blockbuster"
-msgstr "Kasszasiker"
-
-#: audiosettings.cpp:116
-msgid "Documentary"
-msgstr "Dokumentum"
-
-#: audiosettings.cpp:120
-msgid "Drama"
-msgstr "Dráma"
-
-#: audiosettings.cpp:124 audiosettings.cpp:149 audiosettings.cpp:166
-#: audiosettings.cpp:185 audiosettings.cpp:216
-msgid "Manual"
-msgstr "Kézi"
-
-#: bangarangapplication.cpp:124
-msgid ""
-"Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
-"library, rating and play count functions will be unavailable."
-msgstr ""
-"Bangarang képtelen elérni a Nepomuk Szemantikus Asztalt. Média "
-"könyvtár, értékelés és lejátszások száma funkció elérhetetlen lesz."
-
-#. i18n: file: mainwindow.ui:17
-#. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
-#: bangarangapplication.cpp:124 bangarangnotifieritem.cpp:11 main.cpp:29
-#: mainwindow.cpp:525 mainwindow.cpp:962 mainwindow.cpp:1104 rc.cpp:5
-msgid "Bangarang"
-msgstr "Bangarang"
-
-#: bangarangapplication.cpp:124
-msgid "Don't show this message again"
-msgstr "Ne mutassa ezt az üzenet újra"
-
-#: bangarangapplication.cpp:168 bangarangapplication.cpp:170
-msgid "Resume"
-msgstr "Folytatás"
-
-#: bangarangapplication.cpp:375 platform/utilities/mediaitems.cpp:1411
-msgid "DVD Video"
-msgstr "DVD Videó"
-
-#: bangarangapplication.cpp:392 platform/listengines/medialistsengine.cpp:193
-#: platform/utilities/mediaitems.cpp:1418
-msgid "Audio CD"
-msgstr "Hang CD"
-
-#: infoitemdelegate.cpp:128 infoitemdelegate.cpp:671
-msgid "Music"
-msgstr "Zene"
-
-#: infoitemdelegate.cpp:130 infoitemdelegate.cpp:671
-msgid "Audio Stream"
-msgstr "Hang adatfolyam"
-
-#: infoitemdelegate.cpp:132 infoitemdelegate.cpp:671
-msgid "Audio Clip"
-msgstr "Hang Klip"
-
-#: infoitemdelegate.cpp:137 infoitemdelegate.cpp:681
-msgid "Movie"
-msgstr "Film"
-
-#: infoitemdelegate.cpp:139 infoitemdelegate.cpp:681
-msgid "TV Show"
-msgstr "TV műsor"
-
-#: infoitemdelegate.cpp:141 infoitemdelegate.cpp:681
-msgid "Video Clip"
-msgstr "Videó Klip"
-
-#: infoitemdelegate.cpp:155
-msgid "No description"
-msgstr "Nincs leírás"
-
-#: infoitemdelegate.cpp:164
-msgid "Multiple Values"
-msgstr "Több érték"
-
-#: infoitemdelegate.cpp:493
-msgid "Open artwork file"
-msgstr "Grafikafájl megnyitása"
-
-#: infoitemdelegate.cpp:707
-msgid "Press <Tab> to finish editing."
-msgstr "Nyomja meg <Tab> gombot a szerkesztés befejezéséhez"
-
-#: infomanager.cpp:285
-msgid "Click to hide"
-msgstr "Kattintson az elrejtéshez"
-
-#: infomanager.cpp:287
-msgid "Additional information may be available. <br> Click to show more..."
-msgstr ""
-"További információk lehetnek elérhetőek <br> Kattintson több megjelenítéséhez."
-".."
-
-#: main.cpp:30
-msgid "A media player for your KDE desktop"
-msgstr "Média lejátszó a KDE környezethez"
-
-#: main.cpp:31
-msgid "Copyright 2011, Andrew Lake"
-msgstr "Copyright 2011, Andrew Lake"
-
-#: main.cpp:32
-msgid ""
-"<b>Note:</b> This product uses the TMDb API but is not endorsed or certified "
-"by TMDb. Please help improve available information by visiting http://"
-"themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but is not "
-"endorsed or certified by Last.fm.  Please help improve available information "
-"by visiting http://last.fm<br><b>Note:</b> This product uses the TheTVDB.com "
-"API but is not endorsed or certified by TheTVDB.com.  Please help improve "
-"available information by visiting http://thetvdb.com"
-msgstr ""
-"<b>Megjegyzés:</b> A letöltő a TMDb API-ját használja, de nem támogatja vagy "
-"hitelesíti a TMDb. Kérjük segítsen tovább fejleszteni az adatbázist, hogy "
-"meglátogatja a "
-"<a href='http://themoviedb.org'>TMDb-t</a>.<br><b>Megjegyzés:</b> A letöltő a "
-"Last.fm API-ját használja, de nem támogatja "
-"vagy hitelesíti a Last.fm. Kérjük segítsen tovább fejleszteni az adatbázist, "
-"hogy meglátogatja a "
-"<a href='http://last.fm'>Last.fm-t</a>.<br><b>Megjegyzés:</b> A letöltő a "
-"TheTVDB.com API-ját használja, de nem "
-"támogatja vagy hitelesíti a TheTVDB.com.Kérjük segítsen tovább fejleszteni az "
-"adatbázist, hogy meglátogatja a "
-"<a href='thetvdb.com'>TheTVDB.com-t</a>."
-
-#: main.cpp:41
-msgid "Andrew (Jamboarder) Lake"
-msgstr "Andrew (Jamboarder) Lake"
-
-#: main.cpp:41
-msgid "Creator"
-msgstr "Készítő"
-
-#: main.cpp:42
-msgid "Stefan Burnicki"
-msgstr "Stefan Burnicki"
-
-#: main.cpp:42 main.cpp:43 main.cpp:44
-msgid "Contributor"
-msgstr "Hozzájáruló"
-
-#: main.cpp:43
-msgid "Andreas Marschke"
-msgstr "Andreas Marschke"
-
-#: main.cpp:44
-msgid "Ni Hui"
-msgstr "Ni Hui"
-
-#: main.cpp:46
-msgid ""
-"Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
-msgstr ""
-"Hibákat lehet jelenteni a http://code.google.com/p/bangarangissuetracking/"
-
-#: main.cpp:46
-msgid ""
-"Defects may be reported at <a href='http://code.google.com/p/"
-"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
-msgstr ""
-"Hibákat lehet jelenteni a <a href='http://code.google.com/p/"
-"bangarangissuetracking/'>Bangarang  Issue Tracker-en</a>"
-
-#: main.cpp:53
-msgid "Play 'URL'"
-msgstr "'URL' lejátszása"
-
-#: main.cpp:54
-msgid "Play DVD Video"
-msgstr "Videó DVD lejátszása"
-
-#: main.cpp:55
-msgid "Play CD Music"
-msgstr "Zene CD lejátszása"
-
-#: main.cpp:56
-msgid "Show Additional Debug Output"
-msgstr "Kiegészítő hibakereső kimenet megjelenítése"
-
-#. i18n: file: mainwindow.ui:7006
-#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
-#: mainwindow.cpp:187 rc.cpp:299
-msgid "No"
-msgstr "Nem"
-
-#. i18n: file: mainwindow.ui:6996
-#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
-#: mainwindow.cpp:188 rc.cpp:296
-msgid "Yes"
-msgstr "Igen"
-
-#. i18n: file: mainwindow.ui:5155
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
-#. i18n: file: mainwindow.ui:5695
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: mainwindow.cpp:281 rc.cpp:263 rc.cpp:269 savedlistsmanager.cpp:759
-#: platform/utilities/mediaitems.cpp:145
-msgid "Playlist"
-msgstr "Lejátszólista"
-
-#: mainwindow.cpp:304
-msgid "Audio Search"
-msgstr "Hang keresés"
-
-#: mainwindow.cpp:311
-msgid "Video Search"
-msgstr "Videó keresés"
-
-#: mainwindow.cpp:391
-msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
-msgstr ""
-"<b>Teljes képernyő</b><br>Kattintson a kilépéshez a teljes képernyős módból"
-
-#: mainwindow.cpp:397
-msgid "Show fullscreen"
-msgstr "Teljes képernyő megjelenítése"
-
-#: mainwindow.cpp:416
-msgid "<b>Paused</b><br>Hold to stop"
-msgstr "<b>Paused</b>Tartsa nyomva a leállításhoz"
-
-#. i18n: file: mainwindow.ui:260
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: mainwindow.cpp:503 rc.cpp:11
-msgid "Search for audio"
-msgstr "Hang keresése"
-
-#: mainwindow.cpp:512
-msgid "Search for video"
-msgstr "Videó keresése"
-
-#. i18n: file: mainwindow.ui:6715
-#. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: mainwindow.cpp:521 rc.cpp:278
-msgid "Clear Playlist"
-msgstr "Lejátszólista kiürítése"
-
-#: mainwindow.cpp:522
-msgid "Are you sure you want to clear the current playlist?"
-msgstr "Biztos, hogy kiakarja üríteni a jelenlegi lejátszólistát?"
-
-#. i18n: file: mainwindow.ui:2175
-#. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:527 mainwindow.cpp:614 mainwindow.cpp:616 mainwindow.cpp:964
-#: rc.cpp:203
-msgid "Now Playing"
-msgstr "Jelenleg lejátszás alatt"
-
-#: mainwindow.cpp:548
-msgid "<b>Showing Upcoming</b><br>Click to show playlist"
-msgstr ""
-"<b>Következők megjelenítése</b><br>Kattintson a lejátszólista megjelenítéséhez"
-
-#. i18n: file: mainwindow.ui:6660
-#. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: mainwindow.cpp:551 rc.cpp:272
-msgid "Show Upcoming"
-msgstr "Következők megjelenítése"
-
-#: mainwindow.cpp:670
-msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
-msgstr ""
-"<b>Lejátszás</b><br>Kattintson a szünethez<br>Tartsa nyomva a leállításhoz"
-
-#: mainwindow.cpp:680
-msgid "An error has been encountered during playback"
-msgstr "Hiba lépett fel lejátszás közben"
-
-#: mainwindow.cpp:734
-msgid "Loading playlist..."
-msgstr "Lejátszólista betöltése..."
-
-#: mainwindow.cpp:736
-msgid "Buffering..."
-msgstr "Pufferelés..."
-
-#: mainwindow.cpp:738 platform/mediaitemmodel.cpp:677
-msgid "Loading..."
-msgstr "Töltés..."
-
-#: mainwindow.cpp:762
-msgid "<b>Muted</b><br>Click to restore volume"
-msgstr "<b>Némítva</b><br>Kattintson a hangerő visszaállításához"
-
-#. i18n: file: mainwindow.ui:8645
-#. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: mainwindow.cpp:766 rc.cpp:438
-msgid "Mute volume"
-msgstr "Hangerő némítása"
-
-#: mainwindow.cpp:868 platform/infoitemmodel.cpp:514
-msgid "Complete"
-msgstr "Kész"
-
-#. i18n: file: mainwindow.ui:2172
-#. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: mainwindow.cpp:965 mainwindow.cpp:1310 rc.cpp:200
-msgid "View Now Playing"
-msgstr "Jelenleg lejátszás alatt álló megtekintése"
-
-#: mainwindow.cpp:973
-msgid "<b>Repeat On</b><br>Click to turn off repeat"
-msgstr "<b>Ismétlés bekapcsolva</b><br>Kattintson az ismétlés kikapcsolásához"
-
-#. i18n: file: mainwindow.ui:6742
-#. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: mainwindow.cpp:976 rc.cpp:281
-msgid "Turn on Repeat"
-msgstr "Ismétlés bekapcsolása"
-
-#: mainwindow.cpp:983
-msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
-msgstr "<b>Véletlenszerű lejátszás</b><br>Kattintson a kikapcsoláshoz"
-
-#. i18n: file: mainwindow.ui:6771
-#. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: mainwindow.cpp:986 rc.cpp:287
-msgid "Turn on Shuffle"
-msgstr "Véletlenszerű lejátszás bekapcsolása"
-
-#: mainwindow.cpp:1105
-msgid "Entertainment... Now"
-msgstr "Szórakoztatás...Most"
-
-#: mainwindow.cpp:1253
-msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
-msgstr ""
-"<b>Hátralévő idő</b><br>Kattintson az eltelt idő és a könyvjelzők "
-"megjelenítéséhez"
-
-#: mainwindow.cpp:1255
-msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
-msgstr ""
-"<b>Eltelt idő</b><br>Kattintson a hátralévő idő és könyvjelzők "
-"megjelenítéséhez"
-
-#. i18n: file: mainwindow.ui:909
-#. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
-#. i18n: file: mainwindow.ui:1773
-#. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
-#: medialistsettings.cpp:91 medialistsettings.cpp:101
-#: medialistsettings.cpp:111 medialistsettings.cpp:121 rc.cpp:71 rc.cpp:164
-msgid "played"
-msgstr "lejátszva"
-
-#: medialistsettings.cpp:96 medialistsettings.cpp:116
-msgid "rated"
-msgstr "értékelve"
-
-#: mediaview.cpp:140
-msgid "Add to playlist/Remove from playlist"
-msgstr "Hozzáadás a lejátszólistához/Eltávolítás a lejátszólistából"
-
-#: mediaview.cpp:143
-msgid "Show Songs"
-msgstr "Dalok megjelenítése"
-
-#: mediaview.cpp:145
-msgid "Show Albums"
-msgstr "Albumok megjelenítése"
-
-#: mediaview.cpp:147
-msgid "Show Artists"
-msgstr "Előadók megjelenítése"
-
-#: nowplayingdelegate.cpp:301
-msgid "Artist: "
-msgstr "Előadó: "
-
-#: nowplayingdelegate.cpp:313
-msgid "Composer: "
-msgstr "Szerző: "
-
-#: nowplayingdelegate.cpp:325
-msgid "Album: "
-msgstr "Album: "
-
-#: nowplayingdelegate.cpp:337
-msgid "Track: "
-msgstr "Szám: "
-
-#: nowplayingdelegate.cpp:350 nowplayingdelegate.cpp:381
-msgid "Year: "
-msgstr "Év: "
-
-#: nowplayingdelegate.cpp:362
-msgid "Genre: "
-msgstr "Műfaj: "
-
-#: nowplayingdelegate.cpp:393
-msgid "Actor: "
-msgstr "Színész: "
-
-#: nowplayingdelegate.cpp:405
-msgid "Director: "
-msgstr "Rendező: "
-
-#: nowplayingdelegate.cpp:417
-msgid "Writer: "
-msgstr "Író: "
-
-#: nowplayingdelegate.cpp:429
-msgid "Producer: "
-msgstr "Producer "
-
-#. i18n: file: mainwindow.ui:6692
-#. i18n: ectx: property (text), widget (QLabel, playlistName)
-#: playlistview.cpp:101 rc.cpp:275
-msgid "<b>Playlist</b>"
-msgstr "<b>Lejátszólista</b>"
-
-#: playlistview.cpp:105
-#, kde-format
-msgid "1 item, %2"
-msgid_plural "%1 items, %2"
-msgstr[0] "egy elem, %2"
-msgstr[1] "%1 elem, %2"
-
-#: playlistview.cpp:107 platform/mediaitemmodel.cpp:458
-#: platform/mediaitemmodel.cpp:478 platform/listengines/feedlistengine.cpp:295
-#: platform/listengines/filelistengine.cpp:116
-#: platform/listengines/filelistengine.cpp:141
-#: platform/listengines/filelistengine.cpp:233
-#: platform/listengines/savedlistsengine.cpp:170
-#: platform/listengines/taglistengine.cpp:143
-#: platform/listengines/videolistengine.cpp:688
-#: platform/listengines/videolistengine.cpp:763
-#, kde-format
-msgid "1 item"
-msgid_plural "%1 items"
-msgstr[0] "egy elem"
-msgstr[1] "%1 elem"
-
-#: playlistview.cpp:113
-msgid "<b>Playlist</b> (Upcoming)"
-msgstr "<b>Lejátszólista</b> (Következők)"
 
 #: rc.cpp:1
 msgctxt "NAME OF TRANSLATORS"
@@ -725,851 +28,1690 @@ msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr "marcus@elitemail.hu"
 
-#. i18n: file: mainwindow.ui:156
-#. i18n: ectx: property (text), widget (QLabel, label)
-#. i18n: file: mainwindow.ui:8376
-#. i18n: ectx: property (text), widget (QToolButton, collectionButton)
-#: rc.cpp:8 rc.cpp:425
-msgid "Media Lists"
-msgstr "Média listák"
+#. i18n: file: app/ui/audiolistsstack.ui:14
+#. i18n: ectx: property (windowTitle), widget (QWidget, AudioListsStack)
+#. i18n: file: app/ui/videolistsstack.ui:14
+#. i18n: ectx: property (windowTitle), widget (QWidget, VideoListsStack)
+#: rc.cpp:5 rc.cpp:401
+msgid "Form"
+msgstr ""
 
-#. i18n: file: mainwindow.ui:303
-#. i18n: ectx: attribute (label), widget (QWidget, AudioTool_2)
-#: rc.cpp:14
-msgid "Audio"
-msgstr "Hang"
-
-#. i18n: file: mainwindow.ui:371
+#. i18n: file: app/ui/audiolistsstack.ui:76
 #. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
-#. i18n: file: mainwindow.ui:1304
+#. i18n: file: app/ui/videolistsstack.ui:76
 #. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
-#: rc.cpp:17 rc.cpp:110
+#: rc.cpp:8 rc.cpp:404
 msgid "Add list"
 msgstr "Lista hozzáadása"
 
-#. i18n: file: mainwindow.ui:388
+#. i18n: file: app/ui/audiolistsstack.ui:96
 #. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
-#. i18n: file: mainwindow.ui:1321
+#. i18n: file: app/ui/videolistsstack.ui:96
 #. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
-#: rc.cpp:20 rc.cpp:113
+#: rc.cpp:11 rc.cpp:407
 msgid "Remove list"
 msgstr "Lista eltávolítása"
 
-#. i18n: file: mainwindow.ui:418
+#. i18n: file: app/ui/audiolistsstack.ui:129
 #. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
-#. i18n: file: mainwindow.ui:1351
+#. i18n: file: app/ui/videolistsstack.ui:129
 #. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
-#: rc.cpp:23 rc.cpp:116
+#: rc.cpp:14 rc.cpp:410
 msgid "Settings"
 msgstr "Beállítások"
 
-#. i18n: file: mainwindow.ui:467
+#. i18n: file: app/ui/audiolistsstack.ui:178
 #. i18n: ectx: property (text), widget (QLabel, label_5)
-#. i18n: file: mainwindow.ui:1400
+#. i18n: file: app/ui/videolistsstack.ui:178
 #. i18n: ectx: property (text), widget (QLabel, label_7)
-#: rc.cpp:26 rc.cpp:119
+#: rc.cpp:17 rc.cpp:413
 msgid "Add List"
 msgstr "Lista hozzáadása"
 
-#. i18n: file: mainwindow.ui:484
+#. i18n: file: app/ui/audiolistsstack.ui:195
 #. i18n: ectx: property (text), widget (QLabel, label_4)
-#. i18n: file: mainwindow.ui:1417
+#. i18n: file: app/ui/videolistsstack.ui:195
 #. i18n: ectx: property (text), widget (QLabel, label_6)
-#: rc.cpp:29 rc.cpp:122
+#: rc.cpp:20 rc.cpp:416
 msgid "Source"
 msgstr "Forrás"
 
-#. i18n: file: mainwindow.ui:506
+#. i18n: file: app/ui/audiolistsstack.ui:214
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
-#. i18n: file: mainwindow.ui:1443
+#. i18n: file: app/ui/videolistsstack.ui:221
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
-#: rc.cpp:32 rc.cpp:128
+#: rc.cpp:23 rc.cpp:422
 msgid "Current View"
 msgstr "Aktuális nézet"
 
-#. i18n: file: mainwindow.ui:513
+#. i18n: file: app/ui/audiolistsstack.ui:221
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
-#. i18n: file: mainwindow.ui:1436
+#. i18n: file: app/ui/videolistsstack.ui:214
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
-#: rc.cpp:35 rc.cpp:125
+#: rc.cpp:26 rc.cpp:419
 msgid "Current Selection"
 msgstr "Aktuális kiválasztás"
 
-#. i18n: file: mainwindow.ui:520
+#. i18n: file: app/ui/audiolistsstack.ui:228
 #. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
-#. i18n: file: mainwindow.ui:1450
+#. i18n: file: app/ui/videolistsstack.ui:228
 #. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
-#: rc.cpp:38 rc.cpp:131
+#: rc.cpp:29 rc.cpp:425
 msgid "Current Playlist"
 msgstr "Aktuális lejátszólista"
 
-#. i18n: file: mainwindow.ui:530
+#. i18n: file: app/ui/audiolistsstack.ui:235
+#. i18n: ectx: property (text), widget (QRadioButton, aListSourceAmpache)
+#: rc.cpp:32
+msgid "ownCloud/Ampache"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:245
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
-#. i18n: file: mainwindow.ui:1460
+#. i18n: file: app/ui/videolistsstack.ui:238
 #. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
-#: rc.cpp:41 rc.cpp:134
+#: rc.cpp:35 rc.cpp:428
 msgid "New List Name"
 msgstr "Új lista neve"
 
-#. i18n: file: mainwindow.ui:552
+#. i18n: file: app/ui/audiolistsstack.ui:258
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheServerAdd)
+#. i18n: file: app/ui/audiolistsstack.ui:432
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheServer)
+#: rc.cpp:38 rc.cpp:59
+msgid "Server"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:265
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserNameAdd)
+#. i18n: file: app/ui/audiolistsstack.ui:439
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserName)
+#: rc.cpp:41 rc.cpp:62
+#, fuzzy
+msgid "User Name"
+msgstr "Név"
+
+#. i18n: file: app/ui/audiolistsstack.ui:272
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePasswordAdd)
+#. i18n: file: app/ui/audiolistsstack.ui:446
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePassword)
+#: rc.cpp:44 rc.cpp:65
+msgid "Password"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:297
 #. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
-#. i18n: file: mainwindow.ui:696
+#. i18n: file: app/ui/audiolistsstack.ui:474
 #. i18n: ectx: property (text), widget (QPushButton, aslsSave)
-#. i18n: file: mainwindow.ui:1196
+#. i18n: file: app/ui/audiolistsstack.ui:1019
 #. i18n: ectx: property (text), widget (QPushButton, semAConfigSave)
-#. i18n: file: mainwindow.ui:1479
-#. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
-#. i18n: file: mainwindow.ui:1599
-#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
-#. i18n: file: mainwindow.ui:2073
-#. i18n: ectx: property (text), widget (QPushButton, semVConfigSave)
-#. i18n: file: mainwindow.ui:2994
+#. i18n: file: app/ui/mainwindow.ui:1432
 #. i18n: ectx: property (text), widget (QToolButton, infoItemSave)
-#: rc.cpp:44 rc.cpp:56 rc.cpp:101 rc.cpp:137 rc.cpp:149 rc.cpp:194 rc.cpp:233
+#. i18n: file: app/ui/videolistsstack.ui:257
+#. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
+#. i18n: file: app/ui/videolistsstack.ui:380
+#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
+#. i18n: file: app/ui/videolistsstack.ui:899
+#. i18n: ectx: property (text), widget (QPushButton, semVConfigSave)
+#: rc.cpp:47 rc.cpp:68 rc.cpp:119 rc.cpp:179 rc.cpp:431 rc.cpp:443 rc.cpp:494
 msgid "Save"
 msgstr "Mentés"
 
-#. i18n: file: mainwindow.ui:606
+#. i18n: file: app/ui/audiolistsstack.ui:354
 #. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
-#. i18n: file: mainwindow.ui:726
+#. i18n: file: app/ui/audiolistsstack.ui:549
 #. i18n: ectx: property (text), widget (QToolButton, aslsCancel)
-#. i18n: file: mainwindow.ui:1222
+#. i18n: file: app/ui/audiolistsstack.ui:1048
 #. i18n: ectx: property (text), widget (QToolButton, aCancelSemConfigure)
-#. i18n: file: mainwindow.ui:1629
+#. i18n: file: app/ui/videolistsstack.ui:455
 #. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
-#. i18n: file: mainwindow.ui:2099
+#. i18n: file: app/ui/videolistsstack.ui:928
 #. i18n: ectx: property (text), widget (QToolButton, vCancelSemConfigure)
-#: rc.cpp:47 rc.cpp:59 rc.cpp:104 rc.cpp:152 rc.cpp:197
+#: rc.cpp:50 rc.cpp:77 rc.cpp:122 rc.cpp:452 rc.cpp:497
 msgid "Return to Lists"
 msgstr "Visszatérés a listákhoz"
 
-#. i18n: file: mainwindow.ui:645
+#. i18n: file: app/ui/audiolistsstack.ui:393
 #. i18n: ectx: property (text), widget (QLabel, label_8)
-#. i18n: file: mainwindow.ui:1548
+#. i18n: file: app/ui/videolistsstack.ui:329
 #. i18n: ectx: property (text), widget (QLabel, label_11)
-#: rc.cpp:50 rc.cpp:143
+#: rc.cpp:53 rc.cpp:437
 msgid "Saved List Settings"
 msgstr "Lista beállítások elmentve"
 
-#. i18n: file: mainwindow.ui:671
+#. i18n: file: app/ui/audiolistsstack.ui:419
 #. i18n: ectx: property (text), widget (QLabel, label_9)
-#. i18n: file: mainwindow.ui:1574
+#. i18n: file: app/ui/videolistsstack.ui:355
 #. i18n: ectx: property (text), widget (QLabel, label_10)
-#: rc.cpp:53 rc.cpp:146
+#: rc.cpp:56 rc.cpp:440
 msgid "Name"
 msgstr "Név"
 
-#. i18n: file: mainwindow.ui:771
+#. i18n: file: app/ui/audiolistsstack.ui:498
+#. i18n: ectx: property (text), widget (QLabel, exportSavedListLabel)
+#. i18n: file: app/ui/videolistsstack.ui:404
+#. i18n: ectx: property (text), widget (QLabel, exportSavedListLabel)
+#: rc.cpp:71 rc.cpp:446
+msgid ""
+"You can export this list to a file if you want to use it in other "
+"applications"
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:520
+#. i18n: ectx: property (text), widget (QPushButton, aslsExport)
+#. i18n: file: app/ui/videolistsstack.ui:426
+#. i18n: ectx: property (text), widget (QPushButton, vslsExport)
+#: rc.cpp:74 rc.cpp:449
+msgid "Export to file..."
+msgstr ""
+
+#. i18n: file: app/ui/audiolistsstack.ui:594
 #. i18n: ectx: property (text), widget (QLabel, aConfigureSemListTitle)
-#. i18n: file: mainwindow.ui:1674
-#. i18n: ectx: property (text), widget (QLabel, vConfigureSemListTitle)
-#. i18n: file: mainwindow.ui:2283
+#. i18n: file: app/ui/mainwindow.ui:665
 #. i18n: ectx: property (text), widget (QLabel, listTitle)
-#: rc.cpp:62 rc.cpp:155 rc.cpp:206
+#. i18n: file: app/ui/videolistsstack.ui:500
+#. i18n: ectx: property (text), widget (QLabel, vConfigureSemListTitle)
+#: rc.cpp:80 rc.cpp:152 rc.cpp:455
 msgid "List Title"
 msgstr "Lista címe"
 
-#. i18n: file: mainwindow.ui:827
+#. i18n: file: app/ui/audiolistsstack.ui:650
 #. i18n: ectx: property (text), widget (QLabel, label_15)
-#. i18n: file: mainwindow.ui:1700
+#. i18n: file: app/ui/videolistsstack.ui:526
 #. i18n: ectx: property (text), widget (QLabel, label_16)
-#: rc.cpp:65 rc.cpp:158
+#: rc.cpp:83 rc.cpp:458
 msgid "Show"
 msgstr "megjelenítése"
 
-#. i18n: file: mainwindow.ui:853
+#. i18n: file: app/ui/audiolistsstack.ui:676
 #. i18n: ectx: property (text), widget (QLabel, label_32)
-#. i18n: file: mainwindow.ui:1723
+#. i18n: file: app/ui/videolistsstack.ui:549
 #. i18n: ectx: property (text), widget (QLabel, label_17)
-#: rc.cpp:68 rc.cpp:161
+#: rc.cpp:86 rc.cpp:461
 msgid "items"
 msgstr "elem"
 
-#. i18n: file: mainwindow.ui:978
+#. i18n: file: app/ui/audiolistsstack.ui:732
+#. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
+#. i18n: file: app/ui/videolistsstack.ui:599
+#. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
+#: rc.cpp:89 rc.cpp:464 app/medialists/medialistsettings.cpp:94
+#: app/medialists/medialistsettings.cpp:106
+#: app/medialists/medialistsettings.cpp:123
+#: app/medialists/medialistsettings.cpp:135
+msgid "played"
+msgstr "lejátszva"
+
+#. i18n: file: app/ui/audiolistsstack.ui:801
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
-#. i18n: file: mainwindow.ui:1842
+#. i18n: file: app/ui/videolistsstack.ui:668
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
-#: rc.cpp:74 rc.cpp:167
+#: rc.cpp:92 rc.cpp:467
 msgid "before"
 msgstr "előtt"
 
-#. i18n: file: mainwindow.ui:983
+#. i18n: file: app/ui/audiolistsstack.ui:806
 #. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
-#. i18n: file: mainwindow.ui:1847
+#. i18n: file: app/ui/videolistsstack.ui:673
 #. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
-#: rc.cpp:77 rc.cpp:170
+#: rc.cpp:95 rc.cpp:470
 msgid "after"
 msgstr "után"
 
-#. i18n: file: mainwindow.ui:1063
+#. i18n: file: app/ui/audiolistsstack.ui:886
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: mainwindow.ui:1166
+#. i18n: file: app/ui/audiolistsstack.ui:989
 #. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: mainwindow.ui:1940
+#. i18n: file: app/ui/videolistsstack.ui:766
 #. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: mainwindow.ui:2043
+#. i18n: file: app/ui/videolistsstack.ui:869
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:80 rc.cpp:92 rc.cpp:173 rc.cpp:185
+#: rc.cpp:98 rc.cpp:110 rc.cpp:473 rc.cpp:485
 msgid "or more"
 msgstr "vagy több"
 
-#. i18n: file: mainwindow.ui:1068
+#. i18n: file: app/ui/audiolistsstack.ui:891
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: mainwindow.ui:1171
+#. i18n: file: app/ui/audiolistsstack.ui:994
 #. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: mainwindow.ui:1945
+#. i18n: file: app/ui/videolistsstack.ui:771
 #. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: mainwindow.ui:2048
+#. i18n: file: app/ui/videolistsstack.ui:874
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:83 rc.cpp:95 rc.cpp:176 rc.cpp:188
+#: rc.cpp:101 rc.cpp:113 rc.cpp:476 rc.cpp:488
 msgid "exactly"
 msgstr "pontosan"
 
-#. i18n: file: mainwindow.ui:1073
+#. i18n: file: app/ui/audiolistsstack.ui:896
 #. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: mainwindow.ui:1176
+#. i18n: file: app/ui/audiolistsstack.ui:999
 #. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: mainwindow.ui:1950
+#. i18n: file: app/ui/videolistsstack.ui:776
 #. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: mainwindow.ui:2053
+#. i18n: file: app/ui/videolistsstack.ui:879
 #. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:86 rc.cpp:98 rc.cpp:179 rc.cpp:191
+#: rc.cpp:104 rc.cpp:116 rc.cpp:479 rc.cpp:491
 msgid "or less"
 msgstr "vagy kevesebb"
 
-#. i18n: file: mainwindow.ui:1149
+#. i18n: file: app/ui/audiolistsstack.ui:972
 #. i18n: ectx: property (text), widget (QLabel, label_14)
-#. i18n: file: mainwindow.ui:2026
+#. i18n: file: app/ui/videolistsstack.ui:852
 #. i18n: ectx: property (text), widget (QLabel, label_28)
-#: rc.cpp:89 rc.cpp:182
+#: rc.cpp:107 rc.cpp:482
 msgid "times"
 msgstr "×"
 
-#. i18n: file: mainwindow.ui:1251
-#. i18n: ectx: attribute (label), widget (QWidget, videoTool_2)
-#: rc.cpp:107
+#. i18n: file: app/ui/mainwindow.ui:17
+#. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
+#: rc.cpp:125 app/main.cpp:29 app/common/bangarangapplication.cpp:137
+#: app/common/bangarangnotifieritem.cpp:11
+#: app/nowplaying/nowplayingmanager.cpp:204
+#: app/nowplaying/nowplayingmanager.cpp:397
+#: app/nowplaying/nowplayingmanager.cpp:528
+msgid "Bangarang"
+msgstr "Bangarang"
+
+#. i18n: file: app/ui/mainwindow.ui:156
+#. i18n: ectx: property (text), widget (QLabel, label)
+#. i18n: file: app/ui/mainwindow.ui:6897
+#. i18n: ectx: property (text), widget (QToolButton, collectionButton)
+#: rc.cpp:128 rc.cpp:374
+msgid "Media Lists"
+msgstr "Média listák"
+
+#. i18n: file: app/ui/mainwindow.ui:263
+#. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
+#: rc.cpp:131 app/medialists/medialistsmanager.cpp:369
+msgid "Search for audio"
+msgstr "Hang keresése"
+
+#. i18n: file: app/ui/mainwindow.ui:306
+#. i18n: ectx: property (text), widget (QLabel, audioListLabel)
+#. i18n: file: app/ui/mainwindow.ui:343
+#. i18n: ectx: property (text), widget (QToolButton, audioListSelect)
+#: rc.cpp:134 rc.cpp:137
+msgid "Audio"
+msgstr "Hang"
+
+#. i18n: file: app/ui/mainwindow.ui:421
+#. i18n: ectx: property (text), widget (QLabel, videoListLabel)
+#. i18n: file: app/ui/mainwindow.ui:458
+#. i18n: ectx: property (text), widget (QToolButton, videoListSelect)
+#: rc.cpp:140 rc.cpp:143
 msgid "Video"
 msgstr "Videó"
 
-#. i18n: file: mainwindow.ui:1512
-#. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
-#: rc.cpp:140
-msgid "Return To Lists"
-msgstr "Visszatérés a listákhoz"
+#. i18n: file: app/ui/mainwindow.ui:554
+#. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
+#: rc.cpp:146 app/nowplaying/nowplayingmanager.cpp:400
+#: app/nowplaying/nowplayingmanager.cpp:447
+msgid "View Now Playing"
+msgstr "Jelenleg lejátszás alatt álló megtekintése"
 
-#. i18n: file: mainwindow.ui:2321
+#. i18n: file: app/ui/mainwindow.ui:557
+#. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
+#: rc.cpp:149 app/nowplaying/nowplayingmanager.cpp:261
+#: app/nowplaying/nowplayingmanager.cpp:264
+#: app/nowplaying/nowplayingmanager.cpp:399
+#: app/nowplaying/nowplayingmanager.cpp:530
+msgid "Now Playing"
+msgstr "Jelenleg lejátszás alatt"
+
+#. i18n: file: app/ui/mainwindow.ui:703
 #. i18n: ectx: property (text), widget (QLabel, listSummary)
-#: rc.cpp:209
+#: rc.cpp:155
 msgid "Summary"
 msgstr "Összefoglaló"
 
-#. i18n: file: mainwindow.ui:2461
+#. i18n: file: app/ui/mainwindow.ui:849
 #. i18n: ectx: property (text), widget (QToolButton, closeMediaListFilter)
-#. i18n: file: mainwindow.ui:2866
+#. i18n: file: app/ui/mainwindow.ui:1292
 #. i18n: ectx: property (text), widget (QToolButton, infoFetcherLink)
-#. i18n: file: mainwindow.ui:7013
+#. i18n: file: app/ui/mainwindow.ui:5502
 #. i18n: ectx: property (text), widget (QToolButton, closePlaylistNotification)
-#. i18n: file: mainwindow.ui:7100
+#. i18n: file: app/ui/mainwindow.ui:5592
 #. i18n: ectx: property (text), widget (QToolButton, closePlaylistFilter)
-#. i18n: file: mainwindow.ui:8706
+#. i18n: file: app/ui/mainwindow.ui:7245
 #. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
-#. i18n: file: mainwindow.ui:8735
+#. i18n: file: app/ui/mainwindow.ui:7277
 #. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
-#. i18n: file: mainwindow.ui:8755
+#. i18n: file: app/ui/mainwindow.ui:7300
 #. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:212 rc.cpp:221 rc.cpp:302 rc.cpp:305 rc.cpp:444 rc.cpp:447
-#: rc.cpp:450
+#: rc.cpp:158 rc.cpp:167 rc.cpp:248 rc.cpp:251 rc.cpp:392 rc.cpp:395
+#: rc.cpp:398
 msgid "..."
 msgstr "..."
 
-#. i18n: file: mainwindow.ui:2475
+#. i18n: file: app/ui/mainwindow.ui:863
 #. i18n: ectx: property (text), widget (QLabel, label_19)
-#. i18n: file: mainwindow.ui:7114
+#. i18n: file: app/ui/mainwindow.ui:5606
 #. i18n: ectx: property (text), widget (QLabel, label_18)
-#: rc.cpp:215 rc.cpp:308
+#: rc.cpp:161 rc.cpp:254
 msgid "Filter"
 msgstr "Szűrő"
 
-#. i18n: file: mainwindow.ui:2844
+#. i18n: file: app/ui/mainwindow.ui:1263
 #. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
-#: rc.cpp:218
+#: rc.cpp:164
 msgid "Additional information may be available from:"
 msgstr "További információ elérhető lehet innen:"
 
-#. i18n: file: mainwindow.ui:2885
+#. i18n: file: app/ui/mainwindow.ui:1314
 #. i18n: ectx: property (text), widget (QToolButton, infoFetch)
-#: rc.cpp:224
+#: rc.cpp:170
 msgid "Fetch info and edit changes"
 msgstr "Információ leletöltése és változtatások szerkesztése"
 
-#. i18n: file: mainwindow.ui:2904
+#. i18n: file: app/ui/mainwindow.ui:1336
 #. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
-#: rc.cpp:227
+#: rc.cpp:173
 msgid "Fetch info and save changes"
 msgstr "Információ letöltése és változtatások mentése"
 
-#. i18n: file: mainwindow.ui:2924
+#. i18n: file: app/ui/mainwindow.ui:1356
 #. i18n: ectx: property (text), widget (QLabel, label_27)
-#: rc.cpp:230
+#: rc.cpp:176
 msgid "Matches"
 msgstr "Találatok"
 
-#. i18n: file: mainwindow.ui:3010
+#. i18n: file: app/ui/mainwindow.ui:1451
 #. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
-#: rc.cpp:236
+#: rc.cpp:182
 msgid "Cancel Edit"
 msgstr "Szerkesztés visszavonása"
 
-#. i18n: file: mainwindow.ui:3057
+#. i18n: file: app/ui/mainwindow.ui:1501
 #. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
-#: rc.cpp:239
+#: rc.cpp:185
 msgid "Index Selected"
 msgstr "Kiválasztott Indexelése"
 
-#. i18n: file: mainwindow.ui:3126
+#. i18n: file: app/ui/mainwindow.ui:1570
 #. i18n: ectx: property (text), widget (QLabel, notificationText)
-#: rc.cpp:242
+#: rc.cpp:188
 msgid "Notification Text"
 msgstr "Értesítő üzenet"
 
-#. i18n: file: mainwindow.ui:3206
+#. i18n: file: app/ui/mainwindow.ui:1653
 #. i18n: ectx: property (text), widget (QToolButton, previous)
-#: rc.cpp:245
+#: rc.cpp:191
 msgid "Previous"
 msgstr "Előző"
 
-#. i18n: file: mainwindow.ui:3247
+#. i18n: file: app/ui/mainwindow.ui:1697
 #. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
-#: rc.cpp:248
+#: rc.cpp:194
 msgid "Play all media in list"
 msgstr "Minden média lejátszása a listában"
 
-#. i18n: file: mainwindow.ui:3253
+#. i18n: file: app/ui/mainwindow.ui:1703
 #. i18n: ectx: property (text), widget (QPushButton, playAll)
-#: rc.cpp:251
+#: rc.cpp:197
 msgid "Play All"
 msgstr "Mind lejátszása"
 
-#. i18n: file: mainwindow.ui:3276
+#. i18n: file: app/ui/mainwindow.ui:1729
 #. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
-#: rc.cpp:254
+#: rc.cpp:200
 msgid "Play selected media in list"
 msgstr "Kiválasztott média lejátszása a listában"
 
-#. i18n: file: mainwindow.ui:3279
+#. i18n: file: app/ui/mainwindow.ui:1732
 #. i18n: ectx: property (text), widget (QPushButton, playSelected)
-#: rc.cpp:257
+#: rc.cpp:203
 msgid "Play Selected"
 msgstr "Kiválasztott lejátszása"
 
-#. i18n: file: mainwindow.ui:5106
+#. i18n: file: app/ui/mainwindow.ui:3562
 #. i18n: ectx: property (text), widget (QLabel, extSubtitle)
-#: rc.cpp:260
+#: rc.cpp:206
 msgid "ExternalSubtitle"
 msgstr "Külső felirat"
 
-#. i18n: file: mainwindow.ui:5219
+#. i18n: file: app/ui/mainwindow.ui:3614
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
+#. i18n: file: app/ui/mainwindow.ui:4160
+#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
+#: rc.cpp:209 rc.cpp:215 app/common/mainwindow.cpp:261
+#: app/medialists/savedlistsmanager.cpp:986
+#: platform/utilities/mediaitems.cpp:146
+msgid "Playlist"
+msgstr "Lejátszólista"
+
+#. i18n: file: app/ui/mainwindow.ui:3681
 #. i18n: ectx: property (text), widget (QLabel, playbackMessage)
-#: rc.cpp:266
+#: rc.cpp:212
 msgid "Error message"
 msgstr "Hiba üzenet"
 
-#. i18n: file: mainwindow.ui:6745
+#. i18n: file: app/ui/mainwindow.ui:5131
+#. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
+#: rc.cpp:218 app/nowplaying/nowplayingmanager.cpp:233
+msgid "Show Upcoming"
+msgstr "Következők megjelenítése"
+
+#. i18n: file: app/ui/mainwindow.ui:5163
+#. i18n: ectx: property (text), widget (QLabel, playlistName)
+#: rc.cpp:221 app/nowplaying/playlistview.cpp:103
+msgid "<b>Playlist</b>"
+msgstr "<b>Lejátszólista</b>"
+
+#. i18n: file: app/ui/mainwindow.ui:5189
+#. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
+#: rc.cpp:224 app/nowplaying/nowplayingmanager.cpp:524
+msgid "Clear Playlist"
+msgstr "Lejátszólista kiürítése"
+
+#. i18n: file: app/ui/mainwindow.ui:5219
+#. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
+#: rc.cpp:227 app/nowplaying/nowplayingmanager.cpp:412
+msgid "Turn on Repeat"
+msgstr "Ismétlés bekapcsolása"
+
+#. i18n: file: app/ui/mainwindow.ui:5222
 #. i18n: ectx: property (text), widget (QToolButton, repeat)
-#. i18n: file: mainwindow.ui:6774
+#. i18n: file: app/ui/mainwindow.ui:5254
 #. i18n: ectx: property (text), widget (QToolButton, shuffle)
-#. i18n: file: mainwindow.ui:8420
+#. i18n: file: app/ui/mainwindow.ui:6944
 #. i18n: ectx: property (text), widget (SToolButton, fullScreen)
-#: rc.cpp:284 rc.cpp:290 rc.cpp:431
+#: rc.cpp:230 rc.cpp:236 rc.cpp:380
 msgid "[ ]"
 msgstr "[ ]"
 
-#. i18n: file: mainwindow.ui:6983
+#. i18n: file: app/ui/mainwindow.ui:5251
+#. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
+#: rc.cpp:233 app/nowplaying/nowplayingmanager.cpp:423
+msgid "Turn on Shuffle"
+msgstr "Véletlenszerű lejátszás bekapcsolása"
+
+#. i18n: file: app/ui/mainwindow.ui:5463
 #. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
-#: rc.cpp:293
+#: rc.cpp:239
 msgid "Notification"
 msgstr "Értesítés"
 
-#. i18n: file: mainwindow.ui:7153
+#. i18n: file: app/ui/mainwindow.ui:5479
+#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
+#: rc.cpp:242 app/common/mainwindow.cpp:118
+msgid "Yes"
+msgstr "Igen"
+
+#. i18n: file: app/ui/mainwindow.ui:5492
+#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
+#: rc.cpp:245 app/common/mainwindow.cpp:117
+msgid "No"
+msgstr "Nem"
+
+#. i18n: file: app/ui/mainwindow.ui:5645
 #. i18n: ectx: property (text), widget (QLabel, label_2)
-#: rc.cpp:311
+#: rc.cpp:257
 msgid "Audio Settings"
 msgstr "Hang beállítások"
 
-#. i18n: file: mainwindow.ui:7202
+#. i18n: file: app/ui/mainwindow.ui:5694
 #. i18n: ectx: property (text), widget (QLabel, label_20)
-#: rc.cpp:314
+#: rc.cpp:260
 msgid "Audio Channel:"
 msgstr "Hang csatorna:"
 
-#. i18n: file: mainwindow.ui:7266
+#. i18n: file: app/ui/mainwindow.ui:5758
 #. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
-#: rc.cpp:317
+#: rc.cpp:263
 msgid "Equalizer"
 msgstr "Equalizer"
 
-#. i18n: file: mainwindow.ui:7284
+#. i18n: file: app/ui/mainwindow.ui:5776
 #. i18n: ectx: property (text), widget (QLabel, label_12)
-#: rc.cpp:320
+#: rc.cpp:266
 msgid "Presets"
 msgstr "Előre beállított"
 
-#. i18n: file: mainwindow.ui:7347
+#. i18n: file: app/ui/mainwindow.ui:5839
 #. i18n: ectx: property (text), widget (QLabel, eq1Label)
-#: rc.cpp:323
+#: rc.cpp:269
 msgid "Pre"
 msgstr "Előre"
 
-#. i18n: file: mainwindow.ui:7385
+#. i18n: file: app/ui/mainwindow.ui:5877
 #. i18n: ectx: property (text), widget (QLabel, eq2Label)
-#: rc.cpp:326
+#: rc.cpp:272
 msgid "60"
 msgstr "60"
 
-#. i18n: file: mainwindow.ui:7423
+#. i18n: file: app/ui/mainwindow.ui:5915
 #. i18n: ectx: property (text), widget (QLabel, eq3Label)
-#: rc.cpp:329
+#: rc.cpp:275
 msgid "170"
 msgstr "170"
 
-#. i18n: file: mainwindow.ui:7461
+#. i18n: file: app/ui/mainwindow.ui:5953
 #. i18n: ectx: property (text), widget (QLabel, eq4Label)
-#: rc.cpp:332
+#: rc.cpp:278
 msgid "310"
 msgstr "310"
 
-#. i18n: file: mainwindow.ui:7499
+#. i18n: file: app/ui/mainwindow.ui:5991
 #. i18n: ectx: property (text), widget (QLabel, eq5Label)
-#: rc.cpp:335
+#: rc.cpp:281
 msgid "600"
 msgstr "600"
 
-#. i18n: file: mainwindow.ui:7537
+#. i18n: file: app/ui/mainwindow.ui:6029
 #. i18n: ectx: property (text), widget (QLabel, eq6Label)
-#: rc.cpp:338
+#: rc.cpp:284
 msgid "1k"
 msgstr "1k"
 
-#. i18n: file: mainwindow.ui:7575
+#. i18n: file: app/ui/mainwindow.ui:6067
 #. i18n: ectx: property (text), widget (QLabel, eq7Label)
-#: rc.cpp:341
+#: rc.cpp:287
 msgid "3k"
 msgstr "3k"
 
-#. i18n: file: mainwindow.ui:7613
+#. i18n: file: app/ui/mainwindow.ui:6105
 #. i18n: ectx: property (text), widget (QLabel, eq8Label)
-#: rc.cpp:344
+#: rc.cpp:290
 msgid "6k"
 msgstr "6k"
 
-#. i18n: file: mainwindow.ui:7651
+#. i18n: file: app/ui/mainwindow.ui:6143
 #. i18n: ectx: property (text), widget (QLabel, eq9Label)
-#: rc.cpp:347
+#: rc.cpp:293
 msgid "12k"
 msgstr "12k"
 
-#. i18n: file: mainwindow.ui:7689
+#. i18n: file: app/ui/mainwindow.ui:6181
 #. i18n: ectx: property (text), widget (QLabel, eq10Label)
-#: rc.cpp:350
+#: rc.cpp:296
 msgid "14k"
 msgstr "14k"
 
-#. i18n: file: mainwindow.ui:7727
+#. i18n: file: app/ui/mainwindow.ui:6219
 #. i18n: ectx: property (text), widget (QLabel, eq11Label)
-#: rc.cpp:353
+#: rc.cpp:299
 msgid "16k"
 msgstr "16k"
 
-#. i18n: file: mainwindow.ui:7765
+#. i18n: file: app/ui/mainwindow.ui:6257
 #. i18n: ectx: property (text), widget (QPushButton, restoreDefaultAudioSettings)
-#. i18n: file: mainwindow.ui:8248
+#. i18n: file: app/ui/mainwindow.ui:6756
 #. i18n: ectx: property (text), widget (QPushButton, restoreDefaultVideoSettings)
-#: rc.cpp:356 rc.cpp:407
+#: rc.cpp:302 rc.cpp:356
 msgid "Restore Defaults"
 msgstr "Alapértelmezés visszaállítása"
 
-#. i18n: file: mainwindow.ui:7772
+#. i18n: file: app/ui/mainwindow.ui:6264
 #. i18n: ectx: property (text), widget (QPushButton, hideAudioSettings)
-#. i18n: file: mainwindow.ui:8255
+#. i18n: file: app/ui/mainwindow.ui:6763
 #. i18n: ectx: property (text), widget (QPushButton, hideVideoSettings)
-#: rc.cpp:359 rc.cpp:410
+#: rc.cpp:305 rc.cpp:359
 msgid "Hide"
 msgstr "Elrejtés"
 
-#. i18n: file: mainwindow.ui:7801
+#. i18n: file: app/ui/mainwindow.ui:6293
 #. i18n: ectx: property (text), widget (QLabel, label_3)
-#: rc.cpp:362
+#: rc.cpp:308
 msgid "Video Settings"
 msgstr "Videó beállítások"
 
-#. i18n: file: mainwindow.ui:7841
+#. i18n: file: app/ui/mainwindow.ui:6333
 #. i18n: ectx: property (text), widget (QLabel, label_26)
-#: rc.cpp:365
+#: rc.cpp:311
 msgid "Subtitle:"
 msgstr "Felirat:"
 
-#. i18n: file: mainwindow.ui:7888
+#. i18n: file: app/ui/mainwindow.ui:6380
 #. i18n: ectx: property (text), widget (QLabel, label_25)
-#: rc.cpp:368
+#: rc.cpp:314
 msgid "Angle:"
 msgstr "Szög:"
 
-#. i18n: file: mainwindow.ui:7944
+#. i18n: file: app/ui/mainwindow.ui:6405
+#. i18n: ectx: property (text), widget (QLabel, subtitleInfoText)
+#: rc.cpp:317
+msgid "Can't detect subtitle encoding, please choose:"
+msgstr ""
+
+#. i18n: file: app/ui/mainwindow.ui:6452
 #. i18n: ectx: property (text), widget (QLabel, label_21)
-#: rc.cpp:371
+#: rc.cpp:320
 msgid "Brightness:"
 msgstr "Fényesség:"
 
-#. i18n: file: mainwindow.ui:7991
+#. i18n: file: app/ui/mainwindow.ui:6499
 #. i18n: ectx: property (text), widget (QLabel, label_22)
-#: rc.cpp:374
+#: rc.cpp:323
 msgid "Contrast:"
 msgstr "Kontraszt:"
 
-#. i18n: file: mainwindow.ui:8038
+#. i18n: file: app/ui/mainwindow.ui:6546
 #. i18n: ectx: property (text), widget (QLabel, label_23)
-#: rc.cpp:377
+#: rc.cpp:326
 msgid "Hue:"
 msgstr "Árnyalat:"
 
-#. i18n: file: mainwindow.ui:8085
+#. i18n: file: app/ui/mainwindow.ui:6593
 #. i18n: ectx: property (text), widget (QLabel, label_24)
-#: rc.cpp:380
+#: rc.cpp:329
 msgid "Saturation:"
 msgstr "Telítettség:"
 
-#. i18n: file: mainwindow.ui:8148
+#. i18n: file: app/ui/mainwindow.ui:6656
 #. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
-#: rc.cpp:383
+#: rc.cpp:332
 msgid "Aspect Ratio"
 msgstr "Képarány"
 
-#. i18n: file: mainwindow.ui:8160
+#. i18n: file: app/ui/mainwindow.ui:6668
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatioAuto)
-#: rc.cpp:386
+#: rc.cpp:335
 msgid "Automatic"
 msgstr "Automatikus"
 
-#. i18n: file: mainwindow.ui:8167
+#. i18n: file: app/ui/mainwindow.ui:6675
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatioWidget)
-#: rc.cpp:389
+#: rc.cpp:338
 msgid "Fit"
 msgstr "Illeszkedő"
 
-#. i18n: file: mainwindow.ui:8174
+#. i18n: file: app/ui/mainwindow.ui:6682
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatio4_3)
-#: rc.cpp:392
+#: rc.cpp:341
 msgid "4:3"
 msgstr "4:3"
 
-#. i18n: file: mainwindow.ui:8181
+#. i18n: file: app/ui/mainwindow.ui:6689
 #. i18n: ectx: property (text), widget (QRadioButton, aspectRatio16_9)
-#: rc.cpp:395
+#: rc.cpp:344
 msgid "16:9"
 msgstr "16:9"
 
-#. i18n: file: mainwindow.ui:8191
+#. i18n: file: app/ui/mainwindow.ui:6699
 #. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
-#: rc.cpp:398
+#: rc.cpp:347
 msgid "Scaling"
 msgstr "Méretezés"
 
-#. i18n: file: mainwindow.ui:8203
+#. i18n: file: app/ui/mainwindow.ui:6711
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
-#: rc.cpp:401
+#: rc.cpp:350
 msgid "Scale to fit"
 msgstr "Méretezés, hogy illeszkedjen"
 
-#. i18n: file: mainwindow.ui:8210
+#. i18n: file: app/ui/mainwindow.ui:6718
 #. i18n: ectx: property (text), widget (QRadioButton, scaleModeScaleAndCrop)
-#: rc.cpp:404
+#: rc.cpp:353
 msgid "Scale and crop"
 msgstr "Méretezés és levágás"
 
-#. i18n: file: mainwindow.ui:8287
+#. i18n: file: app/ui/mainwindow.ui:6795
 #. i18n: ectx: property (text), widget (QLabel, label_13)
-#: rc.cpp:413
+#: rc.cpp:362
 msgid "Shortcuts"
 msgstr "Gyorsbillentyűk"
 
-#. i18n: file: mainwindow.ui:8303
+#. i18n: file: app/ui/mainwindow.ui:6815
 #. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
-#: rc.cpp:416
+#: rc.cpp:365
 msgid "Save Shortcuts"
 msgstr "Gyorsbillentyűk mentése"
 
-#. i18n: file: mainwindow.ui:8373
+#. i18n: file: app/ui/mainwindow.ui:6822
+#. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
+#: rc.cpp:368 app/common/actionsmanager.cpp:1037
+msgid "Cancel"
+msgstr "Mégsem"
+
+#. i18n: file: app/ui/mainwindow.ui:6894
 #. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
-#: rc.cpp:422
+#: rc.cpp:371
 msgid "View Media Lists"
 msgstr "Média Listák megtekintése"
 
-#. i18n: file: mainwindow.ui:8417
+#. i18n: file: app/ui/mainwindow.ui:6941
 #. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
-#: rc.cpp:428
+#: rc.cpp:377
 msgid "Show full screen"
 msgstr "Megjelenítés teljes képernyőben"
 
-#. i18n: file: mainwindow.ui:8522
+#. i18n: file: app/ui/mainwindow.ui:7049
 #. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
-#: rc.cpp:434
+#: rc.cpp:383
 msgid "<b>Time elapsed</b><br>Click to show remaining time"
 msgstr "<b>Eltelt idő</b><br>Kattintson a hátralévő idő megjelenítéséhez"
 
-#. i18n: file: mainwindow.ui:8683
+#. i18n: file: app/ui/mainwindow.ui:7178
+#. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
+#: rc.cpp:386 app/nowplaying/nowplayingmanager.cpp:387
+msgid "Mute volume"
+msgstr "Hangerő némítása"
+
+#. i18n: file: app/ui/mainwindow.ui:7219
 #. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
-#: rc.cpp:441
+#: rc.cpp:389
 msgid "Volume"
 msgstr "Hangerő"
 
-#: savedlistsmanager.cpp:83 savedlistsmanager.cpp:99
+#. i18n: file: app/ui/videolistsstack.ui:293
+#. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
+#: rc.cpp:434
+msgid "Return To Lists"
+msgstr "Visszatérés a listákhoz"
+
+#: app/main.cpp:30
+msgid "A media player for your KDE desktop"
+msgstr "Média lejátszó a KDE környezethez"
+
+#: app/main.cpp:31
+msgid "Copyright 2011, Andrew Lake"
+msgstr "Copyright 2011, Andrew Lake"
+
+#: app/main.cpp:32
+msgid ""
+"<b>Note:</b> This product uses the TMDb API but is not endorsed or certified "
+"by TMDb. Please help improve available information by visiting http://"
+"themoviedb.org<br><b>Note:</b> This product uses the Last.fm API but is not "
+"endorsed or certified by Last.fm.  Please help improve available information "
+"by visiting http://last.fm<br><b>Note:</b> This product uses the TheTVDB.com "
+"API but is not endorsed or certified by TheTVDB.com.  Please help improve "
+"available information by visiting http://thetvdb.com"
+msgstr ""
+"<b>Megjegyzés:</b> A letöltő a TMDb API-ját használja, de nem támogatja vagy "
+"hitelesíti a TMDb. Kérjük segítsen tovább fejleszteni az adatbázist, hogy "
+"meglátogatja a <a href='http://themoviedb.org'>TMDb-t</a>.<br><b>Megjegyzés:"
+"</b> A letöltő a Last.fm API-ját használja, de nem támogatja vagy hitelesíti "
+"a Last.fm. Kérjük segítsen tovább fejleszteni az adatbázist, hogy "
+"meglátogatja a <a href='http://last.fm'>Last.fm-t</a>.<br><b>Megjegyzés:</b> "
+"A letöltő a TheTVDB.com API-ját használja, de nem támogatja vagy hitelesíti "
+"a TheTVDB.com.Kérjük segítsen tovább fejleszteni az adatbázist, hogy "
+"meglátogatja a <a href='thetvdb.com'>TheTVDB.com-t</a>."
+
+#: app/main.cpp:41
+msgid "Andrew (Jamboarder) Lake"
+msgstr "Andrew (Jamboarder) Lake"
+
+#: app/main.cpp:41
+msgid "Creator"
+msgstr "Készítő"
+
+#: app/main.cpp:42
+msgid "Stefan Burnicki"
+msgstr "Stefan Burnicki"
+
+#: app/main.cpp:42 app/main.cpp:43
+msgid "Contributor"
+msgstr "Hozzájáruló"
+
+#: app/main.cpp:43
+msgid "Elias Probst"
+msgstr ""
+
+#: app/main.cpp:45
+msgid ""
+"Defects may be reported at http://code.google.com/p/bangarangissuetracking/"
+msgstr ""
+"Hibákat lehet jelenteni a http://code.google.com/p/bangarangissuetracking/"
+
+#: app/main.cpp:45
+msgid ""
+"Defects may be reported at <a href='http://code.google.com/p/"
+"bangarangissuetracking/'>Bangarang Issue Tracker</a>"
+msgstr ""
+"Hibákat lehet jelenteni a <a href='http://code.google.com/p/"
+"bangarangissuetracking/'>Bangarang  Issue Tracker-en</a>"
+
+#: app/main.cpp:52
+msgid "Play 'URL'"
+msgstr "'URL' lejátszása"
+
+#: app/main.cpp:53
+msgid "Play DVD Video"
+msgstr "Videó DVD lejátszása"
+
+#: app/main.cpp:54
+msgid "Play CD Music"
+msgstr "Zene CD lejátszása"
+
+#: app/main.cpp:55
+msgid "Show Additional Debug Output"
+msgstr "Kiegészítő hibakereső kimenet megjelenítése"
+
+#: app/main.cpp:56
+msgid "Enable touch mode for interface"
+msgstr ""
+
+#: app/common/actionsmanager.cpp:64
+msgid "Quit"
+msgstr "Kilépés"
+
+#: app/common/actionsmanager.cpp:70
+msgid "Play/Pause"
+msgstr "Lejátszás/Szünet"
+
+#: app/common/actionsmanager.cpp:77
+msgid "Play"
+msgstr "Lejátszás"
+
+#: app/common/actionsmanager.cpp:82
+msgid "Pause"
+msgstr "Szünet"
+
+#: app/common/actionsmanager.cpp:87
+msgid "Play next"
+msgstr "Következő lejátszása"
+
+#: app/common/actionsmanager.cpp:93
+msgid "Play previous"
+msgstr "Előző lejátszása"
+
+#: app/common/actionsmanager.cpp:99 app/common/actionsmanager.cpp:746
+msgid "Mute"
+msgstr "Némítás"
+
+#: app/common/actionsmanager.cpp:104
+msgid "Play all"
+msgstr "Mind lejátszása"
+
+#: app/common/actionsmanager.cpp:109
+msgid "Play selected"
+msgstr "Kiválasztott lejátszása"
+
+#: app/common/actionsmanager.cpp:114
+msgid "Add to playlist"
+msgstr "Hozzáadás a lejátszólistához"
+
+#: app/common/actionsmanager.cpp:119 app/common/actionsmanager.cpp:339
+msgid "Add after Now Playing"
+msgstr "Hozzáadás a most játszott után"
+
+#: app/common/actionsmanager.cpp:124 app/common/actionsmanager.cpp:129
+msgid "Remove from playlist"
+msgstr "Eltávolítás a lejátszólistából"
+
+#: app/common/actionsmanager.cpp:135
+msgid "Hide controls"
+msgstr "Irányítás elrejtése"
+
+#: app/common/actionsmanager.cpp:141 app/common/actionsmanager.cpp:1075
+#: app/common/actionsmanager.cpp:1080
+msgid "Show filter"
+msgstr "Szűrő megjelenítése"
+
+#: app/common/actionsmanager.cpp:147 app/common/actionsmanager.cpp:956
+msgid "Show remaining time"
+msgstr "Hátralévő idő megjelenítése"
+
+#: app/common/actionsmanager.cpp:152 app/common/actionsmanager.cpp:623
+#: app/common/actionsmanager.cpp:649 app/common/actionsmanager.cpp:702
+#: app/common/mainwindow.cpp:300 app/nowplaying/nowplayingmanager.cpp:573
+msgid "Show video settings"
+msgstr "Videó beállítások megjelenítése"
+
+#: app/common/actionsmanager.cpp:158 app/common/actionsmanager.cpp:626
+#: app/common/actionsmanager.cpp:646 app/common/actionsmanager.cpp:703
+#: app/common/mainwindow.cpp:301 app/nowplaying/nowplayingmanager.cpp:574
+msgid "Show audio settings"
+msgstr "Hang beállítások megjelenítése"
+
+#: app/common/actionsmanager.cpp:164
+msgid "Fullscreen"
+msgstr "Teljes képernyő"
+
+#: app/common/actionsmanager.cpp:177
+msgid "Save selected info"
+msgstr "Kiválasztott információ mentése"
+
+#: app/common/actionsmanager.cpp:182
+msgid "Remove selected info"
+msgstr "Kiválasztott információ törlése"
+
+#: app/common/actionsmanager.cpp:187
+msgid "Refresh"
+msgstr "Frissítés"
+
+#: app/common/actionsmanager.cpp:193
+msgid "Select All"
+msgstr ""
+
+#: app/common/actionsmanager.cpp:200
+msgid "Remove from list"
+msgstr "Eltávolítás a listáról"
+
+#: app/common/actionsmanager.cpp:205
+msgid "Add to \"Audio Streams\""
+msgstr "Hozzáadás a „Hang adatfolyam” -hoz"
+
+#: app/common/actionsmanager.cpp:210
+msgid "Add to list"
+msgstr "Hozzáadás a listához"
+
+#: app/common/actionsmanager.cpp:214
+msgid "Add to list "
+msgstr "Hozzáadás a listához"
+
+#: app/common/actionsmanager.cpp:218 app/common/actionsmanager.cpp:223
+msgid "New list"
+msgstr "Új lista"
+
+#: app/common/actionsmanager.cpp:228
+msgid "Show items"
+msgstr "Elemek megjelenítése"
+
+#: app/common/actionsmanager.cpp:233 app/common/actionsmanager.cpp:437
+#: app/common/actionsmanager.cpp:478 app/common/actionsmanager.cpp:907
+#: app/common/actionsmanager.cpp:1222
+msgid "Show information"
+msgstr "Információ megjelenítése"
+
+#: app/common/actionsmanager.cpp:238 app/common/actionsmanager.cpp:359
+#: app/common/actionsmanager.cpp:1105
+msgid "Show Info View"
+msgstr "Információs nézet megjelenítése"
+
+#: app/common/actionsmanager.cpp:245
+msgid "Add bookmark"
+msgstr "Könyvjelző hozzáadása"
+
+#: app/common/actionsmanager.cpp:252
+msgid "Remove bookmarks"
+msgstr "Könyvjelző eltávolítása"
+
+#: app/common/actionsmanager.cpp:256 app/common/actionsmanager.cpp:627
+#: app/common/actionsmanager.cpp:650 app/common/actionsmanager.cpp:699
+msgid "Show shortcuts editor"
+msgstr "Gyorsbillentyű szerkesztő megjelenítése"
+
+#: app/common/actionsmanager.cpp:263
+msgid "Update ontologies..."
+msgstr "Ontológiák frissítése..."
+
+#: app/common/actionsmanager.cpp:268
+msgid "Hide in system tray"
+msgstr "Elrejtés a tálcára"
+
+#: app/common/actionsmanager.cpp:278
+msgid "Manage info"
+msgstr "Információk szerkesztése"
+
+#: app/common/actionsmanager.cpp:357 app/common/actionsmanager.cpp:1103
+msgid "Hide Info View"
+msgstr "Információs nézet elrejtése"
+
+#: app/common/actionsmanager.cpp:417
+msgid "Play after Now Playing"
+msgstr "Lejátszás a jelenleg játszott után"
+
+#: app/common/actionsmanager.cpp:440 app/common/actionsmanager.cpp:481
+msgid "Hide information"
+msgstr "Információ elrejtése"
+
+#: app/common/actionsmanager.cpp:530
+#, kde-format
+msgid "Chapter %1"
+msgstr "%1. fejezet"
+
+#: app/common/actionsmanager.cpp:597
+msgid "Show Controls"
+msgstr "Irányítás megjelenítése"
+
+#: app/common/actionsmanager.cpp:601
+msgid "Hide Controls"
+msgstr "Irányítás elrejtése"
+
+#: app/common/actionsmanager.cpp:615
+msgid "Hide video settings"
+msgstr "Videó beállítások elrejtése"
+
+#: app/common/actionsmanager.cpp:638
+msgid "Hide audio settings"
+msgstr "Hang beállítások elrejtése"
+
+#: app/common/actionsmanager.cpp:691
+msgid "Hide shortcuts editor"
+msgstr "Gyorsbillentyű szerkesztő elrejtése"
+
+#: app/common/actionsmanager.cpp:743
+msgid "Restore Volume"
+msgstr "Hangerő visszaállítása"
+
+#: app/common/actionsmanager.cpp:903
+msgid "Restore video size"
+msgstr "Videó méretének visszaállítása"
+
+#: app/common/actionsmanager.cpp:954
+msgid "Show elapsed time"
+msgstr "Hátralévő idő megjelenítése"
+
+#: app/common/actionsmanager.cpp:966
+#, kde-format
+msgid "Bookmark-%1"
+msgstr "Könyvjelző-%1"
+
+#: app/common/actionsmanager.cpp:1035 app/common/actionsmanager.cpp:1042
+msgid "Update Ontologies"
+msgstr "Ontológiák frissítése."
+
+#: app/common/actionsmanager.cpp:1038
+msgid ""
+"Updating ontologies ensures that media information is stored in a way that "
+"makes it most accessible to other desktop applications.  This is only "
+"necessary if you recently upgraded Bangarang or your KDE software "
+"compilation. <br><br>This may take several minutes."
+msgstr ""
+"Ontológiák frissítése biztosítja, hogy a média információk oly módon vannak "
+"eltárolva, hogy elérhető válnak más asztali alkalmazások számára is.\n"
+"Ez csak akkor fontos, ha most frissítette a Bangarangot vagy a KDE SC-"
+"t<br><br> Ez eltarthat pár percig."
+
+#: app/common/actionsmanager.cpp:1046
+msgid "Stop"
+msgstr "Megállítás"
+
+#: app/common/actionsmanager.cpp:1049
+msgid "Close"
+msgstr "Bezárás"
+
+#: app/common/actionsmanager.cpp:1073 app/common/actionsmanager.cpp:1078
+msgid "Hide filter"
+msgstr "Szűrő elrejtése"
+
+#: app/common/actionsmanager.cpp:1148
+#, fuzzy
+msgid "Show Audio Lists"
+msgstr "Hang beállítások megjelenítése"
+
+#: app/common/actionsmanager.cpp:1154
+#, fuzzy
+msgid "Show Video Lists"
+msgstr "Videó beállítások megjelenítése"
+
+#: app/common/bangarangapplication.cpp:137
+msgid ""
+"Bangarang is unable to access the Nepomuk Semantic Desktop repository. Media "
+"library, rating and play count functions will be unavailable."
+msgstr ""
+"Bangarang képtelen elérni a Nepomuk Szemantikus Asztalt. Média könyvtár, "
+"értékelés és lejátszások száma funkció elérhetetlen lesz."
+
+#: app/common/bangarangapplication.cpp:137
+msgid "Don't show this message again"
+msgstr "Ne mutassa ezt az üzenet újra"
+
+#: app/common/bangarangapplication.cpp:191
+#: app/common/bangarangapplication.cpp:193
+msgid "Resume"
+msgstr "Folytatás"
+
+#: app/common/bangarangapplication.cpp:430
+#: platform/utilities/mediaitems.cpp:1441
+msgid "DVD Video"
+msgstr "DVD Videó"
+
+#: app/common/bangarangapplication.cpp:445
+#: platform/listengines/medialistsengine.cpp:202
+#: platform/utilities/mediaitems.cpp:1448
+msgid "Audio CD"
+msgstr "Hang CD"
+
+#: app/common/mainwindow.cpp:316
+msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
+msgstr ""
+"<b>Teljes képernyő</b><br>Kattintson a kilépéshez a teljes képernyős módból"
+
+#: app/common/mainwindow.cpp:324
+msgid "Show fullscreen"
+msgstr "Teljes képernyő megjelenítése"
+
+#: app/common/mediaview.cpp:143
+msgid "Add to playlist/Remove from playlist"
+msgstr "Hozzáadás a lejátszólistához/Eltávolítás a lejátszólistából"
+
+#: app/common/mediaview.cpp:146
+msgid "Show Songs"
+msgstr "Dalok megjelenítése"
+
+#: app/common/mediaview.cpp:148
+msgid "Show Albums"
+msgstr "Albumok megjelenítése"
+
+#: app/common/mediaview.cpp:150
+msgid "Show Artists"
+msgstr "Előadók megjelenítése"
+
+#: app/medialists/infoitemdelegate.cpp:127
+#: app/medialists/infoitemdelegate.cpp:650
+msgid "Music"
+msgstr "Zene"
+
+#: app/medialists/infoitemdelegate.cpp:129
+#: app/medialists/infoitemdelegate.cpp:650
+msgid "Audio Stream"
+msgstr "Hang adatfolyam"
+
+#: app/medialists/infoitemdelegate.cpp:131
+#: app/medialists/infoitemdelegate.cpp:650
+msgid "Audio Clip"
+msgstr "Hang Klip"
+
+#: app/medialists/infoitemdelegate.cpp:136
+#: app/medialists/infoitemdelegate.cpp:661
+msgid "Movie"
+msgstr "Film"
+
+#: app/medialists/infoitemdelegate.cpp:138
+#: app/medialists/infoitemdelegate.cpp:661
+msgid "TV Show"
+msgstr "TV műsor"
+
+#: app/medialists/infoitemdelegate.cpp:140
+#: app/medialists/infoitemdelegate.cpp:661
+msgid "Video Clip"
+msgstr "Videó Klip"
+
+#: app/medialists/infoitemdelegate.cpp:154
+msgid "No description"
+msgstr "Nincs leírás"
+
+#: app/medialists/infoitemdelegate.cpp:163
+msgid "Multiple Values"
+msgstr "Több érték"
+
+#: app/medialists/infoitemdelegate.cpp:466
+msgid "Open artwork file"
+msgstr "Grafikafájl megnyitása"
+
+#: app/medialists/infoitemdelegate.cpp:700
+msgid "Press <Tab> to finish editing."
+msgstr "Nyomja meg <Tab> gombot a szerkesztés befejezéséhez"
+
+#: app/medialists/infomanager.cpp:296
+msgid "Click to hide"
+msgstr "Kattintson az elrejtéshez"
+
+#: app/medialists/infomanager.cpp:298
+msgid "Additional information may be available. <br> Click to show more..."
+msgstr ""
+"További információk lehetnek elérhetőek <br> Kattintson több "
+"megjelenítéséhez..."
+
+#: app/medialists/medialistsettings.cpp:100
+#: app/medialists/medialistsettings.cpp:129
+msgid "rated"
+msgstr "értékelve"
+
+#: app/medialists/medialistsmanager.cpp:385
+msgid "Search for video"
+msgstr "Videó keresése"
+
+#: app/medialists/medialistsmanager.cpp:402
+msgid "Audio Search"
+msgstr "Hang keresés"
+
+#: app/medialists/medialistsmanager.cpp:409
+msgid "Video Search"
+msgstr "Videó keresés"
+
+#: app/medialists/medialistsmanager.cpp:497 platform/infoitemmodel.cpp:550
+msgid "Complete"
+msgstr "Kész"
+
+#: app/medialists/savedlistsmanager.cpp:47
+#: app/medialists/savedlistsmanager.cpp:51
+msgid ""
+"Enter full server path.<br/><i>For example,<br/>- ownCloud, enter \"http://"
+"[host]/owncloud/apps/media\"<br/>- Ampache, enter \"http://[host]/ampache\"</"
+"i>"
+msgstr ""
+
+#: app/medialists/savedlistsmanager.cpp:106
+#: app/medialists/savedlistsmanager.cpp:122
 #: platform/listengines/audiostreamlistengine.cpp:101
 #: platform/listengines/feedlistengine.cpp:175
 msgid "Untitled"
 msgstr "Névtelen"
 
-#: savedlistsmanager.cpp:177 savedlistsmanager.cpp:215
+#: app/medialists/savedlistsmanager.cpp:207
+#: app/medialists/savedlistsmanager.cpp:251
 msgid "Remove"
 msgstr "Eltávolítás"
 
-#: savedlistsmanager.cpp:179 savedlistsmanager.cpp:217
+#: app/medialists/savedlistsmanager.cpp:209
+#: app/medialists/savedlistsmanager.cpp:253
 #, kde-format
 msgid "Are you sure you want to remove \"%1\"?"
 msgstr "Biztos, hogy eltávolítja ezt: %1 ?"
 
-#: videosettings.cpp:231 videosettings.cpp:250
+#: app/medialists/savedlistsmanager.cpp:930
+#: app/medialists/savedlistsmanager.cpp:943
+msgid "*.m3u|M3U files (*.m3u)"
+msgstr ""
+
+#: app/medialists/savedlistsmanager.cpp:935
+#, kde-format
+msgid ""
+"<p>The file <filename>%1</filename> already exists.</p><p>Do you want to "
+"overwrite it?</p>"
+msgstr ""
+
+#: app/nowplaying/audiosettings.cpp:88
+msgid "No effect"
+msgstr "Nincs effekt"
+
+#: app/nowplaying/audiosettings.cpp:92
+msgid "Rock"
+msgstr "Rock"
+
+#: app/nowplaying/audiosettings.cpp:96
+msgid "Reggae"
+msgstr "Reggae"
+
+#: app/nowplaying/audiosettings.cpp:100
+msgid "Dance"
+msgstr "Dance"
+
+#: app/nowplaying/audiosettings.cpp:104
+msgid "Live"
+msgstr "Élő"
+
+#: app/nowplaying/audiosettings.cpp:108
+msgid "Classical"
+msgstr "Klasszikus"
+
+#: app/nowplaying/audiosettings.cpp:112
+msgid "Blockbuster"
+msgstr "Kasszasiker"
+
+#: app/nowplaying/audiosettings.cpp:116
+msgid "Documentary"
+msgstr "Dokumentum"
+
+#: app/nowplaying/audiosettings.cpp:120
+msgid "Drama"
+msgstr "Dráma"
+
+#: app/nowplaying/audiosettings.cpp:124 app/nowplaying/audiosettings.cpp:149
+#: app/nowplaying/audiosettings.cpp:166 app/nowplaying/audiosettings.cpp:185
+#: app/nowplaying/audiosettings.cpp:214
+msgid "Manual"
+msgstr "Kézi"
+
+#: app/nowplaying/nowplayingdelegate.cpp:302
+msgid "Artist: "
+msgstr "Előadó: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:314
+msgid "Composer: "
+msgstr "Szerző: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:326
+msgid "Album: "
+msgstr "Album: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:338
+msgid "Track: "
+msgstr "Szám: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:350
+#: app/nowplaying/nowplayingdelegate.cpp:393
+msgid "Year: "
+msgstr "Év: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:362
+#: app/nowplaying/nowplayingdelegate.cpp:453
+msgid "Genre: "
+msgstr "Műfaj: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:374
+#: app/nowplaying/nowplayingdelegate.cpp:465
+#, fuzzy
+msgid "Tags: "
+msgstr "Címkék"
+
+#: app/nowplaying/nowplayingdelegate.cpp:405
+msgid "Actor: "
+msgstr "Színész: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:417
+msgid "Director: "
+msgstr "Rendező: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:429
+msgid "Writer: "
+msgstr "Író: "
+
+#: app/nowplaying/nowplayingdelegate.cpp:441
+msgid "Producer: "
+msgstr "Producer "
+
+#: app/nowplaying/nowplayingmanager.cpp:110
+msgid "<b>Time remaining</b><br>Click to show elapsed time and bookmarks"
+msgstr ""
+"<b>Hátralévő idő</b><br>Kattintson az eltelt idő és a könyvjelzők "
+"megjelenítéséhez"
+
+#: app/nowplaying/nowplayingmanager.cpp:112
+msgid "<b>Time elapsed</b><br>Click to show remaining time and bookmarks"
+msgstr ""
+"<b>Eltelt idő</b><br>Kattintson a hátralévő idő és könyvjelzők "
+"megjelenítéséhez"
+
+#: app/nowplaying/nowplayingmanager.cpp:150
+msgid "<b>Paused</b><br>Hold to stop"
+msgstr "<b>Paused</b>Tartsa nyomva a leállításhoz"
+
+#: app/nowplaying/nowplayingmanager.cpp:205
+msgid "Entertainment... Now"
+msgstr "Szórakoztatás...Most"
+
+#: app/nowplaying/nowplayingmanager.cpp:230
+msgid "<b>Showing Upcoming</b><br>Click to show playlist"
+msgstr ""
+"<b>Következők megjelenítése</b><br>Kattintson a lejátszólista "
+"megjelenítéséhez"
+
+#: app/nowplaying/nowplayingmanager.cpp:291
+msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
+msgstr ""
+"<b>Lejátszás</b><br>Kattintson a szünethez<br>Tartsa nyomva a leállításhoz"
+
+#: app/nowplaying/nowplayingmanager.cpp:301
+msgid "An error has been encountered during playback"
+msgstr "Hiba lépett fel lejátszás közben"
+
+#: app/nowplaying/nowplayingmanager.cpp:354
+msgid "Loading playlist..."
+msgstr "Lejátszólista betöltése..."
+
+#: app/nowplaying/nowplayingmanager.cpp:356
+msgid "Buffering..."
+msgstr "Pufferelés..."
+
+#: app/nowplaying/nowplayingmanager.cpp:358 platform/mediaitemmodel.cpp:677
+msgid "Loading..."
+msgstr "Töltés..."
+
+#: app/nowplaying/nowplayingmanager.cpp:383
+msgid "<b>Muted</b><br>Click to restore volume"
+msgstr "<b>Némítva</b><br>Kattintson a hangerő visszaállításához"
+
+#: app/nowplaying/nowplayingmanager.cpp:409
+msgid "<b>Repeat On</b><br>Click to turn off repeat"
+msgstr "<b>Ismétlés bekapcsolva</b><br>Kattintson az ismétlés kikapcsolásához"
+
+#: app/nowplaying/nowplayingmanager.cpp:420
+msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
+msgstr "<b>Véletlenszerű lejátszás</b><br>Kattintson a kikapcsoláshoz"
+
+#: app/nowplaying/nowplayingmanager.cpp:525
+msgid "Are you sure you want to clear the current playlist?"
+msgstr "Biztos, hogy kiakarja üríteni a jelenlegi lejátszólistát?"
+
+#: app/nowplaying/playlistview.cpp:107
+#, kde-format
+msgid "1 item, %2"
+msgid_plural "%1 items, %2"
+msgstr[0] "egy elem, %2"
+msgstr[1] "%1 elem, %2"
+
+#: app/nowplaying/playlistview.cpp:109 platform/mediaitemmodel.cpp:458
+#: platform/mediaitemmodel.cpp:478
+#: platform/listengines/ampachelistengine.cpp:96
+#: platform/listengines/ampachelistengine.cpp:169
+#: platform/listengines/feedlistengine.cpp:325
+#: platform/listengines/filelistengine.cpp:116
+#: platform/listengines/filelistengine.cpp:141
+#: platform/listengines/filelistengine.cpp:236
+#: platform/listengines/savedlistsengine.cpp:170
+#: platform/listengines/taglistengine.cpp:148
+#: platform/listengines/videolistengine.cpp:755
+#: platform/listengines/videolistengine.cpp:834
+#, kde-format
+msgid "1 item"
+msgid_plural "%1 items"
+msgstr[0] "egy elem"
+msgstr[1] "%1 elem"
+
+#: app/nowplaying/playlistview.cpp:115
+msgid "<b>Playlist</b> (Upcoming)"
+msgstr "<b>Lejátszólista</b> (Következők)"
+
+#: app/nowplaying/videosettings.cpp:246 app/nowplaying/videosettings.cpp:265
 msgid "Disable"
 msgstr "Letiltás"
 
-#: platform/infoitemmodel.cpp:75 platform/infoitemmodel.cpp:86
+#: platform/infoitemmodel.cpp:79 platform/infoitemmodel.cpp:90
 msgid "Type"
 msgstr "Típus"
 
-#: platform/infoitemmodel.cpp:76
+#: platform/infoitemmodel.cpp:80
 msgid "Artwork"
 msgstr "Grafika"
 
-#: platform/infoitemmodel.cpp:77
+#: platform/infoitemmodel.cpp:81
 msgid "Title"
 msgstr "Cím"
 
-#: platform/infoitemmodel.cpp:78
+#: platform/infoitemmodel.cpp:82
 msgid "Artist"
 msgstr "Előadó"
 
-#: platform/infoitemmodel.cpp:79
+#: platform/infoitemmodel.cpp:83
 msgid "Composer"
 msgstr "Szerző"
 
-#: platform/infoitemmodel.cpp:80
+#: platform/infoitemmodel.cpp:84
 msgid "Album"
 msgstr "Album"
 
-#: platform/infoitemmodel.cpp:81
+#: platform/infoitemmodel.cpp:85
 msgid "Track"
 msgstr "Szám"
 
-#: platform/infoitemmodel.cpp:82
+#: platform/infoitemmodel.cpp:86
 msgid "Year"
 msgstr "Év"
 
-#: platform/infoitemmodel.cpp:83
+#: platform/infoitemmodel.cpp:87
 msgid "Genre"
 msgstr "Műfaj"
 
-#: platform/infoitemmodel.cpp:84 platform/listengines/medialistsengine.cpp:163
-#: platform/listengines/medialistsengine.cpp:347
-#: platform/listengines/taglistengine.cpp:111
+#: platform/infoitemmodel.cpp:88 platform/listengines/medialistsengine.cpp:172
+#: platform/listengines/medialistsengine.cpp:363
+#: platform/listengines/taglistengine.cpp:115
 msgid "Tags"
 msgstr "Címkék"
 
-#: platform/infoitemmodel.cpp:85 platform/infoitemmodel.cpp:566
+#: platform/infoitemmodel.cpp:89 platform/infoitemmodel.cpp:602
 msgid "Location"
 msgstr "Hely"
 
-#: platform/infoitemmodel.cpp:87
+#: platform/infoitemmodel.cpp:91
 msgid "Actor"
 msgstr "Színész"
 
-#: platform/infoitemmodel.cpp:88
+#: platform/infoitemmodel.cpp:92
 msgid "Director"
 msgstr "Rendező"
 
-#: platform/infoitemmodel.cpp:89
+#: platform/infoitemmodel.cpp:93
 msgid "Writer"
 msgstr "Író"
 
-#: platform/infoitemmodel.cpp:90
+#: platform/infoitemmodel.cpp:94
 msgid "Producer"
 msgstr "Producer"
 
-#: platform/infoitemmodel.cpp:91
+#: platform/infoitemmodel.cpp:95
 msgid "Series"
 msgstr "Sorozat"
 
-#: platform/infoitemmodel.cpp:92
+#: platform/infoitemmodel.cpp:96
 msgid "Season"
 msgstr "Évad"
 
-#: platform/infoitemmodel.cpp:93
+#: platform/infoitemmodel.cpp:97
 msgid "Episode"
 msgstr "Epizód"
 
-#: platform/infoitemmodel.cpp:94
+#: platform/infoitemmodel.cpp:98
 msgid "Links"
 msgstr "Hivatkozás"
 
-#: platform/infoitemmodel.cpp:95
+#: platform/infoitemmodel.cpp:99
 msgid "Play Count"
 msgstr "Lejátszások száma"
 
-#: platform/infoitemmodel.cpp:96
+#: platform/infoitemmodel.cpp:100
 msgid "Last Played"
 msgstr "Utoljára játszva"
 
-#: platform/infoitemmodel.cpp:335 platform/infoitemmodel.cpp:346
+#: platform/infoitemmodel.cpp:368 platform/infoitemmodel.cpp:379
 #, kde-format
 msgid "Fetching info for %1 item..."
 msgid_plural "Fetching info for %1 items..."
 msgstr[0] "Infó letöltése egy elemhez..."
 msgstr[1] "Infó letöltése %1 elemhez..."
 
-#: platform/infoitemmodel.cpp:503
+#: platform/infoitemmodel.cpp:539
 #, kde-format
 msgid "Fetched info for %2 of 1 item..."
 msgid_plural "Fetched info for %2 of %1 items..."
 msgstr[0] "Információ letöltve %2 elemhez 1 elemből..."
 msgstr[1] "Információ letöltve %2 elemhez %2 elemből..."
 
-#: platform/infoitemmodel.cpp:527
+#: platform/infoitemmodel.cpp:563
 msgid "No Results"
 msgstr "Nincs találat"
 
-#: platform/infoitemmodel.cpp:1069
-#: platform/listengines/musiclistengine.cpp:123
-#: platform/listengines/musiclistengine.cpp:150
-#: platform/listengines/musiclistengine.cpp:216
-#: platform/listengines/musiclistengine.cpp:238
-#: platform/listengines/musiclistengine.cpp:303
-#: platform/utilities/mediaitems.cpp:771 platform/utilities/mediaitems.cpp:784
-#: platform/utilities/mediaitems.cpp:887 platform/utilities/mediaitems.cpp:906
-#: platform/utilities/mediaitems.cpp:924
+#: platform/infoitemmodel.cpp:1154
+#: platform/listengines/musiclistengine.cpp:127
+#: platform/listengines/musiclistengine.cpp:163
+#: platform/listengines/musiclistengine.cpp:232
+#: platform/listengines/musiclistengine.cpp:262
+#: platform/listengines/musiclistengine.cpp:327
+#: platform/utilities/mediaitems.cpp:784 platform/utilities/mediaitems.cpp:797
+#: platform/utilities/mediaitems.cpp:900 platform/utilities/mediaitems.cpp:919
+#: platform/utilities/mediaitems.cpp:937
 msgid "Recently Played Songs"
 msgstr "Mostanában hallgatott dalok"
 
-#: platform/infoitemmodel.cpp:1070
-#: platform/listengines/musiclistengine.cpp:124
-#: platform/listengines/musiclistengine.cpp:151
-#: platform/listengines/musiclistengine.cpp:217
-#: platform/listengines/musiclistengine.cpp:239
-#: platform/listengines/musiclistengine.cpp:304
-#: platform/utilities/mediaitems.cpp:772 platform/utilities/mediaitems.cpp:785
-#: platform/utilities/mediaitems.cpp:888 platform/utilities/mediaitems.cpp:907
-#: platform/utilities/mediaitems.cpp:925
+#: platform/infoitemmodel.cpp:1155
+#: platform/listengines/musiclistengine.cpp:128
+#: platform/listengines/musiclistengine.cpp:164
+#: platform/listengines/musiclistengine.cpp:233
+#: platform/listengines/musiclistengine.cpp:263
+#: platform/listengines/musiclistengine.cpp:328
+#: platform/utilities/mediaitems.cpp:785 platform/utilities/mediaitems.cpp:798
+#: platform/utilities/mediaitems.cpp:901 platform/utilities/mediaitems.cpp:920
+#: platform/utilities/mediaitems.cpp:938
 msgid "Highest Rated Songs"
 msgstr "Legjobban értékelt dalok"
 
-#: platform/infoitemmodel.cpp:1071
-#: platform/listengines/musiclistengine.cpp:125
-#: platform/listengines/musiclistengine.cpp:152
-#: platform/listengines/musiclistengine.cpp:218
-#: platform/listengines/musiclistengine.cpp:240
-#: platform/listengines/musiclistengine.cpp:305
-#: platform/utilities/mediaitems.cpp:773 platform/utilities/mediaitems.cpp:786
-#: platform/utilities/mediaitems.cpp:889 platform/utilities/mediaitems.cpp:908
-#: platform/utilities/mediaitems.cpp:926
+#: platform/infoitemmodel.cpp:1156
+#: platform/listengines/musiclistengine.cpp:129
+#: platform/listengines/musiclistengine.cpp:165
+#: platform/listengines/musiclistengine.cpp:234
+#: platform/listengines/musiclistengine.cpp:264
+#: platform/listengines/musiclistengine.cpp:329
+#: platform/utilities/mediaitems.cpp:786 platform/utilities/mediaitems.cpp:799
+#: platform/utilities/mediaitems.cpp:902 platform/utilities/mediaitems.cpp:921
+#: platform/utilities/mediaitems.cpp:939
 msgid "Frequently Played Songs"
 msgstr "Gyakran játszott dalok"
 
-#: platform/infoitemmodel.cpp:1073 platform/infoitemmodel.cpp:1085
-#: platform/infoitemmodel.cpp:1089
-#: platform/listengines/medialistsengine.cpp:62
-#: platform/listengines/medialistsengine.cpp:98
-#: platform/listengines/medialistsengine.cpp:108
-#: platform/listengines/medialistsengine.cpp:118
-#: platform/listengines/medialistsengine.cpp:129
-#: platform/listengines/medialistsengine.cpp:140
-#: platform/listengines/medialistsengine.cpp:151
-#: platform/listengines/medialistsengine.cpp:169
-#: platform/listengines/medialistsengine.cpp:249
-#: platform/listengines/semanticslistengine.cpp:259
-#: platform/listengines/taglistengine.cpp:106
-#: platform/listengines/videolistengine.cpp:220
-#: platform/listengines/videolistengine.cpp:321
-#: platform/listengines/videolistengine.cpp:478
-#: platform/listengines/videolistengine.cpp:536
-#: platform/listengines/videolistengine.cpp:594
-#: platform/utilities/mediaitems.cpp:803 platform/utilities/mediaitems.cpp:821
-#: platform/utilities/mediaitems.cpp:839 platform/utilities/mediaitems.cpp:936
-#: platform/utilities/mediaitems.cpp:954 platform/utilities/mediaitems.cpp:973
-#: platform/utilities/mediaitems.cpp:982 platform/utilities/mediaitems.cpp:991
-#: platform/utilities/mediaitems.cpp:1000
-#: platform/utilities/mediaitems.cpp:1012
+#: platform/infoitemmodel.cpp:1158 platform/infoitemmodel.cpp:1170
+#: platform/infoitemmodel.cpp:1174
+#: platform/listengines/medialistsengine.cpp:64
+#: platform/listengines/medialistsengine.cpp:107
+#: platform/listengines/medialistsengine.cpp:117
+#: platform/listengines/medialistsengine.cpp:127
+#: platform/listengines/medialistsengine.cpp:138
+#: platform/listengines/medialistsengine.cpp:149
+#: platform/listengines/medialistsengine.cpp:160
+#: platform/listengines/medialistsengine.cpp:178
+#: platform/listengines/medialistsengine.cpp:258
+#: platform/listengines/semanticslistengine.cpp:282
+#: platform/listengines/taglistengine.cpp:109
+#: platform/listengines/videolistengine.cpp:241
+#: platform/listengines/videolistengine.cpp:352
+#: platform/listengines/videolistengine.cpp:515
+#: platform/listengines/videolistengine.cpp:576
+#: platform/listengines/videolistengine.cpp:645
+#: platform/utilities/mediaitems.cpp:816 platform/utilities/mediaitems.cpp:834
+#: platform/utilities/mediaitems.cpp:852 platform/utilities/mediaitems.cpp:949
+#: platform/utilities/mediaitems.cpp:967 platform/utilities/mediaitems.cpp:986
+#: platform/utilities/mediaitems.cpp:995
+#: platform/utilities/mediaitems.cpp:1004
+#: platform/utilities/mediaitems.cpp:1013
+#: platform/utilities/mediaitems.cpp:1025
 msgid "Recently Played"
 msgstr "Mostanában játszott"
 
-#: platform/infoitemmodel.cpp:1074 platform/infoitemmodel.cpp:1086
-#: platform/infoitemmodel.cpp:1090
-#: platform/listengines/medialistsengine.cpp:72
-#: platform/listengines/medialistsengine.cpp:99
-#: platform/listengines/medialistsengine.cpp:109
-#: platform/listengines/medialistsengine.cpp:119
-#: platform/listengines/medialistsengine.cpp:130
-#: platform/listengines/medialistsengine.cpp:141
-#: platform/listengines/medialistsengine.cpp:152
-#: platform/listengines/medialistsengine.cpp:170
-#: platform/listengines/medialistsengine.cpp:259
-#: platform/listengines/medialistsengine.cpp:286
-#: platform/listengines/medialistsengine.cpp:296
-#: platform/listengines/medialistsengine.cpp:306
-#: platform/listengines/medialistsengine.cpp:316
-#: platform/listengines/medialistsengine.cpp:326
-#: platform/listengines/medialistsengine.cpp:336
-#: platform/listengines/medialistsengine.cpp:353
-#: platform/listengines/semanticslistengine.cpp:329
-#: platform/listengines/taglistengine.cpp:107
-#: platform/listengines/videolistengine.cpp:221
-#: platform/listengines/videolistengine.cpp:322
-#: platform/listengines/videolistengine.cpp:479
-#: platform/listengines/videolistengine.cpp:537
-#: platform/listengines/videolistengine.cpp:595
-#: platform/utilities/mediaitems.cpp:804 platform/utilities/mediaitems.cpp:822
-#: platform/utilities/mediaitems.cpp:840 platform/utilities/mediaitems.cpp:937
-#: platform/utilities/mediaitems.cpp:955 platform/utilities/mediaitems.cpp:974
-#: platform/utilities/mediaitems.cpp:983 platform/utilities/mediaitems.cpp:992
-#: platform/utilities/mediaitems.cpp:1001
-#: platform/utilities/mediaitems.cpp:1013
+#: platform/infoitemmodel.cpp:1159 platform/infoitemmodel.cpp:1171
+#: platform/infoitemmodel.cpp:1175
+#: platform/listengines/medialistsengine.cpp:74
+#: platform/listengines/medialistsengine.cpp:108
+#: platform/listengines/medialistsengine.cpp:118
+#: platform/listengines/medialistsengine.cpp:128
+#: platform/listengines/medialistsengine.cpp:139
+#: platform/listengines/medialistsengine.cpp:150
+#: platform/listengines/medialistsengine.cpp:161
+#: platform/listengines/medialistsengine.cpp:179
+#: platform/listengines/medialistsengine.cpp:268
+#: platform/listengines/medialistsengine.cpp:302
+#: platform/listengines/medialistsengine.cpp:312
+#: platform/listengines/medialistsengine.cpp:322
+#: platform/listengines/medialistsengine.cpp:332
+#: platform/listengines/medialistsengine.cpp:342
+#: platform/listengines/medialistsengine.cpp:352
+#: platform/listengines/medialistsengine.cpp:369
+#: platform/listengines/semanticslistengine.cpp:363
+#: platform/listengines/taglistengine.cpp:110
+#: platform/listengines/videolistengine.cpp:242
+#: platform/listengines/videolistengine.cpp:353
+#: platform/listengines/videolistengine.cpp:516
+#: platform/listengines/videolistengine.cpp:577
+#: platform/listengines/videolistengine.cpp:646
+#: platform/utilities/mediaitems.cpp:817 platform/utilities/mediaitems.cpp:835
+#: platform/utilities/mediaitems.cpp:853 platform/utilities/mediaitems.cpp:950
+#: platform/utilities/mediaitems.cpp:968 platform/utilities/mediaitems.cpp:987
+#: platform/utilities/mediaitems.cpp:996
+#: platform/utilities/mediaitems.cpp:1005
+#: platform/utilities/mediaitems.cpp:1014
+#: platform/utilities/mediaitems.cpp:1026
 msgid "Highest Rated"
 msgstr "Legjobban értékelt"
 
-#: platform/infoitemmodel.cpp:1075 platform/infoitemmodel.cpp:1087
-#: platform/infoitemmodel.cpp:1091
-#: platform/listengines/medialistsengine.cpp:82
-#: platform/listengines/medialistsengine.cpp:100
-#: platform/listengines/medialistsengine.cpp:110
-#: platform/listengines/medialistsengine.cpp:120
-#: platform/listengines/medialistsengine.cpp:131
-#: platform/listengines/medialistsengine.cpp:142
-#: platform/listengines/medialistsengine.cpp:153
-#: platform/listengines/medialistsengine.cpp:171
-#: platform/listengines/medialistsengine.cpp:269
-#: platform/listengines/semanticslistengine.cpp:196
-#: platform/listengines/taglistengine.cpp:108
-#: platform/listengines/videolistengine.cpp:222
-#: platform/listengines/videolistengine.cpp:323
-#: platform/listengines/videolistengine.cpp:480
-#: platform/listengines/videolistengine.cpp:538
-#: platform/listengines/videolistengine.cpp:596
-#: platform/utilities/mediaitems.cpp:805 platform/utilities/mediaitems.cpp:823
-#: platform/utilities/mediaitems.cpp:841 platform/utilities/mediaitems.cpp:938
-#: platform/utilities/mediaitems.cpp:956 platform/utilities/mediaitems.cpp:975
-#: platform/utilities/mediaitems.cpp:984 platform/utilities/mediaitems.cpp:993
-#: platform/utilities/mediaitems.cpp:1002
-#: platform/utilities/mediaitems.cpp:1014
+#: platform/infoitemmodel.cpp:1160 platform/infoitemmodel.cpp:1172
+#: platform/infoitemmodel.cpp:1176
+#: platform/listengines/medialistsengine.cpp:84
+#: platform/listengines/medialistsengine.cpp:109
+#: platform/listengines/medialistsengine.cpp:119
+#: platform/listengines/medialistsengine.cpp:129
+#: platform/listengines/medialistsengine.cpp:140
+#: platform/listengines/medialistsengine.cpp:151
+#: platform/listengines/medialistsengine.cpp:162
+#: platform/listengines/medialistsengine.cpp:180
+#: platform/listengines/medialistsengine.cpp:278
+#: platform/listengines/semanticslistengine.cpp:215
+#: platform/listengines/taglistengine.cpp:111
+#: platform/listengines/videolistengine.cpp:243
+#: platform/listengines/videolistengine.cpp:354
+#: platform/listengines/videolistengine.cpp:517
+#: platform/listengines/videolistengine.cpp:578
+#: platform/listengines/videolistengine.cpp:647
+#: platform/utilities/mediaitems.cpp:818 platform/utilities/mediaitems.cpp:836
+#: platform/utilities/mediaitems.cpp:854 platform/utilities/mediaitems.cpp:951
+#: platform/utilities/mediaitems.cpp:969 platform/utilities/mediaitems.cpp:988
+#: platform/utilities/mediaitems.cpp:997
+#: platform/utilities/mediaitems.cpp:1006
+#: platform/utilities/mediaitems.cpp:1015
+#: platform/utilities/mediaitems.cpp:1027
 msgid "Frequently Played"
 msgstr "Gyakran játszott"
 
-#: platform/infoitemmodel.cpp:1106
+#: platform/infoitemmodel.cpp:1191
 msgid "Fetch Canceled"
 msgstr "Letöltés visszavonva"
 
@@ -1577,12 +1719,12 @@ msgstr "Letöltés visszavonva"
 msgid "Starting update..."
 msgstr "Frissítés kezdése..."
 
-#: platform/mediaindexer.cpp:255
+#: platform/mediaindexer.cpp:288
 #, kde-format
 msgid "Updated: %1 - %2"
 msgstr "Frissítve: %1 - %2"
 
-#: platform/mediaindexer.cpp:260
+#: platform/mediaindexer.cpp:293
 msgid "Removing info..."
 msgstr "Információ eltávolítása..."
 
@@ -1600,6 +1742,7 @@ msgid "No results"
 msgstr "Nincs találat"
 
 #: platform/ontologyupdater.cpp:87 platform/ontologyupdater.cpp:200
+#: platform/ontologyupdater.cpp:371 platform/ontologyupdater.cpp:399
 msgid "<b>Updating audio types and properties</b><br>0 items updated..."
 msgstr "<b>Hang típusok és tulajdonságok frissítése</b><br>0 elem frissítve..."
 
@@ -1613,13 +1756,28 @@ msgstr "<b>Hang típusok és tulajdonságok frissítése</b><br>%1 elem kész...
 msgid "<b>Updating video types and properties</b><br>%1 video items done..."
 msgstr "<b>Videó típusok és tulajdonságok frissítése</b><br>%1 elem kész..."
 
-#: platform/ontologyupdater.cpp:361
+#: platform/ontologyupdater.cpp:385
+#, fuzzy, kde-format
+msgid "<b>Cleaning up erroneous audio properties</b><br>%1 audio items done..."
+msgstr "<b>Hang típusok és tulajdonságok frissítése</b><br>%1 elem kész..."
+
+#: platform/ontologyupdater.cpp:413
+#, fuzzy, kde-format
+msgid "<b>Cleaning up erroneous video properties</b><br>%1 video items done..."
+msgstr "<b>Videó típusok és tulajdonságok frissítése</b><br>%1 elem kész..."
+
+#: platform/ontologyupdater.cpp:418
 msgid "<b>Update complete.</b>"
 msgstr "<b>Frissítés kész</b>"
 
-#: platform/ontologyupdater.cpp:363
+#: platform/ontologyupdater.cpp:420
 msgid "<b>Update stopped.</b>"
 msgstr "<b>Frissítés megállítva</b>"
+
+#: platform/playlist.cpp:671
+#, fuzzy
+msgid "Video Playback"
+msgstr "Videó keresés"
 
 #: platform/infofetchers/dbpediainfofetcher.cpp:35
 msgid "DBPedia"
@@ -1628,6 +1786,19 @@ msgstr "DBPedia"
 #: platform/infofetchers/dbpediainfofetcher.cpp:38
 msgid "This fetcher gets information from DBPedia.org."
 msgstr "A letöltő az információt a DBPedia.org-ról szedi."
+
+#: platform/infofetchers/doubaninfofetcher.cpp:34
+msgid "Douban"
+msgstr ""
+
+#: platform/infofetchers/doubaninfofetcher.cpp:37
+#, fuzzy
+msgid ""
+"Note: This fetcher uses the Douban API but is not endorsed or certified by "
+"Douban."
+msgstr ""
+"Megjegyzés: A letöltő a TMDb API-ját használja, de nem támogatja vagy "
+"hitelesíti a TMDb."
 
 #: platform/infofetchers/feedinfofetcher.cpp:35
 msgid "Feed Info"
@@ -1685,9 +1856,87 @@ msgstr ""
 "Megjegyzés: A letöltő a theTVDB.com API-ját használja, de nem támogatja vagy "
 "hitelesíti a TheTVDB.com."
 
-#: platform/listengines/audioclipslistengine.cpp:93
-#: platform/listengines/audioclipslistengine.cpp:138
-#: platform/listengines/videolistengine.cpp:170
+#: platform/listengines/ampachelistengine.cpp:137
+#: platform/listengines/medialistsengine.cpp:69
+#: platform/listengines/medialistsengine.cpp:79
+#: platform/listengines/medialistsengine.cpp:89
+#: platform/listengines/medialistsengine.cpp:102
+#: platform/listengines/musiclistengine.cpp:145
+msgid "Artists"
+msgstr "Előadók"
+
+#: platform/listengines/ampachelistengine.cpp:145
+#: platform/listengines/medialistsengine.cpp:70
+#: platform/listengines/medialistsengine.cpp:80
+#: platform/listengines/medialistsengine.cpp:90
+#: platform/listengines/medialistsengine.cpp:112
+#: platform/listengines/musiclistengine.cpp:250
+msgid "Albums"
+msgstr "Albumok"
+
+#: platform/listengines/ampachelistengine.cpp:153
+#: platform/listengines/medialistsengine.cpp:71
+#: platform/listengines/medialistsengine.cpp:81
+#: platform/listengines/medialistsengine.cpp:91
+#: platform/listengines/medialistsengine.cpp:122
+#: platform/listengines/medialistsengine.cpp:263
+#: platform/listengines/medialistsengine.cpp:273
+#: platform/listengines/medialistsengine.cpp:283
+#: platform/listengines/medialistsengine.cpp:316
+#: platform/listengines/musiclistengine.cpp:337
+#: platform/listengines/videolistengine.cpp:523
+msgid "Genres"
+msgstr "Műfajok"
+
+#: platform/listengines/ampachelistengine.cpp:161
+#, fuzzy
+msgid "Playlists"
+msgstr "Lejátszólista"
+
+#: platform/listengines/ampachelistengine.cpp:194
+#: platform/listengines/musiclistengine.cpp:169
+#, kde-format
+msgid "1 artist"
+msgid_plural "%1 artists"
+msgstr[0] "egy előadó"
+msgstr[1] "%1 előadó"
+
+#: platform/listengines/ampachelistengine.cpp:224
+#: platform/listengines/musiclistengine.cpp:279
+#, kde-format
+msgid "1 album"
+msgid_plural "%1 albums"
+msgstr[0] "egy album"
+msgstr[1] "%1 album"
+
+#: platform/listengines/ampachelistengine.cpp:249
+#: platform/listengines/musiclistengine.cpp:338
+#: platform/listengines/videolistengine.cpp:524
+#, kde-format
+msgid "1 genre"
+msgid_plural "%1 genres"
+msgstr[0] "egy műfaj"
+msgstr[1] "%1 műfaj"
+
+#: platform/listengines/ampachelistengine.cpp:274
+#, fuzzy, kde-format
+msgid "1 playlist"
+msgid_plural "%1 playlists"
+msgstr[0] "Lejátszólista"
+msgstr[1] "Lejátszólista"
+
+#: platform/listengines/ampachelistengine.cpp:317
+#: platform/listengines/musiclistengine.cpp:455
+#: platform/listengines/musiclistengine.cpp:529
+#, kde-format
+msgid "1 song"
+msgid_plural "%1 songs"
+msgstr[0] "egy dal"
+msgstr[1] "%1 dal"
+
+#: platform/listengines/audioclipslistengine.cpp:97
+#: platform/listengines/audioclipslistengine.cpp:142
+#: platform/listengines/videolistengine.cpp:188
 #, kde-format
 msgid "1 clip"
 msgid_plural "%1 clips"
@@ -1723,11 +1972,18 @@ msgid_plural "%1 tracks"
 msgstr[0] "egy szám"
 msgstr[1] "%1 szám"
 
-#: platform/listengines/dvdlistengine.cpp:80
+#: platform/listengines/dvdlistengine.cpp:91
 #, kde-format
 msgctxt "%1=Total number of tracks on the DVD"
 msgid "DVD Video - %1 Titles"
 msgstr "DVD Videó - %1 Fejezet"
+
+#: platform/listengines/dvdlistengine.cpp:97
+#, fuzzy, kde-format
+msgid "1 title"
+msgid_plural "%1 titles"
+msgstr[0] "Névtelen"
+msgstr[1] "Névtelen"
 
 #: platform/listengines/feedlistengine.cpp:111
 msgid "New audio feed"
@@ -1757,333 +2013,292 @@ msgstr "Infó szerkesztése új videó forrás létrehozásához"
 msgid "Collecting file info..."
 msgstr "Fájl infó begyűjtése"
 
-#: platform/listengines/filelistengine.cpp:317
+#: platform/listengines/filelistengine.cpp:340
 #, kde-format
 msgid "Collecting file info (%1 files)..."
 msgstr "Fájl infó begyűjtése (%1 fájl)..."
 
-#: platform/listengines/medialistsengine.cpp:67
-#: platform/listengines/medialistsengine.cpp:77
-#: platform/listengines/medialistsengine.cpp:87
-#: platform/listengines/medialistsengine.cpp:93
-#: platform/listengines/musiclistengine.cpp:132
-msgid "Artists"
-msgstr "Előadók"
+#: platform/listengines/medialistsengine.cpp:94
+#: platform/listengines/medialistsengine.cpp:288
+#: platform/listengines/semanticslistengine.cpp:408
+#, fuzzy
+msgid "Recently Added"
+msgstr "Mostanában játszott"
 
-#: platform/listengines/medialistsengine.cpp:68
-#: platform/listengines/medialistsengine.cpp:78
-#: platform/listengines/medialistsengine.cpp:88
-#: platform/listengines/medialistsengine.cpp:103
-#: platform/listengines/musiclistengine.cpp:226
-msgid "Albums"
-msgstr "Albumok"
-
-#: platform/listengines/medialistsengine.cpp:69
-#: platform/listengines/medialistsengine.cpp:79
-#: platform/listengines/medialistsengine.cpp:89
-#: platform/listengines/medialistsengine.cpp:113
-#: platform/listengines/medialistsengine.cpp:254
-#: platform/listengines/medialistsengine.cpp:264
-#: platform/listengines/medialistsengine.cpp:274
-#: platform/listengines/medialistsengine.cpp:300
-#: platform/listengines/musiclistengine.cpp:313
-#: platform/listengines/videolistengine.cpp:486
-msgid "Genres"
-msgstr "Műfajok"
-
-#: platform/listengines/medialistsengine.cpp:123
-#: platform/listengines/musiclistengine.cpp:336
+#: platform/listengines/medialistsengine.cpp:132
+#: platform/listengines/musiclistengine.cpp:360
 msgid "Songs"
 msgstr "Dalok"
 
-#: platform/listengines/medialistsengine.cpp:134
+#: platform/listengines/medialistsengine.cpp:143
 msgid "Clips"
 msgstr "Klipek"
 
-#: platform/listengines/medialistsengine.cpp:145
+#: platform/listengines/medialistsengine.cpp:154
 msgid "Audio Streams"
 msgstr "Hangfolyamok"
 
-#: platform/listengines/medialistsengine.cpp:156
+#: platform/listengines/medialistsengine.cpp:165
 msgid "Audio Feeds"
 msgstr "Audio Források"
 
-#: platform/listengines/medialistsengine.cpp:176
-#: platform/listengines/medialistsengine.cpp:359
+#: platform/listengines/medialistsengine.cpp:185
+#: platform/listengines/medialistsengine.cpp:375
 msgid "Files and Folders"
 msgstr "Fájlok és Mappák"
 
-#: platform/listengines/medialistsengine.cpp:255
-#: platform/listengines/medialistsengine.cpp:265
-#: platform/listengines/medialistsengine.cpp:275
-#: platform/listengines/medialistsengine.cpp:310
-#: platform/listengines/videolistengine.cpp:544
+#: platform/listengines/medialistsengine.cpp:264
+#: platform/listengines/medialistsengine.cpp:274
+#: platform/listengines/medialistsengine.cpp:284
+#: platform/listengines/medialistsengine.cpp:326
+#: platform/listengines/videolistengine.cpp:592
 msgid "Actors"
 msgstr "Színészek"
 
-#: platform/listengines/medialistsengine.cpp:256
-#: platform/listengines/medialistsengine.cpp:266
-#: platform/listengines/medialistsengine.cpp:276
-#: platform/listengines/medialistsengine.cpp:320
-#: platform/listengines/videolistengine.cpp:602
+#: platform/listengines/medialistsengine.cpp:265
+#: platform/listengines/medialistsengine.cpp:275
+#: platform/listengines/medialistsengine.cpp:285
+#: platform/listengines/medialistsengine.cpp:336
+#: platform/listengines/videolistengine.cpp:661
 msgid "Directors"
 msgstr "Rendezők"
 
-#: platform/listengines/medialistsengine.cpp:280
-#: platform/listengines/videolistengine.cpp:125
+#: platform/listengines/medialistsengine.cpp:296
+#: platform/listengines/videolistengine.cpp:139
 msgid "Movies"
 msgstr "Filmek"
 
-#: platform/listengines/medialistsengine.cpp:285
-#: platform/listengines/medialistsengine.cpp:295
-#: platform/listengines/medialistsengine.cpp:305
-#: platform/listengines/medialistsengine.cpp:315
-#: platform/listengines/medialistsengine.cpp:325
-#: platform/listengines/medialistsengine.cpp:335
-#: platform/listengines/medialistsengine.cpp:352
+#: platform/listengines/medialistsengine.cpp:301
+#: platform/listengines/medialistsengine.cpp:311
+#: platform/listengines/medialistsengine.cpp:321
+#: platform/listengines/medialistsengine.cpp:331
+#: platform/listengines/medialistsengine.cpp:341
+#: platform/listengines/medialistsengine.cpp:351
+#: platform/listengines/medialistsengine.cpp:368
 msgid "Recently Watched"
 msgstr "Most nézett"
 
-#: platform/listengines/medialistsengine.cpp:287
-#: platform/listengines/medialistsengine.cpp:297
-#: platform/listengines/medialistsengine.cpp:307
-#: platform/listengines/medialistsengine.cpp:317
-#: platform/listengines/medialistsengine.cpp:327
-#: platform/listengines/medialistsengine.cpp:337
-#: platform/listengines/medialistsengine.cpp:354
+#: platform/listengines/medialistsengine.cpp:303
+#: platform/listengines/medialistsengine.cpp:313
+#: platform/listengines/medialistsengine.cpp:323
+#: platform/listengines/medialistsengine.cpp:333
+#: platform/listengines/medialistsengine.cpp:343
+#: platform/listengines/medialistsengine.cpp:353
+#: platform/listengines/medialistsengine.cpp:370
 msgid "Frequently Watched"
 msgstr "Gyakran nézett"
 
-#: platform/listengines/medialistsengine.cpp:290
-#: platform/listengines/videolistengine.cpp:258
+#: platform/listengines/medialistsengine.cpp:306
+#: platform/listengines/videolistengine.cpp:287
 msgid "TV Shows"
 msgstr "TV műsorok"
 
-#: platform/listengines/medialistsengine.cpp:330
-#: platform/listengines/videolistengine.cpp:169
+#: platform/listengines/medialistsengine.cpp:346
+#: platform/listengines/videolistengine.cpp:187
 msgid "Video Clips"
 msgstr "Videó Klipek"
 
-#: platform/listengines/medialistsengine.cpp:340
+#: platform/listengines/medialistsengine.cpp:356
 msgid "Video Feeds"
 msgstr "Videó Források"
 
-#: platform/listengines/musiclistengine.cpp:136
+#: platform/listengines/musiclistengine.cpp:149
 #, kde-format
 msgctxt "%1=Name of Genre"
 msgid "Artists - %1"
 msgstr "Előadók - %1"
 
-#: platform/listengines/musiclistengine.cpp:141
-#: platform/listengines/musiclistengine.cpp:233
+#: platform/listengines/musiclistengine.cpp:154
+#: platform/listengines/musiclistengine.cpp:257
 msgid "All songs"
 msgstr "Minden Zene"
 
-#: platform/listengines/musiclistengine.cpp:156
-#, kde-format
-msgid "1 artist"
-msgid_plural "%1 artists"
-msgstr[0] "egy előadó"
-msgstr[1] "%1 előadó"
-
-#: platform/listengines/musiclistengine.cpp:228
-#: platform/listengines/musiclistengine.cpp:247
+#: platform/listengines/musiclistengine.cpp:252
+#: platform/listengines/musiclistengine.cpp:271
 #, kde-format
 msgid "Albums - %1"
 msgstr "Albumok - %1"
 
-#: platform/listengines/musiclistengine.cpp:252
+#: platform/listengines/musiclistengine.cpp:276
 #, kde-format
 msgid "Albums - %1 - %2"
 msgstr "Albumok - %1 -%2"
 
-#: platform/listengines/musiclistengine.cpp:255
-#, kde-format
-msgid "1 album"
-msgid_plural "%1 albums"
-msgstr[0] "egy album"
-msgstr[1] "%1 album"
-
-#: platform/listengines/musiclistengine.cpp:314
-#: platform/listengines/videolistengine.cpp:487
-#, kde-format
-msgid "1 genre"
-msgid_plural "%1 genres"
-msgstr[0] "egy műfaj"
-msgstr[1] "%1 műfaj"
-
-#: platform/listengines/musiclistengine.cpp:429
-#: platform/listengines/musiclistengine.cpp:499
-#, kde-format
-msgid "1 song"
-msgid_plural "%1 songs"
-msgstr[0] "egy dal"
-msgstr[1] "%1 dal"
-
-#: platform/listengines/semanticslistengine.cpp:185
-#: platform/listengines/semanticslistengine.cpp:189
+#: platform/listengines/semanticslistengine.cpp:197
+#: platform/listengines/semanticslistengine.cpp:201
+#: platform/listengines/semanticslistengine.cpp:464
 #, kde-format
 msgid "played once"
 msgid_plural "played %1 times"
 msgstr[0] "Egyszer lejátszva"
 msgstr[1] "lejátszva ennyiszer: %1"
 
-#: platform/listengines/taglistengine.cpp:112
+#: platform/listengines/semanticslistengine.cpp:403
+#, kde-format
+msgctxt "for example, added 3 days ago"
+msgid "added %1"
+msgstr ""
+
+#: platform/listengines/taglistengine.cpp:116
 #, kde-format
 msgid "1 tag"
 msgid_plural "%1 tags"
 msgstr[0] "egy címke"
 msgstr[1] "%1 címke"
 
-#: platform/listengines/videolistengine.cpp:127
+#: platform/listengines/videolistengine.cpp:141
 #, kde-format
 msgctxt "%1=Genre of the movie"
 msgid "Movies - %1"
 msgstr "Filmek - %1"
 
-#: platform/listengines/videolistengine.cpp:129
+#: platform/listengines/videolistengine.cpp:143
 #, kde-format
 msgid "1 movie"
 msgid_plural "%1 movies"
 msgstr[0] "egy film"
 msgstr[1] "%1 film"
 
-#: platform/listengines/videolistengine.cpp:247
-#: platform/listengines/videolistengine.cpp:248
-#: platform/listengines/videolistengine.cpp:434
+#: platform/listengines/videolistengine.cpp:276
+#: platform/listengines/videolistengine.cpp:277
+#: platform/listengines/videolistengine.cpp:471
 msgid "Uncategorized TV Shows"
 msgstr "Kategorizálatlan TV műsorok"
 
-#: platform/listengines/videolistengine.cpp:259
+#: platform/listengines/videolistengine.cpp:288
 #, kde-format
 msgid "1 show"
 msgid_plural "%1 shows"
 msgstr[0] "egy műsor"
 msgstr[1] "%1 műsor"
 
-#: platform/listengines/videolistengine.cpp:348
+#: platform/listengines/videolistengine.cpp:381
 msgid "Uncategorized seasons"
 msgstr "Kategorizálatlan évadok"
 
-#: platform/listengines/videolistengine.cpp:357
+#: platform/listengines/videolistengine.cpp:390
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "Seasons - %1"
 msgstr "Évadok - %1"
 
-#: platform/listengines/videolistengine.cpp:358
+#: platform/listengines/videolistengine.cpp:391
 #, kde-format
 msgid "1 season"
 msgid_plural "%1 seasons"
 msgstr[0] "egy évad"
 msgstr[1] "%1 évad"
 
-#: platform/listengines/videolistengine.cpp:436
+#: platform/listengines/videolistengine.cpp:473
 #, kde-format
 msgctxt "%1=Name of the series, %2=Number of the Season"
 msgid "%1 - Season %2"
 msgstr "%1 - %2. évad"
 
-#: platform/listengines/videolistengine.cpp:438
+#: platform/listengines/videolistengine.cpp:475
 #, kde-format
 msgctxt "%1=Name of the Series"
 msgid "%1 - Uncategorized Seasons"
 msgstr "%1 - Kategorizálatlan évadok"
 
-#: platform/listengines/videolistengine.cpp:440
+#: platform/listengines/videolistengine.cpp:477
 #, kde-format
 msgid "1 episode"
 msgid_plural "%1 episodes"
 msgstr[0] "egy epizód"
 msgstr[1] "%1 epizód"
 
-#: platform/listengines/videolistengine.cpp:545
+#: platform/listengines/videolistengine.cpp:593
 #, kde-format
 msgid "1 actor"
 msgid_plural "%1 actors"
 msgstr[0] "egy színész"
 msgstr[1] "%1 színész"
 
-#: platform/listengines/videolistengine.cpp:603
+#: platform/listengines/videolistengine.cpp:662
 #, kde-format
 msgid "1 director"
 msgid_plural "%1 directors"
 msgstr[0] "egy rendező"
 msgstr[1] "%1 rendező"
 
-#: platform/utilities/artwork.cpp:535
+#: platform/utilities/artwork.cpp:537
 msgid "folder"
 msgstr "mappa"
 
-#: platform/utilities/general.cpp:390
+#: platform/utilities/general.cpp:379
 #, kde-format
 msgid "a year ago"
 msgid_plural "%1 years ago"
 msgstr[0] "egy évvel ezelőtt"
 msgstr[1] "%1 évvel ezelőtt"
 
-#: platform/utilities/general.cpp:392
+#: platform/utilities/general.cpp:381
 #, kde-format
 msgid "a month ago"
 msgid_plural "%1 months ago"
 msgstr[0] "egy hónappal ezelőtt"
 msgstr[1] "%1 hónappal ezelőtt"
 
-#: platform/utilities/general.cpp:394
+#: platform/utilities/general.cpp:383
 #, kde-format
 msgid "a week ago"
 msgid_plural "%1 weeks ago"
 msgstr[0] "egy héttel ezelőtt"
 msgstr[1] "%1 héttel ezelőtt"
 
-#: platform/utilities/general.cpp:396
+#: platform/utilities/general.cpp:385
 #, kde-format
 msgid "a day ago"
 msgid_plural "%1 days ago"
 msgstr[0] "egy nappal ezelőtt"
 msgstr[1] "%1 nappal ezelőtt"
 
-#: platform/utilities/general.cpp:398
+#: platform/utilities/general.cpp:387
 #, kde-format
 msgid "an hour ago"
 msgid_plural "%1 hours ago"
 msgstr[0] "egy órával ezelőtt"
 msgstr[1] "%1 órával ezelőtt"
 
-#: platform/utilities/general.cpp:400
+#: platform/utilities/general.cpp:389
 #, kde-format
 msgid "a minute ago"
 msgid_plural "%1 minutes ago"
 msgstr[0] "egy perccel ezelőtt"
 msgstr[1] "%1 perccel ezelőtt"
 
-#: platform/utilities/general.cpp:402
+#: platform/utilities/general.cpp:391
 msgid "a few seconds ago"
 msgstr "pár másodperce"
 
-#: platform/utilities/mediaitems.cpp:114
+#: platform/utilities/mediaitems.cpp:115
 #, kde-format
 msgid "Title %1"
 msgstr "Cím %1"
 
-#: platform/utilities/mediaitems.cpp:116
+#: platform/utilities/mediaitems.cpp:117
 msgid "Full Disc"
 msgstr "Teljes Lemez"
 
-#: platform/utilities/mediaitems.cpp:1391
+#: platform/utilities/mediaitems.cpp:1421
 #, kde-format
 msgid "Season %1"
 msgstr "%1. évad"
 
-#: platform/utilities/mediaitems.cpp:1399
+#: platform/utilities/mediaitems.cpp:1429
 #, kde-format
 msgid "Episode %1"
 msgstr "%1. epizód"
 
-#: platform/utilities/mediaitems.cpp:1405
+#: platform/utilities/mediaitems.cpp:1435
 #, kde-format
 msgctxt "%1=Number of the Season"
 msgid "Season %1"
 msgstr "%1. évad"
 
+#~ msgid "Andreas Marschke"
+#~ msgstr "Andreas Marschke"
 
+#~ msgid "Ni Hui"
+#~ msgstr "Ni Hui"
