@@ -400,7 +400,7 @@ void SemanticsListEngine::run()
                     QDateTime added = it.binding("added").literal().toDateTime();
                     Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                     mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
-                    mediaItem.semanticComment = i18n("added %1").arg(Utilities::wordsForTimeSince(added));
+                    mediaItem.semanticComment = i18nc("for example, added 3 days ago", "added %1", Utilities::wordsForTimeSince(added));
                     if (!mediaItem.url.startsWith("nepomuk:/")) {
                         mediaList.append(mediaItem);
                     }
