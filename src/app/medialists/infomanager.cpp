@@ -565,7 +565,7 @@ void InfoManager::infoBoxSelectionChanged (const QItemSelection & selected, cons
 {
     if (selected.indexes().count() > 0) {
         //Only allow one item in one infobox to be selected at a time.
-        int totalInfoBoxes = ui->infoBoxHolder->layout()->count() - 1;
+        int totalInfoBoxes = ui->infoBoxHolder->layout()->count();
         for (int i = 0; i < totalInfoBoxes; i++) {
             InfoBox * infoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(i)->widget(); 
             if (infoBox->mediaView()->selectionModel()->selectedRows().count() > 0) {

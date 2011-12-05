@@ -63,7 +63,7 @@ InfoBox::InfoBox(QWidget * parent):QWidget (parent)
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(0);
     m_mediaView = new MediaView();
-    m_mediaView->setFocusPolicy(Qt::NoFocus);
+    m_mediaView->setFocusPolicy(Qt::ClickFocus);
     connect((MediaItemModel *)m_mediaView->sourceModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     layout->addWidget(m_titleBar);
     layout->addWidget(m_mediaView);
