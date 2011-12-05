@@ -299,6 +299,7 @@ void MainWindow::on_showPlaylist_clicked()
     }
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio settings"));
+    m_application->actionsManager()->action("show_shortcuts_editor")->setText(i18n("Show shortcuts editor"));
 }
 
 void MainWindow::on_showPlaylist_2_clicked()
