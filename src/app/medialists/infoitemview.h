@@ -32,6 +32,7 @@ public:
     void resizeEvent(QResizeEvent *e);
     void fixHeightToContents();
     void enableTouch();
+    void suppressEditing(bool suppress);
 
 signals:
     void updateSizeHints(QModelIndex index);

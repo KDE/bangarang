@@ -56,6 +56,7 @@ class InfoItemDelegate : public QItemDelegate
         int heightForAllRows();
         void resetEditMode();
         void enableTouch();
+        void suppressEditing(bool suppress);
 
     protected:
         bool eventFilter(QObject * editor, QEvent * event);
@@ -75,6 +76,7 @@ class InfoItemDelegate : public QItemDelegate
         int m_starRatingSize;
         BangarangApplication* m_application;
         bool  m_typeChanged;
+        bool m_suppressEditing;
         QRect fieldDataRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         int stringListIndexAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         QRect stringListRectAtMousePos(const QStyleOptionViewItem &option, const QModelIndex &index) const;

@@ -356,6 +356,14 @@ void InfoManager::loadSelectedInfo()
           m_infoItemModel->mediaList().count() == 1 &&
           m_context.at(0).url == m_infoItemModel->mediaList().at(0).url)) {
         m_infoItemModel->loadInfo(m_context);
+
+        if (m_context.at(0).fields["audioType"].toString() == "Audio Stream" ||
+                m_context.at(0).fields["categoryType"].toString() == "Audio Feed" ||
+                m_context.at(0).fields["categoryType"].toString() == "Video Feed") {
+            ui->infoItemView->suppressEditing(false);
+        } else {
+            ui->infoItemView->suppressEditing(m_application->isTouchEnabled());
+        }
     }
 
     //Show/Hide Info Fetcher
