@@ -923,10 +923,11 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
             QString artist = it.binding(MediaVocabulary::musicArtistNameBinding()).literal().toString();
             QString album = it.binding(MediaVocabulary::musicAlbumTitleBinding()).literal().toString();
             QString genre = it.binding(MediaVocabulary::genreBinding()).literal().toString();
+            genre = Utilities::genreFromRawTagGenre(genre);
             QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
             QString albumFilter = album.isEmpty() ? QString(): QString("album=%1").arg(album);
             QString genreFilter = genre.isEmpty() ? QString(): QString("genre=%1").arg(genre);
-            mediaItem.url = QString("music://artists?%1||%2||%3")
+            mediaItem.url = QString("music://albums?%1||%2||%3")
                             .arg(artistFilter)
                             .arg(albumFilter)
                             .arg(genreFilter);
