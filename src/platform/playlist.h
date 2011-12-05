@@ -303,6 +303,7 @@ class Playlist : public QObject
         KNotificationRestrictions * m_notificationRestrictions;
         QList<QString> m_streamListUrls;
         QString m_currentUrl;
+        QString m_currentStream;
         int m_powerManagementCookie;
         
     private slots:
