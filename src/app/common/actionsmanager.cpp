@@ -97,6 +97,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
 
     //Mute
     action = new KAction(KIcon("dialog-cancel"), i18n("Mute"), this);
+    action->setShortcut(Qt::Key_M);
     connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
     m_shortcutsCollection->addAction("mute", action);
 
@@ -1240,12 +1241,6 @@ void ActionsManager::addShortcuts()
     action = new KAction(QString(), this);
     action->setShortcut(Qt::Key_Left);
     connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
-    ui->nowPlayingPage->addAction(action);
-
-    //Mute
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::Key_M);
-    connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
     ui->nowPlayingPage->addAction(action);
 
 }
