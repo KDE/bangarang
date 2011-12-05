@@ -525,6 +525,7 @@ void MediaItemDelegate::setRenderMode(RenderMode mode)
     m_textInner = m_iconSize == 0 ? m_padding : m_iconSize + 2 * m_padding;
 
     if (m_renderMode != NormalMode) {
+        m_actionIconPadding = 2;
         m_categoryIconSize = 18;
     }
 }
@@ -568,9 +569,9 @@ QRect MediaItemDelegate::categoryIconRect(const QRect* rect) const
                           rect->top() + m_padding);
         return QRect(p, QSize(m_categoryIconSize + 2 * m_actionIconPadding, rect->height()));
     } else {
-        QPoint p = QPoint(rect->left() + rect->width() - 18,
-                          rect->top() + m_padding);
-        return QRect(p, QSize(18, 18));
+        QPoint p = QPoint(rect->left() + rect->width() - m_categoryIconSize - 2 * m_actionIconPadding,
+                          rect->top() + (rect->height() - m_categoryIconSize)/2);
+        return QRect(p, QSize(m_categoryIconSize, m_categoryIconSize));
     }
 }
 
