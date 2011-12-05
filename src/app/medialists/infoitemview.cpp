@@ -70,3 +70,8 @@ void InfoItemView::enableTouch()
     m_infoItemDelegate->enableTouch();
 }
 
+void InfoItemView::suppressEditing(bool suppress)
+{
+    m_infoItemDelegate->suppressEditing(suppress);
+}
+

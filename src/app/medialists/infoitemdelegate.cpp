@@ -73,6 +73,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 
     m_starRatingSize = StarRating::Big;
 
+    m_suppressEditing = false;
+
     m_drillIcon = KIcon("bangarang-category-browse");
     QImage drillIconHighlightImage = KIcon("bangarang-category-browse").pixmap(16+m_padding,16+m_padding).toImage();
     KIconEffect::toGamma(drillIconHighlightImage, 0.5);
@@ -108,7 +110,7 @@ void InfoItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         }
     }
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
-    bool isEditable = model->itemFromIndex(index)->isEditable() && !m_application->isTouchEnabled();
+    bool isEditable = model->itemFromIndex(index)->isEditable() && !m_suppressEditing;
     bool modified = (index.data(Qt::DisplayRole) != index.data(InfoItemModel::OriginalValueRole));
     bool isArtwork = (field == "artwork");
     bool isRating = (field == "rating");
@@ -447,7 +449,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
     }
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "artwork") {
-        bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable() && !m_application->isTouchEnabled();
+        bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable() && !m_suppressEditing;
         if (event->type() == QEvent::MouseButtonRelease && isEditable) {
             QRect clearButtonRect = QRect(option.rect.left()+option.rect.width()-16, option.rect.top()+(option.rect.height()-16)/2, 16, 16);
             if (clearButtonRect.contains(m_mousePos)) {
@@ -506,6 +508,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         return true;
     }  else if (field == "url") {
         if (event->type() == QEvent::MouseButtonPress) {
+            bool isEditable = ((QStandardItemModel *)model)->itemFromIndex(index)->isEditable() && !m_suppressEditing;
             QRect dataRect = fieldDataRect(option, index);
             QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
             KUrl url(index.data(Qt::DisplayRole).toString());
@@ -514,11 +517,12 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
                 QRect linkIconRect = dataRect.adjusted(dataRect.width() - 16, -m_padding, m_padding, m_padding);
                 hoverRect.adjust(0, 0, -16 - m_padding, 0);
                 if (linkIconRect.contains(m_mousePos) ||
-                    (m_application->isTouchEnabled() && hoverRect.contains(m_mousePos))) {
+                    (m_application->isTouchEnabled() && hoverRect.contains(m_mousePos) & !isEditable)) {
                     QDesktopServices::openUrl(url);
                 }
             }
-            if (hoverRect.contains(m_mousePos) && !m_application->isTouchEnabled()) {
+            if (hoverRect.contains(m_mousePos)) {
+                m_isEditing = true;
                 return QItemDelegate::editorEvent(event, model, option, index);
             }
         }
@@ -564,7 +568,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
             listIndex == textList.count()-1) {
             plusIconRect = dataRect.adjusted(dataRect.width()-16, 0, 0, 0);
         }
-        if (hoverRect.contains(m_mousePos) && !m_isEditing && !m_application->isTouchEnabled()) {
+        if (hoverRect.contains(m_mousePos) && !m_isEditing && !m_suppressEditing) {
             if (event->type() == QEvent::MouseButtonRelease) {
                 m_isEditing = true;
             }
@@ -635,10 +639,6 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
 
 QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    if (m_application->isTouchEnabled()) {
-        return 0;
-    }
-
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant value = index.data(Qt::EditRole);
     if (field == "artwork" || field == "rating") {
@@ -732,10 +732,6 @@ QWidget *InfoItemDelegate::createEditor( QWidget * parent, const QStyleOptionVie
 
 void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & index) const
 {
-    if (m_application->isTouchEnabled()) {
-        return;
-    }
-
     QString field = index.data(InfoItemModel::FieldRole).toString();
     QVariant::Type type = index.data(Qt::EditRole).type();
     bool multipleValues = index.data(InfoItemModel::MultipleValuesRole).toBool();
@@ -798,10 +794,6 @@ void InfoItemDelegate::setEditorData (QWidget * editor, const QModelIndex & inde
 
 void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (m_application->isTouchEnabled()) {
-        return;
-    }
-
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (index.data(Qt::DisplayRole).type() == QVariant::StringList) {
         QRect editorRect = stringListRectAtMousePos(option, index);
@@ -815,10 +807,6 @@ void InfoItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
 void InfoItemDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex &index) const
 {
-    if (m_application->isTouchEnabled()) {
-        return;
-    }
-
     QString field = index.data(InfoItemModel::FieldRole).toString();
     if (field == "audioType" || field == "videoType") {
         QComboBox * comboBox = qobject_cast<QComboBox*>(editor);
@@ -943,7 +931,7 @@ int InfoItemDelegate::rowHeight(int row) const
         } else if (field == "description") {
             availableWidth = width - 4*m_padding;
         } else if (field == "url") {
-            text = QString(); // url text is elided to a single line anyway
+            text = QString(" "); // url text is elided to a single line anyway
         }
         if (availableWidth <= 0) {
             availableWidth = 100;
@@ -986,7 +974,7 @@ QRect InfoItemDelegate::fieldDataRect(const QStyleOptionViewItem &option, const 
     QString field = index.data(InfoItemModel::FieldRole).toString();
 
     //Set basic formatting info
-    int padding = 3;
+    int padding = m_padding;
     int fieldNameWidth = qMax(70, (width - 4 * padding)/4);
     int textWidth = width - 5 * padding - fieldNameWidth;
     int textLeft = left + fieldNameWidth + 3 * padding;
@@ -1108,4 +1096,9 @@ bool InfoItemDelegate::eventFilter(QObject *editor, QEvent *event)
     } else {
         return QItemDelegate::eventFilter(editor, event);
     }
+}
+
+void InfoItemDelegate::suppressEditing(bool suppress)
+{
+    m_suppressEditing = suppress;
 }
