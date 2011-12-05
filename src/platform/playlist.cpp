@@ -157,6 +157,7 @@ void Playlist::playItemAt(int row, Model model)
     
     //Play media Item
     m_mediaObject->clearQueue();
+    m_currentStream.clear();
     QString subType;
     if (nextMediaItem.type == "Audio") {
         subType = nextMediaItem.fields["audioType"].toString();
@@ -185,6 +186,7 @@ void Playlist::playItemAt(int row, Model model)
         m_mediaController->setCurrentTitle(title);
         m_mediaController->setAutoplayTitles(true);
     } else if (subType == "Audio Stream") {
+        m_currentStream = nextMediaItem.url;
         m_streamListUrls.clear();
         if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
             QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
@@ -537,6 +539,9 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
         //Playlist is finished
         m_state = Playlist::Finished;
     } else {
+        if (m_queue->rowCount() > 0 && Utilities::isAudioStream(m_queue->mediaItemAt(0).fields["audioType"].toString())){
+            return;
+        }
         m_queue->removeMediaItemAt(0);
         addToQueue();
         if (m_queue->rowCount() > 0) {
@@ -629,6 +634,16 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     if (m_hadVideo && m_mediaObject->hasVideo()) {
         return;
     }
+
+    //If a pls or m3u based stream starts playing and there are other streams in the playlist
+    //clear the queue to allow the other playlist streams to accessed.
+    if (newstate == Phonon::PlayingState && nowPlayingModel()->rowCount() > 0) {
+        if (Utilities::isAudioStream(nowPlayingModel()->mediaItemAt(0).fields["audioType"].toString())) {
+            m_mediaObject->clearQueue();
+            m_streamListUrls.clear();
+        }
+    }
+
     if (newstate == Phonon::PlayingState || newstate == Phonon::PausedState) {
         m_hadVideo = m_mediaObject->hasVideo();
         
@@ -848,11 +863,9 @@ void Playlist::updateNowPlaying()
     int queueRow = -1;
     for (int i = 0; i < m_queue->rowCount(); i++) {
         if (Utilities::isAudioStream(m_queue->mediaItemAt(i).fields["audioType"].toString())) {
-            for (int j = 0; j < m_streamListUrls.count(); j++) {
-                if (m_currentUrl ==  QUrl::fromPercentEncoding(m_streamListUrls.at(j).toUtf8())) {
-                    queueRow = i;
-                    break;
-                }
+            if (m_currentStream == m_queue->mediaItemAt(i).url) {
+                queueRow = i;
+                break;
             }
         } else {
             if (m_currentUrl == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
