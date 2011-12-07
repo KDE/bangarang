@@ -298,21 +298,10 @@ void NowPlayingManager::mediaStateChanged(Phonon::State newstate, Phonon::State 
 
     if (newstate == Phonon::ErrorState) {
         if (m_application->mediaObject()->errorString().isEmpty()) {
-            ui->playbackMessage->setText(i18n("An error has been encountered during playback"));
+            showErrorMessage(i18n("An error has been encountered during playback"));
         } else {
-            ui->playbackMessage->setText(m_application->mediaObject()->errorString());
+            showErrorMessage(m_application->mediaObject()->errorString());
         }
-        QFontMetrics fm(ui->playbackMessage->font());
-        QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()),
-                                         Qt::AlignCenter | Qt::TextWordWrap,
-                                         ui->playbackMessage->text()).size();
-
-        int top = ui->nowPlayingHolder->geometry().bottom() - 50 - textSize.height();
-        int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
-        ui->playbackMessage->setGeometry(left - 8, top - 8, textSize.width() + 8, textSize.height() + 8);
-        ui->playbackMessage->setVisible(true);
-        ui->playbackMessage->raise();
-        QTimer::singleShot(6000, ui->playbackMessage, SLOT(hide()));
 
         //Use a new media object instead and discard
         //the old media object (whose state appears to be broken after errors)
@@ -572,4 +561,21 @@ void NowPlayingManager::togglePlaylist()
     }
     m_application->actionsManager()->action("show_video_settings")->setText(i18n("Show video settings"));
     m_application->actionsManager()->action("show_audio_settings")->setText(i18n("Show audio settings"));
+}
+
+void NowPlayingManager::showErrorMessage(QString error)
+{
+    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
+    ui->playbackMessage->setText(error);
+    QFontMetrics fm(ui->playbackMessage->font());
+    QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()),
+                                     Qt::AlignCenter | Qt::TextWordWrap,
+                                     ui->playbackMessage->text()).size();
+
+    int top = ui->nowPlayingHolder->geometry().bottom() - 50 - textSize.height();
+    int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
+    ui->playbackMessage->setGeometry(left - 8, top - 8, textSize.width() + 8, textSize.height() + 8);
+    ui->playbackMessage->setVisible(true);
+    ui->playbackMessage->raise();
+    QTimer::singleShot(6000, ui->playbackMessage, SLOT(hide()));
 }

@@ -176,15 +176,15 @@ void Playlist::playItemAt(int row, Model model)
         Phonon::DiscType discType = (subType == "CD Track") ? Phonon::Cd : Phonon::Dvd;
         Phonon::MediaSource src = Phonon::MediaSource(discType, block->device());
         int title = nextMediaItem.fields["trackNumber"].toInt();
-        if (m_mediaObject->currentSource().deviceName() != src.deviceName()) {
-            disconnect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
+        if (m_mediaObject->currentSource().discType() != src.discType() ||
+            m_mediaObject->currentSource().deviceName() != src.deviceName()) {
             m_mediaObject->setCurrentSource(src);
-            connect(m_mediaObject, SIGNAL(currentSourceChanged (const Phonon::MediaSource & )), this, SLOT(currentSourceChanged(const Phonon::MediaSource & )));
-            updateNowPlaying();
+        }
+        if (title != -1) {
+            m_mediaController->setCurrentTitle(title);
+            m_mediaController->setAutoplayTitles(true);
         }
         m_mediaObject->play();
-        m_mediaController->setCurrentTitle(title);
-        m_mediaController->setAutoplayTitles(true);
     } else if (subType == "Audio Stream") {
         m_currentStream = nextMediaItem.url;
         m_streamListUrls.clear();
@@ -875,6 +875,7 @@ void Playlist::updateNowPlaying()
         }
     }
 
+
     //Update Now Playing model
     MediaItem nowPlayingItem;
     if (queueRow != -1) {
@@ -901,7 +902,7 @@ void Playlist::updateNowPlaying()
             m_nowPlaying->loadMediaItem(nowPlayingItem, true);
         }
     }
-    
+
     //Refresh playlist model to ensure views get updated
     int row = -1;
     if (m_nowPlaying->rowCount() > 0) {
