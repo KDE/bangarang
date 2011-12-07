@@ -437,7 +437,7 @@ QMenu *ActionsManager::nowPlayingContextMenu()
             (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
             action("show_now_playing_info")->setText(i18n("Show information"));
             action("show_now_playing_info")->setIcon(KIcon("help-about"));
-        } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
+        } else if (delegate->showingInfo()) {
             action("show_now_playing_info")->setText(i18n("Hide information"));
             action("show_now_playing_info")->setIcon(KIcon("help-about"));
         }
@@ -478,7 +478,7 @@ KMenu *ActionsManager::nowPlayingMenu()
                 (ui->videoFrame->isVisible() && m_application->mainWindow()->videoSize() == MainWindow::Normal)) {
                 action("show_now_playing_info")->setText(i18n("Show information"));
                 action("show_now_playing_info")->setIcon(KIcon("help-about"));
-            } else if (delegate->showingInfo() && !ui->videoFrame->isVisible()) {
+            } else if (delegate->showingInfo()) {
                 action("show_now_playing_info")->setText(i18n("Hide information"));
                 action("show_now_playing_info")->setIcon(KIcon("help-about"));
             }
@@ -898,6 +898,7 @@ void ActionsManager::showInfoForNowPlaying()
     if (m_application->playlist()->nowPlayingModel()->rowCount() == 0) {
         return;
     }
+    //FIXME: Remove this since "Hide Information" overrides this on the menu builder functions
     if (m_application->playlist()->mediaObject()->hasVideo()) {
         if (m_application->mainWindow()->videoSize() == MainWindow::Normal) {
             m_application->mainWindow()->setVideoSize(MainWindow::Mini);
