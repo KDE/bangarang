@@ -50,6 +50,7 @@ signals:
 public slots:
     void showApplicationBanner();
     void showMenu();
+    void showErrorMessage(QString error);
     void togglePlaylist();
     void clearPlaylist();
     void toggleShuffle();

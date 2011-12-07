@@ -373,6 +373,9 @@ void BangarangApplication::nowPlayingChanged()
 
     MediaItem nowPlayingItem = nowPlayingModel->mediaItemAt(0);
     QString type = nowPlayingItem.type;
+    if (Utilities::isDisc(nowPlayingItem.url)) {
+        return;
+    }
 
     //Switch the audio output to the appropriate phonon category
     bool changed = false;
@@ -424,29 +427,33 @@ void BangarangApplication::processCommandLineArgs()
         QList<Solid::Device> dvds = DeviceManager::instance()->deviceList(DeviceManager::VideoType);
         if ( dvds.isEmpty() ) {
             kDebug() << "no DVD found";
+            m_nowPlayingManager->showErrorMessage(i18n("No DVD found"));
+        } else {
+            kDebug() << "playing DVD";
+            MediaItem mediaItem;
+            mediaItem.title = i18n("DVD Video");
+            mediaItem.fields["title"];
+            mediaItem.url = QString("dvdvideo://%1" ).arg(dvds.at(0).udi());
+            mediaItem.type = "Category";
+            mediaList << mediaItem;
+            itemLoaded = true;
         }
-        kDebug() << "playing DVD";
-        MediaItem mediaItem;
-        mediaItem.title = i18n("DVD Video");
-        mediaItem.fields["title"];
-        mediaItem.url = QString("dvdvideo://%1" ).arg(dvds.at(0).udi());
-        mediaItem.type = "Category";
-        mediaList << mediaItem;
-        itemLoaded = true;
     } else if (args->isSet("play-cd")) {
         //Play CD
         QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
         if ( cds.isEmpty() ) {
             kDebug() << "no CD found";
+            m_nowPlayingManager->showErrorMessage(i18n("No CD found"));
+        } else {
+            kDebug() << "playing CD";
+            MediaItem mediaItem;
+            mediaItem.type = "Category";
+            mediaItem.title = i18n("Audio CD");
+            mediaItem.fields["title"] = mediaItem.title;
+            mediaItem.url = QString( "cdaudio://%1" ).arg(cds.at(0).udi());
+            mediaList << mediaItem;
+            itemLoaded = true;
         }
-        kDebug() << "playing CD";
-        MediaItem mediaItem;
-        mediaItem.type = "Category";
-        mediaItem.title = i18n("Audio CD");
-        mediaItem.fields["title"] = mediaItem.title;
-        mediaItem.url = QString( "cdaudio://%1" ).arg(cds.at(0).udi());
-        mediaList << mediaItem;
-        itemLoaded = true;
     } else {
         //Play Url(s)
         for(int i = 0; i < args->count(); i++) {
