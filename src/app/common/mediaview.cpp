@@ -29,14 +29,17 @@
 #include <QToolTip>
 #include <KDebug>
 
-MediaView::MediaView(QWidget * parent):QTreeView (parent)
+MediaView::MediaView(QWidget * parent):QTreeView (parent), LoadingAnimation(viewport(), 32)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
     m_proxyModel = new MediaSortFilterProxyModel();
     setModel(m_proxyModel);
     m_mediaItemModel = new MediaItemModel(parent);
+    m_mediaItemDelegate = NULL;
     setSourceModel(m_mediaItemModel);
     m_mode = MediaItemDelegate::NormalMode;
+    m_loading = false;
+    m_itemsAvailable = false;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     setHeaderHidden(true);
     setRootIsDecorated(false);
@@ -62,8 +65,20 @@ void MediaView::setMainWindow(MainWindow * mainWindow)
 
 void MediaView::setMode(MediaItemDelegate::RenderMode mode)
 {
-    m_mode = mode;
-    m_mediaItemDelegate->setRenderMode(mode);
+    if (m_mediaItemDelegate) {
+        m_mediaItemDelegate->setRenderMode(mode);
+    }
+    if ( m_mode != mode ) {
+        switch ( mode ) {
+            case MediaItemDelegate::NormalMode:
+                setAnimationSize(32);
+                break;
+                
+            default:
+                setAnimationSize(8);
+        }
+    }
+    m_mode = mode; 
 }
 
 MediaItemDelegate::RenderMode MediaView::mode()
@@ -75,6 +90,8 @@ void MediaView::setSourceModel(QAbstractItemModel * mediaItemModel)
 {
     m_mediaItemModel = (MediaItemModel *)mediaItemModel;
     connect(m_mediaItemModel, SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
+    connect(m_mediaItemModel, SIGNAL(loadingStateChanged(bool)), this, SLOT(loadingStateChanged(bool)));
+    connect(m_mediaItemModel, SIGNAL(itemsAvailable(bool)), this, SLOT(itemsAvailable(bool)));
     m_proxyModel->setSourceModel((QAbstractItemModel *) m_mediaItemModel);
 }
 void MediaView::contextMenuEvent(QContextMenuEvent * event)
@@ -178,4 +195,39 @@ void MediaView::keyPressEvent(QKeyEvent *event)
         }
     }
     QTreeView::keyPressEvent(event);
+}
+
+void MediaView::loadingStateChanged(bool loading)
+{
+    if (loading == m_loading) {
+        return;
+    }
+    m_loading = loading;
+    if ( loading ) {
+        startAnimation();
+    } else {
+        stopAnimation(); //should be done by itemsAvailable anyway, but we like to be sure
+    }
+    
+}
+
+void MediaView::paintEvent(QPaintEvent* event)
+{
+    if ( m_itemsAvailable ) { //we have items, simply draw them
+        QTreeView::paintEvent(event);
+        return;
+    }
+    //no items, are we loading ?
+    if ( m_loading ) {
+        paintAnimation(event);
+    }
+    //so we have no results, draw a message
+    //showNoResultsMessage
+}
+
+void MediaView::itemsAvailable(bool available)
+{
+
+    stopAnimation(); //definitely not loading anymore
+    m_itemsAvailable = available;
 }

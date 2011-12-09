@@ -23,6 +23,7 @@
 #include <QTreeView>
 #include <QAction>
 #include "mediaitemdelegate.h"
+#include "loadinganimation.h"
 
 class MainWindow;
 class MediaItemModel;
@@ -34,7 +35,7 @@ class QSortFilterProxyModel;
  * This class is mostly to provide custom context menus for the QTreeView
  * used to display media lists.
  */
-class MediaView : public QTreeView
+class MediaView : public QTreeView, protected LoadingAnimation
 {
     Q_OBJECT
     public:
@@ -55,6 +56,7 @@ class MediaView : public QTreeView
         void contextMenuEvent(QContextMenuEvent * event);
         bool viewportEvent(QEvent * event);
         void keyPressEvent(QKeyEvent *event);
+        void paintEvent(QPaintEvent *event);
 
     private:
         BangarangApplication * m_application;
@@ -66,8 +68,13 @@ class MediaView : public QTreeView
         QAction * playSelectedAction;   
         QAction * addSelectedToPlayListAction;
         QAction * removeSelectedToPlayListAction;
+        bool m_loading;
+        bool m_itemsAvailable;
     
     private slots:
         void mediaListChanged();
+        void loadingStateChanged(bool loading);
+        void itemsAvailable(bool available);
+
 };
 #endif // MEDIAVIEW_H
