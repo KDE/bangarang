@@ -646,10 +646,10 @@ class MediaItemModel : public QStandardItemModel
         void mediaListChanged();
         
         /**
-         * Emitted when the model is loading a list of MediaItems.
+         * Emitted to signal that items are or aren't available to be shown and used
          */
-        void loading();
-
+        void itemsAvailable(bool available);
+        
         /**
          * Emitted when the loading state changes
          */
@@ -786,10 +786,8 @@ class MediaItemModel : public QStandardItemModel
         
     private Q_SLOTS:
         void synchRemoveRows(const QModelIndex &index, int start, int end);
-        void showLoadingMessage();
         
     private:
-        void hideLoadingMessage();
         void showNoResultsMessage();
         QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
         void loadSourcesForNextCat();

@@ -68,7 +68,6 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     mediaView->setSourceModel(m_application->browsingModel());
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
-    connect(m_application->browsingModel(), SIGNAL(loading()), this, SLOT(mediaListLoading()));
     connect(m_application->browsingModel(), SIGNAL(loadingStateChanged(bool)), this, SLOT(mediaListLoadingStateChanged(bool)));
     connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     connect((MediaItemDelegate *)mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
@@ -169,19 +168,14 @@ void MediaListsManager::mediaListChanged()
     }
 }
 
-void MediaListsManager::mediaListLoading()
-{
-    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
-    if (ui->mediaListFilter->isVisible()) {
-        ui->mediaListFilterProxyLine->lineEdit()->clear();
-        hidePlayButtons();
-    }
-}
-
 void MediaListsManager::mediaListLoadingStateChanged(bool loading)
 {
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     if (loading) {
+        if (ui->mediaListFilter->isVisible()) {
+            ui->mediaListFilterProxyLine->lineEdit()->clear();
+            hidePlayButtons();
+        }
         if (!ui->loadingIndicator->isVisible()) {
             ui->loadingIndicator->show();
             showMediaListLoading();

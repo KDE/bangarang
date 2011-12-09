@@ -77,7 +77,6 @@ private slots:
     void videoListsChanged();
     void mediaListChanged();
     void mediaListPropertiesChanged();
-    void mediaListLoading();
     void mediaListLoadingStateChanged(bool);
     void updateListHeader();
     void mediaListCategoryActivated(QModelIndex index);

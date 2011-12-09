@@ -400,7 +400,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
    if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
-            hideLoadingMessage();
+            emit itemsAvailable(true);
             loadMediaList(mediaList, false, true);
             m_mediaListProperties = mediaListProperties;
             emit mediaListPropertiesChanged();
@@ -470,7 +470,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                                 continue;
                             }
                             if (m_subRequestMediaLists.at(i).count() > 0) {
-                                hideLoadingMessage();
+                                emit itemsAvailable(true);
                                 loadMediaList(m_subRequestMediaLists.at(i), false, true);
                                 if (!m_reload && !m_mediaListProperties.name.contains(i18n("Multiple"))) {
                                     m_mediaListProperties.name = i18n("Multiple %1", m_mediaListProperties.name);
@@ -648,13 +648,8 @@ void MediaItemModel::setLoadingState(bool state)
 {
     bool stateChanged = (m_loadingState != state);
     m_loadingState = state;
-    if (m_loadingState) {
-        showLoadingMessage();
-        emit loading();
-    } else {
-        hideLoadingMessage();
-    }
     if (stateChanged) {
+        emit itemsAvailable(!m_loadingState);
         emit loadingStateChanged(m_loadingState);
     }
 }
@@ -662,45 +657,6 @@ void MediaItemModel::setLoadingState(bool state)
 bool MediaItemModel::isLoading()
 {
     return m_loadingState;
-}
-
-void MediaItemModel::showLoadingMessage()
-{
-    if (m_loadingState ) {
-        MediaItem loadingMessage;
-        m_loadingProgress += 1;
-        if ((m_loadingProgress > 7) || (m_loadingProgress < 0)) {
-            m_loadingProgress = 0;
-        }
-        QString iconName = QString("bangarang-loading-%1").arg(m_loadingProgress);
-        loadingMessage.artwork = KIcon(iconName);
-        loadingMessage.title = i18n("Loading...");
-        loadingMessage.type = "Message";
-        loadingMessage.fields["messageType"] = "Loading";
-        if (rowCount() == 0) {
-            loadMediaItem(loadingMessage, false);
-        } else if (m_mediaList.at(0).type == "Message" &&
-                   m_mediaList.at(0).fields["messageType"].toString() == "Loading") {
-            replaceMediaItemAt(0, loadingMessage, false);
-        }
-        QTimer::singleShot(100, this, SLOT(showLoadingMessage()));
-    }
-}
-
-void MediaItemModel::hideLoadingMessage()
-{
-    int row = -1;
-    for (int i = 0; i < m_mediaList.count(); ++i) {
-        if ((m_mediaList.at(i).fields["messageType"].toString() == "Loading") && (m_mediaList.at(i).type == "Message")) {
-            row = i;
-            break;
-        }
-    }
-    if (row != -1) {
-        if (m_mediaList.count() > 0) {
-            removeMediaItemAt(row, false);
-        }
-    }
 }
 
 void MediaItemModel::showNoResultsMessage()
