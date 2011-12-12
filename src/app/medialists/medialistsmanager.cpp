@@ -172,9 +172,9 @@ void MediaListsManager::mediaListLoadingStateChanged(bool loading)
 {
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     if (loading) {
+        hidePlayButtons();
         if (ui->mediaListFilter->isVisible()) {
             ui->mediaListFilterProxyLine->lineEdit()->clear();
-            hidePlayButtons();
         }
         if (!ui->loadingIndicator->isVisible()) {
             ui->loadingIndicator->show();
