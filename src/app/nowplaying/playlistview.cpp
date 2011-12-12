@@ -27,7 +27,7 @@
 
 #include <KDebug>
 
-PlaylistView::PlaylistView(QWidget* parent): QListView(parent)
+PlaylistView::PlaylistView(QWidget* parent): QListView(parent), LoadingAnimation(viewport(), 32)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
     m_playlist = m_application->playlist();
@@ -39,11 +39,15 @@ PlaylistView::PlaylistView(QWidget* parent): QListView(parent)
     
     connect(m_playlistModel, SIGNAL(mediaListChanged()), this, SLOT(playlistChanged()));
     connect(m_playlistModel, SIGNAL(mediaListPropertiesChanged()), this, SLOT(playlistChanged()));
-    
+    connect(m_playlistModel, SIGNAL(loadingStateChanged(bool)), this, SLOT(loadingStateChanged(bool)));
+    connect(m_playlistModel, SIGNAL(itemsAvailable(bool)), this, SLOT(itemsAvailable(bool)));
+
     m_playlistItemDelegate = NULL;
     m_playlistName = NULL;
     m_playlistDuration = NULL;
     m_currentModel = Playlist::PlaylistModel;
+    m_loading = false;
+    m_itemsAvailable = false;
 }
 
 void PlaylistView::setMainWindow(MainWindow* mainWindow)
@@ -140,4 +144,39 @@ void PlaylistView::enableTouch()
     charm->activateOn(this);
     this->setDragEnabled(false);
     m_playlistItemDelegate->enableTouch();
+}
+
+void PlaylistView::loadingStateChanged(bool loading)
+{
+    if (loading == m_loading) {
+        return;
+    }
+    m_loading = loading;
+    if ( loading ) {
+        startAnimation();
+    } else {
+        stopAnimation(); //should be done by itemsAvailable anyway, but we like to be sure
+    }
+
+}
+
+void PlaylistView::paintEvent(QPaintEvent* event)
+{
+    if ( m_itemsAvailable ) { //we have items, simply draw them
+        QListView::paintEvent(event);
+        return;
+    }
+    //no items, are we loading ?
+    if ( m_loading ) {
+        paintAnimation(event);
+    }
+    //so we have no results, draw a message
+    //showNoResultsMessage
+}
+
+void PlaylistView::itemsAvailable(bool available)
+{
+
+    stopAnimation(); //definitely not loading anymore
+    m_itemsAvailable = available;
 }

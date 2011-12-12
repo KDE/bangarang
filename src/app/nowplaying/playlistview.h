@@ -23,10 +23,11 @@
 #include <QLabel>
 #include "../../platform/playlist.h"
 #include "../common/mainwindow.h"
+#include "../common/loadinganimation.h"
 
 class MediaItemDelegate;
 
-class PlaylistView : public QListView
+class PlaylistView : public QListView, protected LoadingAnimation
 {
     Q_OBJECT
     public:
@@ -43,7 +44,8 @@ class PlaylistView : public QListView
         void contextMenuEvent (QContextMenuEvent * event);
         void dragMoveEvent(QDragMoveEvent *e);
         void dropEvent(QDropEvent *e);
-        
+        void paintEvent(QPaintEvent *event);
+
     private:
         Playlist *m_playlist;
         BangarangApplication *m_application;
@@ -52,9 +54,13 @@ class PlaylistView : public QListView
         QLabel* m_playlistName;
         QLabel* m_playlistDuration;
         Playlist::Model m_currentModel;
-        
+        bool m_loading;
+        bool m_itemsAvailable;
+
     private slots:
         void playlistChanged();
+        void loadingStateChanged(bool loading);
+        void itemsAvailable(bool available);
 };
 
 #endif // PLAYLISTVIEW_H
