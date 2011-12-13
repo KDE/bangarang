@@ -22,6 +22,7 @@
 #include <QtCore>
 #include <QTreeView>
 #include <QAction>
+#include <QScrollBar>
 #include "mediaitemdelegate.h"
 #include "loadinganimation.h"
 
@@ -70,11 +71,16 @@ class MediaView : public QTreeView, protected LoadingAnimation
         QAction * removeSelectedToPlayListAction;
         bool m_loading;
         bool m_itemsAvailable;
+        QTime *m_scrolling;
+        bool m_scrollBarPressed;
     
     private slots:
         void mediaListChanged();
         void loadingStateChanged(bool loading);
         void itemsAvailable(bool available);
+        void scrollBarMoved();
+        void scrollBarPressed();
+        void scrollBarReleased();
 
 };
 #endif // MEDIAVIEW_H
