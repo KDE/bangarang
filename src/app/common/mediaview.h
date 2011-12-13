@@ -58,7 +58,8 @@ class MediaView : public QTreeView, protected LoadingAnimation
         bool viewportEvent(QEvent * event);
         void keyPressEvent(QKeyEvent *event);
         void paintEvent(QPaintEvent *event);
-
+        void checkForScrollOverlay();
+        
     private:
         BangarangApplication * m_application;
         MediaItemModel * m_mediaItemModel;

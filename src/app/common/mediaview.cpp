@@ -49,9 +49,6 @@ MediaView::MediaView(QWidget * parent):QTreeView (parent), LoadingAnimation(view
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     m_scrolling = new QTime();
     m_scrollBarPressed = false;
-    connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarMoved()));
-    connect(verticalScrollBar(), SIGNAL(sliderPressed()), this, SLOT(scrollBarPressed()));
-    connect(verticalScrollBar(), SIGNAL(sliderReleased()), this, SLOT(scrollBarReleased()));
 }
 
 MediaView::~MediaView() 
@@ -207,6 +204,9 @@ void MediaView::loadingStateChanged(bool loading)
     if (loading == m_loading) {
         return;
     }
+    if ( loading ) {
+        checkForScrollOverlay();
+    }
     m_loading = loading;
     if ( loading ) {
         startAnimation();
@@ -266,6 +266,26 @@ void MediaView::paintEvent(QPaintEvent* event)
     //showNoResultsMessage
 }
 
+void MediaView::checkForScrollOverlay()
+{
+    //TODO: well this is kind of a workaround to disable ugly behavior where the current scrolling overlay
+    //doesn't make sense
+    
+    QString engine = m_mediaItemModel->mediaListProperties().engine();
+    //semantic engines have no "simple" order by item-title, so we leave it out. they are restricted
+    //in their length anyway
+    if (engine == "semantics://") {
+        disconnect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarMoved()));
+        disconnect(verticalScrollBar(), SIGNAL(sliderPressed()), this, SLOT(scrollBarPressed()));
+        disconnect(verticalScrollBar(), SIGNAL(sliderReleased()), this, SLOT(scrollBarReleased()));   
+        m_scrollBarPressed = false; //to be safe
+    } else {
+        connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarMoved()));
+        connect(verticalScrollBar(), SIGNAL(sliderPressed()), this, SLOT(scrollBarPressed()));
+        connect(verticalScrollBar(), SIGNAL(sliderReleased()), this, SLOT(scrollBarReleased()));   
+    }
+}
+
 void MediaView::itemsAvailable(bool available)
 {
 
@@ -289,3 +309,4 @@ void MediaView::scrollBarReleased()
     m_scrollBarPressed = false; 
     viewport()->update();
 }
+

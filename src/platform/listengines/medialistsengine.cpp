@@ -407,7 +407,7 @@ void MediaListsEngine::run()
                         return;
                     }
                     QString line = in.readLine();
-                    QStringList nameUrl = line.split(":::");
+                    QStringList nameUrl = line.split("::a:");
                     if (nameUrl.count() >= 3) {
                         if (nameUrl.at(0) == "Video") {
                             mediaItem.title = nameUrl.at(1).trimmed();
