@@ -47,6 +47,8 @@ MediaView::MediaView(QWidget * parent):QTreeView (parent), LoadingAnimation(view
     setFrameShadow(QFrame::Plain);
     setAlternatingRowColors(true);
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_scrolling = new QTime();
+    m_scrollBarPressed = false;
 }
 
 MediaView::~MediaView() 
@@ -202,6 +204,9 @@ void MediaView::loadingStateChanged(bool loading)
     if (loading == m_loading) {
         return;
     }
+    if ( loading ) {
+        checkForScrollOverlay();
+    }
     m_loading = loading;
     if ( loading ) {
         startAnimation();
@@ -215,14 +220,70 @@ void MediaView::paintEvent(QPaintEvent* event)
 {
     if ( m_itemsAvailable ) { //we have items, simply draw them
         QTreeView::paintEvent(event);
+        int scrollInterval = 500;
+        int scrollLeft = scrollInterval - m_scrolling->elapsed();
+        
+        if (scrollLeft > 0 || m_scrollBarPressed ) { 
+            //draw the letter of the topmost item semitransparent in the middle
+            if ( scrollLeft > 0 ) {
+                //make sure we redraw this after scrolling has ended
+                QTimer::singleShot(scrollLeft, viewport(), SLOT(update()));
+            }
+            QPainter painter(viewport());
+            QModelIndex idx = m_proxyModel->mapToSource(indexAt(viewport()->geometry().topLeft()));
+            const QChar letter = m_mediaItemModel->mediaItemAt(idx.row()).title[0];
+            QFont font = KGlobalSettings::largeFont();
+            font.setPointSize(font.pointSize() - 8);
+            font.setBold(true);
+            QRect rect = QFontMetrics(font).boundingRect(letter);
+            rect.setWidth(rect.width()+20);
+            rect.setHeight(rect.height()+20);
+            rect.moveCenter(viewport()->geometry().center());
+            
+            if ( event->rect().intersects(rect) ) {
+                QColor background = QApplication::palette().color(QPalette::Foreground);
+                QColor foreground = QApplication::palette().color(QPalette::Base);
+                background.setAlpha(128);
+                foreground.setAlpha(128);
+                painter.setBrush(QBrush(background));
+                painter.setPen(foreground);
+                painter.drawRoundedRect(rect, 5.0, 5.0);
+                foreground.setAlpha(190);
+                painter.setPen(foreground);
+                painter.setFont(font);
+                painter.drawText(rect, Qt::AlignCenter, letter);
+            }
+        }
+        
         return;
     }
     //no items, are we loading ?
     if ( m_loading ) {
         paintAnimation(event);
+        return;
     }
     //so we have no results, draw a message
     //showNoResultsMessage
+}
+
+void MediaView::checkForScrollOverlay()
+{
+    //TODO: well this is kind of a workaround to disable ugly behavior where the current scrolling overlay
+    //doesn't make sense
+    
+    QString engine = m_mediaItemModel->mediaListProperties().engine();
+    //semantic engines have no "simple" order by item-title, so we leave it out. they are restricted
+    //in their length anyway
+    if (engine == "semantics://") {
+        disconnect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarMoved()));
+        disconnect(verticalScrollBar(), SIGNAL(sliderPressed()), this, SLOT(scrollBarPressed()));
+        disconnect(verticalScrollBar(), SIGNAL(sliderReleased()), this, SLOT(scrollBarReleased()));   
+        m_scrollBarPressed = false; //to be safe
+    } else {
+        connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarMoved()));
+        connect(verticalScrollBar(), SIGNAL(sliderPressed()), this, SLOT(scrollBarPressed()));
+        connect(verticalScrollBar(), SIGNAL(sliderReleased()), this, SLOT(scrollBarReleased()));   
+    }
 }
 
 void MediaView::itemsAvailable(bool available)
@@ -231,3 +292,21 @@ void MediaView::itemsAvailable(bool available)
     stopAnimation(); //definitely not loading anymore
     m_itemsAvailable = available;
 }
+
+void MediaView::scrollBarMoved()
+{
+    m_scrolling->restart();
+}
+
+void MediaView::scrollBarPressed()
+{
+    m_scrollBarPressed = true;
+    viewport()->update();
+}
+
+void MediaView::scrollBarReleased()
+{
+    m_scrollBarPressed = false; 
+    viewport()->update();
+}
+
