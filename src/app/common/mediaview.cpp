@@ -218,43 +218,9 @@ void MediaView::loadingStateChanged(bool loading)
 
 void MediaView::paintEvent(QPaintEvent* event)
 {
-    if ( m_itemsAvailable ) { //we have items, simply draw them
-        QTreeView::paintEvent(event);
-        int scrollInterval = 500;
-        int scrollLeft = scrollInterval - m_scrolling->elapsed();
-        
-        if (scrollLeft > 0 || m_scrollBarPressed ) { 
-            //draw the letter of the topmost item semitransparent in the middle
-            if ( scrollLeft > 0 ) {
-                //make sure we redraw this after scrolling has ended
-                QTimer::singleShot(scrollLeft, viewport(), SLOT(update()));
-            }
-            QPainter painter(viewport());
-            QModelIndex idx = m_proxyModel->mapToSource(indexAt(viewport()->geometry().topLeft()));
-            const QChar letter = m_mediaItemModel->mediaItemAt(idx.row()).title[0];
-            QFont font = KGlobalSettings::largeFont();
-            font.setPointSize(font.pointSize() - 8);
-            font.setBold(true);
-            QRect rect = QFontMetrics(font).boundingRect(letter);
-            rect.setWidth(rect.width()+20);
-            rect.setHeight(rect.height()+20);
-            rect.moveCenter(viewport()->geometry().center());
-            
-            if ( event->rect().intersects(rect) ) {
-                QColor background = QApplication::palette().color(QPalette::Foreground);
-                QColor foreground = QApplication::palette().color(QPalette::Base);
-                background.setAlpha(128);
-                foreground.setAlpha(128);
-                painter.setBrush(QBrush(background));
-                painter.setPen(foreground);
-                painter.drawRoundedRect(rect, 5.0, 5.0);
-                foreground.setAlpha(190);
-                painter.setPen(foreground);
-                painter.setFont(font);
-                painter.drawText(rect, Qt::AlignCenter, letter);
-            }
-        }
-        
+    if ( m_itemsAvailable ) {
+        QTreeView::paintEvent(event); //we have items, simply draw them
+        paintScrollOverlay(event); //paints the scroll overlay if needed
         return;
     }
     //no items, are we loading ?
@@ -265,6 +231,58 @@ void MediaView::paintEvent(QPaintEvent* event)
     //so we have no results, draw a message
     //showNoResultsMessage
 }
+
+void MediaView::paintScrollOverlay(QPaintEvent* event)
+{
+    int scrollInterval = 500;
+    int timeElapsed = m_scrolling->elapsed();
+    int scrollLeft = scrollInterval - timeElapsed;
+    int scrollFade = (scrollLeft < 0) ? -scrollLeft : 0;
+    
+    //draw scrolling overlay if active (scrollFade = 0) or it should fade (<= 100ms)
+    if (scrollFade > 100) {
+        return;
+    }
+
+    //make sure we redraw this after scrolling has ended or we need the next frame of fadeout animation
+    if ( !m_scrollBarPressed ) {
+        int interval = (scrollFade == 0) ? scrollLeft : 10; 
+        QTimer::singleShot(interval, viewport(), SLOT(update()));
+    }
+    
+    //calculate the rect for the overlay
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    QModelIndex idx = m_proxyModel->mapToSource(indexAt(viewport()->geometry().topLeft()));
+    const QChar letter = m_mediaItemModel->mediaItemAt(idx.row()).title[0];
+    QFont font = KGlobalSettings::largeFont();
+    font.setPointSize(font.pointSize() - 8);
+    font.setBold(true);
+    QRect rect = QFontMetrics(font).boundingRect(letter);
+    rect.setWidth(rect.width()+20);
+    rect.setHeight(rect.height()+20);
+    rect.moveCenter(viewport()->geometry().center());
+    
+    //check if we are allowed to draw in our area
+    if (!event->rect().intersects(rect)) {
+        return;
+    }
+
+    //draw the letter of the topmost item semitransparent in the middle
+    QColor background = QApplication::palette().color(QPalette::Foreground);
+    QColor foreground = QApplication::palette().color(QPalette::Base);
+    background.setAlpha(128 - scrollFade);
+    foreground.setAlpha(128 - scrollFade);
+    painter.setBrush(QBrush(background));
+    painter.setPen(foreground);
+    painter.drawRoundedRect(rect, 5.0, 5.0);
+    foreground.setAlpha(190);
+    painter.setPen(foreground);
+    painter.setFont(font);
+    painter.drawText(rect, Qt::AlignCenter, letter);
+    
+}
+
 
 void MediaView::checkForScrollOverlay()
 {
