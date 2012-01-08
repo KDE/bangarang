@@ -1,7 +1,5 @@
 project(Bangarang)
 
-set(WITHTRANSLATIONS YES)
-
 find_package(KDE4 4.5.0 REQUIRED)
 find_package(Nepomuk REQUIRED)
 
@@ -22,12 +20,6 @@ include_directories(
 
 add_subdirectory(icons)
 add_subdirectory(src)
-
-if (WITHTRANSLATIONS)
-    find_package(Msgfmt REQUIRED)
-    find_package(Gettext REQUIRED)
-    add_subdirectory(po)
-endif( WITHTRANSLATIONS)
 
 ########### install files ###############
 
