@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://code.google.com/p/bangarangissuetracking/"
 "issues\n"
-"POT-Creation-Date: 2011-12-03 21:21-0800\n"
+"POT-Creation-Date: 2012-01-08 04:17+0100\n"
 "PO-Revision-Date: 2011-01-30 10:18+0800\n"
 "Last-Translator: Ni Hui <shuizhuyuanluo@126.com>\n"
 "Language-Team: Chinese Simplified <kde-china@kde.org>\n"
@@ -19,786 +19,23 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Lokalize 1.1\n"
 
-#: rc.cpp:1
+#: rc.cpp:1 rc.cpp:3
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
 msgstr "Ni Hui"
 
-#: rc.cpp:2
+#: rc.cpp:2 rc.cpp:4
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr "shuizhuyuanluo@126.com"
 
-#. i18n: file: app/ui/audiolistsstack.ui:14
-#. i18n: ectx: property (windowTitle), widget (QWidget, AudioListsStack)
-#. i18n: file: app/ui/videolistsstack.ui:14
-#. i18n: ectx: property (windowTitle), widget (QWidget, VideoListsStack)
-#: rc.cpp:5 rc.cpp:401
-msgid "Form"
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:76
-#. i18n: ectx: property (toolTip), widget (QToolButton, addAudioList)
-#. i18n: file: app/ui/videolistsstack.ui:76
-#. i18n: ectx: property (toolTip), widget (QToolButton, addVideoList)
-#: rc.cpp:8 rc.cpp:404
-msgid "Add list"
-msgstr "添加列表"
-
-#. i18n: file: app/ui/audiolistsstack.ui:96
-#. i18n: ectx: property (toolTip), widget (QToolButton, removeAudioList)
-#. i18n: file: app/ui/videolistsstack.ui:96
-#. i18n: ectx: property (toolTip), widget (QToolButton, removeVideoList)
-#: rc.cpp:11 rc.cpp:407
-msgid "Remove list"
-msgstr "删除列表"
-
-#. i18n: file: app/ui/audiolistsstack.ui:129
-#. i18n: ectx: property (toolTip), widget (QToolButton, configureAudioList)
-#. i18n: file: app/ui/videolistsstack.ui:129
-#. i18n: ectx: property (toolTip), widget (QToolButton, configureVideoList)
-#: rc.cpp:14 rc.cpp:410
-msgid "Settings"
-msgstr "设置"
-
-#. i18n: file: app/ui/audiolistsstack.ui:178
-#. i18n: ectx: property (text), widget (QLabel, label_5)
-#. i18n: file: app/ui/videolistsstack.ui:178
-#. i18n: ectx: property (text), widget (QLabel, label_7)
-#: rc.cpp:17 rc.cpp:413
-msgid "Add List"
-msgstr "添加列表"
-
-#. i18n: file: app/ui/audiolistsstack.ui:195
-#. i18n: ectx: property (text), widget (QLabel, label_4)
-#. i18n: file: app/ui/videolistsstack.ui:195
-#. i18n: ectx: property (text), widget (QLabel, label_6)
-#: rc.cpp:20 rc.cpp:416
-msgid "Source"
-msgstr "来源"
-
-#. i18n: file: app/ui/audiolistsstack.ui:214
-#. i18n: ectx: property (text), widget (QRadioButton, aListSourceView)
-#. i18n: file: app/ui/videolistsstack.ui:221
-#. i18n: ectx: property (text), widget (QRadioButton, vListSourceView)
-#: rc.cpp:23 rc.cpp:422
-msgid "Current View"
-msgstr "当前视图"
-
-#. i18n: file: app/ui/audiolistsstack.ui:221
-#. i18n: ectx: property (text), widget (QRadioButton, aListSourceSelection)
-#. i18n: file: app/ui/videolistsstack.ui:214
-#. i18n: ectx: property (text), widget (QRadioButton, vListSourceSelection)
-#: rc.cpp:26 rc.cpp:419
-msgid "Current Selection"
-msgstr "当前选中项"
-
-#. i18n: file: app/ui/audiolistsstack.ui:228
-#. i18n: ectx: property (text), widget (QRadioButton, aListSourcePlaylist)
-#. i18n: file: app/ui/videolistsstack.ui:228
-#. i18n: ectx: property (text), widget (QRadioButton, vListSourcePlaylist)
-#: rc.cpp:29 rc.cpp:425
-msgid "Current Playlist"
-msgstr "当前播放列表"
-
-#. i18n: file: app/ui/audiolistsstack.ui:235
-#. i18n: ectx: property (text), widget (QRadioButton, aListSourceAmpache)
-#: rc.cpp:32
-msgid "ownCloud/Ampache"
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:245
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, aNewListName)
-#. i18n: file: app/ui/videolistsstack.ui:238
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, vNewListName)
-#: rc.cpp:35 rc.cpp:428
-msgid "New List Name"
-msgstr "新列表名称"
-
-#. i18n: file: app/ui/audiolistsstack.ui:258
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheServerAdd)
-#. i18n: file: app/ui/audiolistsstack.ui:432
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheServer)
-#: rc.cpp:38 rc.cpp:59
-msgid "Server"
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:265
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserNameAdd)
-#. i18n: file: app/ui/audiolistsstack.ui:439
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampacheUserName)
-#: rc.cpp:41 rc.cpp:62
-#, fuzzy
-msgid "User Name"
-msgstr "名称"
-
-#. i18n: file: app/ui/audiolistsstack.ui:272
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePasswordAdd)
-#. i18n: file: app/ui/audiolistsstack.ui:446
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, ampachePassword)
-#: rc.cpp:44 rc.cpp:65
-msgid "Password"
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:297
-#. i18n: ectx: property (text), widget (QPushButton, saveAudioList)
-#. i18n: file: app/ui/audiolistsstack.ui:474
-#. i18n: ectx: property (text), widget (QPushButton, aslsSave)
-#. i18n: file: app/ui/audiolistsstack.ui:1019
-#. i18n: ectx: property (text), widget (QPushButton, semAConfigSave)
-#. i18n: file: app/ui/mainwindow.ui:1432
-#. i18n: ectx: property (text), widget (QToolButton, infoItemSave)
-#. i18n: file: app/ui/videolistsstack.ui:257
-#. i18n: ectx: property (text), widget (QPushButton, saveVideoList)
-#. i18n: file: app/ui/videolistsstack.ui:380
-#. i18n: ectx: property (text), widget (QPushButton, vslsSave)
-#. i18n: file: app/ui/videolistsstack.ui:899
-#. i18n: ectx: property (text), widget (QPushButton, semVConfigSave)
-#: rc.cpp:47 rc.cpp:68 rc.cpp:119 rc.cpp:179 rc.cpp:431 rc.cpp:443 rc.cpp:494
-msgid "Save"
-msgstr "保存"
-
-#. i18n: file: app/ui/audiolistsstack.ui:354
-#. i18n: ectx: property (text), widget (QToolButton, aCancelSaveList)
-#. i18n: file: app/ui/audiolistsstack.ui:549
-#. i18n: ectx: property (text), widget (QToolButton, aslsCancel)
-#. i18n: file: app/ui/audiolistsstack.ui:1048
-#. i18n: ectx: property (text), widget (QToolButton, aCancelSemConfigure)
-#. i18n: file: app/ui/videolistsstack.ui:455
-#. i18n: ectx: property (text), widget (QToolButton, vslsCancel)
-#. i18n: file: app/ui/videolistsstack.ui:928
-#. i18n: ectx: property (text), widget (QToolButton, vCancelSemConfigure)
-#: rc.cpp:50 rc.cpp:77 rc.cpp:122 rc.cpp:452 rc.cpp:497
-msgid "Return to Lists"
-msgstr "返回到列表"
-
-#. i18n: file: app/ui/audiolistsstack.ui:393
-#. i18n: ectx: property (text), widget (QLabel, label_8)
-#. i18n: file: app/ui/videolistsstack.ui:329
-#. i18n: ectx: property (text), widget (QLabel, label_11)
-#: rc.cpp:53 rc.cpp:437
-msgid "Saved List Settings"
-msgstr "已保存的列表设置"
-
-#. i18n: file: app/ui/audiolistsstack.ui:419
-#. i18n: ectx: property (text), widget (QLabel, label_9)
-#. i18n: file: app/ui/videolistsstack.ui:355
-#. i18n: ectx: property (text), widget (QLabel, label_10)
-#: rc.cpp:56 rc.cpp:440
-msgid "Name"
-msgstr "名称"
-
-#. i18n: file: app/ui/audiolistsstack.ui:498
-#. i18n: ectx: property (text), widget (QLabel, exportSavedListLabel)
-#. i18n: file: app/ui/videolistsstack.ui:404
-#. i18n: ectx: property (text), widget (QLabel, exportSavedListLabel)
-#: rc.cpp:71 rc.cpp:446
-msgid ""
-"You can export this list to a file if you want to use it in other "
-"applications"
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:520
-#. i18n: ectx: property (text), widget (QPushButton, aslsExport)
-#. i18n: file: app/ui/videolistsstack.ui:426
-#. i18n: ectx: property (text), widget (QPushButton, vslsExport)
-#: rc.cpp:74 rc.cpp:449
-msgid "Export to file..."
-msgstr ""
-
-#. i18n: file: app/ui/audiolistsstack.ui:594
-#. i18n: ectx: property (text), widget (QLabel, aConfigureSemListTitle)
-#. i18n: file: app/ui/mainwindow.ui:665
-#. i18n: ectx: property (text), widget (QLabel, listTitle)
-#. i18n: file: app/ui/videolistsstack.ui:500
-#. i18n: ectx: property (text), widget (QLabel, vConfigureSemListTitle)
-#: rc.cpp:80 rc.cpp:152 rc.cpp:455
-msgid "List Title"
-msgstr "列出标题"
-
-#. i18n: file: app/ui/audiolistsstack.ui:650
-#. i18n: ectx: property (text), widget (QLabel, label_15)
-#. i18n: file: app/ui/videolistsstack.ui:526
-#. i18n: ectx: property (text), widget (QLabel, label_16)
-#: rc.cpp:83 rc.cpp:458
-msgid "Show"
-msgstr "显示"
-
-#. i18n: file: app/ui/audiolistsstack.ui:676
-#. i18n: ectx: property (text), widget (QLabel, label_32)
-#. i18n: file: app/ui/videolistsstack.ui:549
-#. i18n: ectx: property (text), widget (QLabel, label_17)
-#: rc.cpp:86 rc.cpp:461
-msgid "items"
-msgstr "项"
-
-#. i18n: file: app/ui/audiolistsstack.ui:732
-#. i18n: ectx: property (text), widget (QLabel, semAMoreVerb)
-#. i18n: file: app/ui/videolistsstack.ui:599
-#. i18n: ectx: property (text), widget (QLabel, semVMoreVerb)
-#: rc.cpp:89 rc.cpp:464 app/medialists/medialistsettings.cpp:94
-#: app/medialists/medialistsettings.cpp:106
-#: app/medialists/medialistsettings.cpp:123
-#: app/medialists/medialistsettings.cpp:135
-msgid "played"
-msgstr "已播放"
-
-#. i18n: file: app/ui/audiolistsstack.ui:801
-#. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
-#. i18n: file: app/ui/videolistsstack.ui:668
-#. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
-#: rc.cpp:92 rc.cpp:467
-msgid "before"
-msgstr "之前于"
-
-#. i18n: file: app/ui/audiolistsstack.ui:806
-#. i18n: ectx: property (text), item, widget (QComboBox, semATimeComp)
-#. i18n: file: app/ui/videolistsstack.ui:673
-#. i18n: ectx: property (text), item, widget (QComboBox, semVTimeComp)
-#: rc.cpp:95 rc.cpp:470
-msgid "after"
-msgstr "之后于"
-
-#. i18n: file: app/ui/audiolistsstack.ui:886
-#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: app/ui/audiolistsstack.ui:989
-#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: app/ui/videolistsstack.ui:766
-#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: app/ui/videolistsstack.ui:869
-#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:98 rc.cpp:110 rc.cpp:473 rc.cpp:485
-msgid "or more"
-msgstr "或高于"
-
-#. i18n: file: app/ui/audiolistsstack.ui:891
-#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: app/ui/audiolistsstack.ui:994
-#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: app/ui/videolistsstack.ui:771
-#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: app/ui/videolistsstack.ui:874
-#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:101 rc.cpp:113 rc.cpp:476 rc.cpp:488
-msgid "exactly"
-msgstr "等于"
-
-#. i18n: file: app/ui/audiolistsstack.ui:896
-#. i18n: ectx: property (text), item, widget (QComboBox, semARatingComp)
-#. i18n: file: app/ui/audiolistsstack.ui:999
-#. i18n: ectx: property (text), item, widget (QComboBox, semAFreqComp)
-#. i18n: file: app/ui/videolistsstack.ui:776
-#. i18n: ectx: property (text), item, widget (QComboBox, semVRatingComp)
-#. i18n: file: app/ui/videolistsstack.ui:879
-#. i18n: ectx: property (text), item, widget (QComboBox, semVFreqComp)
-#: rc.cpp:104 rc.cpp:116 rc.cpp:479 rc.cpp:491
-msgid "or less"
-msgstr "或低于"
-
-#. i18n: file: app/ui/audiolistsstack.ui:972
-#. i18n: ectx: property (text), widget (QLabel, label_14)
-#. i18n: file: app/ui/videolistsstack.ui:852
-#. i18n: ectx: property (text), widget (QLabel, label_28)
-#: rc.cpp:107 rc.cpp:482
-msgid "times"
-msgstr "次"
-
-#. i18n: file: app/ui/mainwindow.ui:17
-#. i18n: ectx: property (windowTitle), widget (QMainWindow, MainWindowClass)
-#: rc.cpp:125 app/main.cpp:29 app/common/bangarangapplication.cpp:137
+#: app/main.cpp:29 app/common/bangarangapplication.cpp:137
 #: app/common/bangarangnotifieritem.cpp:11
 #: app/nowplaying/nowplayingmanager.cpp:204
-#: app/nowplaying/nowplayingmanager.cpp:397
-#: app/nowplaying/nowplayingmanager.cpp:528
+#: app/nowplaying/nowplayingmanager.cpp:386
+#: app/nowplaying/nowplayingmanager.cpp:517
 msgid "Bangarang"
 msgstr "Bangarang"
-
-#. i18n: file: app/ui/mainwindow.ui:156
-#. i18n: ectx: property (text), widget (QLabel, label)
-#. i18n: file: app/ui/mainwindow.ui:6897
-#. i18n: ectx: property (text), widget (QToolButton, collectionButton)
-#: rc.cpp:128 rc.cpp:374
-msgid "Media Lists"
-msgstr "媒体列表"
-
-#. i18n: file: app/ui/mainwindow.ui:263
-#. i18n: ectx: property (clickMessage), widget (KLineEdit, Filter)
-#: rc.cpp:131 app/medialists/medialistsmanager.cpp:369
-msgid "Search for audio"
-msgstr "搜索音频"
-
-#. i18n: file: app/ui/mainwindow.ui:306
-#. i18n: ectx: property (text), widget (QLabel, audioListLabel)
-#. i18n: file: app/ui/mainwindow.ui:343
-#. i18n: ectx: property (text), widget (QToolButton, audioListSelect)
-#: rc.cpp:134 rc.cpp:137
-msgid "Audio"
-msgstr "音频"
-
-#. i18n: file: app/ui/mainwindow.ui:421
-#. i18n: ectx: property (text), widget (QLabel, videoListLabel)
-#. i18n: file: app/ui/mainwindow.ui:458
-#. i18n: ectx: property (text), widget (QToolButton, videoListSelect)
-#: rc.cpp:140 rc.cpp:143
-msgid "Video"
-msgstr "视频"
-
-#. i18n: file: app/ui/mainwindow.ui:554
-#. i18n: ectx: property (toolTip), widget (QToolButton, nowPlaying)
-#: rc.cpp:146 app/nowplaying/nowplayingmanager.cpp:400
-#: app/nowplaying/nowplayingmanager.cpp:447
-msgid "View Now Playing"
-msgstr "查看现在播放"
-
-#. i18n: file: app/ui/mainwindow.ui:557
-#. i18n: ectx: property (text), widget (QToolButton, nowPlaying)
-#: rc.cpp:149 app/nowplaying/nowplayingmanager.cpp:261
-#: app/nowplaying/nowplayingmanager.cpp:264
-#: app/nowplaying/nowplayingmanager.cpp:399
-#: app/nowplaying/nowplayingmanager.cpp:530
-msgid "Now Playing"
-msgstr "现在播放"
-
-#. i18n: file: app/ui/mainwindow.ui:703
-#. i18n: ectx: property (text), widget (QLabel, listSummary)
-#: rc.cpp:155
-msgid "Summary"
-msgstr "摘要"
-
-#. i18n: file: app/ui/mainwindow.ui:849
-#. i18n: ectx: property (text), widget (QToolButton, closeMediaListFilter)
-#. i18n: file: app/ui/mainwindow.ui:1292
-#. i18n: ectx: property (text), widget (QToolButton, infoFetcherLink)
-#. i18n: file: app/ui/mainwindow.ui:5502
-#. i18n: ectx: property (text), widget (QToolButton, closePlaylistNotification)
-#. i18n: file: app/ui/mainwindow.ui:5592
-#. i18n: ectx: property (text), widget (QToolButton, closePlaylistFilter)
-#. i18n: file: app/ui/mainwindow.ui:7245
-#. i18n: ectx: property (text), widget (QToolButton, mediaPrevious)
-#. i18n: file: app/ui/mainwindow.ui:7277
-#. i18n: ectx: property (text), widget (SToolButton, mediaPlayPause)
-#. i18n: file: app/ui/mainwindow.ui:7300
-#. i18n: ectx: property (text), widget (QToolButton, mediaNext)
-#: rc.cpp:158 rc.cpp:167 rc.cpp:248 rc.cpp:251 rc.cpp:392 rc.cpp:395
-#: rc.cpp:398
-msgid "..."
-msgstr "..."
-
-#. i18n: file: app/ui/mainwindow.ui:863
-#. i18n: ectx: property (text), widget (QLabel, label_19)
-#. i18n: file: app/ui/mainwindow.ui:5606
-#. i18n: ectx: property (text), widget (QLabel, label_18)
-#: rc.cpp:161 rc.cpp:254
-msgid "Filter"
-msgstr "过滤器"
-
-#. i18n: file: app/ui/mainwindow.ui:1263
-#. i18n: ectx: property (text), widget (QLabel, infoFetcherLabel)
-#: rc.cpp:164
-msgid "Additional information may be available from:"
-msgstr "其它信息可用："
-
-#. i18n: file: app/ui/mainwindow.ui:1314
-#. i18n: ectx: property (text), widget (QToolButton, infoFetch)
-#: rc.cpp:170
-msgid "Fetch info and edit changes"
-msgstr "获取信息并编辑更改"
-
-#. i18n: file: app/ui/mainwindow.ui:1336
-#. i18n: ectx: property (text), widget (QToolButton, infoAutoFetch)
-#: rc.cpp:173
-msgid "Fetch info and save changes"
-msgstr "获取信息并保存更改"
-
-#. i18n: file: app/ui/mainwindow.ui:1356
-#. i18n: ectx: property (text), widget (QLabel, label_27)
-#: rc.cpp:176
-msgid "Matches"
-msgstr "匹配"
-
-#. i18n: file: app/ui/mainwindow.ui:1451
-#. i18n: ectx: property (text), widget (QToolButton, infoItemCancelEdit)
-#: rc.cpp:182
-msgid "Cancel Edit"
-msgstr "取消编辑"
-
-#. i18n: file: app/ui/mainwindow.ui:1501
-#. i18n: ectx: property (text), widget (QToolButton, infoIndexSelected)
-#: rc.cpp:185
-msgid "Index Selected"
-msgstr "索引选中项"
-
-#. i18n: file: app/ui/mainwindow.ui:1570
-#. i18n: ectx: property (text), widget (QLabel, notificationText)
-#: rc.cpp:188
-msgid "Notification Text"
-msgstr "通知文本"
-
-#. i18n: file: app/ui/mainwindow.ui:1653
-#. i18n: ectx: property (text), widget (QToolButton, previous)
-#: rc.cpp:191
-msgid "Previous"
-msgstr "向前"
-
-#. i18n: file: app/ui/mainwindow.ui:1697
-#. i18n: ectx: property (toolTip), widget (QPushButton, playAll)
-#: rc.cpp:194
-msgid "Play all media in list"
-msgstr "播放列表中全部媒体"
-
-#. i18n: file: app/ui/mainwindow.ui:1703
-#. i18n: ectx: property (text), widget (QPushButton, playAll)
-#: rc.cpp:197
-msgid "Play All"
-msgstr "全部播放"
-
-#. i18n: file: app/ui/mainwindow.ui:1729
-#. i18n: ectx: property (toolTip), widget (QPushButton, playSelected)
-#: rc.cpp:200
-msgid "Play selected media in list"
-msgstr "播放列表中选中媒体"
-
-#. i18n: file: app/ui/mainwindow.ui:1732
-#. i18n: ectx: property (text), widget (QPushButton, playSelected)
-#: rc.cpp:203
-msgid "Play Selected"
-msgstr "播放选中项"
-
-#. i18n: file: app/ui/mainwindow.ui:3562
-#. i18n: ectx: property (text), widget (QLabel, extSubtitle)
-#: rc.cpp:206
-msgid "ExternalSubtitle"
-msgstr "外部字幕"
-
-#. i18n: file: app/ui/mainwindow.ui:3614
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist_2)
-#. i18n: file: app/ui/mainwindow.ui:4160
-#. i18n: ectx: property (text), widget (QToolButton, showPlaylist)
-#: rc.cpp:209 rc.cpp:215 app/common/mainwindow.cpp:261
-#: app/medialists/savedlistsmanager.cpp:986
-#: platform/utilities/mediaitems.cpp:146
-msgid "Playlist"
-msgstr "播放列表"
-
-#. i18n: file: app/ui/mainwindow.ui:3681
-#. i18n: ectx: property (text), widget (QLabel, playbackMessage)
-#: rc.cpp:212
-msgid "Error message"
-msgstr "错误消息"
-
-#. i18n: file: app/ui/mainwindow.ui:5131
-#. i18n: ectx: property (toolTip), widget (QToolButton, showQueue)
-#: rc.cpp:218 app/nowplaying/nowplayingmanager.cpp:233
-msgid "Show Upcoming"
-msgstr "显示即将播放"
-
-#. i18n: file: app/ui/mainwindow.ui:5163
-#. i18n: ectx: property (text), widget (QLabel, playlistName)
-#: rc.cpp:221 app/nowplaying/playlistview.cpp:103
-msgid "<b>Playlist</b>"
-msgstr "<b>播放列表</b>"
-
-#. i18n: file: app/ui/mainwindow.ui:5189
-#. i18n: ectx: property (toolTip), widget (QToolButton, clearPlaylist)
-#: rc.cpp:224 app/nowplaying/nowplayingmanager.cpp:524
-msgid "Clear Playlist"
-msgstr "清除播放列表"
-
-#. i18n: file: app/ui/mainwindow.ui:5219
-#. i18n: ectx: property (toolTip), widget (QToolButton, repeat)
-#: rc.cpp:227 app/nowplaying/nowplayingmanager.cpp:412
-msgid "Turn on Repeat"
-msgstr "开启重复"
-
-#. i18n: file: app/ui/mainwindow.ui:5222
-#. i18n: ectx: property (text), widget (QToolButton, repeat)
-#. i18n: file: app/ui/mainwindow.ui:5254
-#. i18n: ectx: property (text), widget (QToolButton, shuffle)
-#. i18n: file: app/ui/mainwindow.ui:6944
-#. i18n: ectx: property (text), widget (SToolButton, fullScreen)
-#: rc.cpp:230 rc.cpp:236 rc.cpp:380
-msgid "[ ]"
-msgstr "[ ]"
-
-#. i18n: file: app/ui/mainwindow.ui:5251
-#. i18n: ectx: property (toolTip), widget (QToolButton, shuffle)
-#: rc.cpp:233 app/nowplaying/nowplayingmanager.cpp:423
-msgid "Turn on Shuffle"
-msgstr "开启乱序"
-
-#. i18n: file: app/ui/mainwindow.ui:5463
-#. i18n: ectx: property (text), widget (QLabel, playlistNotificationLabel)
-#: rc.cpp:239
-msgid "Notification"
-msgstr "通知"
-
-#. i18n: file: app/ui/mainwindow.ui:5479
-#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationYes)
-#: rc.cpp:242 app/common/mainwindow.cpp:118
-msgid "Yes"
-msgstr "是"
-
-#. i18n: file: app/ui/mainwindow.ui:5492
-#. i18n: ectx: property (text), widget (QPushButton, playlistNotificationNo)
-#: rc.cpp:245 app/common/mainwindow.cpp:117
-msgid "No"
-msgstr "否"
-
-#. i18n: file: app/ui/mainwindow.ui:5645
-#. i18n: ectx: property (text), widget (QLabel, label_2)
-#: rc.cpp:257
-msgid "Audio Settings"
-msgstr "音频设置"
-
-#. i18n: file: app/ui/mainwindow.ui:5694
-#. i18n: ectx: property (text), widget (QLabel, label_20)
-#: rc.cpp:260
-msgid "Audio Channel:"
-msgstr "声道："
-
-#. i18n: file: app/ui/mainwindow.ui:5758
-#. i18n: ectx: property (title), widget (QGroupBox, eqHolder)
-#: rc.cpp:263
-msgid "Equalizer"
-msgstr "均衡器"
-
-#. i18n: file: app/ui/mainwindow.ui:5776
-#. i18n: ectx: property (text), widget (QLabel, label_12)
-#: rc.cpp:266
-msgid "Presets"
-msgstr "预设"
-
-#. i18n: file: app/ui/mainwindow.ui:5839
-#. i18n: ectx: property (text), widget (QLabel, eq1Label)
-#: rc.cpp:269
-msgid "Pre"
-msgstr "预设"
-
-#. i18n: file: app/ui/mainwindow.ui:5877
-#. i18n: ectx: property (text), widget (QLabel, eq2Label)
-#: rc.cpp:272
-msgid "60"
-msgstr "60"
-
-#. i18n: file: app/ui/mainwindow.ui:5915
-#. i18n: ectx: property (text), widget (QLabel, eq3Label)
-#: rc.cpp:275
-msgid "170"
-msgstr "170"
-
-#. i18n: file: app/ui/mainwindow.ui:5953
-#. i18n: ectx: property (text), widget (QLabel, eq4Label)
-#: rc.cpp:278
-msgid "310"
-msgstr "310"
-
-#. i18n: file: app/ui/mainwindow.ui:5991
-#. i18n: ectx: property (text), widget (QLabel, eq5Label)
-#: rc.cpp:281
-msgid "600"
-msgstr "600"
-
-#. i18n: file: app/ui/mainwindow.ui:6029
-#. i18n: ectx: property (text), widget (QLabel, eq6Label)
-#: rc.cpp:284
-msgid "1k"
-msgstr "1k"
-
-#. i18n: file: app/ui/mainwindow.ui:6067
-#. i18n: ectx: property (text), widget (QLabel, eq7Label)
-#: rc.cpp:287
-msgid "3k"
-msgstr "3k"
-
-#. i18n: file: app/ui/mainwindow.ui:6105
-#. i18n: ectx: property (text), widget (QLabel, eq8Label)
-#: rc.cpp:290
-msgid "6k"
-msgstr "6k"
-
-#. i18n: file: app/ui/mainwindow.ui:6143
-#. i18n: ectx: property (text), widget (QLabel, eq9Label)
-#: rc.cpp:293
-msgid "12k"
-msgstr "12k"
-
-#. i18n: file: app/ui/mainwindow.ui:6181
-#. i18n: ectx: property (text), widget (QLabel, eq10Label)
-#: rc.cpp:296
-msgid "14k"
-msgstr "14k"
-
-#. i18n: file: app/ui/mainwindow.ui:6219
-#. i18n: ectx: property (text), widget (QLabel, eq11Label)
-#: rc.cpp:299
-msgid "16k"
-msgstr "16k"
-
-#. i18n: file: app/ui/mainwindow.ui:6257
-#. i18n: ectx: property (text), widget (QPushButton, restoreDefaultAudioSettings)
-#. i18n: file: app/ui/mainwindow.ui:6756
-#. i18n: ectx: property (text), widget (QPushButton, restoreDefaultVideoSettings)
-#: rc.cpp:302 rc.cpp:356
-msgid "Restore Defaults"
-msgstr "还原为默认值"
-
-#. i18n: file: app/ui/mainwindow.ui:6264
-#. i18n: ectx: property (text), widget (QPushButton, hideAudioSettings)
-#. i18n: file: app/ui/mainwindow.ui:6763
-#. i18n: ectx: property (text), widget (QPushButton, hideVideoSettings)
-#: rc.cpp:305 rc.cpp:359
-msgid "Hide"
-msgstr "隐藏"
-
-#. i18n: file: app/ui/mainwindow.ui:6293
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#: rc.cpp:308
-msgid "Video Settings"
-msgstr "视频设置"
-
-#. i18n: file: app/ui/mainwindow.ui:6333
-#. i18n: ectx: property (text), widget (QLabel, label_26)
-#: rc.cpp:311
-msgid "Subtitle:"
-msgstr "字幕："
-
-#. i18n: file: app/ui/mainwindow.ui:6380
-#. i18n: ectx: property (text), widget (QLabel, label_25)
-#: rc.cpp:314
-msgid "Angle:"
-msgstr "角度："
-
-#. i18n: file: app/ui/mainwindow.ui:6405
-#. i18n: ectx: property (text), widget (QLabel, subtitleInfoText)
-#: rc.cpp:317
-msgid "Can't detect subtitle encoding, please choose:"
-msgstr ""
-
-#. i18n: file: app/ui/mainwindow.ui:6452
-#. i18n: ectx: property (text), widget (QLabel, label_21)
-#: rc.cpp:320
-msgid "Brightness:"
-msgstr "亮度："
-
-#. i18n: file: app/ui/mainwindow.ui:6499
-#. i18n: ectx: property (text), widget (QLabel, label_22)
-#: rc.cpp:323
-msgid "Contrast:"
-msgstr "对比度："
-
-#. i18n: file: app/ui/mainwindow.ui:6546
-#. i18n: ectx: property (text), widget (QLabel, label_23)
-#: rc.cpp:326
-msgid "Hue:"
-msgstr "色调："
-
-#. i18n: file: app/ui/mainwindow.ui:6593
-#. i18n: ectx: property (text), widget (QLabel, label_24)
-#: rc.cpp:329
-msgid "Saturation:"
-msgstr "饱和度："
-
-#. i18n: file: app/ui/mainwindow.ui:6656
-#. i18n: ectx: property (title), widget (QGroupBox, aspectRatioHolder)
-#: rc.cpp:332
-msgid "Aspect Ratio"
-msgstr "纵横比"
-
-#. i18n: file: app/ui/mainwindow.ui:6668
-#. i18n: ectx: property (text), widget (QRadioButton, aspectRatioAuto)
-#: rc.cpp:335
-msgid "Automatic"
-msgstr "自动"
-
-#. i18n: file: app/ui/mainwindow.ui:6675
-#. i18n: ectx: property (text), widget (QRadioButton, aspectRatioWidget)
-#: rc.cpp:338
-msgid "Fit"
-msgstr "自适应"
-
-#. i18n: file: app/ui/mainwindow.ui:6682
-#. i18n: ectx: property (text), widget (QRadioButton, aspectRatio4_3)
-#: rc.cpp:341
-msgid "4:3"
-msgstr "4:3"
-
-#. i18n: file: app/ui/mainwindow.ui:6689
-#. i18n: ectx: property (text), widget (QRadioButton, aspectRatio16_9)
-#: rc.cpp:344
-msgid "16:9"
-msgstr "16:9"
-
-#. i18n: file: app/ui/mainwindow.ui:6699
-#. i18n: ectx: property (title), widget (QGroupBox, scalingModeHolder)
-#: rc.cpp:347
-msgid "Scaling"
-msgstr "缩放"
-
-#. i18n: file: app/ui/mainwindow.ui:6711
-#. i18n: ectx: property (text), widget (QRadioButton, scaleModeFitInView)
-#: rc.cpp:350
-msgid "Scale to fit"
-msgstr "缩放以适应"
-
-#. i18n: file: app/ui/mainwindow.ui:6718
-#. i18n: ectx: property (text), widget (QRadioButton, scaleModeScaleAndCrop)
-#: rc.cpp:353
-msgid "Scale and crop"
-msgstr "缩放并裁剪"
-
-#. i18n: file: app/ui/mainwindow.ui:6795
-#. i18n: ectx: property (text), widget (QLabel, label_13)
-#: rc.cpp:362
-msgid "Shortcuts"
-msgstr "快捷键"
-
-#. i18n: file: app/ui/mainwindow.ui:6815
-#. i18n: ectx: property (text), widget (QPushButton, saveShortcuts)
-#: rc.cpp:365
-msgid "Save Shortcuts"
-msgstr "保存快捷键"
-
-#. i18n: file: app/ui/mainwindow.ui:6822
-#. i18n: ectx: property (text), widget (QPushButton, cancelEditShortcuts)
-#: rc.cpp:368 app/common/actionsmanager.cpp:1037
-msgid "Cancel"
-msgstr "取消"
-
-#. i18n: file: app/ui/mainwindow.ui:6894
-#. i18n: ectx: property (toolTip), widget (QToolButton, collectionButton)
-#: rc.cpp:371
-msgid "View Media Lists"
-msgstr "查看媒体列表"
-
-#. i18n: file: app/ui/mainwindow.ui:6941
-#. i18n: ectx: property (toolTip), widget (SToolButton, fullScreen)
-#: rc.cpp:377
-msgid "Show full screen"
-msgstr "全屏显示"
-
-#. i18n: file: app/ui/mainwindow.ui:7049
-#. i18n: ectx: property (toolTip), widget (QToolButton, seekTime)
-#: rc.cpp:383
-msgid "<b>Time elapsed</b><br>Click to show remaining time"
-msgstr "<b>已用时间</b><br>点击显示剩余时间"
-
-#. i18n: file: app/ui/mainwindow.ui:7178
-#. i18n: ectx: property (toolTip), widget (SToolButton, volumeIcon)
-#: rc.cpp:386 app/nowplaying/nowplayingmanager.cpp:387
-msgid "Mute volume"
-msgstr "静音"
-
-#. i18n: file: app/ui/mainwindow.ui:7219
-#. i18n: ectx: property (toolTip), widget (Phonon::VolumeSlider, volumeSlider)
-#: rc.cpp:389
-msgid "Volume"
-msgstr "音量"
-
-#. i18n: file: app/ui/videolistsstack.ui:293
-#. i18n: ectx: property (text), widget (QToolButton, vCancelSaveList)
-#: rc.cpp:434
-msgid "Return To Lists"
-msgstr "返回到列表"
 
 #: app/main.cpp:30
 msgid "A media player for your KDE desktop"
@@ -896,194 +133,199 @@ msgstr "播放下一首"
 msgid "Play previous"
 msgstr "播放上一首"
 
-#: app/common/actionsmanager.cpp:99 app/common/actionsmanager.cpp:746
+#: app/common/actionsmanager.cpp:99 app/common/actionsmanager.cpp:747
 msgid "Mute"
 msgstr "静音"
 
-#: app/common/actionsmanager.cpp:104
+#: app/common/actionsmanager.cpp:105
 msgid "Play all"
 msgstr "全部播放"
 
-#: app/common/actionsmanager.cpp:109
+#: app/common/actionsmanager.cpp:110
 msgid "Play selected"
 msgstr "播放选中项"
 
-#: app/common/actionsmanager.cpp:114
+#: app/common/actionsmanager.cpp:115
 msgid "Add to playlist"
 msgstr "添加到播放列表"
 
-#: app/common/actionsmanager.cpp:119 app/common/actionsmanager.cpp:339
+#: app/common/actionsmanager.cpp:120 app/common/actionsmanager.cpp:340
 msgid "Add after Now Playing"
 msgstr "添加于现在播放之后"
 
-#: app/common/actionsmanager.cpp:124 app/common/actionsmanager.cpp:129
+#: app/common/actionsmanager.cpp:125 app/common/actionsmanager.cpp:130
 msgid "Remove from playlist"
 msgstr "从播放列表删除"
 
-#: app/common/actionsmanager.cpp:135
+#: app/common/actionsmanager.cpp:136
 msgid "Hide controls"
 msgstr "隐藏控件"
 
-#: app/common/actionsmanager.cpp:141 app/common/actionsmanager.cpp:1075
-#: app/common/actionsmanager.cpp:1080
+#: app/common/actionsmanager.cpp:142 app/common/actionsmanager.cpp:1077
+#: app/common/actionsmanager.cpp:1082
 msgid "Show filter"
 msgstr "显示过滤器"
 
-#: app/common/actionsmanager.cpp:147 app/common/actionsmanager.cpp:956
+#: app/common/actionsmanager.cpp:148 app/common/actionsmanager.cpp:958
 msgid "Show remaining time"
 msgstr "显示剩余时间"
 
-#: app/common/actionsmanager.cpp:152 app/common/actionsmanager.cpp:623
-#: app/common/actionsmanager.cpp:649 app/common/actionsmanager.cpp:702
-#: app/common/mainwindow.cpp:300 app/nowplaying/nowplayingmanager.cpp:573
+#: app/common/actionsmanager.cpp:153 app/common/actionsmanager.cpp:624
+#: app/common/actionsmanager.cpp:650 app/common/actionsmanager.cpp:703
+#: app/common/mainwindow.cpp:300 app/nowplaying/nowplayingmanager.cpp:562
 msgid "Show video settings"
 msgstr "显示视频设置"
 
-#: app/common/actionsmanager.cpp:158 app/common/actionsmanager.cpp:626
-#: app/common/actionsmanager.cpp:646 app/common/actionsmanager.cpp:703
-#: app/common/mainwindow.cpp:301 app/nowplaying/nowplayingmanager.cpp:574
+#: app/common/actionsmanager.cpp:159 app/common/actionsmanager.cpp:627
+#: app/common/actionsmanager.cpp:647 app/common/actionsmanager.cpp:704
+#: app/common/mainwindow.cpp:301 app/nowplaying/nowplayingmanager.cpp:563
 msgid "Show audio settings"
 msgstr "显示音频设置"
 
-#: app/common/actionsmanager.cpp:164
+#: app/common/actionsmanager.cpp:165
 msgid "Fullscreen"
 msgstr "全屏"
 
-#: app/common/actionsmanager.cpp:177
+#: app/common/actionsmanager.cpp:178
 msgid "Save selected info"
 msgstr "保存选中信息"
 
-#: app/common/actionsmanager.cpp:182
+#: app/common/actionsmanager.cpp:183
 msgid "Remove selected info"
 msgstr "删除选中信息"
 
-#: app/common/actionsmanager.cpp:187
+#: app/common/actionsmanager.cpp:188
 msgid "Refresh"
 msgstr "刷新"
 
-#: app/common/actionsmanager.cpp:193
+#: app/common/actionsmanager.cpp:194
 msgid "Select All"
 msgstr ""
 
-#: app/common/actionsmanager.cpp:200
+#: app/common/actionsmanager.cpp:201
 msgid "Remove from list"
 msgstr "从列表删除"
 
-#: app/common/actionsmanager.cpp:205
+#: app/common/actionsmanager.cpp:206
 msgid "Add to \"Audio Streams\""
 msgstr "添加到“音频流”"
 
-#: app/common/actionsmanager.cpp:210
+#: app/common/actionsmanager.cpp:211
 msgid "Add to list"
 msgstr "添加到列表"
 
-#: app/common/actionsmanager.cpp:214
+#: app/common/actionsmanager.cpp:215
 msgid "Add to list "
 msgstr "添加到列表 "
 
-#: app/common/actionsmanager.cpp:218 app/common/actionsmanager.cpp:223
+#: app/common/actionsmanager.cpp:219 app/common/actionsmanager.cpp:224
 msgid "New list"
 msgstr "新建列表"
 
-#: app/common/actionsmanager.cpp:228
+#: app/common/actionsmanager.cpp:229
 msgid "Show items"
 msgstr "显示项目"
 
-#: app/common/actionsmanager.cpp:233 app/common/actionsmanager.cpp:437
-#: app/common/actionsmanager.cpp:478 app/common/actionsmanager.cpp:907
-#: app/common/actionsmanager.cpp:1222
+#: app/common/actionsmanager.cpp:234 app/common/actionsmanager.cpp:438
+#: app/common/actionsmanager.cpp:479 app/common/actionsmanager.cpp:909
+#: app/common/actionsmanager.cpp:1224
 msgid "Show information"
 msgstr "显示信息"
 
-#: app/common/actionsmanager.cpp:238 app/common/actionsmanager.cpp:359
-#: app/common/actionsmanager.cpp:1105
+#: app/common/actionsmanager.cpp:239 app/common/actionsmanager.cpp:360
+#: app/common/actionsmanager.cpp:1107
 msgid "Show Info View"
 msgstr "显示信息视图"
 
-#: app/common/actionsmanager.cpp:245
+#: app/common/actionsmanager.cpp:246
 msgid "Add bookmark"
 msgstr "添加书签"
 
-#: app/common/actionsmanager.cpp:252
+#: app/common/actionsmanager.cpp:253
 msgid "Remove bookmarks"
 msgstr "删除书签"
 
-#: app/common/actionsmanager.cpp:256 app/common/actionsmanager.cpp:627
-#: app/common/actionsmanager.cpp:650 app/common/actionsmanager.cpp:699
+#: app/common/actionsmanager.cpp:257 app/common/actionsmanager.cpp:628
+#: app/common/actionsmanager.cpp:651 app/common/actionsmanager.cpp:700
+#: app/common/mainwindow.cpp:302
 msgid "Show shortcuts editor"
 msgstr "显示快捷键编辑器"
 
-#: app/common/actionsmanager.cpp:263
+#: app/common/actionsmanager.cpp:264
 msgid "Update ontologies..."
 msgstr "更新实体..."
 
-#: app/common/actionsmanager.cpp:268
+#: app/common/actionsmanager.cpp:269
 msgid "Hide in system tray"
 msgstr "隐藏于系统托盘"
 
-#: app/common/actionsmanager.cpp:278
+#: app/common/actionsmanager.cpp:279
 msgid "Manage info"
 msgstr "管理信息"
 
-#: app/common/actionsmanager.cpp:357 app/common/actionsmanager.cpp:1103
+#: app/common/actionsmanager.cpp:358 app/common/actionsmanager.cpp:1105
 msgid "Hide Info View"
 msgstr "隐藏信息视图"
 
-#: app/common/actionsmanager.cpp:417
+#: app/common/actionsmanager.cpp:418
 msgid "Play after Now Playing"
 msgstr "播放于现在播放之后"
 
-#: app/common/actionsmanager.cpp:440 app/common/actionsmanager.cpp:481
+#: app/common/actionsmanager.cpp:441 app/common/actionsmanager.cpp:482
 msgid "Hide information"
 msgstr "隐藏信息"
 
-#: app/common/actionsmanager.cpp:530
+#: app/common/actionsmanager.cpp:531
 #, kde-format
 msgid "Chapter %1"
 msgstr "章节 %1"
 
-#: app/common/actionsmanager.cpp:597
+#: app/common/actionsmanager.cpp:598
 msgid "Show Controls"
 msgstr "显示控件"
 
-#: app/common/actionsmanager.cpp:601
+#: app/common/actionsmanager.cpp:602
 msgid "Hide Controls"
 msgstr "隐藏控件"
 
-#: app/common/actionsmanager.cpp:615
+#: app/common/actionsmanager.cpp:616
 msgid "Hide video settings"
 msgstr "隐藏视频设置"
 
-#: app/common/actionsmanager.cpp:638
+#: app/common/actionsmanager.cpp:639
 msgid "Hide audio settings"
 msgstr "隐藏音频设置"
 
-#: app/common/actionsmanager.cpp:691
+#: app/common/actionsmanager.cpp:692
 msgid "Hide shortcuts editor"
 msgstr "隐藏快捷键编辑器"
 
-#: app/common/actionsmanager.cpp:743
+#: app/common/actionsmanager.cpp:744
 msgid "Restore Volume"
 msgstr "恢复音量"
 
-#: app/common/actionsmanager.cpp:903
+#: app/common/actionsmanager.cpp:905
 msgid "Restore video size"
 msgstr "恢复视频大小"
 
-#: app/common/actionsmanager.cpp:954
+#: app/common/actionsmanager.cpp:956
 msgid "Show elapsed time"
 msgstr "显示已用时间"
 
-#: app/common/actionsmanager.cpp:966
+#: app/common/actionsmanager.cpp:968
 #, kde-format
 msgid "Bookmark-%1"
 msgstr "书签-%1"
 
-#: app/common/actionsmanager.cpp:1035 app/common/actionsmanager.cpp:1042
+#: app/common/actionsmanager.cpp:1037 app/common/actionsmanager.cpp:1044
 msgid "Update Ontologies"
 msgstr "更新实体"
 
-#: app/common/actionsmanager.cpp:1038
+#: app/common/actionsmanager.cpp:1039
+msgid "Cancel"
+msgstr "取消"
+
+#: app/common/actionsmanager.cpp:1040
 msgid ""
 "Updating ontologies ensures that media information is stored in a way that "
 "makes it most accessible to other desktop applications.  This is only "
@@ -1094,24 +336,24 @@ msgstr ""
 "最近升级了 Bangarang 或 KDE 软件集合的时候才是需要的。 <br><br>此操作可能会花"
 "费好几分钟。"
 
-#: app/common/actionsmanager.cpp:1046
+#: app/common/actionsmanager.cpp:1048
 msgid "Stop"
 msgstr "停止"
 
-#: app/common/actionsmanager.cpp:1049
+#: app/common/actionsmanager.cpp:1051
 msgid "Close"
 msgstr "关闭"
 
-#: app/common/actionsmanager.cpp:1073 app/common/actionsmanager.cpp:1078
+#: app/common/actionsmanager.cpp:1075 app/common/actionsmanager.cpp:1080
 msgid "Hide filter"
 msgstr "隐藏过滤器"
 
-#: app/common/actionsmanager.cpp:1148
+#: app/common/actionsmanager.cpp:1150
 #, fuzzy
 msgid "Show Audio Lists"
 msgstr "显示音频设置"
 
-#: app/common/actionsmanager.cpp:1154
+#: app/common/actionsmanager.cpp:1156
 #, fuzzy
 msgid "Show Video Lists"
 msgstr "显示视频设置"
@@ -1134,79 +376,100 @@ msgid "Resume"
 msgstr "继续"
 
 #: app/common/bangarangapplication.cpp:430
-#: platform/utilities/mediaitems.cpp:1441
+msgid "No DVD found"
+msgstr ""
+
+#: app/common/bangarangapplication.cpp:434
+#: platform/utilities/mediaitems.cpp:1442
 msgid "DVD Video"
 msgstr "DVD 视频"
 
-#: app/common/bangarangapplication.cpp:445
+#: app/common/bangarangapplication.cpp:446
+msgid "No CD found"
+msgstr ""
+
+#: app/common/bangarangapplication.cpp:451
 #: platform/listengines/medialistsengine.cpp:202
-#: platform/utilities/mediaitems.cpp:1448
+#: platform/utilities/mediaitems.cpp:1449
 msgid "Audio CD"
 msgstr "音频 CD"
 
-#: app/common/mainwindow.cpp:316
+#: app/common/mainwindow.cpp:117
+msgid "No"
+msgstr "否"
+
+#: app/common/mainwindow.cpp:118
+msgid "Yes"
+msgstr "是"
+
+#: app/common/mainwindow.cpp:261 app/medialists/savedlistsmanager.cpp:986
+#: platform/utilities/mediaitems.cpp:146
+msgid "Playlist"
+msgstr "播放列表"
+
+#: app/common/mainwindow.cpp:317
 msgid "<b>Fullscreen</b><br>Click to exit fullscreen"
 msgstr "<b>全屏</b><br>点击退出全屏"
 
-#: app/common/mainwindow.cpp:324
+#: app/common/mainwindow.cpp:325
 msgid "Show fullscreen"
 msgstr "全屏显示"
 
-#: app/common/mediaview.cpp:143
+#: app/common/mediaview.cpp:162
 msgid "Add to playlist/Remove from playlist"
 msgstr "添加到播放列表 / 从播放列表删除"
 
-#: app/common/mediaview.cpp:146
+#: app/common/mediaview.cpp:165
 msgid "Show Songs"
 msgstr "显示歌曲"
 
-#: app/common/mediaview.cpp:148
+#: app/common/mediaview.cpp:167
 msgid "Show Albums"
 msgstr "显示专辑"
 
-#: app/common/mediaview.cpp:150
+#: app/common/mediaview.cpp:169
 msgid "Show Artists"
 msgstr "显示艺人"
 
-#: app/medialists/infoitemdelegate.cpp:127
+#: app/medialists/infoitemdelegate.cpp:129
 #: app/medialists/infoitemdelegate.cpp:650
 msgid "Music"
 msgstr "音乐"
 
-#: app/medialists/infoitemdelegate.cpp:129
+#: app/medialists/infoitemdelegate.cpp:131
 #: app/medialists/infoitemdelegate.cpp:650
 msgid "Audio Stream"
 msgstr "音频流"
 
-#: app/medialists/infoitemdelegate.cpp:131
+#: app/medialists/infoitemdelegate.cpp:133
 #: app/medialists/infoitemdelegate.cpp:650
 msgid "Audio Clip"
 msgstr "音频剪辑"
 
-#: app/medialists/infoitemdelegate.cpp:136
+#: app/medialists/infoitemdelegate.cpp:138
 #: app/medialists/infoitemdelegate.cpp:661
 msgid "Movie"
 msgstr "影片"
 
-#: app/medialists/infoitemdelegate.cpp:138
+#: app/medialists/infoitemdelegate.cpp:140
 #: app/medialists/infoitemdelegate.cpp:661
 msgid "TV Show"
 msgstr "电视节目"
 
-#: app/medialists/infoitemdelegate.cpp:140
+#: app/medialists/infoitemdelegate.cpp:142
 #: app/medialists/infoitemdelegate.cpp:661
 msgid "Video Clip"
 msgstr "视频剪辑"
 
-#: app/medialists/infoitemdelegate.cpp:154
+#: app/medialists/infoitemdelegate.cpp:156
 msgid "No description"
 msgstr "无描述"
 
-#: app/medialists/infoitemdelegate.cpp:163
+#: app/medialists/infoitemdelegate.cpp:165
 msgid "Multiple Values"
 msgstr "多个值"
 
-#: app/medialists/infoitemdelegate.cpp:466
+#: app/medialists/infoitemdelegate.cpp:468
 msgid "Open artwork file"
 msgstr "打开封面艺照文件"
 
@@ -1222,24 +485,35 @@ msgstr "点击以隐藏"
 msgid "Additional information may be available. <br> Click to show more..."
 msgstr "其它信息可用。<br> 点击以显示更多..."
 
+#: app/medialists/medialistsettings.cpp:94
+#: app/medialists/medialistsettings.cpp:106
+#: app/medialists/medialistsettings.cpp:123
+#: app/medialists/medialistsettings.cpp:135
+msgid "played"
+msgstr "已播放"
+
 #: app/medialists/medialistsettings.cpp:100
 #: app/medialists/medialistsettings.cpp:129
 msgid "rated"
 msgstr "已评分"
 
-#: app/medialists/medialistsmanager.cpp:385
+#: app/medialists/medialistsmanager.cpp:363
+msgid "Search for audio"
+msgstr "搜索音频"
+
+#: app/medialists/medialistsmanager.cpp:379
 msgid "Search for video"
 msgstr "搜索视频"
 
-#: app/medialists/medialistsmanager.cpp:402
+#: app/medialists/medialistsmanager.cpp:396
 msgid "Audio Search"
 msgstr "音频搜索"
 
-#: app/medialists/medialistsmanager.cpp:409
+#: app/medialists/medialistsmanager.cpp:403
 msgid "Video Search"
 msgstr "视频搜索"
 
-#: app/medialists/medialistsmanager.cpp:497 platform/infoitemmodel.cpp:550
+#: app/medialists/medialistsmanager.cpp:491 platform/infoitemmodel.cpp:550
 msgid "Complete"
 msgstr "完成"
 
@@ -1391,6 +665,17 @@ msgstr "影音之乐... 享受吧"
 msgid "<b>Showing Upcoming</b><br>Click to show playlist"
 msgstr "<b>显示即将播放</b><br>点击显示播放列表"
 
+#: app/nowplaying/nowplayingmanager.cpp:233
+msgid "Show Upcoming"
+msgstr "显示即将播放"
+
+#: app/nowplaying/nowplayingmanager.cpp:261
+#: app/nowplaying/nowplayingmanager.cpp:264
+#: app/nowplaying/nowplayingmanager.cpp:388
+#: app/nowplaying/nowplayingmanager.cpp:519
+msgid "Now Playing"
+msgstr "现在播放"
+
 #: app/nowplaying/nowplayingmanager.cpp:291
 msgid "<b>Playing</b><br>Click to pause<br>Click and hold to stop"
 msgstr "<b>播放中</b><br>点击以暂停<br>点击并按住以停止"
@@ -1399,41 +684,66 @@ msgstr "<b>播放中</b><br>点击以暂停<br>点击并按住以停止"
 msgid "An error has been encountered during playback"
 msgstr "播放时遇到错误"
 
-#: app/nowplaying/nowplayingmanager.cpp:354
+#: app/nowplaying/nowplayingmanager.cpp:343
 msgid "Loading playlist..."
 msgstr "正在装入播放列表..."
 
-#: app/nowplaying/nowplayingmanager.cpp:356
+#: app/nowplaying/nowplayingmanager.cpp:345
 msgid "Buffering..."
 msgstr "正在缓冲..."
 
-#: app/nowplaying/nowplayingmanager.cpp:358 platform/mediaitemmodel.cpp:677
+#: app/nowplaying/nowplayingmanager.cpp:347
 msgid "Loading..."
 msgstr "正在装入..."
 
-#: app/nowplaying/nowplayingmanager.cpp:383
+#: app/nowplaying/nowplayingmanager.cpp:372
 msgid "<b>Muted</b><br>Click to restore volume"
 msgstr "<b>已静音</b><br>点击还原音量"
 
-#: app/nowplaying/nowplayingmanager.cpp:409
+#: app/nowplaying/nowplayingmanager.cpp:376
+msgid "Mute volume"
+msgstr "静音"
+
+#: app/nowplaying/nowplayingmanager.cpp:389
+#: app/nowplaying/nowplayingmanager.cpp:436
+msgid "View Now Playing"
+msgstr "查看现在播放"
+
+#: app/nowplaying/nowplayingmanager.cpp:398
 msgid "<b>Repeat On</b><br>Click to turn off repeat"
 msgstr "<b>重复开启</b><br>点击关闭重复"
 
-#: app/nowplaying/nowplayingmanager.cpp:420
+#: app/nowplaying/nowplayingmanager.cpp:401
+msgid "Turn on Repeat"
+msgstr "开启重复"
+
+#: app/nowplaying/nowplayingmanager.cpp:409
 msgid "<b>Shuffle On</b><br>Click to turn off Shuffle"
 msgstr "<b>乱序开启</b><br>点击关闭乱序"
 
-#: app/nowplaying/nowplayingmanager.cpp:525
+#: app/nowplaying/nowplayingmanager.cpp:412
+msgid "Turn on Shuffle"
+msgstr "开启乱序"
+
+#: app/nowplaying/nowplayingmanager.cpp:513
+msgid "Clear Playlist"
+msgstr "清除播放列表"
+
+#: app/nowplaying/nowplayingmanager.cpp:514
 msgid "Are you sure you want to clear the current playlist?"
 msgstr "您确定要清除当前播放列表吗？"
 
 #: app/nowplaying/playlistview.cpp:107
+msgid "<b>Playlist</b>"
+msgstr "<b>播放列表</b>"
+
+#: app/nowplaying/playlistview.cpp:111
 #, kde-format
 msgid "1 item, %2"
 msgid_plural "%1 items, %2"
 msgstr[0] "%1 项，%2"
 
-#: app/nowplaying/playlistview.cpp:109 platform/mediaitemmodel.cpp:458
+#: app/nowplaying/playlistview.cpp:113 platform/mediaitemmodel.cpp:458
 #: platform/mediaitemmodel.cpp:478
 #: platform/listengines/ampachelistengine.cpp:96
 #: platform/listengines/ampachelistengine.cpp:169
@@ -1450,7 +760,7 @@ msgid "1 item"
 msgid_plural "%1 items"
 msgstr[0] "%1 项"
 
-#: app/nowplaying/playlistview.cpp:115
+#: app/nowplaying/playlistview.cpp:119
 msgid "<b>Playlist</b> (Upcoming)"
 msgstr "<b>播放列表</b> (即将播放)"
 
@@ -1568,7 +878,7 @@ msgstr "无结果"
 #: platform/listengines/musiclistengine.cpp:327
 #: platform/utilities/mediaitems.cpp:784 platform/utilities/mediaitems.cpp:797
 #: platform/utilities/mediaitems.cpp:900 platform/utilities/mediaitems.cpp:919
-#: platform/utilities/mediaitems.cpp:937
+#: platform/utilities/mediaitems.cpp:938
 msgid "Recently Played Songs"
 msgstr "最近播放的歌曲"
 
@@ -1580,7 +890,7 @@ msgstr "最近播放的歌曲"
 #: platform/listengines/musiclistengine.cpp:328
 #: platform/utilities/mediaitems.cpp:785 platform/utilities/mediaitems.cpp:798
 #: platform/utilities/mediaitems.cpp:901 platform/utilities/mediaitems.cpp:920
-#: platform/utilities/mediaitems.cpp:938
+#: platform/utilities/mediaitems.cpp:939
 msgid "Highest Rated Songs"
 msgstr "评分较高的歌曲"
 
@@ -1592,7 +902,7 @@ msgstr "评分较高的歌曲"
 #: platform/listengines/musiclistengine.cpp:329
 #: platform/utilities/mediaitems.cpp:786 platform/utilities/mediaitems.cpp:799
 #: platform/utilities/mediaitems.cpp:902 platform/utilities/mediaitems.cpp:921
-#: platform/utilities/mediaitems.cpp:939
+#: platform/utilities/mediaitems.cpp:940
 msgid "Frequently Played Songs"
 msgstr "最常播放的歌曲"
 
@@ -1615,12 +925,12 @@ msgstr "最常播放的歌曲"
 #: platform/listengines/videolistengine.cpp:576
 #: platform/listengines/videolistengine.cpp:645
 #: platform/utilities/mediaitems.cpp:816 platform/utilities/mediaitems.cpp:834
-#: platform/utilities/mediaitems.cpp:852 platform/utilities/mediaitems.cpp:949
-#: platform/utilities/mediaitems.cpp:967 platform/utilities/mediaitems.cpp:986
-#: platform/utilities/mediaitems.cpp:995
-#: platform/utilities/mediaitems.cpp:1004
-#: platform/utilities/mediaitems.cpp:1013
-#: platform/utilities/mediaitems.cpp:1025
+#: platform/utilities/mediaitems.cpp:852 platform/utilities/mediaitems.cpp:950
+#: platform/utilities/mediaitems.cpp:968 platform/utilities/mediaitems.cpp:987
+#: platform/utilities/mediaitems.cpp:996
+#: platform/utilities/mediaitems.cpp:1005
+#: platform/utilities/mediaitems.cpp:1014
+#: platform/utilities/mediaitems.cpp:1026
 msgid "Recently Played"
 msgstr "最近播放"
 
@@ -1650,12 +960,12 @@ msgstr "最近播放"
 #: platform/listengines/videolistengine.cpp:577
 #: platform/listengines/videolistengine.cpp:646
 #: platform/utilities/mediaitems.cpp:817 platform/utilities/mediaitems.cpp:835
-#: platform/utilities/mediaitems.cpp:853 platform/utilities/mediaitems.cpp:950
-#: platform/utilities/mediaitems.cpp:968 platform/utilities/mediaitems.cpp:987
-#: platform/utilities/mediaitems.cpp:996
-#: platform/utilities/mediaitems.cpp:1005
-#: platform/utilities/mediaitems.cpp:1014
-#: platform/utilities/mediaitems.cpp:1026
+#: platform/utilities/mediaitems.cpp:853 platform/utilities/mediaitems.cpp:951
+#: platform/utilities/mediaitems.cpp:969 platform/utilities/mediaitems.cpp:988
+#: platform/utilities/mediaitems.cpp:997
+#: platform/utilities/mediaitems.cpp:1006
+#: platform/utilities/mediaitems.cpp:1015
+#: platform/utilities/mediaitems.cpp:1027
 msgid "Highest Rated"
 msgstr "评分较高"
 
@@ -1678,12 +988,12 @@ msgstr "评分较高"
 #: platform/listengines/videolistengine.cpp:578
 #: platform/listengines/videolistengine.cpp:647
 #: platform/utilities/mediaitems.cpp:818 platform/utilities/mediaitems.cpp:836
-#: platform/utilities/mediaitems.cpp:854 platform/utilities/mediaitems.cpp:951
-#: platform/utilities/mediaitems.cpp:969 platform/utilities/mediaitems.cpp:988
-#: platform/utilities/mediaitems.cpp:997
-#: platform/utilities/mediaitems.cpp:1006
-#: platform/utilities/mediaitems.cpp:1015
-#: platform/utilities/mediaitems.cpp:1027
+#: platform/utilities/mediaitems.cpp:854 platform/utilities/mediaitems.cpp:952
+#: platform/utilities/mediaitems.cpp:970 platform/utilities/mediaitems.cpp:989
+#: platform/utilities/mediaitems.cpp:998
+#: platform/utilities/mediaitems.cpp:1007
+#: platform/utilities/mediaitems.cpp:1016
+#: platform/utilities/mediaitems.cpp:1028
 msgid "Frequently Played"
 msgstr "最常播放"
 
@@ -1713,7 +1023,7 @@ msgstr "多个"
 msgid "Multiple %1"
 msgstr "多个 %1"
 
-#: platform/mediaitemmodel.cpp:709
+#: platform/mediaitemmodel.cpp:665
 msgid "No results"
 msgstr "无结果"
 
@@ -1750,7 +1060,7 @@ msgstr "<b>更新完成。</b>"
 msgid "<b>Update stopped.</b>"
 msgstr "<b>更新停止。</b>"
 
-#: platform/playlist.cpp:671
+#: platform/playlist.cpp:686
 #, fuzzy
 msgid "Video Playback"
 msgstr "视频搜索"
@@ -2224,21 +1534,274 @@ msgstr "标题 %1"
 msgid "Full Disc"
 msgstr "全盘"
 
-#: platform/utilities/mediaitems.cpp:1421
+#: platform/utilities/mediaitems.cpp:1422
 #, kde-format
 msgid "Season %1"
 msgstr "上演期 %1"
 
-#: platform/utilities/mediaitems.cpp:1429
+#: platform/utilities/mediaitems.cpp:1430
 #, kde-format
 msgid "Episode %1"
 msgstr "片段 %1"
 
-#: platform/utilities/mediaitems.cpp:1435
+#: platform/utilities/mediaitems.cpp:1436
 #, kde-format
 msgctxt "%1=Number of the Season"
 msgid "Season %1"
 msgstr "上演期 %1"
+
+#~ msgid "Add list"
+#~ msgstr "添加列表"
+
+#~ msgid "Remove list"
+#~ msgstr "删除列表"
+
+#~ msgid "Settings"
+#~ msgstr "设置"
+
+#~ msgid "Add List"
+#~ msgstr "添加列表"
+
+#~ msgid "Source"
+#~ msgstr "来源"
+
+#~ msgid "Current View"
+#~ msgstr "当前视图"
+
+#~ msgid "Current Selection"
+#~ msgstr "当前选中项"
+
+#~ msgid "Current Playlist"
+#~ msgstr "当前播放列表"
+
+#~ msgid "New List Name"
+#~ msgstr "新列表名称"
+
+#, fuzzy
+#~ msgid "User Name"
+#~ msgstr "名称"
+
+#~ msgid "Save"
+#~ msgstr "保存"
+
+#~ msgid "Return to Lists"
+#~ msgstr "返回到列表"
+
+#~ msgid "Saved List Settings"
+#~ msgstr "已保存的列表设置"
+
+#~ msgid "Name"
+#~ msgstr "名称"
+
+#~ msgid "List Title"
+#~ msgstr "列出标题"
+
+#~ msgid "Show"
+#~ msgstr "显示"
+
+#~ msgid "items"
+#~ msgstr "项"
+
+#~ msgid "before"
+#~ msgstr "之前于"
+
+#~ msgid "after"
+#~ msgstr "之后于"
+
+#~ msgid "or more"
+#~ msgstr "或高于"
+
+#~ msgid "exactly"
+#~ msgstr "等于"
+
+#~ msgid "or less"
+#~ msgstr "或低于"
+
+#~ msgid "times"
+#~ msgstr "次"
+
+#~ msgid "Media Lists"
+#~ msgstr "媒体列表"
+
+#~ msgid "Audio"
+#~ msgstr "音频"
+
+#~ msgid "Video"
+#~ msgstr "视频"
+
+#~ msgid "Summary"
+#~ msgstr "摘要"
+
+#~ msgid "..."
+#~ msgstr "..."
+
+#~ msgid "Filter"
+#~ msgstr "过滤器"
+
+#~ msgid "Additional information may be available from:"
+#~ msgstr "其它信息可用："
+
+#~ msgid "Fetch info and edit changes"
+#~ msgstr "获取信息并编辑更改"
+
+#~ msgid "Fetch info and save changes"
+#~ msgstr "获取信息并保存更改"
+
+#~ msgid "Matches"
+#~ msgstr "匹配"
+
+#~ msgid "Cancel Edit"
+#~ msgstr "取消编辑"
+
+#~ msgid "Index Selected"
+#~ msgstr "索引选中项"
+
+#~ msgid "Notification Text"
+#~ msgstr "通知文本"
+
+#~ msgid "Previous"
+#~ msgstr "向前"
+
+#~ msgid "Play all media in list"
+#~ msgstr "播放列表中全部媒体"
+
+#~ msgid "Play All"
+#~ msgstr "全部播放"
+
+#~ msgid "Play selected media in list"
+#~ msgstr "播放列表中选中媒体"
+
+#~ msgid "Play Selected"
+#~ msgstr "播放选中项"
+
+#~ msgid "ExternalSubtitle"
+#~ msgstr "外部字幕"
+
+#~ msgid "Error message"
+#~ msgstr "错误消息"
+
+#~ msgid "[ ]"
+#~ msgstr "[ ]"
+
+#~ msgid "Notification"
+#~ msgstr "通知"
+
+#~ msgid "Audio Settings"
+#~ msgstr "音频设置"
+
+#~ msgid "Audio Channel:"
+#~ msgstr "声道："
+
+#~ msgid "Equalizer"
+#~ msgstr "均衡器"
+
+#~ msgid "Presets"
+#~ msgstr "预设"
+
+#~ msgid "Pre"
+#~ msgstr "预设"
+
+#~ msgid "60"
+#~ msgstr "60"
+
+#~ msgid "170"
+#~ msgstr "170"
+
+#~ msgid "310"
+#~ msgstr "310"
+
+#~ msgid "600"
+#~ msgstr "600"
+
+#~ msgid "1k"
+#~ msgstr "1k"
+
+#~ msgid "3k"
+#~ msgstr "3k"
+
+#~ msgid "6k"
+#~ msgstr "6k"
+
+#~ msgid "12k"
+#~ msgstr "12k"
+
+#~ msgid "14k"
+#~ msgstr "14k"
+
+#~ msgid "16k"
+#~ msgstr "16k"
+
+#~ msgid "Restore Defaults"
+#~ msgstr "还原为默认值"
+
+#~ msgid "Hide"
+#~ msgstr "隐藏"
+
+#~ msgid "Video Settings"
+#~ msgstr "视频设置"
+
+#~ msgid "Subtitle:"
+#~ msgstr "字幕："
+
+#~ msgid "Angle:"
+#~ msgstr "角度："
+
+#~ msgid "Brightness:"
+#~ msgstr "亮度："
+
+#~ msgid "Contrast:"
+#~ msgstr "对比度："
+
+#~ msgid "Hue:"
+#~ msgstr "色调："
+
+#~ msgid "Saturation:"
+#~ msgstr "饱和度："
+
+#~ msgid "Aspect Ratio"
+#~ msgstr "纵横比"
+
+#~ msgid "Automatic"
+#~ msgstr "自动"
+
+#~ msgid "Fit"
+#~ msgstr "自适应"
+
+#~ msgid "4:3"
+#~ msgstr "4:3"
+
+#~ msgid "16:9"
+#~ msgstr "16:9"
+
+#~ msgid "Scaling"
+#~ msgstr "缩放"
+
+#~ msgid "Scale to fit"
+#~ msgstr "缩放以适应"
+
+#~ msgid "Scale and crop"
+#~ msgstr "缩放并裁剪"
+
+#~ msgid "Shortcuts"
+#~ msgstr "快捷键"
+
+#~ msgid "Save Shortcuts"
+#~ msgstr "保存快捷键"
+
+#~ msgid "View Media Lists"
+#~ msgstr "查看媒体列表"
+
+#~ msgid "Show full screen"
+#~ msgstr "全屏显示"
+
+#~ msgid "<b>Time elapsed</b><br>Click to show remaining time"
+#~ msgstr "<b>已用时间</b><br>点击显示剩余时间"
+
+#~ msgid "Volume"
+#~ msgstr "音量"
+
+#~ msgid "Return To Lists"
+#~ msgstr "返回到列表"
 
 #~ msgid "Andreas Marschke"
 #~ msgstr "Andreas Marschke"
