@@ -1,5 +1,12 @@
 [Desktop Entry]
 Name=Play CD with Bangarang
+Name[ga]=Seinn Dlúthdhiosca le Bangarang
+Name[hu]=CD lejátszása a Bangaranggal
+Name[nl]=Cd afspelen met Bangarang
+Name[pt]=Tocar um CD com o Bangarang
+Name[pt_BR]=Reproduzir CD com o Bangarang
+Name[uk]=Відтворити CD за допомогою Bangarang
+Name[x-test]=xxPlay CD with Bangarangxx
 Actions=open;
 Type=Service
 X-KDE-Action-Custom=true
@@ -9,3 +16,10 @@ X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Audio' AND StorageVolum
 Exec=bangarang --play-cd %u
 Icon=bangarang
 Name=Play CD with Bangarang
+Name[ga]=Seinn Dlúthdhiosca le Bangarang
+Name[hu]=CD lejátszása a Bangaranggal
+Name[nl]=Cd afspelen met Bangarang
+Name[pt]=Tocar um CD com o Bangarang
+Name[pt_BR]=Reproduzir CD com o Bangarang
+Name[uk]=Відтворити CD за допомогою Bangarang
+Name[x-test]=xxPlay CD with Bangarangxx
