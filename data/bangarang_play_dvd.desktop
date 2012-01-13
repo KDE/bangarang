@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=Play DVD with Bangarang
-Name[ga]="Seinn DVD le Bangarang"
-Name[hu]=„DVD lejátszása a Bangaranggal”
-Name[nl]="Dvd afspelen met Bangarang"
+Name[ga]=Seinn DVD le Bangarang
+Name[hu]=DVD lejátszása a Bangaranggal
+Name[nl]=Dvd afspelen met Bangarang
 Name[pt]=Tocar um DVD com o Bangarang
-Name[pt_BR]="Reproduzir DVD com o Bangarang"
+Name[pt_BR]=Reproduzir DVD com o Bangarang
 Name[uk]=Відтворити DVD за допомогою Bangarang
-Name[x-test]=xx"Play DVD with Bangarang"xx
+Name[x-test]=xxPlay DVD with Bangarangxx
 Actions=open;
 Type=Service
 X-KDE-Action-Custom=true
