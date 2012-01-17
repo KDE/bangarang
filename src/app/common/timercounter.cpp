@@ -16,37 +16,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOADINGANIMATION_H
-#define LOADINGANIMATION_H
 
-#include <QList>
+#include "timercounter.h"
 
-class QWidget;
-class KIcon;
-class QPaintEvent;
-class TimerCounter;
-
-class LoadingAnimation
+TimerCounter::TimerCounter(int max, int interval, bool loop): QTimer()
 {
+    m_max = max;
+    setInterval(interval);
+    m_value = 0;
+    m_loop = loop;
+}
 
-public:
-    LoadingAnimation(QWidget *displayWidget, int size);
-    ~LoadingAnimation();
-    
-    void setAnimationSize(int size);
-    void startAnimation();
-    void stopAnimation();
-    
-    void paintAnimation(QPaintEvent *event);
-    
-    
-private:
-    QWidget *m_display;
-    QList<KIcon *> *m_frames;
-    TimerCounter *m_counter;
-    bool m_running;
-    int m_frameCount;
-    int m_size;
-};
+int TimerCounter::getValue()
+{
+    return m_value;
+}
 
-#endif // LOADINGANIMATION_H
+int TimerCounter::max()
+{
+    return m_max;
+}
+
+void TimerCounter::setMax(int max)
+{
+    m_max = max;
+}
+
+
+void TimerCounter::reset()
+{
+    m_value = 0;
+    start();
+}
+
+void TimerCounter::timerEvent(QTimerEvent* event)
+{
+    m_value++;
+    if ( m_value > m_max ) {
+        if (m_loop) {
+            m_value = 0;
+        }
+        m_value--; //do not loop, stay at max
+        stop();
+    }
+    QTimer::timerEvent(event);
+}

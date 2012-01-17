@@ -19,15 +19,22 @@
 #include "sensiblewidgets.h"
 #include "ratingdelegate.h"
 #include "starrating.h"
+#include "timercounter.h"
 
 #include <KIcon>
 #include <KFileDialog>
 #include <QStylePainter>
+#include <QPaintEvent>
 
 SToolButton::SToolButton(QWidget * parent):QToolButton (parent) 
 {
     m_hoverDelay = 0;
+    m_holdEnabled = true;
     m_timer = new QTimer(this);
+    m_holdIcon = NULL;
+    m_animateHold = false;
+    m_animationTimer = new TimerCounter(0, 50, false);
+    connect(m_animationTimer, SIGNAL(timeout()), this, SLOT(repaint()));
     connect(this, SIGNAL(pressed()), this, SLOT(pressedEvent()));
     connect(this, SIGNAL(released()), this, SLOT(releasedEvent()));
 }
@@ -68,29 +75,74 @@ void SToolButton::hoverTimeout()
 void SToolButton::setHoldDelay(int i)
 {
     m_holdDelay = i;
+    m_animationTimer->setMax(i/m_animationTimer->interval());
 }
 int SToolButton::holdDelay()
 {
     return m_holdDelay;
 }
+void SToolButton::setHoldIcon(KIcon icon, bool animation)
+{
+    delete m_holdIcon;
+    m_holdIcon = new KIcon(icon); //copy it
+    m_animateHold = animation;
+}
+void SToolButton::enableHold(bool enable)
+{
+    m_holdEnabled = enable; //no animation if no icon was set
+}
+void SToolButton::disableHold()
+{
+    m_holdEnabled = false;
+}
 void SToolButton::pressedEvent()
 {
     m_pressed = true;
-    if (m_holdDelay > 0) {
-        m_timer->singleShot(m_holdDelay, this, SLOT(holdTimeout()));
+    if (m_holdDelay <= 0 || !m_holdEnabled) { //nothing else to do
+        return;
     }
+    if (m_animateHold) {
+        m_animationTimer->reset();
+    }
+ 
+    //start timer when hold timeout exceeds
+    m_timer->singleShot(m_holdDelay, this, SLOT(holdTimeout()));
 }
 void SToolButton::holdTimeout()
 {
-    if (m_pressed) {
-        emit this->held();
+    if (m_animateHold || m_animationTimer->isActive() ){
+        m_animationTimer->stop();
     }
+    if (!m_pressed) {
+        return; //not pressed anymore, no actions required
+    }
+    if (m_holdIcon) {
+        setIcon(*m_holdIcon);
+    }
+    emit this->held();
 }
 void SToolButton::releasedEvent()
 {
     m_pressed = false;
     m_timer->stop();
 }
+void SToolButton::paintEvent(QPaintEvent* event)
+{
+    QToolButton::paintEvent(event);
+    if (m_animateHold && m_pressed && m_holdEnabled) {
+        qreal progress = (qreal) m_animationTimer->getValue() / (qreal) m_animationTimer->max();
+        //progress *= progress;
+        const QPixmap &pxm = m_holdIcon->pixmap(iconSize());
+        QRect pmRect = pxm.rect();
+        pmRect.moveCenter(rect().center());
+        if (pmRect.intersects(event->rect())) {
+            QPainter painter(this);
+            painter.setOpacity(progress);
+            painter.drawPixmap(pmRect.left(), pmRect.top(), pxm);
+        }
+    }
+}
+
 
 SFrame::SFrame(QWidget * parent):QFrame (parent) 
 {

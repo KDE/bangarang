@@ -32,6 +32,9 @@
 #include <QHBoxLayout>
 #include <QComboBox>
 
+class KIcon;
+class TimerCounter;
+
 class SToolButton : public QToolButton
 {
     Q_OBJECT
@@ -42,6 +45,9 @@ public:
     int hoverDelay();
     void setHoldDelay(int i);
     int holdDelay();
+    void enableHold(bool enable = true);
+    void disableHold();
+    void setHoldIcon(KIcon icon, bool animation = true);
     
 private:
     bool m_hovered;
@@ -49,6 +55,10 @@ private:
     int m_hoverDelay;
     int m_holdDelay;
     QTimer *m_timer;
+    bool m_animateHold;
+    bool m_holdEnabled;
+    KIcon *m_holdIcon;
+    TimerCounter *m_animationTimer;
 
 Q_SIGNALS:
     void entered();
@@ -58,6 +68,7 @@ Q_SIGNALS:
 protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+    void paintEvent(QPaintEvent *event);
     
     
 protected Q_SLOTS:

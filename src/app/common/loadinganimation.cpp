@@ -18,34 +18,12 @@
 
 
 #include "loadinganimation.h"
+#include "timercounter.h"
 
 #include <QWidget>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QTimer>
 #include <KIcon>
-
-TimerCounter::TimerCounter(int max, int interval): QTimer()
-{
-    m_max = max;
-    setInterval(interval);
-    m_value = 0;
-}
-
-int TimerCounter::getValue()
-{
-    return m_value;
-}
-
-void TimerCounter::timerEvent(QTimerEvent* event)
-{
-    m_value++;
-    if ( m_value > m_max ) {
-        m_value = 0;
-    }
-    QTimer::timerEvent(event);
-}
-
 
 LoadingAnimation::LoadingAnimation(QWidget* displayWidget, int size)
 {

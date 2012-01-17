@@ -16,37 +16,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOADINGANIMATION_H
-#define LOADINGANIMATION_H
+#ifndef TIMERCOUNTER_H
+#define TIMERCOUNTER_H
 
-#include <QList>
+#include <QTimer>
 
 class QWidget;
+class QTimer;
 class KIcon;
 class QPaintEvent;
-class TimerCounter;
 
-class LoadingAnimation
+class TimerCounter: public QTimer
 {
-
+    Q_OBJECT
+    
 public:
-    LoadingAnimation(QWidget *displayWidget, int size);
-    ~LoadingAnimation();
+    TimerCounter(int max, int interval, bool loop = true);
+    int getValue();
+    void setMax(int max);
+    int max();
+    void reset();
     
-    void setAnimationSize(int size);
-    void startAnimation();
-    void stopAnimation();
-    
-    void paintAnimation(QPaintEvent *event);
-    
-    
+protected:
+    virtual void timerEvent(QTimerEvent* event);
+
 private:
-    QWidget *m_display;
-    QList<KIcon *> *m_frames;
-    TimerCounter *m_counter;
-    bool m_running;
-    int m_frameCount;
-    int m_size;
+    int m_max;
+    int m_value;
+    bool m_loop;
 };
 
-#endif // LOADINGANIMATION_H
+#endif // TIMERCOUNTER_H

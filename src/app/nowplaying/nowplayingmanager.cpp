@@ -76,6 +76,7 @@ NowPlayingManager::NowPlayingManager(MainWindow* parent) :
     connect(ui->clearPlaylist, SIGNAL(clicked()), this, SLOT(clearPlaylist()));
 
     //Setup playback buttons
+    ui->mediaPlayPause->setHoldIcon(KIcon("media-playback-stop"));
     connect(ui->mediaPlayPause, SIGNAL(pressed()), this, SLOT(mediaPlayPausePressed()));
     connect(ui->mediaPlayPause, SIGNAL(held()), this, SLOT(mediaPlayPauseHeld()));
     connect(ui->mediaPlayPause, SIGNAL(released()), this, SLOT(mediaPlayPauseReleased()));
@@ -153,13 +154,11 @@ void NowPlayingManager::mediaPlayPausePressed()
 
 void NowPlayingManager::mediaPlayPauseHeld()
 {
-    Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
     if ((m_application->mediaObject()->state() != Phonon::LoadingState) && (m_application->mediaObject()->state() != Phonon::StoppedState)) {
         if (m_pausePressed) {
             m_pausePressed = false;
         }
         m_stopPressed = true;
-        ui->mediaPlayPause->setIcon(KIcon("media-playback-stop"));
         m_application->playlist()->stop();
     }
 }
@@ -182,7 +181,9 @@ void NowPlayingManager::mediaPlayPauseReleased()
         }
     }
     m_pausePressed = false;
-    if ((m_application->mediaObject()->state() == Phonon::PausedState) || (m_application->mediaObject()->state() == Phonon::StoppedState)) {
+    bool stopped = (m_application->mediaObject()->state() == Phonon::StoppedState);
+    if ((m_application->mediaObject()->state() == Phonon::PausedState) || stopped) {
+        ui->mediaPlayPause->enableHold(!stopped);
         ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
         ui->mediaPlayPause->setToolTip("");
     }
@@ -273,6 +274,7 @@ void NowPlayingManager::mediaStateChanged(Phonon::State newstate, Phonon::State 
        m_application->statusNotifierItem()->setState(newstate);
 
         ui->mediaPlayPause->setIcon(KIcon("media-playback-pause"));
+        ui->mediaPlayPause->enableHold();
         bool nowPlayingItemIsVideo = false;
         if (m_application->playlist()->nowPlayingModel()->rowCount() > 0) {
             MediaItem nowPlayingItem = m_application->playlist()->nowPlayingModel()->mediaItemAt(0);
@@ -292,6 +294,7 @@ void NowPlayingManager::mediaStateChanged(Phonon::State newstate, Phonon::State 
     } else {
         if ((!m_pausePressed) && (!m_stopPressed)) {
             ui->mediaPlayPause->setIcon(KIcon("media-playback-start"));
+            ui->mediaPlayPause->enableHold(newstate != Phonon::StoppedState);
         }
     }
     showLoading();
