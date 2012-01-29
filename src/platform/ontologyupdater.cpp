@@ -30,6 +30,9 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
+#include <Nepomuk/Vocabulary/NMM>
+#include <Nepomuk/Vocabulary/NIE>
+#include <Nepomuk/Vocabulary/NFO>
 #include <QApplication>
 
 OntologyUpdater::OntologyUpdater(QObject * parent) : QObject(parent)
@@ -141,11 +144,19 @@ void OntologyUpdater::start()
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.duration(), value);
         }
-        property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
+        property = Nepomuk::Vocabulary::NMM::artwork();
         if (resource.hasProperty(property)) {
             Nepomuk::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.artwork(), value);
+        }
+        property = Nepomuk::Vocabulary::NIE::hasLogicalPart();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            if (value.toResource().hasType(Nepomuk::Vocabulary::NFO::Image())) {
+                resource.removeProperty(property);
+                resource.setProperty(mediaVocabulary.artwork(), value);
+            }
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
         if (resource.hasProperty(property)) {
@@ -321,11 +332,19 @@ void OntologyUpdater::start()
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.duration(), value);
         }
-        property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#artwork");
+        property = Nepomuk::Vocabulary::NMM::artwork();
         if (resource.hasProperty(property)) {
             Nepomuk::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.artwork(), value);
+        }
+        property = Nepomuk::Vocabulary::NIE::hasLogicalPart();
+        if (resource.hasProperty(property)) {
+            Nepomuk::Variant value = resource.property(property);
+            if (value.toResource().hasType(Nepomuk::Vocabulary::NFO::Image())) {
+                resource.removeProperty(property);
+                resource.setProperty(mediaVocabulary.artwork(), value);
+            }
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
         if (resource.hasProperty(property)) {

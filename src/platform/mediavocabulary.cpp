@@ -331,8 +331,7 @@ QUrl MediaVocabulary::playCount()
 
 QUrl MediaVocabulary::artwork()
 {
-    //TODO: This must change to nmm:artwork
-    return Nepomuk::Vocabulary::NIE::hasLogicalPart();
+    return QUrl(Nepomuk::Vocabulary::NIE::nieNamespace().toString() + "depiction");
 }
 
 QUrl MediaVocabulary::created()
