@@ -47,6 +47,7 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QPropertyAnimation>
+#include <QDeclarativeView>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
@@ -129,6 +130,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->videoFrame->resize(ui->nowPlayingHolder->size());
     KAcceleratorManager::setNoAccel(ui->showPlaylist);
     KAcceleratorManager::setNoAccel(ui->showPlaylist_2);
+
+    //Setup NowPlaying QML view
+    QDeclarativeView *npQML = ui->nowPlayingQMLView;
+    npQML->setSource();
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);

@@ -27,7 +27,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="collectionPage">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -3693,6 +3693,16 @@ color: rgb(255, 255, 255);</string>
                    <number>2</number>
                   </property>
                  </widget>
+                 <widget class="QDeclarativeView" name="nowPlayingQMLView">
+                  <property name="geometry">
+                   <rect>
+                    <x>20</x>
+                    <y>130</y>
+                    <width>300</width>
+                    <height>200</height>
+                   </rect>
+                  </property>
+                 </widget>
                 </widget>
                 <widget class="QWidget" name="contextStackHolder" native="true">
                  <property name="palette">
@@ -7344,6 +7354,11 @@ color: rgb(255, 255, 255);</string>
    <class>Phonon::VolumeSlider</class>
    <extends>QWidget</extends>
    <header location="global">phonon/volumeslider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QDeclarativeView</class>
+   <extends>QGraphicsView</extends>
+   <header>QtDeclarative/QDeclarativeView</header>
   </customwidget>
   <customwidget>
    <class>KFilterProxySearchLine</class>

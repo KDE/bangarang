@@ -78,6 +78,10 @@ set(BangarangSources
     platform/utilities/typechecks.cpp
 )
 
+set(QMLFiles
+    app/ui/nowPlaying.qml
+)
+
 kde4_add_ui_files(BangarangSources app/ui/mainwindow.ui app/ui/audiolistsstack.ui app/ui/videolistsstack.ui)
 
 kde4_add_executable(bangarang ${BangarangSources})
@@ -104,6 +108,7 @@ target_link_libraries(bangarang
 ########### install files ###############
 
 install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(FILES QMLFiles DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins
 # install(TARGETS  krossmodulebangarangmod DESTINATION ${PLUGIN_INSTALL_DIR}) # modules one might want to link against in c++ plugins (using dynamic libload magic)
 #install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})
