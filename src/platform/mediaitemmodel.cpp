@@ -21,6 +21,7 @@
 #include "listengines/listenginefactory.h"
 #include "medialistcache.h"
 #include "utilities/utilities.h"
+#include "mediaitemmodelimageprovider.h"
 
 #include <QFontMetrics>
 #include <QDateTime>
@@ -46,7 +47,21 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_pendingUpdateRefresh = false;
     m_suppressTooltip = false;
     setSupportedDragActions(Qt::CopyAction);
-    
+    QHash<int, QByteArray> roles;
+    roles[Qt::DecorationRole] = "artwork";
+    roles[Qt::DisplayRole] = "title";
+    roles[MediaItem::SubTitleRole] = "subTitle";
+    roles[MediaItem::TypeRole] = "type";
+    roles[MediaItem::SubTypeRole] = "subType";
+    roles[MediaItem::DurationRole] = "duration";
+    roles[MediaItem::RatingRole] = "rating";
+    roles[MediaItem::PlayCountRole] = "playCount";
+    roles[MediaItem::LastPlayedRole] = "lastPlayed";
+    roles[MediaItem::ArtworkIdRole] = "artworkId";
+    setRoleNames(roles);
+    m_imageProvider = new MediaItemModelImageProvider(QDeclarativeImageProvider::Pixmap);
+    m_imageProvider->setModel(this);
+
 }
 
 MediaItemModel::~MediaItemModel() 
@@ -209,6 +224,7 @@ void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaLis
         m_mediaList << mediaItem;
         m_urlList << mediaItem.url;
         m_resourceUriList << mediaItem.fields["resourceUri"].toString();
+        m_imageProvider->artworkIds()->append(m_imageProvider->artworkIdForMediaItem(mediaItem));
         appendRow(rowDataFromMediaItem(mediaItem));
         if (emitMediaListChanged) {
             emit mediaListChanged();
@@ -562,10 +578,11 @@ void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
     disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     m_listEngineFactory->stopAll();
-    removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
     m_resourceUriList.clear();
+    m_imageProvider->artworkIds()->clear();
+    removeRows(0, rowCount());
     connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
     m_loadSources = false;
     m_mediaListForLoadSources.clear();
@@ -578,10 +595,11 @@ void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
 {
     if (row < rowCount()) {
         disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
-        removeRows(row, 1);
         m_urlList.removeAt(row);
         m_resourceUriList.removeAt(row);
         m_mediaList.removeAt(row);
+        m_imageProvider->artworkIds()->removeAt(row);
+        removeRows(row, 1);
         connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
         
     }
@@ -595,6 +613,7 @@ void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, boo
     m_mediaList.replace(row, mediaItem);
     m_urlList.replace(row, mediaItem.url);
     m_resourceUriList.replace(row, mediaItem.fields["resourceUri"].toString());
+    m_imageProvider->artworkIds()->replace(row, m_imageProvider->artworkIdForMediaItem(mediaItem));
     QList<QStandardItem *> rowData = rowDataFromMediaItem(mediaItem);
     for (int i = 0; i < rowData.count(); i++) {
         setItem(row, i, rowData.at(i));
@@ -615,6 +634,7 @@ void MediaItemModel::insertMediaItemAt(int row, const MediaItem &mediaItem, bool
     m_mediaList.insert(row, mediaItem);
     m_urlList.insert(row, mediaItem.url);
     m_resourceUriList.insert(row, mediaItem.fields["resourceUri"].toString());
+    m_imageProvider->artworkIds()->insert(row, m_imageProvider->artworkIdForMediaItem(mediaItem));
     QList<QStandardItem *> rowData = rowDataFromMediaItem(mediaItem);
     insertRow(row, rowData);
 
@@ -636,6 +656,7 @@ void MediaItemModel::synchRemoveRows(const QModelIndex &index, int start, int en
         m_mediaList.removeAt(start);
         m_urlList.removeAt(start);
         m_resourceUriList.removeAt(start);
+        m_imageProvider->artworkIds()->removeAt(start);
     }
     if (m_emitChangedAfterDrop) {
         emit mediaListChanged();
@@ -693,6 +714,7 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
     titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
     titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
     titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
+    titleItem->setData(m_imageProvider->artworkUriForMediaItem(mediaItem), MediaItem::ArtworkIdRole);
     if (!m_suppressTooltip) {
         QString tooltip = QString("<b>%1</b>").arg(mediaItem.title);
         if (!mediaItem.subTitle.isEmpty()) {
@@ -1007,3 +1029,8 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     }
     return true;
 };
+
+MediaItemModelImageProvider * MediaItemModel::imageProvider()
+{
+    return m_imageProvider;
+}

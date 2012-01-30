@@ -37,6 +37,7 @@ class MusicListEngine;
 class FileListEngine;
 class ListEngineFactory;
 class MediaListCache;
+class MediaItemModelImageProvider;
 
 
 /**
@@ -83,7 +84,10 @@ public:
     ExistsRole = Qt::UserRole + 14,  /** QStandardItem role containing whether or
                                         *the file the MediaItem.url refers to exists.*/
     
-    HasCustomArtworkRole = Qt::UserRole + 15}; /** QStandardItem role containing whether
+    HasCustomArtworkRole = Qt::UserRole + 15, /** QStandardItem role containing whether
+                                                 * not artwork is custom(true) or default(false).*/
+
+    ArtworkIdRole = Qt::UserRole + 16}; /** QStandardItem role containing whether
                                                  * not artwork is custom(true) or default(false).*/
 
     QString url; /** Url of MediaItem. The may be a standard url representing a 
@@ -130,7 +134,7 @@ public:
     bool hasCustomArtwork; /** If the artwork property is a default icon this bool is false,
                             * otherwise if artwork property has custom artwork this bool is
                             * true. */
-                   
+
     QHash <QString, QVariant> fields;  /** Collection of all key, value pairs containing
                                          * the metadata fields associated with this MediaItem.
                                          *  key - A string containing the field name.
@@ -393,6 +397,11 @@ class MediaItemModel : public QStandardItemModel
          * Flags for items dragged from a view associated with the model.
          */
         Qt::ItemFlags flags(const QModelIndex &index) const;
+
+        /**
+         * Returns QDeclarativeImageProvider to retrieve artwork from model
+         */
+        MediaItemModelImageProvider * imageProvider();
         
         /**
          * Insert MediaItem at the specified row in the model with the one
@@ -820,6 +829,7 @@ class MediaItemModel : public QStandardItemModel
         bool m_pendingUpdateRefresh;
         bool m_suppressTooltip;
         QHash<QString, QVariant> m_status;
+        MediaItemModelImageProvider * m_imageProvider;
 
 };
 

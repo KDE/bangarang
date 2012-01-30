@@ -38,6 +38,7 @@ set(BangarangSources
     platform/downloader.cpp
     platform/infoitemmodel.cpp
     platform/mediaitemmodel.cpp
+    platform/mediaitemmodelimageprovider.cpp
     platform/mediaindexer.cpp
     platform/mediavocabulary.cpp
     platform/mediaquery.cpp
@@ -78,9 +79,7 @@ set(BangarangSources
     platform/utilities/typechecks.cpp
 )
 
-set(QMLFiles
-    app/ui/nowPlaying.qml
-)
+QT4_ADD_RESOURCES(BangarangSources app/resources.qrc)
 
 kde4_add_ui_files(BangarangSources app/ui/mainwindow.ui app/ui/audiolistsstack.ui app/ui/videolistsstack.ui)
 
@@ -92,6 +91,7 @@ kde4_add_app_icon(BangarangSources "${CMAKE_CURRENT_SOURCE_DIR}/../icons/hi*.png
 target_link_libraries(bangarang
     ${QT_QTCORE_LIBRARY}
     ${QT_QTGUI_LIBRARY}
+    ${QT_QTDECLARATIVE_LIBRARY}
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KPARTS_LIBS}
     ${KDE4_PHONON_LIBS}
@@ -108,7 +108,6 @@ target_link_libraries(bangarang
 ########### install files ###############
 
 install(TARGETS bangarang ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES QMLFiles DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins
 # install(TARGETS  krossmodulebangarangmod DESTINATION ${PLUGIN_INSTALL_DIR}) # modules one might want to link against in c++ plugins (using dynamic libload magic)
 #install(FILES <bangarangDataFilesHere> DESTINATION ${DATA_INSTALL_DIR}/bangarang) # We might need that once we can load plugins
 #install(FILES bangarangrc DESTINATION ${CONFIG_INSTALL_DIR})

@@ -27,6 +27,8 @@
 #include "../medialists/infomanager.h"
 #include "../medialists/medialistsettings.h"
 #include "../../platform/utilities/utilities.h"
+#include "../../platform/playlist.h"
+#include "../../platform/mediaitemmodelimageprovider.h"
 
 #include <KAction>
 #include <KAcceleratorManager>
@@ -48,6 +50,9 @@
 #include <QTimer>
 #include <QPropertyAnimation>
 #include <QDeclarativeView>
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
@@ -133,7 +138,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //Setup NowPlaying QML view
     QDeclarativeView *npQML = ui->nowPlayingQMLView;
-    npQML->setSource();
+    npQML->setSource(QUrl("qrc:/ui/nowPlaying.qml"));
+    npQML->rootContext()->setContextProperty("nowPlayingModel", m_application->playlist()->nowPlayingModel());
+    MediaItemModelImageProvider * imageProvider = m_application->playlist()->nowPlayingModel()->imageProvider();
+    npQML->engine()->addImageProvider(imageProvider->id(), imageProvider);
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
