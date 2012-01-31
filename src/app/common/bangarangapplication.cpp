@@ -18,6 +18,7 @@
 
 #include "bangarangapplication.h"
 #include "bangarangnotifieritem.h"
+#include "iconimageprovider.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../medialists/medialistsmanager.h"
@@ -44,6 +45,7 @@
 #include <Nepomuk/ResourceManager>
 #include <Solid/Device>
 
+#include <QDeclarativeImageProvider>
 #include <QDBusConnection>
 
 void BangarangApplication::setup()
@@ -81,6 +83,9 @@ void BangarangApplication::setup()
 
     //Start device manager (Singleton will create and start it)
     DeviceManager::instance();
+
+    //Set up QML icon image provider
+    m_iconImageProvider = new IconImageProvider(QDeclarativeImageProvider::Pixmap);
     
     //Set up main window
     m_mainWindow = new MainWindow();
@@ -474,4 +479,9 @@ void BangarangApplication::processCommandLineArgs()
 bool BangarangApplication::isTouchEnabled()
 {
     return m_touchIsEnabled;
+}
+
+IconImageProvider * BangarangApplication::iconImageProvider()
+{
+    return m_iconImageProvider;
 }

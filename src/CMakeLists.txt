@@ -7,6 +7,7 @@ set(BangarangSources
     app/common/bangarangnotifieritem.cpp
     app/common/dbusobjects.cpp
     app/common/flickcharm.cpp
+    app/common/iconimageprovider.cpp
     app/common/loadinganimation.cpp
     app/common/mainwindow.cpp
     app/common/mediaitemdelegate.cpp

@@ -40,6 +40,7 @@ class AudioSettings;
 class MainWindow;
 class BangarangNotifierItem;
 class MprisRootObject;
+class IconImageProvider;
 
 class BangarangApplication : public KApplication
 {
@@ -72,6 +73,7 @@ class BangarangApplication : public KApplication
         const KAboutData * aboutData();
         void processCommandLineArgs();
         bool isTouchEnabled();
+        IconImageProvider * iconImageProvider();
         
     private:
         MainWindow * m_mainWindow;
@@ -96,6 +98,7 @@ class BangarangApplication : public KApplication
         MprisRootObject * m_mprisRootObject;
         bool m_nepomukInited;
         bool m_touchIsEnabled;
+        IconImageProvider * m_iconImageProvider;
 
     private slots:
         void handleNotifierStateRequest(Phonon::State state);

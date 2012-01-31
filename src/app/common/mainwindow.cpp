@@ -17,6 +17,7 @@
 */
 
 #include "mainwindow.h"
+#include "iconimageprovider.h"
 #include "bangarangapplication.h"
 #include "bangarangnotifieritem.h"
 #include "actionsmanager.h"
@@ -138,10 +139,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //Setup NowPlaying QML view
     QDeclarativeView *npQML = ui->nowPlayingQMLView;
-    npQML->setSource(QUrl("qrc:/ui/nowPlaying.qml"));
     npQML->rootContext()->setContextProperty("nowPlayingModel", m_application->playlist()->nowPlayingModel());
-    MediaItemModelImageProvider * imageProvider = m_application->playlist()->nowPlayingModel()->imageProvider();
-    npQML->engine()->addImageProvider(imageProvider->id(), imageProvider);
+    MediaItemModelImageProvider * npImageProvider = m_application->playlist()->nowPlayingModel()->imageProvider();
+    npQML->engine()->addImageProvider(npImageProvider->id(), npImageProvider);
+    npQML->engine()->addImageProvider("icons", m_application->iconImageProvider());
+    npQML->setSource(QUrl("qrc:/ui/nowPlaying.qml"));
+    //npQML->setVisible(false);
     
     //Setup Media List Settings
     m_mediaListSettings =  new MediaListSettings(this);
@@ -247,6 +250,12 @@ void MainWindow::on_nowPlayingHolder_resized()
 {
     ui->nowPlayingView->move(0,0);
     ui->nowPlayingView->resize(ui->nowPlayingHolder->size());
+
+    QDeclarativeView *npQML = ui->nowPlayingQMLView;
+    npQML->move(0,0);
+    npQML->rootObject()->setProperty("height", ui->nowPlayingHolder->height());
+    npQML->rootObject()->setProperty("width", ui->nowPlayingHolder->width());
+//    npQML->resize(ui->nowPlayingHolder->size());
 
     QFont extSubtitleFont = ui->extSubtitle->font();
     extSubtitleFont.setPixelSize(qMax(int(ui->nowPlayingHolder->height()*0.045), KGlobalSettings::smallestReadableFont().pixelSize()));
