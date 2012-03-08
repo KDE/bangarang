@@ -57,8 +57,8 @@ void TimerCounter::timerEvent(QTimerEvent* event)
             m_value = 0;
         } else {
             m_value--; //do not loop, stay at max
+            stop();
         }
-        stop();
     }
     QTimer::timerEvent(event);
 }
