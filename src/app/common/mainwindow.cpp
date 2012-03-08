@@ -242,6 +242,10 @@ void MainWindow::on_nowPlayingHolder_resized()
     ui->extSubtitle->move((ui->nowPlayingHolder->width() - ui->extSubtitle->width())/2,
                           ui->nowPlayingHolder->geometry().bottom() - 20 - ui->extSubtitle->height());
 
+    if (ui->playbackMessage->isVisible()) {
+        m_application->nowPlayingManager()->showErrorMessage(ui->playbackMessage->text());
+    }
+
     if (m_videoSize == Normal && !this->isFullScreen()) {
         ui->videoFrame->setGeometry(QRect(QPoint(0, 0), ui->nowPlayingHolder->size()));
     } else if (m_videoSize == Normal && this->isFullScreen()) {

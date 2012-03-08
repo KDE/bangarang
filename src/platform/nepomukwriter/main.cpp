@@ -28,7 +28,7 @@
 #include <QString>
 #include <QUrl>
 
-static KAboutData aboutData( "bangarangnepomukwriter", 0,
+static KAboutData aboutData( "bangarangnepomukwriter", "bangarang",
                              KLocalizedString(), "2.0",
                              KLocalizedString(), KAboutData::License_GPL_V3,
         ki18n("Copyright 2011, Andrew Lake"), KLocalizedString(),

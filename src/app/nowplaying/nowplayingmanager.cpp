@@ -569,11 +569,12 @@ void NowPlayingManager::togglePlaylist()
 void NowPlayingManager::showErrorMessage(QString error)
 {
     Ui::MainWindowClass* ui = m_application->mainWindow()->ui;
-    ui->playbackMessage->setText(error);
     QFontMetrics fm(ui->playbackMessage->font());
     QSize textSize = fm.boundingRect(QRect(0, 0, ui->extSubtitle->maximumWidth(), fm.lineSpacing()),
                                      Qt::AlignCenter | Qt::TextWordWrap,
-                                     ui->playbackMessage->text()).size();
+                                     error).size();
+    QString tidyError = fm.elidedText(error, Qt::ElideRight, textSize.width());
+    ui->playbackMessage->setText(tidyError);
 
     int top = ui->nowPlayingHolder->geometry().bottom() - 50 - textSize.height();
     int left = (ui->nowPlayingHolder->width() - textSize.width()) / 2;
