@@ -40,6 +40,7 @@ void ArtworkPainter::paint(QPainter *p, QRect rect, QList<QVariant> artworkList)
     if (artworkList.count() == 1) {
         artworkSize = m_size;
     }
+    p->setRenderHint(QPainter::Antialiasing, true);
     int spacing = (rect.width() - artworkSize - 30)/artworkList.count();
     int aTop = rect.top() + (rect.height()-artworkSize)/2;
     int startx = rect.left() + (rect.width()/2) - ((artworkSize/2) - (spacing/2)*(artworkList.count()-1));
