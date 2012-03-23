@@ -57,7 +57,9 @@ void ArtworkPainter::paint(QPainter *p, QRect rect, QList<QVariant> artworkList)
         p->translate(transX, -transY);
         QPixmap artwork = artworkList.at(i).value<QPixmap>().scaledToHeight(artworkSize);
         int ARxOffset = (artworkSize - artwork.width())/2;
-        p->fillRect(ARxOffset, 0, artwork.width(), artwork.height(), Qt::white);
+	if (artworkList.count() != 1) {
+            p->fillRect(ARxOffset, 0, artwork.width(), artwork.height(), Qt::white);
+        }
         p->drawPixmap(ARxOffset, 0, artwork.width(), artwork.height(), artwork);
         if (artworkList.count() > 1) {
             QColor outlineColor = QColor(Qt::black);
