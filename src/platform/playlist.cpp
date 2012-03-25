@@ -164,6 +164,7 @@ void Playlist::playItemAt(int row, Model model)
         subType = nextMediaItem.fields["videoType"].toString();
     }
     m_currentUrl = nextMediaItem.url;
+    m_currentStream.clear();
     bool isDiscTitle = Utilities::isDisc( nextMediaItem.url );
     if (isDiscTitle) {
         Solid::Device device = Solid::Device( Utilities::deviceUdiFromUrl(nextMediaItem.url) );
@@ -185,11 +186,13 @@ void Playlist::playItemAt(int row, Model model)
         }
         m_mediaObject->play();
     } else if (subType == "Audio Stream") {
+	m_currentStream = m_currentUrl;
 	if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
             QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
             for (int i = 0; i < streamList.count(); i++) {
                 if (i == 0) {
-                    m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
+		    m_currentUrl = QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8());
+                    m_mediaObject->setCurrentSource(Phonon::MediaSource(m_currentUrl));
                 } else {
                     m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
                 }
@@ -826,7 +829,9 @@ void Playlist::playlistChanged()
         //if currently playing url is not at front of queueMediaList
         // stop playing and play item at front of queue
         if ((m_mediaObject->state() == Phonon::PlayingState) || (m_mediaObject->state() == Phonon::PausedState)) {
-            if (m_currentUrl != QUrl::fromEncoded(m_queue->mediaItemAt(0).url.toUtf8()).toString()) {
+	    MediaItem cur = m_queue->mediaItemAt(0);
+	    const QString &ref =  Utilities::isAudioStream(cur.fields["audioType"].toString()) ? m_currentStream : m_currentUrl;
+            if (ref != QUrl::fromEncoded(cur.url.toUtf8()).toString()) {
                 m_mediaObject->stop();
                 playItemAt(0, Playlist::QueueModel);
             }
@@ -854,16 +859,10 @@ void Playlist::updateNowPlaying()
     //Find matching item in queue
     int queueRow = -1;
     for (int i = 0; i < m_queue->rowCount(); i++) {
-        if (Utilities::isAudioStream(m_queue->mediaItemAt(i).fields["audioType"].toString())) {
-            if (m_currentStream == m_queue->mediaItemAt(i).url) {
-                queueRow = i;
-                break;
-            }
-        } else {
-            if (m_currentUrl == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
-                queueRow = i;
-                break;
-            }
+        const QString &ref =  Utilities::isAudioStream(m_queue->mediaItemAt(0).fields["audioType"].toString()) ? m_currentStream : m_currentUrl;
+        if (ref == QUrl::fromEncoded(m_queue->mediaItemAt(i).url.toUtf8()).toString()) {
+	  queueRow = i;
+          break;
         }
     }
 
