@@ -157,7 +157,6 @@ void Playlist::playItemAt(int row, Model model)
     
     //Play media Item
     m_mediaObject->clearQueue();
-    m_currentStream.clear();
     QString subType;
     if (nextMediaItem.type == "Audio") {
         subType = nextMediaItem.fields["audioType"].toString();
@@ -186,22 +185,16 @@ void Playlist::playItemAt(int row, Model model)
         }
         m_mediaObject->play();
     } else if (subType == "Audio Stream") {
-        m_currentStream = nextMediaItem.url;
-        m_streamListUrls.clear();
-        if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
+	if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
             QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
             for (int i = 0; i < streamList.count(); i++) {
-                m_streamListUrls << streamList.at(i).url;
                 if (i == 0) {
-                    m_currentUrl = streamList.at(i).url;
+                    m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
                 } else {
                     m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
                 }
             }
-        } else {
-            m_streamListUrls << nextMediaItem.url;
         }
-        m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromPercentEncoding(m_currentUrl.toUtf8())));
         m_mediaObject->play();
     } else {
         m_mediaObject->setCurrentSource(Phonon::MediaSource(QUrl::fromEncoded(m_currentUrl.toUtf8())));
@@ -640,7 +633,6 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
     if (newstate == Phonon::PlayingState && nowPlayingModel()->rowCount() > 0) {
         if (Utilities::isAudioStream(nowPlayingModel()->mediaItemAt(0).fields["audioType"].toString())) {
             m_mediaObject->clearQueue();
-            m_streamListUrls.clear();
         }
     }
 
