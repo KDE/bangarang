@@ -330,6 +330,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
         if (rowCount() == 0  && !m_suppressNoResultsMessage) {
             showNoResultsMessage();
         }
+        emit itemsAvailable(true);
         emit mediaListChanged();
     } else if (!m_remainingCatsForLoadSources.isEmpty()){
         //Launch load request(s)
