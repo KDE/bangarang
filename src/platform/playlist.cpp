@@ -186,12 +186,12 @@ void Playlist::playItemAt(int row, Model model)
         }
         m_mediaObject->play();
     } else if (subType == "Audio Stream") {
-	m_currentStream = m_currentUrl;
-	if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
+        m_currentStream = m_currentUrl;
+        if (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url)) {
             QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
             for (int i = 0; i < streamList.count(); i++) {
                 if (i == 0) {
-		    m_currentUrl = QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8());
+                    m_currentUrl = QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8());
                     m_mediaObject->setCurrentSource(Phonon::MediaSource(m_currentUrl));
                 } else {
                     m_mediaObject->enqueue(Phonon::MediaSource(QUrl::fromPercentEncoding(streamList.at(i).url.toUtf8())));
@@ -551,6 +551,16 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
                 QList<Phonon::MediaSource> queue;
                 queue << Phonon::MediaSource(Phonon::Dvd);
                 m_mediaObject->setQueue(queue);
+            } else if (Utilities::isAudioStream(nextMediaItem.fields["audioType"].toString()) &&
+                      (Utilities::isPls(nextMediaItem.url) || Utilities::isM3u(nextMediaItem.url))
+            ) {
+                QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
+                QList<QUrl> queue;
+                foreach (MediaItem mi, streamList) {
+                   queue << QUrl::fromPercentEncoding(mi.url.toUtf8());
+                }
+                m_mediaObject->setQueue(queue);
+                m_currentStream = QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
             } else {
                 QList<QUrl> queue;
                 queue << QUrl::fromPercentEncoding(nextMediaItem.url.toUtf8());
