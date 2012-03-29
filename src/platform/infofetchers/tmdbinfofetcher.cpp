@@ -30,6 +30,8 @@
 #include <QDomDocument>
 #include <QFile>
 
+#include <unistd.h>
+
 TMDBInfoFetcher::TMDBInfoFetcher(QObject *parent) :
         InfoFetcher(parent)
 {

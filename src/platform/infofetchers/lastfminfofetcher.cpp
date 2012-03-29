@@ -32,6 +32,8 @@
 #include <QFile>
 #include <QTextEdit>
 
+#include <unistd.h>
+
 LastfmInfoFetcher::LastfmInfoFetcher(QObject *parent) :
         InfoFetcher(parent)
 {

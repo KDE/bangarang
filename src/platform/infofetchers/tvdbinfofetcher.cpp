@@ -30,6 +30,8 @@
 #include <QDomDocument>
 #include <QFile>
 
+#include <unistd.h>
+
 TVDBInfoFetcher::TVDBInfoFetcher(QObject *parent) :
         InfoFetcher(parent)
 {
