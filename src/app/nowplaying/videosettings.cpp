@@ -44,7 +44,7 @@ VideoSettings::VideoSettings(MainWindow *parent, VideoWidget *widget) : QObject(
 
     //Setup encoding combo box
     QStringList list;
-    foreach (QString codec, QTextCodec::availableCodecs())
+    foreach (const QString& codec, QTextCodec::availableCodecs())
     list.append(codec);
     list.sort();
     ui->subtitleEncodingSelection->addItems(list);

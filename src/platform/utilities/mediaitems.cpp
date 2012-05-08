@@ -241,7 +241,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
         QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
         mediaItem.fields["rating"] = res.rating();
         QStringList tags;
-        foreach (Nepomuk::Tag tag, res.tags()) {
+        foreach (const Nepomuk::Tag& tag, res.tags()) {
             tags.append(tag.label());
         }
         mediaItem.fields["tags"] = tags;
@@ -395,7 +395,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     mediaItem.fields["rating"] = res.rating();
 
     QStringList tags;
-    foreach (Nepomuk::Tag tag, res.tags()) {
+    foreach (const Nepomuk::Tag& tag, res.tags()) {
         tags.append(tag.label());
     }
     mediaItem.fields["tags"] = tags;
@@ -589,7 +589,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.fields["genre"] = genresFromRawTagGenres(rawGenres);
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
     QStringList tags;
-    foreach (Nepomuk::Tag tag, res.tags()) {
+    foreach (const Nepomuk::Tag& tag, res.tags()) {
         tags.append(tag.label());
     }
     mediaItem.fields["tags"] = tags;

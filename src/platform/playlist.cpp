@@ -556,7 +556,7 @@ void Playlist::queueNextPlaylistItem() // connected to MediaObject::aboutToFinis
             ) {
                 QList<MediaItem> streamList = Utilities::mediaListFromSavedList(nextMediaItem);
                 QList<QUrl> queue;
-                foreach (MediaItem mi, streamList) {
+                foreach (const MediaItem& mi, streamList) {
                    queue << QUrl::fromPercentEncoding(mi.url.toUtf8());
                 }
                 m_mediaObject->setQueue(queue);

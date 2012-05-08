@@ -74,7 +74,7 @@ void DeviceManager::run()
     QList<Solid::Device> devices = Solid::Device::listFromType(Solid::DeviceInterface::OpticalDisc, QString());
     //Create the device list
     m_deviceMutex->lock();
-    foreach (Solid::Device device, devices) {
+    foreach (const Solid::Device& device, devices) {
         const Solid::OpticalDisc *disc = device.as<const Solid::OpticalDisc> ();
         RelatedType relT = AllTypes;
         if (disc == NULL)

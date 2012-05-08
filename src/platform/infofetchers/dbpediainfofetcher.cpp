@@ -440,7 +440,7 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
 bool DBPediaInfoFetcher::allThumbnailsFetchedForIndex(int index)
 {
     bool thumbnailsFetched = true;
-    foreach(QString requestKey, m_thumbnailKeys) {
+    foreach(const QString& requestKey, m_thumbnailKeys) {
         int foundIndex = requestKey.split(",").at(0).toInt();
         if (foundIndex == index) {
             thumbnailsFetched = false;

@@ -195,7 +195,7 @@ void MediaListsEngine::run()
 
         //Show Audio CDs if present
         QList<Solid::Device> cds = DeviceManager::instance()->deviceList(DeviceManager::AudioType);
-        foreach (Solid::Device cd, cds) {
+        foreach (const Solid::Device& cd, cds) {
             if (m_stop) {
                 return;
             }
@@ -381,7 +381,7 @@ void MediaListsEngine::run()
         mediaList << mediaItem;
         
         QList<Solid::Device> dvds = DeviceManager::instance()->deviceList(DeviceManager::VideoType);
-        foreach (Solid::Device dvd, dvds) {
+        foreach (const Solid::Device& dvd, dvds) {
             if (m_stop) {
                 return;
             }

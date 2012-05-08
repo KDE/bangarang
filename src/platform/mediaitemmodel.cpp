@@ -760,7 +760,7 @@ QMimeData *MediaItemModel::mimeData(const QModelIndexList &indexes) const
     QMimeData *mimeData = new QMimeData();
     QList<QUrl> urls;
     QString indexList;
-    foreach (QModelIndex index, indexes) {
+    foreach (const QModelIndex& index, indexes) {
         if (index.isValid() && index.column() != 1) {
             QUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
             urls << url;
@@ -999,10 +999,10 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     
     if (model->data(index, MediaItem::SubTitleRole).isValid())
         data += " " + model->data(index, MediaItem::SubTitleRole).toString();
-    foreach (QString str, pat) {
+    foreach (const QString& str, pat) {
         search << QRegExp(str, case_sen);
     }
-    foreach(QRegExp reg, search) {
+    foreach(const QRegExp& reg, search) {
         if (!data.contains(reg))
             return false;
     }

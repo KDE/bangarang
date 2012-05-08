@@ -753,7 +753,7 @@ void ActionsManager::addSelectedToPlaylistSlot()
 {
     QList<MediaItem> mediaList = selectedMediaItems();
     MediaItemModel *plmod = m_application->playlist()->playlistModel();
-    foreach (MediaItem item, mediaList) {
+    foreach (const MediaItem& item, mediaList) {
         if (Utilities::isMedia(item.type)) {
             if (plmod->rowOfUrl(item.url) >= 0)
                 continue;

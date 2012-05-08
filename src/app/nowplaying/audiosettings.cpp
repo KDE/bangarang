@@ -264,7 +264,7 @@ void AudioSettings::updateAudioChannels()
     int no = auds.count();
     ui->audioChannelSelectionHolder->setEnabled( no > 1 ); //has at least one audio channel
     cb->clear();
-    foreach (AudioChannelDescription aud, auds) {
+    foreach (const AudioChannelDescription& aud, auds) {
         QString descr = aud.description().trimmed();
         QString more = descr.isEmpty() ? QString() : QString(" (%1)").arg(descr);
         QString name = aud.name().trimmed();
@@ -292,7 +292,7 @@ void AudioSettings::updateAudioChannelCombo()
 bool AudioSettings::insertAudioEffects(Path* audioPath)
 {
     QList<EffectDescription> effects = BackendCapabilities::availableAudioEffects();
-    foreach (EffectDescription effect, effects) {
+    foreach (const EffectDescription& effect, effects) {
         if(effect.name() != "KEqualizer") {
             continue;
         }
