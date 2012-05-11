@@ -290,7 +290,7 @@ void VideoListEngine::run()
             } else {
                 //engineArg = "episodes";
                 if (mediaList.at(0).url == "video://episodes?||seriesName=~") {
-                    seriesName = "~";
+                    seriesName = '~';
                     engineArg = "episodes";
                 } else {
                     seriesName = mediaList.at(0).title;

@@ -464,7 +464,7 @@ void VideoSettings::showExternalSubtitles(qint64 time)
 
     //Find subtitle index corresponding to time
     for (int i = 0; i < m_extSubtitleTimes.count(); i++) {
-        QStringList times = m_extSubtitleTimes.at(i).split(",");
+        QStringList times = m_extSubtitleTimes.at(i).split(',');
         int startTime = times.at(0).trimmed().toInt();
         int endTime = times.at(1).trimmed().toInt();
         if (time >= startTime && time <= endTime) {

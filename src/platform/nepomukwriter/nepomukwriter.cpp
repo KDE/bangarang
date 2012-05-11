@@ -23,8 +23,8 @@ void NepomukWriter::processJob(QFile *jobFile)
     while (!in.atEnd()) {
         if (!line.isEmpty()) {
             if (line.startsWith("#Count")) {
-                count = line.split("=").at(1).trimmed().toInt();
-            } else if (line.startsWith("[") && line.endsWith("]")) {
+                count = line.split('=').at(1).trimmed().toInt();
+            } else if (line.startsWith('[') && line.endsWith(']')) {
                 QString resourceUri = line.mid(1, line.length()-2);
                 fields.insert("resourceUri",resourceUri);
             } else {
@@ -54,7 +54,7 @@ void NepomukWriter::processJob(QFile *jobFile)
         line = in.readLine().trimmed();
 
         //Update the resource once all provided fields for a resource is read.
-        if ((line.startsWith("[") && line.endsWith("]")) || in.atEnd()) {
+        if ((line.startsWith('[') && line.endsWith(']')) || in.atEnd()) {
             if (fields.count() > 0) {
                 writeToNepomuk(fields);
                 fields.clear();
@@ -830,9 +830,9 @@ void NepomukWriter::removeUnusedPropertyResources()
 {
     outputMessage(Message, i18n("Identifying unused resources..."));
     MediaVocabulary mediaVocabulary;
-    QString resourceBinding = "pres";
-    QString playableResourceBinding = "r";
-    QString playableResourceProperty = "p";
+    QString resourceBinding("pres");
+    QString playableResourceBinding("r");
+    QString playableResourceProperty("p");
     MediaQuery query;
     QStringList bindings;
     bindings.append(resourceBinding);

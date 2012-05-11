@@ -263,8 +263,8 @@ void FeedListEngine::downloadComplete(const KUrl &from, const KUrl &to)
             mediaItem.title = titleElement.text();
             mediaItem.fields["title"] = titleElement.text();
             QDomElement descriptionElement = getPreferredTag(itemNodes, descriptionTagPref);
-            if (!descriptionElement.text().trimmed().startsWith("<") &&
-                !descriptionElement.text().trimmed().endsWith(">")) { //ignore html descriptions
+            if (!descriptionElement.text().trimmed().startsWith('<') &&
+                !descriptionElement.text().trimmed().endsWith('>')) { //ignore html descriptions
                 mediaItem.fields["description"] = descriptionElement.text();
             }
             QList<QDomElement> contentElements = getPreferredTags(itemNodes, contentTagPref);

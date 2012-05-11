@@ -284,8 +284,8 @@ void TVDBInfoFetcher::processSeriesInfoRequest(const KUrl &from, const KUrl to)
     m_seriesInfoKeys.insert(seriesInfoKey, "done");
 
     //Process results
-    int originalRequestIndex = seriesInfoKey.split(",").at(0).toInt();
-    int matchesIndex = seriesInfoKey.split(",").at(1).toInt();
+    int originalRequestIndex = seriesInfoKey.split(',').at(0).toInt();
+    int matchesIndex = seriesInfoKey.split(',').at(1).toInt();
 
     QList<MediaItem> matches = m_fetchedMatches.value(originalRequestIndex);
     MediaItem match = matches.at(matchesIndex);
@@ -349,9 +349,9 @@ void TVDBInfoFetcher::processSeriesInfoRequest(const KUrl &from, const KUrl to)
             }
             QDomElement element = nodes.at(j).toElement();
             if (element.tagName() == "Actors") {
-                match.fields["actor"] = element.text().split("|", QString::SkipEmptyParts);
+                match.fields["actor"] = element.text().split('|', QString::SkipEmptyParts);
             } else if (element.tagName() == "Genre") {
-                match.fields["genre"] = element.text().split("|", QString::SkipEmptyParts);
+                match.fields["genre"] = element.text().split('|', QString::SkipEmptyParts);
             } else if (element.tagName() == "poster") {
                 seriesArtworkUrl = QString("http://thetvdb.com/banners/%1").arg(element.text());
             }
@@ -398,9 +398,9 @@ void TVDBInfoFetcher::processSeriesInfoRequest(const KUrl &from, const KUrl to)
                 } else if (element.tagName() == "Overview") {
                     match.fields["description"] = element.text();
                 } else if (element.tagName() == "Director") {
-                    match.fields["director"] = element.text().split("|", QString::SkipEmptyParts);
+                    match.fields["director"] = element.text().split('|', QString::SkipEmptyParts);
                 } else if (element.tagName() == "Writer") {
-                    match.fields["writer"] = element.text().split("|", QString::SkipEmptyParts);
+                    match.fields["writer"] = element.text().split('|', QString::SkipEmptyParts);
                 } else if (element.tagName() == "filename") {
                     QString imageUrl = QString("http://thetvdb.com/banners/%1").arg(element.text());
                     KUrl thumbnailUrl = KUrl(imageUrl);
@@ -455,8 +455,8 @@ void TVDBInfoFetcher::processThumbnails(const KUrl &from, const KUrl to)
     m_thumbnailKeys.insert(requestKey, "done");
 
     //Process results
-    int originalRequestIndex = requestKey.split(",").at(0).toInt();
-    int matchesIndex = requestKey.split(",").at(1).toInt();
+    int originalRequestIndex = requestKey.split(',').at(0).toInt();
+    int matchesIndex = requestKey.split(',').at(1).toInt();
 
     if (!m_fetchedMatches.contains(originalRequestIndex)) {
         return;

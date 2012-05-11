@@ -212,7 +212,7 @@ void SavedListsManager::removeAudioList()
             if (isSavedList) {
                 //Remove M3U file
                 QString filename = name;
-                filename = filename.replace(" ", "");
+                filename = filename.remove(' ');
                 QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Audio-%1.m3u").arg(filename), false));
 
                 QString savedListEntry = QString("Audio:::%1")
@@ -255,7 +255,7 @@ void SavedListsManager::removeVideoList()
         if (KMessageBox::warningContinueCancel(m_parent, message, QString(), removeSavedList) == KMessageBox::Continue) {
             //Remove M3U file
             QString filename = name;
-            filename = filename.replace(" ", "");
+            filename = filename.remove(' ');
             QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/Video-%1.m3u").arg(filename), false));
             
             QString savedListEntry = QString("Video:::%1")
@@ -478,7 +478,7 @@ void SavedListsManager::saveMediaList(QList<MediaItem> mediaList, const QString 
         
         //Create and populate M3U file
         QString filename = name;
-        filename = filename.replace(" ", "");
+        filename = filename.remove(' ');
         QIODevice::OpenMode openMode;
         if (append) {
             openMode = QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append;
@@ -740,9 +740,9 @@ void SavedListsManager::saveAudioListSettings()
                         QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
                         if (lri.startsWith("savedlists://")) {
                             //rename file
-                            QString filename = name.replace(" ", "");
+                            QString filename = name.remove(' ');
                             QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-                            QString newFilename = QString(newName).replace(" ", "");
+                            QString newFilename = QString(newName).remove(' ');
                             QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(newFilename), true));
                             QString renamedFileName = file.fileName();
                             renamedFileName.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
@@ -811,9 +811,9 @@ void SavedListsManager::saveVideoListSettings()
                     QString newName = m_parent->videoListsStack()->ui->vslsListName->text();
                     if (lri.startsWith("savedlists://")) {
                         //rename file
-                        QString filename = name.replace(" ", "");
+                        QString filename = name.remove(' ');
                         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
-                        QString newFilename = QString(newName).replace(" ", "");
+                        QString newFilename = QString(newName).remove(' ');
                         QFile::remove(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(newFilename), true));
                         QString renamedFileName = file.fileName();
                         renamedFileName.replace(QString("%1.m3u").arg(filename), QString("%1.m3u").arg(newFilename));
@@ -876,7 +876,7 @@ void SavedListsManager::exportAudioList()
                 QString indexEntry = line;
                 if (name == listName) {
                     if (lri.startsWith("savedlists://")) {
-                        QString filename = name.replace(" ", "");
+                        QString filename = name.remove(' ');
                         KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
                         exportPlaylist(fileUrl);
                     }
@@ -914,7 +914,7 @@ void SavedListsManager::exportVideoList()
                 QString indexEntry = line;
                 if (name == listName) {
                     if (lri.startsWith("savedlists://")) {
-                        QString filename = name.replace(" ", "");
+                        QString filename = name.remove(' ');
                         KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
                         exportPlaylist(fileUrl);
                     }

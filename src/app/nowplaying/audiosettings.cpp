@@ -157,7 +157,7 @@ void AudioSettings::saveAudioSettings(KConfigGroup *configGroup)
 void AudioSettings::restoreAudioSettings(KConfigGroup *configGroup)
 {
     QString manualPresetStr = configGroup->readEntry("EqualizerManualPreset", QString());
-    QStringList manualPresetStrL = manualPresetStr.split(",");
+    QStringList manualPresetStrL = manualPresetStr.split(',');
     if (manualPresetStrL.count() == 11) {
         QList<int> preset;
         for (int i = 0; i < manualPresetStrL.count(); i++) {

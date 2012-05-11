@@ -433,8 +433,8 @@ void LastfmInfoFetcher::processThumbnails(const KUrl &from, const KUrl to)
     m_thumbnailKeys.insert(requestKey, "done");
 
     //Process results
-    int originalRequestIndex = requestKey.split(",").at(0).toInt();
-    int matchesIndex = requestKey.split(",").at(1).toInt();
+    int originalRequestIndex = requestKey.split(',').at(0).toInt();
+    int matchesIndex = requestKey.split(',').at(1).toInt();
 
     if (!m_fetchedMatches.contains(originalRequestIndex)) {
         return;
@@ -469,8 +469,8 @@ void LastfmInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
     m_moreInfoKeys.insert(requestKey, "done");
 
     //Process results
-    int originalRequestIndex = requestKey.split(",").at(0).toInt();
-    int matchesIndex = requestKey.split(",").at(1).toInt();
+    int originalRequestIndex = requestKey.split(',').at(0).toInt();
+    int matchesIndex = requestKey.split(',').at(1).toInt();
 
     if (!m_fetchedMatches.contains(originalRequestIndex)) {
         return;

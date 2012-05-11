@@ -100,21 +100,21 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, b
         QString keySuffix;
         if (mediaItem.subType() == "Artist") {
             keyPrefix = "Artist:";
-            keySuffix = mediaItem.fields["title"].toString().remove("'");
+            keySuffix = mediaItem.fields["title"].toString().remove('\'');
         }
         if (mediaItem.subType() == "Actor") {
             keyPrefix = "Actor:";
-            keySuffix = mediaItem.fields["title"].toString().remove("'");
+            keySuffix = mediaItem.fields["title"].toString().remove('\'');
         }
         if (mediaItem.subType() == "Director") {
             keyPrefix = "Director:";
-            keySuffix = mediaItem.fields["title"].toString().remove("'");
+            keySuffix = mediaItem.fields["title"].toString().remove('\'');
         }
         if (mediaItem.subType() == "Movie") {
             keyPrefix = "Movie:";
             mediaItem.title = Utilities::titleForRequest(mediaItem.title);
             keySuffix = mediaItem.title;
-            keySuffix.remove("'");
+            keySuffix.remove('\'');
         }
         if (!keyPrefix.isEmpty()) {
             m_mediaList.append(mediaItem);
@@ -407,8 +407,8 @@ void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
         return;
     }
 
-    int foundIndex = requestKey.split(",").at(0).toInt();
-    int matchesIndex = requestKey.split(",").at(1).toInt();
+    int foundIndex = requestKey.split(',').at(0).toInt();
+    int matchesIndex = requestKey.split(',').at(1).toInt();
 
     if (!m_fetchedMatches.contains(foundIndex)) {
         return;
@@ -441,7 +441,7 @@ bool DBPediaInfoFetcher::allThumbnailsFetchedForIndex(int index)
 {
     bool thumbnailsFetched = true;
     foreach(const QString& requestKey, m_thumbnailKeys) {
-        int foundIndex = requestKey.split(",").at(0).toInt();
+        int foundIndex = requestKey.split(',').at(0).toInt();
         if (foundIndex == index) {
             thumbnailsFetched = false;
             break;

@@ -784,7 +784,7 @@ QString Utilities::genreFromRawTagGenre(QString rawTagGenre)
     QHash<int, QString> genreDictionary = tagGenreDictionary();
     QString genre = rawTagGenre;
     //if (rawTagGenre.startsWith("(") && rawTagGenre.endsWith(")")) {
-        QString tagGenreNoParenth = rawTagGenre.remove("(").remove(")").trimmed();
+        QString tagGenreNoParenth = rawTagGenre.remove('(').remove(')').trimmed();
         bool ok;
         int tagGenreNo = tagGenreNoParenth.toInt(&ok);
         if (ok) {

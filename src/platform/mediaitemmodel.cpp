@@ -800,7 +800,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     bool internalMove = false;
     QStringList rowsToMove;
     if (data->text().startsWith("BangarangRow:")) {
-        rowsToMove = data->text().split(",", QString::SkipEmptyParts);
+        rowsToMove = data->text().split(',', QString::SkipEmptyParts);
         internalMove = true;
     }
 
@@ -994,11 +994,11 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
         if ( Utilities::isMessage( type ) )
             return true;
     }
-    QStringList pat = filterRegExp().pattern().split(" ", QString::SkipEmptyParts);
+    QStringList pat = filterRegExp().pattern().split(' ', QString::SkipEmptyParts);
     Qt::CaseSensitivity case_sen = filterRegExp().caseSensitivity();
     
     if (model->data(index, MediaItem::SubTitleRole).isValid())
-        data += " " + model->data(index, MediaItem::SubTitleRole).toString();
+        data += ' ' + model->data(index, MediaItem::SubTitleRole).toString();
     foreach (const QString& str, pat) {
         search << QRegExp(str, case_sen);
     }

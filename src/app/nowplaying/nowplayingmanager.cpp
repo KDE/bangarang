@@ -205,7 +205,7 @@ void NowPlayingManager::showApplicationBanner()
     applicationBanner.title = i18n("Bangarang");
     applicationBanner.subTitle = i18n("Entertainment... Now");
     applicationBanner.type = "Application Banner";
-    applicationBanner.url = "-";
+    applicationBanner.url = '-';
     m_application->playlist()->nowPlayingModel()->loadMediaItem(applicationBanner, true);
     m_application->mainWindow()->setVideoSize(MainWindow::Normal);
     ui->videoFrame->setVisible(false);

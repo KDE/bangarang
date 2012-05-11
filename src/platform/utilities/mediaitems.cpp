@@ -1120,8 +1120,8 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                 //copy the title of the original item
                 if(line.startsWith("#EXTINF:")) {
                     add = true;
-                    line = line.replace("#EXTINF:","");
-                    QStringList durTitle = line.split(",");
+                    line = line.remove("#EXTINF:");
+                    QStringList durTitle = line.split(',');
                     if (durTitle.count() == 1) {
                         //No title
                         duration = 0;

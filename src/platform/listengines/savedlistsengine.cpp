@@ -109,8 +109,8 @@ void SavedListsEngine::run()
 
                 //Read playlist entry to get title and url
                 if ((isM3U) && line.startsWith("#EXTINF:")) {
-                    line = line.replace("#EXTINF:","");
-                    QStringList durTitle = line.split(",");
+                    line = line.remove("#EXTINF:");
+                    QStringList durTitle = line.split(',');
 
                     if (durTitle.count() == 1) {
                         //No title

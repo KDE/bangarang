@@ -220,9 +220,9 @@ KUrl Utilities::deviceUrl(const QString &type, const QString& udi, const QString
         query += QString("?name=%1").arg(name);
     if (!content.isEmpty()) {
         if ( query.isEmpty() )
-            query = "?";
+            query = '?';
         else
-            query += "&";
+            query += '&';
         query += QString("content=%1").arg(content);
     }
     if (!query.isEmpty())
@@ -396,7 +396,7 @@ QString Utilities::wordsForTimeSince(const QDateTime &dateTime)
 QString Utilities::capitalize(const QString &text)
 {
     QStringList capWords;
-    QStringList words = text.split(" ");
+    QStringList words = text.split(' ');
     for (int i=0; i < words.count(); i++) {
         QString capWord = words.at(i).left(1).toUpper() + words.at(i).mid(1);
         capWords.append(capWord);
