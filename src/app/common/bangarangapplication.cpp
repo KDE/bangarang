@@ -61,6 +61,8 @@ void BangarangApplication::setup()
     //Set up media object
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setTickInterval(500);
+    //Enable zeitgeist logging
+    m_mediaObject->setProperty("PlaybackTracking", true);
     m_audioOutput = new Phonon::AudioOutput(Phonon::MusicCategory, this); // default to music category;
     connect(m_audioOutput, SIGNAL(volumeChanged(qreal)), this, SLOT(volumeChanged(qreal)));
 
