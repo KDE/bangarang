@@ -200,8 +200,8 @@ void SavedListsManager::removeAudioList()
         int selectedRow = m_parent->audioListsStack()->ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
         QString name = selectedItem.title;
-        bool isSavedList = selectedItem.url.startsWith("savedlists://");
-        bool isAmpacheServer = selectedItem.url.startsWith("ampache://");
+        bool isSavedList = selectedItem.url.startsWith(QLatin1String("savedlists://"));
+        bool isAmpacheServer = selectedItem.url.startsWith(QLatin1String("ampache://"));
         
         KGuiItem removeSavedList;
         removeSavedList.setText(i18n("Remove"));
@@ -331,7 +331,7 @@ void SavedListsManager::audioListsSelectionChanged(const QItemSelection & select
 {
     if (selected.indexes().count() > 0) {
         bool isSavedList = selected.indexes().at(0).data(MediaItem::IsSavedListRole).toBool();
-        bool isAmpacheServer = selected.indexes().at(0).data(MediaItem::UrlRole).toString().startsWith("ampache://");
+        bool isAmpacheServer = selected.indexes().at(0).data(MediaItem::UrlRole).toString().startsWith(QLatin1String("ampache://"));
         if (isSavedList || isAmpacheServer) {
             m_parent->audioListsStack()->ui->removeAudioList->setEnabled(true);
         } else {
@@ -411,14 +411,14 @@ void SavedListsManager::showAudioSavedListSettings()
         m_parent->audioListsStack()->ui->aslsListName->setText(m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row).title);
         // We can only export a playlist when we have a .m3u file
         MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(row);
-        if (selectedItem.url.startsWith("savedlists://")) {
+        if (selectedItem.url.startsWith(QLatin1String("savedlists://"))) {
             m_parent->audioListsStack()->ui->aslsExport->show();
             m_parent->audioListsStack()->ui->exportSavedListLabel->show();
             m_parent->audioListsStack()->ui->ampacheData->hide();
         } else {
             m_parent->audioListsStack()->ui->aslsExport->hide();
             m_parent->audioListsStack()->ui->exportSavedListLabel->hide();
-            if (selectedItem.url.startsWith("ampache://")) {
+            if (selectedItem.url.startsWith(QLatin1String("ampache://"))) {
                 m_ampachePasswordEdited = false;
                 m_parent->audioListsStack()->ui->ampacheData->show();
                 QString server = selectedItem.fields["server"].toString();
@@ -443,7 +443,7 @@ void SavedListsManager::showVideoSavedListSettings()
         m_parent->videoListsStack()->ui->vslsListName->setText(m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).title);
         // We can only export a playlist when we have a .m3u file
         QString selectedLri = m_application->mediaListsManager()->videoListsModel()->mediaItemAt(row).url;
-        if (selectedLri.startsWith("savedlists://")) {
+        if (selectedLri.startsWith(QLatin1String("savedlists://"))) {
             m_parent->videoListsStack()->ui->vslsExport->show();
             m_parent->videoListsStack()->ui->exportSavedListLabel->show();
         } else {
@@ -642,7 +642,7 @@ QStringList SavedListsManager::savedListNames(const QString &type)
     for (int i = 0; i < savedLists.count(); i++) {
         QString name = savedLists.at(i).split(":::").at(1);
         QString lri = savedLists.at(i).split(":::").at(2);
-        if (lri.startsWith("savedlists://")) {
+        if (lri.startsWith(QLatin1String("savedlists://"))) {
             savedListNames.append(name);
         }
     }
@@ -651,7 +651,7 @@ QStringList SavedListsManager::savedListNames(const QString &type)
 
 void SavedListsManager::removeSelected()
 {
-    if (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")) {
+    if (m_application->browsingModel()->mediaListProperties().lri.startsWith(QLatin1String("savedlists://"))) {
         QList<MediaItem> mediaList;
         
         QList<int> rowsToRemove;
@@ -690,7 +690,7 @@ void SavedListsManager::saveAudioListSettings()
         mediaItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(audioListsRow);
     }
 
-    if (mediaItem.url.startsWith("ampache://")) {
+    if (mediaItem.url.startsWith(QLatin1String("ampache://"))) {
         QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
         QString server = m_parent->audioListsStack()->ui->ampacheServer->text();
         QString userName = m_parent->audioListsStack()->ui->ampacheUserName->text();
@@ -719,7 +719,7 @@ void SavedListsManager::saveAudioListSettings()
         m_ampachePasswordEdited = false;
     }
     
-    if (mediaItem.url.startsWith("savedlists://")) {
+    if (mediaItem.url.startsWith(QLatin1String("savedlists://"))) {
         //Read index file to locate and rename saved list name
         QFile indexFile(KStandardDirs::locateLocal("data", "bangarang/savedlists", false));
         if (!indexFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -738,7 +738,7 @@ void SavedListsManager::saveAudioListSettings()
                     QString indexEntry = line;
                     if (name == oldName) {
                         QString newName = m_parent->audioListsStack()->ui->aslsListName->text();
-                        if (lri.startsWith("savedlists://")) {
+                        if (lri.startsWith(QLatin1String("savedlists://"))) {
                             //rename file
                             QString filename = name.remove(' ');
                             QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
@@ -809,7 +809,7 @@ void SavedListsManager::saveVideoListSettings()
                 QString indexEntry = line;
                 if (name == oldName) {
                     QString newName = m_parent->videoListsStack()->ui->vslsListName->text();
-                    if (lri.startsWith("savedlists://")) {
+                    if (lri.startsWith(QLatin1String("savedlists://"))) {
                         //rename file
                         QString filename = name.remove(' ');
                         QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
@@ -875,7 +875,7 @@ void SavedListsManager::exportAudioList()
             if (type == "Audio") {
                 QString indexEntry = line;
                 if (name == listName) {
-                    if (lri.startsWith("savedlists://")) {
+                    if (lri.startsWith(QLatin1String("savedlists://"))) {
                         QString filename = name.remove(' ');
                         KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
                         exportPlaylist(fileUrl);
@@ -913,7 +913,7 @@ void SavedListsManager::exportVideoList()
             if (type == "Video") {
                 QString indexEntry = line;
                 if (name == listName) {
-                    if (lri.startsWith("savedlists://")) {
+                    if (lri.startsWith(QLatin1String("savedlists://"))) {
                         QString filename = name.remove(' ');
                         KUrl fileUrl(KStandardDirs::locateLocal("data", QString("bangarang/%1-%2.m3u").arg(type).arg(filename), true));
                         exportPlaylist(fileUrl);

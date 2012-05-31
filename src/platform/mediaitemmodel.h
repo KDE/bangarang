@@ -702,7 +702,7 @@ class MediaItemModel : public QStandardItemModel
         /**
         * Update MediaItem contained in the model to the MediaItem specified
         * Only MediaItems in the model whose url matches the url of the
-        * specifed MediaItem will be updated.
+        * specified MediaItem will be updated.
         * 
         * @param mediaItem MediaItem with updated information.
         *
@@ -757,7 +757,7 @@ class MediaItemModel : public QStandardItemModel
         /**
         * Update artwork for mediaItem corresponding to the specified MediaItem.
         * Only MediaItems in the model whose url matches the url of the
-        * specifed MediaItem will be updated.
+        * specified MediaItem will be updated.
         * 
         * @param artworkImage Image of updated artwork.
         * @param mediaItem MediaItem to update the artwork for.

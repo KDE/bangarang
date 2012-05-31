@@ -520,7 +520,7 @@ void MediaListsManager::updateSeekTime(qint64 time)
         QStringList filterList = mediaListProperties.engineFilterList();
         int filterIndex = -1;
         for (int i = 0; i < filterList.count(); i++) {
-            if (filterList.at(i).startsWith("lastPlayed")) {
+            if (filterList.at(i).startsWith(QLatin1String("lastPlayed"))) {
                 filterIndex = i;
                 break;
             }

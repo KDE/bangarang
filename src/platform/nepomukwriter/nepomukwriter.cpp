@@ -22,7 +22,7 @@ void NepomukWriter::processJob(QFile *jobFile)
     int processed = 0;
     while (!in.atEnd()) {
         if (!line.isEmpty()) {
-            if (line.startsWith("#Count")) {
+            if (line.startsWith(QLatin1String("#Count"))) {
                 count = line.split('=').at(1).trimmed().toInt();
             } else if (line.startsWith('[') && line.endsWith(']')) {
                 QString resourceUri = line.mid(1, line.length()-2);

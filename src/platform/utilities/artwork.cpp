@@ -609,7 +609,7 @@ QIcon Utilities::defaultArtworkForMediaItem(const MediaItem &mediaItem)
             artwork = KIcon("system-users");
         } else if (mediaItem.subType() == "Album") {
             artwork = KIcon("media-optical-audio");
-        } else if (mediaItem.subType().endsWith(" Feed")) {
+        } else if (mediaItem.subType().endsWith(QLatin1String(" Feed"))) {
             artwork = KIcon("application-rss+xml");
         } else if (mediaItem.subType() == "AudioGenre") {
             artwork = KIcon("flag-blue");

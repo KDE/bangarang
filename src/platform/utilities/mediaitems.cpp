@@ -132,7 +132,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
         return mediaItem;
     }
 
-    if (url.prettyUrl().startsWith("filex:/")) {
+    if (url.prettyUrl().startsWith(QLatin1String("filex:/"))) {
         url = urlForFilex(url);
     }
 
@@ -309,7 +309,7 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
         KUrl url = KUrl(QUrl::toPercentEncoding(url_string).data());
         if (dvdNotFound ||
             (url.isValid() && url.isLocalFile() && !QFile(url.path()).exists()) ||
-            url_string.startsWith("trash:/")
+            url_string.startsWith(QLatin1String("trash:/"))
            ) {
             mediaItem.exists = false;
             kDebug() << mediaItem.url << " missing";
@@ -350,7 +350,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
     KUrl url(res.property(nieUrl).toUrl());
     url = decodedUrl(url).prettyUrl();
-    if (url.prettyUrl().startsWith("filex:/")) {
+    if (url.prettyUrl().startsWith(QLatin1String("filex:/"))) {
         url = urlForFilex(url);
     }
 
@@ -369,7 +369,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
 
     MediaItem mediaItem;
     mediaItem.url = url.prettyUrl();
-    mediaItem.exists = !url.prettyUrl().startsWith("filex:/"); //if url is still a filex:/ url mark not exists.
+    mediaItem.exists = !url.prettyUrl().startsWith(QLatin1String("filex:/")); //if url is still a filex:/ url mark not exists.
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = res.resourceUri().toString();
     mediaItem.fields["sourceLri"] = sourceLri;
@@ -560,11 +560,11 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
     url = decodedUrl(url);
-    if (url.prettyUrl().startsWith("filex:/")) {
+    if (url.prettyUrl().startsWith(QLatin1String("filex:/"))) {
         url = urlForFilex(url);
     }
     mediaItem.url = url.prettyUrl();
-    mediaItem.exists = !url.prettyUrl().startsWith("filex:/"); //if url is still a filex:/ url mark not exists.
+    mediaItem.exists = !url.prettyUrl().startsWith(QLatin1String("filex:/")); //if url is still a filex:/ url mark not exists.
     mediaItem.fields["url"] = mediaItem.url;
     mediaItem.fields["resourceUri"] = it.binding(MediaVocabulary::mediaResourceBinding()).uri().toString();
     mediaItem.fields["sourceLri"] = sourceLri;
@@ -1118,7 +1118,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                 //some internet radios only list mirrors without any #EXTINF.
                 //so if it hasn't #EXTINF check if it was an internet stream, take the mirror and
                 //copy the title of the original item
-                if(line.startsWith("#EXTINF:")) {
+                if(line.startsWith(QLatin1String("#EXTINF:"))) {
                     add = true;
                     line = line.remove("#EXTINF:");
                     QStringList durTitle = line.split(',');
@@ -1158,7 +1158,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                     mediaList << mediaItem;
                 }
             }
-            if ((isPLS) && line.startsWith("File")) {
+            if ((isPLS) && line.startsWith(QLatin1String("File"))) {
                 QString url = line.mid(line.indexOf("=") + 1).trimmed();
                 QString title;
                 if (!in.atEnd()) {

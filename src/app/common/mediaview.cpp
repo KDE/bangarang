@@ -161,11 +161,11 @@ bool MediaView::viewportEvent(QEvent* event)
                 if (Utilities::isMedia(type)) {
                     tipText = i18n("Add to playlist/Remove from playlist");
                 } else if (Utilities::isCategory(type)) {
-                    if (url.startsWith("music://songs")) {
+                    if (url.startsWith(QLatin1String("music://songs"))) {
                         tipText = i18n( "Show Songs" );
-                    } else if (url.startsWith("music://albums")) {
+                    } else if (url.startsWith(QLatin1String("music://albums"))) {
                         tipText = i18n( "Show Albums" );
-                    } else if (url.startsWith("music://artists")) {
+                    } else if (url.startsWith(QLatin1String("music://artists"))) {
                         tipText = i18n( "Show Artists" );
                     }   
                 }

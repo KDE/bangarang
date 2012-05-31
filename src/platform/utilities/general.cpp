@@ -341,7 +341,7 @@ QString Utilities::titleForRequest(const QString& title)
     }
 
     //Remove "the" from front of name
-    if (edited.startsWith("the", Qt::CaseInsensitive) && KGlobal::locale()->language().startsWith("en")) {
+    if (edited.startsWith("the", Qt::CaseInsensitive) && KGlobal::locale()->language().startsWith(QLatin1String("en"))) {
         tmp = edited.mid(4).trimmed();
     }
     if ( !tmp.isEmpty() ) {

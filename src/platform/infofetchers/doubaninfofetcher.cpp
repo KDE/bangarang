@@ -167,7 +167,7 @@ void DoubanInfoFetcher::processOriginalRequest(const KUrl &from, const KUrl to)
     QDomElement linkElem = entry.firstChildElement("link");
     while (!linkElem.isNull()) {
         link = linkElem.attribute("href");
-        if (link.endsWith("jpg"))
+        if (link.endsWith(QLatin1String("jpg")))
             break;
         linkElem = linkElem.nextSiblingElement("link");
     }

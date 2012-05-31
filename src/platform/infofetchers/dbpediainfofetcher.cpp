@@ -135,19 +135,19 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, b
     //Launch requests
     if (!m_requestKeys.isEmpty()) {
         for (int i = 0; i < m_requestKeys.count(); i++) {
-            if (m_requestKeys.at(i).startsWith("Artist:")) {
+            if (m_requestKeys.at(i).startsWith(QLatin1String("Artist:"))) {
                 setFetching();
                 m_dbPediaQuery->getArtistInfo(m_requestKeys.at(i).mid(7));
             }
-            if (m_requestKeys.at(i).startsWith("Actor:")) {
+            if (m_requestKeys.at(i).startsWith(QLatin1String("Actor:"))) {
                 setFetching();
                 m_dbPediaQuery->getActorInfo(m_requestKeys.at(i).mid(6));
             }
-            if (m_requestKeys.at(i).startsWith("Director:")) {
+            if (m_requestKeys.at(i).startsWith(QLatin1String("Director:"))) {
                 setFetching();
                 m_dbPediaQuery->getDirectorInfo(m_requestKeys.at(i).mid(9));
             }
-            if (m_requestKeys.at(i).startsWith("Movie:")) {
+            if (m_requestKeys.at(i).startsWith(QLatin1String("Movie:"))) {
                 setFetching();
                 m_dbPediaQuery->getMovieInfo(m_requestKeys.at(i).mid(6));
             }

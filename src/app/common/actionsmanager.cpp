@@ -383,7 +383,7 @@ QMenu * ActionsManager::mediaViewMenu(bool showAbout, MainWindow::ContextMenuSou
                 menu->addMenu(m_addToVideoSavedList);
             }
         }
-        if (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")) {
+        if (m_application->browsingModel()->mediaListProperties().lri.startsWith(QLatin1String("savedlists://"))) {
             menu->addAction(action("remove_from_list"));
         }
         menu->addSeparator();
@@ -795,7 +795,7 @@ void ActionsManager::updateSavedListsMenus()
     QStringList audioListNames = m_application->savedListsManager()->savedListNames("Audio");
     for (int i = 0; i < audioListNames.count(); i++) {
         if (!((audioListNames.at(i) == m_application->browsingModel()->mediaListProperties().name)
-            && (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")))) { 
+            && (m_application->browsingModel()->mediaListProperties().lri.startsWith(QLatin1String("savedlists://"))))) { 
             KAction * addToSavedList = new KAction(KIcon("view-list-text"), audioListNames.at(i), m_addToAudioSavedList);
             addToSavedList->setData(audioListNames.at(i));
             m_addToAudioSavedList->addAction(addToSavedList);
@@ -807,7 +807,7 @@ void ActionsManager::updateSavedListsMenus()
     QStringList videoListNames = m_application->savedListsManager()->savedListNames("Video");
     for (int i = 0; i < videoListNames.count(); i++) {
         if (!((videoListNames.at(i) == m_application->browsingModel()->mediaListProperties().name)
-            && (m_application->browsingModel()->mediaListProperties().lri.startsWith("savedlists://")))) { 
+            && (m_application->browsingModel()->mediaListProperties().lri.startsWith(QLatin1String("savedlists://"))))) { 
             KAction * addToSavedList = new KAction(KIcon("view-list-text"), videoListNames.at(i), m_addToVideoSavedList);
             addToSavedList->setData(videoListNames.at(i));
             m_addToVideoSavedList->addAction(addToSavedList);
@@ -978,11 +978,11 @@ void ActionsManager::activateBookmark(QAction *bookmarkAction)
     QString bookmark = bookmarkAction->data().toString();
     if (bookmark.isEmpty())
         return;
-    if (bookmark.startsWith("Activate:")) {
+    if (bookmark.startsWith(QLatin1String("Activate:"))) {
         bookmark.remove(0,9);
         qint64 time = m_application->bookmarksManager()->bookmarkTime(bookmark);
         m_application->playlist()->mediaObject()->seek(time);
-    } else if (bookmark.startsWith("Chapter:")) {
+    } else if (bookmark.startsWith(QLatin1String("Chapter:"))) {
         int no = bookmark.remove(0,8).toInt();
         m_application->playlist()->mediaController()->setCurrentChapter(no);
     }
@@ -991,7 +991,7 @@ void ActionsManager::activateBookmark(QAction *bookmarkAction)
 void ActionsManager::removeBookmark(QAction *bookmarkAction)
 {
     QString bookmark = bookmarkAction->data().toString();
-    if (!bookmark.isEmpty() && bookmark.startsWith("Remove:")) {
+    if (!bookmark.isEmpty() && bookmark.startsWith(QLatin1String("Remove:"))) {
         bookmark.remove(0,7);
         QString nowPlayingUrl = m_application->playlist()->nowPlayingModel()->mediaItemAt(0).url;
         m_application->bookmarksManager()->removeBookmark(nowPlayingUrl, bookmark);

@@ -271,9 +271,9 @@ void MediaIndexer::processWriterOutput()
         }
 
         QString line = QUrl::fromPercentEncoding(buffer);
-        if (line.startsWith("BangarangProgress:")) {
+        if (line.startsWith(QLatin1String("BangarangProgress:"))) {
             m_percent = line.remove("BangarangProgress:").trimmed().toInt();
-        } else if (line.startsWith("BangarangSignal:sourceInfoUpdated:")) {
+        } else if (line.startsWith(QLatin1String("BangarangSignal:sourceInfoUpdated:"))) {
             QString url = line.remove("BangarangSignal:sourceInfoUpdated:").trimmed();
             int index = m_urlList.indexOf(url);
             if (index == -1) {
@@ -288,18 +288,18 @@ void MediaIndexer::processWriterOutput()
             m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
             m_status["progress"] = m_percent;
             emit updateStatus(m_status);
-        } else if (line.startsWith("BangrangSignal:urlInfoRemoved:")) {
+        } else if (line.startsWith(QLatin1String("BangrangSignal:urlInfoRemoved:"))) {
             QString resourceUri = line.remove("BangrangSignal:urlInfoRemoved:").trimmed();
             m_status["description"] = i18n("Removing info...");
             m_status["progress"] = m_percent;
             emit updateStatus(m_status);
             emit urlInfoRemoved(resourceUri);
-        } else if (line.startsWith("BangarangMessage:")) {
+        } else if (line.startsWith(QLatin1String("BangarangMessage:"))) {
             QString message = line.remove("BangarangMessage:").trimmed();
             m_status["description"] = message;
             m_status["progress"] = m_percent;
             emit updateStatus(m_status);
-        } else if (line.startsWith("BangarangDebug:")) {
+        } else if (line.startsWith(QLatin1String("BangarangDebug:"))) {
             kDebug() << line.remove("BangarangDebug:");
         }
     }

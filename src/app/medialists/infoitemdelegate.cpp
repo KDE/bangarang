@@ -528,7 +528,7 @@ bool InfoItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *model, co
         }
         return true;
     } else {
-        //Determine where mouse button was pressed and handle approriate
+        //Determine where mouse button was pressed and handle appropriately
         int listIndex = stringListIndexAtMousePos(option, index);
         QRect dataRect = fieldDataRect(option, index);
         QRect hoverRect = dataRect.adjusted(-m_padding, -m_padding, m_padding, m_padding);
@@ -910,7 +910,7 @@ int InfoItemDelegate::rowHeight(int row) const
 
     int height;
     if (field == "artwork") {
-        height = 128 + 10 + 2*m_padding ; //10 pixel to accomodate rotated artwork
+        height = 128 + 10 + 2*m_padding ; //10 pixel to accommodate rotated artwork
     } else if (field == "rating") {
         height = StarRating::SizeHint(m_starRatingSize).height() + 2 *m_padding;
     } else {

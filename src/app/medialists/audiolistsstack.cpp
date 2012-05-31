@@ -58,13 +58,13 @@ void AudioListsStack::on_configureAudioList_clicked()
     if (ui->audioLists->selectionModel()->selectedIndexes().count() > 0) {
         int selectedRow = ui->audioLists->selectionModel()->selectedIndexes().at(0).row();
         MediaItem selectedItem = m_application->mediaListsManager()->audioListsModel()->mediaItemAt(selectedRow);
-        if (selectedItem.url.startsWith("savedlists://") ||
-            selectedItem.url.startsWith("ampache://")) {
+        if (selectedItem.url.startsWith(QLatin1String("savedlists://")) ||
+            selectedItem.url.startsWith(QLatin1String("ampache://"))) {
             m_application->savedListsManager()->showAudioSavedListSettings();
-        } else if (selectedItem.url.startsWith("semantics://recent") ||
-            selectedItem.url.startsWith("semantics://frequent") ||
-            selectedItem.url.startsWith("semantics://highest") ||
-            selectedItem.url.startsWith("semantics://recentlyadded")) {
+        } else if (selectedItem.url.startsWith(QLatin1String("semantics://recent")) ||
+            selectedItem.url.startsWith(QLatin1String("semantics://frequent")) ||
+            selectedItem.url.startsWith(QLatin1String("semantics://highest")) ||
+            selectedItem.url.startsWith(QLatin1String("semantics://recentlyadded"))) {
             m_application->mainWindow()->mediaListSettings()->showMediaListSettings();
         }
     }

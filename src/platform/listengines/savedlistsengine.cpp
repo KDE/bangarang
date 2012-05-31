@@ -108,7 +108,7 @@ void SavedListsEngine::run()
                 int duration = 0;
 
                 //Read playlist entry to get title and url
-                if ((isM3U) && line.startsWith("#EXTINF:")) {
+                if ((isM3U) && line.startsWith(QLatin1String("#EXTINF:"))) {
                     line = line.remove("#EXTINF:");
                     QStringList durTitle = line.split(',');
 
@@ -120,7 +120,7 @@ void SavedListsEngine::run()
                         title = durTitle.at(1);
                     }
                     url = in.readLine().trimmed();
-                } else if ((isPLS) && line.startsWith("File")) {
+                } else if ((isPLS) && line.startsWith(QLatin1String("File"))) {
                     url = line.mid(line.indexOf("=") + 1).trimmed();
                     if (!in.atEnd()) {
                         line = in.readLine();
