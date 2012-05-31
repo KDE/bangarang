@@ -296,7 +296,7 @@ void InfoManager::toggleShowInfoFetcherExpander()
         ui->showInfoFetcherExpander->setToolTip(i18n("Click to hide"));
     } else {
         ui->showInfoFetcherExpander->setToolTip(i18n("Additional information may be available. <br> Click to show more..."));
-        ui->infoFetcherExpander->setCurrentIndex(0);  //switch to infofetcher selector page everytime it is hidden.
+        ui->infoFetcherExpander->setCurrentIndex(0);  //switch to infofetcher selector page every time it is hidden.
     }
 }
 
@@ -450,7 +450,7 @@ void InfoManager::showIndexer()
     if (m_nepomukInited) {
         bool isLocalFileList = false;
         MediaListProperties viewProperties = m_application->browsingModel()->mediaListProperties();
-        if (viewProperties.lri.startsWith("files://") && viewProperties.engineFilterList().count() >= 2) {
+        if (viewProperties.lri.startsWith(QLatin1String("files://")) && viewProperties.engineFilterList().count() >= 2) {
             KUrl viewUrl(viewProperties.engineFilterList().at(1));
             if (!viewUrl.isEmpty() && viewUrl.isLocalFile()) {
                 isLocalFileList = true;
@@ -465,7 +465,7 @@ void InfoManager::showIndexer()
                 MediaItem selectedItem = m_application->browsingModel()->mediaItemAt(row);
                 MediaListProperties selectedProperties;
                 selectedProperties.lri = selectedItem.url;
-                if (selectedProperties.lri.startsWith("files://") && selectedProperties.engineFilterList().count() >= 2) {
+                if (selectedProperties.lri.startsWith(QLatin1String("files://")) && selectedProperties.engineFilterList().count() >= 2) {
                     KUrl selectedUrl(selectedProperties.engineFilterList().at(1));
                     if (!selectedUrl.isEmpty() && selectedUrl.isLocalFile()) {
                         indexerVisible = true;

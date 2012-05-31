@@ -119,7 +119,7 @@ void VideoListEngine::run()
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Movie"), m_mediaListProperties.lri);
                 if (urls.indexOf(mediaItem.url) == -1) {
-                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                         relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                         mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                         mediaList.append(mediaItem);
@@ -179,7 +179,7 @@ void VideoListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"), m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     mediaList.append(mediaItem);
                 }
             }
@@ -462,7 +462,7 @@ void VideoListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"), m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     mediaList.append(mediaItem);
                 }
             }
@@ -745,7 +745,7 @@ void VideoListEngine::run()
                     }
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                     mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);
@@ -824,7 +824,7 @@ void VideoListEngine::run()
                     }
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, type, m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     relatedTos = Utilities::multiValueAppend(relatedTos, mediaItem.url, it.binding(mediaVocabulary.relatedToBinding()).uri().toString());
                     mediaItem.fields["relatedTo"] = relatedTos.value(mediaItem.url);
                     mediaList.append(mediaItem);

@@ -206,15 +206,15 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text) ||
         requestKey.isEmpty()) {
         kDebug() << QString("Couldn't open dbpedia query result file:%1").arg(from.path());
-        if (requestKey.startsWith("Artist")) {
+        if (requestKey.startsWith(QLatin1String("Artist"))) {
             emit gotArtistInfo(false, resultsBindingSets, requestKey);
-        } else if (requestKey.startsWith("Album")) {
+        } else if (requestKey.startsWith(QLatin1String("Album"))) {
             emit gotAlbumInfo(false, resultsBindingSets, requestKey);
-        } else if (requestKey.startsWith("Actor")) {
+        } else if (requestKey.startsWith(QLatin1String("Actor"))) {
             emit gotActorInfo(false, resultsBindingSets, requestKey);
-        } else if (requestKey.startsWith("Director")) {
+        } else if (requestKey.startsWith(QLatin1String("Director"))) {
             emit gotDirectorInfo(false, resultsBindingSets, requestKey);
-        } else if (requestKey.startsWith("Movie")) {
+        } else if (requestKey.startsWith(QLatin1String("Movie"))) {
             emit gotMovieInfo(false, resultsBindingSets, requestKey);
         }        
         return;
@@ -252,15 +252,15 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     m_requests.remove(requestKey);
     
     //Check type of request and emit appropriate results signal
-    if (requestKey.startsWith("Artist")) {
+    if (requestKey.startsWith(QLatin1String("Artist"))) {
         emit gotArtistInfo(true, resultsBindingSets, requestKey);
-    } else if (requestKey.startsWith("Album")) {
+    } else if (requestKey.startsWith(QLatin1String("Album"))) {
         emit gotAlbumInfo(true, resultsBindingSets, requestKey);
-    } else if (requestKey.startsWith("Actor")) {
+    } else if (requestKey.startsWith(QLatin1String("Actor"))) {
         emit gotActorInfo(true, resultsBindingSets, requestKey);
-    } else if (requestKey.startsWith("Director")) {
+    } else if (requestKey.startsWith(QLatin1String("Director"))) {
         emit gotDirectorInfo(true, resultsBindingSets, requestKey);
-    } else if (requestKey.startsWith("Movie")) {
+    } else if (requestKey.startsWith(QLatin1String("Movie"))) {
         emit gotMovieInfo(true, resultsBindingSets, requestKey);
     }
 

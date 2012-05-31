@@ -201,7 +201,7 @@ void SemanticsListEngine::run()
                         mediaItem.semanticComment = i18np("played once", "played %1 times", playCount);
                         mediaItem.fields["playCount"] = playCount;
                     }
-                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                         if ((ignoreZeros && mediaItem.fields["playCount"].toInt() > 0) ||
                             !ignoreZeros) {
                             if (groupByCategoryType == "AudioGenre") {
@@ -271,7 +271,7 @@ void SemanticsListEngine::run()
                         mediaItem.fields["lastPlayed"] = it.binding(QString("%1_max").arg(mediaVocabulary.lastPlayedBinding())).literal().toDateTime();
                     }
                     mediaItem.semanticComment = Utilities::wordsForTimeSince(mediaItem.fields["lastPlayed"].toDateTime());
-                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                         if (groupByCategoryType == "AudioGenre") {
                             addUniqueGenreGroup("lastPlayed", mediaItem, &mediaList, originalGenreLimit);
                         } else {
@@ -349,7 +349,7 @@ void SemanticsListEngine::run()
                         int rating = sum/count;
                         mediaItem.fields["rating"] = rating;
                     }
-                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                         if ((ignoreZeros && mediaItem.fields["rating"].toInt() > 0) ||
                             !ignoreZeros) {
                             if (groupByCategoryType == "AudioGenre") {
@@ -401,7 +401,7 @@ void SemanticsListEngine::run()
                     Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                     mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                     mediaItem.semanticComment = i18nc("for example, added 3 days ago", "added %1", Utilities::wordsForTimeSince(added));
-                    if (!mediaItem.url.startsWith("nepomuk:/")) {
+                    if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                         mediaList.append(mediaItem);
                     }
                 }

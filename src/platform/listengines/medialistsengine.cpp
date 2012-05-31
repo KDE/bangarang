@@ -223,7 +223,7 @@ void MediaListsEngine::run()
                             mediaItem.title = nameUrl.at(1).trimmed();
                             mediaItem.fields["title"] = mediaItem.title;
                             QString savedLri = nameUrl.at(2).trimmed();
-                            if (savedLri.startsWith("savedlists://")) {
+                            if (savedLri.startsWith(QLatin1String("savedlists://"))) {
                                 mediaItem.url = savedLri;
                                 mediaItem.artwork = KIcon("view-list-text");
                             } else {
@@ -236,7 +236,7 @@ void MediaListsEngine::run()
                                 mediaList << mediaItem;
                             } else {
                                 //Only show lists that aren't don't require nepomuk
-                                if (mediaItem.url.startsWith("savedlists://")) {
+                                if (mediaItem.url.startsWith(QLatin1String("savedlists://"))) {
                                     mediaList << mediaItem;
                                 }
                             }
@@ -413,7 +413,7 @@ void MediaListsEngine::run()
                             mediaItem.title = nameUrl.at(1).trimmed();
                             mediaItem.fields["title"] = mediaItem.title;
                             QString savedLri = nameUrl.at(2).trimmed();
-                            if (savedLri.startsWith("savedlists://")) {
+                            if (savedLri.startsWith(QLatin1String("savedlists://"))) {
                                 mediaItem.url = savedLri;
                                 mediaItem.artwork = KIcon("view-list-text");
                             } else {
@@ -426,7 +426,7 @@ void MediaListsEngine::run()
                                 mediaList << mediaItem;
                             } else {
                                 //Only show lists that aren't don't require nepomuk
-                                if (mediaItem.url.startsWith("savedlists://")) {
+                                if (mediaItem.url.startsWith(QLatin1String("savedlists://"))) {
                                     mediaList << mediaItem;
                                 }
                             }

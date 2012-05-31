@@ -85,7 +85,7 @@ void AudioStreamListEngine::run()
                     return;
                 }
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     mediaList.append(mediaItem);
                 }
             }
@@ -137,7 +137,7 @@ void AudioStreamListEngine::run()
             //Build media list from results
             while( it.next() ) {
                 MediaItem mediaItem = Utilities::mediaItemFromIterator(it, QString("Audio Stream"), m_mediaListProperties.lri);
-                if (!mediaItem.url.startsWith("nepomuk:/")) {
+                if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     mediaList.append(mediaItem);
                 }
             }

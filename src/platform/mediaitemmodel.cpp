@@ -799,7 +799,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     
     bool internalMove = false;
     QStringList rowsToMove;
-    if (data->text().startsWith("BangarangRow:")) {
+    if (data->text().startsWith(QLatin1String("BangarangRow:"))) {
         rowsToMove = data->text().split(',', QString::SkipEmptyParts);
         internalMove = true;
     }

@@ -154,7 +154,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         QString album   = TStringToQString(file.tag()->album()).trimmed();
         QString genre   = TStringToQString(file.tag()->genre()).trimmed();
         QByteArray encodingname = "utf-8";
-        if (KUrl(mediaItem.url).path().endsWith(".mp3")) {
+        if (KUrl(mediaItem.url).path().endsWith(QLatin1String(".mp3"))) {
             // detect encoding for mpeg id3v2
             QString tmp = title + artist + album + genre;
             KEncodingProber prober(KEncodingProber::Universal);

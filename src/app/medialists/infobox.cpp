@@ -97,13 +97,13 @@ void InfoBox::setMainWindow(MainWindow * mainWindow)
 void InfoBox::setInfo(const QString &title, const QString & lri)
 {
     m_title->setText(title);
-    if (lri.startsWith("semantics://frequent")) {
+    if (lri.startsWith(QLatin1String("semantics://frequent"))) {
         m_mediaView->setMode(MediaItemDelegate::MiniPlayCountMode);
-    } else if (lri.startsWith("semantics://recent")) {
+    } else if (lri.startsWith(QLatin1String("semantics://recent"))) {
         m_mediaView->setMode(MediaItemDelegate::MiniPlaybackTimeMode);
-    } else if (lri.startsWith("semantics://highest")) {
+    } else if (lri.startsWith(QLatin1String("semantics://highest"))) {
         m_mediaView->setMode(MediaItemDelegate::MiniRatingMode);
-    }else if (lri.startsWith("music://albums")) {
+    }else if (lri.startsWith(QLatin1String("music://albums"))) {
         m_mediaView->setMode(MediaItemDelegate::MiniAlbumMode);
     } else {
         m_mediaView->setMode(MediaItemDelegate::MiniMode);

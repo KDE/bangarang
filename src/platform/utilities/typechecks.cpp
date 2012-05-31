@@ -101,7 +101,7 @@ bool Utilities::isVideo(const QString &url)
         //It turns out that wma files may pass the "video/x-ms-asf" mimetype test.
         //Per Microsoft KB284094, the only way to distinguish between audio-only
         //and audio+video content is to look at the file extenstion.
-        if (result->is("video/x-ms-asf") && KUrl(url).fileName().endsWith(".wma")) {
+        if (result->is("video/x-ms-asf") && KUrl(url).fileName().endsWith(QLatin1String(".wma"))) {
             return false;
         }
         return isVideoMimeType(result);

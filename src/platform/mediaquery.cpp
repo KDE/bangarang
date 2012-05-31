@@ -293,7 +293,7 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
         addCondition(mediaVocabulary.hasTag(MediaQuery::Required,
                                             value,
                                             constraint));
-    } else if (field == "desription") {
+    } else if (field == "description") {
         addCondition(mediaVocabulary.hasDescription(MediaQuery::Required,
                                                         value,
                                                         constraint));

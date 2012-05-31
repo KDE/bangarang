@@ -72,7 +72,7 @@ void FileNameInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, 
             // If the url is empty or poinst to to nepomuk's location,
             // we can't get the filname that way.
             // So we use the title as a fall-back
-            if (fileName.isEmpty() || fileName.startsWith("nepomuk:/"))
+            if (fileName.isEmpty() || fileName.startsWith(QLatin1String("nepomuk:/")))
             {
                 fileName = item.fields["title"].toString();
             }
