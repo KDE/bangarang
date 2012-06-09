@@ -56,7 +56,7 @@ class MediaVocabulary {
         // Media types 
         QUrl typeAudio();
         QUrl typeAudioMusic();
-        QUrl typeAudioStream();
+        QUrl typeMediaStream();
         QUrl typeAudioFeed();
         QUrl typeVideo();
         QUrl typeVideoMovie();

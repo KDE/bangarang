@@ -158,7 +158,7 @@ QUrl MediaVocabulary::typeAudioMusic()
     return returnUrl;
 }
 
-QUrl MediaVocabulary::typeAudioStream()
+QUrl MediaVocabulary::typeMediaStream()
 {
     QUrl returnUrl = QUrl();
     if (m_audioVocabulary == MediaVocabulary::xesam) {
@@ -166,7 +166,7 @@ QUrl MediaVocabulary::typeAudioStream()
     } else if (m_audioVocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#MediaStream");
     } else if (m_audioVocabulary == MediaVocabulary::nmm) {
-        returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#DigitalRadio");
+        returnUrl = Nepomuk::Vocabulary::NFO::MediaStream();
     }
     
     return returnUrl;
@@ -652,7 +652,7 @@ QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
          statement = MediaQuery::addOptional(statement);
     }
     statement += MediaQuery::excludeType(resourceBinding, typeAudioMusic());
-    statement += MediaQuery::excludeType(resourceBinding, typeAudioStream());
+    statement += MediaQuery::excludeType(resourceBinding, typeMediaStream());
     statement += MediaQuery::excludeType(resourceBinding, typeAudioFeed());
     return statement;
     
@@ -672,7 +672,9 @@ QString MediaVocabulary::hasTypeAudioMusic(MediaQuery::Match match)
 QString MediaVocabulary::hasTypeAudioStream(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = MediaQuery::hasType(resourceBinding, typeAudioStream());
+    QString statement = QString("%1 %2 ")
+                        .arg(MediaQuery::hasType(resourceBinding, typeMediaStream()))
+                        .arg(MediaQuery::hasType(resourceBinding, typeAudio()));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
          statement = MediaQuery::addOptional(statement);
@@ -697,7 +699,9 @@ QString MediaVocabulary::hasTypeAnyAudio(MediaQuery::Match match)
     QString statement = QString("{%1} UNION  {%2} UNION {%3} ")
                         .arg(MediaQuery::hasType(resourceBinding, typeAudio()))
                         .arg(MediaQuery::hasType(resourceBinding, typeAudioMusic()))
-                        .arg(MediaQuery::hasType(resourceBinding, typeAudioStream()));
+                        .arg(QString("%1 %2 ")
+                             .arg(MediaQuery::hasType(resourceBinding, typeMediaStream()))
+                             .arg(MediaQuery::hasType(resourceBinding, typeAudio())));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);

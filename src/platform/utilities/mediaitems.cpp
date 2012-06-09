@@ -171,7 +171,6 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
         Nepomuk::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
             res.hasType(mediaVocabulary.typeAudioMusic()) ||
-            res.hasType(mediaVocabulary.typeAudioStream()) ||
             res.hasType(mediaVocabulary.typeVideo()) ||
             res.hasType(mediaVocabulary.typeVideoMovie()) ||
             res.hasType(mediaVocabulary.typeVideoTVShow())) ) {
@@ -331,7 +330,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     if (res.hasType(mediaVocabulary.typeAudioMusic())) {
         type = "Music";
     }
-    if (res.hasType(mediaVocabulary.typeAudioStream())) {
+    if (res.hasType(mediaVocabulary.typeMediaStream()) && res.hasType(mediaVocabulary.typeAudio())) {
         type = "Audio Stream";
     }
     //Check types beyond the current vocabulary to detect basic Video type indexed by Strigi
@@ -1056,7 +1055,6 @@ Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
         res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
             res.hasType(mediaVocabulary.typeAudioMusic()) ||
-            res.hasType(mediaVocabulary.typeAudioStream()) ||
             res.hasType(mediaVocabulary.typeVideo()) ||
             res.hasType(mediaVocabulary.typeVideoMovie()) ||
             res.hasType(mediaVocabulary.typeVideoTVShow())) ) {

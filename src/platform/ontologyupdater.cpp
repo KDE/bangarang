@@ -84,7 +84,7 @@ void OntologyUpdater::start()
                        "{?r rdf:type <%3>} }")
                        .arg(mediaVocabulary.typeAudio().toString())
                        .arg(mediaVocabulary.typeAudioMusic().toString())
-                       .arg(mediaVocabulary.typeAudioStream().toString());
+                       .arg(mediaVocabulary.typeMediaStream().toString());
     
     Soprano::QueryResultIterator it = m_mainModel->executeQuery(queryStr, Soprano::Query::QueryLanguageSparql);
     emit infoMessage(i18n("<b>Updating audio types and properties</b><br>0 items updated..."));
@@ -125,8 +125,8 @@ void OntologyUpdater::start()
         type = QUrl("http://www.semanticdesktop.org/ontologies/nmm#DigitalRadio");
         if (resource.hasType(type)) {
             removeType(resource, type);
-            if (!resource.hasType(mediaVocabulary.typeAudioStream())) {
-                resource.addType(mediaVocabulary.typeAudioStream());
+            if (!resource.hasType(mediaVocabulary.typeMediaStream())) {
+                resource.addType(mediaVocabulary.typeMediaStream());
             }
         }
         type = QUrl("http://www.semanticdesktop.org/ontologies/nmm#MusicAlbum");

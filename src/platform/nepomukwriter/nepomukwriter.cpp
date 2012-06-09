@@ -103,12 +103,15 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
             if (fields["audioType"] == "Music") {
                 audioType = mediaVocabulary.typeAudioMusic();
             } else if (fields["audioType"] == "Audio Stream") {
-                audioType = mediaVocabulary.typeAudioStream();
+                audioType = mediaVocabulary.typeMediaStream();
             } else if (fields["audioType"] == "Audio Clip") {
                 audioType = mediaVocabulary.typeAudio();
             }
             if (res.hasType(audioType)) {
                 removeType(res, audioType);
+                if (audioType == mediaVocabulary.typeMediaStream()) {
+                    removeType(res, mediaVocabulary.typeAudio());
+                }
             }
 
             // Update the properties
@@ -294,25 +297,28 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 if (!res.exists()) {
                     res = Nepomuk::Resource(url, audioType);
                 }
-                removeType(res, mediaVocabulary.typeAudioStream());
+                removeType(res, mediaVocabulary.typeMediaStream());
                 removeType(res, mediaVocabulary.typeAudio());
             } else if (fields["audioType"] == "Audio Stream") {
-                audioType = mediaVocabulary.typeAudioStream();
+                audioType = mediaVocabulary.typeMediaStream();
                 if (!res.exists()) {
                     res = Nepomuk::Resource(url, audioType);
+                    res.addType(mediaVocabulary.typeAudio());
                 }
                 removeType(res, mediaVocabulary.typeAudioMusic());
-                removeType(res, mediaVocabulary.typeAudio());
             } else if (fields["audioType"] == "Audio Clip") {
                 audioType = mediaVocabulary.typeAudio();
                 if (!res.exists()) {
                     res = Nepomuk::Resource(url, audioType);
                 }
                 removeType(res, mediaVocabulary.typeAudioMusic());
-                removeType(res, mediaVocabulary.typeAudioStream());
+                removeType(res, mediaVocabulary.typeMediaStream());
             }
             if (!res.hasType(audioType)) {
                 res.addType(audioType);
+                if (audioType == mediaVocabulary.typeMediaStream() && !res.hasType(mediaVocabulary.typeAudio())) {
+                    res.addType(mediaVocabulary.typeAudio());
+                }
             }
         } else if (type == "Video") {
             //Update the media type
