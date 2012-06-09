@@ -5,6 +5,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <Soprano/Vocabulary/RDF>
+#include <Nepomuk/Vocabulary/NFO>
 #include <QDBusInterface>
 
 NepomukWriter::NepomukWriter(QObject *parent) :
@@ -215,10 +216,14 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
             }
         } else if (type == "Category") {
             if (fields["categoryType"] == "Audio Feed") {
-                removeType(res, mediaVocabulary.typeAudioFeed());
+                removeType(res, mediaVocabulary.typeAudio());
+                removeType(res, Nepomuk::Vocabulary::NFO::MediaList());
+                removeType(res, Nepomuk::Vocabulary::NFO::RemoteDataObject());
                 //res.remove();
             } else if (fields["categoryType"] == "Video Feed") {
-                removeType(res, mediaVocabulary.typeVideoFeed());
+                removeType(res, mediaVocabulary.typeVideo());
+                removeType(res, Nepomuk::Vocabulary::NFO::MediaList());
+                removeType(res, Nepomuk::Vocabulary::NFO::RemoteDataObject());
                 //res.remove();
             }
             //Update the properties
@@ -352,20 +357,24 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         } else if (type == "Category") {
             if (fields["categoryType"] == "Audio Feed") {
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, mediaVocabulary.typeAudioFeed());
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeAudio());
                 } else {
-                    if (!res.hasType(mediaVocabulary.typeAudioFeed())) {
-                        res.addType(mediaVocabulary.typeAudioFeed());
+                    if (!res.hasType(mediaVocabulary.typeAudio())) {
+                        res.addType(mediaVocabulary.typeAudio());
                     }
                 }
+                res.addType(Nepomuk::Vocabulary::NFO::MediaList());
+                res.addType(Nepomuk::Vocabulary::NFO::RemoteDataObject());
             } else if (fields["categoryType"] == "Video Feed") {
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, mediaVocabulary.typeVideoFeed());
+                    res = Nepomuk::Resource(url, mediaVocabulary.typeVideo());
                 } else {
-                    if (!res.hasType(mediaVocabulary.typeVideoFeed())) {
-                        res.addType(mediaVocabulary.typeVideoFeed());
+                    if (!res.hasType(mediaVocabulary.typeVideo())) {
+                        res.addType(mediaVocabulary.typeVideo());
                     }
                 }
+                res.addType(Nepomuk::Vocabulary::NFO::MediaList());
+                res.addType(Nepomuk::Vocabulary::NFO::RemoteDataObject());
             }
         }
     }

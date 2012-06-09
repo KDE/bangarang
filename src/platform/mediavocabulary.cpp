@@ -172,12 +172,6 @@ QUrl MediaVocabulary::typeMediaStream()
     return returnUrl;
 }
 
-QUrl MediaVocabulary::typeAudioFeed()
-{
-    QUrl returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#AudioFeed");
-    return returnUrl;
-}
-
 QUrl MediaVocabulary::typeVideo()
 {
     QUrl returnUrl = QUrl();
@@ -209,12 +203,6 @@ QUrl MediaVocabulary::typeVideoTVShow()
         returnUrl = Nepomuk::Vocabulary::NMM::TVShow();
     }
     
-    return returnUrl;
-}
-
-QUrl MediaVocabulary::typeVideoFeed()
-{
-    QUrl returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2009/02/19/nmm#VideoFeed");
     return returnUrl;
 }
 
@@ -653,7 +641,7 @@ QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
     }
     statement += MediaQuery::excludeType(resourceBinding, typeAudioMusic());
     statement += MediaQuery::excludeType(resourceBinding, typeMediaStream());
-    statement += MediaQuery::excludeType(resourceBinding, typeAudioFeed());
+    statement += MediaQuery::excludeType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList());
     return statement;
     
 }
@@ -685,7 +673,10 @@ QString MediaVocabulary::hasTypeAudioStream(MediaQuery::Match match)
 QString MediaVocabulary::hasTypeAudioFeed(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = MediaQuery::hasType(resourceBinding, typeAudioFeed());
+    QString statement = QString("%1 %2 %3 ")
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::Audio()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::RemoteDataObject()));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -721,7 +712,7 @@ QString MediaVocabulary::hasTypeVideo(MediaQuery::Match match)
     }
     statement += MediaQuery::excludeType(resourceBinding, typeVideoMovie());
     statement += MediaQuery::excludeType(resourceBinding, typeVideoTVShow());
-    statement += MediaQuery::excludeType(resourceBinding, typeVideoFeed());
+    statement += MediaQuery::excludeType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList());
     return statement;
 }
 
@@ -750,7 +741,10 @@ QString MediaVocabulary::hasTypeVideoTVShow(MediaQuery::Match match)
 QString MediaVocabulary::hasTypeVideoFeed(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
-    QString statement = MediaQuery::hasType(resourceBinding, typeVideoFeed());
+    QString statement = QString("%1 %2 %3 ")
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::Video()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::RemoteDataObject()));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
