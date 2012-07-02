@@ -184,9 +184,9 @@ void DBPediaQuery::launchQuery(const QString &query, const QString &requestKey)
     KIO::CopyJob *copyJob = KIO::copy(dbPediaUrl, dbPediaDownloadUrl, KIO::Overwrite | KIO::HideProgressInfo);
     copyJob->setAutoDelete(true);
     connect (copyJob, 
-             SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+             SIGNAL(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)),
              this,
-             SLOT(resultsReturned(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+             SLOT(resultsReturned(KIO::Job*,KUrl,KUrl,time_t,bool,bool)));
     copyJob->setUiDelegate(0);
 }
 

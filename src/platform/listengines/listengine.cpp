@@ -33,9 +33,9 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
 {
     m_mediaItemModel = mediaItemModel;
     connect(this, 
-            SIGNAL(results(QString, QList<MediaItem>, MediaListProperties, bool, QString)),
+            SIGNAL(results(QString,QList<MediaItem>,MediaListProperties,bool,QString)),
             m_mediaItemModel,
-            SLOT(addResults(QString, QList<MediaItem>, MediaListProperties, bool, QString)));
+            SLOT(addResults(QString,QList<MediaItem>,MediaListProperties,bool,QString)));
     connect(this, 
             SIGNAL(updateMediaItems(QList<MediaItem>)),
             m_mediaItemModel,
@@ -45,13 +45,13 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
             m_mediaItemModel,
             SLOT(updateMediaItem(MediaItem)));
     connect(this, 
-            SIGNAL(updateArtwork(QImage, MediaItem)),
+            SIGNAL(updateArtwork(QImage,MediaItem)),
             m_mediaItemModel,
-            SLOT(updateArtwork(QImage, MediaItem)));
+            SLOT(updateArtwork(QImage,MediaItem)));
     connect(this, 
-            SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)),
+            SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage,MediaItem)),
             m_mediaItemModel,
-            SLOT(updateMediaListPropertiesCategoryArtwork(QImage, MediaItem)));
+            SLOT(updateMediaListPropertiesCategoryArtwork(QImage,MediaItem)));
     connect(this,
             SIGNAL(updateStatus(QHash<QString,QVariant>)),
             m_mediaItemModel,
@@ -97,16 +97,16 @@ const QString& ListEngine::subRequestSignature() const {
 
 void ListEngine::connectDownloader()
 {
-    connect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
-    connect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
+    connect(this, SIGNAL(download(KUrl,KUrl)), m_parent->downloader(), SLOT(download(KUrl,KUrl)));
+    connect(m_parent->downloader(), SIGNAL(downloadComplete(KUrl,KUrl)), this, SLOT(downloadComplete(KUrl,KUrl)));
     connect(this, SIGNAL(listDir(KUrl)), m_parent->downloader(), SLOT(listDir(KUrl)));
     connect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
 }
 
 void ListEngine::disconnectDownloader()
 {
-    disconnect(this, SIGNAL(download(const KUrl, const KUrl)), m_parent->downloader(), SLOT(download(const KUrl, const KUrl)));
-    disconnect(m_parent->downloader(), SIGNAL(downloadComplete(const KUrl, const KUrl)), this, SLOT(downloadComplete(const KUrl, const KUrl)));
+    disconnect(this, SIGNAL(download(KUrl,KUrl)), m_parent->downloader(), SLOT(download(KUrl,KUrl)));
+    disconnect(m_parent->downloader(), SIGNAL(downloadComplete(KUrl,KUrl)), this, SLOT(downloadComplete(KUrl,KUrl)));
     disconnect(this, SIGNAL(listDir(KUrl)), m_parent->downloader(), SLOT(listDir(KUrl)));
     disconnect(m_parent->downloader(), SIGNAL(listingComplete(KUrl)), this, SLOT(listingComplete(KUrl)));
 }

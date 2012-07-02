@@ -95,7 +95,7 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     connect(ui->infoItemCancelEdit, SIGNAL(clicked()), this, SLOT(cancelItemEdit()));
     connect(ui->infoItemSave, SIGNAL(clicked()), this, SLOT(saveItemInfo()));
     connect(ui->infoIndexSelected, SIGNAL(clicked()), this, SLOT(addSelectedItemsInfo()));
-    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(mediaSelectionChanged(QItemSelection,QItemSelection)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(loadSelectedInfo()));
     connect(m_application->browsingModel(), SIGNAL(mediaListPropertiesChanged()), this, SLOT(mediaListPropertiesChanged()));
 
@@ -422,7 +422,7 @@ void InfoManager::loadSelectedInfo()
                 }
                 QVBoxLayout * infoBoxHolderLayout = (QVBoxLayout *)ui->infoBoxHolder->layout();
                 infoBoxHolderLayout->addWidget(infoBox);
-                connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                connect(infoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(infoBoxSelectionChanged(QItemSelection,QItemSelection)));
             }
         }
 
@@ -435,7 +435,7 @@ void InfoManager::loadSelectedInfo()
             int lastItemIndex = ui->infoBoxHolder->layout()->count() - 1;
             if (lastItemIndex >= 0) {
                 InfoBox * unusedInfoBox = (InfoBox *)ui->infoBoxHolder->layout()->itemAt(lastItemIndex)->widget();
-                disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(infoBoxSelectionChanged(const QItemSelection, const QItemSelection)));
+                disconnect(unusedInfoBox->mediaView()->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(infoBoxSelectionChanged(QItemSelection,QItemSelection)));
                 ui->infoBoxHolder->layout()->removeWidget(unusedInfoBox);
                 delete unusedInfoBox;
             }

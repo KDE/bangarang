@@ -44,7 +44,7 @@
 
 InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
 {
-    connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
 
     m_defaultEditable = true;
     m_modified = false;
@@ -147,32 +147,32 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     TMDBInfoFetcher * tmdbInfoFetcher = new TMDBInfoFetcher(this);
     connect(tmdbInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(tmdbInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(tmdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(tmdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(tmdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(tmdbInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(tmdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(tmdbInfoFetcher);
 
     TVDBInfoFetcher * tvdbInfoFetcher = new TVDBInfoFetcher(this);
     connect(tvdbInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(tvdbInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(tvdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(tvdbInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(tvdbInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(tvdbInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(tvdbInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(tvdbInfoFetcher);
 
     LastfmInfoFetcher * lastfmInfoFetcher = new LastfmInfoFetcher(this);
     connect(lastfmInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(lastfmInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(lastfmInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(lastfmInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(lastfmInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(lastfmInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(lastfmInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(lastfmInfoFetcher);
 
     DoubanInfoFetcher * doubanInfoFetcher = new DoubanInfoFetcher(this);
     connect(doubanInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(doubanInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(doubanInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(doubanInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(doubanInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(doubanInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(doubanInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(doubanInfoFetcher);
 
@@ -189,16 +189,16 @@ InfoItemModel::InfoItemModel(QObject *parent) : QStandardItemModel(parent)
     FeedInfoFetcher * feedInfoFetcher = new FeedInfoFetcher(this);
     connect(feedInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(feedInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(feedInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(feedInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(feedInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(feedInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(feedInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(feedInfoFetcher);
 
     FileNameInfoFetcher * fileNameInfoFetcher = new FileNameInfoFetcher(this);
     connect(fileNameInfoFetcher, SIGNAL(infoFetched(QList<MediaItem>)), this, SLOT(infoFetched(QList<MediaItem>)));
     connect(fileNameInfoFetcher, SIGNAL(fetching()), this, SIGNAL(fetching()));
-    connect(fileNameInfoFetcher, SIGNAL(fetchComplete(InfoFetcher *)), this, SLOT(infoFetcherComplete(InfoFetcher *)));
-    connect(fileNameInfoFetcher, SIGNAL(noResults(InfoFetcher *)), this, SLOT(noResults(InfoFetcher *)));
+    connect(fileNameInfoFetcher, SIGNAL(fetchComplete(InfoFetcher*)), this, SLOT(infoFetcherComplete(InfoFetcher*)));
+    connect(fileNameInfoFetcher, SIGNAL(noResults(InfoFetcher*)), this, SLOT(noResults(InfoFetcher*)));
     connect(fileNameInfoFetcher, SIGNAL(updateFetchedInfo(int,MediaItem)), this, SLOT(updateFetchedInfo(int,MediaItem)));
     m_infoFetchers.append(fileNameInfoFetcher);
 
@@ -472,11 +472,11 @@ void InfoItemModel::setRating(int rating)
     for (int i = 0 ; i < rowCount(); i++) {
         QStandardItem *currentItem = item(i);
         if (currentItem->data(InfoItemModel::FieldRole).toString() == "rating") {
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             currentItem->setData(rating, Qt::DisplayRole);
             currentItem->setData(rating, Qt::EditRole);
             currentItem->setData(rating, InfoItemModel::OriginalValueRole);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             break;
         }
     }
@@ -871,7 +871,7 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
     if (changedItem->data(Qt::EditRole) != changedItem->data(InfoItemModel::OriginalValueRole)) {
         m_modified = true;
         if (field == "artwork") {
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             QString artworkUrl = changedItem->data(Qt::EditRole).toString();
             QString originalArtworkUrl = changedItem->data(InfoItemModel::OriginalValueRole).toString();
             for (int i = 0; i < m_mediaList.count(); i++) {
@@ -883,24 +883,24 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
                 Utilities::removeFromImageCache(mediaItem);
             }
             getArtwork(changedItem, artworkUrl);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
         } else if (field == "url") {
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             QString url = changedItem->data(Qt::EditRole).toString();
             changedItem->setData(url, Qt::ToolTipRole);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
         } else {
             //Update drill for changed item
             QVariant value = changedItem->data(Qt::EditRole);
-            disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             setDrill(changedItem, field, value);
-            connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+            connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
         }
 
         //Since the data has changed then make sure the multipleValues flag is set to false
-        disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
         changedItem->setData(false, InfoItemModel::MultipleValuesRole);
-        connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
     } else {
         m_modified = false;
         for (int row = 0; row < rowCount(); row++) {
@@ -921,9 +921,9 @@ void InfoItemModel::itemChanged(QStandardItem *changedItem)
         int originalType = changedItem->data(InfoItemModel::OriginalValueRole).toInt();
         int row = changedItem->row();
         loadFieldsInOrder();
-        disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
         setData(index(row, 0), originalType, InfoItemModel::OriginalValueRole);
-        connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+        connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
     }
 
     emit infoChanged(m_modified);
@@ -1056,9 +1056,9 @@ void InfoItemModel::gotArtworks(QList<QImage> artworks, MediaItem mediaItem)
                 }
             }
             if (!artworkPixmaps.isEmpty()) {
-                disconnect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+                disconnect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
                 fieldItem->setData(artworkPixmaps, InfoItemModel::ArtworkListRole);
-                connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
+                connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(itemChanged(QStandardItem*)));
             }
             break;
         }

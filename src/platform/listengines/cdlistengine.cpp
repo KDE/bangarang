@@ -41,7 +41,7 @@ CDListEngine::CDListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
     m_mediaObject = new Phonon::MediaObject(this);
     m_mediaObject->setCurrentSource(Phonon::Cd);
-    connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(stateChanged(Phonon::State, Phonon::State)));
+    connect(m_mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(stateChanged(Phonon::State,Phonon::State)));
     m_loadWhenReady = false;
     qRegisterMetaType<Phonon::MediaSource>("MediaSource");
 }

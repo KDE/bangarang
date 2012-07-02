@@ -89,10 +89,10 @@ void DeviceManager::run()
     }
     m_deviceMutex->unlock();
     //connect to signals to stay up-to-date with our list
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString & )),
-            this, SLOT(deviceAdded(const QString & )));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString & )),
-            this, SLOT(deviceRemoved(const QString & )));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
+            this, SLOT(deviceRemoved(QString)));
     //don't forget to run the event loop, or signals/slots won't work
     exec();
 }

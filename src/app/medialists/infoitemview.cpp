@@ -29,7 +29,7 @@ InfoItemView::InfoItemView(QWidget *parent) :
     m_infoItemDelegate->setView(this);
     setItemDelegate(m_infoItemDelegate);
     connect(this, SIGNAL(updateSizeHints(QModelIndex)), m_infoItemDelegate, SIGNAL(sizeHintChanged(QModelIndex)));
-    connect(m_infoItemModel, SIGNAL(dataChanged(const QModelIndex, const QModelIndex)), this, SLOT(infoDataChangedSlot(const QModelIndex, const QModelIndex)));
+    connect(m_infoItemModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(infoDataChangedSlot(QModelIndex,QModelIndex)));
     connect(m_infoItemModel, SIGNAL(infoChanged(bool)), this, SLOT(infoChanged(bool)));
 
 }

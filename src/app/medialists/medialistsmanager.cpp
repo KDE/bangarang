@@ -42,7 +42,7 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     m_audioListsModel->setMediaListProperties(audioListsProperties);
     QListView* audioLists = m_application->mainWindow()->audioListsStack()->ui->audioLists;
     audioLists->setModel(m_audioListsModel);
-    connect(audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(audioLists->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(audioListsSelectionChanged(QItemSelection,QItemSelection)));
     connect(m_audioListsModel, SIGNAL(mediaListChanged()), this, SLOT(audioListsChanged()));
     m_audioListsModel->load();
     QToolButton* audioListSelect = m_application->mainWindow()->ui->audioListSelect;
@@ -55,7 +55,7 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     m_videoListsModel->setMediaListProperties(videoListsProperties);
     QListView* videoLists = m_application->mainWindow()->videoListsStack()->ui->videoLists;
     videoLists->setModel(m_videoListsModel);
-    connect(videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(videoLists->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(videoListsSelectionChanged(QItemSelection,QItemSelection)));
     connect(m_videoListsModel, SIGNAL(mediaListChanged()), this, SLOT(videoListsChanged()));
     m_videoListsModel->load();
     QToolButton* videoListSelect = m_application->mainWindow()->ui->videoListSelect;
@@ -72,7 +72,7 @@ MediaListsManager::MediaListsManager(MainWindow* parent) : QObject(parent)
     connect(m_application->browsingModel(), SIGNAL(propertiesChanged()), this, SLOT(updateListHeader()));
     connect((MediaItemDelegate *)mediaView->itemDelegate(), SIGNAL(categoryActivated(QModelIndex)), this, SLOT(mediaListCategoryActivated(QModelIndex)));
     connect((MediaItemDelegate *)mediaView->itemDelegate(), SIGNAL(actionActivated(QModelIndex)), this, SLOT(mediaListActionActivated(QModelIndex)));
-    connect(mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(mediaSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(mediaView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(mediaSelectionChanged(QItemSelection,QItemSelection)));
     connect(ui->previous, SIGNAL(clicked()), this, SLOT(loadPreviousList()));
     connect(m_application->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(nowPlayingChanged()));
     connect(m_application->mainWindow(), SIGNAL(switchedMainWidget(MainWindow::MainWidget)), this, SLOT(defaultListLoad(MainWindow::MainWidget)));

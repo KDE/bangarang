@@ -113,7 +113,7 @@ MprisPlayerObject::MprisPlayerObject(BangarangApplication *app_)
     connect(m_app->playlist()->nowPlayingModel(), SIGNAL(mediaListChanged()), this, SLOT(slotTrackChange()));
     connect(m_app->playlist(), SIGNAL(shuffleModeChanged(bool)), this, SLOT(slotStatusChange()));
     connect(m_app->playlist(), SIGNAL(repeatModeChanged(bool)), this, SLOT(slotStatusChange()));
-    connect(m_app->playlist()->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(slotMediaStateChange(Phonon::State,Phonon::State)));
+    connect(m_app->playlist()->mediaObject(), SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(slotMediaStateChange(Phonon::State,Phonon::State)));
 }
 
 MprisPlayerObject::~MprisPlayerObject()

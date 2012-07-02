@@ -46,7 +46,7 @@ NowPlayingManager::NowPlayingManager(MainWindow* parent) :
 
     //Connect to media object signals and slots
     connect(m_application->mediaObject(), SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
-    connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+    connect(m_application->mediaObject(), SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State,Phonon::State)));
     connect(m_application->mainWindow()->videoWidget(), SIGNAL(skipForward(int)), this, SLOT(skipForward(int)));
     connect(m_application->mainWindow()->videoWidget(), SIGNAL(skipBackward(int)), this, SLOT(skipBackward(int)));
     connectPhononWidgets();
@@ -311,7 +311,7 @@ void NowPlayingManager::mediaStateChanged(Phonon::State newstate, Phonon::State 
         Phonon::MediaObject * mediaObject = m_application->newMediaObject();
         ui->seekSlider->setMediaObject(mediaObject);
         connect(mediaObject, SIGNAL(tick(qint64)), this, SLOT(updateSeekTime(qint64)));
-        connect(mediaObject, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State, Phonon::State)));
+        connect(mediaObject, SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(mediaStateChanged(Phonon::State,Phonon::State)));
 
         if (m_application->playlist()->rowOfNowPlaying() < (m_application->playlist()->playlistModel()->rowCount() - 1)) {
             m_application->playlist()->playNext();

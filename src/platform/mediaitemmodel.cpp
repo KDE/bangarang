@@ -36,7 +36,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_listEngineFactory = new ListEngineFactory(this);
     m_emitChangedAfterDrop = false;
     m_loadingState = false;
-    connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(synchRemoveRows(QModelIndex,int,int)));
     m_mediaListCache = new MediaListCache(parent);
     m_cacheThreshold = 5000; //default to 5 second loading threshold for adding to cache
     m_forceRefreshFromSource = false;
@@ -561,13 +561,13 @@ void MediaItemModel::removeMediaItemByResource(QString resourceUri)
 
 void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 {
-    disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    disconnect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(synchRemoveRows(QModelIndex,int,int)));
     m_listEngineFactory->stopAll();
     removeRows(0, rowCount());
     m_mediaList.clear();
     m_urlList.clear();
     m_resourceUriList.clear();
-    connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+    connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(synchRemoveRows(QModelIndex,int,int)));
     m_loadSources = false;
     m_mediaListForLoadSources.clear();
     if (emitMediaListChanged) {
@@ -578,12 +578,12 @@ void MediaItemModel::clearMediaListData(bool emitMediaListChanged)
 void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
 {
     if (row < rowCount()) {
-        disconnect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+        disconnect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(synchRemoveRows(QModelIndex,int,int)));
         removeRows(row, 1);
         m_urlList.removeAt(row);
         m_resourceUriList.removeAt(row);
         m_mediaList.removeAt(row);
-        connect(this, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(synchRemoveRows(const QModelIndex &, int, int)));
+        connect(this, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(synchRemoveRows(QModelIndex,int,int)));
         
     }
     if (emitMediaListChanged) {

@@ -45,7 +45,7 @@ MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
     connect(this, SIGNAL(startWriter(QStringList)), this, SLOT(startWriterSlot(QStringList)));
     connect(m_writer, SIGNAL(readyReadStandardOutput()), this, SLOT(processWriterOutput()));
     connect(m_writer, SIGNAL(started()), this, SIGNAL(started()));
-    connect(m_writer, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(finished(int, QProcess::ExitStatus)));
+    connect(m_writer, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(finished(int,QProcess::ExitStatus)));
     connect(m_writer, SIGNAL(error(QProcess::ProcessError)), this, SLOT(error(QProcess::ProcessError)));
 }
 

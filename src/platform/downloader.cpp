@@ -39,9 +39,9 @@ void Downloader::download(const KUrl &from, const KUrl &to)
     copyJob->setUiDelegate(0);
     copyJob->setAutoDelete(true);
     connect (copyJob, 
-             SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+             SIGNAL(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)),
              this,
-             SLOT(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+             SLOT(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)));
 }
 
 KDirLister * Downloader::dirLister()
@@ -62,9 +62,9 @@ void Downloader::copyingDone(KIO::Job *job, const KUrl &from, const KUrl &to, ti
     Q_UNUSED(directory);
     Q_UNUSED(renamed);
     disconnect (job,
-             SIGNAL(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)),
+             SIGNAL(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)),
              this,
-             SLOT(copyingDone(KIO::Job *, const KUrl, const KUrl, time_t, bool, bool)));
+             SLOT(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)));
     
     emit downloadComplete(from, to);
 }

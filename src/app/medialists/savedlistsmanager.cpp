@@ -86,9 +86,9 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_parent->audioListsStack()->ui->ampacheUserName, SIGNAL(textChanged(QString)), this, SLOT(enableValidSave(QString)));
     connect(m_parent->audioListsStack()->ui->ampachePassword, SIGNAL(textEdited(QString)), this, SLOT(ampachePasswordEdited(QString)));
 
-    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(selectionChanged(const QItemSelection, const QItemSelection)));
-    connect(m_parent->audioListsStack()->ui->audioLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(audioListsSelectionChanged(const QItemSelection, const QItemSelection)));
-    connect(m_parent->videoListsStack()->ui->videoLists->selectionModel(), SIGNAL(selectionChanged(const QItemSelection, const QItemSelection)), this, SLOT(videoListsSelectionChanged(const QItemSelection, const QItemSelection)));
+    connect(ui->mediaView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection,QItemSelection)));
+    connect(m_parent->audioListsStack()->ui->audioLists->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(audioListsSelectionChanged(QItemSelection,QItemSelection)));
+    connect(m_parent->videoListsStack()->ui->videoLists->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(videoListsSelectionChanged(QItemSelection,QItemSelection)));
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->infoManager(), SIGNAL(infoBoxSelectionChanged(QList<MediaItem>)), this, SLOT(infoBoxSelectionChanged(QList<MediaItem>)));
     

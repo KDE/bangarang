@@ -126,7 +126,7 @@ void AudioSettings::setAudioPath(Path *audioPath)
     
     ui->eqPresets->addItems(m_eqPresetNames);
     ui->eqPresets->setCurrentIndex(0);
-    connect(ui->eqPresets, SIGNAL(currentIndexChanged(const QString)), this, SLOT(loadPreset(const QString)));
+    connect(ui->eqPresets, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadPreset(QString)));
 }
 
 void AudioSettings::reconnectAudioPath(Path* audioPath)
@@ -189,9 +189,9 @@ void AudioSettings::updateManualEqPresets()
             preset << eq->value();
         }
         m_eqPresets.replace(manualIndex, preset);
-        disconnect(ui->eqPresets, SIGNAL(currentIndexChanged(const QString)), this, SLOT(loadPreset(const QString)));
+        disconnect(ui->eqPresets, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadPreset(QString)));
         ui->eqPresets->setCurrentIndex(manualIndex);
-        connect(ui->eqPresets, SIGNAL(currentIndexChanged(const QString)), this, SLOT(loadPreset(const QString)));
+        connect(ui->eqPresets, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadPreset(QString)));
     }
 }
 
