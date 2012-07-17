@@ -319,7 +319,7 @@ QUrl MediaVocabulary::playCount()
 
 QUrl MediaVocabulary::artwork()
 {
-    return QUrl(Nepomuk::Vocabulary::NIE::nieNamespace().toString() + "depiction");
+    return QUrl(Nepomuk::Vocabulary::NFO::nfoNamespace().toString() + "depiction");
 }
 
 QUrl MediaVocabulary::created()
