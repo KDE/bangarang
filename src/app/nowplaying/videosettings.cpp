@@ -367,7 +367,7 @@ QStringList VideoSettings::findSubtitleFiles(const KUrl &url)
 
 void VideoSettings::readExternalSubtitles(const KUrl &subtitleUrl)
 {
-    QString encodingName = QString();
+    QString encodingName;
     bool emitted = false;
     kDebug() << "Checking external subtitles...";
 

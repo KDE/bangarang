@@ -68,7 +68,7 @@ QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
             }
         }
         MediaListProperties mergedProperties(mergedLRI);
-        mergedFilter = QString();
+        mergedFilter.clear();
         for (int i = 0; i < sourceFilterList.count(); i++) {
             QString sourceFilter = sourceFilterList.at(i);
             QString field = sourceProperties.filterField(sourceFilter);

@@ -336,7 +336,7 @@ void InfoManager::loadSelectedInfo()
         for (int i = 0 ; i < selectedRows.count() ; ++i) {
             int row = proxy->mapToSource(selectedRows.at(i)).row();
             MediaItem mediaItem = m_application->browsingModel()->mediaItemAt(row);
-            mediaItem.subTitle = QString();
+            mediaItem.subTitle.clear();
             mediaItem.fields["isTemplate"] = false;
             m_context.append(mediaItem);
         }

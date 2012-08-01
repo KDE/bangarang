@@ -159,6 +159,6 @@ void TagListEngine::run()
         emit updateMediaItems(mediaItems);
     }
     
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }

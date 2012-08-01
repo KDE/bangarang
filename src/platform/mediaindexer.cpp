@@ -307,7 +307,7 @@ void MediaIndexer::processWriterOutput()
 
 void MediaIndexer::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    m_status["description"] = QString();
+    m_status["description"].clear();
     m_status["progress"] = -1;
     emit updateStatus(m_status);
     emit finished();

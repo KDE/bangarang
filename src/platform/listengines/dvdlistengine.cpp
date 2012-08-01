@@ -96,8 +96,8 @@ void DVDListEngine::stateChanged(Phonon::State newState, Phonon::State oldState)
 
         m_mediaListProperties.summary = i18np("1 title", "%1 titles", mediaList.count());
         emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-        m_requestSignature = QString();
-        m_subRequestSignature = QString();
+        m_requestSignature.clear();
+        m_subRequestSignature.clear();
         m_loadWhenReady = false;
     }
     Q_UNUSED(newState);

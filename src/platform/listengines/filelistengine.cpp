@@ -115,8 +115,8 @@ void FileListEngine::run()
             }
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-            m_requestSignature = QString();
-            m_subRequestSignature = QString();
+            m_requestSignature.clear();
+            m_subRequestSignature.clear();
         } else {
             //Get folder listing
             connectDownloader();
@@ -140,8 +140,8 @@ void FileListEngine::run()
 
             m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
             emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-            m_requestSignature = QString();
-            m_subRequestSignature = QString();
+            m_requestSignature.clear();
+            m_subRequestSignature.clear();
 
             //Get more detailed info for each mediaitem and update;
             for (int i = 0; i < mediaList.count(); i++) {
@@ -235,8 +235,8 @@ void FileListEngine::listingComplete(const KUrl &url)
     }
     m_mediaListProperties.summary = i18np("1 item", "%1 items", mediaList.count());
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
     disconnectDownloader();
 
     //Get more detailed info for each mediaitem and update;

@@ -568,7 +568,7 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
                 if (!testUrl.isEmpty() && testUrl.isLocalFile()) {
                     artworkUrl = testUrl.path();
                     if (!QFile::exists(artworkUrl)) {
-                        artworkUrl = QString();
+                        artworkUrl.clear();
                     }
                 }
             }

@@ -857,8 +857,8 @@ void VideoListEngine::run()
         }
     }
     
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }
 
 void VideoListEngine::setFilterForSources(const QString& engineFilter)

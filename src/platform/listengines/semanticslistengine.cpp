@@ -431,8 +431,8 @@ void SemanticsListEngine::run()
         
     }
     
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }
 
 void SemanticsListEngine::addUniqueGenreGroup(QString field, MediaItem mediaItem, QList<MediaItem>* mediaList, int limit)

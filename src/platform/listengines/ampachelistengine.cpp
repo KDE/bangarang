@@ -39,7 +39,7 @@
 AmpacheListEngine::AmpacheListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {
     m_fetchingThumbnails = false;
-    m_token = QString();
+    m_token.clear();
 }
 
 AmpacheListEngine::~AmpacheListEngine()

@@ -24,7 +24,7 @@
 
 InfoFetcher::InfoFetcher(QObject * parent) : QObject(parent)
 {
-    m_name = QString();
+    m_name.clear();
     m_icon = KIcon("run-build");
     m_url = KUrl();
     m_isFetching = false;

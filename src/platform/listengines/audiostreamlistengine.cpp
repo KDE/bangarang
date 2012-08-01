@@ -94,7 +94,7 @@ void AudioStreamListEngine::run()
             
             MediaItem mediaItem;
             mediaItem.type = "Audio";
-            mediaItem.url = QString();
+            mediaItem.url.clear();
             mediaItem.title = i18n("New Audio Stream");
             mediaItem.subTitle = i18n("Edit info to create new audio stream");
             mediaItem.artwork = KIcon("text-html");
@@ -149,8 +149,8 @@ void AudioStreamListEngine::run()
     
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
     
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }
 
 void AudioStreamListEngine::setFilterForSources(const QString& engineFilter)

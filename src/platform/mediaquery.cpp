@@ -258,7 +258,7 @@ void MediaQuery::addLRIFilterCondition(const QString &lriFilter, MediaVocabulary
         
         //Set the field to ensure SPARQL triple match is also added to the query condition
         field = value;
-        value = QString();
+        value.clear();
     }
     
     

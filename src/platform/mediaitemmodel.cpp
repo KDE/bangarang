@@ -31,8 +31,8 @@
 MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent) 
 {
     m_parent = parent;
-    m_mediaListProperties.lri = QString();
-    m_filter = QString();
+    m_mediaListProperties.lri.clear();
+    m_filter.clear();
     m_listEngineFactory = new ListEngineFactory(this);
     m_emitChangedAfterDrop = false;
     m_loadingState = false;

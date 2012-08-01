@@ -1150,7 +1150,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                         mediaItem.duration = Utilities::durationString(duration);
                         mediaItem.fields["duration"] = duration;
                     } else if (duration == -1) {
-                        mediaItem.duration = QString();
+                        mediaItem.duration.clear();
                         mediaItem.fields["audioType"] = "Audio Stream";
                     }
                     mediaList << mediaItem;
@@ -1183,7 +1183,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                     mediaItem.duration = Utilities::durationString(duration);
                     mediaItem.fields["duration"] = duration;
                 } else if (duration == -1) {
-                    mediaItem.duration = QString();
+                    mediaItem.duration.clear();
                     mediaItem.fields["audioType"] = "Audio Stream";
                 }
                 mediaList << mediaItem;

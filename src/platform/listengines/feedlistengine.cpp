@@ -111,7 +111,7 @@ void FeedListEngine::run()
             mediaItem.title = i18n("New audio feed");
             mediaItem.subTitle = i18n("Edit info to create new audio feed");
             mediaItem.fields["title"] = "Untitled";
-            mediaItem.fields["url"] = QString();
+            mediaItem.fields["url"].clear();
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Audio Feed");
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
@@ -173,7 +173,7 @@ void FeedListEngine::run()
             mediaItem.title = i18n("New video feed");
             mediaItem.subTitle = i18n("Edit info to create new video feed");
             mediaItem.fields["title"] = i18n("Untitled");
-            mediaItem.fields["url"] = QString();
+            mediaItem.fields["url"].clear();
             mediaItem.type = QString("Category");
             mediaItem.fields["categoryType"] = QString("Video Feed");
             mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;

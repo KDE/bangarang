@@ -151,8 +151,8 @@ void AudioClipsListEngine::run()
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     }
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }
 
 void AudioClipsListEngine::setFilterForSources(const QString& engineFilter)

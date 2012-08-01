@@ -490,7 +490,7 @@ void LastfmInfoFetcher::processMoreInfo(const KUrl &from, const KUrl to)
         if (artists.count() == 0) {
             return;
         }
-        match.fields["description"] = QString();
+        match.fields["description"].clear();
         QDomNodeList nodes = artists.at(0).childNodes();
         for (int j = 0; j < nodes.count(); j++) {
             if (!nodes.at(j).isElement()) {

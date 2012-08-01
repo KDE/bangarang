@@ -438,8 +438,8 @@ void MediaListsEngine::run()
     }
         
     emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
     m_loadWhenReady = false;
     //exec();    
 }

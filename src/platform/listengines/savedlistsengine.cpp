@@ -57,8 +57,8 @@ void SavedListsEngine::run()
         mediaListProperties.lri = m_mediaListProperties.engineFilter();
         kDebug() << mediaListProperties.lri;
         emit loadOtherEngine(mediaListProperties, m_requestSignature, m_subRequestSignature);
-        m_requestSignature = QString();
-        m_subRequestSignature = QString();
+        m_requestSignature.clear();
+        m_subRequestSignature.clear();
         return;
     }
 
@@ -157,7 +157,7 @@ void SavedListsEngine::run()
                         mediaItem.duration = Utilities::durationString(duration);
                         mediaItem.fields["duration"] = duration;
                     } else if (duration == -1) {
-                        mediaItem.duration = QString();
+                        mediaItem.duration.clear();
                         mediaItem.fields["audioType"] = "Audio Stream";
                     }
                     mediaList << mediaItem;
@@ -185,6 +185,6 @@ void SavedListsEngine::run()
         emit updateMediaItems(mediaItems);
     }
 
-    m_requestSignature = QString();
-    m_subRequestSignature = QString();
+    m_requestSignature.clear();
+    m_subRequestSignature.clear();
 }

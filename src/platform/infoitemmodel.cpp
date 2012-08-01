@@ -549,7 +549,7 @@ void InfoItemModel::infoFetcherComplete(InfoFetcher *infoFetcher)
         m_isFetching = false;
         m_fetchingStatus["description"] = i18n("Complete");
         emit fetchingStatusUpdated();
-        m_fetchingStatus["description"] = QString();
+        m_fetchingStatus["description"].clear();
         emit fetchingStatusUpdated();
         emit fetchComplete();
         if (m_fetchType == AutoFetch) {
@@ -562,7 +562,7 @@ void InfoItemModel::noResults(InfoFetcher *infoFetcher)
 {
     m_fetchingStatus["description"] = i18n("No Results");
     emit fetchingStatusUpdated();
-    m_fetchingStatus["description"] = QString();
+    m_fetchingStatus["description"].clear();
     emit fetchingStatusUpdated();
     Q_UNUSED(infoFetcher)
 }
@@ -1190,7 +1190,7 @@ void InfoItemModel::cancelFetching()
         m_isFetching = false;
         m_fetchingStatus["description"] = i18n("Fetch Canceled");
         emit fetchingStatusUpdated();
-        m_fetchingStatus["description"] = QString();
+        m_fetchingStatus["description"].clear();
         emit fetchingStatusUpdated();
         emit fetchComplete();
     }
