@@ -36,12 +36,11 @@
 #include "../nowplaying/nowplayingmanager.h"
 
 #include <KStandardDirs>
-#include <KMessageBox>
 #include <KHelpMenu>
 #include <KMessageBox>
 #include <KDebug>
 #include <KNotifyConfigWidget>
-#include <QFile>
+#include <QtCore/QFile>
 
 
 ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)

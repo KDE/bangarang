@@ -22,7 +22,6 @@
 #include "infofetcher.h"
 #include <KUrl>
 #include <Soprano/BindingSet>
-#include <QtCore>
 
 class DBPediaQuery;
 class Downloader;

@@ -19,8 +19,8 @@
 #ifndef UTILITIES_ARTWORK_CPP
 #define UTILITIES_ARTWORK_CPP
 
-#include "general.h"
 #include "artwork.h"
+#include "general.h"
 #include "typechecks.h"
 #include "filetags.h"
 #include "mediaitems.h"
@@ -36,12 +36,11 @@
 #include <Soprano/QueryResultIterator>
 #include <Nepomuk/ResourceManager>
 
-#include <QtCore>
-#include <QLinearGradient>
-#include <QPainter>
-#include <QImage>
-#include <QPixmap>
-#include <QMutexLocker>
+#include <QtGui/QLinearGradient>
+#include <QtGui/QPainter>
+#include <QtGui/QImage>
+#include <QtGui/QPixmap>
+#include <QtCore/QMutexLocker>
 
 
 QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)

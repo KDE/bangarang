@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../mediaitemmodel.h"
 #include "savedlistsengine.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "../utilities/utilities.h"
 #include "../mediavocabulary.h"

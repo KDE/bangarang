@@ -20,7 +20,6 @@
 #define ONTOLOGYUPDATER_H
 
 #include <Nepomuk/Resource>
-#include <QtCore>
 
 /* This class is used to update ontology of the types and properties used to 
  * store media data in nepomuk.  Bangarang may be released using draft ontologies

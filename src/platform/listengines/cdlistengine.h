@@ -20,8 +20,7 @@
 #define CDLISTENGINE_H
 
 #include "listengine.h"
-#include <QtCore>
-#include <QDir>
+#include <QtCore/QDir>
 #include <KUrl>
 #include <Soprano/Model>
 #include <phonon/mediaobject.h>

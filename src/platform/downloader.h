@@ -21,7 +21,6 @@
 
 #include <KIO/CopyJob>
 #include <KDirLister>
-#include <QtCore>
 
 /*
  * This class provides a simple downloader accessible via signals/slots.

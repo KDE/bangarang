@@ -20,8 +20,7 @@
 #define MEDIALISTSENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QtCore>
-#include <QDir>
+#include <QtCore/QDir>
 #include <KUrl>
 
 class MediaItem;

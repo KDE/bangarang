@@ -20,7 +20,6 @@
 #define TAGLISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QtCore>
 #include <Soprano/QueryResultIterator>
 
 class MediaItem;

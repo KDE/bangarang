@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../mediaitemmodel.h"
 #include "cachelistengine.h"
+#include "../mediaitemmodel.h"
 #include "../utilities/utilities.h"
 #include "listenginefactory.h"
 #include "../medialistcache.h"

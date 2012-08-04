@@ -22,6 +22,7 @@
 #include "infofetcher.h"
 
 #include <KUrl>
+#include <QtCore/QDate>
 
 class Downloader;
 

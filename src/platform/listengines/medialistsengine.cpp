@@ -16,22 +16,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "medialistsengine.h"
 #include "../devicemanager.h"
 #include "../mediaitemmodel.h"
-#include "medialistsengine.h"
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
 #include "../utilities/utilities.h"
 #include "../mediavocabulary.h"
 
-#include <QApplication>
+#include <QtGui/QApplication>
+#include <QtCore/QFile>
 #include <KIcon>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KLocale>
 #include <KMimeType>
 #include <KStandardDirs>
-#include <QFile>
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>

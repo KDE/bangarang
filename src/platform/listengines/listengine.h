@@ -21,8 +21,7 @@
 
 #include "../mediaitemmodel.h"
 #include "listenginefactory.h"
-#include <QtCore>
-#include <QImage>
+#include <QtGui/QImage>
 
 /**
 * This is the base ListEngine class.

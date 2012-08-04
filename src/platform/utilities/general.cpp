@@ -42,7 +42,6 @@
 #include <phonon/backendcapabilities.h>
 #include <phonon/MediaObject>
 
-#include <QtCore>
 
 QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
 {

@@ -23,7 +23,6 @@
 #include <KAboutData>
 #include <phonon/mediaobject.h>
 #include <phonon/audiooutput.h>
-#include <QtCore>
 
 class VideoSettings;
 class MediaListProperties;

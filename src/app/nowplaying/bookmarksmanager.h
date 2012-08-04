@@ -19,8 +19,8 @@
 #ifndef BOOKMARKSMANAGER_H
 #define BOOKMARKSMANAGER_H
 
-#include <QtCore>
-#include <QMenu>
+#include <QtGui/QMenu>
+#include <QtCore/QFile>
 
 namespace Ui
 {

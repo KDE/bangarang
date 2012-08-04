@@ -22,8 +22,7 @@
 #include <KUrl>
 #include <phonon/Global>
 #include <solid/opticaldisc.h>
-#include <QtCore>
-#include <QMutex>
+#include <QtCore/QMutex>
 
 namespace Phonon {
 class MediaObject;

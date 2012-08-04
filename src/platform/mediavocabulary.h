@@ -19,7 +19,7 @@
 #ifndef MEDIAVOCABULARY_H
 #define MEDIAVOCABULARY_H
 
-#include <QtCore>
+#include <QtCore/QDate>
 #include "mediaquery.h"
 
 class MediaVocabulary {

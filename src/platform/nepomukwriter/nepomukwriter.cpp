@@ -1,6 +1,6 @@
+#include "nepomukwriter.h"
 #include "../mediavocabulary.h"
 #include "../mediaquery.h"
-#include "nepomukwriter.h"
 #include <KDebug>
 #include <KUrl>
 #include <KLocale>

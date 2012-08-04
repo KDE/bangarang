@@ -8,8 +8,7 @@
 #include <Nepomuk/Tag>
 #include <KApplication>
 #include <KUrl>
-#include <QtCore>
-#include <QFile>
+#include <QtCore/QFile>
 
 class NepomukWriter : public QObject
 {

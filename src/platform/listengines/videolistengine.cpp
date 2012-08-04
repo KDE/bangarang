@@ -16,8 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../mediaitemmodel.h"
 #include "videolistengine.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "../mediavocabulary.h"
 #include "../utilities/utilities.h"
@@ -27,7 +27,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <KDebug>
-#include <QTime>
+#include <QtCore/QTime>
 #include <nepomuk/variant.h>
 
 

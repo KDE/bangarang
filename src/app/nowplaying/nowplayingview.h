@@ -19,9 +19,8 @@
 #ifndef NOWPLAYINGVIEW_H
 #define NOWPLAYINGVIEW_H
 
-#include <QtCore>
-#include <QTreeView>
-#include <QAction>
+#include <QtGui/QTreeView>
+#include <QtGui/QAction>
 #include "../../platform/mediaitemmodel.h"
 
 class MainWindow;

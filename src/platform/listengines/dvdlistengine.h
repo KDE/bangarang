@@ -20,8 +20,7 @@
 #define DVDLISTENGINE_H
 
 #include "listengine.h"
-#include <QtCore>
-#include <QDir>
+#include <QtCore/QDir>
 #include <KUrl>
 #include <phonon/mediaobject.h>
 #include <phonon/mediacontroller.h>

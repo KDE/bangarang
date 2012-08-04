@@ -1,3 +1,4 @@
+#include "audiolistsstack.h"
 #include "../common/bangarangapplication.h"
 #include "../common/mainwindow.h"
 #include "../common/flickcharm.h"
@@ -5,7 +6,7 @@
 #include "savedlistsmanager.h"
 #include "medialistsettings.h"
 #include "../../platform/mediaitemmodel.h"
-#include "audiolistsstack.h"
+
 
 AudioListsStack::AudioListsStack(QWidget *parent) :
     QWidget(parent),

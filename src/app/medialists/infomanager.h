@@ -20,10 +20,10 @@
 #define INFOMANAGER_H
 
 #include "../../platform/mediaitemmodel.h"
-#include <QtCore>
-#include <QStandardItemModel>
-#include <QItemDelegate>
-#include <QAbstractItemView>
+
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QItemDelegate>
+#include <QtGui/QAbstractItemView>
 
 
 namespace Ui

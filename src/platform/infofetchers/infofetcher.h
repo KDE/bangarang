@@ -20,8 +20,8 @@
 #define INFOFETCHER_H
 
 #include <KUrl>
-#include <QtCore>
-#include <QIcon>
+#include <QtGui/QIcon>
+#include <QtCore/QTimer>
 #include "../mediaitemmodel.h"
 
 /*

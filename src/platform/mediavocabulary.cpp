@@ -28,7 +28,6 @@
 #include <Nepomuk/Vocabulary/NFO>
 #include <Nepomuk/Vocabulary/NIE>
 #include <Nepomuk/Vocabulary/NCO>
-#include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NUAO>
 
 MediaVocabulary::MediaVocabulary()

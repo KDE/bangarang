@@ -20,8 +20,7 @@
 #define AMPACHELISTENGINE_H
 
 #include "nepomuklistengine.h"
-#include <QtCore>
-#include <QDir>
+#include <QtCore/QDir>
 #include <KUrl>
 #include <kjob.h>
 #include <kio/copyjob.h>

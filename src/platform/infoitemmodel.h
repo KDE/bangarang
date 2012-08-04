@@ -20,8 +20,7 @@
 #define INFOITEMMODEL_H
 
 #include <KIcon>
-#include <QtCore>
-#include <QStandardItemModel>
+#include <QtGui/QStandardItemModel>
 
 #include "mediaitemmodel.h"
 class InfoFetcher;

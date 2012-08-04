@@ -22,7 +22,7 @@
 #include <KUrl>
 #include <kio/copyjob.h>
 #include <Soprano/BindingSet>
-#include <QtCore>
+#include <QtCore/QDate>
 
 class DBPediaQuery : public QObject 
 {

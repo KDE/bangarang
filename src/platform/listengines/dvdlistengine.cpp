@@ -16,14 +16,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../mediaitemmodel.h"
 #include "dvdlistengine.h"
+#include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
 #include "../utilities/utilities.h"
 #include "../mediavocabulary.h"
 
-#include <QApplication>
+#include <QtGui/QApplication>
 #include <KIcon>
 #include <KFileDialog>
 #include <KMimeType>

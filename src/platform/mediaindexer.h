@@ -19,7 +19,7 @@
 #ifndef MEDIAINDEXER_H
 #define MEDIAINDEXER_H
 
-#include <QtCore>
+#include <QtCore/QTextStream>
 #include <KProcess>
 
 #include "mediaitemmodel.h"

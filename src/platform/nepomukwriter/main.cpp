@@ -23,10 +23,9 @@
 #include <KLocalizedString>
 #include <KAboutData>
 #include <KDebug>
-#include <QtCore>
-#include <QFile>
-#include <QString>
-#include <QUrl>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
 
 static KAboutData aboutData( "bangarangnepomukwriter", "bangarang",
                              KLocalizedString(), "2.0",

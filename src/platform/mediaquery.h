@@ -19,7 +19,7 @@
 #ifndef MEDIAQUERY_H
 #define MEDIAQUERY_H
 
-#include <QtCore>
+#include <QtCore/QDate>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
 

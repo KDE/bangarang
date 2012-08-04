@@ -19,9 +19,8 @@
 #define UTILITIES_THREAD_H
 
 #include "../mediaitemmodel.h"
-#include <QThread>
-#include <QtCore>
-#include <QImage>
+#include <QtCore/QThread>
+#include <QtGui/QImage>
 
 namespace Utilities {
     class Thread : public QThread

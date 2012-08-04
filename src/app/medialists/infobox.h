@@ -19,10 +19,9 @@
 #ifndef INFOBOX_H
 #define INFOBOX_H
 
-#include <QtCore>
 #include <QWidget>
-#include <QLabel>
-#include <QModelIndex>
+#include <QtGui/QLabel>
+#include <QtCore/QModelIndex>
 
 class MainWindow;
 class MediaView;

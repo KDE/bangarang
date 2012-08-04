@@ -19,10 +19,10 @@
 #ifndef MEDIAVIEW_H
 #define MEDIAVIEW_H
 
-#include <QtCore>
-#include <QTreeView>
-#include <QAction>
-#include <QScrollBar>
+#include <QtCore/QTextCodec>
+#include <QtGui/QTreeView>
+#include <QtGui/QAction>
+#include <QtGui/QScrollBar>
 #include "mediaitemdelegate.h"
 #include "loadinganimation.h"
 

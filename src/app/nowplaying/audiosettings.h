@@ -19,10 +19,9 @@
 #ifndef AUDIOSETTINGS_H
 #define AUDIOSETTINGS_H
 
+#include <QtGui/QTreeView>
+#include <QtGui/QAction>
 #include <KConfigGroup>
-#include <QtCore>
-#include <QTreeView>
-#include <QAction>
 #include <phonon/path.h>
 #include <phonon/effect.h>
 #include <phonon/effectparameter.h>

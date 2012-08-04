@@ -22,8 +22,10 @@
 #include <KUrl>
 #include <KIcon>
 #include <KMimeType>
-#include <QPixmap>
-#include <QImage>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
 
 class MediaItem;
 

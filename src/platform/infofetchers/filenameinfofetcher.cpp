@@ -23,7 +23,6 @@
 #include <KIcon>
 #include <KLocale>
 
-#include <QtCore>
 
 FileNameInfoFetcher::FileNameInfoFetcher(QObject *parent) :
         InfoFetcher(parent)

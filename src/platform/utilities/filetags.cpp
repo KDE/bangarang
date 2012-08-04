@@ -19,8 +19,8 @@
 #ifndef UTILITIES_FILETAGS_CPP
 #define UTILITIES_FILETAGS_CPP
 
-#include "general.h"
 #include "filetags.h"
+#include "general.h"
 #include "typechecks.h"
 #include "mediaitems.h"
 

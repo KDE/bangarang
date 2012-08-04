@@ -1,3 +1,4 @@
+#include "videolistsstack.h"
 #include "../common/bangarangapplication.h"
 #include "../common/mainwindow.h"
 #include "../common/flickcharm.h"
@@ -5,7 +6,6 @@
 #include "savedlistsmanager.h"
 #include "medialistsettings.h"
 #include "../../platform/mediaitemmodel.h"
-#include "videolistsstack.h"
 
 VideoListsStack::VideoListsStack(QWidget *parent) :
     QWidget(parent),
