@@ -315,7 +315,7 @@ void MainWindow::on_showPlaylist_2_clicked()
 void MainWindow::on_fullScreen_toggled(bool fullScreen)
 {
     if (fullScreen) {
-        showFullScreen();
+        setWindowState(windowState() | Qt::WindowFullScreen);
         ui->widgetSet->setPalette(ui->contextStackHolder->palette());
         ui->widgetSet->setAutoFillBackground(true);
         ui->fullScreen->setIcon(KIcon("view-restore"));
@@ -323,7 +323,7 @@ void MainWindow::on_fullScreen_toggled(bool fullScreen)
         ui->fullScreen->setChecked(true);
         ui->widgetSet->setVisible(false);
     } else {
-        showNormal();
+        setWindowState(windowState() & ~Qt::WindowFullScreen);
         ui->widgetSet->setPalette(this->palette());
         ui->widgetSet->setAutoFillBackground(false);
         ui->fullScreen->setIcon(KIcon("view-fullscreen"));
