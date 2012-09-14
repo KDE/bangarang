@@ -40,7 +40,9 @@ class MediaQuery {
                          GreaterThanOrEqual = 5,
                          LessThanOrEqual = 6,
                          Bound = 7,
-                         NotBound = 8};
+                         NotBound = 8,
+                         EqualLiteral = 9
+        };
         
         enum Match {Required = 0, Optional = 1};
         
@@ -137,6 +139,10 @@ class MediaQuery {
                 statement += QString(" (?%1 = %2) ")
                 .arg(binding)
                 .arg(Soprano::Node::literalToN3(test));
+            } else if (constraint == MediaQuery::EqualLiteral) {
+                statement += QString(" (?%1 = %2) ")
+                .arg(binding)
+                .arg("\"%1\"").arg(test);
             } else if (constraint == MediaQuery::NotEqual) {
                 statement += QString(" (?%1 != %2) ")
                 .arg(binding)
