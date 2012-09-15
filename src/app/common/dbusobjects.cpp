@@ -148,7 +148,9 @@ void MprisPlayerObject::Stop()
 void MprisPlayerObject::Play()
 {
     if (m_app->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        qreal vol = m_app->audioOutput()->volume();
         m_app->playlist()->mediaObject()->play();
+        m_app->audioOutput()->setVolume(vol);
     } else if (m_app->playlist()->mediaObject()->state() != Phonon::PlayingState) {
         m_app->playlist()->start();
     }

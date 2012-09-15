@@ -170,7 +170,9 @@ void NowPlayingManager::mediaPlayPauseReleased()
         m_stopPressed = false;
     } else {
         if ((!m_pausePressed) && (m_application->mediaObject()->state() == Phonon::PausedState)) {
+            qreal vol = m_application->audioOutput()->volume();
             m_application->mediaObject()->play();
+            m_application->audioOutput()->setVolume(vol);
         } else if ((m_application->mediaObject()->state() == Phonon::StoppedState) || (m_application->mediaObject()->state() == Phonon::LoadingState)) {
             if (ui->playlistView->model()->rowCount() > 0 && ui->playlistView->selectionModel()->selectedIndexes().count() == 0) {
                 m_application->playlist()->start();

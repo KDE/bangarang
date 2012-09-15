@@ -729,7 +729,9 @@ void ActionsManager::simplePlayPause()
 void ActionsManager::smartPlay()
 {
     if (m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
+        qreal vol = m_application->audioOutput()->volume();
         m_application->playlist()->mediaObject()->play();
+        m_application->audioOutput()->setVolume(vol);
     } else if (m_application->playlist()->mediaObject()->state() != Phonon::PlayingState) {
         m_application->playlist()->start();
     }
