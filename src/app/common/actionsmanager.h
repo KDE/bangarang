@@ -135,5 +135,7 @@ class ActionsManager : public QObject
         void handleAltS();
         void handleAltLeft();
         void handleCtrlM();
+        void seekForward();
+        void seekBackward();
 };
 #endif //ACTIONSMANAGER_H

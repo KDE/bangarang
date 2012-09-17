@@ -55,6 +55,7 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_shortcutsCollection = new KActionCollection(this);
     m_shortcutsCollection->setConfigGlobal(true);
     m_shortcutsCollection->addAssociatedWidget(m_parent); //won't have to add each action to the parent
+
     m_othersCollection = new KActionCollection(this);
     m_contextMenuSource = MainWindow::Default;
     
@@ -68,31 +69,36 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     //Play/Pause Action
     action = new KAction(KIcon("media-playback-start"), i18n("Play/Pause"), this);
     connect(action, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
+    action->setShortcut(Qt::Key_Space);
     m_shortcutsCollection->addAction("play_pause", action);
     //globals only work after adding them to the action manager
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_D));
 
-    //Play Action
-    action = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(smartPlay()));
-    m_othersCollection->addAction("play", action);
-
-    //Pause Action
-    action = new KAction(KIcon("media-playback-pause"), i18n("Pause"), this);
-    connect(action, SIGNAL(triggered()), m_application->playlist()->mediaObject(), SLOT(pause()));
-    m_othersCollection->addAction("pause", action);
-
     //Play Next
     action = new KAction(KIcon("media-skip-forward"), i18n("Play next"), this);
     connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playNext()));
+    action->setShortcut(Qt::Key_Right);
     m_shortcutsCollection->addAction("play_next", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_F));
 
     //Play Previous
     action = new KAction(KIcon("media-skip-backward"), i18n("Play previous"), this);
     connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
+    action->setShortcut(Qt::Key_Left);
     m_shortcutsCollection->addAction("play_previous", action);
     action->setGlobalShortcut(KShortcut(Qt::META + Qt::Key_S));
+
+    //Seek forward
+    action = new KAction(KIcon("media-skip-forward"), i18n("Skip forward"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(seekForward()));
+    action->setShortcut(Qt::CTRL + Qt::Key_Right);
+    m_shortcutsCollection->addAction("skip_forward", action);
+
+    //Seek backward
+    action = new KAction(KIcon("media-skip-backward"), i18n("Skip backward"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(seekBackward()));
+    action->setShortcut(Qt::CTRL + Qt::Key_Left);
+    m_shortcutsCollection->addAction("skip_backward", action);
 
     //Mute
     action = new KAction(KIcon("dialog-cancel"), i18n("Mute"), this);
@@ -100,36 +106,29 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(muteAudio()));
     m_shortcutsCollection->addAction("mute", action);
 
-    //Play All Action
-    action = new KAction(KIcon("media-playback-start"), i18n("Play all"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(playAllSlot()));
-    m_othersCollection->addAction("play_all", action);
+    //Search/Shuffle Action
+    action = new KAction(i18n("Shuffle"), this);
+    action->setShortcut(Qt::ALT + Qt::Key_S);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleAltS()));
+    m_shortcutsCollection->addAction("shuffle", action);
 
-    //Play Selected Action
-    action = new KAction(KIcon("media-playback-start"), i18n("Play selected"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(playSelectedSlot()));
-    m_othersCollection->addAction("play_selected", action);
+    //Open Previous List/ Seek backward action
+    action = new KAction(i18n("Previous List"), this);
+    action->setShortcut(Qt::ALT + Qt::Key_Left);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleAltLeft()));
+    m_shortcutsCollection->addAction("show-previous-list", action);
 
-    //Add Selected To Playlist Action
-    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add to playlist"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));
-    m_othersCollection->addAction("add_to_playlist", action);
+    //Open menu
+    action = new KAction(i18n("Open menu"), this);
+    action->setShortcut(Qt::CTRL + Qt::Key_M);
+    connect(action, SIGNAL(triggered()), this, SLOT(handleCtrlM()));
+    m_shortcutsCollection->addAction("open-menu", action);
 
-    //Add After Now Playing Action
-    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add after Now Playing"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(addAfterNowPlaying()));
-    m_othersCollection->addAction("add_after_now_playing", action);
-
-    //Remove Selected From Playlist Action
-    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
-    m_othersCollection->addAction("remove_from_playlist", action);
-    
-    //Remove the selection of the playlist from the playlist
-    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
-    action->setShortcut(Qt::Key_Delete);
-    connect(action, SIGNAL(triggered()), this, SLOT(removePlaylistSelectionFromPlaylistSlot()));
-    m_othersCollection->addAction("remove_playlistselection_from_playlist", action);
+    //Show Now Playing Info
+    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
+    action->setShortcut(Qt::ALT + Qt::Key_I);
+    connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
+    m_shortcutsCollection->addAction("show_info", action);
 
     //Toggle Controls Shortcut
     action = new KAction(KIcon("layer-visible-off"), i18n("Hide controls"), this);
@@ -166,6 +165,68 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     connect(action, SIGNAL(triggered()), this, SLOT(fullScreenToggle()));
     m_shortcutsCollection->addAction("toggle_fullscreen", action);
 
+    //Refresh Media View
+    action = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
+    action->setShortcut(Qt::Key_F5);
+    connect(action, SIGNAL(triggered()), this, SLOT(mediaViewRefresh()));
+    m_shortcutsCollection->addAction("reload", action);
+
+    //Edit Shortcuts
+    action = new KAction(KIcon("configure-shortcuts"), i18n("Show shortcuts editor"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(toggleShortcutsEditor()));
+    m_shortcutsCollection->addAction("show_shortcuts_editor", action);
+
+    //Update Ontologies
+    action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
+    m_shortcutsCollection->addAction("update_ontologies", action);
+
+    //Hide in system tray
+    action = new KAction(KIcon("view-close"), i18n("Hide in system tray"), this);
+    connect(action, SIGNAL(triggered()), m_application->statusNotifierItem(), SLOT(activate()));
+    m_shortcutsCollection->addAction("hide_in_system_tray", action);
+
+    //Play Action
+    action = new KAction(KIcon("media-playback-start"), i18n("Play"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(smartPlay()));
+    m_othersCollection->addAction("play", action);
+
+    //Pause Action
+    action = new KAction(KIcon("media-playback-pause"), i18n("Pause"), this);
+    connect(action, SIGNAL(triggered()), m_application->playlist()->mediaObject(), SLOT(pause()));
+    m_othersCollection->addAction("pause", action);
+
+    //Play All Action
+    action = new KAction(KIcon("media-playback-start"), i18n("Play all"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(playAllSlot()));
+    m_othersCollection->addAction("play_all", action);
+
+    //Play Selected Action
+    action = new KAction(KIcon("media-playback-start"), i18n("Play selected"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(playSelectedSlot()));
+    m_othersCollection->addAction("play_selected", action);
+
+    //Add Selected To Playlist Action
+    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add to playlist"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(addSelectedToPlaylistSlot()));
+    m_othersCollection->addAction("add_to_playlist", action);
+
+    //Add After Now Playing Action
+    action = new KAction(KIcon("dialog-ok-apply"), i18n("Add after Now Playing"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(addAfterNowPlaying()));
+    m_othersCollection->addAction("add_after_now_playing", action);
+
+    //Remove Selected From Playlist Action
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(removeSelectedFromPlaylistSlot()));
+    m_othersCollection->addAction("remove_from_playlist", action);
+    
+    //Remove the selection of the playlist from the playlist
+    action = new KAction(KIcon("list-remove"), i18n("Remove from playlist"), this);
+    action->setShortcut(Qt::Key_Delete);
+    connect(action, SIGNAL(triggered()), this, SLOT(removePlaylistSelectionFromPlaylistSlot()));
+    m_othersCollection->addAction("remove_playlistselection_from_playlist", action);
+
     //Cancel FullScreen/Cancel Hide Controls
     action = new KAction(this);
     action->setShortcut(Qt::Key_Escape);
@@ -182,12 +243,6 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     action = new KAction(KIcon("trash-empty"), i18n("Remove selected info"), this);
     connect(action, SIGNAL(triggered()), m_application->infoManager(), SLOT(removeSelectedItemsInfo()));
     m_othersCollection->addAction("remove_selected_info", action);
-
-    //Refresh Media View
-    action = new KAction(KIcon("view-refresh"), i18n("Refresh"), this);
-    action->setShortcut(Qt::Key_F5);
-    connect(action, SIGNAL(triggered()), this, SLOT(mediaViewRefresh()));
-    m_shortcutsCollection->addAction("reload", action);
 
     //Select all items
     action = new KAction(KIcon("edit-select-all"), i18n("Select All"), this);
@@ -252,27 +307,9 @@ ActionsManager::ActionsManager(MainWindow * parent) : QObject(parent)
     m_removeBookmarksMenu = new QMenu(i18n("Remove bookmarks"), m_parent);
     connect(m_removeBookmarksMenu, SIGNAL(triggered(QAction*)), this, SLOT(removeBookmark(QAction*)));
 
-    //Edit Shortcuts
-    action = new KAction(KIcon("configure-shortcuts"), i18n("Show shortcuts editor"), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(toggleShortcutsEditor()));
     connect(ui->cancelEditShortcuts, SIGNAL(clicked()), this, SLOT(cancelShortcuts()));
     connect(ui->saveShortcuts, SIGNAL(clicked()), this, SLOT(saveShortcuts()));
-    m_shortcutsCollection->addAction("show_shortcuts_editor", action);
     
-    //Update Ontologies
-    action = new KAction(KIcon("system-run"), i18n("Update ontologies..."), this);
-    connect(action, SIGNAL(triggered()), this, SLOT(updateOntologies()));
-    m_shortcutsCollection->addAction("update_ontologies", action);
-
-    //Hide in system tray
-    action = new KAction(KIcon("view-close"), i18n("Hide in system tray"), this);
-    connect(action, SIGNAL(triggered()), m_application->statusNotifierItem(), SLOT(activate()));
-    m_shortcutsCollection->addAction("hide_in_system_tray", action);
-    
-    //set up the shortcuts collection
-    m_shortcutsCollection->readSettings(&m_shortcutsConfig);
-    ui->shortcutsEditor->addCollection(m_shortcutsCollection);
-
     /*Set up other variables */
     m_nowPlayingContextMenu = new QMenu(m_parent);
     m_infoMenu = new QMenu(i18n("Manage info"), m_parent);
@@ -726,6 +763,18 @@ void ActionsManager::simplePlayPause()
     }
 }
 
+void ActionsManager::seekForward()
+{
+    qint64 newtime = m_application->playlist()->mediaObject()->currentTime() + 10000;
+    m_application->playlist()->mediaObject()->seek(newtime);
+}
+
+void ActionsManager::seekBackward()
+{
+    qint64 newtime = m_application->playlist()->mediaObject()->currentTime() - 10000;
+    m_application->playlist()->mediaObject()->seek(newtime);
+}
+
 void ActionsManager::smartPlay()
 {
     if (m_application->playlist()->mediaObject()->state() == Phonon::PausedState) {
@@ -1145,104 +1194,65 @@ void ActionsManager::handleCtrlM()
     }
 }
 
-void ActionsManager::addShortcuts()
+void ActionsManager::addShortcuts() // add additional shortcuts that cannot be added in constructor
 {
     //Show Audio Lists Action
     KAction *action = new KAction(i18n("Show Audio Lists"), this);
     action->setShortcut(Qt::ALT + Qt::Key_A);
     connect(action, SIGNAL(triggered()), m_application->mediaListsManager(), SLOT(selectAudioList()));
-    ui->collectionPage->addAction(action);
+    m_shortcutsCollection->addAction("show-audio-list", action);
 
     //Show Video Lists Action
     action = new KAction(i18n("Show Video Lists"), this);
     action->setShortcut(Qt::ALT + Qt::Key_V);
     connect(action, SIGNAL(triggered()), m_application->mediaListsManager(), SLOT(selectVideoList()));
-    ui->collectionPage->addAction(action);
-
-    //Search/Shuffle Action
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::ALT + Qt::Key_S);
-    connect(action, SIGNAL(triggered()), this, SLOT(handleAltS()));
-    m_application->mainWindow()->addAction(action);
-
-    //Open Previous List/ Seek backward action
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::ALT + Qt::Key_Left);
-    connect(action, SIGNAL(triggered()), this, SLOT(handleAltLeft()));
-    m_application->mainWindow()->addAction(action);
-
-    //Open menu
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::CTRL + Qt::Key_M);
-    connect(action, SIGNAL(triggered()), this, SLOT(handleCtrlM()));
-    m_application->mainWindow()->addAction(action);
+    m_shortcutsCollection->addAction("show-video-list", action);
 
     //Show Media Lists/Now Playing
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("Toggle Media Lists/Now Playing"), this);
     action->setShortcut(Qt::ALT + Qt::Key_N);
     connect(action, SIGNAL(triggered()), m_application->mainWindow(), SLOT(toggleMainWidget()));
-    m_application->mainWindow()->addAction(action);
-    action = new KAction(QString(), this);
+    m_shortcutsCollection->addAction("toggle-media-list", action);
+/*    action = new KAction(QString(), this); // don't see why we need two shortcuts for the same action..
     action->setShortcut(Qt::ALT + Qt::Key_M);
     connect(action, SIGNAL(triggered()), m_application->mainWindow(), SLOT(toggleMainWidget()));
-    m_application->mainWindow()->addAction(action);
+    m_application->mainWindow()->addAction(action);*/
 
     //Show Time/Bookmark menu
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("Show Time/Bookmark menu"), this);
     action->setShortcut(Qt::ALT + Qt::Key_T);
     connect(action, SIGNAL(triggered()), m_application->bookmarksManager(), SLOT(showBookmarksMenu()));
-    ui->nowPlayingPage->addAction(action);
-    action = new KAction(QString(), this);
+    m_shortcutsCollection->addAction("show-bookmark-menu", action);
+/*    action = new KAction(QString(), this);
     action->setShortcut(Qt::ALT + Qt::Key_B);
     connect(action, SIGNAL(triggered()), m_application->bookmarksManager(), SLOT(showBookmarksMenu()));
-    ui->nowPlayingPage->addAction(action);
+    m_shortcutsCollection->addAction(action);*/
 
     //Show/Hide playlist
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("Show/Hide playlist"), this);
     action->setShortcut(Qt::ALT + Qt::Key_P);
     connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(togglePlaylist()));
-    ui->nowPlayingPage->addAction(action);
+    m_shortcutsCollection->addAction("toggle-playlist", action);
 
     //View upcoming
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("View upcoming"), this);
     action->setShortcut(Qt::ALT + Qt::Key_U);
     connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(toggleQueue()));
-    ui->nowPlayingPage->addAction(action);
+    m_shortcutsCollection->addAction("view-upcoming", action);
 
     //Clear Playlist
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("Clear Playlist"), this);
     action->setShortcut(Qt::ALT + Qt::Key_C);
     connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(clearPlaylist()));
-    ui->nowPlayingPage->addAction(action);
+    m_shortcutsCollection->addAction("clear-playlist", action);
 
     //Toggle Repeat
-    action = new KAction(QString(), this);
+    action = new KAction(i18n("Toggle Repeat"), this);
     action->setShortcut(Qt::ALT + Qt::Key_R);
     connect(action, SIGNAL(triggered()), m_application->nowPlayingManager(), SLOT(toggleRepeat()));
-    ui->nowPlayingPage->addAction(action);
+    m_shortcutsCollection->addAction("toggle-repeat", action);
 
-    //Show Now Playing Info
-    action = new KAction(KIcon("help-about"), i18n("Show information"), m_parent);
-    action->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(action, SIGNAL(triggered()), this, SLOT(showInfoForNowPlaying()));
-    ui->nowPlayingPage->addAction(action);
-
-    //Play/Pause Action
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::Key_Space);
-    connect(action, SIGNAL(triggered()), this, SLOT(simplePlayPause()));
-    ui->nowPlayingPage->addAction(action);
-
-    //Play Next
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::Key_Right);
-    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playNext()));
-    ui->nowPlayingPage->addAction(action);
-
-    //Play Previous
-    action = new KAction(QString(), this);
-    action->setShortcut(Qt::Key_Left);
-    connect(action, SIGNAL(triggered()), m_application->playlist(), SLOT(playPrevious()));
-    ui->nowPlayingPage->addAction(action);
-
+    //set up the shortcuts collection
+    m_shortcutsCollection->readSettings(&m_shortcutsConfig);
+    ui->shortcutsEditor->addCollection(m_shortcutsCollection);
 }
