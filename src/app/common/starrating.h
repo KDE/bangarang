@@ -37,7 +37,7 @@ class StarRating {
 
         static const int Margin = 1;
 
-        StarRating(int rating = 0, int size = Small,
+        explicit StarRating(int rating = 0, int size = Small,
                    QPoint point = QPoint(0, 0), QPoint hoverPos = QPoint(-1, -1));
 
         void setRating(int rating) { m_rating = rating; }
