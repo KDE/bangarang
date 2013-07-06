@@ -25,7 +25,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <Soprano/QueryResultIterator>
-#include <nepomuk/variant.h>
+#include <nepomuk2/variant.h>
 #include <QApplication>
 #include <QTime>
 #include <taglib/fileref.h>

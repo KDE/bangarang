@@ -40,9 +40,9 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <nepomuk/resource.h>
-#include <Nepomuk/ResourceManager>
-#include <nepomuk/variant.h>
+#include <nepomuk2/resource.h>
+#include <Nepomuk2/ResourceManager>
+#include <nepomuk2/variant.h>
 #include <QComboBox>
 #include <QDateEdit>
 #include <QDesktopServices>

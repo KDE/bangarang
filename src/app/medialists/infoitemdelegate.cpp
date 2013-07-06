@@ -39,9 +39,9 @@
 #include <KDateTime>
 #include <KDebug>
 #include <Soprano/Vocabulary/NAO>
-#include <nepomuk/variant.h>
-#include <nepomuk/resource.h>
-#include <Nepomuk/ResourceManager>
+#include <nepomuk2/variant.h>
+#include <nepomuk2/resource.h>
+#include <Nepomuk2/ResourceManager>
 
 #include <QUrl>
 #include <QDesktopServices>

@@ -35,7 +35,7 @@
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 
 MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)

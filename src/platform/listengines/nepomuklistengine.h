@@ -24,8 +24,8 @@
 #include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/Model>
 
 /** This is an abstract base class for all list engines which

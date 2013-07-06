@@ -41,7 +41,7 @@
 #include <KMessageBox>
 #include <KDebug>
 #include <KStandardDirs>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 #include <Solid/Device>
 
 #include <QDBusConnection>

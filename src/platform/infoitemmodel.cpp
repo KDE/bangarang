@@ -1123,23 +1123,23 @@ MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &ty
     MediaItem mediaItem;
     QString categoryType = categoryTypeForField(field, type);
     if (categoryType == "Artist") {
-        Nepomuk::Resource res(Utilities::artistResource(value));
+        Nepomuk2::Resource res(Utilities::artistResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "Actor") {
-        Nepomuk::Resource res(Utilities::actorResource(value));
+        Nepomuk2::Resource res(Utilities::actorResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "Director") {
-        Nepomuk::Resource res(Utilities::directorResource(value));
+        Nepomuk2::Resource res(Utilities::directorResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "Album") {
-        Nepomuk::Resource res(Utilities::albumResource(value));
+        Nepomuk2::Resource res(Utilities::albumResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "TV Series") {
-        Nepomuk::Resource res(Utilities::TVSeriesResource(value));
+        Nepomuk2::Resource res(Utilities::TVSeriesResource(value));
         mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
         mediaItem.url = m_drillLris[categoryType].arg(value);
     } else if (categoryType == "AudioGenre" ||

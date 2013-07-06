@@ -25,9 +25,9 @@
 #include <KDebug>
 #include <KStandardDirs>
 #include <KLocale>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
-#include <Nepomuk/ResourceManager>
+#include <nepomuk2/resource.h>
+#include <nepomuk2/variant.h>
+#include <Nepomuk2/ResourceManager>
 #include <QTextStream>
 #include <QProcess>
 #include <QFile>
@@ -151,7 +151,7 @@ void MediaIndexer::updatePlaybackInfo(const QString &resourceUri, bool increment
         out << "lastPlayed = " << playDateTime.toString("yyyyMMddhhmmss") << "\n";
         if (incrementPlayCount) {
             int playCount = 0;
-            Nepomuk::Resource res(resourceUri);
+            Nepomuk2::Resource res(resourceUri);
             if (res.exists()) {
                 playCount = res.property(MediaVocabulary().playCount()).toInt();
             }   
@@ -280,9 +280,9 @@ void MediaIndexer::processWriterOutput()
                 continue;
             }
             MediaItem mediaItem = m_mediaList.at(index);
-            Nepomuk::Resource res(KUrl(mediaItem.url));
+            Nepomuk2::Resource res(KUrl(mediaItem.url));
             if (res.exists()) {
-                mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+                mediaItem.fields["resourceUri"] = res.uri().toString();
             }
             emit sourceInfoUpdated(mediaItem);
             m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);

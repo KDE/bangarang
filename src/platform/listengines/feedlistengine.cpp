@@ -32,7 +32,7 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <QFile>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 FeedListEngine::FeedListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {

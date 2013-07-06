@@ -34,10 +34,10 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <Soprano/Model>
-#include <Nepomuk/Resource>
-#include <Nepomuk/Variant>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Tag>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Tag>
 
 #include <phonon/backendcapabilities.h>
 #include <phonon/MediaObject>
@@ -100,7 +100,7 @@ QUrl Utilities::artistResource(const QString &artistName)
     query.endFilter();
     query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
@@ -125,7 +125,7 @@ QUrl Utilities::albumResource(const QString &albumName)
     query.endFilter();
     query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
@@ -150,7 +150,7 @@ QUrl Utilities::TVSeriesResource(const QString &seriesName)
     query.endFilter();
     query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
@@ -175,7 +175,7 @@ QUrl Utilities::actorResource(const QString &actorName)
     query.endFilter();
     query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
@@ -200,7 +200,7 @@ QUrl Utilities::directorResource(const QString &directorName)
     query.endFilter();
     query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
@@ -271,10 +271,10 @@ QString Utilities::deviceName(QString udi, Phonon::MediaObject *mobj)
 
 bool Utilities::nepomukInited()
 {
-    bool nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+    bool nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
     if (!nepomukInited) {
-        Nepomuk::ResourceManager::instance()->init();
-        nepomukInited = Nepomuk::ResourceManager::instance()->initialized();
+        Nepomuk2::ResourceManager::instance()->init();
+        nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
     }
     return nepomukInited;
 }

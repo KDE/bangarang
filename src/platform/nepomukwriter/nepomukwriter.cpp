@@ -5,7 +5,7 @@
 #include <KUrl>
 #include <KLocale>
 #include <Soprano/Vocabulary/RDF>
-#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NFO>
 #include <QDBusInterface>
 
 NepomukWriter::NepomukWriter(QObject *parent) :
@@ -90,7 +90,7 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QString resourceUri = fields["resourceUri"].toString();
     QString type = fields["type"].toString();
-    Nepomuk::Resource res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
+    Nepomuk2::Resource res = Nepomuk2::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
 
     if (fields["removeInfo"].toString() == "true") {
 
@@ -217,13 +217,13 @@ void NepomukWriter::removeInfo(QHash <QString, QVariant> fields)
         } else if (type == "Category") {
             if (fields["categoryType"] == "Audio Feed") {
                 removeType(res, mediaVocabulary.typeAudio());
-                removeType(res, Nepomuk::Vocabulary::NFO::MediaList());
-                removeType(res, Nepomuk::Vocabulary::NFO::RemoteDataObject());
+                removeType(res, Nepomuk2::Vocabulary::NFO::MediaList());
+                removeType(res, Nepomuk2::Vocabulary::NFO::RemoteDataObject());
                 //res.remove();
             } else if (fields["categoryType"] == "Video Feed") {
                 removeType(res, mediaVocabulary.typeVideo());
-                removeType(res, Nepomuk::Vocabulary::NFO::MediaList());
-                removeType(res, Nepomuk::Vocabulary::NFO::RemoteDataObject());
+                removeType(res, Nepomuk2::Vocabulary::NFO::MediaList());
+                removeType(res, Nepomuk2::Vocabulary::NFO::RemoteDataObject());
                 //res.remove();
             }
             //Update the properties
@@ -249,9 +249,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     QString url = fields["url"].toString();
 
     //Find corresponding Nepomuk resource
-    Nepomuk::Resource res;
+    Nepomuk2::Resource res;
     if (!resourceUri.isEmpty()) {
-        res = Nepomuk::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
+        res = Nepomuk2::Resource(QUrl::fromEncoded(resourceUri.toUtf8()));
     }
 
     //If Nepomuk resource doesn't exist for local file, ask Strigi to index file first
@@ -265,7 +265,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         if (strigi.isValid()) {
             strigi.call("indexFile", KUrl(url).path());
         }
-        res = Nepomuk::Resource(QUrl::fromEncoded(url.toUtf8()));
+        res = Nepomuk2::Resource(QUrl::fromEncoded(url.toUtf8()));
         outputMessage(Debug, QString("RESOURCE EXISTS:%1").arg(res.exists()));
     } else {
         outputMessage(Debug, QString("RESOURCE EXISTS:%1").arg(res.exists()));
@@ -300,21 +300,21 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields["audioType"] == "Music") {
                 audioType = mediaVocabulary.typeAudioMusic();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, audioType);
+                    res = Nepomuk2::Resource(url, audioType);
                 }
                 removeType(res, mediaVocabulary.typeMediaStream());
                 removeType(res, mediaVocabulary.typeAudio());
             } else if (fields["audioType"] == "Audio Stream") {
                 audioType = mediaVocabulary.typeMediaStream();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, audioType);
+                    res = Nepomuk2::Resource(url, audioType);
                     res.addType(mediaVocabulary.typeAudio());
                 }
                 removeType(res, mediaVocabulary.typeAudioMusic());
             } else if (fields["audioType"] == "Audio Clip") {
                 audioType = mediaVocabulary.typeAudio();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, audioType);
+                    res = Nepomuk2::Resource(url, audioType);
                 }
                 removeType(res, mediaVocabulary.typeAudioMusic());
                 removeType(res, mediaVocabulary.typeMediaStream());
@@ -332,21 +332,21 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields["videoType"] == "Movie") {
                 videoType = mediaVocabulary.typeVideoMovie();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
+                    res = Nepomuk2::Resource(url, videoType);
                 }
                 removeType(res, mediaVocabulary.typeVideoTVShow());
                 removeType(res, mediaVocabulary.typeVideo());
             } else if (fields["videoType"] == "TV Show") {
                 videoType = mediaVocabulary.typeVideoTVShow();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
+                    res = Nepomuk2::Resource(url, videoType);
                 }
                 removeType(res, mediaVocabulary.typeVideoMovie());
                 removeType(res, mediaVocabulary.typeVideo());
             } else if (fields["videoType"] == "Video Clip") {
                 videoType = mediaVocabulary.typeVideo();
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, videoType);
+                    res = Nepomuk2::Resource(url, videoType);
                 }
                 removeType(res, mediaVocabulary.typeVideoMovie());
                 removeType(res, mediaVocabulary.typeVideoTVShow());
@@ -357,24 +357,24 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         } else if (type == "Category") {
             if (fields["categoryType"] == "Audio Feed") {
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, mediaVocabulary.typeAudio());
+                    res = Nepomuk2::Resource(url, mediaVocabulary.typeAudio());
                 } else {
                     if (!res.hasType(mediaVocabulary.typeAudio())) {
                         res.addType(mediaVocabulary.typeAudio());
                     }
                 }
-                res.addType(Nepomuk::Vocabulary::NFO::MediaList());
-                res.addType(Nepomuk::Vocabulary::NFO::RemoteDataObject());
+                res.addType(Nepomuk2::Vocabulary::NFO::MediaList());
+                res.addType(Nepomuk2::Vocabulary::NFO::RemoteDataObject());
             } else if (fields["categoryType"] == "Video Feed") {
                 if (!res.exists()) {
-                    res = Nepomuk::Resource(url, mediaVocabulary.typeVideo());
+                    res = Nepomuk2::Resource(url, mediaVocabulary.typeVideo());
                 } else {
                     if (!res.hasType(mediaVocabulary.typeVideo())) {
                         res.addType(mediaVocabulary.typeVideo());
                     }
                 }
-                res.addType(Nepomuk::Vocabulary::NFO::MediaList());
-                res.addType(Nepomuk::Vocabulary::NFO::RemoteDataObject());
+                res.addType(Nepomuk2::Vocabulary::NFO::MediaList());
+                res.addType(Nepomuk2::Vocabulary::NFO::RemoteDataObject());
             }
         }
     }
@@ -384,16 +384,16 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     {
         if (fields.contains("description")) {
             QString description = fields["description"].toString();
-            res.setProperty(mediaVocabulary.description(), Nepomuk::Variant(description));
+            res.setProperty(mediaVocabulary.description(), Nepomuk2::Variant(description));
         }
         if (fields.contains("artworkUrl")) {
             QString artworkUrl = fields["artworkUrl"].toString();
             if (!artworkUrl.isEmpty()) {
-                Nepomuk::Resource artworkRes(artworkUrl);
+                Nepomuk2::Resource artworkRes(artworkUrl);
                 if (!artworkRes.exists()) {
-                    artworkRes = Nepomuk::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+                    artworkRes = Nepomuk2::Resource(QUrl(artworkUrl), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
                 }
-                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(artworkRes));
+                res.setProperty(mediaVocabulary.artwork(), Nepomuk2::Variant(artworkRes));
             } else {
                 if (res.hasProperty(mediaVocabulary.artwork())) {
                     res.removeProperty(mediaVocabulary.artwork());
@@ -406,7 +406,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         }
         if (fields.contains("title")) {
             QString title = fields["title"].toString();
-            res.setProperty(mediaVocabulary.title(), Nepomuk::Variant(title));
+            res.setProperty(mediaVocabulary.title(), Nepomuk2::Variant(title));
         }
         if (fields.contains("rating")) {
             unsigned int rating = fields["rating"].toInt();
@@ -416,27 +416,27 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         }
         if (fields.contains("playCount")) {
             int playCount = fields["playCount"].toInt();
-            res.setProperty(mediaVocabulary.playCount(), Nepomuk::Variant(playCount));
+            res.setProperty(mediaVocabulary.playCount(), Nepomuk2::Variant(playCount));
         }
         if (fields.contains("duration")) {
             int duration = fields["duration"].toInt();
-            res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
+            res.setProperty(mediaVocabulary.duration(), Nepomuk2::Variant(duration));
         }
         if (fields.contains("lastPlayed")) {
-            Nepomuk::Variant value;
+            Nepomuk2::Variant value;
             QDateTime lastPlayed = fields["lastPlayed"].toDateTime();
             if (lastPlayed.isValid()) {
-                value = Nepomuk::Variant(lastPlayed);
+                value = Nepomuk2::Variant(lastPlayed);
             }
             res.setProperty(mediaVocabulary.lastPlayed(), value);
         }
         if (fields.contains("tags")) {
             QStringList tagStrList = fields["tags"].toString().split("||", QString::SkipEmptyParts);
-            QList<Nepomuk::Tag> tags;
-            QList<Nepomuk::Tag> currentTags = res.tags();
+            QList<Nepomuk2::Tag> tags;
+            QList<Nepomuk2::Tag> currentTags = res.tags();
             bool tagsChanged = false;
             for (int i = 0; i < tagStrList.count(); i++) {
-                Nepomuk::Tag tag(tagStrList.at(i).trimmed());
+                Nepomuk2::Tag tag(tagStrList.at(i).trimmed());
                 tag.setLabel(tagStrList.at(i).trimmed());
                 tags.append(tag);
                 if (currentTags.indexOf(tag) == -1) {
@@ -453,11 +453,11 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
         if (fields.contains("associatedImage")) {
             QString associatedImage = fields["associatedImage"].toString();
             if (!associatedImage.isEmpty()) {
-                Nepomuk::Resource associatedImageRes(associatedImage);
+                Nepomuk2::Resource associatedImageRes(associatedImage);
                 if (!associatedImageRes.exists()) {
-                    associatedImageRes = Nepomuk::Resource(QUrl(associatedImage), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
+                    associatedImageRes = Nepomuk2::Resource(QUrl(associatedImage), QUrl("http://http://www.semanticdesktop.org/ontologies/nfo#Image"));
                 }
-                res.setProperty(mediaVocabulary.artwork(), Nepomuk::Variant(associatedImageRes));
+                res.setProperty(mediaVocabulary.artwork(), Nepomuk2::Variant(associatedImageRes));
             } else {
                 if (res.hasProperty(mediaVocabulary.artwork())) {
                     res.removeProperty(mediaVocabulary.artwork());
@@ -468,9 +468,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             QString dataSourceUrl = fields["dataSourceUrl"].toString();
             QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#dataSource");
             if (!dataSourceUrl.isEmpty()) {
-                Nepomuk::Resource dataSourceRes(dataSourceUrl);
+                Nepomuk2::Resource dataSourceRes(dataSourceUrl);
                 if (dataSourceRes.exists()) {
-                    res.setProperty(property, Nepomuk::Variant(dataSourceRes));
+                    res.setProperty(property, Nepomuk2::Variant(dataSourceRes));
                 }
             } else {
                 if (res.hasProperty(property)) {
@@ -482,9 +482,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             QString isLogicalPartOfUrl = fields["isLogicalPartOfUrl"].toString();
             QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#isLogicalPartOf");
             if (!isLogicalPartOfUrl.isEmpty()) {
-                Nepomuk::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
+                Nepomuk2::Resource isLogicalPartOfRes(isLogicalPartOfUrl);
                 if (isLogicalPartOfRes.exists()) {
-                    res.setProperty(property, Nepomuk::Variant(isLogicalPartOfRes));
+                    res.setProperty(property, Nepomuk2::Variant(isLogicalPartOfRes));
                 }
             } else {
                 if (res.hasProperty(property)) {
@@ -516,9 +516,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 QStringList artists  = fields["artist"].toString().split("||", QString::SkipEmptyParts);
                 res.removeProperty(mediaVocabulary.musicArtist());
                 if (!artists.isEmpty()) {
-                    QList<Nepomuk::Variant> artistResources;
+                    QList<Nepomuk2::Variant> artistResources;
                     for (int i = 0; i < artists.count(); i++) {
-                        Nepomuk::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(), artists.at(i), true);
+                        Nepomuk2::Resource artistResource = findPropertyResourceByTitle(mediaVocabulary.musicArtist(), artists.at(i), true);
                         artistResources.append(artistResource);
                     }
                     res.setProperty(mediaVocabulary.musicPerformer(), artistResources);
@@ -531,10 +531,10 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("composer")) {
                 QStringList composers  = fields["composer"].toString().split("||", QString::SkipEmptyParts);
                 if (!composers.isEmpty()) {
-                    QList<Nepomuk::Variant> composerResources;
+                    QList<Nepomuk2::Variant> composerResources;
                     for (int i = 0; i < composers.count(); i++) {
                         if (!composers.at(i).isEmpty()) {
-                            Nepomuk::Resource composerResource = findPropertyResourceByTitle(mediaVocabulary.musicComposer(), composers.at(i), true);
+                            Nepomuk2::Resource composerResource = findPropertyResourceByTitle(mediaVocabulary.musicComposer(), composers.at(i), true);
                             composerResources.append(composerResource);
                         }
                     }
@@ -548,8 +548,8 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("album")) {
                 QString album   = fields["album"].toString();
                 if (!album.isEmpty()) {
-                    Nepomuk::Resource albumResource = findPropertyResourceByTitle(mediaVocabulary.musicAlbum(), album, true);
-                    res.setProperty(mediaVocabulary.musicAlbum(), Nepomuk::Variant(albumResource));
+                    Nepomuk2::Resource albumResource = findPropertyResourceByTitle(mediaVocabulary.musicAlbum(), album, true);
+                    res.setProperty(mediaVocabulary.musicAlbum(), Nepomuk2::Variant(albumResource));
                 } else {
                     if (res.hasProperty(mediaVocabulary.musicAlbum())) {
                         res.removeProperty(mediaVocabulary.musicAlbum());
@@ -563,7 +563,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("trackNumber")) {
                 int track   = fields["trackNumber"].toInt();
                 if (track != 0) {
-                    res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk::Variant(track));
+                    res.setProperty(mediaVocabulary.musicTrackNumber(), Nepomuk2::Variant(track));
                 } else {
                     if (res.hasProperty(mediaVocabulary.musicTrackNumber())) {
                         res.removeProperty(mediaVocabulary.musicTrackNumber());
@@ -573,7 +573,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("duration")) {
                 int duration = fields["duration"].toInt();
                 if (duration != 0) {
-                    res.setProperty(mediaVocabulary.duration(), Nepomuk::Variant(duration));
+                    res.setProperty(mediaVocabulary.duration(), Nepomuk2::Variant(duration));
                 } else {
                     if (res.hasProperty(mediaVocabulary.duration())) {
                         res.removeProperty(mediaVocabulary.duration());
@@ -584,7 +584,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 int year = fields["year"].toInt();
                 if (year != 0) {
                     QDate releaseDate = QDate(year, 1, 1);
-                    res.setProperty(mediaVocabulary.releaseDate(), Nepomuk::Variant(releaseDate));
+                    res.setProperty(mediaVocabulary.releaseDate(), Nepomuk2::Variant(releaseDate));
                 } else {
                     if (res.hasProperty(mediaVocabulary.releaseDate())) {
                         res.removeProperty(mediaVocabulary.releaseDate());
@@ -606,13 +606,13 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             }
             if (fields.contains("synopsis")) {
                 QString synopsis   = fields["synopsis"].toString();
-                res.setProperty(mediaVocabulary.videoSynopsis(), Nepomuk::Variant(synopsis));
+                res.setProperty(mediaVocabulary.videoSynopsis(), Nepomuk2::Variant(synopsis));
             }
             if (fields.contains("year")) {
                 int year = fields["year"].toInt();
                 if (year != 0) {
                     QDate releaseDate = QDate(year, 1, 1);
-                    res.setProperty(mediaVocabulary.releaseDate(), Nepomuk::Variant(releaseDate));
+                    res.setProperty(mediaVocabulary.releaseDate(), Nepomuk2::Variant(releaseDate));
                 } else {
                     if (res.hasProperty(mediaVocabulary.releaseDate())) {
                         res.removeProperty(mediaVocabulary.releaseDate());
@@ -620,19 +620,19 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 }
             }
             if (fields.contains("releaseDate")) {
-                Nepomuk::Variant value;
+                Nepomuk2::Variant value;
                 QDate releaseDate = fields["releaseDate"].toDate();
                 if (releaseDate.isValid()) {
-                    value = Nepomuk::Variant(releaseDate);
+                    value = Nepomuk2::Variant(releaseDate);
                 }
-                res.setProperty(mediaVocabulary.releaseDate(), Nepomuk::Variant(releaseDate));
+                res.setProperty(mediaVocabulary.releaseDate(), Nepomuk2::Variant(releaseDate));
             }
             if (fields.contains("writer")) {
                 QStringList writers  = fields["writer"].toString().split("||", QString::SkipEmptyParts);
                 if (!writers.isEmpty()) {
-                    QList<Nepomuk::Variant> writerResources;
+                    QList<Nepomuk2::Variant> writerResources;
                     for (int i = 0; i < writers.count(); i++) {
-                        Nepomuk::Resource writerResource = findPropertyResourceByTitle(mediaVocabulary.videoWriter(), writers.at(i), true);
+                        Nepomuk2::Resource writerResource = findPropertyResourceByTitle(mediaVocabulary.videoWriter(), writers.at(i), true);
                         writerResources.append(writerResource);
                     }
                     res.setProperty(mediaVocabulary.videoWriter(), writerResources);
@@ -645,9 +645,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("director")) {
                 QStringList directors  = fields["director"].toString().split("||", QString::SkipEmptyParts);
                 if (!directors.isEmpty()) {
-                    QList<Nepomuk::Variant> directorResources;
+                    QList<Nepomuk2::Variant> directorResources;
                     for (int i = 0; i < directors.count(); i++) {
-                        Nepomuk::Resource directorResource = findPropertyResourceByTitle(mediaVocabulary.videoDirector(), directors.at(i), true);
+                        Nepomuk2::Resource directorResource = findPropertyResourceByTitle(mediaVocabulary.videoDirector(), directors.at(i), true);
                         directorResources.append(directorResource);
                     }
                     res.setProperty(mediaVocabulary.videoDirector(), directorResources);
@@ -660,9 +660,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("producer")) {
                 QStringList producers  = fields["producer"].toString().split("||", QString::SkipEmptyParts);
                 if (!producers.isEmpty()) {
-                    QList<Nepomuk::Variant> producerResources;
+                    QList<Nepomuk2::Variant> producerResources;
                     for (int i = 0; i < producers.count(); i++) {
-                        Nepomuk::Resource producerResource = findPropertyResourceByTitle(mediaVocabulary.videoProducer(), producers.at(i), true);
+                        Nepomuk2::Resource producerResource = findPropertyResourceByTitle(mediaVocabulary.videoProducer(), producers.at(i), true);
                         producerResources.append(producerResource);
                     }
                     res.setProperty(mediaVocabulary.videoProducer(), producerResources);
@@ -675,9 +675,9 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
             if (fields.contains("actor")) {
                 QStringList actors  = fields["actor"].toString().split("||", QString::SkipEmptyParts);
                 if (!actors.isEmpty()) {
-                    QList<Nepomuk::Variant> actorResources;
+                    QList<Nepomuk2::Variant> actorResources;
                     for (int i = 0; i < actors.count(); i++) {
-                        Nepomuk::Resource actorResource = findPropertyResourceByTitle(mediaVocabulary.videoActor(), actors.at(i), true);
+                        Nepomuk2::Resource actorResource = findPropertyResourceByTitle(mediaVocabulary.videoActor(), actors.at(i), true);
                         actorResources.append(actorResource);
                     }
                     res.setProperty(mediaVocabulary.videoActor(), actorResources);
@@ -692,8 +692,8 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 if (fields.contains("seriesName")) {
                     QString seriesName = fields["seriesName"].toString();
                     if (!seriesName.isEmpty()) {
-                        Nepomuk::Resource seriesResource = findPropertyResourceByTitle(mediaVocabulary.videoSeries(), seriesName, true);
-                        res.setProperty(mediaVocabulary.videoSeries(), Nepomuk::Variant(seriesResource));
+                        Nepomuk2::Resource seriesResource = findPropertyResourceByTitle(mediaVocabulary.videoSeries(), seriesName, true);
+                        res.setProperty(mediaVocabulary.videoSeries(), Nepomuk2::Variant(seriesResource));
                     } else {
                         if (res.hasProperty(mediaVocabulary.videoSeries())) {
                             res.removeProperty(mediaVocabulary.videoSeries());
@@ -703,7 +703,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 if (fields.contains("season")) {
                     int season = fields["season"].toInt();
                     if (season != 0) {
-                        res.setProperty(mediaVocabulary.videoSeason(), Nepomuk::Variant(season));
+                        res.setProperty(mediaVocabulary.videoSeason(), Nepomuk2::Variant(season));
                     } else {
                         if (res.hasProperty(mediaVocabulary.videoSeason())) {
                             res.removeProperty(mediaVocabulary.videoSeason());
@@ -713,7 +713,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
                 if (fields.contains("episodeNumber")) {
                     int episodeNumber = fields["episodeNumber"].toInt();
                     if (episodeNumber != 0) {
-                        res.setProperty(mediaVocabulary.videoEpisodeNumber(), Nepomuk::Variant(episodeNumber));
+                        res.setProperty(mediaVocabulary.videoEpisodeNumber(), Nepomuk2::Variant(episodeNumber));
                     } else {
                         if (res.hasProperty(mediaVocabulary.videoEpisodeNumber())) {
                             res.removeProperty(mediaVocabulary.videoEpisodeNumber());
@@ -727,7 +727,7 @@ void NepomukWriter::updateInfo(QHash<QString, QVariant> fields)
     outputMessage(InfoUpdated, QUrl::toPercentEncoding(url));
 }
 
-void NepomukWriter::removeType(Nepomuk::Resource res, QUrl mediaType)
+void NepomukWriter::removeType(Nepomuk2::Resource res, QUrl mediaType)
 {
     QList<QUrl> types = res.types();
     for (int i = 0; i < types.count(); i++) {
@@ -758,12 +758,12 @@ void NepomukWriter::outputMessage(MessageType messageType, QString urlOrProgress
     cout.flush();
 }
 
-Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing)
+Nepomuk2::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing)
 {
     //First look in cache to see if this resource was previously found
     QString cacheKey = QString("%1:%2").arg(property.toString()).arg(title);
     if (m_propertyResourceCache.contains(cacheKey)) {
-        return Nepomuk::Resource::fromResourceUri(m_propertyResourceCache.value(cacheKey));
+        return Nepomuk2::Resource::fromResourceUri(m_propertyResourceCache.value(cacheKey));
     }
 
     //Query nepomuk store for resource
@@ -809,7 +809,7 @@ Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QStr
     query.endFilter();
     query.endWhere();
 
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     KUrl propertyResource;
     QUrl type;
@@ -823,21 +823,21 @@ Nepomuk::Resource NepomukWriter::findPropertyResourceByTitle(QUrl property, QStr
 
     if (!propertyResource.isEmpty()) {
         m_propertyResourceCache[cacheKey] = propertyResource;
-        Nepomuk::Resource resource;
-        resource =  Nepomuk::Resource::fromResourceUri(propertyResource);
+        Nepomuk2::Resource resource;
+        resource =  Nepomuk2::Resource::fromResourceUri(propertyResource);
         //If found resource has no type, assign the correct type and use it.
         if (type.isEmpty()) {
             resource.addType(resourceType);
         }
         return resource;
     } else if (createIfMissing){
-        Nepomuk::Resource resource;
-        resource.setProperty(resourceProperty, Nepomuk::Variant(title));
+        Nepomuk2::Resource resource;
+        resource.setProperty(resourceProperty, Nepomuk2::Variant(title));
         resource.addType(resourceType);
-        m_propertyResourceCache[cacheKey] = resource.resourceUri();
+        m_propertyResourceCache[cacheKey] = resource.uri();
         return resource;
     } else {
-        return Nepomuk::Resource();
+        return Nepomuk2::Resource();
     }
 }
 
@@ -870,11 +870,11 @@ void NepomukWriter::removeUnusedPropertyResources()
     query.endFilter();
     query.endWhere();
 
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
     outputMessage(Message, i18n("Tidying up unused resources..."));
     while( it.next() ) {
         QUrl propertyResource = it.binding(resourceBinding).uri();
-        Nepomuk::Resource resource = Nepomuk::Resource::fromResourceUri(propertyResource);
+        Nepomuk2::Resource resource = Nepomuk2::Resource::fromResourceUri(propertyResource);
         QString name = it.binding("name").literal().toString().trimmed();
         outputMessage(Message, i18n("Tidying up unused resources: %1", name));
         resource.remove();
@@ -882,11 +882,11 @@ void NepomukWriter::removeUnusedPropertyResources()
 
 }
 
-QList<Nepomuk::Variant> NepomukWriter::variantListFromStringList(const QStringList &stringList)
+QList<Nepomuk2::Variant> NepomukWriter::variantListFromStringList(const QStringList &stringList)
 {
-    QList<Nepomuk::Variant> variantList;
+    QList<Nepomuk2::Variant> variantList;
     for (int i = 0; i < stringList.count(); i++) {
-        variantList.append(Nepomuk::Variant(stringList.at(i)));
+        variantList.append(Nepomuk2::Variant(stringList.at(i)));
     }
     return variantList;
 }

@@ -31,8 +31,8 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <nepomuk/variant.h>
-#include <nepomuk/tag.h>
+#include <nepomuk2/variant.h>
+#include <nepomuk2/tag.h>
 #include <QApplication>
 #include <QTime>
 #include <taglib/fileref.h>
@@ -138,7 +138,7 @@ void TagListEngine::run()
                 if (m_stop) {
                     return;
                 }
-                Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                Nepomuk2::Resource res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                 MediaItem mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                 if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {
                     mediaList.append(mediaItem);

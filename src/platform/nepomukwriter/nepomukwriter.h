@@ -2,10 +2,10 @@
 #define NEPOMUKWRITER_H
 
 #include "../mediavocabulary.h"
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Variant>
-#include <Nepomuk/Tag>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Tag>
 #include <KApplication>
 #include <KUrl>
 #include <QtCore/QFile>
@@ -32,11 +32,11 @@ private:
     void writeToNepomuk(QHash <QString, QVariant> fields);
     void removeInfo(QHash <QString, QVariant> fields);
     void updateInfo(QHash <QString, QVariant> fields);
-    void removeType(Nepomuk::Resource res, QUrl mediaType);
+    void removeType(Nepomuk2::Resource res, QUrl mediaType);
     void outputMessage(MessageType messageType, QString urlOrProgressOrMessage = QString());
-    Nepomuk::Resource findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing = false);
+    Nepomuk2::Resource findPropertyResourceByTitle(QUrl property, QString title, bool createIfMissing = false);
     void removeUnusedPropertyResources();
-    QList<Nepomuk::Variant> variantListFromStringList(const QStringList &stringList);
+    QList<Nepomuk2::Variant> variantListFromStringList(const QStringList &stringList);
 
 };
 

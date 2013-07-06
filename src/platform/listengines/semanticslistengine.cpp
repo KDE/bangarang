@@ -31,7 +31,7 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <nepomuk/variant.h>
+#include <nepomuk2/variant.h>
 #include <QApplication>
 #include <QTime>
 #include <taglib/fileref.h>
@@ -192,7 +192,7 @@ void SemanticsListEngine::run()
                     }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
-                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        Nepomuk2::Resource res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         mediaItem.semanticComment = i18np("played once", "played %1 times", mediaItem.fields["playCount"].toInt());
                     } else {
@@ -263,7 +263,7 @@ void SemanticsListEngine::run()
                     }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
-                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        Nepomuk2::Resource res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                         mediaItem.fields["lastPlayed"] = it.binding(mediaVocabulary.lastPlayedBinding()).literal().toDateTime();
                     } else {
@@ -340,7 +340,7 @@ void SemanticsListEngine::run()
                     }
                     MediaItem mediaItem;
                     if (groupByCategoryType.isEmpty()) {
-                        Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                        Nepomuk2::Resource res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                         mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                     } else {
                         mediaItem = Utilities::categoryMediaItemFromIterator(it, groupByCategoryType, m_mediaListProperties.lri);
@@ -398,7 +398,7 @@ void SemanticsListEngine::run()
                     }
                     MediaItem mediaItem;
                     QDateTime added = it.binding("added").literal().toDateTime();
-                    Nepomuk::Resource res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+                    Nepomuk2::Resource res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
                     mediaItem = Utilities::mediaItemFromNepomuk(res, m_mediaListProperties.lri);
                     mediaItem.semanticComment = i18nc("for example, added 3 days ago", "added %1", Utilities::wordsForTimeSince(added));
                     if (!mediaItem.url.startsWith(QLatin1String("nepomuk:/"))) {

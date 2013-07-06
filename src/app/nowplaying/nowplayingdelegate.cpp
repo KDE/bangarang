@@ -40,9 +40,9 @@
 #include <KIcon>
 #include <KIconEffect>
 #include <QTextOption>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
-#include <Nepomuk/ResourceManager>
+#include <nepomuk2/resource.h>
+#include <nepomuk2/variant.h>
+#include <Nepomuk2/ResourceManager>
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
 {

@@ -24,11 +24,11 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <Nepomuk/Vocabulary/NMM>
-#include <Nepomuk/Vocabulary/NFO>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NCO>
-#include <Nepomuk/Vocabulary/NUAO>
+#include <Nepomuk2/Vocabulary/NMM>
+#include <Nepomuk2/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NUAO>
 
 MediaVocabulary::MediaVocabulary()
 {
@@ -121,7 +121,7 @@ QUrl MediaVocabulary::mediaNamespace(int vocabulary)
     } else if (vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#");
     } else if (vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::nmmNamespace();
+        returnUrl = Nepomuk2::Vocabulary::NMM::nmmNamespace();
     } else if (vocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#");
     }
@@ -137,7 +137,7 @@ QUrl MediaVocabulary::typeAudio()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Audio");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NFO::Audio();
+        returnUrl = Nepomuk2::Vocabulary::NFO::Audio();
     }
     
     return returnUrl;
@@ -151,7 +151,7 @@ QUrl MediaVocabulary::typeAudioMusic()
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#ID3Audio");
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::MusicPiece();
+        returnUrl = Nepomuk2::Vocabulary::NMM::MusicPiece();
     }
     
     return returnUrl;
@@ -165,7 +165,7 @@ QUrl MediaVocabulary::typeMediaStream()
     } else if (m_audioVocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#MediaStream");
     } else if (m_audioVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NFO::MediaStream();
+        returnUrl = Nepomuk2::Vocabulary::NFO::MediaStream();
     }
     
     return returnUrl;
@@ -179,7 +179,7 @@ QUrl MediaVocabulary::typeVideo()
     } else if (m_videoVocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Video");
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NFO::Video();
+        returnUrl = Nepomuk2::Vocabulary::NFO::Video();
     }
     
     return returnUrl;
@@ -189,7 +189,7 @@ QUrl MediaVocabulary::typeVideoMovie()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::Movie();
+        returnUrl = Nepomuk2::Vocabulary::NMM::Movie();
     }
     
     return returnUrl;
@@ -199,7 +199,7 @@ QUrl MediaVocabulary::typeVideoTVShow()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::TVShow();
+        returnUrl = Nepomuk2::Vocabulary::NMM::TVShow();
     }
     
     return returnUrl;
@@ -209,7 +209,7 @@ QUrl MediaVocabulary::typeTVSeries()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::TVSeries();
+        returnUrl = Nepomuk2::Vocabulary::NMM::TVSeries();
     }
     
     return returnUrl;
@@ -223,7 +223,7 @@ QUrl MediaVocabulary::typeImage()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#Image");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NFO::Image();
+        returnUrl = Nepomuk2::Vocabulary::NFO::Image();
     }
     
     return returnUrl;
@@ -233,7 +233,7 @@ QUrl MediaVocabulary::typeMusicArtist()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NCO::Contact();
+        returnUrl = Nepomuk2::Vocabulary::NCO::Contact();
     }
     
     return returnUrl;
@@ -243,7 +243,7 @@ QUrl MediaVocabulary::typeMusicAlbum()
 {
     QUrl returnUrl = QUrl();
     if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::MusicAlbum();
+        returnUrl = Nepomuk2::Vocabulary::NMM::MusicAlbum();
     }
     
     return returnUrl;
@@ -251,7 +251,7 @@ QUrl MediaVocabulary::typeMusicAlbum()
 
 QUrl MediaVocabulary::typeNCOContact()
 {
-    return Nepomuk::Vocabulary::NCO::Contact();
+    return Nepomuk2::Vocabulary::NCO::Contact();
 }
 
 QUrl MediaVocabulary::title()
@@ -262,7 +262,7 @@ QUrl MediaVocabulary::title()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#title");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::title();
+        returnUrl = Nepomuk2::Vocabulary::NIE::title();
     }
     
     return returnUrl;
@@ -275,7 +275,7 @@ QUrl MediaVocabulary::tag()
 
 QUrl MediaVocabulary::relatedTo()
 {
-    return Nepomuk::Vocabulary::NIE::relatedTo();
+    return Nepomuk2::Vocabulary::NIE::relatedTo();
 }
 
 QUrl MediaVocabulary::description()
@@ -286,7 +286,7 @@ QUrl MediaVocabulary::description()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#description");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::description();
+        returnUrl = Nepomuk2::Vocabulary::NIE::description();
     }
     
     return returnUrl;
@@ -300,7 +300,7 @@ QUrl MediaVocabulary::duration()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#duration");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NFO::duration();
+        returnUrl = Nepomuk2::Vocabulary::NFO::duration();
     }
     
     return returnUrl;
@@ -308,17 +308,17 @@ QUrl MediaVocabulary::duration()
 
 QUrl MediaVocabulary::lastPlayed()
 {
-    return Nepomuk::Vocabulary::NUAO::lastUsage();
+    return Nepomuk2::Vocabulary::NUAO::lastUsage();
 }
 
 QUrl MediaVocabulary::playCount()
 {
-    return Nepomuk::Vocabulary::NUAO::usageCount();
+    return Nepomuk2::Vocabulary::NUAO::usageCount();
 }
 
 QUrl MediaVocabulary::artwork()
 {
-    return QUrl(Nepomuk::Vocabulary::NFO::nfoNamespace().toString() + "depiction");
+    return QUrl(Nepomuk2::Vocabulary::NFO::nfoNamespace().toString() + "depiction");
 }
 
 QUrl MediaVocabulary::created()
@@ -329,7 +329,7 @@ QUrl MediaVocabulary::created()
     } else if (m_vocabulary == MediaVocabulary::nie) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#contentCreated");
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::contentCreated();
+        returnUrl = Nepomuk2::Vocabulary::NIE::contentCreated();
     }
     
     return returnUrl;
@@ -341,7 +341,7 @@ QUrl MediaVocabulary::releaseDate()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::releaseDate();
+        returnUrl = Nepomuk2::Vocabulary::NMM::releaseDate();
     }
     
     return returnUrl;
@@ -354,7 +354,7 @@ QUrl MediaVocabulary::genre()
     if (m_vocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_vocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::genre();
+        returnUrl = Nepomuk2::Vocabulary::NMM::genre();
     }
     return returnUrl;
 }
@@ -367,7 +367,7 @@ QUrl MediaVocabulary::rating()
 
 QUrl MediaVocabulary::ncoFullname()
 {
-    return Nepomuk::Vocabulary::NCO::fullname();
+    return Nepomuk2::Vocabulary::NCO::fullname();
 }
 
 QUrl MediaVocabulary::musicArtist()
@@ -376,7 +376,7 @@ QUrl MediaVocabulary::musicArtist()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NCO::creator();
+        returnUrl = Nepomuk2::Vocabulary::NCO::creator();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
     }
@@ -390,7 +390,7 @@ QUrl MediaVocabulary::musicPerformer()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::performer();
+        returnUrl = Nepomuk2::Vocabulary::NMM::performer();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
     }
@@ -404,7 +404,7 @@ QUrl MediaVocabulary::musicComposer()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::composer();
+        returnUrl = Nepomuk2::Vocabulary::NMM::composer();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#leadArtist");
     }
@@ -418,7 +418,7 @@ QUrl MediaVocabulary::musicArtistName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::artist();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NCO::fullname();
+        returnUrl = Nepomuk2::Vocabulary::NCO::fullname();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#fullname");
     }
@@ -432,7 +432,7 @@ QUrl MediaVocabulary::musicAlbum()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::album();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::musicAlbum();
+        returnUrl = Nepomuk2::Vocabulary::NMM::musicAlbum();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#albumTitle");
     }
@@ -446,7 +446,7 @@ QUrl MediaVocabulary::musicAlbumName()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::album();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::title();
+        returnUrl = Nepomuk2::Vocabulary::NIE::title();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#albumTitle");
     }
@@ -460,7 +460,7 @@ QUrl MediaVocabulary::musicAlbumYear()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::contentCreated();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::releaseDate();
+        returnUrl = Nepomuk2::Vocabulary::NMM::releaseDate();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#recordingYear");
     }
@@ -474,7 +474,7 @@ QUrl MediaVocabulary::musicTrackNumber()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::trackNumber();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::trackNumber();
+        returnUrl = Nepomuk2::Vocabulary::NMM::trackNumber();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#trackNumber");
     }
@@ -488,7 +488,7 @@ QUrl MediaVocabulary::musicGenre()
     if (m_musicVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_musicVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::genre();
+        returnUrl = Nepomuk2::Vocabulary::NMM::genre();
     } else if (m_musicVocabulary == MediaVocabulary::nid3) {
         returnUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/05/10/nid3#contentType");
     }
@@ -502,7 +502,7 @@ QUrl MediaVocabulary::videoGenre()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::genre();
+        returnUrl = Nepomuk2::Vocabulary::NMM::genre();
     }
     
     return returnUrl;
@@ -512,7 +512,7 @@ QUrl MediaVocabulary::videoSeries()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::series();
+        returnUrl = Nepomuk2::Vocabulary::NMM::series();
     }
     
     return returnUrl;
@@ -522,7 +522,7 @@ QUrl MediaVocabulary::videoSeriesTitle()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::title();
+        returnUrl = Nepomuk2::Vocabulary::NIE::title();
     }
     
     return returnUrl;
@@ -534,7 +534,7 @@ QUrl MediaVocabulary::videoSynopsis()
     if (m_videoVocabulary == MediaVocabulary::xesam) {
         returnUrl = Soprano::Vocabulary::Xesam::genre();
     } else if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NIE::description();
+        returnUrl = Nepomuk2::Vocabulary::NIE::description();
     }
     
     return returnUrl;
@@ -544,7 +544,7 @@ QUrl MediaVocabulary::videoSeason()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::season();
+        returnUrl = Nepomuk2::Vocabulary::NMM::season();
     }
     
     return returnUrl;
@@ -554,7 +554,7 @@ QUrl MediaVocabulary::videoEpisodeNumber()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::episodeNumber();
+        returnUrl = Nepomuk2::Vocabulary::NMM::episodeNumber();
     }
     
     return returnUrl;
@@ -564,7 +564,7 @@ QUrl MediaVocabulary::videoAudienceRating()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::audienceRating();
+        returnUrl = Nepomuk2::Vocabulary::NMM::audienceRating();
     }
     
     return returnUrl;
@@ -574,7 +574,7 @@ QUrl MediaVocabulary::videoWriter()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::writer();
+        returnUrl = Nepomuk2::Vocabulary::NMM::writer();
     }
     
     return returnUrl;
@@ -584,7 +584,7 @@ QUrl MediaVocabulary::videoDirector()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::director();
+        returnUrl = Nepomuk2::Vocabulary::NMM::director();
     }
     
     return returnUrl;
@@ -594,7 +594,7 @@ QUrl MediaVocabulary::videoAssistantDirector()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::assistantDirector();
+        returnUrl = Nepomuk2::Vocabulary::NMM::assistantDirector();
     }
     
     return returnUrl;
@@ -604,7 +604,7 @@ QUrl MediaVocabulary::videoProducer()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::producer();
+        returnUrl = Nepomuk2::Vocabulary::NMM::producer();
     }
     
     return returnUrl;
@@ -614,7 +614,7 @@ QUrl MediaVocabulary::videoActor()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::actor();
+        returnUrl = Nepomuk2::Vocabulary::NMM::actor();
     }
     
     return returnUrl;
@@ -624,7 +624,7 @@ QUrl MediaVocabulary::videoCinematographer()
 {
     QUrl returnUrl = QUrl();
     if (m_videoVocabulary == MediaVocabulary::nmm) {
-        returnUrl = Nepomuk::Vocabulary::NMM::cinematographer();
+        returnUrl = Nepomuk2::Vocabulary::NMM::cinematographer();
     }
     
     return returnUrl;
@@ -640,7 +640,7 @@ QString MediaVocabulary::hasTypeAudio(MediaQuery::Match match)
     }
     statement += MediaQuery::excludeType(resourceBinding, typeAudioMusic());
     statement += MediaQuery::excludeType(resourceBinding, typeMediaStream());
-    statement += MediaQuery::excludeType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList());
+    statement += MediaQuery::excludeType(resourceBinding, Nepomuk2::Vocabulary::NFO::MediaList());
     return statement;
     
 }
@@ -673,9 +673,9 @@ QString MediaVocabulary::hasTypeAudioFeed(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
     QString statement = QString("%1 %2 %3 ")
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::Audio()))
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList()))
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::RemoteDataObject()));
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::Audio()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::MediaList()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::RemoteDataObject()));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);
@@ -711,7 +711,7 @@ QString MediaVocabulary::hasTypeVideo(MediaQuery::Match match)
     }
     statement += MediaQuery::excludeType(resourceBinding, typeVideoMovie());
     statement += MediaQuery::excludeType(resourceBinding, typeVideoTVShow());
-    statement += MediaQuery::excludeType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList());
+    statement += MediaQuery::excludeType(resourceBinding, Nepomuk2::Vocabulary::NFO::MediaList());
     return statement;
 }
 
@@ -741,9 +741,9 @@ QString MediaVocabulary::hasTypeVideoFeed(MediaQuery::Match match)
 {
     QString resourceBinding = mediaResourceBinding();
     QString statement = QString("%1 %2 %3 ")
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::Video()))
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::MediaList()))
-                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk::Vocabulary::NFO::RemoteDataObject()));
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::Video()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::MediaList()))
+                        .arg(MediaQuery::hasType(resourceBinding, Nepomuk2::Vocabulary::NFO::RemoteDataObject()));
     statement += fileUrl(resourceBinding);
     if (match == MediaQuery::Optional) {
         statement = MediaQuery::addOptional(statement);

@@ -27,9 +27,9 @@
 #include <KIcon>
 #include <KDebug>
 #include <KStandardDirs>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
-#include <Nepomuk/ResourceManager>
+#include <nepomuk2/resource.h>
+#include <nepomuk2/variant.h>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
@@ -735,7 +735,7 @@ void Playlist::updatePlaybackInfo(qint64 time)
         //Update last played date and play count after 10 seconds
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
             MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
-            Nepomuk::Resource res(nowPlayingItem.url);
+            Nepomuk2::Resource res(nowPlayingItem.url);
             nowPlayingItem.fields["playCount"] = nowPlayingItem.fields["playCount"].toInt() + 1;
             nowPlayingItem.fields["lastPlayed"] = QDateTime::currentDateTime();
             m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem);

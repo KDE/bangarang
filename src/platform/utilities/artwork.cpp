@@ -34,7 +34,7 @@
 #include <KIconEffect>
 #include <KStandardDirs>
 #include <Soprano/QueryResultIterator>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 #include <QtGui/QLinearGradient>
 #include <QtGui/QPainter>
@@ -154,7 +154,7 @@ QImage Utilities::getAlbumArtwork(const QString &album, bool ignoreCache)
     query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
     query.endWhere();
     query.addLimit(5);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
@@ -190,7 +190,7 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
         QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
         query.orderBy(orderByBindings);
         query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
         //Build media list from results
         while( it.next() ) {
@@ -217,7 +217,7 @@ QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &t
         query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required, genre, MediaQuery::Equal));
         query.endWhere();
         query.addLimit(5);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
         while( it.next() ) {
             MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
@@ -251,7 +251,7 @@ QList<QImage> Utilities::getArtistArtworks(const QString &artist, bool ignoreCac
     QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
     query.orderBy(orderByBindings);
     query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     //Build media list from results
     while( it.next() ) {
@@ -288,7 +288,7 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type,
         QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
         query.orderBy(orderByBindings);
         query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
         //Build media list from results
         while( it.next() ) {
@@ -315,7 +315,7 @@ QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type,
         query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required, tag, MediaQuery::Equal));
         query.endWhere();
         query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
         while( it.next() ) {
             MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
@@ -349,7 +349,7 @@ QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ig
     query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
     query.endWhere();
     query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
@@ -383,7 +383,7 @@ QList<QImage> Utilities::getTVSeasonArtworks(const QString &seriesTitle, int sea
     query.addCondition((mediaVocabulary.hasVideoSeason(MediaQuery::Required, season, MediaQuery::Equal)));
     query.endWhere();
     query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
@@ -416,7 +416,7 @@ QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache
     query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required, actor, MediaQuery::Equal));
     query.endWhere();
     query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
@@ -448,7 +448,7 @@ QList<QImage> Utilities::getDirectorArtworks(const QString &director, bool ignor
     query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required, director, MediaQuery::Equal));
     query.endWhere();
     query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());

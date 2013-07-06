@@ -28,7 +28,7 @@
 #include <KLocale>
 #include <KDebug>
 #include <QtCore/QTime>
-#include <nepomuk/variant.h>
+#include <nepomuk2/variant.h>
 
 
 VideoListEngine::VideoListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
@@ -734,7 +734,7 @@ void VideoListEngine::run()
                 QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
                 it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
                 it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-                Nepomuk::Resource res(url);
+                Nepomuk2::Resource res(url);
                 QString type = "Video Clip";
                 if (res.exists()) {
                     if (res.hasType(mediaVocabulary.typeVideoMovie())) {
@@ -813,7 +813,7 @@ void VideoListEngine::run()
                 QUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
                 it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
                 it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
-                Nepomuk::Resource res(url);
+                Nepomuk2::Resource res(url);
                 QString type = "Video Clip";
                 if (res.exists()) {
                     if (res.hasType(mediaVocabulary.typeVideoMovie())) {

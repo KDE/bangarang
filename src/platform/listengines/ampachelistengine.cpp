@@ -34,7 +34,7 @@
 #include <KWallet/Wallet>
 #include <QFile>
 #include <QCryptographicHash>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 AmpacheListEngine::AmpacheListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {

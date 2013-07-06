@@ -398,7 +398,7 @@ void MediaItemModel::loadSourcesForNextCat()
 void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
 {
     //Check request signature of results and ignore results with a different signature
-   if (done) kDebug() << "results returned for " << mediaListProperties.lri;
+   //if (done) kDebug() << "results returned for " << mediaListProperties.lri;
    if ((mediaListProperties.lri == m_mediaListProperties.lri) || (requestSignature == m_requestSignature)) {
         if (m_subRequestSignatures.count() == 0) {
             emit itemsAvailable(true);

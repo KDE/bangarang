@@ -94,7 +94,7 @@ target_link_libraries(bangarang
     ${KDE4_KFILE_LIBS}
     ${KDE4_KROSSCORE_LIBS}
     ${KDE4_SOLID_LIBS}
-    ${NEPOMUK_LIBRARIES}
+    ${NEPOMUK_CORE_LIBRARY}
     ${SOPRANO_LIBRARIES}
     ${TAGLIB_LIBRARIES}
     tag

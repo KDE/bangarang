@@ -42,11 +42,11 @@
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
 #include <Soprano/Model>
-#include <Nepomuk/Resource>
-#include <Nepomuk/File>
-#include <Nepomuk/Variant>
-#include <Nepomuk/ResourceManager>
-#include <Nepomuk/Tag>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/File>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Tag>
 
 #include <QFile>
 #include <QTime>
@@ -81,7 +81,7 @@ MediaItem Utilities::getArtistCategoryItem(const QString &artist)
     query.addCondition(mediaVocabulary.hasMusicArtistArtwork(MediaQuery::Optional));
     query.endWhere();
     query.addLimit(1);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk::ResourceManager::instance()->mainModel());
+    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
     while( it.next() ) {
         QString artist = it.binding(mediaVocabulary.musicArtistNameBinding()).literal().toString().trimmed();
@@ -168,7 +168,7 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
     bool foundInNepomuk = false;
     if (nepomukInited()) {
         //Try to find the corresponding resource in Nepomuk
-        Nepomuk::Resource res = mediaResourceFromUrl(url);
+        Nepomuk2::Resource res = mediaResourceFromUrl(url);
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
             res.hasType(mediaVocabulary.typeAudioMusic()) ||
             res.hasType(mediaVocabulary.typeVideo()) ||
@@ -236,11 +236,11 @@ MediaItem Utilities::mediaItemFromUrl(KUrl url, bool preferFileMetaData)
 
     //Lookup nepomuk metadata not stored with file
     if (nepomukInited() && preferFileMetaData) {
-        Nepomuk::Resource res(KUrl(mediaItem.url));
+        Nepomuk2::Resource res(KUrl(mediaItem.url));
         QUrl nieUrl = QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url");
         mediaItem.fields["rating"] = res.rating();
         QStringList tags;
-        foreach (const Nepomuk::Tag& tag, res.tags()) {
+        foreach (const Nepomuk2::Tag& tag, res.tags()) {
             tags.append(tag.label());
         }
         mediaItem.fields["tags"] = tags;
@@ -318,7 +318,7 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
     return items;
 }
 
-MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &sourceLri)
+MediaItem Utilities::mediaItemFromNepomuk(Nepomuk2::Resource res, const QString &sourceLri)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     QString type;
@@ -370,7 +370,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     mediaItem.url = url.prettyUrl();
     mediaItem.exists = !url.prettyUrl().startsWith(QLatin1String("filex:/")); //if url is still a filex:/ url mark not exists.
     mediaItem.fields["url"] = mediaItem.url;
-    mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+    mediaItem.fields["resourceUri"] = res.uri().toString();
     mediaItem.fields["sourceLri"] = sourceLri;
     mediaItem.title = res.property(mediaVocabulary.title()).toString();
     mediaItem.fields["title"] = mediaItem.title;
@@ -394,7 +394,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
     mediaItem.fields["rating"] = res.rating();
 
     QStringList tags;
-    foreach (const Nepomuk::Tag& tag, res.tags()) {
+    foreach (const Nepomuk2::Tag& tag, res.tags()) {
         tags.append(tag.label());
     }
     mediaItem.fields["tags"] = tags;
@@ -419,7 +419,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.artwork = KIcon("audio-mpeg");
 
             QStringList artists;
-            QList<Nepomuk::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
+            QList<Nepomuk2::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
@@ -431,7 +431,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.fields["artist"] = artists;
 
             QStringList composers;
-            QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            QList<Nepomuk2::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
             for (int i = 0; i < composerResources.count(); i++) {
                 composers.append(composerResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
@@ -479,7 +479,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
             }
             QStringList writers;
-            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            QList<Nepomuk2::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
             for (int i = 0; i < writerResources.count(); i++) {
                 QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -490,7 +490,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
-            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            QList<Nepomuk2::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
             for (int i = 0; i < directorResources.count(); i++) {
                 QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -501,7 +501,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
-            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            QList<Nepomuk2::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
             for (int i = 0; i < producerResources.count(); i++) {
                 QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -512,7 +512,7 @@ MediaItem Utilities::mediaItemFromNepomuk(Nepomuk::Resource res, const QString &
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
-            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            QList<Nepomuk2::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
             for (int i = 0; i < actorResources.count(); i++) {
                 QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -554,7 +554,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     MediaItem mediaItem;
     MediaVocabulary mediaVocabulary;
 
-    Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
+    Nepomuk2::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
     KUrl url = it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri().isEmpty() ?
     it.binding(MediaVocabulary::mediaResourceBinding()).uri() :
     it.binding(MediaVocabulary::mediaResourceUrlBinding()).uri();
@@ -588,7 +588,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     mediaItem.fields["genre"] = genresFromRawTagGenres(rawGenres);
     mediaItem.fields["rating"] = it.binding(MediaVocabulary::ratingBinding()).literal().toInt();
     QStringList tags;
-    foreach (const Nepomuk::Tag& tag, res.tags()) {
+    foreach (const Nepomuk2::Tag& tag, res.tags()) {
         tags.append(tag.label());
     }
     mediaItem.fields["tags"] = tags;
@@ -611,7 +611,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.artwork = KIcon("audio-mpeg");
 
             QStringList artists;
-            QList<Nepomuk::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
+            QList<Nepomuk2::Resource> artistResources = res.property(mediaVocabulary.musicArtist()).toResourceList();
             for (int i = 0; i < artistResources.count(); i++) {
                 artists.append(artistResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
@@ -623,7 +623,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.fields["artist"] = artists;
 
             QStringList composers;
-            QList<Nepomuk::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
+            QList<Nepomuk2::Resource> composerResources = res.property(mediaVocabulary.musicComposer()).toResourceList();
             for (int i = 0; i < composerResources.count(); i++) {
                 composers.append(composerResources.at(i).property(mediaVocabulary.musicArtistName()).toString());
             }
@@ -633,7 +633,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             //TODO: For some reason virtuoso SPARQL corrupts string variable non-ascii characters when a filter is specified
             //WORKAROUND: Prefer album title using album resource for now
             QString album;
-            Nepomuk::Resource albumRes(it.binding(MediaVocabulary::albumResourceBinding()).uri());
+            Nepomuk2::Resource albumRes(it.binding(MediaVocabulary::albumResourceBinding()).uri());
             if (res.exists()) {
                 album = albumRes.property(mediaVocabulary.musicAlbumName()).toString();
             } else {
@@ -679,7 +679,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
                 mediaItem.fields["year"] = QVariant(QVariant::Int);
             }
             QStringList writers;
-            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            QList<Nepomuk2::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
             for (int i = 0; i < writerResources.count(); i++) {
                 QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -690,7 +690,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
-            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            QList<Nepomuk2::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
             for (int i = 0; i < directorResources.count(); i++) {
                 QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -701,7 +701,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
-            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            QList<Nepomuk2::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
             for (int i = 0; i < producerResources.count(); i++) {
                 QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -712,7 +712,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
-            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            QList<Nepomuk2::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
             for (int i = 0; i < actorResources.count(); i++) {
                 QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -748,7 +748,7 @@ MediaItem Utilities::mediaItemFromIterator(Soprano::QueryResultIterator &it, con
     return mediaItem;
 }
 
-MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const QString &type, const QString &sourceLri)
+MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk2::Resource &res, const QString &type, const QString &sourceLri)
 {
     MediaVocabulary mediaVocabulary;
     MediaItem mediaItem;
@@ -761,7 +761,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
         mediaItem.type = "Category";
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
-        mediaItem.fields["resourceUri"] = res.resourceUri().toString();
+        mediaItem.fields["resourceUri"] = res.uri().toString();
         mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
 
         if (type =="Artist") {
@@ -769,7 +769,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
             QString artistFilter = artist.isEmpty() ? QString(): QString("artist=%1").arg(artist);
             QString artworkUrl;
             if (res.hasProperty(mediaVocabulary.artwork())) {
-                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                Nepomuk2::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
                 artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
             }
             mediaItem.url = QString("music://albums?%1")
@@ -801,7 +801,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
             QString seriesNameFilter = seriesName.isEmpty() ? QString(): QString("seriesName=%1").arg(seriesName);
             QString artworkUrl;
             if (res.hasProperty(mediaVocabulary.artwork())) {
-                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                Nepomuk2::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
                 artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
             }
             mediaItem.url = QString("video://seasons?||%1")
@@ -820,7 +820,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
             QString actorFilter = actor.isEmpty() ? QString(): QString("actor=%1").arg(actor);
             QString artworkUrl;
             if (res.hasProperty(mediaVocabulary.artwork())) {
-                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                Nepomuk2::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
                 artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
             }
             mediaItem.url = QString("video://sources?||%1")
@@ -838,7 +838,7 @@ MediaItem Utilities::categoryMediaItemFromNepomuk(Nepomuk::Resource &res, const 
             QString directorFilter = director.isEmpty() ? QString(): QString("director=%1").arg(director);
             QString artworkUrl;
             if (res.hasProperty(mediaVocabulary.artwork())) {
-                Nepomuk::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
+                Nepomuk2::Resource artworkResource = res.property(mediaVocabulary.artwork()).toResource();
                 artworkUrl = artworkResource.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toString();
             }
             mediaItem.url = QString("video://sources?||%1")
@@ -875,7 +875,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
         mediaItem.fields["categoryType"] = type;
         mediaItem.nowPlaying = false;
         if (!MediaVocabulary::resourceBindingForCategory(type).isEmpty()) {
-            Nepomuk::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Artist")).uri());
+            Nepomuk2::Resource res(it.binding(MediaVocabulary::resourceBindingForCategory("Artist")).uri());
             if (res.exists()) {
                 mediaItem.fields["relatedTo"] = Utilities::getLinksForResource(res);
             }
@@ -1036,7 +1036,7 @@ MediaItem Utilities::categoryMediaItemFromIterator(Soprano::QueryResultIterator 
     return mediaItem;
 }
 
-Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
+Nepomuk2::Resource Utilities::mediaResourceFromUrl(KUrl url)
 {
     MediaVocabulary mediaVocabulary = MediaVocabulary();
     MediaQuery query;
@@ -1047,12 +1047,12 @@ Nepomuk::Resource Utilities::mediaResourceFromUrl(KUrl url)
     query.startWhere();
     query.addCondition(mediaVocabulary.hasUrl(MediaQuery::Required, url.url()));
     query.endWhere();
-    Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
-    Nepomuk::Resource res = Nepomuk::Resource();
+    Nepomuk2::Resource res = Nepomuk2::Resource();
     while (it.next()) {
-        res = Nepomuk::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
+        res = Nepomuk2::Resource(it.binding(mediaVocabulary.mediaResourceBinding()).uri());
         if (res.exists() && (res.hasType(mediaVocabulary.typeAudio()) ||
             res.hasType(mediaVocabulary.typeAudioMusic()) ||
             res.hasType(mediaVocabulary.typeVideo()) ||
@@ -1232,13 +1232,13 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
         }
         query.endWhere();
 
-        Soprano::Model * mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+        Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
         Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
         while (it.next()) {
-            Nepomuk::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
+            Nepomuk2::Resource res(it.binding(MediaVocabulary::mediaResourceBinding()).uri());
             QStringList writers;
-            QList<Nepomuk::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
+            QList<Nepomuk2::Resource> writerResources = res.property(mediaVocabulary.videoWriter()).toResourceList();
             for (int i = 0; i < writerResources.count(); i++) {
                 QString name = writerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -1249,7 +1249,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
             mediaItem.fields["writer"] = writers;
 
             QStringList directors;
-            QList<Nepomuk::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
+            QList<Nepomuk2::Resource> directorResources = res.property(mediaVocabulary.videoDirector()).toResourceList();
             for (int i = 0; i < directorResources.count(); i++) {
                 QString name = directorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -1260,7 +1260,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
             mediaItem.fields["director"] = directors;
 
             QStringList producers;
-            QList<Nepomuk::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
+            QList<Nepomuk2::Resource> producerResources = res.property(mediaVocabulary.videoProducer()).toResourceList();
             for (int i = 0; i < producerResources.count(); i++) {
                 QString name = producerResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -1271,7 +1271,7 @@ MediaItem Utilities::completeMediaItem(const MediaItem & sourceMediaItem)
             mediaItem.fields["producer"] = producers;
 
             QStringList actors;
-            QList<Nepomuk::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
+            QList<Nepomuk2::Resource> actorResources = res.property(mediaVocabulary.videoActor()).toResourceList();
             for (int i = 0; i < actorResources.count(); i++) {
                 QString name = actorResources.at(i).property(mediaVocabulary.ncoFullname()).toString();
                 if (!name.isEmpty()) {
@@ -1449,7 +1449,7 @@ MediaItem Utilities::makeSubtitle(const MediaItem & mediaItem)
     return updatedItem;
 }
 
-QStringList Utilities::getLinksForResource(Nepomuk::Resource &res)
+QStringList Utilities::getLinksForResource(Nepomuk2::Resource &res)
 {
     QStringList related;
     QUrl relatedProperty("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#relatedTo");

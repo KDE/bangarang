@@ -19,16 +19,16 @@
 #include "nepomuklistengine.h"
 #include "../mediavocabulary.h"
 #include "../utilities/utilities.h"
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
+#include <nepomuk2/resource.h>
+#include <nepomuk2/variant.h>
 #include <KDebug>
 
 NepomukListEngine::NepomukListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
-    Nepomuk::ResourceManager::instance()->init();
+    Nepomuk2::ResourceManager::instance()->init();
     m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
-        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+        m_mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     }
     m_removeSourceInfo = false;
     m_updateSourceInfo = false;

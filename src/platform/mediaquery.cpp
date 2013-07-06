@@ -20,7 +20,7 @@
 #include "mediavocabulary.h"
 #include <kdeversion.h>
 #include <KDebug>
-#include <nepomuk/tag.h>
+#include <nepomuk2/tag.h>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>

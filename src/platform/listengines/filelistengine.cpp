@@ -39,9 +39,9 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
-#include <nepomuk/resource.h>
-#include <nepomuk/variant.h>
-#include <Nepomuk/ResourceManager>
+#include <nepomuk2/resource.h>
+#include <nepomuk2/variant.h>
+#include <Nepomuk2/ResourceManager>
 
 FileListEngine::FileListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
 {

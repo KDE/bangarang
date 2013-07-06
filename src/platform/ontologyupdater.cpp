@@ -22,17 +22,17 @@
 #include "utilities/utilities.h"
 #include <KDebug>
 #include <KLocale>
-#include <Nepomuk/Variant>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <Nepomuk/Vocabulary/NMM>
-#include <Nepomuk/Vocabulary/NIE>
-#include <Nepomuk/Vocabulary/NFO>
+#include <Nepomuk2/Vocabulary/NMM>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/Vocabulary/NFO>
 #include <QApplication>
 
 OntologyUpdater::OntologyUpdater(QObject * parent) : QObject(parent)
@@ -49,7 +49,7 @@ void OntologyUpdater::start()
     Soprano::Model *m_mainModel;
     bool m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
-        m_mainModel = Nepomuk::ResourceManager::instance()->mainModel();
+        m_mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
     } else {
         return;
     }
@@ -93,7 +93,7 @@ void OntologyUpdater::start()
     while( it.next() && !m_stopUpdate) {
         QApplication::processEvents();
         i++;
-        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        Nepomuk2::Resource resource = Nepomuk2::Resource(it.binding("r").uri());
         //Update types
         QUrl type = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Audio");
         if (resource.hasType(type)) {
@@ -111,13 +111,13 @@ void OntologyUpdater::start()
             //Update properties
             QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#musicAlbum");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.musicAlbum(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#trackNumber");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.musicTrackNumber(), value);
             }
@@ -140,45 +140,45 @@ void OntologyUpdater::start()
         //Update common properties
         QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/nfo#duration");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.duration(), value);
         }
-        property = Nepomuk::Vocabulary::NMM::artwork();
+        property = Nepomuk2::Vocabulary::NMM::artwork();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.artwork(), value);
         }
-        property = Nepomuk::Vocabulary::NIE::hasLogicalPart();
+        property = Nepomuk2::Vocabulary::NIE::hasLogicalPart();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
-            if (value.toResource().hasType(Nepomuk::Vocabulary::NFO::Image())) {
+            Nepomuk2::Variant value = resource.property(property);
+            if (value.toResource().hasType(Nepomuk2::Vocabulary::NFO::Image())) {
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.artwork(), value);
             }
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.genre(), value);
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.releaseDate(), value);
         }
         property = Soprano::Vocabulary::Xesam::useCount();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.playCount(), value);
         }
         property = Soprano::Vocabulary::Xesam::lastUsed();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.lastPlayed(), value);
         }
@@ -214,7 +214,7 @@ void OntologyUpdater::start()
     while( it.next() && !m_stopUpdate) {
         QApplication::processEvents();
         i++;
-        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        Nepomuk2::Resource resource = Nepomuk2::Resource(it.binding("r").uri());
         //Update types
         QUrl type = QUrl("http://www.semanticdesktop.org/ontologies/nfo#Video");
         if (resource.hasType(type)) {
@@ -232,31 +232,31 @@ void OntologyUpdater::start()
             //Update properties
             QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#synopsis");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoSynopsis(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#writer");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoWriter(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#actor");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoActor(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#director");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoDirector(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#producer");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoProducer(), value);
             }
@@ -270,49 +270,49 @@ void OntologyUpdater::start()
             //Update properties
             QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#series");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoSeries(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#synopsis");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoSynopsis(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#season");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoSeason(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#episodeNumber");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoEpisodeNumber(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#writer");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoWriter(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#actor");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoActor(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#director");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoDirector(), value);
             }
             property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#producer");
             if (resource.hasProperty(property)) {
-                Nepomuk::Variant value = resource.property(property);
+                Nepomuk2::Variant value = resource.property(property);
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.videoProducer(), value);
             }
@@ -328,45 +328,45 @@ void OntologyUpdater::start()
         //Update common properties
         QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/nfo#duration");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.duration(), value);
         }
-        property = Nepomuk::Vocabulary::NMM::artwork();
+        property = Nepomuk2::Vocabulary::NMM::artwork();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.artwork(), value);
         }
-        property = Nepomuk::Vocabulary::NIE::hasLogicalPart();
+        property = Nepomuk2::Vocabulary::NIE::hasLogicalPart();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
-            if (value.toResource().hasType(Nepomuk::Vocabulary::NFO::Image())) {
+            Nepomuk2::Variant value = resource.property(property);
+            if (value.toResource().hasType(Nepomuk2::Vocabulary::NFO::Image())) {
                 resource.removeProperty(property);
                 resource.setProperty(mediaVocabulary.artwork(), value);
             }
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#genre");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.genre(), value);
         }
         property = QUrl("http://www.semanticdesktop.org/ontologies/nmm#releaseDate");
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.releaseDate(), value);
         }
         property = Soprano::Vocabulary::Xesam::useCount();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.playCount(), value);
         }
         property = Soprano::Vocabulary::Xesam::lastUsed();
         if (resource.hasProperty(property)) {
-            Nepomuk::Variant value = resource.property(property);
+            Nepomuk2::Variant value = resource.property(property);
             resource.removeProperty(property);
             resource.setProperty(mediaVocabulary.lastPlayed(), value);
         }
@@ -393,7 +393,7 @@ void OntologyUpdater::start()
     while( it.next() && !m_stopUpdate) {
         QApplication::processEvents();
         i++;
-        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        Nepomuk2::Resource resource = Nepomuk2::Resource(it.binding("r").uri());
         QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating");
         if (resource.hasProperty(property)) {
             int rating = resource.property(property).toInt();
@@ -421,7 +421,7 @@ void OntologyUpdater::start()
     while( it.next() && !m_stopUpdate) {
         QApplication::processEvents();
         i++;
-        Nepomuk::Resource resource = Nepomuk::Resource(it.binding("r").uri());
+        Nepomuk2::Resource resource = Nepomuk2::Resource(it.binding("r").uri());
         QUrl property = QUrl("http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating");
         if (resource.hasProperty(property)) {
             int rating = resource.property(property).toInt();
@@ -446,7 +446,7 @@ void OntologyUpdater::stopUpdate()
     m_stopUpdate = true;
 }
 
-void OntologyUpdater::removeType(Nepomuk::Resource res, QUrl mediaType)
+void OntologyUpdater::removeType(Nepomuk2::Resource res, QUrl mediaType)
 {
     QList<QUrl> types = res.types();
     for (int i = 0; i < types.count(); i++) {

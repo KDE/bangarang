@@ -34,7 +34,7 @@
 #include <KIO/NetAccess>
 #include <KDebug>
 #include <QFile>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 
 SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {

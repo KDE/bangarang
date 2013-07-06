@@ -19,7 +19,7 @@
 #ifndef ONTOLOGYUPDATER_H
 #define ONTOLOGYUPDATER_H
 
-#include <Nepomuk/Resource>
+#include <Nepomuk2/Resource>
 
 /* This class is used to update ontology of the types and properties used to 
  * store media data in nepomuk.  Bangarang may be released using draft ontologies
@@ -53,7 +53,7 @@ class OntologyUpdater : public QObject
         void done();
         
     private:
-        void removeType(Nepomuk::Resource res, QUrl mediaType);
+        void removeType(Nepomuk2::Resource res, QUrl mediaType);
         bool m_stopUpdate;
 
 };

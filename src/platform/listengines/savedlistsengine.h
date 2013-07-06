@@ -22,8 +22,8 @@
 #include "nepomuklistengine.h"
 #include <QtCore/QDir>
 #include <KUrl>
-#include <Nepomuk/Resource>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/Model>
 #include <phonon/mediaobject.h>
 

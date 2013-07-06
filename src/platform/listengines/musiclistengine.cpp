@@ -32,7 +32,7 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <nepomuk/variant.h>
+#include <nepomuk2/variant.h>
 #include <QApplication>
 #include <QTime>
 #include <QTextStream>
@@ -209,7 +209,7 @@ void MusicListEngine::run()
                 }
                 //TODO: For some reason virtuoso SPARQL corrupts string variable non-ascii characters when a filter is specified
                 //WORKAROUND: Prefer artist title using artist resource for now
-                QString artist = Nepomuk::Resource(it.binding(mediaVocabulary.artistResourceBinding()).uri()).property(mediaVocabulary.musicArtistName()).toString();
+                QString artist = Nepomuk2::Resource(it.binding(mediaVocabulary.artistResourceBinding()).uri()).property(mediaVocabulary.musicArtistName()).toString();
                 QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
                 if (!album.isEmpty()) {
                     QString lri = QString("music://songs?album=%1||%2||%3").arg(album, artistFilter, genreFilter);
