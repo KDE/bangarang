@@ -24,6 +24,8 @@
 #include <QtCore/QTimer>
 #include "../mediaitemmodel.h"
 
+#include <unistd.h>
+
 /*
  * This is a base clase for fetching meta info for a provided media list.
  */
