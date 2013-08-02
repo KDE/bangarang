@@ -2,6 +2,7 @@
 Type=Application
 Version=1.0
 Name=Bangarang
+Name[bs]=Bangarang
 Name[cs]=Bangarang
 Name[da]=Bangarang
 Name[de]=Bangarang
@@ -26,6 +27,7 @@ Name[tr]=Bangarang
 Name[uk]=Bangarang
 Name[x-test]=xxBangarangxx
 GenericName=Media Player
+GenericName[bs]=Izvođač medija
 GenericName[cs]=Přehrávač médií
 GenericName[da]=Medieafspiller
 GenericName[de]=Medienwiedergabe

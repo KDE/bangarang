@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Play DVD with Bangarang
+Name[bs]=Izvodi DVD preko Bangarang
 Name[cs]=Přehrát DVD v Bangarangu
 Name[da]=Afspil dvd med Bangarang
 Name[de]=DVD mit Bangarang wiedergeben
@@ -32,6 +33,7 @@ X-KDE-Solid-Predicate=[ OpticalDisc.availableContent == 'Data|VideoDvd' AND Stor
 Exec=bangarang --play-dvd %u
 Icon=bangarang
 Name=Play DVD with Bangarang
+Name[bs]=Izvodi DVD preko Bangarang
 Name[cs]=Přehrát DVD v Bangarangu
 Name[da]=Afspil dvd med Bangarang
 Name[de]=DVD mit Bangarang wiedergeben
