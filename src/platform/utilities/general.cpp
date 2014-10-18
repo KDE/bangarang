@@ -29,15 +29,15 @@
 #include <KDebug>
 #include <KLocale>
 #include <Solid/Device>
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
-#include <Soprano/Model>
-#include <Nepomuk2/Resource>
-#include <Nepomuk2/Variant>
-#include <Nepomuk2/ResourceManager>
-#include <Nepomuk2/Tag>
+//#include <Soprano/QueryResultIterator>
+//#include <Soprano/Vocabulary/Xesam>
+//#include <Soprano/Vocabulary/RDF>
+//#include <Soprano/Vocabulary/XMLSchema>
+//#include <Soprano/Model>
+//#include <Nepomuk2/Resource>
+//#include <Nepomuk2/Variant>
+//#include <Nepomuk2/ResourceManager>
+//#include <Nepomuk2/Tag>
 
 #include <phonon/backendcapabilities.h>
 #include <phonon/MediaObject>
@@ -84,129 +84,129 @@ QString Utilities::mergeLRIs(const QString &lri, const QString &lriToMerge)
 
 QUrl Utilities::artistResource(const QString &artistName)
 {
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append("r");
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(QString("{?pr <%1> ?r. } UNION {?pr <%2> ?r . } UNION {?pr <%3> ?r . } ")
-                       .arg(mediaVocabulary.musicArtist().toString())
-                       .arg(mediaVocabulary.musicPerformer().toString())
-                       .arg(mediaVocabulary.musicComposer().toString()));
-    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
-    query.startFilter();
-    query.addFilterConstraint("name", artistName, MediaQuery::Equal);
-    query.endFilter();
-    query.endWhere();
+//    MediaVocabulary mediaVocabulary = MediaVocabulary();
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append("r");
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(QString("{?pr <%1> ?r. } UNION {?pr <%2> ?r . } UNION {?pr <%3> ?r . } ")
+//                       .arg(mediaVocabulary.musicArtist().toString())
+//                       .arg(mediaVocabulary.musicPerformer().toString())
+//                       .arg(mediaVocabulary.musicComposer().toString()));
+//    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
+//    query.startFilter();
+//    query.addFilterConstraint("name", artistName, MediaQuery::Equal);
+//    query.endFilter();
+//    query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+//    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
+//    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
-    while (it.next()) {
-        resource = it.binding("r").uri();
-    }
+//    while (it.next()) {
+//        resource = it.binding("r").uri();
+//    }
     return resource;
 }
 
 QUrl Utilities::albumResource(const QString &albumName)
 {
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append("r");
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeMusicAlbum().toString()));
-    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.musicAlbumName().toString()));
-    query.startFilter();
-    query.addFilterConstraint("name", albumName, MediaQuery::Equal);
-    query.endFilter();
-    query.endWhere();
+//    MediaVocabulary mediaVocabulary = MediaVocabulary();
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append("r");
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeMusicAlbum().toString()));
+//    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.musicAlbumName().toString()));
+//    query.startFilter();
+//    query.addFilterConstraint("name", albumName, MediaQuery::Equal);
+//    query.endFilter();
+//    query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+//    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
+//    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
-    while (it.next()) {
-        resource = it.binding("r").uri();
-    }
+//    while (it.next()) {
+//        resource = it.binding("r").uri();
+//    }
     return resource;
 }
 
 QUrl Utilities::TVSeriesResource(const QString &seriesName)
 {
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append("r");
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeTVSeries().toString()));
-    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.videoSeriesTitle().toString()));
-    query.startFilter();
-    query.addFilterConstraint("name", seriesName, MediaQuery::Equal);
-    query.endFilter();
-    query.endWhere();
+//    MediaVocabulary mediaVocabulary = MediaVocabulary();
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append("r");
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(QString("?r rdf:type <%1> . ").arg(mediaVocabulary.typeTVSeries().toString()));
+//    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.videoSeriesTitle().toString()));
+//    query.startFilter();
+//    query.addFilterConstraint("name", seriesName, MediaQuery::Equal);
+//    query.endFilter();
+//    query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+//    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
+//    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
-    while (it.next()) {
-        resource = it.binding("r").uri();
-    }
+//    while (it.next()) {
+//        resource = it.binding("r").uri();
+//    }
     return resource;
 }
 
 QUrl Utilities::actorResource(const QString &actorName)
 {
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append("r");
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoActor().toString()));
-    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
-    query.startFilter();
-    query.addFilterConstraint("name", actorName, MediaQuery::Equal);
-    query.endFilter();
-    query.endWhere();
+//    MediaVocabulary mediaVocabulary = MediaVocabulary();
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append("r");
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoActor().toString()));
+//    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
+//    query.startFilter();
+//    query.addFilterConstraint("name", actorName, MediaQuery::Equal);
+//    query.endFilter();
+//    query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+//    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
+//    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
-    while (it.next()) {
-        resource = it.binding("r").uri();
-    }
+//    while (it.next()) {
+//        resource = it.binding("r").uri();
+//    }
     return resource;
 }
 
 QUrl Utilities::directorResource(const QString &directorName)
 {
-    MediaVocabulary mediaVocabulary = MediaVocabulary();
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append("r");
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoDirector().toString()));
-    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
-    query.startFilter();
-    query.addFilterConstraint("name", directorName, MediaQuery::Equal);
-    query.endFilter();
-    query.endWhere();
+//    MediaVocabulary mediaVocabulary = MediaVocabulary();
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append("r");
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(QString("?pr <%1> ?r . ").arg(mediaVocabulary.videoDirector().toString()));
+//    query.addCondition(QString("?r <%1> ?name . ").arg(mediaVocabulary.ncoFullname().toString()));
+//    query.startFilter();
+//    query.addFilterConstraint("name", directorName, MediaQuery::Equal);
+//    query.endFilter();
+//    query.endWhere();
 
-    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
+//    Soprano::Model * mainModel = Nepomuk2::ResourceManager::instance()->mainModel();
+//    Soprano::QueryResultIterator it = query.executeSelect(mainModel);
 
     QUrl resource;
-    while (it.next()) {
-        resource = it.binding("r").uri();
-    }
+//    while (it.next()) {
+//        resource = it.binding("r").uri();
+//    }
     return resource;
 }
 
@@ -271,12 +271,13 @@ QString Utilities::deviceName(QString udi, Phonon::MediaObject *mobj)
 
 bool Utilities::nepomukInited()
 {
-    bool nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
-    if (!nepomukInited) {
-        Nepomuk2::ResourceManager::instance()->init();
-        nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
-    }
-    return nepomukInited;
+//    bool nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
+//    if (!nepomukInited) {
+//        Nepomuk2::ResourceManager::instance()->init();
+//        nepomukInited = Nepomuk2::ResourceManager::instance()->initialized();
+//    }
+//    return nepomukInited;
+    return false;
 }
 
 QStringList Utilities::cleanStringList(QStringList stringList)
@@ -340,9 +341,9 @@ QString Utilities::titleForRequest(const QString& title)
     }
 
     //Remove "the" from front of name
-    if (edited.startsWith("the", Qt::CaseInsensitive) && KGlobal::locale()->language().startsWith(QLatin1String("en"))) {
-        tmp = edited.mid(4).trimmed();
-    }
+//    if (edited.startsWith("the", Qt::CaseInsensitive) && KGlobal::locale()->language().startsWith(QLatin1String("en"))) {
+//        tmp = edited.mid(4).trimmed();
+//    }
     if ( !tmp.isEmpty() ) {
         edited = tmp;
     }

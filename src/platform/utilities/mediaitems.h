@@ -21,7 +21,7 @@
 
 #include <KUrl>
 #include <Soprano/QueryResultIterator>
-#include <Nepomuk2/Resource>
+//#include <Nepomuk2/Resource>
 
 class MediaItem;
 
@@ -36,18 +36,18 @@ namespace Utilities {
     int mediaListDuration(const QList<MediaItem> &mediaList);
     QString mediaListDurationText(const QList<MediaItem> &mediaList);
     QList<MediaItem> mediaItemsDontExist(const QList<MediaItem> &mediaList);
-    MediaItem mediaItemFromNepomuk(Nepomuk2::Resource res, const QString &sourceLri = QString());
-    MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri = QString());
-    MediaItem categoryMediaItemFromNepomuk(Nepomuk2::Resource &res, const QString &type, const QString &sourceLri = QString());
-    MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString(), const QString &sourceLri = QString());
-    Nepomuk2::Resource mediaResourceFromUrl(KUrl Url);
+//    MediaItem mediaItemFromNepomuk(Nepomuk2::Resource res, const QString &sourceLri = QString());
+//    MediaItem mediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &sourceLri = QString());
+//    MediaItem categoryMediaItemFromNepomuk(Nepomuk2::Resource &res, const QString &type, const QString &sourceLri = QString());
+//    MediaItem categoryMediaItemFromIterator(Soprano::QueryResultIterator &it, const QString &type, const QString &lri = QString(), const QString &sourceLri = QString());
+//    Nepomuk2::Resource mediaResourceFromUrl(KUrl Url);
     QString lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator);
     QList<MediaItem> mediaListFromSavedList(const MediaItem &savedListMediaItem);
-    MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
+//    MediaItem completeMediaItem(const MediaItem & sourceMediaItem);
     QList<MediaItem> mergeGenres(QList<MediaItem> genreList);
     QList<MediaItem> sortMediaList(QList<MediaItem> mediaList);
     MediaItem makeSubtitle(const MediaItem & mediaItem);
-    QStringList getLinksForResource(Nepomuk2::Resource &res);
+//    QStringList getLinksForResource(Nepomuk2::Resource &res);
     bool isTemporaryAudioStream(const MediaItem &item);
     KUrl urlForFilex(KUrl url);
     KUrl decodedUrl(QUrl url);

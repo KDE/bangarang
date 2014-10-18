@@ -128,7 +128,7 @@ class ActionsManager : public QObject
         void addBookmarkSlot();
         void activateBookmark(QAction *bookmarkAction);
         void removeBookmark(QAction *bookmarkAction);
-        void updateOntologies();
+//        void updateOntologies();
         void addTemporaryAudioStreams();
         void toggleInfoView();
         void selectAll();

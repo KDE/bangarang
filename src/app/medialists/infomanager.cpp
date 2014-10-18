@@ -40,9 +40,9 @@
 #include <Soprano/Vocabulary/Xesam>
 #include <Soprano/Vocabulary/RDF>
 #include <Soprano/Vocabulary/XMLSchema>
-#include <nepomuk2/resource.h>
-#include <Nepomuk2/ResourceManager>
-#include <nepomuk2/variant.h>
+//#include <nepomuk2/resource.h>
+//#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/variant.h>
 #include <QComboBox>
 #include <QDateEdit>
 #include <QDesktopServices>
@@ -57,7 +57,8 @@ InfoManager::InfoManager(MainWindow * parent) : QObject(parent)
     m_parent = parent;
     ui = m_parent->ui;
 
-    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
+//    m_nepomukInited = Utilities::nepomukInited();
     m_enableTouch = false;
     
     m_infoItemModel = (InfoItemModel *)ui->infoItemView->model();

@@ -39,9 +39,9 @@
 #include <KDateTime>
 #include <KDebug>
 #include <Soprano/Vocabulary/NAO>
-#include <nepomuk2/variant.h>
-#include <nepomuk2/resource.h>
-#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/variant.h>
+//#include <nepomuk2/resource.h>
+//#include <Nepomuk2/ResourceManager>
 
 #include <QUrl>
 #include <QDesktopServices>
@@ -59,7 +59,8 @@ InfoItemDelegate::InfoItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
     m_application = (BangarangApplication *)KApplication::kApplication();
 
-    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
+//    m_nepomukInited = Utilities::nepomukInited();
 
     m_stringListIndexEditing = -1;
 

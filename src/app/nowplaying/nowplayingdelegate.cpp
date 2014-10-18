@@ -40,9 +40,9 @@
 #include <KIcon>
 #include <KIconEffect>
 #include <QTextOption>
-#include <nepomuk2/resource.h>
-#include <nepomuk2/variant.h>
-#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/resource.h>
+//#include <nepomuk2/variant.h>
+//#include <Nepomuk2/ResourceManager>
 
 NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -57,7 +57,8 @@ NowPlayingDelegate::NowPlayingDelegate(QObject *parent) : QItemDelegate(parent)
     m_showInfo = false;
     m_infoFont = KGlobalSettings::smallestReadableFont();
 
-    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
+//    m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
         m_mediaIndexer = new MediaIndexer(this);
     }

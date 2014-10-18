@@ -27,12 +27,12 @@
 #include <KIcon>
 #include <KDebug>
 #include <KStandardDirs>
-#include <nepomuk2/resource.h>
-#include <nepomuk2/variant.h>
-#include <Nepomuk2/ResourceManager>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
+//#include <nepomuk2/resource.h>
+//#include <nepomuk2/variant.h>
+//#include <Nepomuk2/ResourceManager>
+//#include <Soprano/Vocabulary/Xesam>
+//#include <Soprano/Vocabulary/RDF>
+//#include <Soprano/Vocabulary/XMLSchema>
 #include <QDBusInterface>
 #include <Solid/Device>
 #include <Solid/Block>
@@ -63,7 +63,8 @@ Playlist::Playlist(QObject * parent, Phonon::MediaObject * mediaObject) : QObjec
     
     setMediaObject(mediaObject);
 
-    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
+//    m_nepomukInited = Utilities::nepomukInited();
     if (m_nepomukInited) {
         m_mediaIndexer = new MediaIndexer(this);
     }
@@ -688,7 +689,7 @@ void Playlist::stateChanged(Phonon::State newstate, Phonon::State oldstate) {
                 && oldstate != Phonon::PausedState) {
 
         if (isKDE46OrGreater) {
-            m_powerManagementCookie = Solid::PowerManagement::beginSuppressingScreenPowerManagement(i18n("Video Playback"));
+            m_powerManagementCookie = Solid::PowerManagement::beginSuppressingScreenPowerManagement("Video Playback"); //TODO: Restore i18n
         } else {
             QDBusInterface iface(
                         "org.kde.kded",
@@ -734,14 +735,15 @@ void Playlist::updatePlaybackInfo(qint64 time)
     if (m_playbackInfoChecks == 2) {
         //Update last played date and play count after 10 seconds
         if (m_nepomukInited && m_nowPlaying->rowCount() > 0) {
-            MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
-            Nepomuk2::Resource res(nowPlayingItem.url);
-            nowPlayingItem.fields["playCount"] = nowPlayingItem.fields["playCount"].toInt() + 1;
-            nowPlayingItem.fields["lastPlayed"] = QDateTime::currentDateTime();
-            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem);
-            if (res.exists()) {
-                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).fields["resourceUri"].toString(), true, nowPlayingItem.fields["lastPlayed"].toDateTime());
-            }
+            //TODO: Fix to work without Nepomuk
+//            MediaItem nowPlayingItem = m_nowPlaying->mediaItemAt(0);
+//            Nepomuk2::Resource res(nowPlayingItem.url);
+//            nowPlayingItem.fields["playCount"] = nowPlayingItem.fields["playCount"].toInt() + 1;
+//            nowPlayingItem.fields["lastPlayed"] = QDateTime::currentDateTime();
+//            m_nowPlaying->replaceMediaItemAt(0, nowPlayingItem);
+//            if (res.exists()) {
+//                m_mediaIndexer->updatePlaybackInfo(m_nowPlaying->mediaItemAt(0).fields["resourceUri"].toString(), true, nowPlayingItem.fields["lastPlayed"].toDateTime());
+//            }
         }
         m_playbackInfoWritten = true;
     }

@@ -1,4 +1,4 @@
-add_subdirectory(platform/nepomukwriter)
+#add_subdirectory(platform/nepomukwriter)
 
 set(BangarangSources
     app/main.cpp
@@ -39,10 +39,10 @@ set(BangarangSources
     platform/infoitemmodel.cpp
     platform/mediaitemmodel.cpp
     platform/mediaindexer.cpp
-    platform/mediavocabulary.cpp
-    platform/mediaquery.cpp
+#    platform/mediavocabulary.cpp
+#    platform/mediaquery.cpp
     platform/medialistcache.cpp
-    platform/ontologyupdater.cpp
+#    platform/ontologyupdater.cpp
     platform/playlist.cpp
     platform/infofetchers/dbpediainfofetcher.cpp
     platform/infofetchers/doubaninfofetcher.cpp
@@ -52,23 +52,23 @@ set(BangarangSources
     platform/infofetchers/lastfminfofetcher.cpp
     platform/infofetchers/tmdbinfofetcher.cpp
     platform/infofetchers/tvdbinfofetcher.cpp
-    platform/listengines/ampachelistengine.cpp
-    platform/listengines/audioclipslistengine.cpp
-    platform/listengines/audiostreamlistengine.cpp
+#    platform/listengines/ampachelistengine.cpp
+#    platform/listengines/audioclipslistengine.cpp
+#    platform/listengines/audiostreamlistengine.cpp
     platform/listengines/cachelistengine.cpp
     platform/listengines/cdlistengine.cpp
     platform/listengines/dvdlistengine.cpp
-    platform/listengines/feedlistengine.cpp
-    platform/listengines/filelistengine.cpp
+#    platform/listengines/feedlistengine.cpp
+#    platform/listengines/filelistengine.cpp
     platform/listengines/listengine.cpp
     platform/listengines/listenginefactory.cpp
-    platform/listengines/medialistsengine.cpp
-    platform/listengines/musiclistengine.cpp
-    platform/listengines/nepomuklistengine.cpp
-    platform/listengines/semanticslistengine.cpp
-    platform/listengines/savedlistsengine.cpp
-    platform/listengines/taglistengine.cpp
-    platform/listengines/videolistengine.cpp
+#    platform/listengines/medialistsengine.cpp
+#    platform/listengines/musiclistengine.cpp
+#    platform/listengines/nepomuklistengine.cpp
+#    platform/listengines/semanticslistengine.cpp
+#    platform/listengines/savedlistsengine.cpp
+#    platform/listengines/taglistengine.cpp
+#    platform/listengines/videolistengine.cpp
     platform/utilities/artwork.cpp
     platform/utilities/filetags.cpp
     platform/utilities/general.cpp
@@ -94,7 +94,7 @@ target_link_libraries(bangarang
     ${KDE4_KFILE_LIBS}
     ${KDE4_KROSSCORE_LIBS}
     ${KDE4_SOLID_LIBS}
-    ${NEPOMUK_CORE_LIBRARY}
+#    ${NEPOMUK_CORE_LIBRARY}
     ${SOPRANO_LIBRARIES}
     ${TAGLIB_LIBRARIES}
     tag

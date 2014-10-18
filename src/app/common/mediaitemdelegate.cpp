@@ -32,9 +32,9 @@
 #include <KIconEffect>
 #include <KDebug>
 #include <Soprano/Vocabulary/NAO>
-#include <nepomuk2/variant.h>
-#include <nepomuk2/resource.h>
-#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/variant.h>
+//#include <nepomuk2/resource.h>
+//#include <Nepomuk2/ResourceManager>
 
 #include <QUrl>
 #include <QPalette>
@@ -78,11 +78,12 @@ MediaItemDelegate::MediaItemDelegate(QObject *parent) : QItemDelegate(parent)
     m_itemsThatNeedArtwork = new QList<MediaItem>();
     m_utilThread = new Utilities::Thread(this);
     connect(m_utilThread, SIGNAL(gotArtwork(QImage,MediaItem)), this, SLOT(gotArtwork(QImage,MediaItem)));
+    m_nepomukInited = false;
 
-    m_nepomukInited = Utilities::nepomukInited();
-    if (m_nepomukInited) {
-        m_mediaIndexer = new MediaIndexer(this);
-    }
+//    m_nepomukInited = Utilities::nepomukInited();
+//    if (m_nepomukInited) {
+//        m_mediaIndexer = new MediaIndexer(this);
+//    }
 }
 
 MediaItemDelegate::~MediaItemDelegate()

@@ -33,8 +33,8 @@
 #include <KDebug>
 #include <KIconEffect>
 #include <KStandardDirs>
-#include <Soprano/QueryResultIterator>
-#include <Nepomuk2/ResourceManager>
+//#include <Soprano/QueryResultIterator>
+//#include <Nepomuk2/ResourceManager>
 
 #include <QtGui/QLinearGradient>
 #include <QtGui/QPainter>
@@ -137,326 +137,326 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool 
 
 QImage Utilities::getAlbumArtwork(const QString &album, bool ignoreCache)
 {
-    if (album.isEmpty()) {
-        return QImage();
-    }
+//    if (album.isEmpty()) {
+//        return QImage();
+//    }
 
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.mediaResourceBinding());
-    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-    bindings.append(mediaVocabulary.artworkBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, album, MediaQuery::Equal));
-    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-    query.endWhere();
-    query.addLimit(5);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.mediaResourceBinding());
+//    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//    bindings.append(mediaVocabulary.artworkBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required, album, MediaQuery::Equal));
+//    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//    query.endWhere();
+//    query.addLimit(5);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-        if (!artwork.isNull()) {
-            return artwork;
-        }
-    }
+//    while( it.next() ) {
+//        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Music"));
+//        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//        if (!artwork.isNull()) {
+//            return artwork;
+//        }
+//    }
     return QImage();
 }
 
 QList<QImage> Utilities::getGenreArtworks(const QString &genre, const QString &type, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (genre.isEmpty()) {
-        return artworks;
-    }
+//    if (genre.isEmpty()) {
+//        return artworks;
+//    }
 
-    if (type == "audio" || type == "music") {
-        //Get album artworks associated with genre
-        MediaVocabulary mediaVocabulary;
-        MediaQuery query;
-        QStringList bindings;
-        bindings.append(mediaVocabulary.musicAlbumTitleBinding());
-        query.select(bindings, MediaQuery::Distinct);
-        query.startWhere();
-        query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
-                                                    Utilities::genreFilter(genre),
-                                                    MediaQuery::Equal));
-        query.endWhere();
-        QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
-        query.orderBy(orderByBindings);
-        query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    if (type == "audio" || type == "music") {
+//        //Get album artworks associated with genre
+//        MediaVocabulary mediaVocabulary;
+//        MediaQuery query;
+//        QStringList bindings;
+//        bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+//        query.select(bindings, MediaQuery::Distinct);
+//        query.startWhere();
+//        query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required,
+//                                                    Utilities::genreFilter(genre),
+//                                                    MediaQuery::Equal));
+//        query.endWhere();
+//        QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
+//        query.orderBy(orderByBindings);
+//        query.addLimit(8);
+//        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-        //Build media list from results
-        while( it.next() ) {
-            QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
-            if (!album.isEmpty()) {
-                QImage artwork = getAlbumArtwork(album, ignoreCache);
-                if (!artwork.isNull()) {
-                    artworks.append(artwork);
-                }
-            }
-        }
-    } else if (type == "video") {
-        MediaVocabulary mediaVocabulary;
-        MediaQuery query;
-        QStringList bindings;
-        bindings.append(mediaVocabulary.mediaResourceBinding());
-        bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-        bindings.append(mediaVocabulary.artworkBinding());
-        query.select(bindings, MediaQuery::Distinct);
-        query.startWhere();
-        query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required, genre, MediaQuery::Equal));
-        query.endWhere();
-        query.addLimit(5);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//        //Build media list from results
+//        while( it.next() ) {
+//            QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
+//            if (!album.isEmpty()) {
+//                QImage artwork = getAlbumArtwork(album, ignoreCache);
+//                if (!artwork.isNull()) {
+//                    artworks.append(artwork);
+//                }
+//            }
+//        }
+//    } else if (type == "video") {
+//        MediaVocabulary mediaVocabulary;
+//        MediaQuery query;
+//        QStringList bindings;
+//        bindings.append(mediaVocabulary.mediaResourceBinding());
+//        bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//        bindings.append(mediaVocabulary.artworkBinding());
+//        query.select(bindings, MediaQuery::Distinct);
+//        query.startWhere();
+//        query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//        query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//        query.addCondition(mediaVocabulary.hasGenre(MediaQuery::Required, genre, MediaQuery::Equal));
+//        query.endWhere();
+//        query.addLimit(5);
+//        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-        while( it.next() ) {
-            MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
-            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-            if (!artwork.isNull()) {
-                artworks.append(artwork);
-            }
-        }
-    }
+//        while( it.next() ) {
+//            MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
+//            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//            if (!artwork.isNull()) {
+//                artworks.append(artwork);
+//            }
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getArtistArtworks(const QString &artist, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (artist.isEmpty()) {
-        return artworks;
-    }
+//    if (artist.isEmpty()) {
+//        return artworks;
+//    }
 
-    //Get album artworks associated with artist
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.musicAlbumTitleBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required, artist, MediaQuery::Equal));
-    query.endWhere();
-    QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
-    query.orderBy(orderByBindings);
-    query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    //Get album artworks associated with artist
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasMusicArtistName(MediaQuery::Required, artist, MediaQuery::Equal));
+//    query.endWhere();
+//    QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
+//    query.orderBy(orderByBindings);
+//    query.addLimit(8);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    //Build media list from results
-    while( it.next() ) {
-        QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
-        if (!album.isEmpty()) {
-            QImage artwork = getAlbumArtwork(album, ignoreCache);
-            if (!artwork.isNull()) {
-                artworks.append(artwork);
-            }
-        }
-    }
+//    //Build media list from results
+//    while( it.next() ) {
+//        QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
+//        if (!album.isEmpty()) {
+//            QImage artwork = getAlbumArtwork(album, ignoreCache);
+//            if (!artwork.isNull()) {
+//                artworks.append(artwork);
+//            }
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getTagArtworks(const QString &tag, const QString &type, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (tag.isEmpty()) {
-        return artworks;
-    }
+//    if (tag.isEmpty()) {
+//        return artworks;
+//    }
 
-    if (type == "audio" || type == "music") {
-        //Get album artworks associated with tag
-        MediaVocabulary mediaVocabulary;
-        MediaQuery query;
-        QStringList bindings;
-        bindings.append(mediaVocabulary.musicAlbumTitleBinding());
-        query.select(bindings, MediaQuery::Distinct);
-        query.startWhere();
-        query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required, tag, MediaQuery::Equal));
-        query.endWhere();
-        QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
-        query.orderBy(orderByBindings);
-        query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    if (type == "audio" || type == "music") {
+//        //Get album artworks associated with tag
+//        MediaVocabulary mediaVocabulary;
+//        MediaQuery query;
+//        QStringList bindings;
+//        bindings.append(mediaVocabulary.musicAlbumTitleBinding());
+//        query.select(bindings, MediaQuery::Distinct);
+//        query.startWhere();
+//        query.addCondition(mediaVocabulary.hasTypeAudioMusic(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasMusicAlbumTitle(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required, tag, MediaQuery::Equal));
+//        query.endWhere();
+//        QStringList orderByBindings(mediaVocabulary.musicAlbumTitleBinding());
+//        query.orderBy(orderByBindings);
+//        query.addLimit(8);
+//        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-        //Build media list from results
-        while( it.next() ) {
-            QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
-            if (!album.isEmpty()) {
-                QImage artwork = getAlbumArtwork(album, ignoreCache);
-                if (!artwork.isNull()) {
-                    artworks.append(artwork);
-                }
-            }
-        }
-    } else if (type == "video") {
-        MediaVocabulary mediaVocabulary;
-        MediaQuery query;
-        QStringList bindings;
-        bindings.append(mediaVocabulary.mediaResourceBinding());
-        bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-        bindings.append(mediaVocabulary.artworkBinding());
-        query.select(bindings, MediaQuery::Distinct);
-        query.startWhere();
-        query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-        query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-        query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required, tag, MediaQuery::Equal));
-        query.endWhere();
-        query.addLimit(8);
-        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//        //Build media list from results
+//        while( it.next() ) {
+//            QString album = it.binding(mediaVocabulary.musicAlbumTitleBinding()).literal().toString().trimmed();
+//            if (!album.isEmpty()) {
+//                QImage artwork = getAlbumArtwork(album, ignoreCache);
+//                if (!artwork.isNull()) {
+//                    artworks.append(artwork);
+//                }
+//            }
+//        }
+//    } else if (type == "video") {
+//        MediaVocabulary mediaVocabulary;
+//        MediaQuery query;
+//        QStringList bindings;
+//        bindings.append(mediaVocabulary.mediaResourceBinding());
+//        bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//        bindings.append(mediaVocabulary.artworkBinding());
+//        query.select(bindings, MediaQuery::Distinct);
+//        query.startWhere();
+//        query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+//        query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//        query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//        query.addCondition(mediaVocabulary.hasTag(MediaQuery::Required, tag, MediaQuery::Equal));
+//        query.endWhere();
+//        query.addLimit(8);
+//        Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-        while( it.next() ) {
-            MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
-            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-            if (!artwork.isNull()) {
-                artworks.append(artwork);
-            }
-        }
-    }
+//        while( it.next() ) {
+//            MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("Video Clip"));
+//            QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//            if (!artwork.isNull()) {
+//                artworks.append(artwork);
+//            }
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getTVSeriesArtworks(const QString &seriesTitle, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (seriesTitle.isEmpty()) {
-        return artworks;
-    }
+//    if (seriesTitle.isEmpty()) {
+//        return artworks;
+//    }
 
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.mediaResourceBinding());
-    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-    bindings.append(mediaVocabulary.artworkBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
-    query.endWhere();
-    query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.mediaResourceBinding());
+//    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//    bindings.append(mediaVocabulary.artworkBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
+//    query.endWhere();
+//    query.addLimit(8);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-        if (!artwork.isNull()) {
-            artworks.append(artwork);
-        }
-    }
+//    while( it.next() ) {
+//        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+//        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//        if (!artwork.isNull()) {
+//            artworks.append(artwork);
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getTVSeasonArtworks(const QString &seriesTitle, int season, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (seriesTitle.isEmpty() || season < 1) {
-        return artworks;
-    }
+//    if (seriesTitle.isEmpty() || season < 1) {
+//        return artworks;
+//    }
 
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.mediaResourceBinding());
-    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-    bindings.append(mediaVocabulary.artworkBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
-    query.addCondition((mediaVocabulary.hasVideoSeason(MediaQuery::Required, season, MediaQuery::Equal)));
-    query.endWhere();
-    query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.mediaResourceBinding());
+//    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//    bindings.append(mediaVocabulary.artworkBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeVideoTVShow(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasVideoSeriesTitle(MediaQuery::Required, seriesTitle, MediaQuery::Equal));
+//    query.addCondition((mediaVocabulary.hasVideoSeason(MediaQuery::Required, season, MediaQuery::Equal)));
+//    query.endWhere();
+//    query.addLimit(8);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-        if (!artwork.isNull()) {
-            artworks.append(artwork);
-        }
-    }
+//    while( it.next() ) {
+//        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString("TV Show"));
+//        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//        if (!artwork.isNull()) {
+//            artworks.append(artwork);
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getActorArtworks(const QString &actor, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (actor.isEmpty()) {
-        return artworks;
-    }
+//    if (actor.isEmpty()) {
+//        return artworks;
+//    }
 
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.mediaResourceBinding());
-    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-    bindings.append(mediaVocabulary.artworkBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required, actor, MediaQuery::Equal));
-    query.endWhere();
-    query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.mediaResourceBinding());
+//    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//    bindings.append(mediaVocabulary.artworkBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasVideoActor(MediaQuery::Required, actor, MediaQuery::Equal));
+//    query.endWhere();
+//    query.addLimit(8);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-        if (!artwork.isNull()) {
-            artworks.append(artwork);
-        }
-    }
+//    while( it.next() ) {
+//        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
+//        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//        if (!artwork.isNull()) {
+//            artworks.append(artwork);
+//        }
+//    }
     return artworks;
 }
 
 QList<QImage> Utilities::getDirectorArtworks(const QString &director, bool ignoreCache)
 {
     QList<QImage> artworks;
-    if (director.isEmpty()) {
-        return artworks;
-    }
-    MediaVocabulary mediaVocabulary;
-    MediaQuery query;
-    QStringList bindings;
-    bindings.append(mediaVocabulary.mediaResourceBinding());
-    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
-    bindings.append(mediaVocabulary.artworkBinding());
-    query.select(bindings, MediaQuery::Distinct);
-    query.startWhere();
-    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
-    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
-    query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required, director, MediaQuery::Equal));
-    query.endWhere();
-    query.addLimit(8);
-    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
+//    if (director.isEmpty()) {
+//        return artworks;
+//    }
+//    MediaVocabulary mediaVocabulary;
+//    MediaQuery query;
+//    QStringList bindings;
+//    bindings.append(mediaVocabulary.mediaResourceBinding());
+//    bindings.append(mediaVocabulary.mediaResourceUrlBinding());
+//    bindings.append(mediaVocabulary.artworkBinding());
+//    query.select(bindings, MediaQuery::Distinct);
+//    query.startWhere();
+//    query.addCondition(mediaVocabulary.hasTypeAnyVideo(MediaQuery::Required));
+//    query.addCondition(mediaVocabulary.hasTitle(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasArtwork(MediaQuery::Optional));
+//    query.addCondition(mediaVocabulary.hasVideoDirector(MediaQuery::Required, director, MediaQuery::Equal));
+//    query.endWhere();
+//    query.addLimit(8);
+//    Soprano::QueryResultIterator it = query.executeSelect(Nepomuk2::ResourceManager::instance()->mainModel());
 
-    while( it.next() ) {
-        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
-        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
-        if (!artwork.isNull()) {
-            artworks.append(artwork);
-        }
-    }
+//    while( it.next() ) {
+//        MediaItem artworkMediaItem = Utilities::mediaItemFromIterator(it, QString());
+//        QImage artwork = Utilities::getArtworkImageFromMediaItem(artworkMediaItem, ignoreCache);
+//        if (!artwork.isNull()) {
+//            artworks.append(artwork);
+//        }
+//    }
     return artworks;
 }
 
@@ -533,10 +533,10 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
             //since windows media player stores more then one file,
             //we are forced to choose the right one (e.g folder is better then
             //albumartsmall)
-            if (files[i].contains(i18n("folder")) || files[i].contains("album")) {
-                kDebug() << "Found multiple files, picking name [folder/album]:" << path + files[i];
-                return path + files[i];
-            }
+//            if (files[i].contains(i18n("folder")) || files[i].contains("album")) {
+//                kDebug() << "Found multiple files, picking name [folder/album]:" << path + files[i];
+//                return path + files[i];
+//            }
 
             if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
                 kDebug() << "Found multiple files, picking name [album name]:" << path + files[i];

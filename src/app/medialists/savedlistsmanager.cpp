@@ -34,7 +34,7 @@
 #include <KIO/NetAccess>
 #include <KDebug>
 #include <QFile>
-#include <Nepomuk2/ResourceManager>
+//#include <Nepomuk2/ResourceManager>
 
 SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
 {
@@ -92,7 +92,8 @@ SavedListsManager::SavedListsManager(MainWindow * parent) : QObject(parent)
     connect(m_application->browsingModel(), SIGNAL(mediaListChanged()), this, SLOT(mediaListChanged()));
     connect(m_application->infoManager(), SIGNAL(infoBoxSelectionChanged(QList<MediaItem>)), this, SLOT(infoBoxSelectionChanged(QList<MediaItem>)));
     
-    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
+//    m_nepomukInited = Utilities::nepomukInited();
     
 }
 

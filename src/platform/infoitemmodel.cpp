@@ -1121,66 +1121,67 @@ QString InfoItemModel::categoryTypeForField(const QString &field, const QString 
 MediaItem InfoItemModel::createDrillItem(const QString &field, const QString &type, const QString &value)
 {
     MediaItem mediaItem;
-    QString categoryType = categoryTypeForField(field, type);
-    if (categoryType == "Artist") {
-        Nepomuk2::Resource res(Utilities::artistResource(value));
-        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-    } else if (categoryType == "Actor") {
-        Nepomuk2::Resource res(Utilities::actorResource(value));
-        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-    } else if (categoryType == "Director") {
-        Nepomuk2::Resource res(Utilities::directorResource(value));
-        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-    } else if (categoryType == "Album") {
-        Nepomuk2::Resource res(Utilities::albumResource(value));
-        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-    } else if (categoryType == "TV Series") {
-        Nepomuk2::Resource res(Utilities::TVSeriesResource(value));
-        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-    } else if (categoryType == "AudioGenre" ||
-               categoryType == "VideoGenre") {
-        mediaItem.type = "Category";
-        mediaItem.fields["categoryType"] = categoryType;
-        mediaItem.title = value;
-        mediaItem.fields["title"] = mediaItem.title;
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-        mediaItem.fields["artworkUrl"] = Utilities::getGenreArtworkUrl(value);
-        if (categoryType == "AudioGenre") {
-            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||genre=%1").arg(value));
-            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||genre=%1").arg(value));
-            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||genre=%1").arg(value));
-        } else {
-            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||genre=%1").arg(value));
-            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||genre=%1").arg(value));
-            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||genre=%1").arg(value));
-        }
-    } else if (categoryType == "AudioTag" ||
-               categoryType == "VideoTag") {
-        mediaItem.type = "Category";
-        mediaItem.fields["categoryType"] = categoryType;
-        mediaItem.title = value;
-        mediaItem.fields["title"] = mediaItem.title;
-        mediaItem.url = m_drillLris[categoryType].arg(value);
-        if (categoryType == "AudioTag") {
-            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?audio||limit=4||tag=%1").arg(value));
-            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?audio||limit=4||tag=%1").arg(value));
-            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?audio||limit=4||tag=%1").arg(value));
-        } else {
-            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||tag=%1").arg(value));
-            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||tag=%1").arg(value));
-            mediaItem.addContext(i18n("Frequently Played"),QString("semantics://frequent?video||limit=4||tag=%1").arg(value));
-        }
-    }
+    //TODO: Fix to not use Nepmuk
+//    QString categoryType = categoryTypeForField(field, type);
+//    if (categoryType == "Artist") {
+//        Nepomuk2::Resource res(Utilities::artistResource(value));
+//        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//    } else if (categoryType == "Actor") {
+//        Nepomuk2::Resource res(Utilities::actorResource(value));
+//        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//    } else if (categoryType == "Director") {
+//        Nepomuk2::Resource res(Utilities::directorResource(value));
+//        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//    } else if (categoryType == "Album") {
+//        Nepomuk2::Resource res(Utilities::albumResource(value));
+//        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//    } else if (categoryType == "TV Series") {
+//        Nepomuk2::Resource res(Utilities::TVSeriesResource(value));
+//        mediaItem = Utilities::categoryMediaItemFromNepomuk(res, categoryType);
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//    } else if (categoryType == "AudioGenre" ||
+//               categoryType == "VideoGenre") {
+//        mediaItem.type = "Category";
+//        mediaItem.fields["categoryType"] = categoryType;
+//        mediaItem.title = value;
+//        mediaItem.fields["title"] = mediaItem.title;
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//        mediaItem.fields["artworkUrl"] = Utilities::getGenreArtworkUrl(value);
+//        if (categoryType == "AudioGenre") {
+//            mediaItem.addContext(i18n("Recently Played Songs"), QString("semantics://recent?audio||limit=4||genre=%1").arg(value));
+//            mediaItem.addContext(i18n("Highest Rated Songs"), QString("semantics://highest?audio||limit=4||genre=%1").arg(value));
+//            mediaItem.addContext(i18n("Frequently Played Songs"), QString("semantics://frequent?audio||limit=4||genre=%1").arg(value));
+//        } else {
+//            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||genre=%1").arg(value));
+//            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||genre=%1").arg(value));
+//            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?video||limit=4||genre=%1").arg(value));
+//        }
+//    } else if (categoryType == "AudioTag" ||
+//               categoryType == "VideoTag") {
+//        mediaItem.type = "Category";
+//        mediaItem.fields["categoryType"] = categoryType;
+//        mediaItem.title = value;
+//        mediaItem.fields["title"] = mediaItem.title;
+//        mediaItem.url = m_drillLris[categoryType].arg(value);
+//        if (categoryType == "AudioTag") {
+//            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?audio||limit=4||tag=%1").arg(value));
+//            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?audio||limit=4||tag=%1").arg(value));
+//            mediaItem.addContext(i18n("Frequently Played"), QString("semantics://frequent?audio||limit=4||tag=%1").arg(value));
+//        } else {
+//            mediaItem.addContext(i18n("Recently Played"), QString("semantics://recent?video||limit=4||tag=%1").arg(value));
+//            mediaItem.addContext(i18n("Highest Rated"), QString("semantics://highest?video||limit=4||tag=%1").arg(value));
+//            mediaItem.addContext(i18n("Frequently Played"),QString("semantics://frequent?video||limit=4||tag=%1").arg(value));
+//        }
+//    }
 
-    if (mediaItem.title.isEmpty()) {
-        mediaItem.title = value;
-        mediaItem.fields["title"] = value;
-    }
+//    if (mediaItem.title.isEmpty()) {
+//        mediaItem.title = value;
+//        mediaItem.fields["title"] = value;
+//    }
     return mediaItem;
 }
 

@@ -25,9 +25,9 @@
 #include <KDebug>
 #include <KStandardDirs>
 #include <KLocale>
-#include <nepomuk2/resource.h>
-#include <nepomuk2/variant.h>
-#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/resource.h>
+//#include <nepomuk2/variant.h>
+//#include <Nepomuk2/ResourceManager>
 #include <QTextStream>
 #include <QProcess>
 #include <QFile>
@@ -36,7 +36,8 @@
 MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
 {
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
-    m_nepomukInited = Utilities::nepomukInited();
+//    m_nepomukInited = Utilities::nepomukInited();
+    m_nepomukInited = false;
     m_state = Idle;
     m_percent = 0;
     m_writer = new KProcess(this);
@@ -150,13 +151,14 @@ void MediaIndexer::updatePlaybackInfo(const QString &resourceUri, bool increment
         out << "[" << resourceUri << "]\n";
         out << "lastPlayed = " << playDateTime.toString("yyyyMMddhhmmss") << "\n";
         if (incrementPlayCount) {
-            int playCount = 0;
-            Nepomuk2::Resource res(resourceUri);
-            if (res.exists()) {
-                playCount = res.property(MediaVocabulary().playCount()).toInt();
-            }   
-            playCount = playCount + 1;
-            out << "playCount = " << playCount << "\n";
+            //TODO: Replace with non-nepomuk code
+//            int playCount = 0;
+//            Nepomuk2::Resource res(resourceUri);
+//            if (res.exists()) {
+//                playCount = res.property(MediaVocabulary().playCount()).toInt();
+//            }
+//            playCount = playCount + 1;
+//            out << "playCount = " << playCount << "\n";
         }
         out << "\n" << "\n";
         emit startWriter(QStringList(path));
@@ -280,10 +282,11 @@ void MediaIndexer::processWriterOutput()
                 continue;
             }
             MediaItem mediaItem = m_mediaList.at(index);
-            Nepomuk2::Resource res(KUrl(mediaItem.url));
-            if (res.exists()) {
-                mediaItem.fields["resourceUri"] = res.uri().toString();
-            }
+            //TODO: Fix to work without Nepomuk
+//            Nepomuk2::Resource res(KUrl(mediaItem.url));
+//            if (res.exists()) {
+//                mediaItem.fields["resourceUri"] = res.uri().toString();
+//            }
             emit sourceInfoUpdated(mediaItem);
             m_status["description"] = i18n("Updated: %1 - %2", mediaItem.title, mediaItem.subTitle);
             m_status["progress"] = m_percent;

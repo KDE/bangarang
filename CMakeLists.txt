@@ -1,8 +1,8 @@
 project(Bangarang)
 
 find_package(KDE4 4.5.0 REQUIRED)
-find_package(NepomukCore REQUIRED)
-find_package(Soprano REQUIRED)
+#find_package(NepomukCore REQUIRED)
+#find_package(Soprano REQUIRED)
 
 include(KDE4Defaults)
 
@@ -13,8 +13,8 @@ find_package(Taglib REQUIRED)
 include_directories(
     ${KDE4_INCLUDES}
     ${KROSS_INCLUDES}
-    ${NEPOMUK_CORE_INCLUDE_DIR}
-    ${QT_QTSCRIPT_INCLUDES}
+#    ${NEPOMUK_CORE_INCLUDE_DIR}
+#    ${QT_QTSCRIPT_INCLUDES}
     ${SOPRANO_INCLUDE_DIR}
     ${TAGLIB_INCLUDES}
 )

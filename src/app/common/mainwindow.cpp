@@ -38,7 +38,7 @@
 #include <KHelpMenu>
 #include <KMenu>
 
-#include <Nepomuk2/ResourceManager>
+//#include <Nepomuk2/ResourceManager>
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QtGlobal>
