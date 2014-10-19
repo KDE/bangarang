@@ -39,11 +39,11 @@
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
-#include <nepomuk2/resource.h>
-#include <nepomuk2/variant.h>
-#include <Nepomuk2/ResourceManager>
+//#include <nepomuk2/resource.h>
+//#include <nepomuk2/variant.h>
+//#include <Nepomuk2/ResourceManager>
 
-FileListEngine::FileListEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
+FileListEngine::FileListEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
     m_filePlacesModel = new KFilePlacesModel(parent);
     m_dirModel = new KDirModel(parent);
@@ -51,7 +51,7 @@ FileListEngine::FileListEngine(ListEngineFactory * parent) : NepomukListEngine(p
     m_dirSortProxyModel = new KDirSortFilterProxyModel(parent);
     m_dirSortProxyModel->setSourceModel(m_dirModel);
     m_dirSortProxyModel->setSortFoldersFirst(true);
-    m_updateNepomukOnly = false;
+//    m_updateNepomukOnly = false;
 }
 
 FileListEngine::~FileListEngine()
@@ -63,19 +63,19 @@ void FileListEngine::run()
     QThread::setTerminationEnabled(true);
     m_stop = false;
 
-    if (m_updateSourceInfo || m_removeSourceInfo) {
-        //Make sure to crawl dirs if necessary
-        if (m_updateSourceInfo) {
-            QHash<QString, QVariant> status;
-            status["description"] = i18n("Collecting file info...");
-            status["progress"] = -1;
-            emit updateStatus(status);
-            m_mediaItemsInfoToUpdate = getFiles(m_mediaItemsInfoToUpdate, false, true);
-        }
+//    if (m_updateSourceInfo || m_removeSourceInfo) {
+//        //Make sure to crawl dirs if necessary
+//        if (m_updateSourceInfo) {
+//            QHash<QString, QVariant> status;
+//            status["description"] = i18n("Collecting file info...");
+//            status["progress"] = -1;
+//            emit updateStatus(status);
+//            m_mediaItemsInfoToUpdate = getFiles(m_mediaItemsInfoToUpdate, false, true);
+//        }
 
-        NepomukListEngine::run();
-        return;
-    }
+//        NepomukListEngine::run();
+//        return;
+//    }
 
 
     QStringList filterList = m_mediaListProperties.engineFilter().split("||");
@@ -172,8 +172,8 @@ void FileListEngine::setFilterForSources(const QString& engineFilter)
 
 void FileListEngine::updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly)
 {
-    m_updateNepomukOnly = nepomukOnly;
-    NepomukListEngine::updateSourceInfo(mediaList);
+//    m_updateNepomukOnly = nepomukOnly;
+//    NepomukListEngine::updateSourceInfo(mediaList);
 }
 
 

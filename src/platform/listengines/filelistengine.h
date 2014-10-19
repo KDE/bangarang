@@ -19,15 +19,16 @@
 #ifndef FILELISTENGINE_H
 #define FILELISTENGINE_H
 
-#include "nepomuklistengine.h"
+#include "listengine.h"
+//#include "nepomuklistengine.h"
 #include <QtCore/QDir>
 #include <KUrl>
 #include <KFilePlacesModel>
 #include <KDirModel>
 #include <KDirSortFilterProxyModel>
-#include <Nepomuk2/Resource>
-#include <Nepomuk2/ResourceManager>
-#include <Soprano/Model>
+//#include <Nepomuk2/Resource>
+//#include <Nepomuk2/ResourceManager>
+//#include <Soprano/Model>
 
 class MediaItem;
 class MediaListProperties;
@@ -40,7 +41,7 @@ class MediaIndexer;
 *  files://audio?browseFolder||[folder]
 *  files://video?browseFolder||[folder]
 */
-class FileListEngine : public NepomukListEngine
+class FileListEngine : public ListEngine
 {
     Q_OBJECT
     
@@ -57,7 +58,7 @@ class FileListEngine : public NepomukListEngine
         KFilePlacesModel *m_filePlacesModel;
         KDirModel *m_dirModel;
         KDirSortFilterProxyModel *m_dirSortProxyModel;
-        bool m_updateNepomukOnly;
+//        bool m_updateNepomukOnly;
         QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false, bool emitStatus = false);
         QFileInfoList crawlDir(const QDir &dir, QString engineArg);
 

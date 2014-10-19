@@ -22,7 +22,6 @@
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
 #include "../utilities/utilities.h"
-#include "../mediavocabulary.h"
 
 #include <QtGui/QApplication>
 #include <QtCore/QFile>
@@ -35,10 +34,10 @@
 #include <Solid/Device>
 #include <Solid/DeviceInterface>
 #include <Solid/OpticalDisc>
-#include <Nepomuk2/ResourceManager>
+//#include <Nepomuk2/ResourceManager>
 
 
-MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
+MediaListsEngine::MediaListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
 }
 
@@ -50,6 +49,7 @@ void MediaListsEngine::run()
 {
     QThread::setTerminationEnabled(true);
     m_stop = false;
+    bool m_nepomukInited = false; //Set to false here since we no longer inherit from NepomukListEngine. Remove and replace when we have a replacement for NepomukListEngine.
 
     QList<MediaItem> mediaList;
     if (m_mediaListProperties.engineArg() == "audio") {
@@ -371,7 +371,7 @@ void MediaListsEngine::run()
             mediaItem.fields["isConfigurable"] = false;
             mediaList << mediaItem;
         }
-        
+
         mediaItem.title = i18n("Files and Folders");
         mediaItem.fields["title"] = mediaItem.title;
         mediaItem.url = "files://video?browseFolder";

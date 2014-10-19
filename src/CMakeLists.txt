@@ -59,14 +59,14 @@ set(BangarangSources
     platform/listengines/cdlistengine.cpp
     platform/listengines/dvdlistengine.cpp
 #    platform/listengines/feedlistengine.cpp
-#    platform/listengines/filelistengine.cpp
+    platform/listengines/filelistengine.cpp
     platform/listengines/listengine.cpp
     platform/listengines/listenginefactory.cpp
-#    platform/listengines/medialistsengine.cpp
+    platform/listengines/medialistsengine.cpp
 #    platform/listengines/musiclistengine.cpp
 #    platform/listengines/nepomuklistengine.cpp
 #    platform/listengines/semanticslistengine.cpp
-#    platform/listengines/savedlistsengine.cpp
+    platform/listengines/savedlistsengine.cpp
 #    platform/listengines/taglistengine.cpp
 #    platform/listengines/videolistengine.cpp
     platform/utilities/artwork.cpp

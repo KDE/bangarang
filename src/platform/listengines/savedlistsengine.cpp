@@ -20,7 +20,6 @@
 #include "../mediaitemmodel.h"
 #include "listenginefactory.h"
 #include "../utilities/utilities.h"
-#include "../mediavocabulary.h"
 
 #include <KIcon>
 #include <KMimeType>
@@ -32,7 +31,7 @@
 #include <taglib/tstring.h>
 #include <id3v2tag.h>
 
-SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : NepomukListEngine(parent)
+SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
 }
 
@@ -45,10 +44,10 @@ void SavedListsEngine::run()
     QThread::setTerminationEnabled(true);
     m_stop = false;
 
-    if (m_updateSourceInfo || m_removeSourceInfo) {
-        NepomukListEngine::run();
-        return;
-    }
+//    if (m_updateSourceInfo || m_removeSourceInfo) {
+//        NepomukListEngine::run();
+//        return;
+//    }
     
     QList<MediaItem> mediaList;
     

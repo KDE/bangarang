@@ -19,7 +19,7 @@
 #ifndef MEDIALISTSENGINE_H
 #define MEDIALISTSENGINE_H
 
-#include "nepomuklistengine.h"
+#include "listengine.h"
 #include <QtCore/QDir>
 #include <KUrl>
 
@@ -35,7 +35,7 @@ class MediaIndexer;
 *   medialists://audio
 *   medialists://video
 */
-class MediaListsEngine : public NepomukListEngine
+class MediaListsEngine : public ListEngine
 {
     Q_OBJECT
     

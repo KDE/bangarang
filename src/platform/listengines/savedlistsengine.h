@@ -19,12 +19,12 @@
 #ifndef SAVEDLISTSENGINE_H
 #define SAVEDLISTSENGINE_H
 
-#include "nepomuklistengine.h"
+#include "listengine.h"
 #include <QtCore/QDir>
 #include <KUrl>
-#include <Nepomuk2/Resource>
-#include <Nepomuk2/ResourceManager>
-#include <Soprano/Model>
+//#include <Nepomuk2/Resource>
+//#include <Nepomuk2/ResourceManager>
+//#include <Soprano/Model>
 #include <phonon/mediaobject.h>
 
 class MediaItem;
@@ -37,7 +37,7 @@ class MediaIndexer;
 * List Resource Identifiers handled are:
 *   savedlists://[name]
 */
-class SavedListsEngine : public NepomukListEngine
+class SavedListsEngine : public ListEngine
 {
     Q_OBJECT
     
@@ -46,7 +46,5 @@ class SavedListsEngine : public NepomukListEngine
         ~SavedListsEngine();
         void run();
         
-    private:
-        Soprano::Model * m_mainModel;
 };
 #endif // SAVEDLISTSENGINE_H

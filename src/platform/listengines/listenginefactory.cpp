@@ -20,12 +20,12 @@
 #include "../downloader.h"
 #include "listengine.h"
 //#include "musiclistengine.h"
-//#include "filelistengine.h"
+#include "filelistengine.h"
 //#include "videolistengine.h"
 #include "cdlistengine.h"
 #include "dvdlistengine.h"
 //#include "savedlistsengine.h"
-//#include "medialistsengine.h"
+#include "medialistsengine.h"
 //#include "audiostreamlistengine.h"
 //#include "semanticslistengine.h"
 #include "cachelistengine.h"
@@ -68,9 +68,9 @@ ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemMode
 //            eng = new MusicListEngine(this);
 //            break;
             
-//        case EngineTypeFiles:
-//            eng = new FileListEngine(this);
-//            break;
+        case EngineTypeFiles:
+            eng = new FileListEngine(this);
+            break;
             
 //        case EngineTypeVideo:
 //            eng = new VideoListEngine(this);
@@ -88,9 +88,9 @@ ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemMode
 //            eng = new SavedListsEngine(this);
 //            break;
 
-//        case EngineTypeMediaLists:
-//            eng = new MediaListsEngine(this);
-//            break;
+        case EngineTypeMediaLists:
+            eng = new MediaListsEngine(this);
+            break;
 
 //        case EngineTypeAudioStreams:
 //            eng = new AudioStreamListEngine(this);
