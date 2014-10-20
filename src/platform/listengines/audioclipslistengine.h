@@ -1,5 +1,5 @@
 /* BANGARANG MEDIA PLAYER
-* Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)
+* Copyright (C) 2009 Andrew Lake (jamboarder@gmail.com)
 * <https://projects.kde.org/projects/playground/multimedia/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
