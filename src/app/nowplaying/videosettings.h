@@ -1,6 +1,6 @@
 /* BANGARANG MEDIA PLAYER
 * Copyright (C) 2009 Andreas Marschke (xxtjaxx@gmail.com)
-* <http://gitorious.org/bangarang>
+* <https://projects.kde.org/projects/playground/multimedia/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by

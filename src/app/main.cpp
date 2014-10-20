@@ -1,6 +1,6 @@
 /* BANGARANG MEDIA PLAYER
 * Copyright (C) 2009 Andrew Lake (jamboarder@yahoo.com)
-* <http://gitorious.org/bangarang>
+* <https://projects.kde.org/projects/playground/multimedia/bangarang>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     aboutData.addCredit(ki18n("Elias Probst"), ki18n("Contributor"));
     aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
     aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
-    aboutData.setHomepage("http://gitorious.org/bangarang");
+    aboutData.setHomepage("https://projects.kde.org/projects/playground/multimedia/bangarang");
     aboutData.setLicense(KAboutData::License_GPL_V3);
 
     KCmdLineArgs::init( argc, argv, &aboutData );
