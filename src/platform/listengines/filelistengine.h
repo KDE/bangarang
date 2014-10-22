@@ -28,7 +28,7 @@
 #include <KDirSortFilterProxyModel>
 //#include <Nepomuk2/Resource>
 //#include <Nepomuk2/ResourceManager>
-//#include <Soprano/Model>
+////#include <Soprano/Model>
 
 class MediaItem;
 class MediaListProperties;

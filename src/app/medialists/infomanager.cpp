@@ -36,10 +36,10 @@
 #include <KGlobalSettings>
 #include <KAction>
 #include <KDebug>
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
+//#include <Soprano/QueryResultIterator>
+//#include <Soprano/Vocabulary/Xesam>
+//#include <Soprano/Vocabulary/RDF>
+//#include <Soprano/Vocabulary/XMLSchema>
 //#include <nepomuk2/resource.h>
 //#include <Nepomuk2/ResourceManager>
 //#include <nepomuk2/variant.h>

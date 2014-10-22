@@ -25,15 +25,15 @@
 #include "filetags.h"
 #include "mediaitems.h"
 #include "../mediaitemmodel.h"
-#include "../mediaquery.h"
-#include "../mediavocabulary.h"
+//#include "../mediaquery.h"
+//#include "../mediavocabulary.h"
 
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
 #include <KIconEffect>
 #include <KStandardDirs>
-//#include <Soprano/QueryResultIterator>
+////#include <Soprano/QueryResultIterator>
 //#include <Nepomuk2/ResourceManager>
 
 #include <QtGui/QLinearGradient>

@@ -15,7 +15,7 @@ include_directories(
     ${KROSS_INCLUDES}
 #    ${NEPOMUK_CORE_INCLUDE_DIR}
 #    ${QT_QTSCRIPT_INCLUDES}
-    ${SOPRANO_INCLUDE_DIR}
+#    ${SOPRANO_INCLUDE_DIR}
     ${TAGLIB_INCLUDES}
 )
 

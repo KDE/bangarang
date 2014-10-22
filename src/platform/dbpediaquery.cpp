@@ -22,10 +22,10 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <kio/copyjob.h>
-#include <Soprano/LiteralValue>
-#include <Soprano/Node>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
+//#include <Soprano/LiteralValue>
+//#include <Soprano/Node>
+//#include <Soprano/Vocabulary/RDF>
+//#include <Soprano/Vocabulary/XMLSchema>
 
 #include <QDomDocument>
 #include <QFile>
@@ -43,7 +43,7 @@ DBPediaQuery::DBPediaQuery(QObject * parent) : QObject(parent)
                             "PREFIX dbpedia: <http://dbpedia.org/> "
                             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> "
                             "PREFIX dbo: <http://dbpedia.org/ontology/> ");
-                            
+
      m_lang = KGlobal::locale()->language();
      if (m_lang.size() > 2) {
          m_lang = m_lang.left(2);
@@ -72,7 +72,7 @@ void DBPediaQuery::getArtistInfo(const QString & artistName)
                     "} ")
                     .arg(artistName)
                     .arg(m_lang);
-    
+
     //Create Request Key
     QString requestKey = QString("Artist:%1").arg(artistName);
 
@@ -100,7 +100,7 @@ void DBPediaQuery::getActorInfo(const QString & actorName)
                     "} ")
                     .arg(actorName)
                     .arg(m_lang);
-    
+
     //Create Request Key
     QString requestKey = QString("Actor:%1").arg(actorName);
 
@@ -123,7 +123,7 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
                     "} ")
                     .arg(directorName)
                     .arg(m_lang);
-    
+
     //Create Request Key
     QString requestKey = QString("Director:%1").arg(directorName);
 
@@ -134,7 +134,7 @@ void DBPediaQuery::getDirectorInfo(const QString & directorName)
 void DBPediaQuery::getMovieInfo(const QString & movieName)
 {
     //Create query url
-    QString query = m_queryPrefix + 
+    QString query = m_queryPrefix +
                     QString("SELECT DISTINCT str(?label) AS  ?title ?description ?thumbnail ?duration ?releaseDate ?actor ?writer ?director ?producer "
                     "WHERE { "
                     "{ ?work rdf:type dbo:Film . } "
@@ -145,7 +145,7 @@ void DBPediaQuery::getMovieInfo(const QString & movieName)
                     "?actorres foaf:name ?actor . } "
                     "OPTIONAL { ?work dbo:director ?directorres . "
                     "?directorres foaf:name ?director . } "
-                    "OPTIONAL { ?work dbo:writer ?writerres . " 
+                    "OPTIONAL { ?work dbo:writer ?writerres . "
                     "?writerres foaf:name ?writer . } "
                     "OPTIONAL { ?work dbo:producer ?producerres . "
                     "?producerres foaf:name ?producer . } "
@@ -169,21 +169,21 @@ void DBPediaQuery::launchQuery(const QString &query, const QString &requestKey)
     QString dbPediaSPARQL = QString(QUrl::toPercentEncoding(query));
     QString dbPediaUrlString= QString("http://dbpedia.org/sparql/?format=application/xml&query=%1").arg(dbPediaSPARQL);
     KUrl dbPediaUrl = KUrl(dbPediaUrlString);
-    
+
     //Add query url to request collection
     m_requests.insert(requestKey, dbPediaUrl);
-        
+
     //Prepare download target location
     QString targetFileName = QString("bangarang/%1.tmp")
                                 .arg(QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz"));
     KUrl dbPediaDownloadUrl = KUrl(KStandardDirs::locateLocal("data", targetFileName, true));
     QFile downloadTarget(dbPediaDownloadUrl.path());
     downloadTarget.remove();
-    
+
     //Launch query
     KIO::CopyJob *copyJob = KIO::copy(dbPediaUrl, dbPediaDownloadUrl, KIO::Overwrite | KIO::HideProgressInfo);
     copyJob->setAutoDelete(true);
-    connect (copyJob, 
+    connect (copyJob,
              SIGNAL(copyingDone(KIO::Job*,KUrl,KUrl,time_t,bool,bool)),
              this,
              SLOT(resultsReturned(KIO::Job*,KUrl,KUrl,time_t,bool,bool)));
@@ -196,7 +196,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     Q_UNUSED(mtime);
     Q_UNUSED(directory);
     Q_UNUSED(renamed);
-
+/*****
     QList<Soprano::BindingSet> resultsBindingSets;
     QString requestKey = m_requests.key(from);
 
@@ -216,10 +216,10 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
             emit gotDirectorInfo(false, resultsBindingSets, requestKey);
         } else if (requestKey.startsWith(QLatin1String("Movie"))) {
             emit gotMovieInfo(false, resultsBindingSets, requestKey);
-        }        
+        }
         return;
     }
-    
+
     //Results file is an XML document
     QDomDocument resultsDoc("queryResult");
     resultsDoc.setContent(&file);
@@ -250,7 +250,7 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
         resultsBindingSets.append(bindingSet);
     }
     m_requests.remove(requestKey);
-    
+
     //Check type of request and emit appropriate results signal
     if (requestKey.startsWith(QLatin1String("Artist"))) {
         emit gotArtistInfo(true, resultsBindingSets, requestKey);
@@ -265,5 +265,5 @@ void DBPediaQuery::resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &
     }
 
     //Remove results file
-    file.remove();
+    file.remove(); *****/
 }

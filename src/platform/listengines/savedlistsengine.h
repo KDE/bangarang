@@ -24,7 +24,7 @@
 #include <KUrl>
 //#include <Nepomuk2/Resource>
 //#include <Nepomuk2/ResourceManager>
-//#include <Soprano/Model>
+////#include <Soprano/Model>
 #include <phonon/mediaobject.h>
 
 class MediaItem;

@@ -21,12 +21,12 @@
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
 #include "../utilities/utilities.h"
-#include "../mediavocabulary.h"
+//#include "../mediavocabulary.h"
 
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Vocabulary/Xesam>
-#include <Soprano/Vocabulary/RDF>
-#include <Soprano/Vocabulary/XMLSchema>
+//#include <Soprano/QueryResultIterator>
+//#include <Soprano/Vocabulary/Xesam>
+//#include <Soprano/Vocabulary/RDF>
+//#include <Soprano/Vocabulary/XMLSchema>
 #include <QApplication>
 #include <KEncodingProber>
 #include <KLocale>

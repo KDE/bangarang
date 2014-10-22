@@ -22,7 +22,7 @@
 #include "listengine.h"
 #include <QtCore/QDir>
 #include <KUrl>
-#include <Soprano/Model>
+////#include <Soprano/Model>
 #include <phonon/mediaobject.h>
 
 class MediaItem;

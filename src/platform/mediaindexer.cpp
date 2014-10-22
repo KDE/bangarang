@@ -19,7 +19,7 @@
 #include "mediaindexer.h"
 #include "mediaitemmodel.h"
 #include "utilities/utilities.h"
-#include "mediavocabulary.h"
+//#include "mediavocabulary.h"
 
 #include <KUrl>
 #include <KDebug>
@@ -32,6 +32,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QHash>
+#include <QDateTime>
 
 MediaIndexer::MediaIndexer(QObject * parent) : QObject(parent)
 {

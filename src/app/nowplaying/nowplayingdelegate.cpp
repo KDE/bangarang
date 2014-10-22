@@ -22,7 +22,7 @@
 #include "../../platform/utilities/utilities.h"
 #include "../../platform/mediaitemmodel.h"
 #include "../../platform/mediaindexer.h"
-#include "../../platform/mediavocabulary.h"
+//#include "../../platform/mediavocabulary.h"
 #include "../../platform/playlist.h"
 #include "../common/mainwindow.h"
 #include "../common/starrating.h"

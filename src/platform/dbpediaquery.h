@@ -21,38 +21,38 @@
 
 #include <KUrl>
 #include <kio/copyjob.h>
-#include <Soprano/BindingSet>
+//#include <Soprano/BindingSet>
 #include <QtCore/QDate>
 
-class DBPediaQuery : public QObject 
+class DBPediaQuery : public QObject
 {
-    
+
     Q_OBJECT
     public:
         DBPediaQuery(QObject *parent = 0);
         ~DBPediaQuery();
-        
+
         void getArtistInfo(const QString & artistName);
         void getAlbumInfo(const QString & albumName);
         void getActorInfo(const QString & actorName);
         void getDirectorInfo(const QString & actorName);
         void getMovieInfo(const QString & movieName);
-        
+
     private:
         QString m_queryPrefix;
         QHash<QString, KUrl> m_requests;
         QString m_lang;
         void launchQuery(const QString &query, const QString &requestKey);
-        
+
     Q_SIGNALS:
-        void gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
-        void gotAlbumInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
-        void gotActorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
-        void gotDirectorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
-        void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
-        
+//        void gotArtistInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+//        void gotAlbumInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+//        void gotActorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+//        void gotDirectorInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+//        void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString requestKey);
+
     private Q_SLOTS:
         void resultsReturned(KIO::Job *job, const KUrl &from, const KUrl &to, time_t mtime, bool directory, bool renamed);
-        
+
 };
 #endif // DBPEDIAQUERY_H

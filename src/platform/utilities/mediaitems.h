@@ -20,7 +20,7 @@
 #define UTILITIES_MEDIAITEMS_H
 
 #include <KUrl>
-#include <Soprano/QueryResultIterator>
+////#include <Soprano/QueryResultIterator>
 //#include <Nepomuk2/Resource>
 
 class MediaItem;

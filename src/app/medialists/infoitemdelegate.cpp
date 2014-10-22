@@ -38,7 +38,7 @@
 #include <KFileDialog>
 #include <KDateTime>
 #include <KDebug>
-#include <Soprano/Vocabulary/NAO>
+//#include <Soprano/Vocabulary/NAO>
 //#include <nepomuk2/variant.h>
 //#include <nepomuk2/resource.h>
 //#include <Nepomuk2/ResourceManager>

@@ -21,7 +21,7 @@
 #include "listenginefactory.h"
 #include "../mediaindexer.h"
 #include "../utilities/utilities.h"
-#include "../mediavocabulary.h"
+//#include "../mediavocabulary.h"
 
 #include <QtGui/QApplication>
 #include <KIcon>

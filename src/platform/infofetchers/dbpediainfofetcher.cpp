@@ -25,8 +25,8 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDebug>
-#include <Soprano/LiteralValue>
-#include <Soprano/Node>
+//#include <Soprano/LiteralValue>
+//#include <Soprano/Node>
 #include <Solid/Networking>
 #include <platform/utilities/general.h>
 
@@ -38,10 +38,10 @@ DBPediaInfoFetcher::DBPediaInfoFetcher(QObject * parent) : InfoFetcher(parent)
     m_about = i18n("This fetcher gets information from DBPedia.org.");
 
     m_dbPediaQuery = new DBPediaQuery(this);
-    connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
-    connect (m_dbPediaQuery, SIGNAL(gotActorInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
-    connect (m_dbPediaQuery, SIGNAL(gotDirectorInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
-    connect (m_dbPediaQuery, SIGNAL(gotMovieInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotMovieInfo(bool,QList<Soprano::BindingSet>,QString)));
+//    connect (m_dbPediaQuery, SIGNAL(gotArtistInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
+//    connect (m_dbPediaQuery, SIGNAL(gotActorInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
+//    connect (m_dbPediaQuery, SIGNAL(gotDirectorInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotPersonInfo(bool,QList<Soprano::BindingSet>,QString)));
+//    connect (m_dbPediaQuery, SIGNAL(gotMovieInfo(bool,QList<Soprano::BindingSet>,QString)), this, SLOT(gotMovieInfo(bool,QList<Soprano::BindingSet>,QString)));
 
     m_downloader = new Downloader(this);
     connect(this, SIGNAL(download(KUrl,KUrl)), m_downloader, SLOT(download(KUrl,KUrl)));
@@ -77,7 +77,7 @@ bool DBPediaInfoFetcher::available(const QString &subType)
      */
     Solid::Networking::Status state = Solid::Networking::status();
     bool networkConnected = ( state == Solid::Networking::Connected ||
-			      state == Solid::Networking::Unknown );
+                  state == Solid::Networking::Unknown );
     bool handlesType = (m_requiredFields[subType].count() > 0);
     return (networkConnected && handlesType);
 }
@@ -154,7 +154,7 @@ void DBPediaInfoFetcher::fetchInfo(QList<MediaItem> mediaList, int maxMatches, b
         }
     }
 }
-
+/******
 void DBPediaInfoFetcher::gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey)
 {
     m_requestKeys.removeAll(requestKey);
@@ -397,7 +397,7 @@ void DBPediaInfoFetcher::gotMovieInfo(bool successful, const QList<Soprano::Bind
         }
     }
 }
-
+******/
 
 void DBPediaInfoFetcher::gotThumbnail(const KUrl &from, const KUrl &to)
 {

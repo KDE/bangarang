@@ -19,7 +19,7 @@
 #include "playlist.h"
 #include "mediaitemmodel.h"
 #include "utilities/utilities.h"
-#include "mediavocabulary.h"
+//#include "mediavocabulary.h"
 #include "mediaindexer.h"
 #include <time.h>
 #include <KApplication>
@@ -30,9 +30,9 @@
 //#include <nepomuk2/resource.h>
 //#include <nepomuk2/variant.h>
 //#include <Nepomuk2/ResourceManager>
-//#include <Soprano/Vocabulary/Xesam>
-//#include <Soprano/Vocabulary/RDF>
-//#include <Soprano/Vocabulary/XMLSchema>
+////#include <Soprano/Vocabulary/Xesam>
+////#include <Soprano/Vocabulary/RDF>
+////#include <Soprano/Vocabulary/XMLSchema>
 #include <QDBusInterface>
 #include <Solid/Device>
 #include <Solid/Block>

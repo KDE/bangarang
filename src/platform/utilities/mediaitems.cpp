@@ -37,11 +37,11 @@
 #include <kio/netaccess.h>
 #include <Solid/Device>
 #include <Solid/StorageAccess>
-//#include <Soprano/QueryResultIterator>
-//#include <Soprano/Vocabulary/Xesam>
-//#include <Soprano/Vocabulary/RDF>
-//#include <Soprano/Vocabulary/XMLSchema>
-//#include <Soprano/Model>
+////#include <Soprano/QueryResultIterator>
+////#include <Soprano/Vocabulary/Xesam>
+////#include <Soprano/Vocabulary/RDF>
+////#include <Soprano/Vocabulary/XMLSchema>
+////#include <Soprano/Model>
 //#include <Nepomuk2/Resource>
 //#include <Nepomuk2/File>
 //#include <Nepomuk2/Variant>

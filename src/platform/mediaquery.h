@@ -20,8 +20,8 @@
 #define MEDIAQUERY_H
 
 #include <QtCore/QDate>
-#include <Soprano/QueryResultIterator>
-#include <Soprano/Model>
+//#include <Soprano/QueryResultIterator>
+//#include <Soprano/Model>
 
 class MediaVocabulary;
 

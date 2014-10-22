@@ -22,18 +22,18 @@
 #include "general.h"
 #include "sha256.h"
 #include "../mediaitemmodel.h"
-#include "../mediavocabulary.h"
-#include "../mediaquery.h"
-
+//#include "../mediavocabulary.h"
+//#include "../mediaquery.h"
+#include <QDateTime>
 #include <KUrl>
 #include <KDebug>
 #include <KLocale>
 #include <Solid/Device>
-//#include <Soprano/QueryResultIterator>
-//#include <Soprano/Vocabulary/Xesam>
-//#include <Soprano/Vocabulary/RDF>
-//#include <Soprano/Vocabulary/XMLSchema>
-//#include <Soprano/Model>
+////#include <Soprano/QueryResultIterator>
+////#include <Soprano/Vocabulary/Xesam>
+////#include <Soprano/Vocabulary/RDF>
+////#include <Soprano/Vocabulary/XMLSchema>
+////#include <Soprano/Model>
 //#include <Nepomuk2/Resource>
 //#include <Nepomuk2/Variant>
 //#include <Nepomuk2/ResourceManager>

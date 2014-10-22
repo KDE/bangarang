@@ -21,7 +21,7 @@
 
 #include "infofetcher.h"
 #include <KUrl>
-#include <Soprano/BindingSet>
+//#include <Soprano/BindingSet>
 
 class DBPediaQuery;
 class Downloader;
@@ -39,7 +39,7 @@ class DBPediaInfoFetcher : public InfoFetcher
 
     public slots:
         void fetchInfo(QList<MediaItem> mediaList, int maxMatches = 4, bool updatedRequiredFields = true, bool updateArtwork = true);
-        
+
     private:
         DBPediaQuery * m_dbPediaQuery;
         Downloader * m_downloader;
@@ -50,11 +50,11 @@ class DBPediaInfoFetcher : public InfoFetcher
 
         bool allThumbnailsFetchedForIndex(int index);
         void checkComplete();
-        
+
     private slots:
-        void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+     //   void gotMovieInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
         void gotThumbnail(const KUrl &from, const KUrl &to);
-        void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
+     //   void gotPersonInfo(bool successful, const QList<Soprano::BindingSet> results, const QString &requestKey);
 
     protected slots:
         void timeout();
@@ -62,7 +62,7 @@ class DBPediaInfoFetcher : public InfoFetcher
     signals:
         void download(const KUrl &from, const KUrl &to);
 
-        
-        
+
+
 };
 #endif // DBPEDIAINFOFETCHER_H

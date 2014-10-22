@@ -31,7 +31,7 @@
 #include <KIcon>
 #include <KIconEffect>
 #include <KDebug>
-#include <Soprano/Vocabulary/NAO>
+//#include <Soprano/Vocabulary/NAO>
 //#include <nepomuk2/variant.h>
 //#include <nepomuk2/resource.h>
 //#include <Nepomuk2/ResourceManager>
@@ -98,11 +98,11 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
          (option.state.testFlag(QStyle::State_MouseOver) && !option.state.testFlag(QStyle::State_Selected)))) {
         style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
     }
-    
+
     if (index.column() != 0)
         return;
 
-    
+
     //Determin basic information
     const int left = option.rect.left();
     const int top = option.rect.top();
@@ -117,7 +117,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color();
     QColor nowPlayingColor = option.palette.color(QPalette::Highlight);
     nowPlayingColor.setAlpha(70);
-    
+
     //Determine item type
     QString subType;
     QString type = index.data(MediaItem::TypeRole).toString();
@@ -167,7 +167,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             p.fillRect(left, top, width, height, brush);
         }
     }
-    
+
     //Paint Icon
     int iconSize = m_iconSize;
     int topOffset = (height - iconSize) / 2;
@@ -203,7 +203,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             KIcon("emblem-unmounted").paint(&p, left + m_padding, top + topOffset, 16, 16, Qt::AlignCenter, QIcon::Normal);
         }
     }
-    
+
     //Paint text
     int textInner = m_textInner;
     if (hasCustomArtwork || m_renderMode == NormalMode) {
@@ -262,7 +262,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                    Qt::AlignBottom | hAlign, subTitle);
     }
 
-    
+
     //Paint duration
     if (isMediaItem && (m_renderMode == NormalMode || m_renderMode == MiniMode)) {
         QString duration = index.data(MediaItem::DurationRole).toString();
@@ -271,12 +271,12 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     boxTop+1, currentDuratingSpacer - addRmPlaylistRect(&option.rect).width(), boxHeight, //icon size = add to / remove from playlist icon
                     Qt::AlignBottom | Qt::AlignRight, duration);
     }
-    
+
     //Paint Rating
     if (m_renderMode == NormalMode ||
         (m_renderMode == MiniRatingMode && (!option.state.testFlag(QStyle::State_MouseOver) || !isCategory))) {
-        if ((m_nepomukInited) && 
-            (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) && 
+        if ((m_nepomukInited) &&
+            (isMediaItem || !index.data(MediaItem::RatingRole).isNull()) &&
             (subType != "CD Track") &&
             (subType != "DVD Title") &&
             hasUrl ) {
@@ -290,7 +290,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             r.paint(&p);
         }
     }
-    
+
     //Paint PlayCount
     if (m_renderMode == MiniPlayCountMode &&
         !index.data(MediaItem::PlayCountRole).isNull() &&
@@ -300,7 +300,7 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                     boxTop+1, currentDuratingSpacer - 1, boxHeight,
                     Qt::AlignVCenter| Qt::AlignRight, playCountText);
     }
-        
+
     //Paint Remove from playlist / add to playlist / category icon
     if (isMediaItem && hasUrl && m_renderMode == NormalMode) {
         //Paint add to playlist Icon
@@ -338,12 +338,12 @@ void MediaItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         int leftOffset = categoryIconRect(&option.rect).left() - left + m_actionIconPadding;
         m_categoryActionIcon.paint(&p, left + leftOffset, top + topOffset, m_categoryIconSize, m_categoryIconSize, Qt::AlignLeft, QIcon::Normal);
     }
-        
+
     p.end();
 
     //Draw finished pixmap
     painter->drawPixmap(option.rect.topLeft(), pixmap);
-    
+
 }
 
 QSize MediaItemDelegate::sizeHint(const QStyleOptionViewItem &option,
@@ -358,7 +358,7 @@ int MediaItemDelegate::calcItemHeight() const
 {
     QFont titleFont;
     titleFont.setBold(true);
-    
+
     int textHeight;
     int minHeight;
     int padding;
@@ -387,7 +387,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
     QModelIndex index;
     MediaItemModel *model;
     QPoint mousePos = ((QMouseEvent *)event)->pos();
-    
+
     //if we use a proxy the index is from the proxy, not from the MediaItemModel which we need
     if (useProxy()) {
         MediaSortFilterProxyModel * proxy = (MediaSortFilterProxyModel *) _model;
@@ -397,15 +397,15 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
         model = (MediaItemModel *) _model;
         index = _index;
     }
-      
+
     QString url = index.data(MediaItem::UrlRole).toString();
     QString type = index.data(MediaItem::TypeRole).toString();
-    
+
 
     if (index.column() != 0) //by default it only has the first column
         goto no_special_event;
-    
-    /* Upcoming behaviour: 
+
+    /* Upcoming behaviour:
      * 1. check for the type of the item
      * 2. if exist, check for special regions (rating, "buttons")
      * 3. if they offer different behaviour, check for special events
@@ -486,7 +486,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                 m_view->update(index);
                 return true;
             }
-                
+
         }
         //remove from/add to playlist area
         curArea = addRmPlaylistRect(&option.rect);
@@ -498,7 +498,7 @@ bool MediaItemDelegate::editorEvent( QEvent *event, QAbstractItemModel *_model, 
                     m_application->playlist()->removeMediaItemAt(playlistRow);
                 } else {
                     m_application->playlist()->addMediaItem(model->mediaItemAt(index.row()));
-                }  
+                }
                 return true;
             }
         }
@@ -507,7 +507,7 @@ no_special_event:
     return QItemDelegate::editorEvent(event, model, option, index);
 }
 
-void MediaItemDelegate::setView(QAbstractItemView * view) 
+void MediaItemDelegate::setView(QAbstractItemView * view)
 {
     m_view = view;
     m_defaultViewSelectionMode = view->selectionMode();
