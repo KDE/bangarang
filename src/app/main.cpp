@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
     aboutData.addAuthor( ki18n("Andrew (Jamboarder) Lake"), ki18n("Creator"), "jamboarder@gmail.com");
     aboutData.addCredit(ki18n("Stefan Burnicki"), ki18n("Contributor"));
     aboutData.addCredit(ki18n("Elias Probst"), ki18n("Contributor"));
-    aboutData.setBugAddress("http://code.google.com/p/bangarangissuetracking/");
-    aboutData.setCustomAuthorText(ki18n("Defects may be reported at http://code.google.com/p/bangarangissuetracking/"), ki18n("Defects may be reported at <a href='http://code.google.com/p/bangarangissuetracking/'>Bangarang Issue Tracker</a>"));
+    aboutData.setBugAddress("https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided");
+    aboutData.setCustomAuthorText(ki18n("Defects may be reported at https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided"), ki18n("Defects may be reported at <a href='https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided'>KDE Bugtracker</a>"));
     aboutData.setHomepage("https://projects.kde.org/projects/playground/multimedia/bangarang");
     aboutData.setLicense(KAboutData::License_GPL_V3);
 
