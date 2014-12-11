@@ -35,8 +35,8 @@ target_link_libraries(bangarang
      KF5::KIOWidgets 
      KF5::KIONTLM
      KF5::IconThemes
+     Phonon::phonon4qt5
      tag
-     phonon ${PHONON_LIBS}
 )
 
 # targets to be installed

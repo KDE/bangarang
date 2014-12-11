@@ -24,6 +24,8 @@ find_package(KF5 REQUIRED COMPONENTS CoreAddons I18n KIO IconThemes)
 find_package(Taglib REQUIRED)
 find_package(Phonon4Qt5 REQUIRED) #We cannot build kf5 sources with phonon4 abi
 
+include_directories(BEFORE ${PHONON_INCLUDES})
+
 add_subdirectory(src)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
