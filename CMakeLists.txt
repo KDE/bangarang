@@ -18,7 +18,7 @@ include(KDECompilerSettings)
 include(FeatureSummary)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Core)
-find_package(KF5 REQUIRED COMPONENTS CoreAddons I18n)
+find_package(KF5 REQUIRED COMPONENTS CoreAddons I18n KIO)
 
 add_subdirectory(src)
 
