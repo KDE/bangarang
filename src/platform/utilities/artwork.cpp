@@ -25,17 +25,12 @@
 #include "filetags.h"
 #include "mediaitems.h"
 #include "../mediaitemmodel.h"
-//#include "../mediaquery.h"
-//#include "../mediavocabulary.h"
 
 #include <KConfig>
 #include <KConfigGroup>
-#include <KDebug>
+#include <QDebug>
 #include <KIconEffect>
-#include <KStandardDirs>
-////#include <Soprano/QueryResultIterator>
-//#include <Nepomuk2/ResourceManager>
-
+#include <QStandardPaths>
 #include <QtGui/QLinearGradient>
 #include <QtGui/QPainter>
 #include <QtGui/QImage>
@@ -64,7 +59,7 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool igno
     if (pixmap.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
-            QPixmap rawPixmap= QPixmap(KUrl(artworkUrl).path());
+            QPixmap rawPixmap= QPixmap(QUrl::fromLocalFile(artworkUrl).path());
             if (!rawPixmap.isNull()) {
                 //Always scale height to artwork size
                 qreal widthScale = (qreal)artworkSize/rawPixmap.height();
@@ -109,7 +104,7 @@ QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool 
     if (image.isNull()) {
         QString artworkUrl = mediaItem.fields["artworkUrl"].toString();
         if (!artworkUrl.isEmpty()) {
-            QImage rawImage= QImage(KUrl(artworkUrl).path());
+            QImage rawImage= QImage(QUrl::fromLocalFile(artworkUrl).path());
             if (!rawImage.isNull()) {
                 //Always scale height to artwork size
                 qreal widthScale = (qreal)artworkSize/rawImage.height();
@@ -508,18 +503,18 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
 
     QMutexLocker locker(&mutex);
 
-    //kDebug() << "Url submitted:" << url;
-    KUrl pathUrl(url);
+    //qDebug() << "Url submitted:" << url;
+    QUrl pathUrl = QUrl::fromLocalFile(url);
     if (!pathUrl.isValid() ||
         !pathUrl.isLocalFile()) {
         return QString();
     }
-    QString path = pathUrl.directory(KUrl::AppendTrailingSlash);
+    QString path = pathUrl.path() + "/";
     if (path.isEmpty()) {
         return QString();
     }
 
-    //kDebug() << "Directory determined:" << path;
+    //qDebug() << "Directory determined:" << path;
 
     QDir dir(path);
     QStringList files = dir.entryList(QStringList() << "*.jpg" << "*.jpeg" << "*.gif" << "*.png");
@@ -539,7 +534,7 @@ QString Utilities::getArtworkUrlFromExternalImage(const QString& url, const QStr
 //            }
 
             if (!album.isEmpty() && files[i].contains(album, Qt::CaseInsensitive))
-                kDebug() << "Found multiple files, picking name [album name]:" << path + files[i];
+                qDebug() << "Found multiple files, picking name [album name]:" << path + files[i];
                 return path + files[i];
         }
 
@@ -556,14 +551,14 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
         return QString();
     }
     QString artworkUrl;
-    QString localGenreFile = KGlobal::dirs()->locateLocal("data","bangarang/genrerc", false);
+    QString localGenreFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation,"bangarang/genrerc");
     if (!localGenreFile.isEmpty()) {
         if (QFile::exists(localGenreFile)) {
             KConfig genreConfig(localGenreFile);
             KConfigGroup genreGroup(&genreConfig, genre);
-            artworkUrl = KGlobal::dirs()->locate("data", genreGroup.readEntry("artworkUrl", "|||").trimmed());
+            artworkUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, genreGroup.readEntry("artworkUrl", "|||").trimmed());
             if (artworkUrl.isEmpty()) {
-                KUrl testUrl(genreGroup.readEntry("artworkUrl", QString()));
+                QUrl testUrl = QUrl::fromLocalFile(genreGroup.readEntry("artworkUrl", QString()));
                 if (!testUrl.isEmpty() && testUrl.isLocalFile()) {
                     artworkUrl = testUrl.path();
                     if (!QFile::exists(artworkUrl)) {
@@ -574,11 +569,12 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
         }
     }
     if (artworkUrl.isEmpty()) {
-        QString defaultGenreFile = KGlobal::dirs()->locate("data","bangarang/genrerc");
+        QString defaultGenreFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation,"bangarang/genrerc");
+
         if (!defaultGenreFile.isEmpty()) {
             KConfig genreConfig(defaultGenreFile);
             KConfigGroup genreGroup(&genreConfig, genre);
-            artworkUrl = KGlobal::dirs()->locate("data", genreGroup.readEntry("artworkUrl", "|||").trimmed());
+            artworkUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, genreGroup.readEntry("artworkUrl", "|||").trimmed());
         }
     }
     return artworkUrl;
@@ -589,36 +585,36 @@ QIcon Utilities::defaultArtworkForMediaItem(const MediaItem &mediaItem)
     QIcon artwork;
     if (mediaItem.type == "Audio") {
         if (mediaItem.subType() == "Audio Clip") {
-            artwork = KIcon("audio-x-generic");
+            artwork = QIcon::fromTheme("audio-x-generic");
         } else if (mediaItem.subType() == "Music") {
-            artwork = KIcon("audio-mp4");
+            artwork = QIcon::fromTheme("audio-mp4");
         } else if (mediaItem.subType() == "Audio Stream") {
-            artwork = KIcon("text-html");
+            artwork = QIcon::fromTheme("text-html");
         }
     } else if (mediaItem.type == "Video") {
         if (mediaItem.subType() == "Video Clip") {
-            artwork = KIcon("video-x-generic");
+            artwork = QIcon::fromTheme("video-x-generic");
         } else if (mediaItem.subType() == "Movie") {
-            artwork = KIcon("tool-animator");
+            artwork = QIcon::fromTheme("tool-animator");
         } else if (mediaItem.subType() == "TV Show") {
-            artwork = KIcon("video-television");
+            artwork = QIcon::fromTheme("video-television");
         }
     } else if (mediaItem.type == "Category") {
         if (mediaItem.subType() == "Artist") {
-            artwork = KIcon("system-users");
+            artwork = QIcon::fromTheme("system-users");
         } else if (mediaItem.subType() == "Album") {
-            artwork = KIcon("media-optical-audio");
+            artwork = QIcon::fromTheme("media-optical-audio");
         } else if (mediaItem.subType().endsWith(QLatin1String(" Feed"))) {
-            artwork = KIcon("application-rss+xml");
+            artwork = QIcon::fromTheme("application-rss+xml");
         } else if (mediaItem.subType() == "AudioGenre") {
-            artwork = KIcon("flag-blue");
+            artwork = QIcon::fromTheme("flag-blue");
         } else if (mediaItem.subType() == "VideoGenre") {
-            artwork = KIcon("flag-green");
+            artwork = QIcon::fromTheme("flag-green");
         } else if (mediaItem.subType() == "Actor" ||
                    mediaItem.subType() == "Director" ||
                    mediaItem.subType() == "Writer" ||
                    mediaItem.subType() == "Producer") {
-            artwork = KIcon("view-media-artist");
+            artwork = QIcon::fromTheme("view-media-artist");
         }
     }
 
@@ -647,11 +643,11 @@ QPixmap Utilities::reflection(QPixmap &pixmap)
     return alphamask;
 }
 
-KIcon Utilities::turnIconOff(KIcon icon, QSize size)
+QIcon Utilities::turnIconOff(QIcon icon, QSize size)
 {
-    QImage image = KIcon(icon).pixmap(size).toImage();
+    QImage image = QIcon(icon).pixmap(size).toImage();
     KIconEffect::toGray(image, 0.8);
-    return KIcon(QPixmap::fromImage(image));
+    return QIcon(QPixmap::fromImage(image));
 }
 
 QImage Utilities::findArtworkInCache(const MediaItem & mediaItem)

@@ -20,9 +20,9 @@
 #define UTILITIES_FILETAGS_H
 
 #include "../mediaitemmodel.h"
-#include <KUrl>
-#include <KIcon>
-#include <KMimeType>
+#include <QUrl>
+#include <QIcon>
+#include <QMimeType>
 
 #include <QPixmap>
 #include <QImage>

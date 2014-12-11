@@ -31,20 +31,10 @@ class ListEngine;
 
 enum EngineType {
     EngineTypeUnknown = -1,
-   //EngineTypeMusic,
     EngineTypeFiles,
-    //EngineTypeVideo,
-    //EngineTypeCDAudio,
-    //EngineTypeDVDVideo,
     EngineTypeSavedLists,
     EngineTypeMediaLists,
-    //EngineTypeAudioStreams,
-    //EngineTypeSemantics,
-    //EngineTypeCache,
-    //EngineTypeAudioClips,
-    //EngineTypeTag,
-    //EngineTypeFeeds,
-    //EngineTypeAmpache
+    EngineTypeCache,
 };
 
 typedef QPair<EngineType, QString> EngineDescription;

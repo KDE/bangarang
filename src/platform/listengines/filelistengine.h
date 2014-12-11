@@ -20,20 +20,17 @@
 #define FILELISTENGINE_H
 
 #include "listengine.h"
-//#include "nepomuklistengine.h"
 #include <QtCore/QDir>
-#include <KUrl>
+#include <QUrl>
 #include <KFilePlacesModel>
 #include <KDirModel>
 #include <KDirSortFilterProxyModel>
-//#include <Nepomuk2/Resource>
-//#include <Nepomuk2/ResourceManager>
-////#include <Soprano/Model>
+
 
 class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
-class MediaIndexer;
+//class MediaIndexer;
 
 /**
 * This ListEngine retrieves media files.
@@ -53,16 +50,15 @@ class FileListEngine : public ListEngine
         void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false);
         
     private:
-        KUrl::List m_fileList;
+        QList<QUrl> m_fileList;
         QString m_directoryPath;
         KFilePlacesModel *m_filePlacesModel;
         KDirModel *m_dirModel;
         KDirSortFilterProxyModel *m_dirSortProxyModel;
-//        bool m_updateNepomukOnly;
         QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false, bool emitStatus = false);
         QFileInfoList crawlDir(const QDir &dir, QString engineArg);
 
     private Q_SLOTS:
-        void listingComplete(const KUrl &url);
+        void listingComplete(const QUrl &url);
 };
 #endif // FILELISTENGINE_H

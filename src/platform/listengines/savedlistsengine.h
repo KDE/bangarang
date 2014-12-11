@@ -21,16 +21,13 @@
 
 #include "listengine.h"
 #include <QtCore/QDir>
-#include <KUrl>
-//#include <Nepomuk2/Resource>
-//#include <Nepomuk2/ResourceManager>
-////#include <Soprano/Model>
+#include <QUrl>
 #include <phonon/mediaobject.h>
 
 class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
-class MediaIndexer;
+//class MediaIndexer;
 
 /**
 * This ListEngine retrieves saved media lists.

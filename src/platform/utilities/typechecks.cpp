@@ -21,87 +21,90 @@
 
 #include "typechecks.h"
 #include "../mediaitemmodel.h"
-
 #include <phonon/backendcapabilities.h>
+
 
 bool Utilities::isMusic(const QString &url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+        QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
         return isMusicMimeType(result);
     } else {
         return false;
     }
 }
 
-bool Utilities::isMusicMimeType(KMimeType::Ptr type)
+bool Utilities::isMusicMimeType(QMimeType type)
 {
-    return (type->is("audio/mpeg") ||
-            type->is("audio/mp4") ||
-            type->is("audio/mp3") ||
-            type->is("audio/ogg") ||
-            type->is("audio/flac") ||
-            type->is("application/ogg") ||
-            type->is("audio/x-flac") ||
-            type->is("audio/x-musepack") ||
-            type->is("audio/x-oma") ||
-            type->is("audio/x-m4a") ||
-            type->is("audio/x-monkeys-audio") ||
-            type->is("audio/x-wv") ||
-            type->is("audio/x-ms-wma") ||
-            type->is("audio/aac") ||
-            type->is("audio/3gpp")  ||
-            type->is("audio/3gpp2"));
+    return (type.inherits("audio/mpeg") ||
+            type.inherits("audio/mp4") ||
+            type.inherits("audio/mp3") ||
+            type.inherits("audio/ogg") ||
+            type.inherits("audio/flac") ||
+            type.inherits("application/ogg") ||
+            type.inherits("audio/x-flac") ||
+            type.inherits("audio/x-musepack") ||
+            type.inherits("audio/x-oma") ||
+            type.inherits("audio/x-m4a") ||
+            type.inherits("audio/x-monkeys-audio") ||
+            type.inherits("audio/x-wv") ||
+            type.inherits("audio/x-ms-wma") ||
+            type.inherits("audio/aac") ||
+            type.inherits("audio/3gpp")  ||
+            type.inherits("audio/3gpp2"));
 }
 
 bool Utilities::isAudio(const QString &url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+          QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
         return isAudioMimeType(result);
     } else {
         return false;
     }
 }
 
-bool Utilities::isAudioMimeType(KMimeType::Ptr type)
+bool Utilities::isAudioMimeType(QMimeType type)
 {
-    return (type->is("audio/mpeg") ||
-            type->is("audio/mp4") ||
-            type->is("audio/ogg") ||
-            type->is("audio/vorbis") ||
-            type->is("audio/aac") ||
-            type->is("audio/ac3") ||
-            type->is("audio/aiff") ||
-            type->is("audio/basic") ||
-            type->is("audio/flac") ||
-            type->is("audio/mp2") ||
-            type->is("audio/mp3") ||
-            type->is("audio/vnd.rn-realaudio") ||
-            type->is("audio/wav") ||
-            type->is("application/ogg") ||
-            type->is("audio/x-ac3") ||
-            type->is("audio/x-flac") ||
-            type->is("audio/x-musepack") ||
-            type->is("audio/x-m4a") ||
-            type->is("audio/x-oma") ||
-            type->is("audio/x-monkeys-audio") ||
-            type->is("audio/x-wv") ||
-            type->is("audio/x-ms-asf") ||
-            type->is("audio/x-ms-wma") ||
-            type->is("audio/3gpp")  ||
-            type->is("audio/3gpp2"));
+    return (type.inherits("audio/mpeg") ||
+            type.inherits("audio/mp4") ||
+            type.inherits("audio/ogg") ||
+            type.inherits("audio/vorbis") ||
+            type.inherits("audio/aac") ||
+            type.inherits("audio/ac3") ||
+            type.inherits("audio/aiff") ||
+            type.inherits("audio/basic") ||
+            type.inherits("audio/flac") ||
+            type.inherits("audio/mp2") ||
+            type.inherits("audio/mp3") ||
+            type.inherits("audio/vnd.rn-realaudio") ||
+            type.inherits("audio/wav") ||
+            type.inherits("application/ogg") ||
+            type.inherits("audio/x-ac3") ||
+            type.inherits("audio/x-flac") ||
+            type.inherits("audio/x-musepack") ||
+            type.inherits("audio/x-m4a") ||
+            type.inherits("audio/x-oma") ||
+            type.inherits("audio/x-monkeys-audio") ||
+            type.inherits("audio/x-wv") ||
+            type.inherits("audio/x-ms-asf") ||
+            type.inherits("audio/x-ms-wma") ||
+            type.inherits("audio/3gpp")  ||
+            type.inherits("audio/3gpp2"));
 }
 
 bool Utilities::isVideo(const QString &url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
+         QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
         //NOTE: Special handling for .wma extensions
         //It turns out that wma files may pass the "video/x-ms-asf" mimetype test.
         //Per Microsoft KB284094, the only way to distinguish between audio-only
         //and audio+video content is to look at the file extenstion.
-        if (result->is("video/x-ms-asf") && KUrl(url).fileName().endsWith(QLatin1String(".wma"))) {
+        if (result.inherits("video/x-ms-asf") && (QUrl::fromLocalFile(url)).fileName().endsWith(QLatin1String(".wma"))) {
             return false;
         }
         return isVideoMimeType(result);
@@ -110,35 +113,36 @@ bool Utilities::isVideo(const QString &url)
     }
 }
 
-bool Utilities::isVideoMimeType(KMimeType::Ptr type)
+bool Utilities::isVideoMimeType(QMimeType type)
 {
-    return (type->is("video/mp4") ||
-            type->is("video/mpeg") ||
-            type->is("video/ogg") ||
-            type->is("video/quicktime") ||
-            type->is("video/msvideo") ||
-            type->is("video/x-theora") ||
-            type->is("video/x-theora+ogg") ||
-            type->is("video/x-ogm")||
-            type->is("video/x-ogm+ogg") ||
-            type->is("video/divx") ||
-            type->is("video/x-msvideo") ||
-            type->is("video/x-ms-asf") ||
-            type->is("video/x-ms-wmv") ||
-            type->is("video/x-wmv") ||
-            type->is("video/x-flv") ||
-            type->is("video/x-matroska")) ||
-            type->is("video/3gpp") ||
-            type->is("video/3gpp2");
+    return (type.inherits("video/mp4") ||
+            type.inherits("video/mpeg") ||
+            type.inherits("video/ogg") ||
+            type.inherits("video/quicktime") ||
+            type.inherits("video/msvideo") ||
+            type.inherits("video/x-theora") ||
+            type.inherits("video/x-theora+ogg") ||
+            type.inherits("video/x-ogm")||
+            type.inherits("video/x-ogm+ogg") ||
+            type.inherits("video/divx") ||
+            type.inherits("video/x-msvideo") ||
+            type.inherits("video/x-ms-asf") ||
+            type.inherits("video/x-ms-wmv") ||
+            type.inherits("video/x-wmv") ||
+            type.inherits("video/x-flv") ||
+            type.inherits("video/x-matroska")) ||
+            type.inherits("video/3gpp") ||
+            type.inherits("video/3gpp2");
 }
 
 bool Utilities::isM3u(const QString &url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-        return (result->is("audio/m3u") ||
-                result->is("application/vnd.apple.mpegurl") ||
-                result->is("audio/x-mpegurl"));
+          QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
+        return (result.inherits("audio/m3u") ||
+                result.inherits("application/vnd.apple.mpegurl") ||
+                result.inherits("audio/x-mpegurl"));
     } else {
         return false;
     }
@@ -146,34 +150,36 @@ bool Utilities::isM3u(const QString &url)
 
 bool Utilities::isPls(const QString &url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-        return result->is("audio/x-scpls");
+          QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
+        return result.inherits("audio/x-scpls");
     } else {
         return false;
     }
 }
 
-bool Utilities::isDvd(const KUrl& url)
+bool Utilities::isDvd(const QUrl &url)
 {
     return (deviceTypeFromUrl(url) == "dvd");
 }
 
-bool Utilities::isCd(const KUrl& url)
+bool Utilities::isCd(const QUrl &url)
 {
     return (deviceTypeFromUrl(url) == "cd");
 }
 
-bool Utilities::isDisc(const KUrl& url)
+bool Utilities::isDisc(const QUrl& url)
 {
     return (isDvd(url) || isCd(url));
 }
 
 bool Utilities::isFSDirectory(const QString& url)
 {
+    QMimeDatabase db;
     if (!url.isEmpty()) {
-        KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-        return result->is("inode/directory");
+          QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
+        return result.inherits("inode/directory");
     } else {
         return false;
     }
@@ -261,7 +267,7 @@ QString Utilities::videoMimeFilter()
     return mimeFilter;*/
 }
 
-QString Utilities::deviceTypeFromUrl(const KUrl& url)
+QString Utilities::deviceTypeFromUrl(const QUrl &url)
 {
     return url.authority();
 }

@@ -5,8 +5,20 @@ set(BangarangSources
     platform/mediaitemmodel.cpp
     platform/listengines/listengine.cpp
     platform/listengines/listenginefactory.cpp
+    platform/listengines/filelistengine.cpp
+    platform/listengines/medialistsengine.cpp
+    platform/listengines/cachelistengine.cpp
+    platform/listengines/savedlistsengine.cpp
     platform/downloader.cpp
+    platform/devicemanager.cpp
     platform/medialistcache.cpp
+    platform/utilities/artwork.cpp
+    platform/utilities/filetags.cpp
+    platform/utilities/general.cpp
+    platform/utilities/mediaitems.cpp
+    platform/utilities/sha256.cpp
+    platform/utilities/thread.cpp
+    platform/utilities/typechecks.cpp
 )
 
 
@@ -22,6 +34,9 @@ target_link_libraries(bangarang
      KF5::KIOFileWidgets 
      KF5::KIOWidgets 
      KF5::KIONTLM
+     KF5::IconThemes
+     tag
+     phonon ${PHONON_LIBS}
 )
 
 # targets to be installed

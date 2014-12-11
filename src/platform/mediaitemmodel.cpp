@@ -24,9 +24,9 @@
 
 #include <QFontMetrics>
 #include <QDateTime>
-#include <KIcon>
-#include <KDebug>
-#include <KLocale>
+//#include <QIcon>
+#include <QDebug>
+#include <KLocalizedString>
 
 MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent) 
 {
@@ -45,7 +45,7 @@ MediaItemModel::MediaItemModel(QObject * parent) : QStandardItemModel(parent)
     m_suppressNoResultsMessage = false;
     m_pendingUpdateRefresh = false;
     m_suppressTooltip = false;
-    setSupportedDragActions(Qt::CopyAction);
+
     
 }
 
@@ -66,7 +66,7 @@ MediaItemModel::~MediaItemModel()
         }
     } else if (section == 1) {
         if (role == Qt::DecorationRole) {
-            return KIcon("system-run");
+            return QIcon::fromTheme("system-run");
         } else if (role == Qt::TextAlignmentRole) {
             return Qt::AlignRight;
         } else {
@@ -139,7 +139,7 @@ void MediaItemModel::load()
             listEngine->setRequestSignature(m_requestSignature);
             listEngine->setMediaListProperties(cacheListProperties);
             listEngine->start();
-            kDebug() << "loading from cache for " << m_mediaListProperties.lri;
+            qDebug() << "loading from cache for " << m_mediaListProperties.lri;
         } else {
             EngineType type = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
             if (m_listEngineFactory->engineExists(type)) {
@@ -152,7 +152,7 @@ void MediaItemModel::load()
                 listEngine->setMediaListProperties(m_mediaListProperties);
                 m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
                 listEngine->start();
-                kDebug() << "started new load for " << m_mediaListProperties.lri;
+                qDebug() << "started new load for " << m_mediaListProperties.lri;
             } else {
                 showNoResultsMessage();
             }
@@ -248,7 +248,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
             listEngine->setMediaListProperties(m_mediaListProperties);
             m_lriStartTimes.insert(m_mediaListProperties.lri, QTime::currentTime());
             listEngine->start();
-            kDebug()<< "started load for " << m_mediaListProperties.lri;
+            qDebug()<< "started load for " << m_mediaListProperties.lri;
         }
     }
 }
@@ -389,7 +389,7 @@ void MediaItemModel::loadSourcesForNextCat()
                 }
                 m_lriStartTimes.insert(loadSourcesLri, QTime::currentTime());
                 listEngine->start();
-                kDebug()<< "started load for " << loadSourcesLri;
+                qDebug()<< "started load for " << loadSourcesLri;
             }
         }
     }
@@ -663,7 +663,7 @@ bool MediaItemModel::isLoading()
 void MediaItemModel::showNoResultsMessage()
 {
     MediaItem loadingMessage;
-    loadingMessage.title = i18n("No results");
+    loadingMessage.title = i18n("No results"); //check
     loadingMessage.type = "Message";
     loadingMessage.fields["messageType"] = "No Results";
     loadMediaItem(loadingMessage, false);
@@ -819,13 +819,13 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
         } else {
             QString url = urls.at(i).toEncoded();
             if (Utilities::isAudio(url) || Utilities::isVideo(url)) {
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                MediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
                 mediaItemsInserted << mediaItem;
                 QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
                 insertRow(insertionRow, rowItems);
                 insertionRow = insertionRow + 1;
             } else if (Utilities::isFSDirectory(url)) {
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(KUrl(url));
+                MediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
                 if (mediaItem.type == "Category") {
                     QList<MediaItem> mediaList;
                     mediaList.append(mediaItem);
@@ -1007,4 +1007,4 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
             return false;
     }
     return true;
-};
+}//;

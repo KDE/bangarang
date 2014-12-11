@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
   aboutData.addAuthor(i18n("Andrew Lake"), i18n("Creator"), "jamboarder@gmail.com");
   aboutData.addCredit(i18n("Stefan Burnicki"), i18n("Contributor"));
   aboutData.addCredit(i18n("Elias Probst"), i18n("Contributor"));
-  aboutData.addCredit(il8n("Eshton Robateau"), i18n("Contributor"));
+  aboutData.addCredit(i18n("Eshton Robateau"), i18n("Contributor"));
   aboutData.setBugAddress("https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided");
   aboutData.setCustomAuthorText(
 	i18n("Defects may be reported at https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided"),

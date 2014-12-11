@@ -19,7 +19,7 @@
 #ifndef UTILITIES_GENERAL_H
 #define UTILITIES_GENERAL_H
 
-#include <KUrl>
+#include <QUrl>
 #include <phonon/Global>
 #include <solid/opticaldisc.h>
 #include <QtCore/QMutex>
@@ -55,10 +55,10 @@ namespace Utilities {
     QUrl TVSeriesResource(const QString &seriesName);
     QUrl actorResource(const QString &actorName);
     QUrl directorResource(const QString &directorName);
-    KUrl deviceUrl(const QString &type, const QString &udi, const QString& name = QString(), QString content = QString(), int title = -1 );
-    int deviceTitleFromUrl(const KUrl &url);
-    QString deviceUdiFromUrl(const KUrl &url);
-    QString deviceNameFromUrl(const KUrl &url);
+    QUrl deviceUrl(const QString &type, const QString &udi, const QString& name = QString(), QString content = QString(), int title = -1 );
+    int deviceTitleFromUrl(const QUrl &url);
+    QString deviceUdiFromUrl(const QUrl &url);
+    QString deviceNameFromUrl(const QUrl &url);
     int invalidTitle();
     QString deviceName( QString udi, Phonon::MediaObject *mobj = NULL );
     bool nepomukInited();

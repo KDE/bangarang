@@ -1,7 +1,7 @@
 #include "thread.h"
 #include "artwork.h"
 
-#include <KDebug>
+#include <QDebug>
 
 Utilities::Thread::Thread(QObject *parent) :
     QThread(parent)

@@ -19,39 +19,22 @@
 #include "listenginefactory.h"
 #include "../downloader.h"
 #include "listengine.h"
-//#include "musiclistengine.h"
-#include "filelistengine.h" //TODO: Port engine
-//#include "videolistengine.h"
-//#include "cdlistengine.h"
-//#include "dvdlistengine.h"
-//#include "savedlistsengine.h" //TODO: port and re-enable engine
-#include "medialistsengine.h"   //TODO: port engine
-//#include "audiostreamlistengine.h"
-//#include "semanticslistengine.h"
-//#include "cachelistengine.h"
-//#include "audioclipslistengine.h"
-//#include "taglistengine.h"
-//#include "feedlistengine.h"
-//#include "ampachelistengine.h"
-#include <QDebug> // track uses in child classes
+
+#include "filelistengine.h"
+#include "savedlistsengine.h"
+#include "medialistsengine.h"
+#include "cachelistengine.h"
+
+#include <QDebug>
 
 ListEngineFactory::ListEngineFactory(MediaItemModel * parent) : QObject(parent)
 {
     m_parent = parent;
-    m_engines //<< EngineDescription(EngineTypeMusic, QString( "music://" ))
+    m_engines
               << EngineDescription(EngineTypeFiles, "files://")
-              //<< EngineDescription(EngineTypeVideo, "video://")
-              //<< EngineDescription(EngineTypeCDAudio, "cdaudio://")
-              //<< EngineDescription(EngineTypeDVDVideo, "dvdvideo://")
               << EngineDescription(EngineTypeSavedLists, "savedlists://")
-              << EngineDescription(EngineTypeMediaLists, "medialists://");
-              /*<< EngineDescription(EngineTypeAudioStreams, "audiostreams://")
-                << EngineDescription(EngineTypeSemantics, "semantics://")
-                << EngineDescription(EngineTypeCache, "cache://")
-                << EngineDescription(EngineTypeAudioClips, "audioclips://")
-                << EngineDescription(EngineTypeTag, "tag://")
-                << EngineDescription(EngineTypeFeeds, "feeds://")
-                << EngineDescription(EngineTypeAmpache, "ampache://");*/
+              << EngineDescription(EngineTypeMediaLists, "medialists://")
+              << EngineDescription(EngineTypeCache, "cache://");
 
     m_downloader = new Downloader(this);
 }
@@ -65,61 +48,22 @@ ListEngine* ListEngineFactory::createEngine(const EngineType type, MediaItemMode
 {
     ListEngine *eng;
     switch (type) {
-//        case EngineTypeMusic:
-//            eng = new MusicListEngine(this);
-//            break;
-            
+
         case EngineTypeFiles:
             eng = new FileListEngine(this);
             break;
             
-//        case EngineTypeVideo:
-//            eng = new VideoListEngine(this);
-//            break;
-            
-//        case EngineTypeCDAudio:
-//            eng = new CDListEngine(this);
-//            break;
-//
-//        case EngineTypeDVDVideo:
-//            eng = new DVDListEngine(this);
-//            break;
-
-//        case EngineTypeSavedLists:
-//            eng = new SavedListsEngine(this);
-//            break;
+            case EngineTypeSavedLists:
+            eng = new SavedListsEngine(this);
+               break;
 
         case EngineTypeMediaLists:
             eng = new MediaListsEngine(this);
             break;
 
-//        case EngineTypeAudioStreams:
-//            eng = new AudioStreamListEngine(this);
-//            break;
-
-//        case EngineTypeSemantics:
-//            eng = new SemanticsListEngine(this);
-//            break;
-            
-//        case EngineTypeCache:
-//            eng = new CacheListEngine(this);
-//            break;
-            
-//        case EngineTypeAudioClips:
-//            eng = new AudioClipsListEngine(this);
-//            break;
-            
-//        case EngineTypeTag:
-//            eng = new TagListEngine(this);
-//            break;
-
-//        case EngineTypeFeeds:
-//            eng = new FeedListEngine(this);
-//            break;
-
-//        case EngineTypeAmpache:
-//            eng = new AmpacheListEngine(this);
-//            break;
+    case EngineTypeCache:
+        eng = new CacheListEngine(this);
+        break;
 
         default:
             eng = new ListEngine(this);

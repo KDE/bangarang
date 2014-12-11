@@ -21,12 +21,12 @@
 
 #include "listengine.h"
 #include <QtCore/QDir>
-#include <KUrl>
+#include <QUrl>
 
 class MediaItem;
 class MediaListProperties;
 class ListEngineFactory;
-class MediaIndexer;
+//class MediaIndexer;
 
 /**
 * This ListEngine retrieves a convenient list of "Category" MediaItems.

@@ -21,15 +21,15 @@
 #include "listenginefactory.h"
 #include "../utilities/utilities.h"
 
-#include <KIcon>
-#include <KMimeType>
-#include <KStandardDirs>
-#include <KUrl>
-#include <KLocale>
-#include <KDebug>
+#include <QIcon>
+#include <QMimeType>
+#include <QStandardPaths>
+#include <QUrl>
+#include <KLocalizedString>
+#include <QDebug>
 #include <taglib/fileref.h>
 #include <taglib/tstring.h>
-#include <id3v2tag.h>
+#include <taglib/id3v2tag.h>
 
 SavedListsEngine::SavedListsEngine(ListEngineFactory * parent) : ListEngine(parent)
 {
@@ -44,17 +44,12 @@ void SavedListsEngine::run()
     QThread::setTerminationEnabled(true);
     m_stop = false;
 
-//    if (m_updateSourceInfo || m_removeSourceInfo) {
-//        NepomukListEngine::run();
-//        return;
-//    }
-    
     QList<MediaItem> mediaList;
     
     if (m_mediaListProperties.engineArg().isEmpty() && !m_mediaListProperties.engineFilter().isEmpty()) {
         MediaListProperties mediaListProperties = m_mediaListProperties;
         mediaListProperties.lri = m_mediaListProperties.engineFilter();
-        kDebug() << mediaListProperties.lri;
+        qDebug() << mediaListProperties.lri;
         emit loadOtherEngine(mediaListProperties, m_requestSignature, m_subRequestSignature);
         m_requestSignature.clear();
         m_subRequestSignature.clear();
@@ -63,15 +58,15 @@ void SavedListsEngine::run()
 
     if (!m_mediaListProperties.engineArg().isEmpty()) {
         QString workingDir;
-        QFile file(KStandardDirs::locateLocal("data", QString("bangarang/%1").arg(m_mediaListProperties.engineArg()), false));
+        QFile file(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QString("bangarang/%1").arg(m_mediaListProperties.engineArg())));
         if (file.exists()) {
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
                 return;
             }
         } else {
-            KUrl url(m_mediaListProperties.engineArg());
-            workingDir = url.directory(KUrl::AppendTrailingSlash);
+            QUrl url = QUrl::fromLocalFile(m_mediaListProperties.engineArg());
+            workingDir = url.path() + "/";
             file.setFileName(url.path());
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 emit results(m_requestSignature, mediaList, m_mediaListProperties, true, m_subRequestSignature);
@@ -133,7 +128,8 @@ void SavedListsEngine::run()
 
                 //Create a basic mediaItem for each entry
                 MediaItem mediaItem;
-                KUrl itemUrl(workingDir, url);
+              //  KUrl itemUrl(workingDir, url);
+                QUrl itemUrl = QUrl::fromLocalFile(workingDir).resolved(QUrl::fromLocalFile(url));
                 if (!url.isEmpty()) {
                     if (!title.isEmpty()) {
                         mediaItem.title = title;
@@ -141,15 +137,15 @@ void SavedListsEngine::run()
                         mediaItem.title = itemUrl.fileName();
                     }
                     mediaItem.fields["title"] = mediaItem.title;
-                    mediaItem.url = itemUrl.prettyUrl();
+                    mediaItem.url = itemUrl.toDisplayString();
                     mediaItem.fields["url"] = mediaItem.url;
                     if (Utilities::isVideo(mediaItem.url)) {
                         mediaItem.type = "Video";
-                        mediaItem.artwork = KIcon("video-x-generic");
+                        mediaItem.artwork = QIcon::fromTheme("video-x-generic");
                         mediaItem.fields["videoType"] = "Video Clip";
                     } else {
                         mediaItem.type = "Audio";
-                        mediaItem.artwork = KIcon("audio-x-generic");
+                        mediaItem.artwork = QIcon::fromTheme("audio-x-generic");
                         mediaItem.fields["audioType"] = "Audio Clip";
                     }
                     if ((duration > 0) && (mediaItem.fields["duration"].toInt() <= 0)) {
@@ -174,7 +170,7 @@ void SavedListsEngine::run()
         if (m_stop) {
             return;
         }
-        MediaItem detailedMediaItem = Utilities::mediaItemFromUrl(KUrl(mediaList.at(i).url));
+        MediaItem detailedMediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url));
         emit updateMediaItem(detailedMediaItem);
     }
 

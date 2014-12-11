@@ -24,10 +24,10 @@
 #include "typechecks.h"
 #include "mediaitems.h"
 
-#include <KDebug>
+#include <QDebug>
 #include <KEncodingProber>
-#include <KUrl>
-
+#include <QUrl>
+#include <QMimeDatabase>
 #include <QByteArray>
 #include <QBuffer>
 #include <QFile>
@@ -53,6 +53,7 @@
 #include <taglib/xiphcomment.h>
 #include <taglib/attachedpictureframe.h>
 
+
 QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 {
     QImage attachedImage = getArtworkImageFromTag(url, size);
@@ -61,16 +62,17 @@ QPixmap Utilities::getArtworkFromTag(const QString &url, QSize size)
 
 QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 {
+    QMimeDatabase db;
     QMutexLocker locker(&mutex);
     QImage attachedImage;
-    KUrl kUrl(url);
-    KMimeType::Ptr type = KMimeType::findByUrl(kUrl, 0, true);
-    if (kUrl.isValid() && (type->is("audio/mpeg") ||
-        type->is("audio/MPA") ||
-        type->is("audio/mpa-robust") ||
-        type->is("audio/mp4") ||
-        type->is("video/mp4") ||
-        type->is("application/mp4"))) {
+    QUrl kUrl = QUrl::fromLocalFile(url);
+    QMimeType type = db.mimeTypeForUrl(kUrl);
+    if (kUrl.isValid() && (type.inherits("audio/mpeg") ||
+        type.inherits("audio/MPA") ||
+        type.inherits("audio/mpa-robust") ||
+        type.inherits("audio/mp4") ||
+        type.inherits("video/mp4") ||
+        type.inherits("application/mp4"))) {
 
         TagLib::MPEG::File mpegFile(kUrl.path().toLocal8Bit().constData(), false);
         TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(false);
@@ -97,21 +99,22 @@ QImage Utilities::getArtworkImageFromTag(const QString &url, QSize size)
 
 QString Utilities::tagType(const QString &url)
 {
-    QMutexLocker locker(&mutex);
-    KMimeType::Ptr type = KMimeType::findByUrl(KUrl(url), 0, true);
+    QMimeDatabase db;
+    QMutexLocker locker(&mutex);QUrl kurl = QUrl::fromLocalFile(url);
+      QMimeType type = db.mimeTypeForUrl(kurl);
     if (isMusic(url)) {
-        if (type->is("audio/ogg") ||
-            type->is("application/ogg") ||
-            type->is("audio/vorbis") ||
-            type->is("audio/speex")) {
-            TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
+        if (type.inherits("audio/ogg") ||
+            type.inherits("application/ogg") ||
+            type.inherits("audio/vorbis") ||
+            type.inherits("audio/speex")) {
+            TagLib::Ogg::Vorbis::File vorbisFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
             TagLib::Ogg::XiphComment *oggTag = vorbisFile.tag();
             if (oggTag && !oggTag->isEmpty()) {
                 return "OGG";
             }
         }
-        if (type->is("audio/x-flac") || type->is("audio/flac")) {
-            TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+        if (type.inherits("audio/x-flac") || type.inherits("audio/flac")) {
+            TagLib::FLAC::File flacFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
             TagLib::Ogg::XiphComment *oggTag = flacFile.xiphComment(false);
             if (oggTag && !oggTag->isEmpty()) {
                 return "FLACOGG";
@@ -125,7 +128,7 @@ QString Utilities::tagType(const QString &url)
                 return "FLACID3V1";
             }
         }
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::MPEG::File mpegFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         TagLib::ID3v2::Tag *id3v2Tag = mpegFile.ID3v2Tag(false);
         if (id3v2Tag && !id3v2Tag->isEmpty()) {
             return "ID3V2";
@@ -147,18 +150,18 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
     MediaItem mediaItem = templateItem;
     mediaItem.url = url;
     mediaItem.fields["url"] = url;
-    TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+    TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
     if (!file.isNull()) {
         QString title = TStringToQString(file.tag()->title()).trimmed();
         QString artist  = TStringToQString(file.tag()->artist()).trimmed();
         QString album   = TStringToQString(file.tag()->album()).trimmed();
         QString genre   = TStringToQString(file.tag()->genre()).trimmed();
         QByteArray encodingname = "utf-8";
-        if (KUrl(mediaItem.url).path().endsWith(QLatin1String(".mp3"))) {
+        if ((QUrl::fromLocalFile(mediaItem.url)).path().endsWith(QLatin1String(".mp3"))) {
             // detect encoding for mpeg id3v2
             QString tmp = title + artist + album + genre;
             KEncodingProber prober(KEncodingProber::Universal);
-            KEncodingProber::ProberState result = prober.feed(tmp.toAscii());
+            KEncodingProber::ProberState result = prober.feed(tmp.toLatin1());
             if (result != KEncodingProber::NotMe) {
                 encodingname = prober.encoding().toLower();
                 if ( prober.confidence() > 0.47
@@ -167,16 +170,16 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                     || ( encodingname == "euc-kr" )
                     || ( encodingname == "euc-jp" )
                     || ( encodingname == "koi8-r" ) ) ) {
-                    title = QTextCodec::codecForName(encodingname)->toUnicode(title.toAscii());
-                    artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toAscii());
-                    album = QTextCodec::codecForName(encodingname)->toUnicode(album.toAscii());
-                    genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toAscii());
+                    title = QTextCodec::codecForName(encodingname)->toUnicode(title.toLatin1());
+                    artist = QTextCodec::codecForName(encodingname)->toUnicode(artist.toLatin1());
+                    album = QTextCodec::codecForName(encodingname)->toUnicode(album.toLatin1());
+                    genre = QTextCodec::codecForName(encodingname)->toUnicode(genre.toLatin1());
                 } else if ((prober.confidence() < 0.3 || encodingname != "utf-8")
                     && QTextCodec::codecForLocale()->name().toLower() != "utf-8") {
-                    title = QTextCodec::codecForLocale()->toUnicode(title.toAscii());
-                    artist = QTextCodec::codecForLocale()->toUnicode(artist.toAscii());
-                    album = QTextCodec::codecForLocale()->toUnicode(album.toAscii());
-                    genre = QTextCodec::codecForLocale()->toUnicode(genre.toAscii());
+                    title = QTextCodec::codecForLocale()->toUnicode(title.toLatin1());
+                    artist = QTextCodec::codecForLocale()->toUnicode(artist.toLatin1());
+                    album = QTextCodec::codecForLocale()->toUnicode(album.toLatin1());
+                    genre = QTextCodec::codecForLocale()->toUnicode(genre.toLatin1());
                     encodingname = QTextCodec::codecForLocale()->name().toLower();
                 } else {
                     encodingname = "utf-8";
@@ -194,7 +197,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
         QString tag = tagType(url);
         if (tag == "ID3V2" || tag == "FLACID3V2") {
             if (tag == "ID3V2") {
-                TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::MPEG::File mpegFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
                 if (id3v2 && !id3v2->isEmpty()) {
                     artists = getID3V2TextFrameFields(id3v2, "TPE1");
@@ -203,18 +206,18 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                     // Convert from decoded encoding
                     if ( encodingname != "utf-8" ) {
                         for ( int i = 0; i != artists.size(); ++i ) {
-                            artists[i] = QTextCodec::codecForName(encodingname)->toUnicode(artists[i].toAscii());
+                            artists[i] = QTextCodec::codecForName(encodingname)->toUnicode(artists[i].toLatin1());
                         }
                         for ( int i = 0; i != composers.size(); ++i ) {
-                            composers[i] = QTextCodec::codecForName(encodingname)->toUnicode(composers[i].toAscii());
+                            composers[i] = QTextCodec::codecForName(encodingname)->toUnicode(composers[i].toLatin1());
                         }
                         for ( int i = 0; i != genres.size(); ++i ) {
-                            genres[i] = QTextCodec::codecForName(encodingname)->toUnicode(genres[i].toAscii());
+                            genres[i] = QTextCodec::codecForName(encodingname)->toUnicode(genres[i].toLatin1());
                         }
                     }
                 }
             } else {
-                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::FLAC::File flacFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::ID3v2::Tag *id3v2 = flacFile.ID3v2Tag();
                 if (id3v2 && !id3v2->isEmpty()) {
                     artists = getID3V2TextFrameFields(id3v2, "TPE1");
@@ -224,7 +227,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
             }
         } else if (tag == "OGG" || tag == "FLACOGG") {
             if (tag == "OGG") {
-                TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::Ogg::Vorbis::File vorbisFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::Ogg::XiphComment *xiph = vorbisFile.tag();
                 if (xiph && !xiph->isEmpty()) {
                     artists = getXiphTextFields(xiph, "ARTIST");
@@ -232,7 +235,7 @@ MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateIte
                     genres = getXiphTextFields(xiph, "GENRE");
                 }
             } else {
-                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::FLAC::File flacFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::Ogg::XiphComment *xiph = flacFile.xiphComment();
                 if (xiph && !xiph->isEmpty()) {
                     artists = getXiphTextFields(xiph, "ARTIST");
@@ -262,7 +265,7 @@ QString Utilities::getArtistFromTag(const QString &url)
 {
     QString artist;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         artist  = TStringToQString(file.tag()->artist()).trimmed();
     }
     return artist;
@@ -272,7 +275,7 @@ QString Utilities::getAlbumFromTag(const QString &url)
 {
     QString album;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         album = TStringToQString(file.tag()->album()).trimmed();
     }
     return album;
@@ -282,7 +285,7 @@ QString Utilities::getTitleFromTag(const QString &url)
 {
     QString title;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         title = TStringToQString(file.tag()->title()).trimmed();
     }
     return title;
@@ -292,7 +295,7 @@ QString Utilities::getGenreFromTag(const QString &url)
 {
     QString genre;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         genre   = TStringToQString(file.tag()->genre()).trimmed();
     }
     return genre;
@@ -302,7 +305,7 @@ int Utilities::getYearFromTag(const QString &url)
 {
     int year = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         year = file.tag()->year();
     }
     return year;
@@ -312,7 +315,7 @@ int Utilities::getDurationFromTag(const QString &url)
 {
     int duration = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         duration = file.audioProperties()->length();
     }
     return duration;
@@ -322,7 +325,7 @@ int Utilities::getTrackNumberFromTag(const QString &url)
 {
     int track = 0;
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         track   = file.tag()->track();
     }
     return track;
@@ -370,7 +373,7 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
         if (!artworkUrl.isEmpty()) {
             Utilities::saveArtworkToTag(mediaList.at(i).url, artworkUrl);
         }
-        TagLib::FileRef file(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(mediaList.at(i).url)).path().toLocal8Bit().constData());
         if (file.isNull()) {
             continue;
         }
@@ -409,14 +412,14 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
         QString tag = tagType(url);
         if (tag == "ID3V2" || tag == "FLACID3V2") {
             if (tag == "ID3V2") {
-                TagLib::MPEG::File mpegFile(KUrl(mediaList.at(i).url).path().toLocal8Bit().constData());
+                TagLib::MPEG::File mpegFile((QUrl::fromLocalFile(mediaList.at(i).url)).path().toLocal8Bit().constData());
                 TagLib::ID3v2::Tag *id3v2 = mpegFile.ID3v2Tag();
                 setID3V2TextFrameFields(id3v2, "TPE1", artists);
                 setID3V2TextFrameFields(id3v2, "TCOM", composers);
                 setID3V2TextFrameFields(id3v2, "TCON", genres);
                 mpegFile.save();
             } else {
-                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::FLAC::File flacFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::ID3v2::Tag *id3v2 = flacFile.ID3v2Tag();
                 setID3V2TextFrameFields(id3v2, "TPE1", artists);
                 setID3V2TextFrameFields(id3v2, "TCOM", composers);
@@ -425,7 +428,7 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
             }
         } else if (tag == "OGG" || tag == "FLACOGG") {
             if (tag == "OGG") {
-                TagLib::Ogg::Vorbis::File vorbisFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::Ogg::Vorbis::File vorbisFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::Ogg::XiphComment *xiph = vorbisFile.tag();
                 setXiphTextFields(xiph, "ARTIST", artists);
                 setXiphTextFields(xiph, "PERFORMER", artists);
@@ -433,7 +436,7 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
                 setXiphTextFields(xiph, "GENRE", genres);
                 vorbisFile.save();
             } else {
-                TagLib::FLAC::File flacFile(KUrl(url).path().toLocal8Bit().constData());
+                TagLib::FLAC::File flacFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
                 TagLib::Ogg::XiphComment *xiph = flacFile.xiphComment();
                 setXiphTextFields(xiph, "ARTIST", artists);
                 setXiphTextFields(xiph, "PERFORMER", artists);
@@ -447,7 +450,7 @@ void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
 
 bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 {
-    TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+    TagLib::MPEG::File mpegFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
     TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
 
     TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
@@ -464,22 +467,23 @@ bool Utilities::saveArtworkToTag(const QString &url, const QPixmap *pixmap)
 
 bool Utilities::saveArtworkToTag(const QString &url, const QString &imageurl)
 {
-    KMimeType::Ptr result = KMimeType::findByUrl(KUrl(url), 0, true);
-    if (result->is("audio/mpeg")) {
-        TagLib::MPEG::File mpegFile(KUrl(url).path().toLocal8Bit().constData());
+    QMimeDatabase db;
+    QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(url)));
+    if (result.inherits("audio/mpeg")) {
+        TagLib::MPEG::File mpegFile((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         if (mpegFile.isValid()) {
             TagLib::ID3v2::Tag *id3tag = mpegFile.ID3v2Tag(true);
 
             TagLib::ID3v2::AttachedPictureFrame *frame = Utilities::attachedPictureFrame(id3tag, true);
 
-            QFile file(KUrl(imageurl).path());
+            QFile file((QUrl::fromLocalFile(imageurl)).path());
             file.open(QIODevice::ReadOnly);
             QByteArray data = file.readAll();
 
-            KMimeType::Ptr result = KMimeType::findByUrl(KUrl(imageurl), 0, true);
-            if (result->is("image/png")) {
+              QMimeType result = db.mimeTypeForUrl((QUrl::fromLocalFile(imageurl)));
+            if (result.inherits("image/png")) {
                 frame->setMimeType("image/png");
-            } else if (result->is("image/jpeg")) {
+            } else if (result.inherits("image/jpeg")) {
                 frame->setMimeType("image/jpeg");
             }
 
@@ -498,7 +502,7 @@ void Utilities::setArtistTag(const QString &url, const QString &artist)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tArtist(artist.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setArtist(tArtist);
         file.save();
     }
@@ -508,7 +512,7 @@ void Utilities::setAlbumTag(const QString &url, const QString &album)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tAlbum(album.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setAlbum(tAlbum);
         file.save();
     }
@@ -518,7 +522,7 @@ void Utilities::setTitleTag(const QString &url, const QString &title)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tTitle(title.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setTitle(tTitle);
         file.save();
     }
@@ -528,7 +532,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 {
     if (Utilities::isMusic(url)) {
         TagLib::String tGenre(genre.trimmed().toUtf8().data(), TagLib::String::UTF8);
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setGenre(tGenre);
         file.save();
     }
@@ -537,7 +541,7 @@ void Utilities::setGenreTag(const QString &url, const QString &genre)
 void Utilities::setYearTag(const QString &url, int year)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setYear(year);
         file.save();
     }
@@ -546,7 +550,7 @@ void Utilities::setYearTag(const QString &url, int year)
 void Utilities::setTrackNumberTag(const QString &url, int trackNumber)
 {
     if (Utilities::isMusic(url)) {
-        TagLib::FileRef file(KUrl(url).path().toLocal8Bit().constData());
+        TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
         file.tag()->setTrack(trackNumber);
         file.save();
     }

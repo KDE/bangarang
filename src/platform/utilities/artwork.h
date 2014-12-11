@@ -19,9 +19,10 @@
 #ifndef UTILITIES_ARTWORK_H
 #define UTILITIES_ARTWORK_H
 
-#include <KUrl>
-#include <KIcon>
-#include <KMimeType>
+#include <QUrl>
+#include <QIcon>
+#include <QMimeType>
+#include <QMimeDatabase>
 #include <QtGui/QPixmap>
 #include <QtGui/QImage>
 #include <QtCore/QDir>
@@ -55,7 +56,7 @@ namespace Utilities {
     QString getGenreArtworkUrl(const QString &genre);
     QIcon defaultArtworkForMediaItem(const MediaItem &mediaItem);
     QPixmap reflection(QPixmap &pixmap);
-    KIcon turnIconOff(KIcon icon, QSize size);
+    QIcon turnIconOff(QIcon icon, QSize size);
     static QHash<QString, QImage> imageCache;
     QImage findArtworkInCache(const MediaItem & mediaItem);
     bool artworkIsInCache(const MediaItem & mediaItem);

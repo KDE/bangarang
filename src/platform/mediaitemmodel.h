@@ -32,6 +32,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <QList>
+#include <QMimeData>
 
 //class MusicListEngine;
 class FileListEngine;
@@ -164,6 +165,7 @@ public:
     }
     
     MediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
+
 };
 
 Q_DECLARE_METATYPE(MediaItem)

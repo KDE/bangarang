@@ -19,9 +19,9 @@
 #ifndef UTILITIES_TYPECHECKS_H
 #define UTILITIES_TYPECHECKS_H
 
-#include <KUrl>
-#include <KMimeType>
-
+#include <QUrl>
+#include <QMimeType>
+#include <QMimeDatabase>
 #include <QModelIndex>
 
 /**
@@ -30,16 +30,16 @@
  */
 namespace Utilities {
     bool isMusic(const QString &url);
-    bool isMusicMimeType(KMimeType::Ptr type);
+    bool isMusicMimeType(QMimeType type);
     bool isAudio(const QString &url);
-    bool isAudioMimeType(KMimeType::Ptr type);
+    bool isAudioMimeType(QMimeType type);
     bool isVideo(const QString &url);
-    bool isVideoMimeType(KMimeType::Ptr type);
+    bool isVideoMimeType(QMimeType type);
     bool isM3u(const QString &url);
     bool isPls(const QString &url);
-    bool isDvd(const KUrl& url);
-    bool isCd(const KUrl& url);
-    bool isDisc(const KUrl& url);
+    bool isDvd(const QUrl& url);
+    bool isCd(const QUrl& url);
+    bool isDisc(const QUrl& url);
     bool isMediaItem(const QModelIndex *index);
     bool isMedia(const QString& type);
     bool isCategory(const QString& type);
@@ -50,7 +50,7 @@ namespace Utilities {
     bool isFSDirectory(const QString& url);
     QString audioMimeFilter();
     QString videoMimeFilter();
-    QString deviceTypeFromUrl(const KUrl &url);
+    QString deviceTypeFromUrl(const QUrl &url);
 }
 
 #endif // UTILITIES_TYPECHECKS_H
