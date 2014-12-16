@@ -18,8 +18,8 @@
  */
 
 #include "mediauri.h"
-#include <QtCore/QUrl>
-#include <QtCore/QUrlQuery>
+#include <QUrl>
+#include <QUrlQuery>
 
 MediaUri::MediaUri(const QString& uri): QObject()
 {
@@ -65,6 +65,11 @@ const QString& MediaUri::uri() const
 const QString& MediaUri::path() const
 {
     return m_path;
+}
+
+bool MediaUri::isNull() const
+{
+    return m_uri.isNull();
 }
 
 #include "mediauri.moc"

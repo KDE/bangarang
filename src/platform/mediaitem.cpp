@@ -19,21 +19,43 @@
 
 #include "mediaitem.h"
 
+MediaItem::MediaItem() : QObject()
+{
+}
+
 MediaItem::MediaItem(const MediaItem& other) : QObject()
+{
+    init(other);
+}
+
+MediaItem::MediaItem(const QString& uri, MediaItemType type, const QImage &artwork,
+                     const QString& title, const QUrl& playbackUrl): QObject()
+{
+    m_uri = MediaUri(uri);
+    m_type = type;
+    m_artwork = artwork;
+    m_title = title;
+    m_playbackUrl = playbackUrl;
+}
+
+MediaItem &MediaItem::operator =(const MediaItem &other)
+{
+    init(other);
+    return *this;
+}
+
+void MediaItem::init(const MediaItem &other)
 {
     m_uri = other.uri();
     m_type = other.type();
     m_title = other.title();
     m_playbackUrl = other.playbackUrl();
+    m_artwork = other.artwork();
 }
 
-MediaItem::MediaItem(const QString& uri, MediaItemType type,
-                     const QString& title, const QUrl& playbackUrl): QObject()
+bool MediaItem::isNull() const
 {
-    m_uri = MediaUri(uri);
-    m_type = type;
-    m_title = title;
-    m_playbackUrl = playbackUrl;
+    return m_uri.isNull();
 }
 
 const QString &MediaItem::title() const
@@ -61,6 +83,20 @@ void MediaItem::setPlaybackUrl(const QUrl& playbackUrl)
     {
         m_playbackUrl = playbackUrl;
         emit playbackUrlChanged();
+    }
+}
+
+const QImage &MediaItem::artwork() const
+{
+    return m_artwork;
+}
+
+void MediaItem::setArtwork(const QImage &artwork)
+{
+    if (artwork != m_artwork)
+    {
+        m_artwork = artwork;
+        emit artworkChanged();
     }
 }
 

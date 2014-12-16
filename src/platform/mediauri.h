@@ -20,8 +20,8 @@
 #ifndef MEDIAURI_H
 #define MEDIAURI_H
 
-#include <QtCore/QObject>
-#include <QtCore/QMap>
+#include <QObject>
+#include <QMap>
 
 class MediaUri : public QObject
 {
@@ -36,6 +36,8 @@ public:
     const QString& path() const;
     const QMap<QString, QString>& parameters() const;
     const QString& uri() const;
+
+    bool isNull() const;
 
 private:
     QString m_engine;

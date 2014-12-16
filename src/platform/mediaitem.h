@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QImage>
 #include "mediauri.h"
 
 enum MediaItemType
@@ -35,28 +36,41 @@ class MediaItem : public QObject
     Q_OBJECT
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QUrl playbackUrl READ playbackUrl WRITE setPlaybackUrl NOTIFY playbackUrlChanged)
+    Q_PROPERTY(QImage artwork READ artwork WRITE setArtwork NOTIFY artworkChanged)
     Q_PROPERTY(MediaItemType type READ type)
     Q_PROPERTY(MediaUri uri READ uri)
 
-public:
-    MediaItem(const MediaItem& other);
-    MediaItem(const QString &uri, MediaItemType type,
-              const QString &title = QString(), const QUrl &playbackUrl = QUrl());
 
-    const QString &title() const;
-    const QUrl &playbackUrl() const;
+public:
+    MediaItem();
+    MediaItem(const MediaItem& other);
+    MediaItem(const QString& uri, MediaItemType type, const QImage& artwork = QImage(),
+              const QString& title = QString(), const QUrl& playbackUrl = QUrl());
+
+    MediaItem& operator =(const MediaItem& other);
+
+    const QString& title() const;
+    const QUrl& playbackUrl() const;
     MediaItemType type() const;
-    const MediaUri &uri() const;
+    const MediaUri& uri() const;
+    const QImage& artwork() const;
+
+    bool isNull() const;
 
 public slots:
     void setTitle(const QString& title);
     void setPlaybackUrl(const QUrl& playbackUrl);
+    void setArtwork(const QImage& artwork);
 
 signals:
     void titleChanged();
     void playbackUrlChanged();
+    void artworkChanged();
 
 private:
+    void init(const MediaItem &other);
+
+    QImage m_artwork;
     QString m_title;
     QUrl m_playbackUrl;
     MediaItemType m_type;
