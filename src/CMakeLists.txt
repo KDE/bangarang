@@ -2,6 +2,8 @@
 # all source files
 set(BangarangSources
     app/main.cpp
+    platform/mediauri.cpp
+    platform/mediaitem.cpp
     platform/mediaitemmodel.cpp
     platform/listengines/listengine.cpp
     platform/listengines/listenginefactory.cpp
