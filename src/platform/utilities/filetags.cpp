@@ -145,9 +145,9 @@ QString Utilities::tagType(const QString &url)
     return QString();
 }
 
-MediaItem Utilities::getAllInfoFromTag(const QString &url, MediaItem templateItem)
+OldMediaItem Utilities::getAllInfoFromTag(const QString &url, OldMediaItem templateItem)
 {
-    MediaItem mediaItem = templateItem;
+    OldMediaItem mediaItem = templateItem;
     mediaItem.url = url;
     mediaItem.fields["url"] = url;
     TagLib::FileRef file((QUrl::fromLocalFile(url)).path().toLocal8Bit().constData());
@@ -358,10 +358,10 @@ QStringList Utilities::getXiphTextFields(TagLib::Ogg::XiphComment *xiph, const T
     return values;
 }
 
-void Utilities::saveAllInfoToTag(const QList<MediaItem> &mediaList)
+void Utilities::saveAllInfoToTag(const QList<OldMediaItem> &mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
-        MediaItem mediaItem = mediaList.at(i);
+        OldMediaItem mediaItem = mediaList.at(i);
         if ( (mediaItem.type != "Audio") || (mediaItem.fields["audioType"] != "Music")) {
             continue;
         }

@@ -56,7 +56,7 @@ void Utilities::Thread::run()
     }
 }
 
-void Utilities::Thread::getArtworksFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
+void Utilities::Thread::getArtworksFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache)
 {
     if (!isRunning()) {
         m_action = "getArtworks";
@@ -66,7 +66,7 @@ void Utilities::Thread::getArtworksFromMediaItem(const MediaItem &mediaItem, boo
     }
 }
 
-void Utilities::Thread::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
+void Utilities::Thread::getArtworkFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache)
 {
     if (!isRunning()) {
         m_action = "getArtwork";

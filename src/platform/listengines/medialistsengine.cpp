@@ -51,11 +51,11 @@ void MediaListsEngine::run()
     m_stop = false;
     bool m_nepomukInited = false; //Set to false here since we no longer inherit from NepomukListEngine. Remove and replace when we have a replacement for NepomukListEngine.
 
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     if (m_mediaListProperties.engineArg() == "audio") {
         QStringList contextTitles;
         QStringList contextLRIs;
-        MediaItem mediaItem;
+        OldMediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
         if (m_nepomukInited) {
@@ -249,7 +249,7 @@ void MediaListsEngine::run()
     } else if (m_mediaListProperties.engineArg() == "video") {
         QStringList contextTitles;
         QStringList contextLRIs;
-        MediaItem mediaItem;
+        OldMediaItem mediaItem;
         mediaItem.type = "Category";
         mediaItem.isSavedList = false;
         if (m_nepomukInited) {
@@ -540,10 +540,10 @@ QString MediaListsEngine::semanticsLriForRecentlyAdded(const QString &type)
     return lri;
 }
 
-QList<MediaItem> MediaListsEngine::loadServerList(QString type)
+QList<OldMediaItem> MediaListsEngine::loadServerList(QString type)
 {
     //Load ampache server list
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
      QFile indexFile(QStandardPaths::locate(QStandardPaths::GenericDataLocation,"bangarang/ampacheservers"));
 
     if (!indexFile.exists()) {
@@ -561,7 +561,7 @@ QList<MediaItem> MediaListsEngine::loadServerList(QString type)
         QString line = in.readLine();
         QStringList nameUrl = line.split(":::");
         if (nameUrl.count() >= 6) {
-            MediaItem mediaItem;
+            OldMediaItem mediaItem;
             if (nameUrl.at(0).toLower() == type.toLower()) {
                 mediaItem.type = "Category";
                 mediaItem.artwork = QIcon::fromTheme("repository");

@@ -23,7 +23,7 @@
 #include <QtCore/QDir>
 #include <QUrl>
 
-class MediaItem;
+class OldMediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 //class MediaIndexer;
@@ -50,6 +50,6 @@ class MediaListsEngine : public ListEngine
         QString semanticsLriForHighest(const QString &type);
         QString semanticsLriForFrequent(const QString &type);
         QString semanticsLriForRecentlyAdded(const QString &type);
-        QList<MediaItem> loadServerList(QString type);
+        QList<OldMediaItem> loadServerList(QString type);
 };
 #endif // MEDIALISTSENGINE_H

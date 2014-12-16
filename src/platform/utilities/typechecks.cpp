@@ -187,7 +187,7 @@ bool Utilities::isFSDirectory(const QString& url)
 
 bool Utilities::isMediaItem(const QModelIndex *index)
 {
-    QString type = index->data(MediaItem::TypeRole).toString();
+    QString type = index->data(OldMediaItem::TypeRole).toString();
     return Utilities::isMedia(type);
 
 }

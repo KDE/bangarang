@@ -103,15 +103,15 @@ void MediaItemModel::setMediaListProperties(const MediaListProperties &mediaList
     emit mediaListPropertiesChanged();
 }
 
-QList<MediaItem> MediaItemModel::mediaList()
+QList<OldMediaItem> MediaItemModel::mediaList()
 {
     return m_mediaList;
 }
 
-MediaItem MediaItemModel::mediaItemAt(int row)
+OldMediaItem MediaItemModel::mediaItemAt(int row)
 {
     if (row < 0 || row >= m_mediaList.size()) {
-        return MediaItem();
+        return OldMediaItem();
     }
     return m_mediaList.at(row);
 }
@@ -174,7 +174,7 @@ void MediaItemModel::reload()
     m_reload = true;
     if (m_loadSources) {
         // If the model was populated using loadSource then reload 
-        QList<MediaItem> mediaList = m_mediaListForLoadSources;
+        QList<OldMediaItem> mediaList = m_mediaListForLoadSources;
         clearMediaListData();
         loadSources(mediaList);
     } else if (!m_mediaListProperties.lri.isEmpty()) {
@@ -184,7 +184,7 @@ void MediaItemModel::reload()
     }
 }
 
-void MediaItemModel::loadMediaList(const QList<MediaItem> &mediaList, bool emitMediaListChanged, bool updateExisting)
+void MediaItemModel::loadMediaList(const QList<OldMediaItem> &mediaList, bool emitMediaListChanged, bool updateExisting)
 {
     for (int i = 0 ; i < mediaList.count() ; ++i) {
         if (updateExisting) {
@@ -203,7 +203,7 @@ void MediaItemModel::loadMediaList(const QList<MediaItem> &mediaList, bool emitM
     }
 }
 
-void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaListChanged)
+void MediaItemModel::loadMediaItem(const OldMediaItem &mediaItem, bool emitMediaListChanged)
 {
     if (rowOfUrl(mediaItem.url) == -1 || mediaItem.url.isEmpty()) {
         m_mediaList << mediaItem;
@@ -219,7 +219,7 @@ void MediaItemModel::loadMediaItem(const MediaItem &mediaItem, bool emitMediaLis
 void MediaItemModel::categoryActivated(QModelIndex index)
 {
     MediaListProperties mediaListProperties;
-    mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
+    mediaListProperties.lri =  itemFromIndex(index)->data(OldMediaItem::UrlRole).toString();
     mediaListProperties.name =  m_mediaList.at(index.row()).title;
     mediaListProperties.category = m_mediaList.at(index.row());
     m_mediaListProperties = mediaListProperties;
@@ -256,7 +256,7 @@ void MediaItemModel::categoryActivated(QModelIndex index)
 void MediaItemModel::actionActivated(QModelIndex index)
 {
     MediaListProperties mediaListProperties;
-    mediaListProperties.lri =  itemFromIndex(index)->data(MediaItem::UrlRole).toString();
+    mediaListProperties.lri =  itemFromIndex(index)->data(OldMediaItem::UrlRole).toString();
     EngineType type = m_listEngineFactory->engineTypeFromString(mediaListProperties.engine());
     if (m_listEngineFactory->engineExists(type)) {
         m_mediaListProperties = mediaListProperties;
@@ -271,7 +271,7 @@ void MediaItemModel::actionActivated(QModelIndex index)
     }   
 }
 
-void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
+void MediaItemModel::loadSources(const QList<OldMediaItem> &mediaList)
 {
 
     if (mediaList.count() == 0) {
@@ -319,7 +319,7 @@ void MediaItemModel::loadSources(const QList<MediaItem> &mediaList)
                 if (m_listEngineFactory->engineExists(type)) {
                     QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
                     m_subRequestSignatures.append(subRequestSignature);
-                    QList<MediaItem> emptyList;
+                    QList<OldMediaItem> emptyList;
                     m_subRequestMediaLists.append(emptyList);
                 }
             }
@@ -353,11 +353,11 @@ void MediaItemModel::loadSourcesForNextCat()
         if (subRequestSignatureIndex < 0) {
             QString subRequestSignature = m_listEngineFactory->generateRequestSignature();
             m_subRequestSignatures.append(subRequestSignature);
-            QList<MediaItem> emptyList;
+            QList<OldMediaItem> emptyList;
             m_subRequestMediaLists.append(emptyList);
             subRequestSignatureIndex = 0;
         }
-        MediaItem category = m_remainingCatsForLoadSources.takeFirst();
+        OldMediaItem category = m_remainingCatsForLoadSources.takeFirst();
         MediaListProperties mediaListProperties;
         mediaListProperties.lri = category.url;
         mediaListProperties.name = category.title;
@@ -395,7 +395,7 @@ void MediaItemModel::loadSourcesForNextCat()
     }
 }
 
-void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
+void MediaItemModel::addResults(QString requestSignature, QList<OldMediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature)
 {
     //Check request signature of results and ignore results with a different signature
    //if (done) kDebug() << "results returned for " << mediaListProperties.lri;
@@ -430,7 +430,7 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
                 }
 
                 //Store subrequest results
-                QList<MediaItem> srMediaList = m_subRequestMediaLists.at(indexOfSubRequest);
+                QList<OldMediaItem> srMediaList = m_subRequestMediaLists.at(indexOfSubRequest);
                 srMediaList.append(mediaList);
                 m_subRequestMediaLists.replace(indexOfSubRequest, srMediaList);
 
@@ -498,26 +498,26 @@ void MediaItemModel::addResults(QString requestSignature, QList<MediaItem> media
     }
 }
 
-void MediaItemModel::updateMediaItems(QList<MediaItem> mediaList)
+void MediaItemModel::updateMediaItems(QList<OldMediaItem> mediaList)
 {
     for (int i = 0; i < mediaList.count(); i++) {
-        MediaItem mediaItem = mediaList.at(i);
+        OldMediaItem mediaItem = mediaList.at(i);
         updateMediaItem(mediaItem);
     }
 }
 
-void MediaItemModel::updateArtwork(QImage artworkImage, MediaItem mediaItem)
+void MediaItemModel::updateArtwork(QImage artworkImage, OldMediaItem mediaItem)
 {
     int row = rowOfUrl(mediaItem.url);
     if (row != -1) {
-        MediaItem updatedMediaItem = mediaItemAt(row);
+        OldMediaItem updatedMediaItem = mediaItemAt(row);
         updatedMediaItem.artwork = QIcon(QPixmap::fromImage(artworkImage));
         updatedMediaItem.hasCustomArtwork = mediaItem.hasCustomArtwork;
         replaceMediaItemAt(row, updatedMediaItem);
     }     
 }
 
-void MediaItemModel::updateMediaItem(MediaItem mediaItem)
+void MediaItemModel::updateMediaItem(OldMediaItem mediaItem)
 {
     int row = rowOfUrl(mediaItem.url);
     if (row != -1) {
@@ -529,7 +529,7 @@ void MediaItemModel::updateMediaItem(MediaItem mediaItem)
     }
 }
 
-void MediaItemModel::updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem)
+void MediaItemModel::updateMediaListPropertiesCategoryArtwork(QImage artworkImage, OldMediaItem mediaItem)
 {
     if (m_mediaListProperties.category.url == mediaItem.url) {
         m_mediaListProperties.category.artwork = QIcon(QPixmap::fromImage(artworkImage));
@@ -591,7 +591,7 @@ void MediaItemModel::removeMediaItemAt(int row, bool emitMediaListChanged)
     }
 }
 
-void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged)
+void MediaItemModel::replaceMediaItemAt(int row, const OldMediaItem &mediaItem, bool emitMediaListChanged)
 {
     m_mediaList.replace(row, mediaItem);
     m_urlList.replace(row, mediaItem.url);
@@ -605,7 +605,7 @@ void MediaItemModel::replaceMediaItemAt(int row, const MediaItem &mediaItem, boo
     }
 }
 
-void MediaItemModel::insertMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged)
+void MediaItemModel::insertMediaItemAt(int row, const OldMediaItem &mediaItem, bool emitMediaListChanged)
 {
     int existingRow = rowOfUrl(mediaItem.url);
     if (existingRow == row) {
@@ -662,7 +662,7 @@ bool MediaItemModel::isLoading()
 
 void MediaItemModel::showNoResultsMessage()
 {
-    MediaItem loadingMessage;
+    OldMediaItem loadingMessage;
     loadingMessage.title = i18n("No results"); //check
     loadingMessage.type = "Message";
     loadingMessage.fields["messageType"] = "No Results";
@@ -680,20 +680,20 @@ void MediaItemModel::setSuppressTooltip(bool suppress)
     m_suppressTooltip = suppress;
 }
 
-QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
+QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(OldMediaItem mediaItem)
 {
     QList<QStandardItem *> rowData;
     QStandardItem * titleItem = new QStandardItem(mediaItem.artwork, mediaItem.title);
-    titleItem->setData(mediaItem.subTitle, MediaItem::SubTitleRole);
-    titleItem->setData(mediaItem.url, MediaItem::UrlRole);
-    titleItem->setData(mediaItem.type, MediaItem::TypeRole);
-    titleItem->setData(mediaItem.duration, MediaItem::DurationRole);
-    titleItem->setData(mediaItem.playlistIndex, MediaItem::PlaylistIndexRole);
-    titleItem->setData(mediaItem.nowPlaying, MediaItem::NowPlayingRole);
-    titleItem->setData(mediaItem.isSavedList, MediaItem::IsSavedListRole);
-    titleItem->setData(mediaItem.exists, MediaItem::ExistsRole);
-    titleItem->setData(mediaItem.hasCustomArtwork, MediaItem::HasCustomArtworkRole);
-    titleItem->setData(mediaItem.semanticComment, MediaItem::SemanticCommentRole);
+    titleItem->setData(mediaItem.subTitle, OldMediaItem::SubTitleRole);
+    titleItem->setData(mediaItem.url, OldMediaItem::UrlRole);
+    titleItem->setData(mediaItem.type, OldMediaItem::TypeRole);
+    titleItem->setData(mediaItem.duration, OldMediaItem::DurationRole);
+    titleItem->setData(mediaItem.playlistIndex, OldMediaItem::PlaylistIndexRole);
+    titleItem->setData(mediaItem.nowPlaying, OldMediaItem::NowPlayingRole);
+    titleItem->setData(mediaItem.isSavedList, OldMediaItem::IsSavedListRole);
+    titleItem->setData(mediaItem.exists, OldMediaItem::ExistsRole);
+    titleItem->setData(mediaItem.hasCustomArtwork, OldMediaItem::HasCustomArtworkRole);
+    titleItem->setData(mediaItem.semanticComment, OldMediaItem::SemanticCommentRole);
     if (!m_suppressTooltip) {
         QString tooltip = QString("<b>%1</b>").arg(mediaItem.title);
         if (!mediaItem.subTitle.isEmpty()) {
@@ -713,16 +713,16 @@ QList<QStandardItem *> MediaItemModel::rowDataFromMediaItem(MediaItem mediaItem)
         titleItem->setData(tooltip, Qt::ToolTipRole);
     }
     if (!mediaItem.fields["rating"].isNull()) {
-        titleItem->setData(mediaItem.fields["rating"].toInt(), MediaItem::RatingRole);
+        titleItem->setData(mediaItem.fields["rating"].toInt(), OldMediaItem::RatingRole);
     }
     if (!mediaItem.fields["playCount"].isNull()) {
-        titleItem->setData(mediaItem.fields["playCount"].toInt(), MediaItem::PlayCountRole);
+        titleItem->setData(mediaItem.fields["playCount"].toInt(), OldMediaItem::PlayCountRole);
     }
     if (!mediaItem.fields["lastPlayed"].isNull()) {
-        titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), MediaItem::LastPlayedRole);
+        titleItem->setData(mediaItem.fields["lastPlayed"].toDateTime(), OldMediaItem::LastPlayedRole);
     }
     if (mediaItem.type == "Category") {
-        titleItem->setData(mediaItem.fields["categoryType"].toString(), MediaItem::SubTypeRole);
+        titleItem->setData(mediaItem.fields["categoryType"].toString(), OldMediaItem::SubTypeRole);
     }           
     rowData << titleItem;
     return rowData;
@@ -736,7 +736,7 @@ Qt::DropActions MediaItemModel::supportedDropActions() const
 Qt::ItemFlags MediaItemModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags useFlags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-    QString type = data(index, MediaItem::TypeRole).toString();
+    QString type = data(index, OldMediaItem::TypeRole).toString();
     if (index.isValid()) {
         useFlags |= Qt::ItemIsDropEnabled;
         if (Utilities::isMedia(type)) {
@@ -762,7 +762,7 @@ QMimeData *MediaItemModel::mimeData(const QModelIndexList &indexes) const
     QString indexList;
     foreach (const QModelIndex& index, indexes) {
         if (index.isValid() && index.column() != 1) {
-            QUrl url = QUrl(data(index, MediaItem::UrlRole).toString());
+            QUrl url = QUrl(data(index, OldMediaItem::UrlRole).toString());
             urls << url;
             indexList += QString("BangarangRow:%1,").arg(index.row());
         }
@@ -805,13 +805,13 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     }
 
     //insert rows into model
-    QList<MediaItem> mediaItemsInserted;
+    QList<OldMediaItem> mediaItemsInserted;
     int insertionRow = beginRow;
     for (int i = 0; i < urls.count(); i++) {
         if (internalMove) {
             QString rowEntry = rowsToMove.at(i);
             int rowToMove = rowEntry.remove("BangarangRow:").toInt();
-            MediaItem mediaItem = mediaItemAt(rowToMove);
+            OldMediaItem mediaItem = mediaItemAt(rowToMove);
             mediaItemsInserted << mediaItem;
             QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
             insertRow(insertionRow, rowItems);
@@ -819,15 +819,15 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
         } else {
             QString url = urls.at(i).toEncoded();
             if (Utilities::isAudio(url) || Utilities::isVideo(url)) {
-                MediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
+                OldMediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
                 mediaItemsInserted << mediaItem;
                 QList<QStandardItem *> rowItems = rowDataFromMediaItem(mediaItem);
                 insertRow(insertionRow, rowItems);
                 insertionRow = insertionRow + 1;
             } else if (Utilities::isFSDirectory(url)) {
-                MediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
+                OldMediaItem mediaItem = Utilities::mediaItemFromUrl((QUrl::fromLocalFile(url)));
                 if (mediaItem.type == "Category") {
-                    QList<MediaItem> mediaList;
+                    QList<OldMediaItem> mediaList;
                     mediaList.append(mediaItem);
                     loadSources(mediaList); // no insertion - always add to end.
                 }
@@ -838,7 +838,7 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     //Update cached data to reflect inserted rows
     insertionRow = beginRow;
     for (int i = 0; i < mediaItemsInserted.count(); i++) {
-        MediaItem mediaItem = mediaItemsInserted.at(i);
+        OldMediaItem mediaItem = mediaItemsInserted.at(i);
         m_mediaList.insert(insertionRow, mediaItem);
         m_urlList.insert(insertionRow, mediaItem.url);
         m_resourceUriList.insert(insertionRow, mediaItem.fields["resourceUri"].toString());
@@ -854,10 +854,10 @@ bool MediaItemModel::dropMimeData(const QMimeData *data,
     return true;
 }
 
-void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
+void MediaItemModel::removeSourceInfo(const QList<OldMediaItem> &mediaList)
 {
     //Group items in list by list engine type of MediaItem sourceLris
-    QHash<EngineType, QList<MediaItem> > typeLists;
+    QHash<EngineType, QList<OldMediaItem> > typeLists;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaListProperties properties(mediaList.at(i).fields["sourceLri"].toString());
         EngineType currentType = m_listEngineFactory->engineTypeFromString(properties.engine());
@@ -865,7 +865,7 @@ void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
             currentType = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
         }
         if (currentType != EngineTypeUnknown) {
-            QList<MediaItem> typeList = typeLists.value(currentType);
+            QList<OldMediaItem> typeList = typeLists.value(currentType);
             typeList.append(mediaList.at(i));
             typeLists.insert(currentType, typeList);
         }
@@ -875,7 +875,7 @@ void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
     QList<EngineType> types = typeLists.keys();
     for (int i = 0; i < types.count(); i++) {
         EngineType type = types.at(i);
-        QList<MediaItem> list = typeLists.value(type);
+        QList<OldMediaItem> list = typeLists.value(type);
         if (m_listEngineFactory->engineExists(type)) {
             ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
             listEngine->removeSourceInfo(mediaList);
@@ -883,10 +883,10 @@ void MediaItemModel::removeSourceInfo(const QList<MediaItem> &mediaList)
     }
 }
 
-void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly)
+void MediaItemModel::updateSourceInfo(const QList<OldMediaItem> &mediaList, bool nepomukOnly)
 {
     //Group items in list by list engine type of MediaItem sourceLris
-    QHash<EngineType, QList<MediaItem> > typeLists;
+    QHash<EngineType, QList<OldMediaItem> > typeLists;
     for (int i = 0; i < mediaList.count(); i++) {
         MediaListProperties properties(mediaList.at(i).fields["sourceLri"].toString());
         EngineType currentType = m_listEngineFactory->engineTypeFromString(properties.engine());
@@ -894,7 +894,7 @@ void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool ne
             currentType = m_listEngineFactory->engineTypeFromString(m_mediaListProperties.engine());
         }
         if (currentType != EngineTypeUnknown) {
-            QList<MediaItem> typeList = typeLists.value(currentType);
+            QList<OldMediaItem> typeList = typeLists.value(currentType);
             typeList.append(mediaList.at(i));
             typeLists.insert(currentType, typeList);
         }
@@ -904,7 +904,7 @@ void MediaItemModel::updateSourceInfo(const QList<MediaItem> &mediaList, bool ne
     QList<EngineType> types = typeLists.keys();
     for (int i = 0; i < types.count(); i++) {
         EngineType type = types.at(i);
-        QList<MediaItem> list = typeLists.value(type);
+        QList<OldMediaItem> list = typeLists.value(type);
         if (m_listEngineFactory->engineExists(type)) {
             ListEngine * listEngine = m_listEngineFactory->availableListEngine(type);
             listEngine->updateSourceInfo(mediaList, nepomukOnly);
@@ -965,7 +965,7 @@ bool MediaItemModel::containsPlayable()
 {
     if (rowCount() < 1)
         return false;
-    MediaItem item = mediaItemAt(0);
+    OldMediaItem item = mediaItemAt(0);
     return ( Utilities::isMedia(item.type) ||
              Utilities::isCategory(item.type) ||
              Utilities::isFeed(item.fields["categoryType"].toString()) );
@@ -983,7 +983,7 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     QModelIndex index = model->index(sourceRow, 0, sourceParent);
     QList<QRegExp> search;
     QString data = model->data(index, Qt::DisplayRole).toString();
-    QVariant type_variant = model->data(index, MediaItem::TypeRole);
+    QVariant type_variant = model->data(index, OldMediaItem::TypeRole);
     if ( type_variant.isValid() ) {
         QString type = type_variant.toString();
         bool isCat = Utilities::isCategory( type );
@@ -997,8 +997,8 @@ bool MediaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     QStringList pat = filterRegExp().pattern().split(' ', QString::SkipEmptyParts);
     Qt::CaseSensitivity case_sen = filterRegExp().caseSensitivity();
     
-    if (model->data(index, MediaItem::SubTitleRole).isValid())
-        data += ' ' + model->data(index, MediaItem::SubTitleRole).toString();
+    if (model->data(index, OldMediaItem::SubTitleRole).isValid())
+        data += ' ' + model->data(index, OldMediaItem::SubTitleRole).toString();
     foreach (const QString& str, pat) {
         search << QRegExp(str, case_sen);
     }

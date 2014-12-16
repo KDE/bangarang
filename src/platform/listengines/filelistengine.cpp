@@ -61,7 +61,7 @@ void FileListEngine::run()
         return;
     }
             
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     
     if (filterList.at(0) == "browseFolder") {
         QString browseUrl;
@@ -79,7 +79,7 @@ void FileListEngine::run()
                 }
                 QString newBrowseUrl = m_filePlacesModel->url(m_filePlacesModel->index(i,0)).toDisplayString();
                 if (!newBrowseUrl.isEmpty() && newBrowseUrl != "trash:/") {
-                    MediaItem mediaItem;
+                    OldMediaItem mediaItem;
                     mediaItem.type = "Category";
                     mediaItem.fields["categoryType"] = "Basic+Artwork";
                     mediaItem.title = m_filePlacesModel->text(m_filePlacesModel->index(i,0));
@@ -104,12 +104,12 @@ void FileListEngine::run()
     } else if (filterList.at(0) == "sources") {
         //Recursively get all relevant files in specified folder
         if (m_mediaListProperties.engineFilterList().count() > 1) {
-            MediaItem mediaItem;
+            OldMediaItem mediaItem;
             mediaItem.type = "Category";
             mediaItem.url = QString("files://%1?browseFolder||%2")
                             .arg(m_mediaListProperties.engineArg())
                             .arg(m_mediaListProperties.engineFilterList().at(1));
-            QList<MediaItem> listToGetFiles;
+            QList<OldMediaItem> listToGetFiles;
             listToGetFiles.append(mediaItem);
             mediaList = getFiles(listToGetFiles, true); //Get basic file info first
             if (m_stop) {
@@ -127,7 +127,7 @@ void FileListEngine::run()
                     return;
                 }
                 QApplication::processEvents();
-                MediaItem mediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url), true);
+                OldMediaItem mediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url), true);
                 mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
                 emit updateMediaItem(mediaItem);
             }
@@ -148,7 +148,7 @@ void FileListEngine::setFilterForSources(const QString& engineFilter)
                                        .arg(filter);
 }
 
-void FileListEngine::updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly)
+void FileListEngine::updateSourceInfo(QList<OldMediaItem> mediaList, bool nepomukOnly)
 {
 //    m_updateNepomukOnly = nepomukOnly;
 //    NepomukListEngine::updateSourceInfo(mediaList);
@@ -157,13 +157,13 @@ void FileListEngine::updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOn
 
 void FileListEngine::listingComplete(const QUrl &url)
 {
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     m_dirSortProxyModel->sort(0);
     for (int i = 0; i < m_dirSortProxyModel->rowCount(); i++) {
         if (m_stop) {
             quit();
         }
-        MediaItem mediaItem;
+        OldMediaItem mediaItem;
         KFileItem fileItem = m_dirModel->itemForIndex(m_dirSortProxyModel->mapToSource(m_dirSortProxyModel->index(i,0)));
         if (fileItem.isDir()) {
             mediaItem.type = "Category";
@@ -223,7 +223,7 @@ void FileListEngine::listingComplete(const QUrl &url)
             quit();
         }
         QApplication::processEvents();
-        MediaItem mediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url), true);
+        OldMediaItem mediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url), true);
         mediaItem.fields["sourceLri"] = m_mediaListProperties.lri;
         emit updateMediaItem(mediaItem);
     }
@@ -232,10 +232,10 @@ void FileListEngine::listingComplete(const QUrl &url)
     Q_UNUSED(url);
 }
 
-QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basicInfo, bool emitStatus)
+QList<OldMediaItem> FileListEngine::getFiles(QList<OldMediaItem> mediaList, bool basicInfo, bool emitStatus)
 {
     //This routine looks for directories in mediaList, crawls and returns a media list with files only
-    QList<MediaItem> crawledList;
+    QList<OldMediaItem> crawledList;
     for (int i = 0; i < mediaList.count(); i++) {
         while (m_stop) {
             //wait while m_stop is true
@@ -268,7 +268,7 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                             QApplication::processEvents();
                         }
                         QFileInfo fileInfo = fileList.at(j);
-                        MediaItem mediaItem;
+                        OldMediaItem mediaItem;
                         if (basicInfo) {
                             mediaItem.url = QUrl::fromLocalFile(fileInfo.absoluteFilePath()).toDisplayString();
                             mediaItem.fields["url"] = mediaItem.url;
@@ -310,7 +310,7 @@ QList<MediaItem> FileListEngine::getFiles(QList<MediaItem> mediaList, bool basic
                             }
                         } else {
                             QUrl fileUrl = QUrl::fromLocalFile(fileList.at(j).absoluteFilePath());
-                            MediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl, true);
+                            OldMediaItem mediaItem = Utilities::mediaItemFromUrl(fileUrl, true);
                             crawledList.append(mediaItem);
                         }
                         if (emitStatus && (crawledList.count() % 20 == 0)) {

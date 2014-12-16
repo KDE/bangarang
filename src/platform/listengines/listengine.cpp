@@ -33,25 +33,25 @@ void ListEngine::setModel(MediaItemModel * mediaItemModel)
 {
     m_mediaItemModel = mediaItemModel;
     connect(this, 
-            SIGNAL(results(QString,QList<MediaItem>,MediaListProperties,bool,QString)),
+            SIGNAL(results(QString,QList<OldMediaItem>,MediaListProperties,bool,QString)),
             m_mediaItemModel,
-            SLOT(addResults(QString,QList<MediaItem>,MediaListProperties,bool,QString)));
+            SLOT(addResults(QString,QList<OldMediaItem>,MediaListProperties,bool,QString)));
     connect(this, 
-            SIGNAL(updateMediaItems(QList<MediaItem>)),
+            SIGNAL(updateMediaItems(QList<OldMediaItem>)),
             m_mediaItemModel,
-            SLOT(updateMediaItems(QList<MediaItem>)));
+            SLOT(updateMediaItems(QList<OldMediaItem>)));
     connect(this, 
-            SIGNAL(updateMediaItem(MediaItem)),
+            SIGNAL(updateMediaItem(OldMediaItem)),
             m_mediaItemModel,
-            SLOT(updateMediaItem(MediaItem)));
+            SLOT(updateMediaItem(OldMediaItem)));
     connect(this, 
-            SIGNAL(updateArtwork(QImage,MediaItem)),
+            SIGNAL(updateArtwork(QImage,OldMediaItem)),
             m_mediaItemModel,
-            SLOT(updateArtwork(QImage,MediaItem)));
+            SLOT(updateArtwork(QImage,OldMediaItem)));
     connect(this, 
-            SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage,MediaItem)),
+            SIGNAL(updateMediaListPropertiesCategoryArtwork(QImage,OldMediaItem)),
             m_mediaItemModel,
-            SLOT(updateMediaListPropertiesCategoryArtwork(QImage,MediaItem)));
+            SLOT(updateMediaListPropertiesCategoryArtwork(QImage,OldMediaItem)));
     connect(this,
             SIGNAL(updateStatus(QHash<QString,QVariant>)),
             m_mediaItemModel,

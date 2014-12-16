@@ -44,7 +44,7 @@ void SavedListsEngine::run()
     QThread::setTerminationEnabled(true);
     m_stop = false;
 
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     
     if (m_mediaListProperties.engineArg().isEmpty() && !m_mediaListProperties.engineFilter().isEmpty()) {
         MediaListProperties mediaListProperties = m_mediaListProperties;
@@ -127,7 +127,7 @@ void SavedListsEngine::run()
                 }
 
                 //Create a basic mediaItem for each entry
-                MediaItem mediaItem;
+                OldMediaItem mediaItem;
               //  KUrl itemUrl(workingDir, url);
                 QUrl itemUrl = QUrl::fromLocalFile(workingDir).resolved(QUrl::fromLocalFile(url));
                 if (!url.isEmpty()) {
@@ -170,12 +170,12 @@ void SavedListsEngine::run()
         if (m_stop) {
             return;
         }
-        MediaItem detailedMediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url));
+        OldMediaItem detailedMediaItem = Utilities::mediaItemFromUrl(QUrl::fromLocalFile(mediaList.at(i).url));
         emit updateMediaItem(detailedMediaItem);
     }
 
     //Check if MediaItems in mediaList exist
-    QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
+    QList<OldMediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     }

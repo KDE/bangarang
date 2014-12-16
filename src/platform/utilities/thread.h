@@ -30,17 +30,17 @@ namespace Utilities {
         explicit Thread(QObject *parent = 0);
         ~Thread();
         void run();
-        void getArtworksFromMediaItem(const MediaItem &mediaItem, bool ignoreCache = false);
-        void getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache = false);
+        void getArtworksFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache = false);
+        void getArtworkFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache = false);
 
     private:
-        MediaItem m_mediaItem;
+        OldMediaItem m_mediaItem;
         QString m_action;
         bool m_ignoreCache;
 
     signals:
-        void gotArtworks(QList<QImage> artworks, MediaItem mediaItem);
-        void gotArtwork(const QImage &artwork, const MediaItem &mediaItem);
+        void gotArtworks(QList<QImage> artworks, OldMediaItem mediaItem);
+        void gotArtwork(const QImage &artwork, const OldMediaItem &mediaItem);
     };
 }
 

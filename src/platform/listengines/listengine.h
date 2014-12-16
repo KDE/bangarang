@@ -120,7 +120,7 @@ class ListEngine : public QThread
          * @param mediaList list of MediaItems whose information should be
          *                  removed from the source.
          */
-        virtual void removeSourceInfo(QList<MediaItem> mediaList)
+        virtual void removeSourceInfo(QList<OldMediaItem> mediaList)
         {
             Q_UNUSED(mediaList);
         }
@@ -131,7 +131,7 @@ class ListEngine : public QThread
          * @param mediaList list of MediaItems whose information should be
          *                  upated in the source.
          */
-        virtual void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false)
+        virtual void updateSourceInfo(QList<OldMediaItem> mediaList, bool nepomukOnly = false)
         {
             Q_UNUSED(mediaList);
             Q_UNUSED(nepomukOnly);
@@ -161,11 +161,11 @@ class ListEngine : public QThread
         }
 
     Q_SIGNALS:
-        void results(QString m_requestSignature, QList<MediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
-        void updateMediaItems(QList<MediaItem> mediaList);
-        void updateMediaItem(MediaItem mediaItem);
-        void updateArtwork(QImage artworkImage, MediaItem mediaItem);
-        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
+        void results(QString m_requestSignature, QList<OldMediaItem> mediaList, MediaListProperties m_mediaListProperties, bool done, QString m_subRequestSignature);
+        void updateMediaItems(QList<OldMediaItem> mediaList);
+        void updateMediaItem(OldMediaItem mediaItem);
+        void updateArtwork(QImage artworkImage, OldMediaItem mediaItem);
+        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, OldMediaItem mediaItem);
         void download(const QUrl &from, const QUrl &to);
         void listDir(const QUrl &url);
         void updateStatus(QHash<QString, QVariant> updatedStatus);

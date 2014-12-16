@@ -35,7 +35,7 @@ void CacheListEngine::run()
     QThread::setTerminationEnabled(true);
     m_stop = false;
 
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     MediaListProperties mediaListProperties;
     
     QString lri = m_mediaListProperties.engineFilter();
@@ -49,7 +49,7 @@ void CacheListEngine::run()
     emit results(m_requestSignature, mediaList, mediaListProperties, true, m_subRequestSignature);
     
     //Check if MediaItems in mediaList exist
-    QList<MediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
+    QList<OldMediaItem> mediaItems = Utilities::mediaItemsDontExist(mediaList);
     if (mediaItems.count() > 0) {
         emit updateMediaItems(mediaItems);
     }

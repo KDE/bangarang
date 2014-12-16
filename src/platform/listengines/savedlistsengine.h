@@ -24,7 +24,7 @@
 #include <QUrl>
 #include <phonon/mediaobject.h>
 
-class MediaItem;
+class OldMediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 //class MediaIndexer;

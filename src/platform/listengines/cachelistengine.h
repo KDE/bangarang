@@ -21,7 +21,7 @@
 
 #include "listengine.h"
 
-class MediaItem;
+class OldMediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 

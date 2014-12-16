@@ -55,9 +55,9 @@
 #include <taglib/xiphcomment.h>
 #include <taglib/attachedpictureframe.h>
 
-MediaItem Utilities::getArtistCategoryItem(const QString &artist)
+OldMediaItem Utilities::getArtistCategoryItem(const QString &artist)
 {
-    MediaItem mediaItem;
+    OldMediaItem mediaItem;
 
     /*
      * TODO: plug in metadata storage
@@ -67,9 +67,9 @@ MediaItem Utilities::getArtistCategoryItem(const QString &artist)
 }
 
 
-MediaItem Utilities::mediaItemFromUrl(QUrl url, bool preferFileMetaData)
+OldMediaItem Utilities::mediaItemFromUrl(QUrl url, bool preferFileMetaData)
 {
-    MediaItem mediaItem;
+    OldMediaItem mediaItem;
     if(isDisc(url)) {
         bool dvd = isDvd(url);
         QString album = dvd ? "DVD Video" : "Audio CD";
@@ -182,7 +182,7 @@ MediaItem Utilities::mediaItemFromUrl(QUrl url, bool preferFileMetaData)
     return mediaItem;
 }
 
-QStringList Utilities::mediaListUrls(const QList<MediaItem> &mediaList)
+QStringList Utilities::mediaListUrls(const QList<OldMediaItem> &mediaList)
 {
     QStringList urls;
     for (int i = 0; i < mediaList.count(); i++) {
@@ -191,7 +191,7 @@ QStringList Utilities::mediaListUrls(const QList<MediaItem> &mediaList)
     return urls;
 }
 
-int Utilities::mediaListDuration(const QList<MediaItem> &mediaList)
+int Utilities::mediaListDuration(const QList<OldMediaItem> &mediaList)
 {
     int duration = 0;
     for (int i = 0; i < mediaList.count(); i++) {
@@ -200,7 +200,7 @@ int Utilities::mediaListDuration(const QList<MediaItem> &mediaList)
     return duration;
 }
 
-QString Utilities::mediaListDurationText(const QList<MediaItem> &mediaList)
+QString Utilities::mediaListDurationText(const QList<OldMediaItem> &mediaList)
 {
     int duration = mediaListDuration(mediaList);
     if (duration == 0) {
@@ -215,11 +215,11 @@ QString Utilities::mediaListDurationText(const QList<MediaItem> &mediaList)
     return QString("%1:%2:%3").arg(hours).arg(min).arg(sec);
 }
 
-QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaList)
+QList<OldMediaItem> Utilities::mediaItemsDontExist(const QList<OldMediaItem> &mediaList)
 {
-    QList<MediaItem> items;
+    QList<OldMediaItem> items;
     for (int i = 0; i < mediaList.count(); i++) {
-        MediaItem mediaItem = mediaList.at(i);
+        OldMediaItem mediaItem = mediaList.at(i);
         bool dvdNotFound = false;
         QString url_string = mediaItem.url;
         if (isDisc(url_string)) {
@@ -242,9 +242,9 @@ QList<MediaItem> Utilities::mediaItemsDontExist(const QList<MediaItem> &mediaLis
 }
 
 
-QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMediaItem)
+QList<OldMediaItem> Utilities::mediaListFromSavedList(const OldMediaItem &savedListMediaItem)
 {
-    QList<MediaItem> mediaList;
+    QList<OldMediaItem> mediaList;
     bool originNotLocal = false;
     Downloader download;
 
@@ -317,7 +317,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                     url = line;
                 }
                 if (add) {
-                    MediaItem mediaItem;
+                    OldMediaItem mediaItem;
                     QUrl itemUrl = QUrl::fromUserInput(url);
                     if (!url.isEmpty()) {
                         mediaItem = Utilities::mediaItemFromUrl(itemUrl);
@@ -350,7 +350,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
                     duration = line.mid(line.indexOf("=") + 1).trimmed().toInt();
                 }
 
-                MediaItem mediaItem;
+                OldMediaItem mediaItem;
                 QUrl itemUrl = QUrl::fromUserInput(url);
                 if (!url.isEmpty()) {
                     mediaItem = Utilities::mediaItemFromUrl(itemUrl);
@@ -376,7 +376,7 @@ QList<MediaItem> Utilities::mediaListFromSavedList(const MediaItem &savedListMed
 }
 
 
-QString Utilities::lriFilterFromMediaListField(const QList<MediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator)
+QString Utilities::lriFilterFromMediaListField(const QList<OldMediaItem> &mediaList, const QString &mediaItemField, const QString &filterFieldName, const QString &lriFilterOperator)
 {
     QString lriFilter;
     for (int i = 0; i < mediaList.count(); i++) {
@@ -385,10 +385,10 @@ QString Utilities::lriFilterFromMediaListField(const QList<MediaItem> &mediaList
     return lriFilter;
 }
 
-QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
+QList<OldMediaItem> Utilities::mergeGenres(QList<OldMediaItem> genreList)
 {
     for (int i = 0; i < genreList.count(); i++) {
-        MediaItem genreItem = genreList.at(i);
+        OldMediaItem genreItem = genreList.at(i);
         if (genreItem.type == "Category" && genreItem.fields["categoryType"] == "AudioGenre") {
             QString rawGenre = genreItem.title;
             QString convertedGenre = Utilities::genreFromRawTagGenre(rawGenre);
@@ -397,7 +397,7 @@ QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
                 for (int j = 0; j < genreList.count(); j++) {
                     if (genreList.at(j).title == convertedGenre) {
                         matchFound = true;
-                        MediaItem matchedGenre = genreList.at(j);
+                        OldMediaItem matchedGenre = genreList.at(j);
                         MediaListProperties matchedGenreProperties;
                         matchedGenreProperties.lri = matchedGenre.url;
                         QString newUrl = QString("%1%2?")
@@ -431,9 +431,9 @@ QList<MediaItem> Utilities::mergeGenres(QList<MediaItem> genreList)
     return genreList;
 }
 
-QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
+QList<OldMediaItem> Utilities::sortMediaList(QList<OldMediaItem> mediaList)
 {
-    QList<MediaItem> sortedList;
+    QList<OldMediaItem> sortedList;
     QMap<QString, int> sortedIndices;
     for (int i = 0; i < mediaList.count(); i++) {
         sortedIndices[mediaList.at(i).title.toLower()] = i;
@@ -446,9 +446,9 @@ QList<MediaItem> Utilities::sortMediaList(QList<MediaItem> mediaList)
     return sortedList;
 }
 
-MediaItem Utilities::makeSubtitle(const MediaItem & mediaItem)
+OldMediaItem Utilities::makeSubtitle(const OldMediaItem & mediaItem)
 {
-    MediaItem updatedItem = mediaItem;
+    OldMediaItem updatedItem = mediaItem;
     QString subType = mediaItem.subType();
 
     if (subType == "Music") {
@@ -518,7 +518,7 @@ MediaItem Utilities::makeSubtitle(const MediaItem & mediaItem)
 }
 
 
-bool Utilities::isTemporaryAudioStream(const MediaItem& item)
+bool Utilities::isTemporaryAudioStream(const OldMediaItem& item)
 {
     if (item.type != "Audio") {
         return false;

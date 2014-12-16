@@ -27,7 +27,7 @@
 #include <KDirSortFilterProxyModel>
 
 
-class MediaItem;
+class OldMediaItem;
 class MediaListProperties;
 class ListEngineFactory;
 //class MediaIndexer;
@@ -47,7 +47,7 @@ class FileListEngine : public ListEngine
         ~FileListEngine();
         void run();
         void setFilterForSources(const QString& engineFilter);
-        void updateSourceInfo(QList<MediaItem> mediaList, bool nepomukOnly = false);
+        void updateSourceInfo(QList<OldMediaItem> mediaList, bool nepomukOnly = false);
         
     private:
         QList<QUrl> m_fileList;
@@ -55,7 +55,7 @@ class FileListEngine : public ListEngine
         KFilePlacesModel *m_filePlacesModel;
         KDirModel *m_dirModel;
         KDirSortFilterProxyModel *m_dirSortProxyModel;
-        QList<MediaItem> getFiles(QList<MediaItem> mediaList, bool basicInfo = false, bool emitStatus = false);
+        QList<OldMediaItem> getFiles(QList<OldMediaItem> mediaList, bool basicInfo = false, bool emitStatus = false);
         QFileInfoList crawlDir(const QDir &dir, QString engineArg);
 
     private Q_SLOTS:

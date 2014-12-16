@@ -50,7 +50,7 @@ class MediaListCache;
  * QList< MediaItem >.
  */
 
-class MediaItem {
+class OldMediaItem {
 public:
     enum MediaItemRole { UrlRole = Qt::UserRole + 1, /** QStandardItem role containing MediaItem url.*/
     
@@ -164,11 +164,11 @@ public:
         }
     }
     
-    MediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
+    OldMediaItem() : nowPlaying(false), isSavedList(false), exists(true), hasCustomArtwork(false) {}
 
 };
 
-Q_DECLARE_METATYPE(MediaItem)
+Q_DECLARE_METATYPE(OldMediaItem)
 
 
 /** 
@@ -193,7 +193,7 @@ public:
     
     QString lri;  /** List Resource Identifier associated with media list.  This string
                     * is the essentially how the media list is retrieved. */
-    MediaItem category;  /** Category mediaItem associated with the media list. This is
+    OldMediaItem category;  /** Category mediaItem associated with the media list. This is
                            * the category mediaItem that was categoryActivated. */
                     
     /** 
@@ -340,7 +340,7 @@ public:
 Q_DECLARE_METATYPE(MediaListProperties)
 
 
-class MediaList : QList<MediaItem>{};
+class MediaList : QList<OldMediaItem>{};
 
 
 /**
@@ -406,7 +406,7 @@ class MediaItemModel : public QStandardItemModel
          *                             otherwise don't emit mediaListChanged().
          *
          */
-        void insertMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged = false);
+        void insertMediaItemAt(int row, const OldMediaItem &mediaItem, bool emitMediaListChanged = false);
 
         /**
          * Loads list of MediaItems as specified by the MediaListProperties.lri
@@ -440,7 +440,7 @@ class MediaItemModel : public QStandardItemModel
          *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
-        void loadMediaList(const QList<MediaItem> &mediaList, bool emitMediaListChanged = false, bool updateExisting = false);
+        void loadMediaList(const QList<OldMediaItem> &mediaList, bool emitMediaListChanged = false, bool updateExisting = false);
         
         /**
          * Loads a MediaItem directly into the model
@@ -452,7 +452,7 @@ class MediaItemModel : public QStandardItemModel
          *       MediaListProperties.lri should either be updated to correspond 
          *       to mediaList or set to QString().
          */
-        void loadMediaItem(const MediaItem &mediaItem, bool emitMediaListChanged = false);
+        void loadMediaItem(const OldMediaItem &mediaItem, bool emitMediaListChanged = false);
         
         /**
          * Loads playable MediaItems into the model.
@@ -466,7 +466,7 @@ class MediaItemModel : public QStandardItemModel
          *                  (type = "Audio" or "Video") then they will be directly 
          *                  loaded into the model.
          */
-        void loadSources(const QList<MediaItem> &mediaList);
+        void loadSources(const QList<OldMediaItem> &mediaList);
         
         /**
          * Returns true if lri is loadable
@@ -476,12 +476,12 @@ class MediaItemModel : public QStandardItemModel
         /**
          * Returns the MediaItem associated with the specified row in the model.
          */
-        MediaItem mediaItemAt(int row);
+        OldMediaItem mediaItemAt(int row);
         
         /**
          * Returns the list of MediaItems contained in the model.
          */
-        QList<MediaItem> mediaList();
+        QList<OldMediaItem> mediaList();
         
         /** 
          * Returns a pointer to the MediaListCache used by the model.
@@ -529,7 +529,7 @@ class MediaItemModel : public QStandardItemModel
          *       can be used to retrieve the MediaItem, its ListEngine can
          *       remove information for the MediaItem.
          */
-        void removeSourceInfo(const QList<MediaItem> &mediaList);
+        void removeSourceInfo(const QList<OldMediaItem> &mediaList);
         
         /**
          * Replace MediaItem at the specified row in the model with the one
@@ -541,7 +541,7 @@ class MediaItemModel : public QStandardItemModel
          *                             otherwise don't emit mediaListChanged().
          *
          */
-        void replaceMediaItemAt(int row, const MediaItem &mediaItem, bool emitMediaListChanged = false);
+        void replaceMediaItemAt(int row, const OldMediaItem &mediaItem, bool emitMediaListChanged = false);
         
         /**
          * Return the row of a MediaItem whose url matches the one provided
@@ -630,7 +630,7 @@ class MediaItemModel : public QStandardItemModel
         *       can be used to retrieve the MediaItem, its ListEngine can
         *       update information for the MediaItem.
         */
-        void updateSourceInfo(const QList<MediaItem> &mediaList, bool nepomukOnly = false);
+        void updateSourceInfo(const QList<OldMediaItem> &mediaList, bool nepomukOnly = false);
         
         QString dataEngine();
         QString filter();
@@ -712,7 +712,7 @@ class MediaItemModel : public QStandardItemModel
         *       does not update the source from which the MediaItems were
         *       retrieved. Use updateSourceInfo() method to do that.
         */
-        void updateMediaItem(MediaItem mediaItem);
+        void updateMediaItem(OldMediaItem mediaItem);
         
         /**
          * Update MediaItems contained in the model to those in the specified
@@ -725,7 +725,7 @@ class MediaItemModel : public QStandardItemModel
          *       does not update the source from which the MediaItems were
          *       retrieved. Use updateSourceInfo() method to do that.
          */
-        void updateMediaItems(QList<MediaItem> mediaList);
+        void updateMediaItems(QList<OldMediaItem> mediaList);
         
         /**
         * Checks if the model contains playble items (media items or feeds)
@@ -768,13 +768,13 @@ class MediaItemModel : public QStandardItemModel
         *       does not update the source from which the MediaItems were
         *       retrieved. Use updateSourceInfo() method to do that.
         */
-        void updateArtwork(QImage artworkImage, MediaItem mediaItem);
+        void updateArtwork(QImage artworkImage, OldMediaItem mediaItem);
         
         void updateRefresh();
         
-        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, MediaItem mediaItem);
+        void updateMediaListPropertiesCategoryArtwork(QImage artworkImage, OldMediaItem mediaItem);
         
-        void addResults(QString requestSignature, QList<MediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
+        void addResults(QString requestSignature, QList<OldMediaItem> mediaList, MediaListProperties mediaListProperties, bool done, QString subRequestSignature);
 
         /**
          * Update model status
@@ -791,7 +791,7 @@ class MediaItemModel : public QStandardItemModel
         
     private:
         void showNoResultsMessage();
-        QList<QStandardItem *> rowDataFromMediaItem(MediaItem mediaItem);
+        QList<QStandardItem *> rowDataFromMediaItem(OldMediaItem mediaItem);
         void loadSourcesForNextCat();
         QObject * m_parent;
         QString m_dataEngine;
@@ -800,11 +800,11 @@ class MediaItemModel : public QStandardItemModel
         ListEngineFactory * m_listEngineFactory;
         QString m_requestSignature;
         QStringList m_subRequestSignatures;
-        QList< QList<MediaItem> > m_subRequestMediaLists;
+        QList< QList<OldMediaItem> > m_subRequestMediaLists;
         int m_subRequestsDone;
         QStringList m_urlList;
         QStringList m_resourceUriList;
-        QList<MediaItem> m_mediaList;
+        QList<OldMediaItem> m_mediaList;
         bool m_emitChangedAfterDrop;
         int m_loadingProgress;
         bool m_loadingState;
@@ -814,8 +814,8 @@ class MediaItemModel : public QStandardItemModel
         bool m_forceRefreshFromSource;
         QHash<QString, QTime> m_lriStartTimes;
         bool m_loadSources;
-        QList<MediaItem> m_mediaListForLoadSources;
-        QList<MediaItem> m_remainingCatsForLoadSources;
+        QList<OldMediaItem> m_mediaListForLoadSources;
+        QList<OldMediaItem> m_remainingCatsForLoadSources;
         bool m_reload;
         bool m_lriIsLoadable;
         bool m_suppressNoResultsMessage;

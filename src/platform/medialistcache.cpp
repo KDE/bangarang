@@ -28,7 +28,7 @@ MediaListCache::~MediaListCache()
 {
 }
 
-void MediaListCache::addMediaList(MediaListProperties mediaListProperties, QList<MediaItem> mediaList)
+void MediaListCache::addMediaList(MediaListProperties mediaListProperties, QList<OldMediaItem> mediaList)
 {
     QString lri = mediaListProperties.lri;
     if (m_lris.indexOf(lri) == -1) {
@@ -57,13 +57,13 @@ void MediaListCache::removeMediaList(const QString &lri)
     }
 }
 
-QList<MediaItem> MediaListCache::mediaList(const QString &lri)
+QList<OldMediaItem> MediaListCache::mediaList(const QString &lri)
 {
     if (m_lris.indexOf(lri) != -1) {
         int index = m_lris.indexOf(lri);
         return m_mediaListCache.at(index);
     } else {
-        QList<MediaItem> emptyList;
+        QList<OldMediaItem> emptyList;
         return emptyList;
     }
 }

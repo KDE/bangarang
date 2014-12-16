@@ -38,7 +38,7 @@
 #include <QtCore/QMutexLocker>
 
 
-QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
+QPixmap Utilities::getArtworkFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache)
 {
     int artworkSize = 164;
     QPixmap pixmap = QPixmap();
@@ -87,7 +87,7 @@ QPixmap Utilities::getArtworkFromMediaItem(const MediaItem &mediaItem, bool igno
     return pixmap;
 }
 
-QImage Utilities::getArtworkImageFromMediaItem(const MediaItem &mediaItem, bool ignoreCache)
+QImage Utilities::getArtworkImageFromMediaItem(const OldMediaItem &mediaItem, bool ignoreCache)
 {
     int artworkSize = 164;
     QImage image = QImage();
@@ -580,7 +580,7 @@ QString Utilities::getGenreArtworkUrl(const QString &genre)
     return artworkUrl;
 }
 
-QIcon Utilities::defaultArtworkForMediaItem(const MediaItem &mediaItem)
+QIcon Utilities::defaultArtworkForMediaItem(const OldMediaItem &mediaItem)
 {
     QIcon artwork;
     if (mediaItem.type == "Audio") {
@@ -650,25 +650,25 @@ QIcon Utilities::turnIconOff(QIcon icon, QSize size)
     return QIcon(QPixmap::fromImage(image));
 }
 
-QImage Utilities::findArtworkInCache(const MediaItem & mediaItem)
+QImage Utilities::findArtworkInCache(const OldMediaItem & mediaItem)
 {
     QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
     return imageCache.value(key, QImage());
 }
 
-bool Utilities::artworkIsInCache(const MediaItem &mediaItem)
+bool Utilities::artworkIsInCache(const OldMediaItem &mediaItem)
 {
     QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
     return imageCache.contains(key);
 }
 
-void Utilities::updateImageCache(const MediaItem &mediaItem, const QImage &image)
+void Utilities::updateImageCache(const OldMediaItem &mediaItem, const QImage &image)
 {
     QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
     imageCache.insert(key, image);
 }
 
-void Utilities::removeFromImageCache(const MediaItem &mediaItem)
+void Utilities::removeFromImageCache(const OldMediaItem &mediaItem)
 {
     QString key = QString("%1:%2").arg(mediaItem.subType(), mediaItem.url);
     imageCache.remove(key);

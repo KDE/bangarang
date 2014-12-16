@@ -39,7 +39,7 @@ namespace Utilities {
     QPixmap getArtworkFromTag(const QString &url, QSize size = QSize(164, 164));
     QImage getArtworkImageFromTag(const QString &url, QSize size = QSize(164, 164));
     QString tagType(const QString &url);
-    MediaItem getAllInfoFromTag(const QString &url, MediaItem templateItem = MediaItem());
+    OldMediaItem getAllInfoFromTag(const QString &url, OldMediaItem templateItem = OldMediaItem());
     QString getArtistFromTag(const QString &url);
     QString getAlbumFromTag(const QString &url);
     QString getTitleFromTag(const QString &url);
@@ -49,7 +49,7 @@ namespace Utilities {
     int getTrackNumberFromTag(const QString &url);
     QStringList getID3V2TextFrameFields(TagLib::ID3v2::Tag *id3v2, const TagLib::ByteVector &type);
     QStringList getXiphTextFields(TagLib::Ogg::XiphComment *xiph, const TagLib::ByteVector &type);
-    void saveAllInfoToTag(const QList<MediaItem> &mediaList);
+    void saveAllInfoToTag(const QList<OldMediaItem> &mediaList);
     bool saveArtworkToTag(const QString &url, const QPixmap *pixmap);
     bool saveArtworkToTag(const QString &url, const QString &imageUrl);
     void setArtistTag(const QString &url, const QString &artist);
