@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   aboutData.setCustomAuthorText(
 	i18n("Defects may be reported at https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided"),
 	i18n("Defects may be reported at <a href='https://bugs.kde.org/enter_bug.cgi?product=bangarang&format=guided'>KDE Bugtracker</a>"));
-  aboutData.setHomepage("https://projects.kde.org/projects/playground/multimedia/bangarang");
+  aboutData.setHomepage("https://commits.kde.org/bangarang");
 
   KAboutData::setApplicationData(aboutData);
 
